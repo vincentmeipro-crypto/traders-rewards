@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+const ADMIN_EMAIL = "vincentmeipro@gmail.com";
+
 async function checkAdmin(req: NextRequest) {
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) return false;
+  if (!token) return { ok: false, reason: "no token" };
   const admin = createAdminClient();
-  const { data: { user } } = await admin.auth.getUser(token);
-  return user?.email === process.env.ADMIN_EMAIL;
+  const { data: { user }, error } = await admin.auth.getUser(token);
+  if (error || !user) return { ok: false, reason: error?.message || "no user" };
+  if (user.email !== ADMIN_EMAIL) return { ok: false, reason: `email mismatch: ${user.email}` };
+  return { ok: true, reason: "ok" };
 }
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  const admin = createAdminClient();
-  const { data: { user } } = await admin.auth.getUser(token || "");
-  if (user?.email !== process.env.ADMIN_EMAIL) {
-    return NextResponse.json({ error: "Unauthorized", userEmail: user?.email, adminEmail: process.env.ADMIN_EMAIL }, { status: 401 });
-  }
+  const check = await checkAdmin(req);
+  if (!check.ok) return NextResponse.json({ error: "Unauthorized", reason: check.reason }, { status: 401 });
 
   const admin = createAdminClient();
 
@@ -33,7 +33,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const check = await checkAdmin(req);
+  if (!check.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id, ...updates } = await req.json();
   const admin = createAdminClient();
