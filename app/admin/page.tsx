@@ -200,7 +200,18 @@ export default function AdminPage() {
                       )}
                     </td>
                     <td style={{ padding: "14px 16px", color: "#22c55e" }}>€{c.amount_paid}</td>
-                    <td style={{ padding: "14px 16px", color: "#888" }}>{c.trading_days}</td>
+                    <td style={{ padding: "14px 16px" }}>
+                      {editing === c.id ? (
+                        <input
+                          type="number"
+                          value={editData.trading_days ?? c.trading_days}
+                          onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))}
+                          style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 60 }}
+                        />
+                      ) : (
+                        <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span>
+                      )}
+                    </td>
                     <td style={{ padding: "14px 16px", color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</td>
                     <td style={{ padding: "14px 16px" }}>
                       {editing === c.id ? (
