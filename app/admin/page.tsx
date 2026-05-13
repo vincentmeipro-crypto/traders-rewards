@@ -15,6 +15,9 @@ type Challenge = {
   amount_paid: number;
   created_at: string;
   trading_days: number;
+  ctrader_account_id: string;
+  ctrader_login: string;
+  ctrader_password: string;
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -143,7 +146,7 @@ export default function AdminPage() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                  {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "Created", "Actions"].map(h => (
+                  {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "cTrader ID", "Login", "Created", "Actions"].map(h => (
                     <th key={h} style={{ padding: "14px 16px", textAlign: "left", color: "#555", fontWeight: 600, letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{h}</th>
                   ))}
                 </tr>
@@ -210,6 +213,26 @@ export default function AdminPage() {
                         />
                       ) : (
                         <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span>
+                      )}
+                    </td>
+                    <td style={{ padding: "14px 16px" }}>
+                      {editing === c.id ? (
+                        <input type="text" placeholder="Account ID"
+                          value={editData.ctrader_account_id ?? c.ctrader_account_id ?? ""}
+                          onChange={e => setEditData(d => ({ ...d, ctrader_account_id: e.target.value }))}
+                          style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                      ) : (
+                        <span style={{ color: c.ctrader_account_id ? "#22c55e" : "#333", fontSize: 12 }}>{c.ctrader_account_id || "—"}</span>
+                      )}
+                    </td>
+                    <td style={{ padding: "14px 16px" }}>
+                      {editing === c.id ? (
+                        <input type="text" placeholder="Login"
+                          value={editData.ctrader_login ?? c.ctrader_login ?? ""}
+                          onChange={e => setEditData(d => ({ ...d, ctrader_login: e.target.value }))}
+                          style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 80 }} />
+                      ) : (
+                        <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_login || "—"}</span>
                       )}
                     </td>
                     <td style={{ padding: "14px 16px", color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</td>
