@@ -10,7 +10,12 @@ async function checkAdmin(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  const admin = createAdminClient();
+  const { data: { user } } = await admin.auth.getUser(token || "");
+  if (user?.email !== process.env.ADMIN_EMAIL) {
+    return NextResponse.json({ error: "Unauthorized", userEmail: user?.email, adminEmail: process.env.ADMIN_EMAIL }, { status: 401 });
+  }
 
   const admin = createAdminClient();
 
