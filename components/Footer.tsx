@@ -42,11 +42,15 @@ export default function Footer() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 32, flexWrap: "wrap", gap: 16 }}>
           <p style={{ color: "#444", fontSize: 13 }}>{T.footer.copyright}</p>
           <div style={{ display: "flex", gap: 24 }}>
-            {[T.footer.privacy, T.footer.terms, T.footer.risk].map(item => (
-              <a key={item} href="#" style={{ color: "#444", fontSize: 13, textDecoration: "none" }}
+            {[
+              { label: T.footer.privacy, href: "/legal/privacy" },
+              { label: T.footer.terms,   href: "/legal/terms" },
+              { label: T.footer.risk,    href: "/legal/risk" },
+            ].map(item => (
+              <a key={item.label} href={item.href} style={{ color: "#444", fontSize: 13, textDecoration: "none" }}
                 onMouseOver={e => (e.currentTarget.style.color = "#C9A84C")}
                 onMouseOut={e => (e.currentTarget.style.color = "#444")}>
-                {item}
+                {item.label}
               </a>
             ))}
           </div>
