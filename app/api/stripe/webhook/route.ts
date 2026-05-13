@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       phase: "phase1",
       balance: size,
       start_balance: size,
-      profit_target: model === "1step" ? 10 : 10,
+      profit_target: 10,
       daily_drawdown_limit: model === "1step" ? 3 : 5,
       total_drawdown_limit: 10,
       trading_days: 0,

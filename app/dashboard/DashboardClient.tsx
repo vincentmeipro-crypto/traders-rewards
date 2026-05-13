@@ -1,28 +1,25 @@
 "use client";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
 import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, AlertCircle, ChevronRight, X } from "lucide-react";
 
-const MOCK = {
-  phase: "Phase 1",
-  accountSize: "$50,000",
-  balance: 51_240,
-  startBalance: 50_000,
-  target: 55_000,
-  maxLoss: 45_000,
-  dailyLoss: 47_500,
-  tradingDays: 6,
-  minDays: 4,
-  daysLeft: "Unlimited",
-  profitTarget: 10,
-  currentProfit: 2.48,
-  dailyDrawdown: 0.8,
-  maxDailyDrawdown: 5,
-  totalDrawdown: 2.52,
-  maxTotalDrawdown: 10,
+type Challenge = {
+  id: string;
+  account_size: string;
+  model: string;
+  phase: string;
+  status: string;
+  balance: number;
+  start_balance: number;
+  profit_target: number;
+  daily_drawdown_limit: number;
+  total_drawdown_limit: number;
+  trading_days: number;
+  amount_paid: number;
+  created_at: string;
 };
 
 function ProgressBar({ value, max, color = "#C9A84C", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -35,13 +32,42 @@ function ProgressBar({ value, max, color = "#C9A84C", danger = false }: { value:
   );
 }
 
+const PHASE_LABELS: Record<string, string> = {
+  phase1: "Phase 1",
+  phase2: "Phase 2",
+  funded: "Funded",
+};
+
+const STATUS_COLORS: Record<string, string> = {
+  active: "#22c55e",
+  passed: "#C9A84C",
+  funded: "#3b82f6",
+  failed: "#ef4444",
+};
+
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClient();
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showPayout, setShowPayout] = useState(false);
   const [payoutForm, setPayoutForm] = useState({ amount: "", wallet_address: "", payment_method: "crypto" });
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from("challenges")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        setChallenge(data);
+        setLoading(false);
+      });
+  }, [user.id]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -54,16 +80,19 @@ export default function DashboardClient({ user }: { user: User }) {
     await fetch("/api/payouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payoutForm, amount: Number(payoutForm.amount), challenge_id: null }),
+      body: JSON.stringify({ ...payoutForm, amount: Number(payoutForm.amount), challenge_id: challenge?.id }),
     });
     setPayoutLoading(false);
     setPayoutSuccess(true);
     setTimeout(() => { setShowPayout(false); setPayoutSuccess(false); }, 2000);
   };
 
-  const profitAmount = MOCK.balance - MOCK.startBalance;
-  const profitPct = ((profitAmount / MOCK.startBalance) * 100).toFixed(2);
-  const targetPct = (((MOCK.balance - MOCK.startBalance) / (MOCK.target - MOCK.startBalance)) * 100).toFixed(0);
+  const profitAmount = challenge ? challenge.balance - challenge.start_balance : 0;
+  const profitPct = challenge ? ((profitAmount / challenge.start_balance) * 100).toFixed(2) : "0";
+  const targetAmount = challenge ? challenge.start_balance * (1 + challenge.profit_target / 100) : 0;
+  const targetPct = challenge ? Math.min(((profitAmount / (targetAmount - challenge.start_balance)) * 100), 100).toFixed(0) : "0";
+  const dailyDrawdownPct = 0.8; // TODO: connect to real trading data
+  const totalDrawdownPct = challenge ? (((challenge.start_balance - challenge.balance) / challenge.start_balance) * 100).toFixed(2) : "0";
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", fontFamily: "Inter, sans-serif" }}>
@@ -111,124 +140,155 @@ export default function DashboardClient({ user }: { user: User }) {
       {/* Main content */}
       <div style={{ marginLeft: 240, padding: "32px 32px" }}>
 
-        {/* Header */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 4 }}>My Challenge</h1>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
-                {MOCK.phase} — {MOCK.accountSize}
-              </span>
-              <span style={{ backgroundColor: "rgba(34,197,94,0.1)", color: "#22c55e", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100 }}>
-                🟢 Active
-              </span>
-            </div>
+        {loading ? (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
+            <div style={{ color: "#C9A84C", fontSize: 16 }}>Loading...</div>
           </div>
-          <a href="#" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", gap: 8 }}>
-            Buy New Challenge <ChevronRight size={14} />
-          </a>
-        </div>
-
-        {/* KPI Cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
-          {[
-            { icon: <TrendingUp size={20} color="#C9A84C" />, label: "Current Balance", value: `$${MOCK.balance.toLocaleString()}`, sub: `+$${profitAmount.toLocaleString()} (+${profitPct}%)`, subColor: "#22c55e" },
-            { icon: <Trophy size={20} color="#C9A84C" />, label: "Profit Target", value: `${MOCK.profitTarget}%`, sub: `${targetPct}% completed`, subColor: "#C9A84C" },
-            { icon: <ShieldCheck size={20} color="#C9A84C" />, label: "Trading Days", value: `${MOCK.tradingDays}`, sub: `Min. ${MOCK.minDays} required ✓`, subColor: "#22c55e" },
-            { icon: <Clock size={20} color="#C9A84C" />, label: "Time Remaining", value: MOCK.daysLeft, sub: "No expiry date", subColor: "#555" },
-          ].map((card, i) => (
-            <div key={i} className="card" style={{ padding: "24px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10 }}>{card.icon}</div>
+        ) : !challenge ? (
+          /* No challenge yet */
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", textAlign: "center" }}>
+            <Trophy size={64} color="#C9A84C" style={{ marginBottom: 24, opacity: 0.5 }} />
+            <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>No Challenge Yet</h2>
+            <p style={{ color: "#555", fontSize: 15, marginBottom: 32 }}>Purchase a challenge to start your journey to funded trading.</p>
+            <a href="/#pricing" className="btn-primary" style={{ padding: "14px 32px", fontSize: 15 }}>Start a Challenge →</a>
+          </div>
+        ) : (
+          <>
+            {/* Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
+              <div>
+                <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>My Challenge</h1>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
+                    {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}
+                  </span>
+                  <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100 }}>
+                    🟢 {challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
+                  </span>
+                </div>
               </div>
-              <div style={{ color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{card.label}</div>
-              <div style={{ fontSize: 26, fontWeight: 800, marginBottom: 4 }}>{card.value}</div>
-              <div style={{ fontSize: 13, color: card.subColor }}>{card.sub}</div>
+              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", gap: 8 }}>
+                Buy New Challenge <ChevronRight size={14} />
+              </a>
             </div>
-          ))}
-        </div>
 
-        {/* Progress Section */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
-
-          {/* Profit Progress */}
-          <div className="card" style={{ padding: 28 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Profit Target</h3>
-              <span style={{ color: "#C9A84C", fontWeight: 700, fontSize: 15 }}>{profitPct}% / {MOCK.profitTarget}%</span>
-            </div>
-            <ProgressBar value={parseFloat(profitPct)} max={MOCK.profitTarget} />
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
-              <span>Start: ${MOCK.startBalance.toLocaleString()}</span>
-              <span>Target: ${MOCK.target.toLocaleString()}</span>
-            </div>
-          </div>
-
-          {/* Daily Drawdown */}
-          <div className="card" style={{ padding: 28 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Daily Drawdown</h3>
-              <span style={{ color: MOCK.dailyDrawdown > 3 ? "#ef4444" : "#22c55e", fontWeight: 700, fontSize: 15 }}>
-                {MOCK.dailyDrawdown}% / {MOCK.maxDailyDrawdown}%
-              </span>
-            </div>
-            <ProgressBar value={MOCK.dailyDrawdown} max={MOCK.maxDailyDrawdown} danger />
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
-              <span>Used today</span>
-              <span>Max allowed: {MOCK.maxDailyDrawdown}%</span>
-            </div>
-          </div>
-
-          {/* Total Drawdown */}
-          <div className="card" style={{ padding: 28 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Total Drawdown</h3>
-              <span style={{ color: MOCK.totalDrawdown > 7 ? "#ef4444" : "#22c55e", fontWeight: 700, fontSize: 15 }}>
-                {MOCK.totalDrawdown}% / {MOCK.maxTotalDrawdown}%
-              </span>
-            </div>
-            <ProgressBar value={MOCK.totalDrawdown} max={MOCK.maxTotalDrawdown} danger />
-            <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
-              <span>Max loss: ${MOCK.maxLoss.toLocaleString()}</span>
-              <span>Current: ${MOCK.balance.toLocaleString()}</span>
-            </div>
-          </div>
-
-          {/* Rules Status */}
-          <div className="card" style={{ padding: 28 }}>
-            <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 20 }}>Rules Status</h3>
-            {[
-              { label: "Profit target", status: "in progress", ok: true },
-              { label: "Min. trading days (4)", status: "passed ✓", ok: true },
-              { label: "Daily drawdown (5%)", status: "within limit ✓", ok: true },
-              { label: "Total drawdown (10%)", status: "within limit ✓", ok: true },
-            ].map((rule, i) => (
-              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
-                <span style={{ color: "#888", fontSize: 14 }}>{rule.label}</span>
-                <span style={{ color: rule.ok ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 600 }}>{rule.status}</span>
+            {/* Phase Banner for Phase 2 / Funded */}
+            {challenge.phase === "phase2" && (
+              <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "16px 24px", marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
+                <Trophy size={20} color="#C9A84C" />
+                <div>
+                  <span style={{ color: "#C9A84C", fontWeight: 700 }}>Phase 1 Passed! </span>
+                  <span style={{ color: "#888", fontSize: 14 }}>You are now in Phase 2 — reach 5% profit to get funded.</span>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
+            )}
+            {challenge.phase === "funded" && (
+              <div style={{ backgroundColor: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 12, padding: "16px 24px", marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
+                <Trophy size={20} color="#3b82f6" />
+                <div>
+                  <span style={{ color: "#3b82f6", fontWeight: 700 }}>🎉 Congratulations! </span>
+                  <span style={{ color: "#888", fontSize: 14 }}>You are now a Funded Trader. Request your payouts below.</span>
+                </div>
+              </div>
+            )}
 
-        {/* Info Banner */}
-        <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 14, padding: "18px 24px", display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
-          <AlertCircle size={20} color="#C9A84C" />
-          <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6 }}>
-            <span style={{ color: "#C9A84C", fontWeight: 600 }}>Note:</span> This dashboard shows simulated data. Connect your cTrader account in Settings to see real trading statistics.
-          </p>
-        </div>
+            {/* KPI Cards */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
+              {[
+                { icon: <TrendingUp size={20} color="#C9A84C" />, label: "Current Balance", value: `$${challenge.balance.toLocaleString()}`, sub: `${profitAmount >= 0 ? "+" : ""}$${profitAmount.toLocaleString()} (${profitAmount >= 0 ? "+" : ""}${profitPct}%)`, subColor: profitAmount >= 0 ? "#22c55e" : "#ef4444" },
+                { icon: <Trophy size={20} color="#C9A84C" />, label: "Profit Target", value: `${challenge.profit_target}%`, sub: `${targetPct}% completed`, subColor: "#C9A84C" },
+                { icon: <ShieldCheck size={20} color="#C9A84C" />, label: "Trading Days", value: `${challenge.trading_days}`, sub: `Min. 4 required ${challenge.trading_days >= 4 ? "✓" : ""}`, subColor: challenge.trading_days >= 4 ? "#22c55e" : "#888" },
+                { icon: <Clock size={20} color="#C9A84C" />, label: "Time Remaining", value: "Unlimited", sub: "No expiry date", subColor: "#555" },
+              ].map((card, i) => (
+                <div key={i} className="card" style={{ padding: "24px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+                    <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10 }}>{card.icon}</div>
+                  </div>
+                  <div style={{ color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{card.label}</div>
+                  <div style={{ fontSize: 26, fontWeight: 800, marginBottom: 4 }}>{card.value}</div>
+                  <div style={{ fontSize: 13, color: card.subColor }}>{card.sub}</div>
+                </div>
+              ))}
+            </div>
 
-        {/* Payout Button */}
-        <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Request a Payout</div>
-            <div style={{ color: "#555", fontSize: 13 }}>Submit your payout request — processed within 24-48h</div>
-          </div>
-          <button onClick={() => setShowPayout(true)} className="btn-primary" style={{ padding: "10px 24px", fontSize: 13 }}>
-            Request Payout
-          </button>
-        </div>
+            {/* Progress Section */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+              <div className="card" style={{ padding: 28 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 700 }}>Profit Target</h3>
+                  <span style={{ color: "#C9A84C", fontWeight: 700, fontSize: 15 }}>{profitPct}% / {challenge.profit_target}%</span>
+                </div>
+                <ProgressBar value={parseFloat(profitPct)} max={challenge.profit_target} />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
+                  <span>Start: ${challenge.start_balance.toLocaleString()}</span>
+                  <span>Target: ${targetAmount.toLocaleString()}</span>
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: 28 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 700 }}>Daily Drawdown</h3>
+                  <span style={{ color: dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e", fontWeight: 700, fontSize: 15 }}>
+                    {dailyDrawdownPct}% / {challenge.daily_drawdown_limit}%
+                  </span>
+                </div>
+                <ProgressBar value={dailyDrawdownPct} max={challenge.daily_drawdown_limit} danger />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
+                  <span>Used today</span>
+                  <span>Max allowed: {challenge.daily_drawdown_limit}%</span>
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: 28 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+                  <h3 style={{ fontSize: 15, fontWeight: 700 }}>Total Drawdown</h3>
+                  <span style={{ color: parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e", fontWeight: 700, fontSize: 15 }}>
+                    {totalDrawdownPct}% / {challenge.total_drawdown_limit}%
+                  </span>
+                </div>
+                <ProgressBar value={parseFloat(totalDrawdownPct)} max={challenge.total_drawdown_limit} danger />
+                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
+                  <span>Max loss: ${(challenge.start_balance * (1 - challenge.total_drawdown_limit / 100)).toLocaleString()}</span>
+                  <span>Current: ${challenge.balance.toLocaleString()}</span>
+                </div>
+              </div>
+
+              <div className="card" style={{ padding: 28 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 20 }}>Rules Status</h3>
+                {[
+                  { label: `Profit target (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? "passed ✓" : "in progress" },
+                  { label: "Min. trading days (4)", ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? "passed ✓" : `${challenge.trading_days}/4 days` },
+                  { label: `Daily drawdown (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: "within limit ✓" },
+                  { label: `Total drawdown (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? "within limit ✓" : "❌ violated" },
+                ].map((rule, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
+                    <span style={{ color: "#888", fontSize: 14 }}>{rule.label}</span>
+                    <span style={{ color: rule.ok ? "#22c55e" : "#C9A84C", fontSize: 13, fontWeight: 600 }}>{rule.status}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Payout Button */}
+            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Request a Payout</div>
+                <div style={{ color: "#555", fontSize: 13 }}>Submit your payout request — processed within 24-48h</div>
+              </div>
+              <button onClick={() => setShowPayout(true)} className="btn-primary" style={{ padding: "10px 24px", fontSize: 13 }}>
+                Request Payout
+              </button>
+            </div>
+
+            {/* Info Banner */}
+            <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 14, padding: "18px 24px", display: "flex", alignItems: "center", gap: 16 }}>
+              <AlertCircle size={20} color="#C9A84C" />
+              <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6 }}>
+                <span style={{ color: "#C9A84C", fontWeight: 600 }}>Note:</span> Balance and trading days are updated manually by our team. Connect your cTrader account in Settings for automatic synchronization.
+              </p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Payout Modal */}

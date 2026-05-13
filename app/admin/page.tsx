@@ -154,7 +154,21 @@ export default function AdminPage() {
                     <td style={{ padding: "14px 16px", color: "#aaa", maxWidth: 180, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</td>
                     <td style={{ padding: "14px 16px", fontWeight: 700, color: "#C9A84C" }}>{c.account_size}</td>
                     <td style={{ padding: "14px 16px", color: "#888" }}>{c.model}</td>
-                    <td style={{ padding: "14px 16px", color: "#888" }}>{c.phase}</td>
+                    <td style={{ padding: "14px 16px" }}>
+                      {editing === c.id ? (
+                        <select
+                          value={editData.phase || c.phase}
+                          onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))}
+                          style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}
+                        >
+                          <option value="phase1">phase1</option>
+                          <option value="phase2">phase2</option>
+                          <option value="funded">funded</option>
+                        </select>
+                      ) : (
+                        <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#C9A84C" : "#888", fontWeight: 600, fontSize: 12 }}>{c.phase}</span>
+                      )}
+                    </td>
                     <td style={{ padding: "14px 16px" }}>
                       {editing === c.id ? (
                         <select
