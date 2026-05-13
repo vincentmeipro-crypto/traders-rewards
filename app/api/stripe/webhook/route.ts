@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@/lib/supabase/server";
+import { sendWelcomeEmail } from "@/lib/mailer";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -44,6 +45,16 @@ export async function POST(req: NextRequest) {
       stripe_session_id: session.id,
       amount_paid: (session.amount_total || 0) / 100,
     });
+
+    // Envoyer l'email de confirmation
+    const userEmail = session.customer_email || session.customer_details?.email;
+    if (userEmail) {
+      try {
+        await sendWelcomeEmail(userEmail, accountSize, model);
+      } catch (e) {
+        console.error("Email error:", e);
+      }
+    }
   }
 
   return NextResponse.json({ received: true });
