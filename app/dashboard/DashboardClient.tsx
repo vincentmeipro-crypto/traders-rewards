@@ -1,9 +1,10 @@
 "use client";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, AlertCircle, ChevronRight } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, AlertCircle, ChevronRight, X } from "lucide-react";
 
 const MOCK = {
   phase: "Phase 1",
@@ -37,11 +38,27 @@ function ProgressBar({ value, max, color = "#C9A84C", danger = false }: { value:
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClient();
+  const [showPayout, setShowPayout] = useState(false);
+  const [payoutForm, setPayoutForm] = useState({ amount: "", wallet_address: "", payment_method: "crypto" });
+  const [payoutLoading, setPayoutLoading] = useState(false);
+  const [payoutSuccess, setPayoutSuccess] = useState(false);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
     router.refresh();
+  };
+
+  const handlePayoutSubmit = async () => {
+    setPayoutLoading(true);
+    await fetch("/api/payouts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...payoutForm, amount: Number(payoutForm.amount), challenge_id: null }),
+    });
+    setPayoutLoading(false);
+    setPayoutSuccess(true);
+    setTimeout(() => { setShowPayout(false); setPayoutSuccess(false); }, 2000);
   };
 
   const profitAmount = MOCK.balance - MOCK.startBalance;
@@ -195,13 +212,74 @@ export default function DashboardClient({ user }: { user: User }) {
         </div>
 
         {/* Info Banner */}
-        <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 14, padding: "18px 24px", display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 14, padding: "18px 24px", display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
           <AlertCircle size={20} color="#C9A84C" />
           <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6 }}>
             <span style={{ color: "#C9A84C", fontWeight: 600 }}>Note:</span> This dashboard shows simulated data. Connect your cTrader account in Settings to see real trading statistics.
           </p>
         </div>
+
+        {/* Payout Button */}
+        <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Request a Payout</div>
+            <div style={{ color: "#555", fontSize: 13 }}>Submit your payout request — processed within 24-48h</div>
+          </div>
+          <button onClick={() => setShowPayout(true)} className="btn-primary" style={{ padding: "10px 24px", fontSize: 13 }}>
+            Request Payout
+          </button>
+        </div>
       </div>
+
+      {/* Payout Modal */}
+      {showPayout && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
+          <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 20, padding: 40, width: "100%", maxWidth: 480 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
+              <h2 style={{ fontSize: 20, fontWeight: 800 }}>Request Payout</h2>
+              <button onClick={() => setShowPayout(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#555" }}><X size={20} /></button>
+            </div>
+
+            {payoutSuccess ? (
+              <div style={{ textAlign: "center", padding: "20px 0" }}>
+                <div style={{ color: "#22c55e", fontSize: 40, marginBottom: 16 }}>✅</div>
+                <div style={{ fontWeight: 700, fontSize: 18 }}>Request Submitted!</div>
+                <div style={{ color: "#555", fontSize: 14, marginTop: 8 }}>We'll process it within 24-48 hours.</div>
+              </div>
+            ) : (
+              <>
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>Amount (USD)</label>
+                  <input type="number" placeholder="e.g. 1500" value={payoutForm.amount}
+                    onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>Payment Method</label>
+                  <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none" }}>
+                    <option value="crypto">Crypto (USDT/BTC)</option>
+                    <option value="bank">Bank Transfer</option>
+                  </select>
+                </div>
+                <div style={{ marginBottom: 28 }}>
+                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>
+                    {payoutForm.payment_method === "crypto" ? "Wallet Address" : "IBAN"}
+                  </label>
+                  <input type="text" placeholder={payoutForm.payment_method === "crypto" ? "0x... or T..." : "FR76..."}
+                    value={payoutForm.wallet_address}
+                    onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount || !payoutForm.wallet_address}
+                  className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, opacity: payoutLoading ? 0.7 : 1 }}>
+                  {payoutLoading ? "Submitting..." : "Submit Request"}
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
