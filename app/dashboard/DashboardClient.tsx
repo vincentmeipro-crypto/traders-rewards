@@ -280,13 +280,23 @@ export default function DashboardClient({ user }: { user: User }) {
               </button>
             </div>
 
-            {/* Info Banner */}
-            <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 14, padding: "18px 24px", display: "flex", alignItems: "center", gap: 16 }}>
-              <AlertCircle size={20} color="#C9A84C" />
-              <p style={{ color: "#888", fontSize: 14, lineHeight: 1.6 }}>
-                <span style={{ color: "#C9A84C", fontWeight: 600 }}>Note:</span> Balance and trading days are updated manually by our team. Connect your cTrader account in Settings for automatic synchronization.
-              </p>
-            </div>
+            {/* cTrader Connect */}
+            {!(challenge as Record<string, unknown>).ctrader_account_id ? (
+              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Connect your cTrader Account</div>
+                  <div style={{ color: "#555", fontSize: 13 }}>Sync your balance and trading data automatically</div>
+                </div>
+                <a href={`/api/ctrader/auth?challenge_id=${challenge.id}`} className="btn-secondary" style={{ padding: "10px 20px", fontSize: 13, textDecoration: "none" }}>
+                  Connect cTrader →
+                </a>
+              </div>
+            ) : (
+              <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "16px 24px", display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+                <span style={{ color: "#22c55e", fontSize: 18 }}>✓</span>
+                <div style={{ color: "#888", fontSize: 14 }}>cTrader account connected — balance synced automatically every hour</div>
+              </div>
+            )}
           </>
         )}
       </div>
