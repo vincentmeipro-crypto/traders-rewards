@@ -1,0 +1,21 @@
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import Stats from "@/components/Stats";
+import HowItWorks from "@/components/HowItWorks";
+import Pricing from "@/components/Pricing";
+import Rules from "@/components/Rules";
+import Footer from "@/components/Footer";
+
+export default function Home() {
+  return (
+    <main style={{ backgroundColor: "#070707", minHeight: "100vh" }}>
+      <Navbar />
+      <Hero />
+      <Stats />
+      <HowItWorks />
+      <Pricing />
+      <Rules />
+      <Footer />
+    </main>
+  );
+}
