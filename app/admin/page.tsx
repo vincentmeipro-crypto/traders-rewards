@@ -32,6 +32,7 @@ export default function AdminPage() {
   const [editData, setEditData] = useState<Partial<Challenge>>({});
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -41,7 +42,7 @@ export default function AdminPage() {
         .then(r => r.json())
         .then(data => {
           if (Array.isArray(data)) setChallenges(data);
-          else router.push("/dashboard");
+          else setError(JSON.stringify(data));
           setLoading(false);
         });
     });
@@ -72,6 +73,16 @@ export default function AdminPage() {
   if (loading) return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ color: "#C9A84C", fontSize: 18 }}>Loading...</div>
+    </div>
+  );
+
+  if (error) return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #ef4444", borderRadius: 12, padding: 32, maxWidth: 500 }}>
+        <div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div>
+        <div style={{ color: "#888", fontSize: 13, fontFamily: "monospace" }}>{error}</div>
+        <a href="/dashboard" style={{ display: "block", marginTop: 20, color: "#C9A84C", fontSize: 13 }}>← Dashboard</a>
+      </div>
     </div>
   );
 
