@@ -23,7 +23,8 @@ function CheckoutContent() {
   const router = useRouter();
   const productId = params.get("product") || "50k-2step";
   const challenge = CHALLENGES[productId as keyof typeof CHALLENGES] || CHALLENGES["50k-2step"];
-  const [loading, setLoading] = useState(false);
+  const [loadingStripe, setLoadingStripe] = useState(false);
+  const [loadingCrypto, setLoadingCrypto] = useState(false);
   const [user, setUser] = useState<{ id: string; email: string } | null>(null);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ function CheckoutContent() {
 
   const handleStripe = async () => {
     if (!user) { router.push("/login"); return; }
-    setLoading(true);
+    setLoadingStripe(true);
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -43,7 +44,20 @@ function CheckoutContent() {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-    else setLoading(false);
+    else setLoadingStripe(false);
+  };
+
+  const handleCrypto = async () => {
+    if (!user) { router.push("/login"); return; }
+    setLoadingCrypto(true);
+    const res = await fetch("/api/crypto/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, userId: user.id }),
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else setLoadingCrypto(false);
   };
 
   return (
@@ -88,21 +102,23 @@ function CheckoutContent() {
 
         {/* Payment buttons */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <button onClick={handleStripe} disabled={loading} className="btn-primary"
-            style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: loading ? 0.7 : 1, cursor: loading ? "not-allowed" : "pointer" }}>
-            {loading ? "Redirecting..." : (
+          <button onClick={handleStripe} disabled={loadingStripe || loadingCrypto} className="btn-primary"
+            style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (loadingStripe || loadingCrypto) ? 0.7 : 1, cursor: (loadingStripe || loadingCrypto) ? "not-allowed" : "pointer" }}>
+            {loadingStripe ? "Redirecting..." : (
               <><span>💳</span> Pay with Card <ChevronRight size={16} /></>
             )}
           </button>
 
-          <button className="btn-secondary"
-            style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: 0.5, cursor: "not-allowed" }}>
-            <span>₿</span> Pay with Crypto (coming soon)
+          <button onClick={handleCrypto} disabled={loadingStripe || loadingCrypto} className="btn-secondary"
+            style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (loadingStripe || loadingCrypto) ? 0.7 : 1, cursor: (loadingStripe || loadingCrypto) ? "not-allowed" : "pointer" }}>
+            {loadingCrypto ? "Redirecting..." : (
+              <><span>₿</span> Pay with Crypto <ChevronRight size={16} /></>
+            )}
           </button>
         </div>
 
         <p style={{ textAlign: "center", color: "#333", fontSize: 12, marginTop: 20 }}>
-          Secured by Stripe · SSL encrypted · No subscription
+          Secured by Stripe & Cryptomus · SSL encrypted · No subscription
         </p>
 
         <a href="/#pricing" style={{ display: "block", textAlign: "center", color: "#333", fontSize: 13, marginTop: 16, textDecoration: "none" }}
