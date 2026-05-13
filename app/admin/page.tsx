@@ -36,9 +36,11 @@ export default function AdminPage() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { router.push("/login"); return; }
-      fetch("/api/admin/challenges")
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) { router.push("/login"); return; }
+      fetch("/api/admin/challenges", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
         .then(r => r.json())
         .then(data => {
           if (Array.isArray(data)) setChallenges(data);
@@ -49,9 +51,11 @@ export default function AdminPage() {
   }, [router]);
 
   const save = async (id: string) => {
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
     const res = await fetch("/api/admin/challenges", {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
       body: JSON.stringify({ id, ...editData }),
     });
     const updated = await res.json();

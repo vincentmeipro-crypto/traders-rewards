@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-async function checkAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+async function checkAdmin(req: NextRequest) {
+  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) return false;
+  const admin = createAdminClient();
+  const { data: { user } } = await admin.auth.getUser(token);
   return user?.email === process.env.ADMIN_EMAIL;
 }
 
-export async function GET() {
-  if (!await checkAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(req: NextRequest) {
+  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const admin = createAdminClient();
 
@@ -27,7 +28,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!await checkAdmin()) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id, ...updates } = await req.json();
   const admin = createAdminClient();
