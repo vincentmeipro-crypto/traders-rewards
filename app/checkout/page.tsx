@@ -3,7 +3,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
-import { Shield, Clock, RefreshCw, ChevronRight } from "lucide-react";
+import { Shield, Clock, RefreshCw, ChevronRight, Tag, X, User } from "lucide-react";
 
 const CHALLENGES = {
   "10k-2step":  { label: "$10,000", model: "2-Step", price: "€129", amount: 12900 },
@@ -18,29 +18,94 @@ const CHALLENGES = {
   "200k-1step": { label: "$200,000",model: "1-Step", price: "€849", amount: 84900 },
 };
 
+function formatPrice(cents: number) {
+  return `€${(cents / 100).toFixed(2).replace(".00", "")}`;
+}
+
 function CheckoutContent() {
   const params = useSearchParams();
   const router = useRouter();
   const productId = params.get("product") || "50k-2step";
   const challenge = CHALLENGES[productId as keyof typeof CHALLENGES] || CHALLENGES["50k-2step"];
+
   const [loadingStripe, setLoadingStripe] = useState(false);
   const [loadingCrypto, setLoadingCrypto] = useState(false);
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+  const [loadingFree, setLoadingFree] = useState(false);
+  const [user, setUser] = useState<{ id: string; email: string; token: string } | null>(null);
+
+  // Personal info
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+
+  // Promo
+  const [promoInput, setPromoInput] = useState("");
+  const [promoStatus, setPromoStatus] = useState<"idle" | "loading" | "valid" | "error">("idle");
+  const [promoError, setPromoError] = useState("");
+  const [appliedCode, setAppliedCode] = useState("");
+  const [discount, setDiscount] = useState(0);
+
+  const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
+  const isFree = discount === 100;
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) setUser({ id: data.user.id, email: data.user.email! });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser({ id: session.user.id, email: session.user.email!, token: session.access_token });
+        setEmail(session.user.email!);
+      }
     });
   }, []);
 
+  const saveProfile = async (token: string) => {
+    await fetch("/api/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone, email }),
+    });
+  };
+
+  const applyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setPromoStatus("loading");
+    setPromoError("");
+    const res = await fetch("/api/promo/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: promoInput }),
+    });
+    const data = await res.json();
+    if (res.ok && data.discount) {
+      setDiscount(data.discount);
+      setAppliedCode(data.code);
+      setPromoStatus("valid");
+    } else {
+      setPromoStatus("error");
+      setPromoError(data.error || "Invalid code");
+    }
+  };
+
+  const removePromo = () => {
+    setPromoInput("");
+    setAppliedCode("");
+    setDiscount(0);
+    setPromoStatus("idle");
+    setPromoError("");
+  };
+
+  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim();
+
   const handleStripe = async () => {
     if (!user) { router.push("/login"); return; }
+    if (!profileComplete) return;
     setLoadingStripe(true);
+    await saveProfile(user.token);
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, userId: user.id, userEmail: user.email }),
+      body: JSON.stringify({ productId, userId: user.id, userEmail: user.email, promoCode: appliedCode, discount }),
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
@@ -49,16 +114,39 @@ function CheckoutContent() {
 
   const handleCrypto = async () => {
     if (!user) { router.push("/login"); return; }
+    if (!profileComplete) return;
     setLoadingCrypto(true);
+    await saveProfile(user.token);
     const res = await fetch("/api/crypto/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, userId: user.id }),
+      body: JSON.stringify({ productId, userId: user.id, promoCode: appliedCode, discount }),
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
     else setLoadingCrypto(false);
   };
+
+  const handleFree = async () => {
+    if (!user) { router.push("/login"); return; }
+    if (!profileComplete) return;
+    setLoadingFree(true);
+    await saveProfile(user.token);
+    const res = await fetch("/api/promo/free", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, userId: user.id, promoCode: appliedCode }),
+    });
+    const data = await res.json();
+    if (data.ok) router.push("/dashboard");
+    else {
+      setPromoStatus("error");
+      setPromoError(data.error || "Error");
+      setLoadingFree(false);
+    }
+  };
+
+  const anyLoading = loadingStripe || loadingCrypto || loadingFree;
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
@@ -78,7 +166,12 @@ function CheckoutContent() {
               <div style={{ fontWeight: 700, fontSize: 16 }}>Challenge {challenge.label}</div>
               <div style={{ color: "#555", fontSize: 13, marginTop: 4 }}>{challenge.model} Model · Elysium Funded</div>
             </div>
-            <div style={{ fontSize: 24, fontWeight: 900, color: "#C9A84C" }}>{challenge.price}</div>
+            <div style={{ textAlign: "right" }}>
+              {discount > 0 && <div style={{ fontSize: 13, color: "#555", textDecoration: "line-through", marginBottom: 2 }}>{challenge.price}</div>}
+              <div style={{ fontSize: 24, fontWeight: 900, color: isFree ? "#22c55e" : "#C9A84C" }}>
+                {isFree ? "FREE" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
+              </div>
+            </div>
           </div>
 
           <div style={{ padding: "16px 0", borderBottom: "1px solid #1a1a1a" }}>
@@ -96,29 +189,98 @@ function CheckoutContent() {
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 16 }}>
             <span style={{ color: "#888", fontWeight: 600 }}>Total</span>
-            <span style={{ fontSize: 28, fontWeight: 900 }}>{challenge.price}</span>
+            <span style={{ fontSize: 28, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
+              {isFree ? "FREE" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
+            </span>
           </div>
+        </div>
+
+        {/* Personal Info */}
+        <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "20px 24px", marginBottom: 16 }}>
+          <div style={{ color: "#555", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+            <User size={12} /> Your Information
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+            <div>
+              <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>FIRST NAME *</div>
+              <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean"
+                style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${firstName ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            </div>
+            <div>
+              <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>LAST NAME *</div>
+              <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont"
+                style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${lastName ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            </div>
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>EMAIL *</div>
+            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com"
+              style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${email ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+          </div>
+          <div>
+            <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>PHONE *</div>
+            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+33 6 00 00 00 00"
+              style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${phone ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+          </div>
+        </div>
+
+        {/* Promo Code */}
+        <div style={{ backgroundColor: "#0f0f0f", border: `1px solid ${promoStatus === "valid" ? "#22c55e33" : "#1e1e1e"}`, borderRadius: 20, padding: "20px 24px", marginBottom: 16 }}>
+          <div style={{ color: "#555", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+            <Tag size={12} /> Promo Code
+          </div>
+
+          {promoStatus !== "valid" ? (
+            <div style={{ display: "flex", gap: 8 }}>
+              <input value={promoInput} onChange={e => { setPromoInput(e.target.value.toUpperCase()); setPromoStatus("idle"); setPromoError(""); }}
+                onKeyDown={e => e.key === "Enter" && applyPromo()} placeholder="ENTER CODE"
+                style={{ flex: 1, backgroundColor: "#1a1a1a", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", fontWeight: 700, letterSpacing: "2px", fontFamily: "monospace" }} />
+              <button onClick={applyPromo} disabled={!promoInput.trim() || promoStatus === "loading"}
+                style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 10, padding: "12px 20px", color: "#C9A84C", fontSize: 14, fontWeight: 700, cursor: promoInput.trim() ? "pointer" : "not-allowed", opacity: promoInput.trim() ? 1 : 0.5, whiteSpace: "nowrap" }}>
+                {promoStatus === "loading" ? "..." : "Apply"}
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", backgroundColor: "#22c55e11", border: "1px solid #22c55e33", borderRadius: 10, padding: "12px 16px" }}>
+              <div>
+                <span style={{ color: "#22c55e", fontWeight: 800, fontSize: 14, letterSpacing: "2px", fontFamily: "monospace" }}>{appliedCode}</span>
+                <span style={{ color: "#22c55e", fontSize: 13, marginLeft: 12 }}>−{discount}% {isFree ? "· FREE ACCESS" : ""}</span>
+              </div>
+              <button onClick={removePromo} style={{ background: "none", border: "none", color: "#555", cursor: "pointer", padding: 4 }}><X size={16} /></button>
+            </div>
+          )}
+          {promoStatus === "error" && <div style={{ marginTop: 8, color: "#ef4444", fontSize: 13 }}>{promoError}</div>}
         </div>
 
         {/* Payment buttons */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <button onClick={handleStripe} disabled={loadingStripe || loadingCrypto} className="btn-primary"
-            style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (loadingStripe || loadingCrypto) ? 0.7 : 1, cursor: (loadingStripe || loadingCrypto) ? "not-allowed" : "pointer" }}>
-            {loadingStripe ? "Redirecting..." : (
-              <><span>💳</span> Pay with Card <ChevronRight size={16} /></>
-            )}
-          </button>
-
-          <button onClick={handleCrypto} disabled={loadingStripe || loadingCrypto} className="btn-secondary"
-            style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (loadingStripe || loadingCrypto) ? 0.7 : 1, cursor: (loadingStripe || loadingCrypto) ? "not-allowed" : "pointer" }}>
-            {loadingCrypto ? "Redirecting..." : (
-              <><span>₿</span> Pay with Crypto <ChevronRight size={16} /></>
-            )}
-          </button>
+          {isFree ? (
+            <button onClick={handleFree} disabled={anyLoading || !profileComplete} className="btn-primary"
+              style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.7 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer", backgroundColor: "#22c55e", borderColor: "#22c55e" }}>
+              {loadingFree ? "Setting up your account..." : <><span>🎉</span> Claim Free Access <ChevronRight size={16} /></>}
+            </button>
+          ) : (
+            <>
+              <button onClick={handleStripe} disabled={anyLoading || !profileComplete} className="btn-primary"
+                style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.7 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer" }}>
+                {loadingStripe ? "Redirecting..." : <><span>💳</span> Pay with Card <ChevronRight size={16} /></>}
+              </button>
+              <button onClick={handleCrypto} disabled={anyLoading || !profileComplete} className="btn-secondary"
+                style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.7 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer" }}>
+                {loadingCrypto ? "Redirecting..." : <><span>₿</span> Pay with Crypto <ChevronRight size={16} /></>}
+              </button>
+            </>
+          )}
         </div>
 
-        <p style={{ textAlign: "center", color: "#333", fontSize: 12, marginTop: 20 }}>
-          Secured by Stripe & Cryptomus · SSL encrypted · No subscription
+        {!profileComplete && (
+          <p style={{ textAlign: "center", color: "#555", fontSize: 12, marginTop: 12 }}>
+            Please fill in your first and last name to continue.
+          </p>
+        )}
+
+        <p style={{ textAlign: "center", color: "#333", fontSize: 12, marginTop: 16 }}>
+          Secured by Stripe & Crypto · SSL encrypted · No subscription
         </p>
 
         <a href="/#pricing" style={{ display: "block", textAlign: "center", color: "#333", fontSize: 13, marginTop: 16, textDecoration: "none" }}
