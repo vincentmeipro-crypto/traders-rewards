@@ -28,6 +28,8 @@ export async function POST(req: NextRequest) {
     const orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}`;
     const amountEur = (finalAmount / 100).toFixed(2);
 
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elysiumfunded.eu";
+
     const res = await fetch("https://api.nowpayments.io/v1/invoice", {
       method: "POST",
       headers: {
@@ -39,9 +41,9 @@ export async function POST(req: NextRequest) {
         price_currency: "eur",
         order_id: orderId,
         order_description: `Elysium Funded — ${product.name}`,
-        ipn_callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/crypto/webhook`,
-        success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/success?method=crypto`,
-        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout/cancel`,
+        ipn_callback_url: `${siteUrl}/api/crypto/webhook`,
+        success_url: `${siteUrl}/checkout/success?method=crypto`,
+        cancel_url: `${siteUrl}/checkout/cancel`,
       }),
     });
 

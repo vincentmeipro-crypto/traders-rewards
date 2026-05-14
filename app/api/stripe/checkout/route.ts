@@ -54,8 +54,8 @@ export async function POST(req: NextRequest) {
         model: product.model,
         promoCode: promoCode || "",
       },
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/checkout/cancel`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://elysiumfunded.eu"}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://elysiumfunded.eu"}/checkout/cancel`,
     });
 
     return NextResponse.json({ url: session.url });
