@@ -15,14 +15,16 @@ export default function Hero() {
           <span style={{ fontSize: "clamp(1.1rem, 3vw, 1.5rem)", fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase", color: "#C9A84C" }}>
             La Prop Firm Élite
           </span>
-          <Image
-            src="/logo.jpg"
-            alt="Elysium Funded"
-            width={90}
-            height={90}
-            priority
-            style={{ objectFit: "contain", mixBlendMode: "screen" }}
-          />
+          <div style={{ backgroundColor: "#070707", borderRadius: 8, overflow: "hidden", lineHeight: 0 }}>
+            <Image
+              src="/logo.jpg"
+              alt="Elysium Funded"
+              width={90}
+              height={90}
+              priority
+              style={{ objectFit: "contain", display: "block", filter: "brightness(0.85) contrast(1.4)", mixBlendMode: "screen" }}
+            />
+          </div>
         </div>
 
         <div style={{ display: "inline-flex", alignItems: "center", gap: 8, backgroundColor: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 100, padding: "8px 20px", marginBottom: 32 }}>
