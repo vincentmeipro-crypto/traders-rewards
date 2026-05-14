@@ -86,7 +86,7 @@ export default function DashboardClient({ user }: { user: User }) {
     });
     setPayoutLoading(false);
     setPayoutSuccess(true);
-    setTimeout(() => { setShowPayout(false); setPayoutSuccess(false); }, 2000);
+    setTimeout(() => { setPayoutSuccess(false); }, 2000);
   };
 
   const profitAmount = challenge ? challenge.balance - challenge.start_balance : 0;
