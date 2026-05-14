@@ -66,9 +66,29 @@ export async function GET(req: NextRequest) {
 
   const { data: { users } } = await admin.auth.admin.listUsers();
   const userMap = Object.fromEntries(users.map(u => [u.id, u.email]));
-  const result = (challenges || []).map(c => ({ ...c, user_email: userMap[c.user_id] || "—" }));
+
+  const { data: profiles } = await admin.from("profiles").select("*");
+  const profileMap = Object.fromEntries((profiles || []).map(p => [p.user_id, p]));
+
+  const result = (challenges || []).map(c => ({
+    ...c,
+    user_email: userMap[c.user_id] || "—",
+    client_first_name: profileMap[c.user_id]?.first_name || "",
+    client_last_name: profileMap[c.user_id]?.last_name || "",
+    client_phone: profileMap[c.user_id]?.phone || "",
+  }));
 
   return NextResponse.json(result);
+}
+
+export async function DELETE(req: NextRequest) {
+  const check = await checkAdmin(req);
+  if (!check.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { id } = await req.json();
+  const admin = createAdminClient();
+  const { error } = await admin.from("challenges").delete().eq("id", id);
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  return NextResponse.json({ ok: true });
 }
 
 export async function PATCH(req: NextRequest) {

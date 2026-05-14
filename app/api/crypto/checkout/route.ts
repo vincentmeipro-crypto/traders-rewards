@@ -15,14 +15,18 @@ const PRODUCTS: Record<string, { name: string; amount: number; accountSize: stri
 
 export async function POST(req: NextRequest) {
   try {
-    const { productId, userId } = await req.json();
+    const { productId, userId, promoCode, discount } = await req.json();
     const product = PRODUCTS[productId];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
 
-    // Encode userId and productId in order_id so we can retrieve them in the webhook
-    // Format: "elysium~{userId}~{productId}~{timestamp}"
-    const orderId = `elysium~${userId}~${productId}~${Date.now()}`;
-    const amountEur = (product.amount / 100).toFixed(2);
+    const discountPct = Number(discount) || 0;
+    const finalAmount = discountPct > 0
+      ? Math.round(product.amount * (100 - discountPct) / 100)
+      : product.amount;
+
+    // Encode promo code in order_id: "elysium~{userId}~{productId}~{timestamp}~{promoCode}"
+    const orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}`;
+    const amountEur = (finalAmount / 100).toFixed(2);
 
     const res = await fetch("https://api.nowpayments.io/v1/invoice", {
       method: "POST",

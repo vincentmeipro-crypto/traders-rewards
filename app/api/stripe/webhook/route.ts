@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -18,19 +18,17 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { userId, accountSize, model } = session.metadata!;
+    const { userId, accountSize, model, promoCode } = session.metadata!;
 
-    const supabase = await createClient();
+    const admin = createAdminClient();
 
-    // Récupérer la taille numérique du compte
     const sizeMap: Record<string, number> = {
       "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
       "$100,000": 100000, "$200,000": 200000,
     };
     const size = sizeMap[accountSize] || 10000;
 
-    // Créer le challenge dans Supabase
-    await supabase.from("challenges").insert({
+    await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
       model,
@@ -46,14 +44,21 @@ export async function POST(req: NextRequest) {
       amount_paid: (session.amount_total || 0) / 100,
     });
 
-    // Envoyer l'email de confirmation
+    // Increment promo code usage if applicable
+    if (promoCode) {
+      const { data: promo } = await admin
+        .from("promo_codes").select("id, used_count")
+        .eq("code", promoCode).single();
+      if (promo) {
+        await admin.from("promo_codes")
+          .update({ used_count: promo.used_count + 1 })
+          .eq("id", promo.id);
+      }
+    }
+
     const userEmail = session.customer_email || session.customer_details?.email;
     if (userEmail) {
-      try {
-        await sendWelcomeEmail(userEmail, accountSize, model);
-      } catch (e) {
-        console.error("Email error:", e);
-      }
+      try { await sendWelcomeEmail(userEmail, accountSize, model); } catch (e) { console.error("Email error:", e); }
     }
   }
 

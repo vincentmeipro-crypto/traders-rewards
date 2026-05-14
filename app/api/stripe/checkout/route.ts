@@ -18,9 +18,18 @@ const PRODUCTS = {
 
 export async function POST(req: NextRequest) {
   try {
-    const { productId, userId, userEmail } = await req.json();
+    const { productId, userId, userEmail, promoCode, discount } = await req.json();
     const product = PRODUCTS[productId as keyof typeof PRODUCTS];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
+
+    const discountPct = Number(discount) || 0;
+    const finalAmount = discountPct > 0
+      ? Math.round(product.amount * (100 - discountPct) / 100)
+      : product.amount;
+
+    const productName = discountPct > 0
+      ? `${product.name} (${discountPct}% off)`
+      : product.name;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -30,15 +39,21 @@ export async function POST(req: NextRequest) {
         price_data: {
           currency: "eur",
           product_data: {
-            name: product.name,
+            name: productName,
             description: `Elysium Funded — ${product.model === "2step" ? "2-Step Challenge" : "1-Step Challenge"} — Fee refunded at first payout`,
             images: [],
           },
-          unit_amount: product.amount,
+          unit_amount: finalAmount,
         },
         quantity: 1,
       }],
-      metadata: { userId, productId, accountSize: product.accountSize, model: product.model },
+      metadata: {
+        userId,
+        productId,
+        accountSize: product.accountSize,
+        model: product.model,
+        promoCode: promoCode || "",
+      },
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/checkout/cancel`,
     });

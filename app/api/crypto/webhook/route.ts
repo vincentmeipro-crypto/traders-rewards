@@ -39,12 +39,11 @@ export async function POST(req: NextRequest) {
     const body = JSON.parse(rawBody);
     const status = body.payment_status as string;
 
-    // Only process confirmed payments
     if (status !== "finished" && status !== "confirmed" && status !== "partially_paid") {
       return NextResponse.json({ received: true });
     }
 
-    // Parse order_id: "elysium~{userId}~{productId}~{timestamp}"
+    // Parse order_id: "elysium~{userId}~{productId}~{timestamp}~{promoCode}"
     const orderId: string = body.order_id || "";
     const parts = orderId.split("~");
     if (parts.length < 3 || parts[0] !== "elysium") {
@@ -53,13 +52,13 @@ export async function POST(req: NextRequest) {
 
     const userId = parts[1];
     const productId = parts[2];
+    const promoCode = parts[4] || "";
     const product = PRODUCTS[productId];
 
     if (!userId || !product) return NextResponse.json({ received: true });
 
     const { accountSize, model } = product;
     const size = SIZE_MAP[accountSize] || 10000;
-
     const admin = createAdminClient();
 
     await admin.from("challenges").insert({
@@ -76,6 +75,18 @@ export async function POST(req: NextRequest) {
       trading_days: 0,
       amount_paid: parseFloat(body.price_amount || "0"),
     });
+
+    // Increment promo code usage if applicable
+    if (promoCode) {
+      const { data: promo } = await admin
+        .from("promo_codes").select("id, used_count")
+        .eq("code", promoCode).single();
+      if (promo) {
+        await admin.from("promo_codes")
+          .update({ used_count: promo.used_count + 1 })
+          .eq("id", promo.id);
+      }
+    }
 
     const { data: { users } } = await admin.auth.admin.listUsers();
     const user = users.find(u => u.id === userId);
