@@ -28,7 +28,8 @@ export async function POST(req: NextRequest) {
     const orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}`;
     const amountEur = (finalAmount / 100).toFixed(2);
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elysiumfunded.eu";
+    const rawUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+    const siteUrl = rawUrl.startsWith("http") ? rawUrl.replace(/\/$/, "") : "https://elysiumfunded.eu";
 
     const res = await fetch("https://api.nowpayments.io/v1/invoice", {
       method: "POST",

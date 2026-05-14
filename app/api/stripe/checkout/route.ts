@@ -16,6 +16,11 @@ const PRODUCTS = {
   "200k-1step": { name: "Challenge $200,000 — 1-Step",amount: 84900,  accountSize: "$200,000", model: "1step" },
 };
 
+function getSiteUrl() {
+  const raw = process.env.NEXT_PUBLIC_SITE_URL || "";
+  return raw.startsWith("http") ? raw.replace(/\/$/, "") : "https://elysiumfunded.eu";
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { productId, userId, userEmail, promoCode, discount } = await req.json();
@@ -54,8 +59,8 @@ export async function POST(req: NextRequest) {
         model: product.model,
         promoCode: promoCode || "",
       },
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://elysiumfunded.eu"}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://elysiumfunded.eu"}/checkout/cancel`,
+      success_url: `${getSiteUrl()}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${getSiteUrl()}/checkout/cancel`,
     });
 
     return NextResponse.json({ url: session.url });
