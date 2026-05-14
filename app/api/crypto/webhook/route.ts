@@ -3,43 +3,64 @@ import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
 
-function verifySign(body: Record<string, unknown>, apiKey: string): boolean {
-  const { sign, ...rest } = body;
-  const encoded = Buffer.from(JSON.stringify(rest)).toString("base64");
-  const expected = crypto.createHash("md5").update(encoded + apiKey).digest("hex");
-  return expected === sign;
+const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
+  "10k-2step":  { accountSize: "$10,000",  model: "2step" },
+  "25k-2step":  { accountSize: "$25,000",  model: "2step" },
+  "50k-2step":  { accountSize: "$50,000",  model: "2step" },
+  "100k-2step": { accountSize: "$100,000", model: "2step" },
+  "200k-2step": { accountSize: "$200,000", model: "2step" },
+  "10k-1step":  { accountSize: "$10,000",  model: "1step" },
+  "25k-1step":  { accountSize: "$25,000",  model: "1step" },
+  "50k-1step":  { accountSize: "$50,000",  model: "1step" },
+  "100k-1step": { accountSize: "$100,000", model: "1step" },
+  "200k-1step": { accountSize: "$200,000", model: "1step" },
+};
+
+const SIZE_MAP: Record<string, number> = {
+  "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
+  "$100,000": 100000, "$200,000": 200000,
+};
+
+function verifySignature(body: string, sig: string, ipnSecret: string): boolean {
+  const hmac = crypto.createHmac("sha512", ipnSecret);
+  hmac.update(body);
+  return hmac.digest("hex") === sig;
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const body: Record<string, unknown> = await req.json();
+    const rawBody = await req.text();
+    const sig = req.headers.get("x-nowpayments-sig") || "";
 
-    if (!verifySign(body, process.env.CRYPTOMUS_API_KEY!)) {
+    if (!verifySignature(rawBody, sig, process.env.NOWPAYMENTS_IPN_SECRET!)) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
-    const status = body.status as string;
-    if (status !== "paid" && status !== "paid_over") {
+    const body = JSON.parse(rawBody);
+    const status = body.payment_status as string;
+
+    // Only process confirmed payments
+    if (status !== "finished" && status !== "confirmed" && status !== "partially_paid") {
       return NextResponse.json({ received: true });
     }
 
-    let additionalData: Record<string, string> = {};
-    try {
-      additionalData = JSON.parse(body.additional_data as string || "{}");
-    } catch { /* ignore */ }
-
-    const { userId, accountSize, model } = additionalData;
-    if (!userId || !accountSize || !model) {
+    // Parse order_id: "elysium~{userId}~{productId}~{timestamp}"
+    const orderId: string = body.order_id || "";
+    const parts = orderId.split("~");
+    if (parts.length < 3 || parts[0] !== "elysium") {
       return NextResponse.json({ received: true });
     }
+
+    const userId = parts[1];
+    const productId = parts[2];
+    const product = PRODUCTS[productId];
+
+    if (!userId || !product) return NextResponse.json({ received: true });
+
+    const { accountSize, model } = product;
+    const size = SIZE_MAP[accountSize] || 10000;
 
     const admin = createAdminClient();
-
-    const sizeMap: Record<string, number> = {
-      "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
-      "$100,000": 100000, "$200,000": 200000,
-    };
-    const size = sizeMap[accountSize] || 10000;
 
     await admin.from("challenges").insert({
       user_id: userId,
@@ -53,7 +74,7 @@ export async function POST(req: NextRequest) {
       daily_drawdown_limit: model === "1step" ? 3 : 5,
       total_drawdown_limit: 10,
       trading_days: 0,
-      amount_paid: parseFloat(body.amount as string || "0"),
+      amount_paid: parseFloat(body.price_amount || "0"),
     });
 
     const { data: { users } } = await admin.auth.admin.listUsers();
