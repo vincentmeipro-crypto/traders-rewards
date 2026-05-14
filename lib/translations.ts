@@ -50,8 +50,8 @@ export const t = {
     rules: {
       label: 'Transparency First', title: 'Clear', titleGold: 'Rules',
       allowed: "What's Allowed", notAllowed: "What's Not Allowed",
-      allowedList: ['All instruments (Forex, Gold, Indices, Crypto)','Algorithmic & EA trading','News trading','Overnight & weekend holding','Multiple currency pairs','Any trading strategy'],
-      notAllowedList: ['Copying trades between Elysium accounts','Third-party signal services exploiting our rules','Manipulative trading patterns','Betting against your own accounts','Gambling-style behavior (all-in positions)'],
+      allowedList: ['All instruments: Forex, Gold, Indices, Crypto, Oil','Algorithmic trading & Expert Advisors (EAs)','News trading — fully unrestricted','Holding positions overnight & over weekends','Scalping, day trading & swing trading','Multiple strategies simultaneously','No mandatory stop-loss requirement'],
+      notAllowedList: ['Copying trades between Elysium accounts','Toxic flow or latency arbitrage strategies','Martingale at extreme risk levels (account-destroying)','Trading on behalf of others / account sharing','Gambling-style behavior (all-in positions)','Coordinated group trading to exploit the rules'],
       ctaTitle: 'Ready to Join the', ctaGold: 'Elite?',
       ctaSub: 'Join thousands of funded traders. Your challenge fee is refunded at first payout.',
       ctaBtn: 'Start Your Challenge Today',
@@ -107,8 +107,8 @@ export const t = {
     rules: {
       label: 'Transparence Totale', title: 'Règles', titleGold: 'Claires',
       allowed: 'Ce qui est Autorisé', notAllowed: 'Ce qui est Interdit',
-      allowedList: ['Tous les instruments (Forex, Or, Indices, Crypto)','Trading algorithmique & EA','Trading sur les news','Positions overnight et weekend','Plusieurs paires simultanément','Toute stratégie de trading'],
-      notAllowedList: ['Copier des trades entre comptes Elysium','Services de signaux exploitant nos règles','Patterns de trading manipulatoires','Parier contre ses propres comptes','Comportement de gambling (all-in)'],
+      allowedList: ['Tous les instruments : Forex, Or, Indices, Crypto, Pétrole','Trading algorithmique & Expert Advisors (EAs)','Trading sur les news — sans aucune restriction','Positions overnight et le weekend','Scalping, day trading et swing trading','Plusieurs stratégies simultanément','Pas de stop-loss obligatoire'],
+      notAllowedList: ['Copier des trades entre comptes Elysium','Toxic flow ou arbitrage sur la latence','Martingale à risque extrême (destruction du compte)','Trading pour le compte d\'autrui / partage de compte','Comportement de gambling (positions all-in)','Trading de groupe coordonné pour exploiter les règles'],
       ctaTitle: 'Prêt à Rejoindre l\'', ctaGold: 'Élite ?',
       ctaSub: 'Rejoignez des milliers de traders financés. Frais remboursés au premier retrait.',
       ctaBtn: 'Commencer le Challenge Aujourd\'hui',
