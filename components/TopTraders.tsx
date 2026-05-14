@@ -2,21 +2,21 @@
 import { useLanguage } from "@/lib/LanguageContext";
 
 const traders = [
-  { name: "Karim B.",       flag: "🇫🇷", payout: "$18,400",  size: "$100K", color: "#C9A84C", initials: "KB" },
-  { name: "Marco V.",       flag: "🇮🇹", payout: "$31,200",  size: "$200K", color: "#3b82f6", initials: "MV" },
-  { name: "Sarah L.",       flag: "🇬🇧", payout: "$9,800",   size: "$50K",  color: "#22c55e", initials: "SL" },
-  { name: "Ahmed R.",       flag: "🇸🇦", payout: "$52,600",  size: "$200K", color: "#a855f7", initials: "AR" },
-  { name: "Lucas M.",       flag: "🇧🇷", payout: "$14,750",  size: "$100K", color: "#f59e0b", initials: "LM" },
-  { name: "TheBullTrader",  flag: "🇩🇪", payout: "$88,300",  size: "$200K", color: "#ef4444", initials: "TB" },
-  { name: "Yuki T.",        flag: "🇯🇵", payout: "$23,150",  size: "$100K", color: "#06b6d4", initials: "YT" },
-  { name: "Carlos G.",      flag: "🇪🇸", payout: "$11,400",  size: "$50K",  color: "#C9A84C", initials: "CG" },
-  { name: "PipHunterPro",   flag: "🇺🇸", payout: "$67,900",  size: "$200K", color: "#22c55e", initials: "PH" },
-  { name: "Fatima A.",      flag: "🇲🇦", payout: "$19,200",  size: "$100K", color: "#f59e0b", initials: "FA" },
-  { name: "Dmitri K.",      flag: "🇷🇺", payout: "$44,500",  size: "$200K", color: "#3b82f6", initials: "DK" },
-  { name: "Lena H.",        flag: "🇩🇪", payout: "$7,600",   size: "$25K",  color: "#a855f7", initials: "LH" },
-  { name: "Jean-Pierre D.", flag: "🇫🇷", payout: "$36,800",  size: "$200K", color: "#ef4444", initials: "JP" },
-  { name: "GoldScalper",    flag: "🇦🇪", payout: "$121,000", size: "$200K", color: "#C9A84C", initials: "GS" },
-  { name: "Min-jun L.",     flag: "🇰🇷", payout: "$28,300",  size: "$100K", color: "#06b6d4", initials: "ML" },
+  { name: "Karim B.",       flag: "🇫🇷", payout: "$840",   size: "$100K", color: "#C9A84C", initials: "KB" },
+  { name: "Marco V.",       flag: "🇮🇹", payout: "$1,620", size: "$200K", color: "#3b82f6", initials: "MV" },
+  { name: "Sarah L.",       flag: "🇬🇧", payout: "$490",   size: "$50K",  color: "#22c55e", initials: "SL" },
+  { name: "Ahmed R.",       flag: "🇸🇦", payout: "$2,100", size: "$200K", color: "#a855f7", initials: "AR" },
+  { name: "Lucas M.",       flag: "🇧🇷", payout: "$750",   size: "$100K", color: "#f59e0b", initials: "LM" },
+  { name: "TheBullTrader",  flag: "🇩🇪", payout: "$3,200", size: "$200K", color: "#ef4444", initials: "TB" },
+  { name: "Yuki T.",        flag: "🇯🇵", payout: "$980",   size: "$100K", color: "#06b6d4", initials: "YT" },
+  { name: "Carlos G.",      flag: "🇪🇸", payout: "$560",   size: "$50K",  color: "#C9A84C", initials: "CG" },
+  { name: "PipHunterPro",   flag: "🇺🇸", payout: "$2,750", size: "$200K", color: "#22c55e", initials: "PH" },
+  { name: "Fatima A.",      flag: "🇲🇦", payout: "$870",   size: "$100K", color: "#f59e0b", initials: "FA" },
+  { name: "Dmitri K.",      flag: "🇷🇺", payout: "$1,340", size: "$200K", color: "#3b82f6", initials: "DK" },
+  { name: "Lena H.",        flag: "🇩🇪", payout: "$310",   size: "$25K",  color: "#a855f7", initials: "LH" },
+  { name: "Jean-Pierre D.", flag: "🇫🇷", payout: "$1,900", size: "$200K", color: "#ef4444", initials: "JP" },
+  { name: "GoldScalper",    flag: "🇦🇪", payout: "$4,100", size: "$200K", color: "#C9A84C", initials: "GS" },
+  { name: "Min-jun L.",     flag: "🇰🇷", payout: "$1,190", size: "$100K", color: "#06b6d4", initials: "ML" },
 ];
 
 function TraderCard({ trader }: { trader: typeof traders[0] }) {
