@@ -52,13 +52,14 @@ export default function Rules() {
   ];
 
   const fundedRows = [
-    { label: labels.profitTarget, v2: labels.noTarget,           v1: labels.noTarget           },
+    { label: labels.profitTarget, v2: labels.noTarget,            v1: labels.noTarget            },
     { label: labels.dailyLoss,    v2: labels.keepRules + " (5%)", v1: labels.keepRules + " (3%)" },
-    { label: labels.totalLoss,    v2: labels.keepRules + " (10%)", v1: labels.keepRules + " (10%)" },
-    { label: labels.profitSplit,  v2: "80%",                      v1: "90%"                     },
-    { label: labels.payout,       v2: labels.payoutVal,           v1: labels.payoutVal          },
-    { label: labels.feeRefund,    v2: labels.feeRefundVal,        v1: labels.feeRefundVal       },
-    { label: labels.scaling,      v2: labels.scalingVal,          v1: labels.scalingVal         },
+    { label: labels.totalLoss,    v2: labels.keepRules + " (10%)",v1: labels.keepRules + " (10%)" },
+    { label: labels.tradingDays,  v2: isFr ? "Aucun minimum" : "No minimum", v1: isFr ? "Aucun minimum" : "No minimum" },
+    { label: labels.profitSplit,  v2: "80%",                      v1: "90%"                      },
+    { label: labels.payout,       v2: labels.payoutVal,           v1: labels.payoutVal           },
+    { label: labels.feeRefund,    v2: labels.feeRefundVal,        v1: labels.feeRefundVal        },
+    { label: labels.scaling,      v2: labels.scalingVal,          v1: labels.scalingVal          },
   ];
 
   const groups = [
