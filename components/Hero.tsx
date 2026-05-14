@@ -13,13 +13,13 @@ export default function Hero() {
         alt="Elysium Funded"
         fill
         priority
-        style={{ objectFit: "cover", objectPosition: "center top" }}
+        style={{ objectFit: "contain", objectPosition: "center center" }}
       />
 
       {/* Gradient overlay pour lisibilité */}
       <div style={{
         position: "absolute", inset: 0,
-        background: "linear-gradient(to bottom, rgba(7,7,7,0.1) 0%, rgba(7,7,7,0.2) 40%, rgba(7,7,7,0.75) 65%, rgba(7,7,7,0.97) 85%, #070707 100%)"
+        background: "linear-gradient(to bottom, rgba(7,7,7,0) 0%, rgba(7,7,7,0) 60%, rgba(7,7,7,0.7) 85%, #070707 100%)"
       }} />
 
       {/* Contenu : une seule ligne centrée */}
