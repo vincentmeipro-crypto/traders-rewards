@@ -27,15 +27,6 @@ export default function Hero() {
 
         {/* Ligne 1 : description + boutons */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32, marginBottom: 20, flexWrap: "wrap" }}>
-          <p style={{ color: "#C8C8C8", fontSize: "clamp(0.95rem, 1.8vw, 1.1rem)", lineHeight: 1.7, maxWidth: 520, textShadow: "0 1px 10px rgba(0,0,0,0.9)", margin: 0 }}
-            dangerouslySetInnerHTML={{ __html: T.hero.sub
-              .replace("$400,000", '<span style="color:#C9A84C;font-weight:600">$400,000</span>')
-              .replace("400.000$", '<span style="color:#C9A84C;font-weight:600">400.000$</span>')
-              .replace("400 000$", '<span style="color:#C9A84C;font-weight:600">400 000$</span>')
-              .replace("90%", '<span style="color:#C9A84C;font-weight:600">90%</span>')
-              .replace("%90", '<span style="color:#C9A84C;font-weight:600">%90</span>')
-            }}
-          />
           <div style={{ display: "flex", gap: 16, flexShrink: 0, flexWrap: "wrap" }}>
             <a href="#pricing" className="btn-primary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta1}</a>
             <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta2}</a>
