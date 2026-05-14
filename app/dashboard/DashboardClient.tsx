@@ -1,10 +1,11 @@
 "use client";
+import React from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, AlertCircle, ChevronRight } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -107,12 +108,12 @@ export default function DashboardClient({ user }: { user: User }) {
 
         <nav style={{ padding: "20px 12px", flex: 1 }}>
           {([
-            { icon: "📊", label: "Dashboard", tab: "dashboard" },
-            { icon: "📈", label: "My Challenges", tab: "challenges" },
-            { icon: "💰", label: "Payouts", tab: "payouts" },
-            { icon: "📋", label: "Rules", tab: "rules" },
-            { icon: "⚙️", label: "Settings", tab: "settings" },
-          ] as { icon: string; label: string; tab: Tab }[]).map(item => (
+            { icon: <LayoutDashboard size={16} />, label: "Dashboard", tab: "dashboard" },
+            { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
+            { icon: <Wallet size={16} />, label: "Payouts", tab: "payouts" },
+            { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
+            { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
+          ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
             <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
               display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
               borderRadius: 10, marginBottom: 4, cursor: "pointer",
@@ -123,7 +124,7 @@ export default function DashboardClient({ user }: { user: User }) {
             onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
             onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
             >
-              <span style={{ fontSize: 16 }}>{item.icon}</span>
+              <span style={{ color: activeTab === item.tab ? "#C9A84C" : "#444" }}>{item.icon}</span>
               <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#C9A84C" : "#555" }}>{item.label}</span>
             </div>
           ))}
@@ -153,17 +154,17 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>These rules apply to all Elysium Funded challenges.</p>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               {[
-                { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: "🎯" },
-                { title: "Minimum Trading Days", desc: "You must trade at least 4 different days before passing a phase.", icon: "📅" },
-                { title: "Daily Drawdown", desc: "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: "📉" },
-                { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: "🛡️" },
-                { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: "⏳" },
-                { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: "📊" },
-                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first payout.", icon: "💰" },
-                { title: "Payout Split", desc: "Funded traders keep 80% of profits. Payouts processed within 24-48h.", icon: "🤝" },
+                { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#C9A84C" /> },
+                { title: "Minimum Trading Days", desc: "You must trade at least 4 different days before passing a phase.", icon: <Calendar size={20} color="#C9A84C" /> },
+                { title: "Daily Drawdown", desc: "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#C9A84C" /> },
+                { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#C9A84C" /> },
+                { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#C9A84C" /> },
+                { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#C9A84C" /> },
+                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first payout.", icon: <Wallet size={20} color="#C9A84C" /> },
+                { title: "Payout Split", desc: "Funded traders keep 80% of profits. Payouts processed within 24-48h.", icon: <Percent size={20} color="#C9A84C" /> },
               ].map((rule, i) => (
                 <div key={i} className="card" style={{ padding: 24 }}>
-                  <div style={{ fontSize: 28, marginBottom: 12 }}>{rule.icon}</div>
+                  <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
                   <div style={{ color: "#666", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
                 </div>
@@ -202,7 +203,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Request a payout from your funded account.</p>
             {challenge?.phase !== "funded" ? (
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
-                <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Payouts unlocked when funded</div>
                 <div style={{ color: "#555", fontSize: 14 }}>Complete Phase 1 and Phase 2 to unlock payout requests.</div>
               </div>
@@ -233,7 +234,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
                 {payoutSuccess ? (
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
-                    <div style={{ color: "#22c55e", fontSize: 40, marginBottom: 16 }}>✅</div>
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#22c55e" /></div>
                     <div style={{ fontWeight: 700, fontSize: 18 }}>Request Submitted!</div>
                     <div style={{ color: "#555", fontSize: 14, marginTop: 8 }}>We will process it within 24-48 hours.</div>
                   </div>
@@ -312,8 +313,9 @@ export default function DashboardClient({ user }: { user: User }) {
                   <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
                     {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}
                   </span>
-                  <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100 }}>
-                    🟢 {challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
+                  <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: STATUS_COLORS[challenge.status] || "#888", display: "inline-block" }} />
+                    {challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
                   </span>
                 </div>
               </div>
@@ -430,21 +432,32 @@ export default function DashboardClient({ user }: { user: User }) {
               </button>
             </div>
 
-            {/* cTrader Connect */}
-            {!(challenge as Record<string, unknown>).ctrader_account_id ? (
-              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Connect your cTrader Account</div>
-                  <div style={{ color: "#555", fontSize: 13 }}>Sync your balance and trading data automatically</div>
+            {/* MT5 Account Credentials */}
+            {!(challenge as Record<string, unknown>).ctrader_login ? (
+              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                  <Clock size={18} color="#C9A84C" />
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>MT5 Account — Pending Setup</div>
                 </div>
-                <a href={`/api/ctrader/auth?challenge_id=${challenge.id}`} className="btn-secondary" style={{ padding: "10px 20px", fontSize: 13, textDecoration: "none" }}>
-                  Connect cTrader →
-                </a>
+                <div style={{ color: "#555", fontSize: 13 }}>Your trading account is being configured. You will receive your login credentials by email shortly.</div>
               </div>
             ) : (
-              <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "16px 24px", display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                <span style={{ color: "#22c55e", fontSize: 18 }}>✓</span>
-                <div style={{ color: "#888", fontSize: 14 }}>cTrader account connected — balance synced automatically every hour</div>
+              <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}><CheckCircle size={16} /> MT5 Trading Account Ready</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                  {[
+                    { label: "Platform", value: "MetaTrader 5" },
+                    { label: "Server", value: "ICMarketsSC-Demo" },
+                    { label: "Login", value: String((challenge as Record<string, unknown>).ctrader_login || "—") },
+                    { label: "Password", value: String((challenge as Record<string, unknown>).ctrader_password || "—") },
+                  ].map((item, i) => (
+                    <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "12px 16px" }}>
+                      <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>{item.label}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "monospace", color: "#fff" }}>{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Download MetaTrader 5 at metatrader5.com and connect with these credentials.</div>
               </div>
             )}
           </>
