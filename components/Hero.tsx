@@ -31,13 +31,8 @@ export default function Hero() {
           <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta2}</a>
         </div>
 
-        {/* Ligne 2 : trust + stats sur toute la largeur */}
-        <div style={{ display: "flex", alignItems: "stretch", gap: 0, width: "100%", borderTop: "1px solid rgba(201,168,76,0.15)", paddingTop: 20 }}>
-          <p style={{ color: "#777", fontSize: 13, textShadow: "0 1px 6px rgba(0,0,0,0.8)", margin: 0, flex: 1, display: "flex", alignItems: "center" }}>
-            {T.hero.trust.split("·").map((part, i) => (
-              <span key={i}>{i > 0 && " · "}<span style={i === 0 ? { color: "#C9A84C" } : {}}>{part.trim()}</span></span>
-            ))}
-          </p>
+        {/* Stats centrées */}
+        <div style={{ display: "flex", justifyContent: "center", gap: 0, borderTop: "1px solid rgba(201,168,76,0.15)", paddingTop: 20 }}>
           {[
             { label: T.hero.maxFunding, value: "$400K" },
             { label: T.hero.profitSplit, value: "Up to 90%" },
@@ -48,7 +43,7 @@ export default function Hero() {
               border: "1px solid rgba(201,168,76,0.2)",
               borderLeft: i === 0 ? "1px solid rgba(201,168,76,0.2)" : "none",
               backdropFilter: "blur(12px)",
-              padding: "14px 36px", textAlign: "center", flex: 1,
+              padding: "14px 60px", textAlign: "center",
             }}>
               <div style={{ fontSize: 22, fontWeight: 800, color: "#C9A84C" }}>{item.value}</div>
               <div style={{ fontSize: 11, color: "#888", marginTop: 3, textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</div>
