@@ -25,12 +25,6 @@ export default function Hero() {
       {/* Contenu */}
       <div style={{ position: "relative", zIndex: 2, width: "100%", padding: "0 48px 80px" }}>
 
-        {/* Titre */}
-        <h1 style={{ fontSize: "clamp(3rem, 8vw, 6rem)", fontWeight: 900, lineHeight: 1.05, letterSpacing: "-3px", marginBottom: 36, textShadow: "0 2px 20px rgba(0,0,0,0.8)", textAlign: "left" }}>
-          {T.hero.headline1}<br />
-          <span className="gold-gradient">{T.hero.headline2}</span>
-        </h1>
-
         {/* Ligne 1 : description + boutons */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32, marginBottom: 20, flexWrap: "wrap" }}>
           <p style={{ color: "#C8C8C8", fontSize: "clamp(0.95rem, 1.8vw, 1.1rem)", lineHeight: 1.7, maxWidth: 520, textShadow: "0 1px 10px rgba(0,0,0,0.9)", margin: 0 }}
