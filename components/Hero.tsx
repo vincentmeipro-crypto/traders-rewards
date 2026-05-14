@@ -9,7 +9,7 @@ export default function Hero() {
 
       {/* Image de fond */}
       <Image
-        src="/IMAGE HERO.png"
+        src="/IMAGE HERO2.png"
         alt="Elysium Funded"
         fill
         priority
