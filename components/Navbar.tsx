@@ -31,7 +31,7 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
             {([
-              [T.nav.challenges, "/#challenges"],
+              [T.nav.challenges, "/#pricing"],
               [T.nav.howItWorks, "/#how-it-works"],
               [T.nav.pricing, "/#pricing"],
               [T.nav.rules, "/#rules"],
@@ -116,7 +116,7 @@ export default function Navbar() {
             ))}
             <hr style={{ borderColor: "#222" }} />
             {([
-              [T.nav.challenges, "/#challenges"],
+              [T.nav.challenges, "/#pricing"],
               [T.nav.howItWorks, "/#how-it-works"],
               [T.nav.pricing, "/#pricing"],
               [T.nav.rules, "/#rules"],
