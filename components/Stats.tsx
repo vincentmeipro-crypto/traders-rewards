@@ -1,8 +1,8 @@
 const stats = [
-  { value: "$12M+", label: "Total Payouts" },
-  { value: "8,400+", label: "Funded Traders" },
+  { value: "$24,800+", label: "Total Payouts" },
+  { value: "37+", label: "Funded Traders" },
   { value: "98%", label: "Satisfaction Rate" },
-  { value: "24h", label: "Support Response" },
+  { value: "<24h", label: "Support Response" },
 ];
 
 export default function Stats() {
