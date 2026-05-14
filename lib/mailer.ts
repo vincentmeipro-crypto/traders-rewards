@@ -1,74 +1,67 @@
-import nodemailer from "nodemailer";
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT),
-  secure: true,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+async function sendEmail(to: string, subject: string, html: string) {
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      from: "Elysium Funded <support@elysiumfunded.eu>",
+      to: [to],
+      subject,
+      html,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend error: ${err}`);
+  }
+}
 
 export async function sendWelcomeEmail(to: string, accountSize: string, model: string) {
   const modelLabel = model === "1step" ? "1-Step" : "2-Step";
-  await transporter.sendMail({
-    from: '"Elysium Funded" <support@elysiumfunded.eu>',
-    to,
-    subject: "🎯 Your Elysium Challenge is Ready!",
-    html: buildEmail({
-      title: "✅ Payment Confirmed",
-      titleColor: "#22c55e",
-      body: `Welcome to the elite. Your challenge account has been created and is ready to trade.`,
-      details: [
-        { label: "Account Size", value: accountSize, color: "#C9A84C" },
-        { label: "Model", value: modelLabel },
-        { label: "Profit Target", value: "10%" },
-        { label: "Daily Drawdown", value: model === "1step" ? "3%" : "5%" },
-      ],
-      cta: { text: "Access My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
-    }),
-  });
+  await sendEmail(to, "🎯 Your Elysium Challenge is Ready!", buildEmail({
+    title: "✅ Payment Confirmed",
+    titleColor: "#22c55e",
+    body: `Welcome to the elite. Your challenge account has been created and is ready to trade.`,
+    details: [
+      { label: "Account Size", value: accountSize, color: "#C9A84C" },
+      { label: "Model", value: modelLabel },
+      { label: "Profit Target", value: "10%" },
+      { label: "Daily Drawdown", value: model === "1step" ? "3%" : "5%" },
+    ],
+    cta: { text: "Access My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
+  }));
 }
 
 export async function sendPhase2Email(to: string, accountSize: string) {
-  await transporter.sendMail({
-    from: '"Elysium Funded" <support@elysiumfunded.eu>',
-    to,
-    subject: "🏆 Phase 1 Passed — Welcome to Phase 2!",
-    html: buildEmail({
-      title: "🏆 Phase 1 Passed!",
-      titleColor: "#C9A84C",
-      body: `Congratulations! You have successfully completed Phase 1 of your ${accountSize} challenge. Your account has been reset and Phase 2 is now active.`,
-      details: [
-        { label: "Account Size", value: accountSize, color: "#C9A84C" },
-        { label: "New Phase", value: "Phase 2" },
-        { label: "New Profit Target", value: "5%" },
-        { label: "Balance Reset", value: "✓ Done" },
-      ],
-      cta: { text: "View My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
-    }),
-  });
+  await sendEmail(to, "🏆 Phase 1 Passed — Welcome to Phase 2!", buildEmail({
+    title: "🏆 Phase 1 Passed!",
+    titleColor: "#C9A84C",
+    body: `Congratulations! You have successfully completed Phase 1 of your ${accountSize} challenge. Your account has been reset and Phase 2 is now active.`,
+    details: [
+      { label: "Account Size", value: accountSize, color: "#C9A84C" },
+      { label: "New Phase", value: "Phase 2" },
+      { label: "New Profit Target", value: "5%" },
+      { label: "Balance Reset", value: "✓ Done" },
+    ],
+    cta: { text: "View My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
+  }));
 }
 
 export async function sendFundedEmail(to: string, accountSize: string) {
-  await transporter.sendMail({
-    from: '"Elysium Funded" <support@elysiumfunded.eu>',
-    to,
-    subject: "🎉 You're Funded! Welcome to Elysium Funded",
-    html: buildEmail({
-      title: "🎉 Congratulations — You're Funded!",
-      titleColor: "#3b82f6",
-      body: `Outstanding performance! You have passed all phases of your ${accountSize} challenge. You are now an official Elysium Funded trader with a 90% profit split.`,
-      details: [
-        { label: "Account Size", value: accountSize, color: "#C9A84C" },
-        { label: "Status", value: "Funded Trader ✓", color: "#3b82f6" },
-        { label: "Profit Split", value: "90% for you" },
-        { label: "Payouts", value: "Available now" },
-      ],
-      cta: { text: "Request Your First Payout →", href: "https://elysiumfunded.eu/dashboard" },
-    }),
-  });
+  await sendEmail(to, "🎉 You're Funded! Welcome to Elysium Funded", buildEmail({
+    title: "🎉 Congratulations — You're Funded!",
+    titleColor: "#3b82f6",
+    body: `Outstanding performance! You have passed all phases of your ${accountSize} challenge. You are now an official Elysium Funded trader with a 90% profit split.`,
+    details: [
+      { label: "Account Size", value: accountSize, color: "#C9A84C" },
+      { label: "Status", value: "Funded Trader ✓", color: "#3b82f6" },
+      { label: "Profit Split", value: "90% for you" },
+      { label: "Payouts", value: "Available now" },
+    ],
+    cta: { text: "Request Your First Payout →", href: "https://elysiumfunded.eu/dashboard" },
+  }));
 }
 
 function buildEmail({ title, titleColor, body, details, cta }: {
