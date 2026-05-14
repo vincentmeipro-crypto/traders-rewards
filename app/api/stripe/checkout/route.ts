@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
         model: product.model,
         promoCode: promoCode || "",
       },
-      success_url: `${SITE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${SITE_URL}/checkout/success`,
       cancel_url: `${SITE_URL}/checkout/cancel`,
     });
 

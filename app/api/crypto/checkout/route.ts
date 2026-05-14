@@ -41,8 +41,7 @@ export async function POST(req: NextRequest) {
         price_currency: "eur",
         order_id: orderId,
         order_description: `Elysium Funded — ${product.name}`,
-        ipn_callback_url: `${siteUrl}/api/crypto/webhook`,
-        success_url: `${siteUrl}/checkout/success?method=crypto`,
+        success_url: `${siteUrl}/checkout/success`,
         cancel_url: `${siteUrl}/checkout/cancel`,
       }),
     });
