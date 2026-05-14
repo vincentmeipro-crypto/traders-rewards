@@ -22,17 +22,17 @@ export default function Hero() {
         background: "linear-gradient(to bottom, rgba(7,7,7,0.1) 0%, rgba(7,7,7,0.2) 40%, rgba(7,7,7,0.75) 65%, rgba(7,7,7,0.97) 85%, #070707 100%)"
       }} />
 
-      {/* Contenu */}
-      <div style={{ position: "relative", zIndex: 2, width: "100%", padding: "0 48px 80px" }}>
+      {/* Contenu centré sous le logo de l'image */}
+      <div style={{ position: "absolute", bottom: 60, left: "37%", transform: "translateX(-50%)", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
 
-        {/* Boutons centrés */}
-        <div style={{ display: "flex", gap: 16, justifyContent: "center", marginBottom: 24, flexWrap: "wrap" }}>
+        {/* Boutons */}
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
           <a href="#pricing" className="btn-primary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta1}</a>
           <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta2}</a>
         </div>
 
-        {/* Stats centrées */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 0, borderTop: "1px solid rgba(201,168,76,0.15)", paddingTop: 20 }}>
+        {/* Stats */}
+        <div style={{ display: "flex", gap: 0, borderTop: "1px solid rgba(201,168,76,0.15)", paddingTop: 16 }}>
           {[
             { label: T.hero.maxFunding, value: "$400K" },
             { label: T.hero.profitSplit, value: "Up to 90%" },
@@ -43,9 +43,9 @@ export default function Hero() {
               border: "1px solid rgba(201,168,76,0.2)",
               borderLeft: i === 0 ? "1px solid rgba(201,168,76,0.2)" : "none",
               backdropFilter: "blur(12px)",
-              padding: "14px 60px", textAlign: "center",
+              padding: "12px 40px", textAlign: "center",
             }}>
-              <div style={{ fontSize: 22, fontWeight: 800, color: "#C9A84C" }}>{item.value}</div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#C9A84C" }}>{item.value}</div>
               <div style={{ fontSize: 11, color: "#888", marginTop: 3, textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</div>
             </div>
           ))}
