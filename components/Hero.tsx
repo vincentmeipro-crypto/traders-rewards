@@ -23,7 +23,7 @@ export default function Hero() {
       }} />
 
       {/* Contenu : une seule ligne centrée */}
-      <div style={{ position: "absolute", bottom: 120, left: "50%", transform: "translateX(-50%)", zIndex: 2, display: "flex", alignItems: "stretch", gap: 0, width: "max-content" }}>
+      <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", zIndex: 2, display: "flex", alignItems: "stretch", gap: 0, width: "max-content" }}>
 
         {/* Boutons */}
         <div style={{ display: "flex", gap: 12, alignItems: "center", paddingRight: 24, marginRight: 0 }}>
