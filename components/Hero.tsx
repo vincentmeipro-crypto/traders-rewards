@@ -32,7 +32,7 @@ export default function Hero() {
         </div>
 
         {/* Séparateur */}
-        <div style={{ width: 1, backgroundColor: "rgba(201,168,76,0.2)", margin: "4px 0" }} />
+        <div style={{ width: 1, backgroundColor: "rgba(201,168,76,0.3)", margin: "8px 0" }} />
 
         {/* Stats */}
         {[
@@ -40,13 +40,7 @@ export default function Hero() {
           { label: T.hero.profitSplit, value: "Up to 90%" },
           { label: T.hero.feeRefunded, value: "1st Payout" },
         ].map((item, i) => (
-          <div key={item.label} style={{
-            backgroundColor: "rgba(201,168,76,0.06)",
-            border: "1px solid rgba(201,168,76,0.2)",
-            borderLeft: "none",
-            backdropFilter: "blur(12px)",
-            padding: "12px 32px", textAlign: "center",
-          }}>
+          <div key={item.label} style={{ padding: "12px 32px", textAlign: "center" }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: "#C9A84C", whiteSpace: "nowrap" }}>{item.value}</div>
             <div style={{ fontSize: 10, color: "#888", marginTop: 3, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{item.label}</div>
           </div>
