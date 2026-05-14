@@ -27,7 +27,7 @@ export default function Hero() {
 
         {/* Boutons */}
         <div style={{ display: "flex", gap: 12, alignItems: "center", paddingRight: 24, marginRight: 0 }}>
-          <a href="#pricing" className="btn-primary" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta1}</a>
+          <a href="#pricing" className="btn-primary btn-primary-animated" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta1}</a>
           <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta2}</a>
         </div>
 
