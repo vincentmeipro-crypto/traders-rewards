@@ -23,7 +23,7 @@ export default function Hero() {
       }} />
 
       {/* Contenu centré sous le logo de l'image */}
-      <div style={{ position: "absolute", bottom: 60, left: "37%", transform: "translateX(-50%)", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}>
+      <div style={{ position: "absolute", bottom: 60, left: "50%", transform: "translateX(-50%)", zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 20, width: "max-content" }}>
 
         {/* Boutons */}
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
