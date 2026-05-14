@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, AlertCircle, ChevronRight, X } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, AlertCircle, ChevronRight } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -45,12 +45,14 @@ const STATUS_COLORS: Record<string, string> = {
   failed: "#ef4444",
 };
 
+type Tab = "dashboard" | "challenges" | "payouts" | "rules" | "settings";
+
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClient();
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showPayout, setShowPayout] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [payoutForm, setPayoutForm] = useState({ amount: "", wallet_address: "", payment_method: "crypto" });
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
@@ -104,21 +106,25 @@ export default function DashboardClient({ user }: { user: User }) {
         </div>
 
         <nav style={{ padding: "20px 12px", flex: 1 }}>
-          {[
-            { icon: "📊", label: "Dashboard", active: true },
-            { icon: "📈", label: "My Challenges", active: false },
-            { icon: "💰", label: "Payouts", active: false },
-            { icon: "📋", label: "Rules", active: false },
-            { icon: "⚙️", label: "Settings", active: false },
-          ].map(item => (
-            <div key={item.label} style={{
+          {([
+            { icon: "📊", label: "Dashboard", tab: "dashboard" },
+            { icon: "📈", label: "My Challenges", tab: "challenges" },
+            { icon: "💰", label: "Payouts", tab: "payouts" },
+            { icon: "📋", label: "Rules", tab: "rules" },
+            { icon: "⚙️", label: "Settings", tab: "settings" },
+          ] as { icon: string; label: string; tab: Tab }[]).map(item => (
+            <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
               display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
               borderRadius: 10, marginBottom: 4, cursor: "pointer",
-              backgroundColor: item.active ? "rgba(201,168,76,0.1)" : "transparent",
-              borderLeft: item.active ? "2px solid #C9A84C" : "2px solid transparent",
-            }}>
+              backgroundColor: activeTab === item.tab ? "rgba(201,168,76,0.1)" : "transparent",
+              borderLeft: activeTab === item.tab ? "2px solid #C9A84C" : "2px solid transparent",
+              transition: "all 0.15s",
+            }}
+            onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
+            onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
+            >
               <span style={{ fontSize: 16 }}>{item.icon}</span>
-              <span style={{ fontSize: 14, fontWeight: item.active ? 600 : 400, color: item.active ? "#C9A84C" : "#555" }}>{item.label}</span>
+              <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#C9A84C" : "#555" }}>{item.label}</span>
             </div>
           ))}
         </nav>
@@ -140,11 +146,155 @@ export default function DashboardClient({ user }: { user: User }) {
       {/* Main content */}
       <div style={{ marginLeft: 240, padding: "32px 32px" }}>
 
-        {loading ? (
+        {/* Rules Tab */}
+        {activeTab === "rules" && (
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Trading Rules</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>These rules apply to all Elysium Funded challenges.</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+              {[
+                { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: "🎯" },
+                { title: "Minimum Trading Days", desc: "You must trade at least 4 different days before passing a phase.", icon: "📅" },
+                { title: "Daily Drawdown", desc: "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: "📉" },
+                { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: "🛡️" },
+                { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: "⏳" },
+                { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: "📊" },
+                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first payout.", icon: "💰" },
+                { title: "Payout Split", desc: "Funded traders keep 80% of profits. Payouts processed within 24-48h.", icon: "🤝" },
+              ].map((rule, i) => (
+                <div key={i} className="card" style={{ padding: 24 }}>
+                  <div style={{ fontSize: 28, marginBottom: 12 }}>{rule.icon}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
+                  <div style={{ color: "#666", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Settings Tab */}
+        {activeTab === "settings" && (
+          <div style={{ maxWidth: 480 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Settings</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Manage your account.</p>
+            <div className="card" style={{ padding: 28, marginBottom: 16 }}>
+              <div style={{ color: "#555", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>Email address</div>
+              <div style={{ fontSize: 15, fontWeight: 600 }}>{user.email}</div>
+            </div>
+            <div className="card" style={{ padding: 28, marginBottom: 16 }}>
+              <div style={{ color: "#555", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>Account ID</div>
+              <div style={{ fontSize: 13, color: "#666", fontFamily: "monospace" }}>{user.id}</div>
+            </div>
+            <div className="card" style={{ padding: 28, marginBottom: 24 }}>
+              <div style={{ color: "#555", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>Member since</div>
+              <div style={{ fontSize: 15 }}>{new Date(user.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
+            </div>
+            <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 24px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, cursor: "pointer", color: "#ef4444", fontWeight: 600, fontSize: 14 }}>
+              <LogOut size={16} /> Log Out
+            </button>
+          </div>
+        )}
+
+        {/* Payouts Tab */}
+        {activeTab === "payouts" && (
+          <div style={{ maxWidth: 520 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Payouts</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Request a payout from your funded account.</p>
+            {challenge?.phase !== "funded" ? (
+              <div className="card" style={{ padding: 32, textAlign: "center" }}>
+                <div style={{ fontSize: 40, marginBottom: 16 }}>🔒</div>
+                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Payouts unlocked when funded</div>
+                <div style={{ color: "#555", fontSize: 14 }}>Complete Phase 1 and Phase 2 to unlock payout requests.</div>
+              </div>
+            ) : (
+              <div className="card" style={{ padding: 32 }}>
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>Amount (USD)</label>
+                  <input type="number" placeholder="e.g. 1500" value={payoutForm.amount}
+                    onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                </div>
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>Payment Method</label>
+                  <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none" }}>
+                    <option value="crypto">Crypto (USDT/BTC)</option>
+                    <option value="bank">Bank Transfer</option>
+                  </select>
+                </div>
+                <div style={{ marginBottom: 28 }}>
+                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>
+                    {payoutForm.payment_method === "crypto" ? "Wallet Address" : "IBAN"}
+                  </label>
+                  <input type="text" placeholder={payoutForm.payment_method === "crypto" ? "0x... or T..." : "FR76..."}
+                    value={payoutForm.wallet_address}
+                    onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                </div>
+                {payoutSuccess ? (
+                  <div style={{ textAlign: "center", padding: "20px 0" }}>
+                    <div style={{ color: "#22c55e", fontSize: 40, marginBottom: 16 }}>✅</div>
+                    <div style={{ fontWeight: 700, fontSize: 18 }}>Request Submitted!</div>
+                    <div style={{ color: "#555", fontSize: 14, marginTop: 8 }}>We will process it within 24-48 hours.</div>
+                  </div>
+                ) : (
+                  <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount || !payoutForm.wallet_address}
+                    className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, opacity: payoutLoading ? 0.7 : 1 }}>
+                    {payoutLoading ? "Submitting..." : "Submit Request"}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Challenges Tab */}
+        {activeTab === "challenges" && (
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
+              <div>
+                <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>My Challenges</h1>
+                <p style={{ color: "#555", fontSize: 14 }}>Overview of all your challenges.</p>
+              </div>
+              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", textDecoration: "none" }}>+ New Challenge</a>
+            </div>
+            {!challenge ? (
+              <div className="card" style={{ padding: 40, textAlign: "center" }}>
+                <Trophy size={48} color="#C9A84C" style={{ marginBottom: 16, opacity: 0.5 }} />
+                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>No challenge yet</div>
+                <div style={{ color: "#555", fontSize: 14 }}>Purchase a challenge to start your journey.</div>
+              </div>
+            ) : (
+              <div className="card" style={{ padding: 28 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{challenge.account_size} — {challenge.model === "2step" ? "2-Step" : "1-Step"}</div>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[challenge.phase] || challenge.phase}</span>
+                      <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{challenge.status}</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 22, fontWeight: 800 }}>${challenge.balance.toLocaleString()}</div>
+                    <div style={{ color: "#555", fontSize: 13 }}>Current Balance</div>
+                  </div>
+                </div>
+                <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #1a1a1a", display: "flex", gap: 24, color: "#555", fontSize: 13 }}>
+                  <span>Trading days: <b style={{ color: "#888" }}>{challenge.trading_days}</b></span>
+                  <span>Profit target: <b style={{ color: "#888" }}>{challenge.profit_target}%</b></span>
+                  <span>Started: <b style={{ color: "#888" }}>{new Date(challenge.created_at).toLocaleDateString("en-GB")}</b></span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Dashboard Tab */}
+        {(activeTab === "dashboard") && loading ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
             <div style={{ color: "#C9A84C", fontSize: 16 }}>Loading...</div>
           </div>
-        ) : !challenge ? (
+        ) : (activeTab === "dashboard") && !challenge ? (
           /* No challenge yet */
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", textAlign: "center" }}>
             <Trophy size={64} color="#C9A84C" style={{ marginBottom: 24, opacity: 0.5 }} />
@@ -152,7 +302,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "#555", fontSize: 15, marginBottom: 32 }}>Purchase a challenge to start your journey to funded trading.</p>
             <a href="/#pricing" className="btn-primary" style={{ padding: "14px 32px", fontSize: 15 }}>Start a Challenge →</a>
           </div>
-        ) : (
+        ) : (activeTab === "dashboard") && (
           <>
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
@@ -275,7 +425,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Request a Payout</div>
                 <div style={{ color: "#555", fontSize: 13 }}>Submit your payout request — processed within 24-48h</div>
               </div>
-              <button onClick={() => setShowPayout(true)} className="btn-primary" style={{ padding: "10px 24px", fontSize: 13 }}>
+              <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ padding: "10px 24px", fontSize: 13 }}>
                 Request Payout
               </button>
             </div>
@@ -301,55 +451,6 @@ export default function DashboardClient({ user }: { user: User }) {
         )}
       </div>
 
-      {/* Payout Modal */}
-      {showPayout && (
-        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100, padding: 24 }}>
-          <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 20, padding: 40, width: "100%", maxWidth: 480 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 28 }}>
-              <h2 style={{ fontSize: 20, fontWeight: 800 }}>Request Payout</h2>
-              <button onClick={() => setShowPayout(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "#555" }}><X size={20} /></button>
-            </div>
-
-            {payoutSuccess ? (
-              <div style={{ textAlign: "center", padding: "20px 0" }}>
-                <div style={{ color: "#22c55e", fontSize: 40, marginBottom: 16 }}>✅</div>
-                <div style={{ fontWeight: 700, fontSize: 18 }}>Request Submitted!</div>
-                <div style={{ color: "#555", fontSize: 14, marginTop: 8 }}>We'll process it within 24-48 hours.</div>
-              </div>
-            ) : (
-              <>
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>Amount (USD)</label>
-                  <input type="number" placeholder="e.g. 1500" value={payoutForm.amount}
-                    onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-                </div>
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>Payment Method</label>
-                  <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none" }}>
-                    <option value="crypto">Crypto (USDT/BTC)</option>
-                    <option value="bank">Bank Transfer</option>
-                  </select>
-                </div>
-                <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>
-                    {payoutForm.payment_method === "crypto" ? "Wallet Address" : "IBAN"}
-                  </label>
-                  <input type="text" placeholder={payoutForm.payment_method === "crypto" ? "0x... or T..." : "FR76..."}
-                    value={payoutForm.wallet_address}
-                    onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-                </div>
-                <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount || !payoutForm.wallet_address}
-                  className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, opacity: payoutLoading ? 0.7 : 1 }}>
-                  {payoutLoading ? "Submitting..." : "Submit Request"}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
