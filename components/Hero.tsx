@@ -25,12 +25,10 @@ export default function Hero() {
       {/* Contenu */}
       <div style={{ position: "relative", zIndex: 2, width: "100%", padding: "0 48px 80px" }}>
 
-        {/* Ligne 1 : description + boutons */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32, marginBottom: 20, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", gap: 16, flexShrink: 0, flexWrap: "wrap" }}>
-            <a href="#pricing" className="btn-primary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta1}</a>
-            <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta2}</a>
-          </div>
+        {/* Boutons centrés */}
+        <div style={{ display: "flex", gap: 16, justifyContent: "center", marginBottom: 24, flexWrap: "wrap" }}>
+          <a href="#pricing" className="btn-primary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta1}</a>
+          <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 40px" }}>{T.hero.cta2}</a>
         </div>
 
         {/* Ligne 2 : trust + stats sur toute la largeur */}
