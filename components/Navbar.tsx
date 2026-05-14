@@ -31,11 +31,11 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
             {([
-              [T.nav.challenges, "#challenges"],
-              [T.nav.howItWorks, "#how-it-works"],
-              [T.nav.pricing, "#pricing"],
-              [T.nav.rules, "#rules"],
-              [T.nav.faq, "#faq"],
+              [T.nav.challenges, "/#challenges"],
+              [T.nav.howItWorks, "/#how-it-works"],
+              [T.nav.pricing, "/#pricing"],
+              [T.nav.rules, "/#rules"],
+              [T.nav.faq, "/#faq"],
             ] as [string, string][]).map(([label, href]) => (
               <a key={href} href={href}
                 style={{ color: "#A0A0A0", fontSize: 13, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
@@ -92,10 +92,10 @@ export default function Navbar() {
               )}
             </div>
 
-            <a href="#pricing" style={{ color: "#C9A84C", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.5px" }}>
+            <a href="/login" style={{ color: "#C9A84C", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.5px" }}>
               {T.nav.logIn}
             </a>
-            <a href="#pricing" className="btn-primary" style={{ padding: "10px 22px", fontSize: 13 }}>
+            <a href="/#pricing" className="btn-primary" style={{ padding: "10px 22px", fontSize: 13 }}>
               {T.nav.startChallenge}
             </a>
           </div>
@@ -116,16 +116,17 @@ export default function Navbar() {
             ))}
             <hr style={{ borderColor: "#222" }} />
             {([
-              [T.nav.challenges, "#challenges"],
-              [T.nav.howItWorks, "#how-it-works"],
-              [T.nav.pricing, "#pricing"],
-              [T.nav.rules, "#rules"],
+              [T.nav.challenges, "/#challenges"],
+              [T.nav.howItWorks, "/#how-it-works"],
+              [T.nav.pricing, "/#pricing"],
+              [T.nav.rules, "/#rules"],
             ] as [string, string][]).map(([label, href]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ color: "#A0A0A0", fontSize: 16, fontWeight: 500, textDecoration: "none" }}
               >{label}</a>
             ))}
-            <a href="#pricing" className="btn-primary" style={{ textAlign: "center" }}>{T.nav.startChallenge}</a>
+            <a href="/login" style={{ color: "#C9A84C", fontSize: 16, fontWeight: 600, textDecoration: "none" }} onClick={() => setOpen(false)}>{T.nav.logIn}</a>
+            <a href="/#pricing" className="btn-primary" style={{ textAlign: "center" }} onClick={() => setOpen(false)}>{T.nav.startChallenge}</a>
           </div>
         )}
       </nav>
