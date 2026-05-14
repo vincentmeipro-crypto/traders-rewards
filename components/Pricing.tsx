@@ -4,8 +4,6 @@ import { Check } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
-  { size: "$10,000",  id: "10k",  price2step: "€129", price1step: "€69",  popular: false },
-  { size: "$25,000",  id: "25k",  price2step: "€219", price1step: "€149", popular: false },
   { size: "$50,000",  id: "50k",  price2step: "€299", price1step: "€249", popular: true  },
   { size: "$100,000", id: "100k", price2step: "€449", price1step: "€399", popular: false },
   { size: "$200,000", id: "200k", price2step: "€899", price1step: "€849", popular: false },
