@@ -131,17 +131,6 @@ export default function Navbar() {
         )}
       </nav>
 
-      {/* Logo fixe en haut à droite sous START CHALLENGE */}
-      <div style={{ position: "fixed", top: 72, right: 24, zIndex: 99 }}>
-        <Image
-          src="/logo.jpg"
-          alt="Elysium Funded"
-          width={100}
-          height={100}
-          priority
-          style={{ objectFit: "contain", mixBlendMode: "screen" }}
-        />
-      </div>
     </>
   );
 }

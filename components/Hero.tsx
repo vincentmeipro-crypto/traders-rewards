@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Hero() {
@@ -8,6 +9,22 @@ export default function Hero() {
       <div style={{ position: "absolute", top: "40%", left: "50%", transform: "translate(-50%, -50%)", width: 700, height: 700, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
 
       <div style={{ maxWidth: 800, position: "relative", zIndex: 1, marginTop: 20 }}>
+
+        {/* Logo + slogan centrés */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 20, marginBottom: 36 }}>
+          <span style={{ fontSize: "clamp(1.1rem, 3vw, 1.5rem)", fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase", color: "#C9A84C" }}>
+            La Prop Firm Élite
+          </span>
+          <Image
+            src="/logo.jpg"
+            alt="Elysium Funded"
+            width={90}
+            height={90}
+            priority
+            style={{ objectFit: "contain", mixBlendMode: "screen" }}
+          />
+        </div>
+
         <div style={{ display: "inline-flex", alignItems: "center", gap: 8, backgroundColor: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 100, padding: "8px 20px", marginBottom: 32 }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#C9A84C", display: "inline-block" }} />
           <span style={{ color: "#C9A84C", fontSize: 13, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>{T.hero.badge}</span>
