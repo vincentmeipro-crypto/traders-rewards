@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
@@ -8,7 +8,15 @@ import { languages, Lang } from "@/lib/translations";
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const { lang, setLang, T } = useLanguage();
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
   const current = languages.find(l => l.code === lang)!;
 
   return (
@@ -29,7 +37,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Nav */}
-          <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
+          <div style={{ display: isMobile ? "none" : "flex", gap: 28, alignItems: "center" }}>
             {([
               [T.nav.challenges, "/#pricing"],
               [T.nav.howItWorks, "/#how-it-works"],
@@ -46,7 +54,7 @@ export default function Navbar() {
           </div>
 
           {/* Droite : langue + CTA */}
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{ display: isMobile ? "none" : "flex", gap: 12, alignItems: "center" }}>
 
             {/* Sélecteur de langue */}
             <div style={{ position: "relative" }}>
@@ -100,7 +108,7 @@ export default function Navbar() {
             </a>
           </div>
 
-          <button onClick={() => setOpen(!open)} style={{ display: "none", background: "none", border: "none", color: "#fff", cursor: "pointer" }}>
+          <button onClick={() => setOpen(!open)} style={{ display: isMobile ? "flex" : "none", background: "none", border: "none", color: "#fff", cursor: "pointer", alignItems: "center" }}>
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>

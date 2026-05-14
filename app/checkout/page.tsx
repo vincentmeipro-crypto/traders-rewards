@@ -204,7 +204,7 @@ function CheckoutContent() {
           <div style={{ color: "#555", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
             <User size={12} /> Your Information
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10, marginBottom: 10 }}>
             <div>
               <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>FIRST NAME *</div>
               <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean"

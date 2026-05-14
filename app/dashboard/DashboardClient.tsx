@@ -60,6 +60,14 @@ export default function DashboardClient({ user }: { user: User }) {
   const [payoutForm, setPayoutForm] = useState({ amount: "", wallet_address: "", payment_method: "crypto" });
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     supabase
@@ -103,59 +111,83 @@ export default function DashboardClient({ user }: { user: User }) {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", fontFamily: "Inter, sans-serif" }}>
 
-      {/* Sidebar */}
-      <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#0a0a0a", borderRight: "1px solid #1a1a1a", display: "flex", flexDirection: "column", zIndex: 50 }}>
-        <div style={{ padding: "24px 20px", borderBottom: "1px solid #1a1a1a" }}>
-          <Image src="/logo.jpg" alt="Elysium" width={60} height={60} style={{ objectFit: "contain", mixBlendMode: "screen" }} />
-        </div>
-
-        <nav style={{ padding: "20px 12px", flex: 1 }}>
-          {([
-            { icon: <LayoutDashboard size={16} />, label: "Dashboard", tab: "dashboard" },
-            { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
-            { icon: <Wallet size={16} />, label: "Payouts", tab: "payouts" },
-            { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
-            { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
-          ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
-            <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
-              display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
-              borderRadius: 10, marginBottom: 4, cursor: "pointer",
-              backgroundColor: activeTab === item.tab ? "rgba(201,168,76,0.1)" : "transparent",
-              borderLeft: activeTab === item.tab ? "2px solid #C9A84C" : "2px solid transparent",
-              transition: "all 0.15s",
-            }}
-            onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
-            onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
-            >
-              <span style={{ color: activeTab === item.tab ? "#C9A84C" : "#444" }}>{item.icon}</span>
-              <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#C9A84C" : "#555" }}>{item.label}</span>
-            </div>
-          ))}
-        </nav>
-
-        <div style={{ padding: "16px 12px", borderTop: "1px solid #1a1a1a" }}>
-          <div style={{ padding: "12px 16px", marginBottom: 8 }}>
-            <div style={{ fontSize: 12, color: "#444", marginBottom: 4 }}>Logged in as</div>
-            <div style={{ fontSize: 13, color: "#888", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
+      {/* Sidebar — desktop only */}
+      {!isMobile && (
+        <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#0a0a0a", borderRight: "1px solid #1a1a1a", display: "flex", flexDirection: "column", zIndex: 50 }}>
+          <div style={{ padding: "24px 20px", borderBottom: "1px solid #1a1a1a" }}>
+            <Image src="/logo.jpg" alt="Elysium" width={60} height={60} style={{ objectFit: "contain", mixBlendMode: "screen" }} />
           </div>
-          <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "#555" }}
-            onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
-            onMouseOut={e => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#555"; }}>
-            <LogOut size={16} />
-            <span style={{ fontSize: 14 }}>Log Out</span>
-          </button>
+
+          <nav style={{ padding: "20px 12px", flex: 1 }}>
+            {([
+              { icon: <LayoutDashboard size={16} />, label: "Dashboard", tab: "dashboard" },
+              { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
+              { icon: <Wallet size={16} />, label: "Payouts", tab: "payouts" },
+              { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
+              { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
+            ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
+              <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
+                display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
+                borderRadius: 10, marginBottom: 4, cursor: "pointer",
+                backgroundColor: activeTab === item.tab ? "rgba(201,168,76,0.1)" : "transparent",
+                borderLeft: activeTab === item.tab ? "2px solid #C9A84C" : "2px solid transparent",
+                transition: "all 0.15s",
+              }}
+              onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
+              onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
+              >
+                <span style={{ color: activeTab === item.tab ? "#C9A84C" : "#444" }}>{item.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#C9A84C" : "#555" }}>{item.label}</span>
+              </div>
+            ))}
+          </nav>
+
+          <div style={{ padding: "16px 12px", borderTop: "1px solid #1a1a1a" }}>
+            <div style={{ padding: "12px 16px", marginBottom: 8 }}>
+              <div style={{ fontSize: 12, color: "#444", marginBottom: 4 }}>Logged in as</div>
+              <div style={{ fontSize: 13, color: "#888", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
+            </div>
+            <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "#555" }}
+              onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
+              onMouseOut={e => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#555"; }}>
+              <LogOut size={16} />
+              <span style={{ fontSize: 14 }}>Log Out</span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Bottom nav — mobile only */}
+      {isMobile && (
+        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderTop: "1px solid #1a1a1a", display: "flex", zIndex: 50, paddingBottom: "env(safe-area-inset-bottom)" }}>
+          {([
+            { icon: <LayoutDashboard size={20} />, label: "Home", tab: "dashboard" },
+            { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
+            { icon: <Wallet size={20} />, label: "Payouts", tab: "payouts" },
+            { icon: <BookOpen size={20} />, label: "Rules", tab: "rules" },
+            { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
+          ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
+            <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
+              flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+              padding: "10px 0", background: "none", border: "none", cursor: "pointer",
+              color: activeTab === item.tab ? "#C9A84C" : "#444",
+            }}>
+              {item.icon}
+              <span style={{ fontSize: 10, marginTop: 3, fontWeight: activeTab === item.tab ? 700 : 400 }}>{item.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Main content */}
-      <div style={{ marginLeft: 240, padding: "32px 32px" }}>
+      <div style={{ marginLeft: isMobile ? 0 : 240, padding: isMobile ? "20px 16px 100px" : "32px 32px" }}>
 
         {/* Rules Tab */}
         {activeTab === "rules" && (
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Trading Rules</h1>
             <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>These rules apply to all Elysium Funded challenges.</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
                 { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#C9A84C" /> },
                 { title: "Minimum Trading Days", desc: "You must trade at least 4 different days before passing a phase.", icon: <Calendar size={20} color="#C9A84C" /> },
@@ -367,7 +399,7 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
 
             {/* Progress Section */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 24 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 24 }}>
               <div className="card" style={{ padding: 28 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
                   <h3 style={{ fontSize: 15, fontWeight: 700 }}>Profit Target</h3>

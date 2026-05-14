@@ -122,3 +122,14 @@ body {
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+@media (max-width: 768px) {
+  .btn-primary, .btn-secondary {
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+
+  .card {
+    border-radius: 12px;
+  }
+}

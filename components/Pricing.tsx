@@ -71,7 +71,7 @@ export default function Pricing() {
 
         <div style={{ marginTop: 64, maxWidth: 700, margin: "64px auto 0" }}>
           <h3 style={{ textAlign: "center", fontSize: 13, fontWeight: 700, marginBottom: 32, color: "#555", letterSpacing: "2px" }}>{T.pricing.allInclude}</h3>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
             {features.map((f, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ width: 20, height: 20, borderRadius: "50%", backgroundColor: "rgba(201,168,76,0.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
