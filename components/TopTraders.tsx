@@ -27,15 +27,21 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
       borderRadius: 14, padding: "14px 20px",
       minWidth: 220, flexShrink: 0,
     }}>
-      {/* Avatar */}
-      <div style={{
-        width: 44, height: 44, borderRadius: "50%",
-        backgroundColor: trader.color + "22",
-        border: `2px solid ${trader.color}44`,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 13, fontWeight: 800, color: trader.color, flexShrink: 0,
-      }}>
-        {trader.initials}
+      {/* Avatar + flag */}
+      <div style={{ position: "relative", flexShrink: 0 }}>
+        <div style={{
+          width: 44, height: 44, borderRadius: "50%",
+          backgroundColor: trader.color + "22",
+          border: `2px solid ${trader.color}44`,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 13, fontWeight: 800, color: trader.color,
+        }}>
+          {trader.initials}
+        </div>
+        <span style={{
+          position: "absolute", bottom: -2, right: -4,
+          fontSize: 14, lineHeight: 1,
+        }}>{trader.country}</span>
       </div>
 
       {/* Info */}
