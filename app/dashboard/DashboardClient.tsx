@@ -302,7 +302,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "#555", fontSize: 15, marginBottom: 32 }}>Purchase a challenge to start your journey to funded trading.</p>
             <a href="/#pricing" className="btn-primary" style={{ padding: "14px 32px", fontSize: 15 }}>Start a Challenge →</a>
           </div>
-        ) : (activeTab === "dashboard") && (
+        ) : (activeTab === "dashboard") && challenge && (
           <>
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
