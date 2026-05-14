@@ -28,7 +28,7 @@ async function getAccountData(accessToken: string) {
   return data.data?.[0] || null;
 }
 
-async function checkAndTransition(challenge: Record<string, unknown>, userEmail: string) {
+async function checkAndTransition(challenge: Record<string, unknown>, userEmail: string, prevBalance: number) {
   const admin = createAdminClient();
   const balance = challenge.balance as number;
   const startBalance = challenge.start_balance as number;
@@ -37,6 +37,24 @@ async function checkAndTransition(challenge: Record<string, unknown>, userEmail:
   const profitTarget = challenge.profit_target as number;
   const accountSize = challenge.account_size as string;
   const id = challenge.id as string;
+  const totalDrawdownLimit = challenge.total_drawdown_limit as number;
+  const dailyDrawdownLimit = challenge.daily_drawdown_limit as number;
+
+  // Check total drawdown (balance vs original start balance)
+  const totalDrawdownPct = ((startBalance - balance) / startBalance) * 100;
+  if (totalDrawdownPct >= totalDrawdownLimit) {
+    await admin.from("challenges").update({ status: "failed" }).eq("id", id);
+    return "failed_total_drawdown";
+  }
+
+  // Check daily drawdown (today's drop vs yesterday's closing balance)
+  if (prevBalance > 0) {
+    const dailyDrawdownPct = ((prevBalance - balance) / prevBalance) * 100;
+    if (dailyDrawdownPct >= dailyDrawdownLimit) {
+      await admin.from("challenges").update({ status: "failed" }).eq("id", id);
+      return "failed_daily_drawdown";
+    }
+  }
 
   const profitPct = ((balance - startBalance) / startBalance) * 100;
 
@@ -116,10 +134,10 @@ export async function GET(req: NextRequest) {
         last_synced_at: new Date().toISOString(),
       }).eq("id", challenge.id);
 
-      // Check phase transition
+      // Check phase transition + drawdown (prevBalance = balance before this sync)
       const updated = { ...challenge, balance: newBalance, trading_days: newTradingDays };
       const userEmail = userMap[challenge.user_id] || "";
-      await checkAndTransition(updated, userEmail);
+      await checkAndTransition(updated, userEmail, challenge.balance);
 
       synced++;
     } catch (e) {

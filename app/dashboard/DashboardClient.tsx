@@ -21,6 +21,9 @@ type Challenge = {
   trading_days: number;
   amount_paid: number;
   created_at: string;
+  ctrader_account_id?: string;
+  ctrader_login?: string;
+  ctrader_password?: string;
 };
 
 function ProgressBar({ value, max, color = "#C9A84C", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -433,23 +436,23 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
 
             {/* MT5 Account Credentials */}
-            {!(challenge as Record<string, unknown>).ctrader_login ? (
+            {!challenge.ctrader_login ? (
               <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                   <Clock size={18} color="#C9A84C" />
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>MT5 Account — Pending Setup</div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>Trading Account — Pending Setup</div>
                 </div>
                 <div style={{ color: "#555", fontSize: 13 }}>Your trading account is being configured. You will receive your login credentials by email shortly.</div>
               </div>
             ) : (
               <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}><CheckCircle size={16} /> MT5 Trading Account Ready</div>
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}><CheckCircle size={16} /> Trading Account Ready</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
                   {[
-                    { label: "Platform", value: "MetaTrader 5" },
-                    { label: "Server", value: "ICMarketsSC-Demo" },
-                    { label: "Login", value: String((challenge as Record<string, unknown>).ctrader_login || "—") },
-                    { label: "Password", value: String((challenge as Record<string, unknown>).ctrader_password || "—") },
+                    { label: "Platform", value: "cTrader" },
+                    { label: "Server", value: "IC Markets" },
+                    { label: "Login", value: challenge.ctrader_login },
+                    { label: "Password", value: challenge.ctrader_password || "—" },
                   ].map((item, i) => (
                     <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "12px 16px" }}>
                       <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>{item.label}</div>
@@ -457,9 +460,30 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                   ))}
                 </div>
-                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Download MetaTrader 5 at metatrader5.com and connect with these credentials.</div>
+                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Download cTrader at ctrader.com and connect with these credentials.</div>
               </div>
             )}
+
+            {/* cTrader Sync Connection */}
+            <div style={{ backgroundColor: challenge.ctrader_account_id ? "rgba(34,197,94,0.05)" : "#0f0f0f", border: `1px solid ${challenge.ctrader_account_id ? "rgba(34,197,94,0.2)" : "#1a1a1a"}`, borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 15, marginBottom: 4 }}>
+                  {challenge.ctrader_account_id ? <CheckCircle size={16} color="#22c55e" /> : <TrendingUp size={16} color="#C9A84C" />}
+                  {challenge.ctrader_account_id ? "Automatic Tracking Active" : "Enable Automatic Tracking"}
+                </div>
+                <div style={{ color: "#555", fontSize: 13 }}>
+                  {challenge.ctrader_account_id
+                    ? `cTrader account #${challenge.ctrader_account_id} — synced daily at midnight`
+                    : "Connect your cTrader account to enable automatic balance sync and rule checking."}
+                </div>
+              </div>
+              {!challenge.ctrader_account_id && (
+                <a href={`/api/ctrader/auth?challenge_id=${challenge.id}`}
+                  style={{ backgroundColor: "#C9A84C", color: "#000", fontWeight: 700, padding: "10px 20px", borderRadius: 8, textDecoration: "none", fontSize: 13, whiteSpace: "nowrap", marginLeft: 16 }}>
+                  Connect cTrader →
+                </a>
+              )}
+            </div>
           </>
         )}
       </div>

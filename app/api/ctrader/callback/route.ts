@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     body: new URLSearchParams({
       grant_type: "authorization_code",
       code,
-      redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/ctrader/callback`,
+      redirect_uri: `https://elysiumfunded.eu/api/ctrader/callback`,
       client_id: process.env.CTRADER_CLIENT_ID!,
       client_secret: process.env.CTRADER_CLIENT_SECRET!,
     }),

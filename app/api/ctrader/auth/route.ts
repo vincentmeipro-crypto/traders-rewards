@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
   const params = new URLSearchParams({
     client_id: process.env.CTRADER_CLIENT_ID!,
-    redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/ctrader/callback`,
+    redirect_uri: `https://elysiumfunded.eu/api/ctrader/callback`,
     response_type: "code",
     scope: "accounts",
     state: `${user.id}:${challengeId}`,
