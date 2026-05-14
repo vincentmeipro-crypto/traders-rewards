@@ -97,8 +97,11 @@ function CheckoutContent() {
 
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim();
 
+  const [payError, setPayError] = useState("");
+
   const handleStripe = async () => {
-    if (!user) { router.push("/login"); return; }
+    setPayError("");
+    if (!user) { router.push(`/login?redirect=/checkout?product=${productId}`); return; }
     if (!profileComplete) return;
     setLoadingStripe(true);
     await saveProfile(user.token);
@@ -109,11 +112,12 @@ function CheckoutContent() {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-    else setLoadingStripe(false);
+    else { setPayError(data.error || "Payment error. Please try again."); setLoadingStripe(false); }
   };
 
   const handleCrypto = async () => {
-    if (!user) { router.push("/login"); return; }
+    setPayError("");
+    if (!user) { router.push(`/login?redirect=/checkout?product=${productId}`); return; }
     if (!profileComplete) return;
     setLoadingCrypto(true);
     await saveProfile(user.token);
@@ -124,7 +128,7 @@ function CheckoutContent() {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-    else setLoadingCrypto(false);
+    else { setPayError(data.error || "Payment error. Please try again."); setLoadingCrypto(false); }
   };
 
   const handleFree = async () => {
@@ -275,7 +279,21 @@ function CheckoutContent() {
 
         {!profileComplete && (
           <p style={{ textAlign: "center", color: "#555", fontSize: 12, marginTop: 12 }}>
-            Please fill in your first and last name to continue.
+            Please fill in all fields to continue.
+          </p>
+        )}
+
+        {!user && profileComplete && (
+          <div style={{ textAlign: "center", marginTop: 12, padding: "12px 16px", backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 10 }}>
+            <span style={{ color: "#C9A84C", fontSize: 13 }}>You need to </span>
+            <a href={`/login?redirect=/checkout?product=${productId}`} style={{ color: "#C9A84C", fontWeight: 700, fontSize: 13 }}>log in</a>
+            <span style={{ color: "#C9A84C", fontSize: 13 }}> to complete your purchase.</span>
+          </div>
+        )}
+
+        {payError && (
+          <p style={{ textAlign: "center", color: "#ef4444", fontSize: 13, marginTop: 12, padding: "10px", backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 8 }}>
+            {payError}
           </p>
         )}
 
