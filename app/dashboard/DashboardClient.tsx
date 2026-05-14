@@ -464,25 +464,23 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             )}
 
-            {/* cTrader Sync Connection */}
-            <div style={{ backgroundColor: challenge.ctrader_account_id ? "rgba(34,197,94,0.05)" : "#0f0f0f", border: `1px solid ${challenge.ctrader_account_id ? "rgba(34,197,94,0.2)" : "#1a1a1a"}`, borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 15, marginBottom: 4 }}>
-                  {challenge.ctrader_account_id ? <CheckCircle size={16} color="#22c55e" /> : <TrendingUp size={16} color="#C9A84C" />}
-                  {challenge.ctrader_account_id ? "Automatic Tracking Active" : "Enable Automatic Tracking"}
-                </div>
-                <div style={{ color: "#555", fontSize: 13 }}>
-                  {challenge.ctrader_account_id
-                    ? `cTrader account #${challenge.ctrader_account_id} — synced daily at midnight`
-                    : "Connect your cTrader account to enable automatic balance sync and rule checking."}
-                </div>
+            {/* Download cTrader */}
+            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px" }}>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Download cTrader</div>
+              <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Available on all platforms — use your login credentials above to connect.</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                {[
+                  { label: "🖥 Windows", href: "https://ctrader.com/download/" },
+                  { label: "🍎 Mac", href: "https://ctrader.com/download/" },
+                  { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/ctrader/id767428811" },
+                  { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=com.spotware.ct" },
+                ].map((item, i) => (
+                  <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
+                    style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "10px 18px", borderRadius: 8, textDecoration: "none", fontSize: 13, border: "1px solid #2a2a2a", display: "inline-block" }}>
+                    {item.label}
+                  </a>
+                ))}
               </div>
-              {!challenge.ctrader_account_id && (
-                <a href={`/api/ctrader/auth?challenge_id=${challenge.id}`}
-                  style={{ backgroundColor: "#C9A84C", color: "#000", fontWeight: 700, padding: "10px 20px", borderRadius: 8, textDecoration: "none", fontSize: 13, whiteSpace: "nowrap", marginLeft: 16 }}>
-                  Connect cTrader →
-                </a>
-              )}
             </div>
           </>
         )}
