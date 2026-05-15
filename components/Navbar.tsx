@@ -30,13 +30,7 @@ export default function Navbar() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Nom */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {/* French flag */}
-            <div style={{ display: "flex", width: 22, height: 15, borderRadius: 3, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(255,255,255,0.1)" }}>
-              <div style={{ flex: 1, backgroundColor: "#002395" }} />
-              <div style={{ flex: 1, backgroundColor: "#EDEDED" }} />
-              <div style={{ flex: 1, backgroundColor: "#ED2939" }} />
-            </div>
+          <div>
             <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1 }}>
               Elysium <span style={{ color: "#2D7DD2" }}>Funded</span>
             </span>
