@@ -26,7 +26,7 @@ export default function Pricing() {
         </div>
 
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 48 }}>
-          <div style={{ backgroundColor: #1E1E26, border: "1px solid #222", borderRadius: 12, padding: 4, display: "flex", gap: 4 }}>
+          <div style={{ backgroundColor: "#1E1E26", border: "1px solid #222", borderRadius: 12, padding: 4, display: "flex", gap: 4 }}>
             {(["2step", "1step"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
                 padding: "10px 28px", borderRadius: 8, border: "none", cursor: "pointer",
@@ -40,7 +40,7 @@ export default function Pricing() {
           </div>
         </div>
 
-        <div style={{ backgroundColor: #1E1E26, border: "1px solid #2A2A38", borderRadius: 16, padding: "24px 32px", marginBottom: 40, maxWidth: 800, margin: "0 auto 40px" }}>
+        <div style={{ backgroundColor: "#1E1E26", border: "1px solid #2A2A38", borderRadius: 16, padding: "24px 32px", marginBottom: 40, maxWidth: 800, margin: "0 auto 40px" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
             {features.slice(0, 4).map((f, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
