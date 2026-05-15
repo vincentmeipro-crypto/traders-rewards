@@ -157,6 +157,28 @@ export default function Rules() {
           </div>
         )}
 
+        {/* Risk Philosophy Block */}
+        <div style={{ marginBottom: 32, backgroundColor: "rgba(201,168,76,0.06)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 16, padding: "28px 32px" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
+            <span style={{ fontSize: 22, flexShrink: 0 }}>⚖️</span>
+            <div>
+              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#C9A84C", marginBottom: 10, letterSpacing: "-0.3px" }}>
+                {isFr ? "Notre approche sur la gestion du risque" : "Our approach to risk management"}
+              </h3>
+              <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8 }}>
+                {isFr
+                  ? "Il n'existe pas de règle fixe sur la taille de vos positions. Nous surveillons activement l'activité de chaque trader et nous nous réservons le droit d'examiner tout compte présentant des signes de gestion du risque insuffisante ou non viable. Cet examen est mené au cas par cas."
+                  : "There is no fixed rule on position sizing. We actively monitor every trader's activity and reserve the right to review any account showing signs of insufficient or unsustainable risk management. Each review is conducted on a case-by-case basis."}
+              </p>
+              <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8, marginTop: 10 }}>
+                {isFr
+                  ? "De manière générale, risquer systématiquement une part importante de la perte journalière maximale sur une seule idée de trading sera considéré comme non viable. Chez Elysium Funded, nous privilégions les traders qui font preuve de constance, de discipline et d'une vision à long terme. Traitez votre compte comme vous le feriez avec votre propre capital réel."
+                  : "In general, consistently risking a significant portion of the maximum daily loss on a single trade idea will be considered unsustainable. At Elysium Funded, we look for traders who demonstrate consistency, discipline, and a long-term vision. Treat your account as you would your own real capital."}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Allowed / Not Allowed */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {groups.map((group, i) => (

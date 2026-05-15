@@ -42,6 +42,10 @@ const faqData = {
       a: "Yes. You may hold positions overnight and over weekends with no restrictions. Swing trading is fully permitted.",
     },
     {
+      q: "Is there a maximum risk per trade?",
+      a: "There is no fixed rule on position sizing. We actively monitor every trader's activity and reserve the right to review any account showing signs of insufficient or unsustainable risk management. Consistently risking a large portion of the daily loss limit on a single trade will be considered unsustainable. We look for serious traders who manage risk responsibly — treat your account as you would your own real capital.",
+    },
+    {
       q: "Can I use Expert Advisors (EAs) or bots?",
       a: "Yes. Algorithmic trading and EAs are allowed. However, strategies must reflect legitimate trading and be replicable in real market conditions. Using the same EA across multiple accounts simultaneously may trigger a review.",
     },
@@ -102,6 +106,10 @@ const faqData = {
     {
       q: "Peut-on garder des positions overnight ou le weekend ?",
       a: "Oui. Vous pouvez conserver des positions ouvertes la nuit et pendant le weekend sans restriction. Le swing trading est totalement autorisé.",
+    },
+    {
+      q: "Y a-t-il un risque maximum par trade ?",
+      a: "Il n'existe pas de règle fixe sur la taille des positions. Nous surveillons activement l'activité de chaque trader et nous réservons le droit d'examiner tout compte présentant des signes de gestion du risque non viable. Risquer systématiquement une part importante de la perte journalière maximale sur une seule idée de trading sera considéré comme non viable. Nous recherchons des traders sérieux qui gèrent leur risque de façon responsable — traitez votre compte comme votre propre capital réel.",
     },
     {
       q: "Les EAs et robots de trading sont-ils autorisés ?",
