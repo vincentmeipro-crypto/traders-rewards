@@ -30,10 +30,11 @@ export default function Navbar() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Nom */}
-          <div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: "2px", textTransform: "uppercase" }}>
               Elysium <span style={{ color: "#2D7DD2" }}>Funded</span>
             </span>
+            <span style={{ fontSize: 16 }}>🇫🇷</span>
           </div>
 
           {/* Desktop Nav */}
