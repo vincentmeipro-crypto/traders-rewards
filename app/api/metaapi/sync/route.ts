@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendDailyUpdateEmail } from "@/lib/mailer";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
-const METAAPI_BASE = "https://mt-provisioning-api-v1.london.agiliumtrade.ai";
+const METAAPI_BASE = "https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai";
 const METAAPI_CLIENT = "https://mt-client-api-v1.london.agiliumtrade.ai";
 
 async function provisionAccount(login: string, password: string, server: string, name: string) {
@@ -176,9 +176,11 @@ export async function GET(req: NextRequest) {
 
       results.push({ id: challenge.id, status: "synced", balance: newBalance, transition });
       synced++;
-    } catch (e) {
+    } catch (e: unknown) {
+      const err = e as { message?: string; cause?: unknown };
+      const detail = err?.cause ? `${err.message} | cause: ${JSON.stringify(err.cause)}` : String(e);
       console.error(`MetaAPI sync error for ${challenge.id}:`, e);
-      results.push({ id: challenge.id, status: "error", error: String(e) });
+      results.push({ id: challenge.id, status: "error", error: detail });
     }
   }
 
