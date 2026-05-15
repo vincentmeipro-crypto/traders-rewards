@@ -19,30 +19,34 @@ export default function Hero() {
   if (isMobile) {
     return (
       <section style={{
-        height: screenH,
-        width: "100vw",
         position: "relative",
+        width: "100%",
+        height: screenH,
         overflow: "hidden",
-        backgroundImage: "url('/hero-mobile-new.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center top",
-        backgroundRepeat: "no-repeat",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-end",
       }}>
-
-        {/* Gradient sombre en bas */}
+        {/* Image plein écran absolue */}
         <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(to bottom, rgba(7,7,7,0) 40%, rgba(7,7,7,0.75) 72%, rgba(7,7,7,0.97) 100%)",
-          zIndex: 1,
+          position: "absolute",
+          top: 0, left: 0, right: 0, bottom: 0,
+          backgroundImage: "url('/hero-mobile-new.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundRepeat: "no-repeat",
         }} />
 
-        {/* CTA collé en bas */}
+        {/* Gradient bas */}
         <div style={{
-          position: "relative", zIndex: 2,
-          padding: "0 16px 32px",
+          position: "absolute",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "linear-gradient(to bottom, transparent 35%, rgba(7,7,7,0.6) 65%, rgba(7,7,7,0.95) 85%, #070707 100%)",
+        }} />
+
+        {/* CTA absolument en bas */}
+        <div style={{
+          position: "absolute",
+          bottom: 0, left: 0, right: 0,
+          zIndex: 2,
+          padding: "0 16px 28px",
           display: "flex", flexDirection: "column", gap: 10,
         }}>
           <a href="#pricing" className="btn-primary btn-primary-animated"
