@@ -36,8 +36,22 @@ function CheckoutContent() {
   // Personal info
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [dialCode, setDialCode] = useState("+33");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+
+  const DIAL_CODES = [
+    { code: "+33", flag: "🇫🇷" }, { code: "+32", flag: "🇧🇪" }, { code: "+41", flag: "🇨🇭" },
+    { code: "+352", flag: "🇱🇺" }, { code: "+1", flag: "🇺🇸" }, { code: "+44", flag: "🇬🇧" },
+    { code: "+49", flag: "🇩🇪" }, { code: "+34", flag: "🇪🇸" }, { code: "+39", flag: "🇮🇹" },
+    { code: "+31", flag: "🇳🇱" }, { code: "+351", flag: "🇵🇹" }, { code: "+48", flag: "🇵🇱" },
+    { code: "+46", flag: "🇸🇪" }, { code: "+45", flag: "🇩🇰" }, { code: "+47", flag: "🇳🇴" },
+    { code: "+212", flag: "🇲🇦" }, { code: "+213", flag: "🇩🇿" }, { code: "+216", flag: "🇹🇳" },
+    { code: "+221", flag: "🇸🇳" }, { code: "+225", flag: "🇨🇮" }, { code: "+237", flag: "🇨🇲" },
+    { code: "+971", flag: "🇦🇪" }, { code: "+966", flag: "🇸🇦" }, { code: "+55", flag: "🇧🇷" },
+    { code: "+52", flag: "🇲🇽" }, { code: "+61", flag: "🇦🇺" }, { code: "+91", flag: "🇮🇳" },
+    { code: "+7", flag: "🇷🇺" }, { code: "+90", flag: "🇹🇷" }, { code: "+27", flag: "🇿🇦" },
+  ];
 
   // Promo
   const [promoInput, setPromoInput] = useState("");
@@ -63,7 +77,7 @@ function CheckoutContent() {
     await fetch("/api/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone, email }),
+      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone: fullPhone, email }),
     });
   };
 
@@ -95,6 +109,7 @@ function CheckoutContent() {
     setPromoError("");
   };
 
+  const fullPhone = phone ? `${dialCode} ${phone}` : "";
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim();
 
   const [payError, setPayError] = useState("");
@@ -223,8 +238,16 @@ function CheckoutContent() {
           </div>
           <div>
             <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>PHONE *</div>
-            <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="+33 6 00 00 00 00"
-              style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${phone ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            <div style={{ display: "flex", gap: 8 }}>
+              <select value={dialCode} onChange={e => setDialCode(e.target.value)}
+                style={{ backgroundColor: "#1a1a1a", border: "1px solid #222", borderRadius: 8, padding: "10px 8px", color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", flexShrink: 0, width: 90 }}>
+                {DIAL_CODES.map(c => (
+                  <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
+                ))}
+              </select>
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="6 00 00 00 00"
+                style={{ flex: 1, backgroundColor: "#1a1a1a", border: `1px solid ${phone ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+            </div>
           </div>
         </div>
 
