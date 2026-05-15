@@ -17,11 +17,11 @@ export default function Hero() {
       <section style={{ height: "100svh", position: "relative", overflow: "hidden" }}>
         {/* Image plein écran */}
         <Image
-          src="/HERO MOBILE.png"
+          src="/HERO MOBILE2.png"
           alt="Elysium Funded"
           fill
           priority
-          style={{ objectFit: "cover", objectPosition: "center 72px" }}
+          style={{ objectFit: "cover", objectPosition: "50% 30px" }}
         />
 
         {/* Gradient bas pour lisibilité du CTA */}
