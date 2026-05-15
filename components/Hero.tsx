@@ -51,14 +51,14 @@ export default function Hero() {
         display: "inline-flex",
         alignItems: "center",
         gap: 8,
-        backgroundColor: "rgba(45,125,210,0.1)",
-        border: "1px solid rgba(45,125,210,0.3)",
+        backgroundColor: "rgba(255,255,255,0.07)",
+        border: "1px solid rgba(255,255,255,0.15)",
         borderRadius: 100,
         padding: "6px 16px",
         marginBottom: 28,
       }}>
-        <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2D7DD2", display: "inline-block" }} />
-        <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+        <span style={{ fontSize: 12 }}>★</span>
+        <span style={{ color: "#fff", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
           {T.hero.badge}
         </span>
       </div>
@@ -72,7 +72,7 @@ export default function Hero() {
         maxWidth: 900,
         marginBottom: 20,
       }}>
-        {T.hero.headline1}{" "}
+        {T.hero.headline1}<br />
         <span className="gold-gradient">{T.hero.headline2}</span>
       </h1>
 
