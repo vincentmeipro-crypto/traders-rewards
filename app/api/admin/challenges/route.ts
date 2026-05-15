@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendPhase2Email, sendFundedEmail } from "@/lib/mailer";
+import { sendPhase2Email, sendFundedEmail, sendFailedEmail } from "@/lib/mailer";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -98,6 +98,15 @@ export async function PATCH(req: NextRequest) {
   const { id, ...updates } = await req.json();
   const admin = createAdminClient();
 
+  // Get current challenge to detect balance change
+  const { data: current } = await admin.from("challenges").select("*").eq("id", id).single();
+
+  // Auto-increment trading_days if balance changed
+  if (current && updates.balance !== undefined && updates.balance !== current.balance) {
+    updates.trading_days = (current.trading_days || 0) + 1;
+    updates.last_synced_at = new Date().toISOString();
+  }
+
   const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
@@ -105,6 +114,26 @@ export async function PATCH(req: NextRequest) {
   const { data: { users } } = await admin.auth.admin.listUsers();
   const userMap = Object.fromEntries(users.map(u => [u.id, u.email]));
   const userEmail = userMap[data.user_id] || "";
+
+  // Check drawdown violations
+  if (updates.balance !== undefined && current) {
+    const totalDrawdownPct = ((data.start_balance - data.balance) / data.start_balance) * 100;
+    const dailyDrawdownPct = current.balance > 0 ? ((current.balance - data.balance) / current.balance) * 100 : 0;
+
+    if (totalDrawdownPct >= data.total_drawdown_limit) {
+      await admin.from("challenges").update({ status: "failed" }).eq("id", id);
+      try { await sendFailedEmail(userEmail, data.account_size, "total_drawdown"); } catch {}
+      const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
+      return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_total_drawdown" });
+    }
+
+    if (dailyDrawdownPct >= data.daily_drawdown_limit) {
+      await admin.from("challenges").update({ status: "failed" }).eq("id", id);
+      try { await sendFailedEmail(userEmail, data.account_size, "daily_drawdown"); } catch {}
+      const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
+      return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_daily_drawdown" });
+    }
+  }
 
   // Auto-transition check after update
   const transitioned = await autoTransitionPhase(data, userEmail);

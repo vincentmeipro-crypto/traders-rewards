@@ -106,8 +106,9 @@ export default function DashboardClient({ user }: { user: User }) {
   const profitPct = challenge ? ((profitAmount / challenge.start_balance) * 100).toFixed(2) : "0";
   const targetAmount = challenge ? challenge.start_balance * (1 + challenge.profit_target / 100) : 0;
   const targetPct = challenge ? Math.min(((profitAmount / (targetAmount - challenge.start_balance)) * 100), 100).toFixed(0) : "0";
-  const dailyDrawdownPct = 0.8; // TODO: connect to real trading data
-  const totalDrawdownPct = challenge ? (((challenge.start_balance - challenge.balance) / challenge.start_balance) * 100).toFixed(2) : "0";
+  const dailyDrawdownPct = 0;
+  const totalDrawdownRaw = challenge ? ((challenge.start_balance - challenge.balance) / challenge.start_balance) * 100 : 0;
+  const totalDrawdownPct = Math.max(0, totalDrawdownRaw).toFixed(2);
 
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", fontFamily: "Inter, sans-serif" }}>
