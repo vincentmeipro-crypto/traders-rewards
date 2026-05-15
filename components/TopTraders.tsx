@@ -2,20 +2,20 @@
 import { useLanguage } from "@/lib/LanguageContext";
 
 const traders = [
-  { name: "Karim B.",       flag: "🇫🇷", payout: "$840",   size: "$100K", color: "#C9A84C", initials: "KB" },
+  { name: "Karim B.",       flag: "🇫🇷", payout: "$840",   size: "$100K", color: "#2D7DD2", initials: "KB" },
   { name: "Marco V.",       flag: "🇮🇹", payout: "$1,620", size: "$200K", color: "#3b82f6", initials: "MV" },
   { name: "Sarah L.",       flag: "🇬🇧", payout: "$490",   size: "$50K",  color: "#22c55e", initials: "SL" },
   { name: "Ahmed R.",       flag: "🇸🇦", payout: "$2,100", size: "$200K", color: "#a855f7", initials: "AR" },
   { name: "Lucas M.",       flag: "🇧🇷", payout: "$750",   size: "$100K", color: "#f59e0b", initials: "LM" },
   { name: "TheBullTrader",  flag: "🇩🇪", payout: "$3,200", size: "$200K", color: "#ef4444", initials: "TB" },
   { name: "Yuki T.",        flag: "🇯🇵", payout: "$980",   size: "$100K", color: "#06b6d4", initials: "YT" },
-  { name: "Carlos G.",      flag: "🇪🇸", payout: "$560",   size: "$50K",  color: "#C9A84C", initials: "CG" },
+  { name: "Carlos G.",      flag: "🇪🇸", payout: "$560",   size: "$50K",  color: "#2D7DD2", initials: "CG" },
   { name: "PipHunterPro",   flag: "🇺🇸", payout: "$2,750", size: "$200K", color: "#22c55e", initials: "PH" },
   { name: "Fatima A.",      flag: "🇲🇦", payout: "$870",   size: "$100K", color: "#f59e0b", initials: "FA" },
   { name: "Dmitri K.",      flag: "🇷🇺", payout: "$1,340", size: "$200K", color: "#3b82f6", initials: "DK" },
   { name: "Lena H.",        flag: "🇩🇪", payout: "$310",   size: "$25K",  color: "#a855f7", initials: "LH" },
   { name: "Jean-Pierre D.", flag: "🇫🇷", payout: "$1,900", size: "$200K", color: "#ef4444", initials: "JP" },
-  { name: "GoldScalper",    flag: "🇦🇪", payout: "$4,100", size: "$200K", color: "#C9A84C", initials: "GS" },
+  { name: "GoldScalper",    flag: "🇦🇪", payout: "$4,100", size: "$200K", color: "#2D7DD2", initials: "GS" },
   { name: "Min-jun L.",     flag: "🇰🇷", payout: "$1,190", size: "$100K", color: "#06b6d4", initials: "ML" },
 ];
 
@@ -23,7 +23,7 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: 14,
-      backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e",
+      backgroundColor: "#21212B", border: "1px solid #2A2A38",
       borderRadius: 14, padding: "14px 20px",
       minWidth: 210, flexShrink: 0,
     }}>
@@ -42,7 +42,7 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
         <div style={{
           position: "absolute", bottom: -3, right: -6,
           width: 20, height: 20, borderRadius: "50%",
-          backgroundColor: "#1a1a1a", border: "1.5px solid #222",
+          backgroundColor: "#2A2A38", border: "1.5px solid #222",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 13, lineHeight: 1,
         }}>
@@ -75,7 +75,7 @@ export default function TopTraders() {
   return (
     <section style={{ padding: "60px 0", overflow: "hidden" }}>
       <div style={{ textAlign: "center", marginBottom: 36, padding: "0 24px" }}>
-        <span style={{ color: "#C9A84C", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 12 }}>
+        <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 12 }}>
           {lang === "fr" ? "Communauté" : "Community"}
         </span>
         <h2 style={{ fontSize: "clamp(1.6rem, 4vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: 12 }}>
@@ -87,9 +87,9 @@ export default function TopTraders() {
       {/* Ticker */}
       <div style={{ position: "relative" }}>
         {/* Fade left */}
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 120, zIndex: 2, background: "linear-gradient(to right, #070707, transparent)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 120, zIndex: 2, background: "linear-gradient(to right, #16161C, transparent)", pointerEvents: "none" }} />
         {/* Fade right */}
-        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 120, zIndex: 2, background: "linear-gradient(to left, #070707, transparent)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 120, zIndex: 2, background: "linear-gradient(to left, #16161C, transparent)", pointerEvents: "none" }} />
 
         <div style={{ display: "flex", gap: 16, animation: "ticker 40s linear infinite", width: "max-content", padding: "8px 16px" }}>
           {doubled.map((trader, i) => (

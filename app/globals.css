@@ -1,40 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #070707;
-  --bg-secondary: #0f0f0f;
-  --bg-card: #141414;
-  --bg-card-hover: #1a1a1a;
-  --gold: #C9A84C;
-  --gold-light: #E8C96C;
-  --gold-dark: #A07830;
+  --bg-primary: #16161C;
+  --bg-secondary: #1E1E26;
+  --bg-card: #21212B;
+  --bg-card-hover: #27273380;
+  --accent: #2D7DD2;
+  --accent-light: #5BA4E6;
+  --accent-dark: #1A5FA8;
+  --accent-glow: rgba(45, 125, 210, 0.35);
   --text-primary: #FFFFFF;
-  --text-secondary: #A0A0A0;
-  --text-muted: #555555;
-  --border: #222222;
-  --border-gold: rgba(201, 168, 76, 0.3);
+  --text-secondary: #A0A0B8;
+  --text-muted: #55556A;
+  --border: #2A2A38;
+  --border-accent: rgba(45, 125, 210, 0.3);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: var(--bg-primary);
+  background: radial-gradient(ellipse at 50% 30%, #22222E 0%, #18181F 50%, #0F0F14 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold-light));
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-  color: #000;
+  background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+  color: #fff;
   font-weight: 700;
   padding: 14px 32px;
   border-radius: 8px;
@@ -49,18 +52,18 @@ body {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
   transform: translateY(-1px);
-  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.35);
+  box-shadow: 0 8px 30px var(--accent-glow);
 }
 
 .btn-secondary {
   background: transparent;
-  color: var(--gold);
+  color: var(--accent-light);
   font-weight: 600;
   padding: 13px 32px;
   border-radius: 8px;
-  border: 1px solid var(--border-gold);
+  border: 1px solid var(--border-accent);
   cursor: pointer;
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
@@ -71,8 +74,8 @@ body {
 }
 
 .btn-secondary:hover {
-  background: rgba(201, 168, 76, 0.08);
-  border-color: var(--gold);
+  background: rgba(45, 125, 210, 0.1);
+  border-color: var(--accent);
 }
 
 .card {
@@ -83,20 +86,20 @@ body {
 }
 
 .card:hover {
-  border-color: var(--border-gold);
+  border-color: var(--border-accent);
   background: var(--bg-card-hover);
 }
 
 .card-featured {
-  background: linear-gradient(145deg, #141414, #1a1510);
-  border: 1px solid var(--gold);
+  background: linear-gradient(145deg, #21212B, #1C2535);
+  border: 1px solid var(--accent);
   border-radius: 16px;
-  box-shadow: 0 0 50px rgba(201, 168, 76, 0.15);
+  box-shadow: 0 0 50px rgba(45, 125, 210, 0.15);
 }
 
 .divider-gold {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
   opacity: 0.3;
 }
 
@@ -106,13 +109,13 @@ body {
 }
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(201,168,76,0.2); }
-  50% { box-shadow: 0 0 40px rgba(201,168,76,0.4); }
+  0%, 100% { box-shadow: 0 0 20px rgba(45,125,210,0.2); }
+  50% { box-shadow: 0 0 40px rgba(45,125,210,0.4); }
 }
 
 @keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.5), 0 8px 30px rgba(201,168,76,0.25); transform: scale(1); }
-  50% { box-shadow: 0 0 0 8px rgba(201,168,76,0), 0 8px 40px rgba(201,168,76,0.45); transform: scale(1.02); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45,125,210,0.5), 0 8px 30px rgba(45,125,210,0.25); transform: scale(1); }
+  50% { box-shadow: 0 0 0 8px rgba(45,125,210,0), 0 8px 40px rgba(45,125,210,0.45); transform: scale(1.02); }
 }
 
 .btn-primary-animated {
@@ -121,14 +124,13 @@ body {
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
 
 @media (max-width: 768px) {
   .btn-primary, .btn-secondary {
     padding: 12px 20px;
     font-size: 13px;
   }
-
   .card {
     border-radius: 12px;
   }
