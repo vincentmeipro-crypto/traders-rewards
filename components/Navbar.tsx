@@ -31,7 +31,12 @@ export default function Navbar() {
 
           {/* Nom */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 20 }}>🇫🇷</span>
+            {/* French flag */}
+            <div style={{ display: "flex", width: 22, height: 15, borderRadius: 3, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(255,255,255,0.1)" }}>
+              <div style={{ flex: 1, backgroundColor: "#002395" }} />
+              <div style={{ flex: 1, backgroundColor: "#EDEDED" }} />
+              <div style={{ flex: 1, backgroundColor: "#ED2939" }} />
+            </div>
             <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: "2px", textTransform: "uppercase" }}>
               Elysium <span style={{ color: "#2D7DD2" }}>Funded</span>
             </span>
