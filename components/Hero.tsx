@@ -1,115 +1,111 @@
 "use client";
-import Image from "next/image";
-import { useEffect, useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Hero() {
   const { T } = useLanguage();
-  const [isMobile, setIsMobile] = useState(false);
-  const [screenH, setScreenH] = useState("100vh");
-  useEffect(() => {
-    const check = () => {
-      setIsMobile(window.innerWidth < 768);
-      setScreenH(`${window.innerHeight}px`);
-    };
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  if (isMobile) {
-    return (
-      <section style={{
-        position: "relative",
-        width: "100%",
-        height: screenH,
-        overflow: "hidden",
-      }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/hero-mobile4.png"
-          alt="Elysium Funded"
-          style={{
-            position: "absolute",
-            top: 0, left: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "center center",
-          }}
-        />
-
-        {/* Gradient bas */}
-        <div style={{
-          position: "absolute",
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: "linear-gradient(to bottom, transparent 35%, rgba(7,7,7,0.6) 65%, rgba(7,7,7,0.95) 85%, #070707 100%)",
-        }} />
-
-        {/* CTA absolument en bas */}
-        <div style={{
-          position: "absolute",
-          bottom: 0, left: 0, right: 0,
-          zIndex: 2,
-          padding: "0 16px 28px",
-          display: "flex", flexDirection: "column", gap: 10,
-        }}>
-          <a href="#pricing" className="btn-primary btn-primary-animated"
-            style={{ display: "block", textAlign: "center", fontSize: 16, padding: "18px", letterSpacing: "1px", borderRadius: 12 }}>
-            {T.hero.cta1}
-          </a>
-          <div style={{ display: "flex", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(201,168,76,0.2)", backgroundColor: "rgba(7,7,7,0.5)" }}>
-            {[
-              { label: T.hero.maxFunding, value: "$400K" },
-              { label: T.hero.profitSplit, value: "90%" },
-              { label: T.hero.feeRefunded, value: "1st Payout" },
-            ].map((item, i) => (
-              <div key={item.label} style={{
-                flex: 1, textAlign: "center", padding: "10px 0",
-                borderRight: i < 2 ? "1px solid rgba(201,168,76,0.2)" : "none",
-              }}>
-                <div style={{ fontSize: 16, fontWeight: 800, color: "#C9A84C" }}>{item.value}</div>
-                <div style={{ fontSize: 9, color: "#888", marginTop: 2, textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
-    <section style={{ minHeight: "100vh", position: "relative", overflow: "hidden", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
+    <section style={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "120px 24px 80px",
+      textAlign: "center",
+      position: "relative",
+      overflow: "hidden",
+    }}>
 
-      {/* Image de fond */}
-      <Image
-        src="/hero-pc2.png"
-        alt="Elysium Funded"
-        fill
-        priority
-        style={{ objectFit: "contain", objectPosition: "center 60px" }}
-      />
-
-      {/* Gradient overlay pour lisibilité */}
+      {/* Subtle radial glow behind text */}
       <div style={{
-        position: "absolute", inset: 0,
-        background: "linear-gradient(to bottom, rgba(7,7,7,0) 0%, rgba(7,7,7,0) 60%, rgba(7,7,7,0.7) 85%, #070707 100%)"
+        position: "absolute",
+        top: "40%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 600,
+        height: 600,
+        borderRadius: "50%",
+        background: "radial-gradient(circle, rgba(45,125,210,0.08) 0%, transparent 70%)",
+        pointerEvents: "none",
       }} />
 
-      {/* Contenu bas desktop */}
-      <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", zIndex: 2, display: "flex", alignItems: "stretch", gap: 0, width: "max-content" }}>
-        <div style={{ display: "flex", gap: 12, alignItems: "center", paddingRight: 24 }}>
-          <a href="#pricing" className="btn-primary btn-primary-animated" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta1}</a>
-          <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta2}</a>
-        </div>
-        <div style={{ width: 1, backgroundColor: "rgba(201,168,76,0.3)", margin: "8px 0" }} />
+      {/* Badge */}
+      <div style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        backgroundColor: "rgba(45,125,210,0.1)",
+        border: "1px solid rgba(45,125,210,0.3)",
+        borderRadius: 100,
+        padding: "6px 16px",
+        marginBottom: 32,
+      }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#2D7DD2", display: "inline-block" }} />
+        <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+          {T.hero.badge ?? "Prop Trading Firm"}
+        </span>
+      </div>
+
+      {/* Title */}
+      <h1 style={{
+        fontSize: "clamp(2.8rem, 8vw, 5.5rem)",
+        fontWeight: 900,
+        letterSpacing: "-2px",
+        lineHeight: 1.05,
+        maxWidth: 900,
+        marginBottom: 24,
+      }}>
+        {T.hero.headline1}{" "}
+        <span className="gold-gradient">{T.hero.headline2}</span>
+      </h1>
+
+      {/* Subtitle */}
+      <p style={{
+        color: "#666",
+        fontSize: "clamp(1rem, 2.5vw, 1.2rem)",
+        maxWidth: 580,
+        lineHeight: 1.7,
+        marginBottom: 48,
+      }}>
+        {T.hero.sub}
+      </p>
+
+      {/* CTAs */}
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginBottom: 72 }}>
+        <a href="#pricing" className="btn-primary btn-primary-animated" style={{ fontSize: 14, padding: "16px 36px" }}>
+          {T.hero.cta1}
+        </a>
+        <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 36px" }}>
+          {T.hero.cta2}
+        </a>
+      </div>
+
+      {/* Stats bar */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 0,
+        backgroundColor: "rgba(255,255,255,0.03)",
+        border: "1px solid #2A2A38",
+        borderRadius: 16,
+        overflow: "hidden",
+        flexWrap: "wrap",
+        justifyContent: "center",
+      }}>
         {[
           { label: T.hero.maxFunding, value: "$400K" },
           { label: T.hero.profitSplit, value: "Up to 90%" },
           { label: T.hero.feeRefunded, value: "1st Payout" },
-        ].map((item) => (
-          <div key={item.label} style={{ padding: "12px 32px", textAlign: "center" }}>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#C9A84C", whiteSpace: "nowrap" }}>{item.value}</div>
-            <div style={{ fontSize: 10, color: "#888", marginTop: 3, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{item.label}</div>
+          { label: "No Time Limit", value: "∞" },
+        ].map((item, i, arr) => (
+          <div key={item.label} style={{
+            padding: "20px 40px",
+            textAlign: "center",
+            borderRight: i < arr.length - 1 ? "1px solid #2A2A38" : "none",
+          }}>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>{item.value}</div>
+            <div style={{ fontSize: 11, color: "#555", marginTop: 4, textTransform: "uppercase", letterSpacing: "1px" }}>{item.label}</div>
           </div>
         ))}
       </div>
