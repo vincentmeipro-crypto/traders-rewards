@@ -98,7 +98,7 @@ export default function Hero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: isMobile ? "100px 20px 60px" : "120px 24px 80px",
+      padding: isMobile ? "140px 20px 60px" : "120px 24px 80px",
       textAlign: "center",
       position: "relative",
       overflow: "hidden",

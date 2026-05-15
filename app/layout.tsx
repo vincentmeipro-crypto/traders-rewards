@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Bebas_Neue } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 export const metadata: Metadata = {
   title: "Elysium Funded — Where Legends Are Funded",
@@ -13,8 +14,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
-      <body style={{ backgroundColor: "#070707" }}>
+    <html lang="en" className={`${inter.variable} ${bebas.variable}`}>
+      <body className={bebas.variable} style={{ backgroundColor: "#070707" }}>
         <LanguageProvider>{children}</LanguageProvider>
         <Script id="crisp-chat" strategy="afterInteractive">{`
           window.$crisp=[];

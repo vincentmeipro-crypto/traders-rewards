@@ -37,7 +37,7 @@ export default function Navbar() {
               <div style={{ flex: 1, backgroundColor: "#EDEDED" }} />
               <div style={{ flex: 1, backgroundColor: "#ED2939" }} />
             </div>
-            <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: "2px", textTransform: "uppercase" }}>
+            <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1 }}>
               Elysium <span style={{ color: "#2D7DD2" }}>Funded</span>
             </span>
           </div>
