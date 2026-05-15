@@ -21,6 +21,7 @@ type Challenge = {
   ctrader_account_id: string;
   ctrader_login: string;
   ctrader_password: string;
+  ctrader_server: string;
 };
 
 type PromoCode = {
@@ -237,7 +238,7 @@ export default function AdminPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                      {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "MT5 Account ID", "MT5 Login", "Created", "Actions"].map(h => (
+                      {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "Account ID", "Login", "Server", "Password", "Created", "Actions"].map(h => (
                         <th key={h} style={{ padding: "14px 16px", textAlign: "left", color: "#555", fontWeight: 600, letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
@@ -247,7 +248,7 @@ export default function AdminPage() {
                       {/* IC Markets setup row */}
                       {(c.client_first_name || c.client_last_name) && (
                         <tr key={`${c.id}-icm`} style={{ backgroundColor: "rgba(201,168,76,0.03)" }}>
-                          <td colSpan={12} style={{ padding: "10px 16px" }}>
+                          <td colSpan={14} style={{ padding: "10px 16px" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                               <span style={{ color: "#C9A84C", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginRight: 4 }}>IC Markets →</span>
                               {[
@@ -330,6 +331,24 @@ export default function AdminPage() {
                               style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 80 }} />
                           ) : (
                             <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_login || "—"}</span>
+                          )}
+                        </td>
+                        <td style={{ padding: "14px 16px" }}>
+                          {editing === c.id ? (
+                            <input type="text" placeholder="ex: ICMarkets-Demo" value={editData.ctrader_server ?? c.ctrader_server ?? ""}
+                              onChange={e => setEditData(d => ({ ...d, ctrader_server: e.target.value }))}
+                              style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 130 }} />
+                          ) : (
+                            <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_server || "—"}</span>
+                          )}
+                        </td>
+                        <td style={{ padding: "14px 16px" }}>
+                          {editing === c.id ? (
+                            <input type="text" placeholder="Password" value={editData.ctrader_password ?? c.ctrader_password ?? ""}
+                              onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))}
+                              style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                          ) : (
+                            <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_password || "—"}</span>
                           )}
                         </td>
                         <td style={{ padding: "14px 16px", color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</td>
