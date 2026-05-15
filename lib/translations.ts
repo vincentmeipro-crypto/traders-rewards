@@ -25,6 +25,7 @@ export const t = {
       cta2: 'How It Works',
       trust: 'Challenge fee fully refunded on first payout · No time limit · Instant account delivery',
       maxFunding: 'Max Funding', profitSplit: 'Profit Split', feeRefunded: 'Fee Refunded',
+      tagline: 'Pass the challenge. Join the elite.',
     },
     stats: {
       payouts: 'Total Payouts', traders: 'Funded Traders',
@@ -82,6 +83,7 @@ export const t = {
       cta2: 'Comment ça marche',
       trust: 'Frais remboursés au 1er retrait · Sans limite de temps · Compte livré instantanément',
       maxFunding: 'Capital Max', profitSplit: 'Partage Profit', feeRefunded: 'Frais Remboursés',
+      tagline: 'Passe le challenge. Rejoins l\'élite.',
     },
     stats: {
       payouts: 'Total des Retraits', traders: 'Traders Financés',
@@ -139,6 +141,7 @@ export const t = {
       cta2: 'كيف يعمل',
       trust: 'رسوم التحدي مستردة عند أول سحب · بلا حد زمني · تسليم فوري للحساب',
       maxFunding: 'أقصى تمويل', profitSplit: 'توزيع الأرباح', feeRefunded: 'استرداد الرسوم',
+      tagline: 'اجتز التحدي. انضم إلى النخبة.',
     },
     stats: {
       payouts: 'إجمالي المدفوعات', traders: 'المتداولون الممولون',
@@ -196,6 +199,7 @@ export const t = {
       cta2: 'Cómo Funciona',
       trust: 'Tarifa del desafío totalmente reembolsada · Sin límite de tiempo · Cuenta entregada al instante',
       maxFunding: 'Capital Máx.', profitSplit: 'División de Ganancias', feeRefunded: 'Tarifa Reembolsada',
+      tagline: 'Supera el desafío. Únete a la élite.',
     },
     stats: {
       payouts: 'Total Pagos', traders: 'Traders Financiados',
@@ -253,6 +257,7 @@ export const t = {
       cta2: 'Como Funciona',
       trust: 'Taxa do desafio totalmente reembolsada · Sem limite de tempo · Conta entregue instantaneamente',
       maxFunding: 'Capital Máx.', profitSplit: 'Divisão de Lucros', feeRefunded: 'Taxa Reembolsada',
+      tagline: 'Passe o desafio. Entre na elite.',
     },
     stats: {
       payouts: 'Total de Pagamentos', traders: 'Traders Financiados',
@@ -310,6 +315,7 @@ export const t = {
       cta2: 'So Funktioniert Es',
       trust: 'Challenge-Gebühr vollständig erstattet · Kein Zeitlimit · Sofortige Kontobereitstellung',
       maxFunding: 'Max. Kapital', profitSplit: 'Gewinnbeteiligung', feeRefunded: 'Gebühr Erstattet',
+      tagline: 'Bestehe die Challenge. Tritt der Elite bei.',
     },
     stats: {
       payouts: 'Gesamtauszahlungen', traders: 'Finanzierte Trader',
@@ -367,6 +373,7 @@ export const t = {
       cta2: 'Nasıl Çalışır',
       trust: 'Meydan okuma ücreti ilk ödemede iade edilir · Zaman sınırı yok · Anında hesap teslimi',
       maxFunding: 'Maks. Fon', profitSplit: 'Kâr Paylaşımı', feeRefunded: 'Ücret İadesi',
+      tagline: 'Meydan okumayı geç. Elite\'e katıl.',
     },
     stats: {
       payouts: 'Toplam Ödeme', traders: 'Fonlanan Trader',

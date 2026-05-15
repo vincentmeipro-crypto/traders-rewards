@@ -74,6 +74,20 @@ export default function Hero() {
         style={{ objectFit: "contain", objectPosition: "center center" }}
       />
 
+      {/* Tagline haut droite */}
+      <div style={{
+        position: "absolute", top: 90, right: 40, zIndex: 2,
+        textAlign: "right",
+      }}>
+        <p style={{
+          fontSize: 15, fontWeight: 700, color: "#fff",
+          letterSpacing: "0.3px", lineHeight: 1.5,
+          textShadow: "0 2px 12px rgba(0,0,0,0.8)",
+        }}>
+          {T.hero.tagline}
+        </p>
+      </div>
+
       {/* Gradient overlay pour lisibilité */}
       <div style={{
         position: "absolute", inset: 0,
