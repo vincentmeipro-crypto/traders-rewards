@@ -17,7 +17,7 @@ export default function Hero() {
       <section style={{ height: "100svh", position: "relative", overflow: "hidden" }}>
         {/* Image plein écran */}
         <Image
-          src="/IMAGE HERO2.png"
+          src="/HERO MOBILE.png"
           alt="Elysium Funded"
           fill
           priority
