@@ -24,7 +24,7 @@ type Challenge = {
   ctrader_account_id?: string;
   ctrader_login?: string;
   ctrader_password?: string;
-  ctrader_server?: string;
+  server?: string;
 };
 
 function ProgressBar({ value, max, color = "#C9A84C", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -483,7 +483,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
                   {[
                     { label: "Platform", value: "cTrader" },
-                    { label: "MT5 Server", value: challenge.ctrader_server || "—" },
+                    { label: "MT5 Server", value: challenge.server || "—" },
                     { label: "Login", value: challenge.ctrader_login },
                     { label: "Password", value: challenge.ctrader_password || "—" },
                   ].map((item, i) => (

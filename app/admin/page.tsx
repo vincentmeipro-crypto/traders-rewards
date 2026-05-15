@@ -21,7 +21,7 @@ type Challenge = {
   ctrader_account_id: string;
   ctrader_login: string;
   ctrader_password: string;
-  ctrader_server: string;
+  server: string;
 };
 
 type PromoCode = {
@@ -339,11 +339,11 @@ export default function AdminPage() {
                         </td>
                         <td style={{ padding: "14px 16px" }}>
                           {editing === c.id ? (
-                            <input type="text" placeholder="ex: ICMarkets-Demo01" value={editData.ctrader_server ?? c.ctrader_server ?? ""}
-                              onChange={e => setEditData(d => ({ ...d, ctrader_server: e.target.value }))}
+                            <input type="text" placeholder="ex: ICMarkets-Demo01" value={editData.server ?? c.server ?? ""}
+                              onChange={e => setEditData(d => ({ ...d, server: e.target.value }))}
                               style={{ backgroundColor: "#1a1a1a", border: "1px solid #C9A84C55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 140 }} />
                           ) : (
-                            <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_server || "—"}</span>
+                            <span style={{ color: "#555", fontSize: 12 }}>{c.server || "—"}</span>
                           )}
                         </td>
                         <td style={{ padding: "14px 16px", color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</td>
