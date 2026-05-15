@@ -16,7 +16,7 @@ async function provisionAccount(login: string, password: string, server: string,
     body: JSON.stringify({
       login,
       password,
-      serverName: server,
+      server,
       platform: "mt5",
       name,
       type: "cloud-g2",
