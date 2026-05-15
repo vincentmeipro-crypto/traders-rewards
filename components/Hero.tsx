@@ -25,7 +25,7 @@ export default function Hero() {
         overflow: "hidden",
       }}>
         <Image
-          src="/hero-mobile3.jpg"
+          src="/hero-mobile4.png"
           alt="Elysium Funded"
           fill
           priority
