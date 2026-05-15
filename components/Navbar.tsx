@@ -22,7 +22,7 @@ export default function Navbar() {
   return (
     <>
       <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        position: "fixed", top: 40, left: 0, right: 0, zIndex: 100,
         backgroundColor: "rgba(20,20,28,0.92)",
         backdropFilter: "blur(20px)",
         borderBottom: "1px solid #2A2A38",
