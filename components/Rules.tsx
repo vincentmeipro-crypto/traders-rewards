@@ -1,10 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Rules() {
   const { T, lang } = useLanguage();
   const [tab, setTab] = useState<"challenge" | "funded">("challenge");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const isFr = lang === "fr";
 
@@ -96,7 +104,7 @@ export default function Rules() {
 
         {/* Challenge Tab */}
         {tab === "challenge" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 40 }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 24, marginBottom: 40 }}>
 
             {/* 2-Step table */}
             <div className="card" style={{ padding: 28 }}>
