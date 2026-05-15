@@ -21,7 +21,7 @@ export default function Hero() {
           alt="Elysium Funded"
           fill
           priority
-          style={{ objectFit: "cover", objectPosition: "center top" }}
+          style={{ objectFit: "cover", objectPosition: "center 72px" }}
         />
 
         {/* Gradient bas pour lisibilité du CTA */}
