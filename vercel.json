@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/ctrader/sync",
+      "path": "/api/metaapi/sync",
       "schedule": "0 0 * * *"
     }
   ]

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendDailyUpdateEmail } from "@/lib/mailer";
 
-const ADMIN_EMAIL = "vincentmeipro@gmail.com";
+const ADMIN_EMAIL = "fundedelysium@gmail.com";
 const METAAPI_BASE = "https://mt-provisioning-api-v1.agiliumtrade.agiliumtrade.ai";
 const METAAPI_CLIENT = "https://mt-client-api-v1.london.agiliumtrade.ai";
 

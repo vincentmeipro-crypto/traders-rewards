@@ -179,7 +179,7 @@ export default function AdminPage() {
     setSyncDetail("");
     try {
       const res = await fetch("/api/metaapi/sync", {
-        headers: { Authorization: `Bearer admin-vincentmeipro@gmail.com` },
+        headers: { Authorization: `Bearer admin-fundedelysium@gmail.com` },
       });
       const data = await res.json();
       setSyncMsg(`✓ ${data.synced ?? 0}/${data.total ?? 0} synchronisé(s)`);

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const ADMIN_EMAIL = "vincentmeipro@gmail.com";
+const ADMIN_EMAIL = "fundedelysium@gmail.com";
 
 async function checkAdmin(req: NextRequest) {
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
