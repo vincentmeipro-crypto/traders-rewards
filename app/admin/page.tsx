@@ -238,7 +238,7 @@ export default function AdminPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                      {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "Account ID", "Login", "Server", "Password", "Created", "Actions"].map(h => (
+                      {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "Account ID", "Password", "Server", "Created", "Actions"].map(h => (
                         <th key={h} style={{ padding: "14px 16px", textAlign: "left", color: "#555", fontWeight: 600, letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
@@ -326,39 +326,25 @@ export default function AdminPage() {
                         </td>
                         <td style={{ padding: "14px 16px" }}>
                           {editing === c.id ? (
-                            <input type="text" placeholder="Login" value={editData.ctrader_login ?? c.ctrader_login ?? ""}
-                              onChange={e => setEditData(d => ({ ...d, ctrader_login: e.target.value }))}
-                              style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 80 }} />
-                          ) : (
-                            <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_login || "—"}</span>
-                          )}
-                        </td>
-                        <td style={{ padding: "14px 16px" }}>
-                          {editing === c.id ? (
-                            <input type="text" placeholder="ex: ICMarkets-Demo" value={editData.ctrader_server ?? c.ctrader_server ?? ""}
-                              onChange={e => setEditData(d => ({ ...d, ctrader_server: e.target.value }))}
-                              style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 130 }} />
-                          ) : (
-                            <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_server || "—"}</span>
-                          )}
-                        </td>
-                        <td style={{ padding: "14px 16px" }}>
-                          {editing === c.id ? (
                             <input type="text" placeholder="Password" value={editData.ctrader_password ?? c.ctrader_password ?? ""}
                               onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))}
-                              style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                              style={{ backgroundColor: "#1a1a1a", border: "1px solid #C9A84C55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
                           ) : (
                             <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_password || "—"}</span>
                           )}
                         </td>
-                        <td style={{ padding: "14px 16px", color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</td>
                         <td style={{ padding: "14px 16px" }}>
                           {editing === c.id ? (
-                            <div style={{ display: "flex", gap: 8 }}>
-                              <button onClick={() => saveChallenge(c.id)} style={{ backgroundColor: "#C9A84C", color: "#000", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Save</button>
-                              <button onClick={() => { setEditing(null); setEditData({}); }} style={{ backgroundColor: "#1a1a1a", color: "#888", border: "1px solid #333", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Cancel</button>
-                            </div>
+                            <input type="text" placeholder="ex: ICMarkets-Demo01" value={editData.ctrader_server ?? c.ctrader_server ?? ""}
+                              onChange={e => setEditData(d => ({ ...d, ctrader_server: e.target.value }))}
+                              style={{ backgroundColor: "#1a1a1a", border: "1px solid #C9A84C55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 140 }} />
                           ) : (
+                            <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_server || "—"}</span>
+                          )}
+                        </td>
+                        <td style={{ padding: "14px 16px", color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</td>
+                        <td style={{ padding: "14px 16px" }}>
+                          {editing !== c.id && (
                             <div style={{ display: "flex", gap: 6 }}>
                               <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "#1a1a1a", color: "#C9A84C", border: "1px solid #C9A84C33", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
                               <button onClick={async () => {
@@ -369,16 +355,32 @@ export default function AdminPage() {
                                   body: JSON.stringify({ id: c.id }),
                                 });
                                 setChallenges(cs => cs.filter(x => x.id !== c.id));
-                              }} style={{ backgroundColor: "#1a1a1a", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
-                                ✕
-                              </button>
+                              }} style={{ backgroundColor: "#1a1a1a", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>✕</button>
                             </div>
                           )}
                         </td>
                       </tr>
+                      {/* Barre Save visible sous la ligne en cours d'édition */}
+                      {editing === c.id && (
+                        <tr key={`${c.id}-save`}>
+                          <td colSpan={13} style={{ padding: "10px 16px", backgroundColor: "rgba(201,168,76,0.08)", borderBottom: "2px solid #C9A84C33" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                              <span style={{ color: "#C9A84C", fontSize: 12, fontWeight: 700 }}>✏️ En cours d&apos;édition</span>
+                              <button onClick={() => saveChallenge(c.id)}
+                                style={{ backgroundColor: "#C9A84C", color: "#000", border: "none", borderRadius: 8, padding: "8px 24px", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
+                                ✓ Sauvegarder
+                              </button>
+                              <button onClick={() => { setEditing(null); setEditData({}); }}
+                                style={{ backgroundColor: "transparent", color: "#555", border: "1px solid #333", borderRadius: 8, padding: "8px 16px", fontSize: 13, cursor: "pointer" }}>
+                                Annuler
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
                     </>))}
                     {filtered.length === 0 && (
-                      <tr><td colSpan={12} style={{ padding: 40, textAlign: "center", color: "#333" }}>No challenges found</td></tr>
+                      <tr><td colSpan={13} style={{ padding: 40, textAlign: "center", color: "#333" }}>No challenges found</td></tr>
                     )}
                   </tbody>
                 </table>
