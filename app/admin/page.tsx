@@ -102,6 +102,10 @@ export default function AdminPage() {
       body: JSON.stringify({ id, ...editData }),
     });
     const updated = await res.json();
+    if (!res.ok || updated.error) {
+      alert(`Erreur sauvegarde : ${updated.error || "Vérifiez la console"}`);
+      return;
+    }
     setChallenges(cs => cs.map(c => c.id === id ? { ...c, ...updated } : c));
     setEditing(null);
     setEditData({});
