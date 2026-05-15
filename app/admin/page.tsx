@@ -171,27 +171,29 @@ export default function AdminPage() {
   const funded = challenges.filter(c => c.status === "funded").length;
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState("");
+  const [syncDetail, setSyncDetail] = useState("");
 
   const runSync = async () => {
     setSyncing(true);
     setSyncMsg("");
+    setSyncDetail("");
     try {
       const res = await fetch("/api/metaapi/sync", {
         headers: { Authorization: `Bearer admin-vincentmeipro@gmail.com` },
       });
       const data = await res.json();
-      setSyncMsg(`✓ ${data.synced ?? 0} compte(s) synchronisé(s)`);
-      // Reload challenges after sync
+      setSyncMsg(`✓ ${data.synced ?? 0}/${data.total ?? 0} synchronisé(s)`);
+      setSyncDetail(JSON.stringify(data.results ?? data, null, 2));
       if (token) {
         const r = await fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } });
         const d = await r.json();
         if (Array.isArray(d)) setChallenges(d);
       }
-    } catch {
+    } catch (e) {
       setSyncMsg("Erreur de synchronisation");
+      setSyncDetail(String(e));
     }
     setSyncing(false);
-    setTimeout(() => setSyncMsg(""), 5000);
   };
 
   if (loading) return (
@@ -234,6 +236,16 @@ export default function AdminPage() {
           <a href="/dashboard" style={{ color: "#555", fontSize: 13, textDecoration: "none" }}>← Back to Dashboard</a>
         </div>
       </div>
+
+      {syncDetail && (
+        <div style={{ margin: "0 32px", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: 16, position: "relative" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+            <span style={{ color: "#555", fontSize: 12, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
+            <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "#555", cursor: "pointer", fontSize: 16 }}>✕</button>
+          </div>
+          <pre style={{ color: "#38bdf8", fontSize: 12, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{syncDetail}</pre>
+        </div>
+      )}
 
       <div style={{ padding: "32px" }}>
         {tab === "challenges" && (
