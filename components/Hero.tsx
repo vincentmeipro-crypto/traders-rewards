@@ -14,35 +14,34 @@ export default function Hero() {
   }, []);
   if (isMobile) {
     return (
-      <section style={{ height: "100svh", position: "relative", overflow: "hidden" }}>
+      <section style={{ height: "100svh", width: "100%", position: "relative", overflow: "hidden" }}>
+
         {/* Image plein écran */}
         <Image
           src="/hero-mobile-new.png"
           alt="Elysium Funded"
           fill
           priority
-          style={{ objectFit: "cover", objectPosition: "center center" }}
+          style={{ objectFit: "cover", objectPosition: "center top" }}
         />
 
-        {/* Gradient bas pour lisibilité du CTA */}
+        {/* Gradient sombre en bas pour lisibilité */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(to bottom, rgba(7,7,7,0) 50%, rgba(7,7,7,0.85) 80%, #070707 100%)"
+          background: "linear-gradient(to bottom, rgba(7,7,7,0) 40%, rgba(7,7,7,0.7) 70%, rgba(7,7,7,0.95) 100%)"
         }} />
 
-        {/* CTA en bas */}
+        {/* CTA collé tout en bas */}
         <div style={{
           position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2,
-          padding: "0 20px 32px",
-          display: "flex", flexDirection: "column", gap: 12,
+          padding: "0 16px 28px",
+          display: "flex", flexDirection: "column", gap: 10,
         }}>
           <a href="#pricing" className="btn-primary btn-primary-animated"
             style={{ display: "block", textAlign: "center", fontSize: 16, padding: "18px", letterSpacing: "1px", borderRadius: 12 }}>
             {T.hero.cta1}
           </a>
-
-          {/* Stats */}
-          <div style={{ display: "flex", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(201,168,76,0.2)", backgroundColor: "rgba(7,7,7,0.6)" }}>
+          <div style={{ display: "flex", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(201,168,76,0.2)", backgroundColor: "rgba(7,7,7,0.5)" }}>
             {[
               { label: T.hero.maxFunding, value: "$400K" },
               { label: T.hero.profitSplit, value: "90%" },
