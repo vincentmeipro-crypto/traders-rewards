@@ -469,45 +469,39 @@ export default function DashboardClient({ user }: { user: User }) {
               </button>
             </div>
 
-            {/* MT5 Account Credentials */}
+            {/* cTrader Connection */}
             {!challenge.ctrader_account_id ? (
-              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
+              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "24px", marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                   <Clock size={18} color="#C9A84C" />
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>Trading Account — Pending Setup</div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>Connect Your cTrader Account</div>
                 </div>
-                <div style={{ color: "#555", fontSize: 13 }}>Your trading account is being configured. You will receive your login credentials by email shortly.</div>
+                <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Connecte ton compte cTrader IC Markets pour synchroniser ton solde automatiquement.</div>
+                <a href={`/api/ctrader/auth?challenge_id=${challenge.id}`}
+                  style={{ display: "inline-block", backgroundColor: "#C9A84C", color: "#000", fontWeight: 700, padding: "12px 24px", borderRadius: 10, textDecoration: "none", fontSize: 14 }}>
+                  🔗 Connecter cTrader
+                </a>
               </div>
             ) : (
               <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}><CheckCircle size={16} /> Trading Account Ready</div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
-                  {[
-                    { label: "Platform", value: "MT5" },
-                    { label: "Account ID", value: challenge.ctrader_account_id || "—" },
-                    { label: "Password", value: challenge.ctrader_password || "—" },
-                    { label: "MT5 Server", value: challenge.server || "—" },
-                  ].map((item, i) => (
-                    <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "12px 16px" }}>
-                      <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>{item.label}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8", textShadow: "0 0 8px rgba(56,189,248,0.6)" }}>{item.value}</div>
-                    </div>
-                  ))}
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
+                  <CheckCircle size={16} /> cTrader Connecté
                 </div>
-                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Télécharge MT5 et connecte-toi avec ces identifiants via IC Markets.</div>
+                <div style={{ color: "#555", fontSize: 13, marginBottom: 8 }}>Compte ID : <span style={{ color: "#38bdf8", fontWeight: 700 }}>{challenge.ctrader_account_id}</span></div>
+                <div style={{ color: "#555", fontSize: 13 }}>Ton solde est synchronisé automatiquement chaque jour.</div>
               </div>
             )}
 
-            {/* Download MT5 */}
+            {/* Download cTrader */}
             <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px" }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Download MetaTrader 5 (MT5)</div>
-              <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Télécharge MT5 et connecte-toi avec tes identifiants ci-dessus via IC Markets.</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Download cTrader</div>
+              <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Télécharge cTrader et connecte-toi avec ton compte IC Markets.</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {[
-                  { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/icmarkets.global.ltd/mt5/icmarketsmt5setup.exe" },
-                  { label: "🍎 Mac", href: "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/MetaTrader5.dmg" },
-                  { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
-                  { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
+                  { label: "🖥 Windows", href: "https://ctrader.com/download/" },
+                  { label: "🍎 Mac", href: "https://ctrader.com/download/" },
+                  { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/ctrader/id767428811" },
+                  { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=com.spotware.ct" },
                 ].map((item, i) => (
                   <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
                     style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "10px 18px", borderRadius: 8, textDecoration: "none", fontSize: 13, border: "1px solid #2a2a2a", display: "inline-block" }}>
