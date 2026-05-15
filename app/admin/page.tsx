@@ -325,7 +325,7 @@ export default function AdminPage() {
                               onChange={e => setEditData(d => ({ ...d, ctrader_account_id: e.target.value }))}
                               style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
                           ) : (
-                            <span style={{ color: c.ctrader_account_id ? "#22c55e" : "#333", fontSize: 12 }}>{c.ctrader_account_id || "—"}</span>
+                            <span style={{ color: c.ctrader_account_id ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700, textShadow: c.ctrader_account_id ? "0 0 8px rgba(56,189,248,0.6)" : "none" }}>{c.ctrader_account_id || "—"}</span>
                           )}
                         </td>
                         <td style={{ padding: "14px 16px" }}>
@@ -334,7 +334,7 @@ export default function AdminPage() {
                               onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))}
                               style={{ backgroundColor: "#1a1a1a", border: "1px solid #C9A84C55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
                           ) : (
-                            <span style={{ color: "#555", fontSize: 12 }}>{c.ctrader_password || "—"}</span>
+                            <span style={{ color: c.ctrader_password ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700, textShadow: c.ctrader_password ? "0 0 8px rgba(56,189,248,0.6)" : "none" }}>{c.ctrader_password || "—"}</span>
                           )}
                         </td>
                         <td style={{ padding: "14px 16px" }}>
@@ -343,7 +343,7 @@ export default function AdminPage() {
                               onChange={e => setEditData(d => ({ ...d, server: e.target.value }))}
                               style={{ backgroundColor: "#1a1a1a", border: "1px solid #C9A84C55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 140 }} />
                           ) : (
-                            <span style={{ color: "#555", fontSize: 12 }}>{c.server || "—"}</span>
+                            <span style={{ color: c.server ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700, textShadow: c.server ? "0 0 8px rgba(56,189,248,0.6)" : "none" }}>{c.server || "—"}</span>
                           )}
                         </td>
                         <td style={{ padding: "14px 16px", color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</td>
