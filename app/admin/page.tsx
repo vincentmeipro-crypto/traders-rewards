@@ -169,6 +169,30 @@ export default function AdminPage() {
   const totalRevenue = challenges.reduce((s, c) => s + (c.amount_paid || 0), 0);
   const active = challenges.filter(c => c.status === "active").length;
   const funded = challenges.filter(c => c.status === "funded").length;
+  const [syncing, setSyncing] = useState(false);
+  const [syncMsg, setSyncMsg] = useState("");
+
+  const runSync = async () => {
+    setSyncing(true);
+    setSyncMsg("");
+    try {
+      const res = await fetch("/api/metaapi/sync", {
+        headers: { Authorization: `Bearer admin-vincentmeipro@gmail.com` },
+      });
+      const data = await res.json();
+      setSyncMsg(`✓ ${data.synced ?? 0} compte(s) synchronisé(s)`);
+      // Reload challenges after sync
+      if (token) {
+        const r = await fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } });
+        const d = await r.json();
+        if (Array.isArray(d)) setChallenges(d);
+      }
+    } catch {
+      setSyncMsg("Erreur de synchronisation");
+    }
+    setSyncing(false);
+    setTimeout(() => setSyncMsg(""), 5000);
+  };
 
   if (loading) return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -201,7 +225,14 @@ export default function AdminPage() {
             ))}
           </div>
         </div>
-        <a href="/dashboard" style={{ color: "#555", fontSize: 13, textDecoration: "none" }}>← Back to Dashboard</a>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 600 }}>{syncMsg}</span>}
+          <button onClick={runSync} disabled={syncing}
+            style={{ backgroundColor: syncing ? "#1a1a1a" : "#1e3a5f", border: "1px solid #38bdf8", borderRadius: 8, color: "#38bdf8", padding: "8px 20px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer", opacity: syncing ? 0.6 : 1 }}>
+            {syncing ? "Sync en cours..." : "⟳ Sync MT5"}
+          </button>
+          <a href="/dashboard" style={{ color: "#555", fontSize: 13, textDecoration: "none" }}>← Back to Dashboard</a>
+        </div>
       </div>
 
       <div style={{ padding: "32px" }}>
