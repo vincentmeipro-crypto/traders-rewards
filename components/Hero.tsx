@@ -24,12 +24,18 @@ export default function Hero() {
         height: screenH,
         overflow: "hidden",
       }}>
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="/hero-mobile4.png"
           alt="Elysium Funded"
-          fill
-          priority
-          style={{ objectFit: "cover", objectPosition: "center center" }}
+          style={{
+            position: "absolute",
+            top: 0, left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center center",
+          }}
         />
 
         {/* Gradient bas */}
