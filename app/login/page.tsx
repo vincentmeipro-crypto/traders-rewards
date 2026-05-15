@@ -17,10 +17,14 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) { setError("Invalid email or password"); return; }
-    router.push("/dashboard");
+    if (data.user?.email === "fundedelysium@gmail.com") {
+      router.push("/admin");
+    } else {
+      router.push("/dashboard");
+    }
     router.refresh();
   };
 
