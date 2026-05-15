@@ -483,7 +483,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
                   {[
                     { label: "Platform", value: "cTrader" },
-                    { label: "Server", value: challenge.ctrader_server || "—" },
+                    { label: "MT5 Server", value: challenge.ctrader_server || "—" },
                     { label: "Login", value: challenge.ctrader_login },
                     { label: "Password", value: challenge.ctrader_password || "—" },
                   ].map((item, i) => (

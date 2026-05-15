@@ -242,7 +242,7 @@ export default function AdminPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
-                      {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "Account ID", "Password", "Server", "Created", "Actions"].map(h => (
+                      {["User", "Account", "Model", "Phase", "Status", "Balance", "Paid", "Days", "Account ID", "Password", "MT5 Server", "Created", "Actions"].map(h => (
                         <th key={h} style={{ padding: "14px 16px", textAlign: "left", color: "#555", fontWeight: 600, letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
