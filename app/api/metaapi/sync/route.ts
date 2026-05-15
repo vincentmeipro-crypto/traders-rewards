@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendPhase2Email, sendFundedEmail } from "@/lib/mailer";
+import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendDailyUpdateEmail } from "@/lib/mailer";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 const METAAPI_BASE = "https://mt-provisioning-api-v1.london.agiliumtrade.ai";
@@ -63,6 +63,7 @@ async function checkAndTransition(
   const totalDrawdownPct = ((startBalance - balance) / startBalance) * 100;
   if (totalDrawdownPct >= totalDrawdownLimit) {
     await admin.from("challenges").update({ status: "failed" }).eq("id", id);
+    try { await sendFailedEmail(userEmail, accountSize, "total_drawdown"); } catch {}
     return "failed_total_drawdown";
   }
 
@@ -70,6 +71,7 @@ async function checkAndTransition(
     const dailyDrawdownPct = ((prevBalance - balance) / prevBalance) * 100;
     if (dailyDrawdownPct >= dailyDrawdownLimit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
+      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown"); } catch {}
       return "failed_daily_drawdown";
     }
   }
@@ -166,6 +168,11 @@ export async function GET(req: NextRequest) {
       const updated = { ...challenge, balance: newBalance, trading_days: newTradingDays };
       const userEmail = userMap[challenge.user_id] || "";
       const transition = await checkAndTransition(updated, userEmail, prevBalance);
+
+      if (!transition) {
+        const profitPct = ((newBalance - (challenge.start_balance as number)) / (challenge.start_balance as number)) * 100;
+        try { await sendDailyUpdateEmail(userEmail, challenge.account_size as string, challenge.phase as string, newBalance, profitPct, newTradingDays); } catch {}
+      }
 
       results.push({ id: challenge.id, status: "synced", balance: newBalance, transition });
       synced++;

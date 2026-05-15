@@ -49,6 +49,24 @@ export async function sendPhase2Email(to: string, accountSize: string) {
   }));
 }
 
+export async function sendFailedEmail(to: string, accountSize: string, reason: "daily_drawdown" | "total_drawdown") {
+  const reasonLabel = reason === "daily_drawdown" ? "Daily Drawdown Exceeded" : "Total Drawdown Exceeded";
+  const reasonDetail = reason === "daily_drawdown"
+    ? "Your daily loss limit has been exceeded. This is an automatic rule to protect capital."
+    : "Your maximum total loss limit has been exceeded.";
+  await sendEmail(to, "❌ Your Elysium Challenge Has Been Stopped", buildEmail({
+    title: "❌ Challenge Failed",
+    titleColor: "#ef4444",
+    body: `We're sorry to inform you that your ${accountSize} challenge has been automatically stopped. ${reasonDetail}`,
+    details: [
+      { label: "Account Size", value: accountSize, color: "#C9A84C" },
+      { label: "Reason", value: reasonLabel, color: "#ef4444" },
+      { label: "Status", value: "Challenge Closed" },
+    ],
+    cta: { text: "Start a New Challenge →", href: "https://elysiumfunded.eu/#pricing" },
+  }));
+}
+
 export async function sendFundedEmail(to: string, accountSize: string) {
   await sendEmail(to, "🎉 You're Funded! Welcome to Elysium Funded", buildEmail({
     title: "🎉 Congratulations — You're Funded!",
@@ -61,6 +79,24 @@ export async function sendFundedEmail(to: string, accountSize: string) {
       { label: "Payouts", value: "Available now" },
     ],
     cta: { text: "Request Your First Payout →", href: "https://elysiumfunded.eu/dashboard" },
+  }));
+}
+
+export async function sendDailyUpdateEmail(to: string, accountSize: string, phase: string, balance: number, profitPct: number, tradingDays: number) {
+  const phaseLabel = phase === "phase1" ? "Phase 1" : phase === "phase2" ? "Phase 2" : "Funded";
+  const profitColor = profitPct >= 0 ? "#22c55e" : "#ef4444";
+  const profitSign = profitPct >= 0 ? "+" : "";
+  await sendEmail(to, `📊 Daily Update — ${accountSize} Challenge`, buildEmail({
+    title: "📊 Your Daily Account Update",
+    titleColor: "#C9A84C",
+    body: `Here is your daily performance summary for your ${accountSize} challenge.`,
+    details: [
+      { label: "Current Balance", value: `$${balance.toLocaleString()}`, color: "#fff" },
+      { label: "Profit / Loss", value: `${profitSign}${profitPct.toFixed(2)}%`, color: profitColor },
+      { label: "Phase", value: phaseLabel, color: "#C9A84C" },
+      { label: "Trading Days", value: `${tradingDays}`, color: "#fff" },
+    ],
+    cta: { text: "View My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
   }));
 }
 
