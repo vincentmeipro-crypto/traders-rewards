@@ -6,8 +6,12 @@ import { useLanguage } from "@/lib/LanguageContext";
 export default function Hero() {
   const { T } = useLanguage();
   const [isMobile, setIsMobile] = useState(false);
+  const [screenH, setScreenH] = useState("100vh");
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => {
+      setIsMobile(window.innerWidth < 768);
+      setScreenH(`${window.innerHeight}px`);
+    };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
@@ -15,7 +19,7 @@ export default function Hero() {
   if (isMobile) {
     return (
       <section style={{
-        height: "100dvh",
+        height: screenH,
         width: "100vw",
         position: "relative",
         overflow: "hidden",
