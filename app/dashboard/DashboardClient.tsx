@@ -469,7 +469,7 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
 
             {/* MT5 Account Credentials */}
-            {!challenge.ctrader_login ? (
+            {!challenge.ctrader_account_id ? (
               <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                   <Clock size={18} color="#C9A84C" />
