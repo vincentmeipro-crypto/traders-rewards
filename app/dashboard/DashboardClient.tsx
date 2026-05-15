@@ -469,26 +469,34 @@ export default function DashboardClient({ user }: { user: User }) {
               </button>
             </div>
 
-            {/* cTrader Connection */}
+            {/* Identifiants cTrader */}
             {!challenge.ctrader_account_id ? (
-              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "24px", marginBottom: 16 }}>
+              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                   <Clock size={18} color="#C9A84C" />
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>Connect Your cTrader Account</div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>Trading Account — Pending Setup</div>
                 </div>
-                <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Connecte ton compte cTrader IC Markets pour synchroniser ton solde automatiquement.</div>
-                <a href={`/api/ctrader/auth?challenge_id=${challenge.id}`}
-                  style={{ display: "inline-block", backgroundColor: "#C9A84C", color: "#000", fontWeight: 700, padding: "12px 24px", borderRadius: 10, textDecoration: "none", fontSize: 14 }}>
-                  🔗 Connecter cTrader
-                </a>
+                <div style={{ color: "#555", fontSize: 13 }}>Your trading account is being configured. You will receive your login credentials shortly.</div>
               </div>
             ) : (
               <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
-                  <CheckCircle size={16} /> cTrader Connecté
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
+                  <CheckCircle size={16} /> Trading Account Ready
                 </div>
-                <div style={{ color: "#555", fontSize: 13, marginBottom: 8 }}>Compte ID : <span style={{ color: "#38bdf8", fontWeight: 700 }}>{challenge.ctrader_account_id}</span></div>
-                <div style={{ color: "#555", fontSize: 13 }}>Ton solde est synchronisé automatiquement chaque jour.</div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                  {[
+                    { label: "Platform", value: "cTrader" },
+                    { label: "Account ID", value: challenge.ctrader_account_id || "—" },
+                    { label: "Password", value: challenge.ctrader_password || "—" },
+                    { label: "Server", value: challenge.server || "—" },
+                  ].map((item, i) => (
+                    <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "12px 16px" }}>
+                      <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>{item.label}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8", textShadow: "0 0 8px rgba(56,189,248,0.6)" }}>{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Utilise ces identifiants pour te connecter sur cTrader.</div>
               </div>
             )}
 
