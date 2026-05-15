@@ -12,6 +12,56 @@ export default function Hero() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+  if (isMobile) {
+    return (
+      <section style={{ height: "100svh", position: "relative", overflow: "hidden" }}>
+        {/* Image plein écran */}
+        <Image
+          src="/IMAGE HERO2.png"
+          alt="Elysium Funded"
+          fill
+          priority
+          style={{ objectFit: "cover", objectPosition: "center top" }}
+        />
+
+        {/* Gradient bas pour lisibilité du CTA */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, rgba(7,7,7,0) 50%, rgba(7,7,7,0.85) 80%, #070707 100%)"
+        }} />
+
+        {/* CTA en bas */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2,
+          padding: "0 20px 32px",
+          display: "flex", flexDirection: "column", gap: 12,
+        }}>
+          <a href="#pricing" className="btn-primary btn-primary-animated"
+            style={{ display: "block", textAlign: "center", fontSize: 16, padding: "18px", letterSpacing: "1px", borderRadius: 12 }}>
+            {T.hero.cta1}
+          </a>
+
+          {/* Stats */}
+          <div style={{ display: "flex", borderRadius: 12, overflow: "hidden", border: "1px solid rgba(201,168,76,0.2)", backgroundColor: "rgba(7,7,7,0.6)" }}>
+            {[
+              { label: T.hero.maxFunding, value: "$400K" },
+              { label: T.hero.profitSplit, value: "90%" },
+              { label: T.hero.feeRefunded, value: "1st Payout" },
+            ].map((item, i) => (
+              <div key={item.label} style={{
+                flex: 1, textAlign: "center", padding: "10px 0",
+                borderRight: i < 2 ? "1px solid rgba(201,168,76,0.2)" : "none",
+              }}>
+                <div style={{ fontSize: 16, fontWeight: 800, color: "#C9A84C" }}>{item.value}</div>
+                <div style={{ fontSize: 9, color: "#888", marginTop: 2, textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section style={{ minHeight: "100vh", position: "relative", overflow: "hidden", display: "flex", alignItems: "flex-end", justifyContent: "center" }}>
 
@@ -30,45 +80,24 @@ export default function Hero() {
         background: "linear-gradient(to bottom, rgba(7,7,7,0) 0%, rgba(7,7,7,0) 60%, rgba(7,7,7,0.7) 85%, #070707 100%)"
       }} />
 
-      {/* Contenu bas */}
-      {isMobile ? (
-        <div style={{ position: "absolute", bottom: 24, left: 0, right: 0, zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "0 20px" }}>
-          <div style={{ display: "flex", gap: 10, width: "100%" }}>
-            <a href="#pricing" className="btn-primary btn-primary-animated" style={{ flex: 1, textAlign: "center", fontSize: 13, padding: "13px 16px" }}>{T.hero.cta1}</a>
-            <a href="#how-it-works" className="btn-secondary" style={{ flex: 1, textAlign: "center", fontSize: 13, padding: "13px 16px" }}>{T.hero.cta2}</a>
-          </div>
-          <div style={{ display: "flex", justifyContent: "center", gap: 0, backgroundColor: "rgba(7,7,7,0.7)", borderRadius: 12, padding: "8px 0", width: "100%" }}>
-            {[
-              { label: T.hero.maxFunding, value: "$400K" },
-              { label: T.hero.profitSplit, value: "90%" },
-              { label: T.hero.feeRefunded, value: "1st Pay" },
-            ].map((item, i) => (
-              <div key={item.label} style={{ flex: 1, textAlign: "center", borderRight: i < 2 ? "1px solid rgba(201,168,76,0.2)" : "none" }}>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#C9A84C" }}>{item.value}</div>
-                <div style={{ fontSize: 9, color: "#888", marginTop: 2, textTransform: "uppercase", letterSpacing: "0.5px" }}>{item.label}</div>
-              </div>
-            ))}
-          </div>
+      {/* Contenu bas desktop */}
+      <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", zIndex: 2, display: "flex", alignItems: "stretch", gap: 0, width: "max-content" }}>
+        <div style={{ display: "flex", gap: 12, alignItems: "center", paddingRight: 24 }}>
+          <a href="#pricing" className="btn-primary btn-primary-animated" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta1}</a>
+          <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta2}</a>
         </div>
-      ) : (
-        <div style={{ position: "absolute", bottom: 40, left: "50%", transform: "translateX(-50%)", zIndex: 2, display: "flex", alignItems: "stretch", gap: 0, width: "max-content" }}>
-          <div style={{ display: "flex", gap: 12, alignItems: "center", paddingRight: 24 }}>
-            <a href="#pricing" className="btn-primary btn-primary-animated" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta1}</a>
-            <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 13, padding: "14px 28px", whiteSpace: "nowrap" }}>{T.hero.cta2}</a>
+        <div style={{ width: 1, backgroundColor: "rgba(201,168,76,0.3)", margin: "8px 0" }} />
+        {[
+          { label: T.hero.maxFunding, value: "$400K" },
+          { label: T.hero.profitSplit, value: "Up to 90%" },
+          { label: T.hero.feeRefunded, value: "1st Payout" },
+        ].map((item) => (
+          <div key={item.label} style={{ padding: "12px 32px", textAlign: "center" }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: "#C9A84C", whiteSpace: "nowrap" }}>{item.value}</div>
+            <div style={{ fontSize: 10, color: "#888", marginTop: 3, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{item.label}</div>
           </div>
-          <div style={{ width: 1, backgroundColor: "rgba(201,168,76,0.3)", margin: "8px 0" }} />
-          {[
-            { label: T.hero.maxFunding, value: "$400K" },
-            { label: T.hero.profitSplit, value: "Up to 90%" },
-            { label: T.hero.feeRefunded, value: "1st Payout" },
-          ].map((item) => (
-            <div key={item.label} style={{ padding: "12px 32px", textAlign: "center" }}>
-              <div style={{ fontSize: 18, fontWeight: 800, color: "#C9A84C", whiteSpace: "nowrap" }}>{item.value}</div>
-              <div style={{ fontSize: 10, color: "#888", marginTop: 3, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{item.label}</div>
-            </div>
-          ))}
-        </div>
-      )}
+        ))}
+      </div>
     </section>
   );
 }
