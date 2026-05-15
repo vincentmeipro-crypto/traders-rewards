@@ -80,9 +80,10 @@ export default function Hero() {
         textAlign: "right",
       }}>
         <p style={{
-          fontSize: 15, fontWeight: 700, color: "#fff",
-          letterSpacing: "0.3px", lineHeight: 1.5,
+          fontSize: 18, fontWeight: 800, color: "#C9A84C",
+          letterSpacing: "2px", textTransform: "uppercase", lineHeight: 1.5,
           textShadow: "0 2px 12px rgba(0,0,0,0.8)",
+          fontFamily: "inherit",
         }}>
           {T.hero.tagline}
         </p>
