@@ -482,10 +482,10 @@ export default function DashboardClient({ user }: { user: User }) {
                 <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}><CheckCircle size={16} /> Trading Account Ready</div>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
                   {[
-                    { label: "Platform", value: "cTrader" },
-                    { label: "MT5 Server", value: challenge.server || "—" },
-                    { label: "Login", value: challenge.ctrader_login },
+                    { label: "Platform", value: "MT5" },
+                    { label: "Account ID", value: challenge.ctrader_account_id || "—" },
                     { label: "Password", value: challenge.ctrader_password || "—" },
+                    { label: "MT5 Server", value: challenge.server || "—" },
                   ].map((item, i) => (
                     <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "12px 16px" }}>
                       <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>{item.label}</div>
