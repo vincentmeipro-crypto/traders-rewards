@@ -14,27 +14,31 @@ export default function Hero() {
   }, []);
   if (isMobile) {
     return (
-      <section style={{ height: "100svh", width: "100%", position: "relative", overflow: "hidden" }}>
+      <section style={{
+        height: "100dvh",
+        width: "100vw",
+        position: "relative",
+        overflow: "hidden",
+        backgroundImage: "url('/hero-mobile-new.png')",
+        backgroundSize: "cover",
+        backgroundPosition: "center top",
+        backgroundRepeat: "no-repeat",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-end",
+      }}>
 
-        {/* Image plein écran */}
-        <Image
-          src="/hero-mobile-new.png"
-          alt="Elysium Funded"
-          fill
-          priority
-          style={{ objectFit: "cover", objectPosition: "center top" }}
-        />
-
-        {/* Gradient sombre en bas pour lisibilité */}
+        {/* Gradient sombre en bas */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(to bottom, rgba(7,7,7,0) 40%, rgba(7,7,7,0.7) 70%, rgba(7,7,7,0.95) 100%)"
+          background: "linear-gradient(to bottom, rgba(7,7,7,0) 40%, rgba(7,7,7,0.75) 72%, rgba(7,7,7,0.97) 100%)",
+          zIndex: 1,
         }} />
 
-        {/* CTA collé tout en bas */}
+        {/* CTA collé en bas */}
         <div style={{
-          position: "absolute", bottom: 0, left: 0, right: 0, zIndex: 2,
-          padding: "0 16px 28px",
+          position: "relative", zIndex: 2,
+          padding: "0 16px 32px",
           display: "flex", flexDirection: "column", gap: 10,
         }}>
           <a href="#pricing" className="btn-primary btn-primary-animated"
