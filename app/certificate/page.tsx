@@ -85,7 +85,7 @@ function CertificateContent() {
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(14px, 2.8vw, 22px)",
+            fontSize: "clamp(20px, 4.2vw, 33px)",
             fontWeight: 800, color: cfg.nameColor,
             letterSpacing: "1px",
             textShadow: "0 2px 10px rgba(0,0,0,0.9)",
@@ -102,7 +102,7 @@ function CertificateContent() {
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(16px, 3.2vw, 26px)",
+            fontSize: "clamp(24px, 4.8vw, 39px)",
             fontWeight: 900, color: cfg.amountColor,
             letterSpacing: "-0.5px",
             textShadow: "0 2px 12px rgba(0,0,0,0.9)",
@@ -119,7 +119,7 @@ function CertificateContent() {
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(10px, 2vw, 13px)",
+            fontSize: "clamp(15px, 3vw, 20px)",
             fontWeight: 600,
             color: cfg.dateColor,
             letterSpacing: "1px",
