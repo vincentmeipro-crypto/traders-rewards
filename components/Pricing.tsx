@@ -46,7 +46,7 @@ export default function Pricing() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.pricing.label}</span>
-          <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: 16 }}>
+          <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: 0 }}>
             {T.pricing.title} <span className="gold-gradient">{T.pricing.titleGold}</span>
           </h2>
         </div>
