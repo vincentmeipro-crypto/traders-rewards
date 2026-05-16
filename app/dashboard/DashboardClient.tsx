@@ -317,7 +317,7 @@ export default function DashboardClient({ user }: { user: User }) {
               const phase = challenge?.phase || "phase1";
               const unlockedPhase1 = phase === "phase2" || phase === "funded";
               const unlockedChallenge = phase === "funded";
-              const unlockedReward = !!latestPayout && (latestPayout.status === "approved" || latestPayout.status === "paid");
+              const unlockedReward = !!latestPayout;
 
               const certs = [
                 {
