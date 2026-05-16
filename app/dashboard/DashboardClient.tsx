@@ -334,7 +334,13 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                     <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <div style={{ color: "#444", fontSize: 12 }}>Issued by <span style={{ color: "#2D7DD2", fontWeight: 700 }}>Elysium</span></div>
-                      <div style={{ color: "#333", fontSize: 12 }}>#{challenge.id.slice(0, 8).toUpperCase()}</div>
+                      <a
+                        href={`/certificate?type=phase1&size=${encodeURIComponent(challenge.account_size)}&model=${challenge.model}&id=${challenge.id}&date=${encodeURIComponent(new Date(challenge.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }))}`}
+                        target="_blank"
+                        style={{ fontSize: 12, fontWeight: 700, color: "#2D7DD2", textDecoration: "none", background: "rgba(45,125,210,0.1)", border: "1px solid rgba(45,125,210,0.3)", borderRadius: 8, padding: "6px 14px" }}
+                      >
+                        View & Print →
+                      </a>
                     </div>
                   </div>
                 )}
@@ -371,7 +377,13 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                     <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <div style={{ color: "#444", fontSize: 12 }}>Issued by <span style={{ color: "#22c55e", fontWeight: 700 }}>Elysium</span></div>
-                      <div style={{ color: "#333", fontSize: 12 }}>#{challenge.id.slice(0, 8).toUpperCase()}</div>
+                      <a
+                        href={`/certificate?type=funded&size=${encodeURIComponent(challenge.account_size)}&model=${challenge.model}&id=${challenge.id}&date=${encodeURIComponent(new Date(challenge.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }))}`}
+                        target="_blank"
+                        style={{ fontSize: 12, fontWeight: 700, color: "#22c55e", textDecoration: "none", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 8, padding: "6px 14px" }}
+                      >
+                        View & Print →
+                      </a>
                     </div>
                   </div>
                 )}
