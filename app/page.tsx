@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import PromoBanner from "@/components/PromoBanner";
+import DisclaimerBanner from "@/components/DisclaimerBanner";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
 import HowItWorks from "@/components/HowItWorks";
@@ -22,6 +23,7 @@ export default function Home() {
       <Rules />
       <FAQ />
       <Footer />
+      <DisclaimerBanner />
     </main>
   );
 }
