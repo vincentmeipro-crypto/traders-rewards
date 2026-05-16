@@ -20,7 +20,7 @@ export const t = {
       badge: 'The Elite Prop Firm',
       headline1: 'The Future Elite',
       headline2: 'Start Here',
-      sub: 'Pass our challenge and access up to $400,000 in funded capital. Keep up to 90% of your profits. No personal risk.',
+      sub: 'Pass our challenge and access up to $200,000 in funded capital. Keep up to 90% of your profits. No personal risk.',
       cta1: 'Start Your Challenge',
       cta2: 'How It Works',
       trust: 'Challenge fee fully refunded on first payout · No time limit · Instant account delivery',
@@ -37,7 +37,7 @@ export const t = {
       steps: [
         { title: 'Choose Your Challenge', desc: 'Select your account size from $10K to $200K. Choose between our 2-Step or 1-Step challenge. Pay the one-time fee — fully refunded at your first payout.' },
         { title: 'Pass the Evaluation', desc: 'Trade with discipline. Hit your profit target while respecting the drawdown rules. No time pressure — trade at your own pace with no expiry date.' },
-        { title: 'Get Funded & Paid', desc: 'Receive your funded account instantly. Trade real capital and keep up to 90% of your profits. Scale up to $400,000 through our scaling program.' },
+        { title: 'Get Funded & Paid', desc: 'Receive your funded account instantly. Trade real capital and keep up to 90% of your profits. Scale up to $200,000 through our scaling program.' },
       ],
     },
     pricing: {
@@ -45,8 +45,8 @@ export const t = {
       sub: 'Challenge fee fully refunded on your first payout.',
       twoStep: '2-STEP', oneStep: '1-STEP ⚡', mostPopular: 'Most Popular',
       account: 'Account', getStarted: 'Get Started', allInclude: 'ALL CHALLENGES INCLUDE',
-      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 4 trading days','No time limit','80% profit split','Fee refunded at 1st payout','Scale up to $400,000'],
-      features1: ['Single phase: +10% profit target','3% max daily loss','10% trailing drawdown','50% best day rule','Minimum 4 trading days','No time limit','90% profit split','Fee refunded at 1st payout','Scale up to $400,000'],
+      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 4 trading days','No time limit','80% profit split','Fee refunded at 1st payout','Scale up to $200,000'],
+      features1: ['Single phase: +10% profit target','3% max daily loss','10% trailing drawdown','50% best day rule','Minimum 4 trading days','No time limit','90% profit split','Fee refunded at 1st payout','Scale up to $200,000'],
     },
     rules: {
       label: 'Transparency First', title: 'Clear', titleGold: 'Rules',
@@ -78,7 +78,7 @@ export const t = {
       badge: 'La Prop Firm Élite',
       headline1: 'La Future Élite',
       headline2: 'Commence Ici',
-      sub: 'Réussissez notre challenge et accédez à 400 000$ de capital. Gardez jusqu\'à 90% de vos profits. Aucun risque personnel.',
+      sub: 'Réussissez notre challenge et accédez à 200 000$ de capital. Gardez jusqu\'à 90% de vos profits. Aucun risque personnel.',
       cta1: 'Commencer le Challenge',
       cta2: 'Comment ça marche',
       trust: 'Frais remboursés au 1er retrait · Sans limite de temps · Compte livré instantanément',
@@ -95,7 +95,7 @@ export const t = {
       steps: [
         { title: 'Choisissez votre Challenge', desc: 'Sélectionnez votre taille de compte de 10K$ à 200K$. Choisissez entre notre challenge 2 étapes ou 1 étape. Frais remboursés au premier retrait.' },
         { title: 'Réussissez l\'Évaluation', desc: 'Tradez avec discipline. Atteignez votre objectif de profit tout en respectant les règles de drawdown. Aucune pression de temps, pas de date d\'expiration.' },
-        { title: 'Soyez Financé et Payé', desc: 'Recevez votre compte financé instantanément. Tradez du vrai capital et gardez jusqu\'à 90% de vos profits. Évoluez jusqu\'à 400 000$.' },
+        { title: 'Soyez Financé et Payé', desc: 'Recevez votre compte financé instantanément. Tradez du vrai capital et gardez jusqu\'à 90% de vos profits. Évoluez jusqu\'à 200 000$.' },
       ],
     },
     pricing: {
@@ -103,8 +103,8 @@ export const t = {
       sub: 'Frais de challenge remboursés à votre premier retrait.',
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
-      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Frais remboursés au 1er retrait','Évolution jusqu\'à 400 000$'],
-      features1: ['Phase unique : +10% objectif profit','3% perte journalière max','10% drawdown trailing','Règle des 50% meilleur jour','Minimum 4 jours de trading','Sans limite de temps','90% partage des profits','Frais remboursés au 1er retrait','Évolution jusqu\'à 400 000$'],
+      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Frais remboursés au 1er retrait','Évolution jusqu\'à 200 000$'],
+      features1: ['Phase unique : +10% objectif profit','3% perte journalière max','10% drawdown trailing','Règle des 50% meilleur jour','Minimum 4 jours de trading','Sans limite de temps','90% partage des profits','Frais remboursés au 1er retrait','Évolution jusqu\'à 200 000$'],
     },
     rules: {
       label: 'Transparence Totale', title: 'Règles', titleGold: 'Claires',
@@ -136,7 +136,7 @@ export const t = {
       badge: 'شركة التداول النخبوية',
       headline1: 'النخبة المستقبلية',
       headline2: 'تبدأ هنا',
-      sub: 'اجتز تحديناً واحصل على رأس مال يصل إلى 400,000$. احتفظ بما يصل إلى 90% من أرباحك. بدون مخاطر شخصية.',
+      sub: 'اجتز تحديناً واحصل على رأس مال يصل إلى 200,000$. احتفظ بما يصل إلى 90% من أرباحك. بدون مخاطر شخصية.',
       cta1: 'ابدأ تحديك',
       cta2: 'كيف يعمل',
       trust: 'رسوم التحدي مستردة عند أول سحب · بلا حد زمني · تسليم فوري للحساب',
@@ -153,7 +153,7 @@ export const t = {
       steps: [
         { title: 'اختر تحديك', desc: 'اختر حجم حسابك من 10K$ إلى 200K$. اختر بين تحدي خطوتين أو خطوة واحدة. الرسوم مستردة عند أول سحب.' },
         { title: 'اجتز التقييم', desc: 'تداول بانضباط. حقق هدف الربح مع احترام قواعد الحد الأقصى للخسارة. لا ضغط زمني.' },
-        { title: 'احصل على التمويل والمكافأة', desc: 'استلم حسابك الممول فوراً. تداول برأس مال حقيقي واحتفظ بـ 90% من أرباحك. قد إلى 400,000$.' },
+        { title: 'احصل على التمويل والمكافأة', desc: 'استلم حسابك الممول فوراً. تداول برأس مال حقيقي واحتفظ بـ 90% من أرباحك. قد إلى 200,000$.' },
       ],
     },
     pricing: {
@@ -161,8 +161,8 @@ export const t = {
       sub: 'رسوم التحدي مستردة عند أول سحب.',
       twoStep: 'خطوتان', oneStep: 'خطوة واحدة ⚡', mostPopular: 'الأكثر شعبية',
       account: 'الحساب', getStarted: 'ابدأ الآن', allInclude: 'جميع التحديات تشمل',
-      features2: ['المرحلة 1: +10% هدف الربح','المرحلة 2: +5% هدف الربح','5% حد الخسارة اليومية','10% حد الخسارة الإجمالية','4 أيام تداول على الأقل','بلا حد زمني','80% توزيع الأرباح','استرداد الرسوم عند أول سحب','تطوير حتى 400,000$'],
-      features1: ['مرحلة واحدة: +10% هدف الربح','3% حد الخسارة اليومية','10% حد الخسارة المتحرك','قاعدة 50% أفضل يوم','4 أيام تداول على الأقل','بلا حد زمني','90% توزيع الأرباح','استرداد الرسوم عند أول سحب','تطوير حتى 400,000$'],
+      features2: ['المرحلة 1: +10% هدف الربح','المرحلة 2: +5% هدف الربح','5% حد الخسارة اليومية','10% حد الخسارة الإجمالية','4 أيام تداول على الأقل','بلا حد زمني','80% توزيع الأرباح','استرداد الرسوم عند أول سحب','تطوير حتى 200,000$'],
+      features1: ['مرحلة واحدة: +10% هدف الربح','3% حد الخسارة اليومية','10% حد الخسارة المتحرك','قاعدة 50% أفضل يوم','4 أيام تداول على الأقل','بلا حد زمني','90% توزيع الأرباح','استرداد الرسوم عند أول سحب','تطوير حتى 200,000$'],
     },
     rules: {
       label: 'الشفافية أولاً', title: 'قواعد', titleGold: 'واضحة',
@@ -194,7 +194,7 @@ export const t = {
       badge: 'La Prop Firm Élite',
       headline1: 'La Futura Élite',
       headline2: 'Empieza Aquí',
-      sub: 'Supera nuestro desafío y accede a $400,000 en capital financiado. Quédate hasta el 90% de tus ganancias. Sin riesgo personal.',
+      sub: 'Supera nuestro desafío y accede a $200,000 en capital financiado. Quédate hasta el 90% de tus ganancias. Sin riesgo personal.',
       cta1: 'Iniciar Desafío',
       cta2: 'Cómo Funciona',
       trust: 'Tarifa del desafío totalmente reembolsada · Sin límite de tiempo · Cuenta entregada al instante',
@@ -211,7 +211,7 @@ export const t = {
       steps: [
         { title: 'Elige tu Desafío', desc: 'Selecciona el tamaño de tu cuenta de $10K a $200K. Elige entre nuestro desafío de 2 pasos o 1 paso. La tarifa se reembolsa en el primer pago.' },
         { title: 'Supera la Evaluación', desc: 'Opera con disciplina. Alcanza tu objetivo de ganancia respetando las reglas de drawdown. Sin presión de tiempo, sin fecha de vencimiento.' },
-        { title: 'Recibe Fondos y Pago', desc: 'Recibe tu cuenta financiada al instante. Opera con capital real y conserva hasta el 90% de tus ganancias. Escala hasta $400,000.' },
+        { title: 'Recibe Fondos y Pago', desc: 'Recibe tu cuenta financiada al instante. Opera con capital real y conserva hasta el 90% de tus ganancias. Escala hasta $200,000.' },
       ],
     },
     pricing: {
@@ -219,8 +219,8 @@ export const t = {
       sub: 'La tarifa del desafío se reembolsa en tu primer pago.',
       twoStep: '2 PASOS', oneStep: '1 PASO ⚡', mostPopular: 'Más Popular',
       account: 'Cuenta', getStarted: 'Empezar', allInclude: 'TODOS LOS DESAFÍOS INCLUYEN',
-      features2: ['Fase 1: +10% objetivo de ganancia','Fase 2: +5% objetivo de ganancia','5% pérdida diaria máx.','10% drawdown total máx.','Mínimo 4 días de trading','Sin límite de tiempo','80% división de ganancias','Tarifa reembolsada en 1er pago','Escala hasta $400,000'],
-      features1: ['Fase única: +10% objetivo de ganancia','3% pérdida diaria máx.','10% drawdown trailing','Regla del 50% mejor día','Mínimo 4 días de trading','Sin límite de tiempo','90% división de ganancias','Tarifa reembolsada en 1er pago','Escala hasta $400,000'],
+      features2: ['Fase 1: +10% objetivo de ganancia','Fase 2: +5% objetivo de ganancia','5% pérdida diaria máx.','10% drawdown total máx.','Mínimo 4 días de trading','Sin límite de tiempo','80% división de ganancias','Tarifa reembolsada en 1er pago','Escala hasta $200,000'],
+      features1: ['Fase única: +10% objetivo de ganancia','3% pérdida diaria máx.','10% drawdown trailing','Regla del 50% mejor día','Mínimo 4 días de trading','Sin límite de tiempo','90% división de ganancias','Tarifa reembolsada en 1er pago','Escala hasta $200,000'],
     },
     rules: {
       label: 'Transparencia Total', title: 'Reglas', titleGold: 'Claras',
@@ -252,7 +252,7 @@ export const t = {
       badge: 'A Prop Firm de Elite',
       headline1: 'A Futura Elite',
       headline2: 'Começa Aqui',
-      sub: 'Passe nosso desafio e acesse até $400.000 em capital financiado. Fique com até 90% dos seus lucros. Sem risco pessoal.',
+      sub: 'Passe nosso desafio e acesse até $200.000 em capital financiado. Fique com até 90% dos seus lucros. Sem risco pessoal.',
       cta1: 'Iniciar Desafio',
       cta2: 'Como Funciona',
       trust: 'Taxa do desafio totalmente reembolsada · Sem limite de tempo · Conta entregue instantaneamente',
@@ -269,7 +269,7 @@ export const t = {
       steps: [
         { title: 'Escolha seu Desafio', desc: 'Selecione o tamanho da sua conta de $10K a $200K. Escolha entre nosso desafio de 2 etapas ou 1 etapa. Taxa reembolsada no primeiro pagamento.' },
         { title: 'Passe a Avaliação', desc: 'Opere com disciplina. Atinja sua meta de lucro respeitando as regras de drawdown. Sem pressão de tempo, sem data de expiração.' },
-        { title: 'Receba Financiamento e Pagamento', desc: 'Receba sua conta financiada instantaneamente. Opere com capital real e fique com até 90% dos seus lucros. Escale até $400.000.' },
+        { title: 'Receba Financiamento e Pagamento', desc: 'Receba sua conta financiada instantaneamente. Opere com capital real e fique com até 90% dos seus lucros. Escale até $200.000.' },
       ],
     },
     pricing: {
@@ -277,8 +277,8 @@ export const t = {
       sub: 'Taxa do desafio reembolsada no seu primeiro pagamento.',
       twoStep: '2 ETAPAS', oneStep: '1 ETAPA ⚡', mostPopular: 'Mais Popular',
       account: 'Conta', getStarted: 'Começar', allInclude: 'TODOS OS DESAFIOS INCLUEM',
-      features2: ['Fase 1: +10% meta de lucro','Fase 2: +5% meta de lucro','5% perda diária máx.','10% drawdown total máx.','Mínimo 4 dias de operação','Sem limite de tempo','80% divisão de lucros','Taxa reembolsada no 1º pagamento','Escale até $400.000'],
-      features1: ['Fase única: +10% meta de lucro','3% perda diária máx.','10% drawdown trailing','Regra de 50% melhor dia','Mínimo 4 dias de operação','Sem limite de tempo','90% divisão de lucros','Taxa reembolsada no 1º pagamento','Escale até $400.000'],
+      features2: ['Fase 1: +10% meta de lucro','Fase 2: +5% meta de lucro','5% perda diária máx.','10% drawdown total máx.','Mínimo 4 dias de operação','Sem limite de tempo','80% divisão de lucros','Taxa reembolsada no 1º pagamento','Escale até $200.000'],
+      features1: ['Fase única: +10% meta de lucro','3% perda diária máx.','10% drawdown trailing','Regra de 50% melhor dia','Mínimo 4 dias de operação','Sem limite de tempo','90% divisão de lucros','Taxa reembolsada no 1º pagamento','Escale até $200.000'],
     },
     rules: {
       label: 'Transparência Total', title: 'Regras', titleGold: 'Claras',
@@ -310,7 +310,7 @@ export const t = {
       badge: 'Die Elite Prop Firm',
       headline1: 'Die Zukünftige Elite',
       headline2: 'Beginnt Hier',
-      sub: 'Bestehe unsere Challenge und erhalte Zugang zu $400.000 an finanziertem Kapital. Behalte bis zu 90% deiner Gewinne. Kein persönliches Risiko.',
+      sub: 'Bestehe unsere Challenge und erhalte Zugang zu $200.000 an finanziertem Kapital. Behalte bis zu 90% deiner Gewinne. Kein persönliches Risiko.',
       cta1: 'Challenge Starten',
       cta2: 'So Funktioniert Es',
       trust: 'Challenge-Gebühr vollständig erstattet · Kein Zeitlimit · Sofortige Kontobereitstellung',
@@ -327,7 +327,7 @@ export const t = {
       steps: [
         { title: 'Wähle deine Challenge', desc: 'Wähle deine Kontogröße von $10K bis $200K. Entscheide dich für unsere 2-Stufen- oder 1-Stufen-Challenge. Gebühr wird bei erstem Auszahlung erstattet.' },
         { title: 'Bestehe die Bewertung', desc: 'Handle diszipliniert. Erreiche dein Gewinnziel unter Einhaltung der Drawdown-Regeln. Kein Zeitdruck, kein Ablaufdatum.' },
-        { title: 'Finanziert werden und Gewinne erhalten', desc: 'Erhalte dein finanziertes Konto sofort. Handle mit echtem Kapital und behalte bis zu 90% deiner Gewinne. Skaliere bis zu $400.000.' },
+        { title: 'Finanziert werden und Gewinne erhalten', desc: 'Erhalte dein finanziertes Konto sofort. Handle mit echtem Kapital und behalte bis zu 90% deiner Gewinne. Skaliere bis zu $200.000.' },
       ],
     },
     pricing: {
@@ -335,8 +335,8 @@ export const t = {
       sub: 'Challenge-Gebühr wird bei deiner ersten Auszahlung erstattet.',
       twoStep: '2 STUFEN', oneStep: '1 STUFE ⚡', mostPopular: 'Am Beliebtesten',
       account: 'Konto', getStarted: 'Jetzt Starten', allInclude: 'ALLE CHALLENGES BEINHALTEN',
-      features2: ['Phase 1: +10% Gewinnziel','Phase 2: +5% Gewinnziel','5% max. Tagesverlust','10% max. Gesamtverlust','Mindestens 4 Handelstage','Kein Zeitlimit','80% Gewinnbeteiligung','Gebühr bei 1. Auszahlung erstattet','Skalierung bis $400.000'],
-      features1: ['Einzelphase: +10% Gewinnziel','3% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 4 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Gebühr bei 1. Auszahlung erstattet','Skalierung bis $400.000'],
+      features2: ['Phase 1: +10% Gewinnziel','Phase 2: +5% Gewinnziel','5% max. Tagesverlust','10% max. Gesamtverlust','Mindestens 4 Handelstage','Kein Zeitlimit','80% Gewinnbeteiligung','Gebühr bei 1. Auszahlung erstattet','Skalierung bis $200.000'],
+      features1: ['Einzelphase: +10% Gewinnziel','3% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 4 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Gebühr bei 1. Auszahlung erstattet','Skalierung bis $200.000'],
     },
     rules: {
       label: 'Transparenz Zuerst', title: 'Klare', titleGold: 'Regeln',
@@ -368,7 +368,7 @@ export const t = {
       badge: 'Elit Prop Firm',
       headline1: 'Geleceğin Eliti',
       headline2: 'Buradan Başlar',
-      sub: 'Meydan okumamızı geç ve $400.000\'e kadar fonlu sermayeye eriş. Kârının %90\'ına kadar al. Kişisel risk yok.',
+      sub: 'Meydan okumamızı geç ve $200.000\'e kadar fonlu sermayeye eriş. Kârının %90\'ına kadar al. Kişisel risk yok.',
       cta1: 'Meydan Okumayı Başlat',
       cta2: 'Nasıl Çalışır',
       trust: 'Meydan okuma ücreti ilk ödemede iade edilir · Zaman sınırı yok · Anında hesap teslimi',
@@ -385,7 +385,7 @@ export const t = {
       steps: [
         { title: 'Meydan Okumanı Seç', desc: '$10K\'dan $200K\'ya hesap büyüklüğünü seç. 2 aşamalı veya 1 aşamalı meydan okuma arasında seç. Ücret ilk ödemede iade edilir.' },
         { title: 'Değerlendirmeyi Geç', desc: 'Disiplinli işlem yap. Drawdown kurallarına uymaya devam ederek kâr hedefine ulaş. Zaman baskısı yok, son tarih yok.' },
-        { title: 'Fon Al ve Kazan', desc: 'Fonlanan hesabını anında al. Gerçek sermaye ile işlem yap ve kârının %90\'ına kadar al. $400.000\'e kadar büyü.' },
+        { title: 'Fon Al ve Kazan', desc: 'Fonlanan hesabını anında al. Gerçek sermaye ile işlem yap ve kârının %90\'ına kadar al. $200.000\'e kadar büyü.' },
       ],
     },
     pricing: {
@@ -393,8 +393,8 @@ export const t = {
       sub: 'Meydan okuma ücreti ilk ödemenizde iade edilir.',
       twoStep: '2 AŞAMA', oneStep: '1 AŞAMA ⚡', mostPopular: 'En Popüler',
       account: 'Hesap', getStarted: 'Başla', allInclude: 'TÜM MEYDAN OKUMALAR İÇERİR',
-      features2: ['Aşama 1: +%10 kâr hedefi','Aşama 2: +%5 kâr hedefi','Maks. %5 günlük kayıp','Maks. %10 toplam drawdown','Minimum 4 işlem günü','Zaman sınırı yok','%80 kâr paylaşımı','1. ödemede ücret iadesi','$400.000\'e kadar büyüme'],
-      features1: ['Tek aşama: +%10 kâr hedefi','Maks. %3 günlük kayıp','%10 trailing drawdown','%50 en iyi gün kuralı','Minimum 4 işlem günü','Zaman sınırı yok','%90 kâr paylaşımı','1. ödemede ücret iadesi','$400.000\'e kadar büyüme'],
+      features2: ['Aşama 1: +%10 kâr hedefi','Aşama 2: +%5 kâr hedefi','Maks. %5 günlük kayıp','Maks. %10 toplam drawdown','Minimum 4 işlem günü','Zaman sınırı yok','%80 kâr paylaşımı','1. ödemede ücret iadesi','$200.000\'e kadar büyüme'],
+      features1: ['Tek aşama: +%10 kâr hedefi','Maks. %3 günlük kayıp','%10 trailing drawdown','%50 en iyi gün kuralı','Minimum 4 işlem günü','Zaman sınırı yok','%90 kâr paylaşımı','1. ödemede ücret iadesi','$200.000\'e kadar büyüme'],
     },
     rules: {
       label: 'Önce Şeffaflık', title: 'Net', titleGold: 'Kurallar',
