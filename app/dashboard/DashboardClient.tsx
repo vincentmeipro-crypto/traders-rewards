@@ -188,7 +188,7 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "rules" && (
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Trading Rules</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>These rules apply to all Elysium Funded challenges.</p>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>These rules apply to all Elysium challenges.</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
                 { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#2D7DD2" /> },
