@@ -4,12 +4,12 @@ import { Suspense } from "react";
 
 const cfg = {
   image: "/CERTIFICAT.png",
-  nameColor: "#ffffff",
-  amountColor: "#c084fc",
-  dateColor: "#aaaaaa",
-  nameTop: "69%",
-  amountTop: "85%",
-  dateTop: "93%",
+  nameColor: "#1a1a6e",
+  amountColor: "#2D7DD2",
+  dateColor: "#333333",
+  nameTop: "55%",
+  amountTop: "70%",
+  dateTop: "87%",
 };
 
 function CertificateContent() {
@@ -48,8 +48,8 @@ function CertificateContent() {
         ↓ Télécharger / Imprimer
       </button>
 
-      {/* Certificate wrapper */}
-      <div style={{ position: "relative", width: "min(480px, 92vw)" }}>
+      {/* Certificate wrapper — landscape format */}
+      <div style={{ position: "relative", width: "min(700px, 96vw)" }}>
         <img
           src={cfg.image}
           alt="certificate"
