@@ -51,7 +51,7 @@ const faqData = {
     },
     {
       q: "How and when do I get paid?",
-      a: "Once funded, you can request a payout anytime from your dashboard. Payouts are processed within 24-48 hours via crypto (USDT, BTC) or bank transfer.",
+      a: "Your first payout is available from day 14 of trading on your funded account (or the day after your first trade, whichever comes later). After that, you can request a payout every 30 calendar days. Payouts are processed within 24-48 hours via crypto (USDT, BTC) or bank transfer.",
     },
     {
       q: "What is the profit split?",
@@ -117,7 +117,7 @@ const faqData = {
     },
     {
       q: "Comment et quand est-ce que je suis payé ?",
-      a: "Une fois financé, vous pouvez demander un retrait à tout moment depuis votre tableau de bord. Les retraits sont traités sous 24-48h par crypto (USDT, BTC) ou virement bancaire.",
+      a: "Votre premier retrait est disponible à partir du 14e jour de trading sur votre compte financé (ou le lendemain de votre premier trade, selon ce qui arrive en dernier). Ensuite, vous pouvez demander un retrait tous les 30 jours calendaires. Les retraits sont traités sous 24-48h par crypto (USDT, BTC) ou virement bancaire.",
     },
     {
       q: "Quel est le partage des profits ?",

@@ -33,7 +33,7 @@ export default function Rules() {
     days: isFr ? "jours" : "days",
     profitSplit: isFr ? "Partage des Profits" : "Profit Split",
     payout: isFr ? "Fréquence des Retraits" : "Payout Frequency",
-    payoutVal: isFr ? "À tout moment (24-48h)" : "Anytime (24-48h)",
+    payoutVal: isFr ? "1er retrait : J+14 · Ensuite tous les 30 jours" : "1st payout: Day 14+ · Then every 30 days",
     feeRefund: isFr ? "Remboursement des Frais" : "Fee Refund",
     feeRefundVal: isFr ? "Au 1er retrait" : "At 1st payout",
     scaling: isFr ? "Scaling Possible" : "Scaling",
