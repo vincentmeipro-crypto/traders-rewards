@@ -37,7 +37,7 @@ export default function Navbar() {
               style={{ width: 32, height: 32, objectFit: "contain", mixBlendMode: "screen" }}
             />
             <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1 }}>
-              Elysium <span style={{ color: "#2D7DD2" }}>Funded</span>
+              Elysium
             </span>
           </div>
 
