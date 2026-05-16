@@ -2,21 +2,21 @@
 import { useLanguage } from "@/lib/LanguageContext";
 
 const traders = [
-  { name: "Karim B.",       flag: "🇫🇷", payout: "$840",   size: "$100K", color: "#2D7DD2", initials: "KB" },
-  { name: "Marco V.",       flag: "🇮🇹", payout: "$1,620", size: "$200K", color: "#3b82f6", initials: "MV" },
-  { name: "Sarah L.",       flag: "🇬🇧", payout: "$490",   size: "$50K",  color: "#22c55e", initials: "SL" },
-  { name: "Ahmed R.",       flag: "🇸🇦", payout: "$2,100", size: "$200K", color: "#a855f7", initials: "AR" },
-  { name: "Lucas M.",       flag: "🇧🇷", payout: "$750",   size: "$100K", color: "#f59e0b", initials: "LM" },
-  { name: "TheBullTrader",  flag: "🇩🇪", payout: "$3,200", size: "$200K", color: "#ef4444", initials: "TB" },
-  { name: "Yuki T.",        flag: "🇯🇵", payout: "$980",   size: "$100K", color: "#06b6d4", initials: "YT" },
-  { name: "Carlos G.",      flag: "🇪🇸", payout: "$560",   size: "$50K",  color: "#2D7DD2", initials: "CG" },
-  { name: "PipHunterPro",   flag: "🇺🇸", payout: "$2,750", size: "$200K", color: "#22c55e", initials: "PH" },
-  { name: "Fatima A.",      flag: "🇲🇦", payout: "$870",   size: "$100K", color: "#f59e0b", initials: "FA" },
-  { name: "Dmitri K.",      flag: "🇷🇺", payout: "$1,340", size: "$200K", color: "#3b82f6", initials: "DK" },
-  { name: "Lena H.",        flag: "🇩🇪", payout: "$310",   size: "$25K",  color: "#a855f7", initials: "LH" },
-  { name: "Jean-Pierre D.", flag: "🇫🇷", payout: "$1,900", size: "$200K", color: "#ef4444", initials: "JP" },
-  { name: "GoldScalper",    flag: "🇦🇪", payout: "$4,100", size: "$200K", color: "#2D7DD2", initials: "GS" },
-  { name: "Min-jun L.",     flag: "🇰🇷", payout: "$1,190", size: "$100K", color: "#06b6d4", initials: "ML" },
+  { name: "Karim B.",       flag: "FR", payout: "$840",   size: "$100K", color: "#2D7DD2", initials: "KB" },
+  { name: "Marco V.",       flag: "IT", payout: "$1,620", size: "$200K", color: "#3b82f6", initials: "MV" },
+  { name: "Sarah L.",       flag: "GB", payout: "$490",   size: "$50K",  color: "#22c55e", initials: "SL" },
+  { name: "Ahmed R.",       flag: "SA", payout: "$2,100", size: "$200K", color: "#a855f7", initials: "AR" },
+  { name: "Lucas M.",       flag: "BR", payout: "$750",   size: "$100K", color: "#f59e0b", initials: "LM" },
+  { name: "TheBullTrader",  flag: "DE", payout: "$3,200", size: "$200K", color: "#ef4444", initials: "TB" },
+  { name: "Yuki T.",        flag: "JP", payout: "$980",   size: "$100K", color: "#06b6d4", initials: "YT" },
+  { name: "Carlos G.",      flag: "ES", payout: "$560",   size: "$50K",  color: "#2D7DD2", initials: "CG" },
+  { name: "PipHunterPro",   flag: "US", payout: "$2,750", size: "$200K", color: "#22c55e", initials: "PH" },
+  { name: "Fatima A.",      flag: "MA", payout: "$870",   size: "$100K", color: "#f59e0b", initials: "FA" },
+  { name: "Dmitri K.",      flag: "RU", payout: "$1,340", size: "$200K", color: "#3b82f6", initials: "DK" },
+  { name: "Lena H.",        flag: "DE", payout: "$310",   size: "$25K",  color: "#a855f7", initials: "LH" },
+  { name: "Jean-Pierre D.", flag: "FR", payout: "$1,900", size: "$200K", color: "#ef4444", initials: "JP" },
+  { name: "GoldScalper",    flag: "AE", payout: "$4,100", size: "$200K", color: "#2D7DD2", initials: "GS" },
+  { name: "Min-jun L.",     flag: "KR", payout: "$1,190", size: "$100K", color: "#06b6d4", initials: "ML" },
 ];
 
 function TraderCard({ trader }: { trader: typeof traders[0] }) {
@@ -41,10 +41,10 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
         {/* Flag badge */}
         <div style={{
           position: "absolute", bottom: -3, right: -6,
-          width: 20, height: 20, borderRadius: "50%",
-          backgroundColor: "#2A2A38", border: "1.5px solid #222",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 13, lineHeight: 1,
+          backgroundColor: "#1a1a2e", border: "1px solid #333",
+          borderRadius: 4, padding: "1px 4px",
+          fontSize: 9, fontWeight: 800, color: "#888",
+          letterSpacing: "0.5px", lineHeight: 1.4,
         }}>
           {trader.flag}
         </div>
