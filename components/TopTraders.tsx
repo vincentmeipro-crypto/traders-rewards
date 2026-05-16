@@ -39,15 +39,16 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
           {trader.initials}
         </div>
         {/* Flag badge */}
-        <div style={{
-          position: "absolute", bottom: -3, right: -6,
-          backgroundColor: "#1a1a2e", border: "1px solid #333",
-          borderRadius: 4, padding: "1px 4px",
-          fontSize: 9, fontWeight: 800, color: "#888",
-          letterSpacing: "0.5px", lineHeight: 1.4,
-        }}>
-          {trader.flag}
-        </div>
+        <img
+          src={`https://flagcdn.com/20x15/${trader.flag.toLowerCase()}.png`}
+          alt={trader.flag}
+          style={{
+            position: "absolute", bottom: -3, right: -6,
+            width: 18, height: 14, borderRadius: 2,
+            border: "1px solid rgba(255,255,255,0.15)",
+            objectFit: "cover",
+          }}
+        />
       </div>
 
       {/* Info */}
