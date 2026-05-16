@@ -4,11 +4,11 @@ import { Suspense } from "react";
 
 const cfg = {
   image: "/CERTIFICAT.png",
-  nameColor: "#1a1a6e",
-  amountColor: "#2D7DD2",
-  dateColor: "#333333",
-  nameTop: "55%",
-  amountTop: "70%",
+  nameColor: "#ffffff",
+  amountColor: "#7dd3fc",
+  dateColor: "#aaaaaa",
+  nameTop: "58%",
+  amountTop: "72%",
   dateTop: "87%",
 };
 
