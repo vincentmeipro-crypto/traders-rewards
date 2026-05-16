@@ -23,7 +23,7 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: 14,
-      backgroundColor: "#21212B", border: "1px solid rgba(255,255,255,0.18)",
+      backgroundColor: "#21212B", border: "1.5px solid rgba(255,255,255,0.7)",
       borderRadius: 14, padding: "14px 20px",
       minWidth: 210, flexShrink: 0,
     }}>
