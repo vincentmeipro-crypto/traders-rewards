@@ -295,11 +295,10 @@ export default function DashboardClient({ user }: { user: User }) {
 
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
 
-              {/* Phase 1 Done */}
               {[
-                { type: "phase1", title: "PHASE 1", sub: "DONE !", color1: "#2D7DD2", color2: "#5BA4E8", label: "Phase 1 Passed" },
-                { type: "challenge", title: "CHALLENGE", sub: "DONE !", color1: "#22c55e", color2: "#4ade80", label: "Challenge Complete" },
-                { type: "payout", title: "PAYOUT", sub: "CERTIFICATE", color1: "#2D7DD2", color2: "#5BA4E8", label: "Payout Earned" },
+                { type: "phase1",   image: "/PAHSE1.png",               label: "Ouvrir Phase 1 →",   btnColor: "#2D7DD2" },
+                { type: "challenge",image: "/CHALLENGE COMPLETED.png",  label: "Ouvrir Challenge →", btnColor: "#a855f7" },
+                { type: "payout",   image: "/PAYOUT.png",               label: "Ouvrir Payout →",    btnColor: "#C9A84C" },
               ].map((cert) => {
                 const firstName = challenge?.client_first_name || "";
                 const lastName = challenge?.client_last_name || "";
@@ -309,34 +308,13 @@ export default function DashboardClient({ user }: { user: User }) {
                 const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`;
                 return (
                   <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    {/* Square preview */}
-                    <div style={{
-                      aspectRatio: "1/1", borderRadius: 20, overflow: "hidden",
-                      background: "linear-gradient(145deg, #0d1220, #111827, #0a0f1a)",
-                      border: "1px solid rgba(255,255,255,0.08)",
-                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between",
-                      padding: "28px 24px",
-                      position: "relative",
-                      boxShadow: `0 0 60px ${cert.color1}22`,
-                    }}>
-                      <div style={{ position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: "80%", height: "80%", borderRadius: "50%", background: `radial-gradient(circle, ${cert.color1}18 0%, transparent 70%)`, pointerEvents: "none" }} />
-                      {/* Logo */}
-                      <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: "5px", color: "#fff", position: "relative", zIndex: 1 }}>ELYSIUM</div>
-                      {/* Main text */}
-                      <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-                        <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: "-1px", background: `linear-gradient(135deg, ${cert.color1}, ${cert.color2})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{cert.title}</div>
-                        <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: "-1px", color: "#fff", marginBottom: 16 }}>{cert.sub}</div>
-                        <div style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "12px 20px" }}>
-                          <div style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>{name}</div>
-                          {cert.type === "payout" && <div style={{ fontSize: 24, fontWeight: 900, background: `linear-gradient(135deg, ${cert.color1}, ${cert.color2})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>$0</div>}
-                        </div>
-                      </div>
-                      {/* Date */}
-                      <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{date}</div>
-                        <div style={{ fontSize: 10, color: "#444", letterSpacing: "2px", textTransform: "uppercase" }}>Issued Date</div>
-                      </div>
-                    </div>
+                    {/* Real image preview */}
+                    <a href={href} target="_blank" style={{ display: "block", borderRadius: 16, overflow: "hidden", textDecoration: "none", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", transition: "transform 0.2s" }}
+                      onMouseOver={e => (e.currentTarget.style.transform = "scale(1.02)")}
+                      onMouseOut={e => (e.currentTarget.style.transform = "scale(1)")}
+                    >
+                      <img src={cert.image} alt={cert.label} style={{ width: "100%", display: "block" }} />
+                    </a>
                     {/* Button */}
                     <a
                       href={href}
@@ -345,11 +323,11 @@ export default function DashboardClient({ user }: { user: User }) {
                         display: "block", textAlign: "center",
                         padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700,
                         textDecoration: "none",
-                        background: `linear-gradient(135deg, ${cert.color1}, ${cert.color2})`,
-                        color: cert.type === "challenge" ? "#000" : "#fff",
+                        backgroundColor: cert.btnColor,
+                        color: "#fff",
                       }}
                     >
-                      {cert.label} →
+                      {cert.label}
                     </a>
                   </div>
                 );
