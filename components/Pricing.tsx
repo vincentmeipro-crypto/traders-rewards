@@ -15,7 +15,9 @@ export default function Pricing() {
   const { T, lang } = useLanguage();
   const isFr = lang === "fr";
 
-  const rows2step = [
+  type Row = { label: string; value: string; highlight: boolean; green?: boolean };
+
+  const rows2step: Row[] = [
     { label: isFr ? "ÉTAPE 1" : "PHASE 1",          value: "10%",                        highlight: false },
     { label: isFr ? "ÉTAPE 2" : "PHASE 2",          value: "5%",                         highlight: false },
     { label: isFr ? "Perte journalière max" : "Max daily loss",    value: "5%",           highlight: false },
@@ -26,7 +28,7 @@ export default function Pricing() {
     { label: isFr ? "Partage des profits" : "Profit split",        value: isFr ? "Jusqu'à 80%" : "Up to 80%", highlight: false },
   ];
 
-  const rows1step = [
+  const rows1step: Row[] = [
     { label: isFr ? "Objectif de profit" : "Profit target",        value: "10%",          highlight: false },
     { label: isFr ? "Perte journalière max" : "Max daily loss",    value: "3%",           highlight: false },
     { label: isFr ? "Perte totale (trailing)" : "Total loss (trailing)", value: "10%",   highlight: false },
