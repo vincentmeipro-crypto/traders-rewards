@@ -2,50 +2,23 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-const CERT_CONFIG = {
-  phase1: {
-    image: "/PHASE1.png",
-    nameColor: "#ffffff",
-    amountColor: "#4fc3f7",
-    dateColor: "#cccccc",
-    nameTop: "63%",
-    amountTop: "80%",
-    dateTop: "90%",
-  },
-  challenge: {
-    image: "/CERTIFICAT.png",
-    nameColor: "#ffffff",
-    amountColor: "#c084fc",
-    dateColor: "#aaaaaa",
-    nameTop: "69%",
-    amountTop: "85%",
-    dateTop: "93%",
-  },
-  payout: {
-    image: "/PAYOUT.png",
-    nameColor: "#ffffff",
-    amountColor: "#f5c842",
-    dateColor: "#cccccc",
-    nameTop: "63%",
-    amountTop: "79%",
-    dateTop: "89%",
-  },
+const cfg = {
+  image: "/CERTIFICAT.png",
+  nameColor: "#ffffff",
+  amountColor: "#c084fc",
+  dateColor: "#aaaaaa",
+  nameTop: "69%",
+  amountTop: "85%",
+  dateTop: "93%",
 };
 
 function CertificateContent() {
   const params = useSearchParams();
-  const type = (params.get("type") || "phase1") as keyof typeof CERT_CONFIG;
   const firstName = params.get("firstname") || "";
   const lastName = params.get("lastname") || "";
   const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (params.get("name") || "Trader");
-  const amount = params.get("amount") || "";
+  const amount = params.get("amount") || "$100,000";
   const date = params.get("date") || new Date().toLocaleDateString("fr-FR");
-
-  const cfg = CERT_CONFIG[type] || CERT_CONFIG.phase1;
-
-  const amountLabel = type === "payout"
-    ? (amount || "$0")
-    : (amount || "$100,000");
 
   return (
     <div style={{
@@ -75,27 +48,23 @@ function CertificateContent() {
         ↓ Télécharger / Imprimer
       </button>
 
-      {/* Certificate wrapper — image + text overlay */}
-      <div style={{
-        position: "relative",
-        width: "min(480px, 92vw)",
-      }}>
-        {/* Background image */}
+      {/* Certificate wrapper */}
+      <div style={{ position: "relative", width: "min(480px, 92vw)" }}>
         <img
           src={cfg.image}
           alt="certificate"
           style={{ width: "100%", display: "block", borderRadius: 16 }}
         />
 
-        {/* Name — 1er cadre "PROUDLY PRESENTED TO" */}
+        {/* Nom — cadre "PROUDLY PRESENTED TO" */}
         <div style={{
           position: "absolute",
-          top: cfg.nameTop, left: "12%", width: "76%",
+          top: cfg.nameTop, left: "10%", width: "80%",
           textAlign: "center", transform: "translateY(-50%)",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(15px, 3.8vw, 21px)",
+            fontSize: "clamp(14px, 3.5vw, 20px)",
             fontWeight: 900, color: cfg.nameColor,
             letterSpacing: "0.5px",
             textShadow: "0 2px 10px rgba(0,0,0,0.9)",
@@ -104,32 +73,32 @@ function CertificateContent() {
           </div>
         </div>
 
-        {/* Montant — 2ème cadre "VERIFIED FUNDED ACCOUNT" */}
+        {/* Montant — cadre "VERIFIED FUNDED ACCOUNT" */}
         <div style={{
           position: "absolute",
-          top: cfg.amountTop, left: "12%", width: "76%",
+          top: cfg.amountTop, left: "10%", width: "80%",
           textAlign: "center", transform: "translateY(-50%)",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(20px, 5vw, 30px)",
+            fontSize: "clamp(18px, 4.5vw, 28px)",
             fontWeight: 900, color: cfg.amountColor,
             letterSpacing: "-0.5px",
             textShadow: "0 2px 12px rgba(0,0,0,0.9)",
           }}>
-            {amountLabel}
+            {amount}
           </div>
         </div>
 
-        {/* Date — SOUS le 2ème cadre */}
+        {/* Date — sous le 2ème cadre */}
         <div style={{
           position: "absolute",
-          top: cfg.dateTop, left: "12%", width: "76%",
+          top: cfg.dateTop, left: "10%", width: "80%",
           textAlign: "center", transform: "translateY(-50%)",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(11px, 2.5vw, 14px)",
+            fontSize: "clamp(11px, 2.5vw, 13px)",
             fontWeight: 600,
             color: cfg.dateColor,
             letterSpacing: "1px",
