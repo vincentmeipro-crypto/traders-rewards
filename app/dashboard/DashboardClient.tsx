@@ -152,8 +152,8 @@ export default function DashboardClient({ user }: { user: User }) {
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
               onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <span style={{ color: activeTab === item.tab ? "#2D7DD2" : "#444" }}>{item.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#2D7DD2" : "#555" }}>{item.label}</span>
+                <span style={{ color: activeTab === item.tab ? "#2D7DD2" : "#ffffff" }}>{item.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#2D7DD2" : "#ffffff" }}>{item.label}</span>
               </div>
             ))}
           </nav>
