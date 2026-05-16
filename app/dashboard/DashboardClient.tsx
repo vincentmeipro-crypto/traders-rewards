@@ -289,105 +289,69 @@ export default function DashboardClient({ user }: { user: User }) {
 
         {/* Certificates Tab */}
         {activeTab === "certificates" && (
-          <div style={{ maxWidth: 680 }}>
+          <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Certificates</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Your achievements unlock as you progress through the challenge.</p>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Téléchargez et partagez vos certificats.</p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
+
+              {/* Phase 1 Done */}
               {[
-                {
-                  label: "Certificate of Achievement",
-                  title: "Phase 1 — Passed",
-                  icon: <Award size={28} color="#2D7DD2" />,
-                  color: "#2D7DD2",
-                  bg: "linear-gradient(135deg, #0a0a14, #121220)",
-                  glow: "rgba(45,125,210,0.08)",
-                  unlocked: true,
-                  certType: "phase1",
-                  stats: [
-                    { label: "Account Size", value: challenge?.account_size || "—" },
-                    { label: "Model", value: challenge?.model === "2step" ? "2-Step" : challenge?.model === "1step" ? "1-Step" : "—" },
-                    { label: "Profit Target", value: "+10%" },
-                  ],
-                },
-                {
-                  label: "Certificate of Achievement",
-                  title: "Phase 2 — Passed",
-                  icon: <Award size={28} color="#a855f7" />,
-                  color: "#a855f7",
-                  bg: "linear-gradient(135deg, #0d0a14, #130f20)",
-                  glow: "rgba(168,85,247,0.08)",
-                  unlocked: true,
-                  certType: "phase2",
-                  stats: [
-                    { label: "Account Size", value: challenge?.account_size || "—" },
-                    { label: "Model", value: challenge?.model === "2step" ? "2-Step" : challenge?.model === "1step" ? "1-Step" : "—" },
-                    { label: "Profit Target", value: "+5%" },
-                  ],
-                },
-                {
-                  label: "Funded Trader Certificate",
-                  title: "Challenge Complete",
-                  icon: <Trophy size={28} color="#22c55e" />,
-                  color: "#22c55e",
-                  bg: "linear-gradient(135deg, #0a1408, #101a08)",
-                  glow: "rgba(34,197,94,0.08)",
-                  unlocked: true,
-                  certType: "funded",
-                  stats: [
-                    { label: "Account Size", value: challenge?.account_size || "—" },
-                    { label: "Profit Split", value: challenge?.model === "2step" ? "80%" : "90%" },
-                    { label: "Status", value: "Funded" },
-                  ],
-                },
-              ].map((cert, idx) => (
-                <div key={idx} style={{
-                  background: cert.unlocked ? cert.bg : "#111116",
-                  border: `1px solid ${cert.unlocked ? cert.color + "44" : "#1e1e26"}`,
-                  borderRadius: 20, padding: "32px 36px", position: "relative", overflow: "hidden",
-                  opacity: cert.unlocked ? 1 : 0.5,
-                  transition: "opacity 0.2s",
-                }}>
-                  {cert.unlocked && (
-                    <div style={{ position: "absolute", top: 0, right: 0, width: 200, height: 200, background: `radial-gradient(circle, ${cert.glow} 0%, transparent 70%)`, pointerEvents: "none" }} />
-                  )}
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24 }}>
-                    <div>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: cert.unlocked ? cert.color : "#333", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 8 }}>{cert.label}</div>
-                      <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-0.5px", color: cert.unlocked ? "#fff" : "#333" }}>
-                        {cert.title} {cert.unlocked ? "✓" : ""}
+                { type: "phase1", title: "PHASE 1", sub: "DONE !", color1: "#2D7DD2", color2: "#5BA4E8", label: "Phase 1 Passed" },
+                { type: "challenge", title: "CHALLENGE", sub: "DONE !", color1: "#22c55e", color2: "#4ade80", label: "Challenge Complete" },
+                { type: "payout", title: "PAYOUT", sub: "CERTIFICATE", color1: "#2D7DD2", color2: "#5BA4E8", label: "Payout Earned" },
+              ].map((cert) => {
+                const name = user.email?.split("@")[0] || "Trader";
+                const date = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
+                const href = `/certificate?type=${cert.type}&name=${encodeURIComponent(name)}&size=${encodeURIComponent(challenge?.account_size || "$100,000")}&date=${encodeURIComponent(date)}&amount=`;
+                return (
+                  <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    {/* Square preview */}
+                    <div style={{
+                      aspectRatio: "1/1", borderRadius: 20, overflow: "hidden",
+                      background: "linear-gradient(145deg, #0d1220, #111827, #0a0f1a)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between",
+                      padding: "28px 24px",
+                      position: "relative",
+                      boxShadow: `0 0 60px ${cert.color1}22`,
+                    }}>
+                      <div style={{ position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: "80%", height: "80%", borderRadius: "50%", background: `radial-gradient(circle, ${cert.color1}18 0%, transparent 70%)`, pointerEvents: "none" }} />
+                      {/* Logo */}
+                      <div style={{ fontSize: 11, fontWeight: 900, letterSpacing: "5px", color: "#fff", position: "relative", zIndex: 1 }}>ELYSIUM</div>
+                      {/* Main text */}
+                      <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
+                        <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: "-1px", background: `linear-gradient(135deg, ${cert.color1}, ${cert.color2})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{cert.title}</div>
+                        <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: "-1px", color: "#fff", marginBottom: 16 }}>{cert.sub}</div>
+                        <div style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "12px 20px" }}>
+                          <div style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>{name}</div>
+                          {cert.type === "payout" && <div style={{ fontSize: 24, fontWeight: 900, background: `linear-gradient(135deg, ${cert.color1}, ${cert.color2})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>$0</div>}
+                        </div>
+                      </div>
+                      {/* Date */}
+                      <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{date}</div>
+                        <div style={{ fontSize: 10, color: "#444", letterSpacing: "2px", textTransform: "uppercase" }}>Issued Date</div>
                       </div>
                     </div>
-                    <div style={{ background: cert.unlocked ? `${cert.color}22` : "rgba(255,255,255,0.03)", border: `1px solid ${cert.unlocked ? cert.color + "33" : "#222"}`, borderRadius: 12, padding: "10px 14px" }}>
-                      {cert.unlocked ? cert.icon : <Lock size={28} color="#333" />}
-                    </div>
+                    {/* Button */}
+                    <a
+                      href={href}
+                      target="_blank"
+                      style={{
+                        display: "block", textAlign: "center",
+                        padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700,
+                        textDecoration: "none",
+                        background: `linear-gradient(135deg, ${cert.color1}, ${cert.color2})`,
+                        color: cert.type === "challenge" ? "#000" : "#fff",
+                      }}
+                    >
+                      {cert.label} →
+                    </a>
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
-                    {cert.stats.map((item, i) => (
-                      <div key={i} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "12px 14px" }}>
-                        <div style={{ color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>{item.label}</div>
-                        <div style={{ fontWeight: 700, fontSize: 14, color: cert.unlocked ? "#fff" : "#333" }}>{item.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 18, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ fontSize: 12, color: cert.unlocked ? "#444" : "#333" }}>
-                      {cert.unlocked ? <>Issued by <span style={{ color: cert.color, fontWeight: 700 }}>Elysium</span></> : "🔒 Not yet unlocked"}
-                    </div>
-                    {cert.unlocked && challenge ? (
-                      <a
-                        href={`/certificate?type=${cert.certType}&size=${encodeURIComponent(challenge.account_size)}&model=${challenge.model}&id=${challenge.id}&date=${encodeURIComponent(new Date(challenge.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }))}`}
-                        target="_blank"
-                        style={{ fontSize: 12, fontWeight: 700, color: cert.color, textDecoration: "none", background: `${cert.color}18`, border: `1px solid ${cert.color}44`, borderRadius: 8, padding: "6px 14px" }}
-                      >
-                        View & Print →
-                      </a>
-                    ) : (
-                      <div style={{ fontSize: 12, color: "#333" }}>#{challenge?.id.slice(0, 8).toUpperCase() || "????????"}</div>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
+
             </div>
           </div>
         )}

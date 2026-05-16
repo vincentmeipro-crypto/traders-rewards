@@ -4,21 +4,44 @@ import { Suspense } from "react";
 
 function CertificateContent() {
   const params = useSearchParams();
-  const type = params.get("type") || "phase1"; // phase1 | funded
+  const type = params.get("type") || "phase1"; // phase1 | challenge | payout
+  const name = params.get("name") || "Trader";
+  const amount = params.get("amount") || "";
+  const date = params.get("date") || new Date().toLocaleDateString("fr-FR");
   const size = params.get("size") || "$100,000";
-  const model = params.get("model") || "2step";
-  const id = params.get("id") || "XXXXXXXX";
-  const date = params.get("date") || new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
-  const isFunded = type === "funded";
-  const accentColor = isFunded ? "#22c55e" : "#2D7DD2";
-  const bgGradient = isFunded
-    ? "linear-gradient(160deg, #050e05, #080f08, #050e05)"
-    : "linear-gradient(160deg, #05080e, #080a0f, #05080e)";
+  const configs = {
+    phase1: {
+      line1: "PHASE 1",
+      line2: "DONE !",
+      sub: `${size} Account`,
+      color1: "#2D7DD2",
+      color2: "#5BA4E8",
+      glow: "rgba(45,125,210,0.4)",
+    },
+    challenge: {
+      line1: "CHALLENGE",
+      line2: "DONE !",
+      sub: `${size} — Funded Trader`,
+      color1: "#22c55e",
+      color2: "#4ade80",
+      glow: "rgba(34,197,94,0.4)",
+    },
+    payout: {
+      line1: "PAYOUT",
+      line2: "CERTIFICATE",
+      sub: "THAT EARNED A PAYOUT OF",
+      color1: "#2D7DD2",
+      color2: "#5BA4E8",
+      glow: "rgba(45,125,210,0.4)",
+    },
+  };
+
+  const cfg = configs[type as keyof typeof configs] || configs.phase1;
 
   return (
     <div style={{
-      minHeight: "100vh", backgroundColor: "#0a0a0a",
+      minHeight: "100vh", backgroundColor: "#08090e",
       display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
       padding: "40px 24px", fontFamily: "Inter, system-ui, sans-serif",
     }}>
@@ -26,125 +49,111 @@ function CertificateContent() {
       {/* Print button */}
       <button
         onClick={() => window.print()}
+        className="no-print"
         style={{
           position: "fixed", top: 24, right: 24, zIndex: 100,
-          backgroundColor: accentColor, color: "#000",
+          backgroundColor: cfg.color1, color: "#fff",
           border: "none", borderRadius: 10, padding: "12px 24px",
           fontSize: 14, fontWeight: 800, cursor: "pointer",
-          boxShadow: `0 4px 20px ${accentColor}44`,
+          boxShadow: `0 4px 20px ${cfg.glow}`,
         }}
-        className="no-print"
       >
-        ↓ Download / Print
+        ↓ Télécharger / Imprimer
       </button>
 
-      {/* Certificate */}
+      {/* Square Certificate */}
       <div style={{
-        width: "100%", maxWidth: 760,
-        background: bgGradient,
-        border: `1.5px solid ${accentColor}55`,
-        borderRadius: 24,
-        padding: "64px 72px",
-        position: "relative",
-        overflow: "hidden",
-        boxShadow: `0 0 80px ${accentColor}11, 0 0 200px ${accentColor}06`,
+        width: 540, height: 540,
+        background: "linear-gradient(145deg, #0d1220 0%, #111827 40%, #0a0f1a 100%)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 28,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between",
+        padding: "44px 48px",
+        position: "relative", overflow: "hidden",
+        boxShadow: `0 0 120px ${cfg.glow}, 0 0 60px rgba(0,0,0,0.8)`,
       }}>
 
-        {/* Corner decorations */}
-        <div style={{ position: "absolute", top: 0, left: 0, width: 300, height: 300, background: `radial-gradient(circle, ${accentColor}10 0%, transparent 65%)`, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", bottom: 0, right: 0, width: 300, height: 300, background: `radial-gradient(circle, ${accentColor}08 0%, transparent 65%)`, pointerEvents: "none" }} />
-
-        {/* Top border line */}
-        <div style={{ height: 3, background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`, marginBottom: 48, borderRadius: 100 }} />
-
-        {/* Logo + label */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: accentColor, letterSpacing: "5px", textTransform: "uppercase", marginBottom: 16 }}>
-            — ELYSIUM —
-          </div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: "#555", letterSpacing: "3px", textTransform: "uppercase" }}>
-            {isFunded ? "Funded Trader Certificate" : "Certificate of Achievement"}
-          </div>
-        </div>
-
-        {/* Main title */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <h1 style={{
-            fontSize: 42, fontWeight: 900, color: "#fff",
-            letterSpacing: "-1.5px", lineHeight: 1.1, marginBottom: 16,
-          }}>
-            {isFunded ? "Challenge Complete" : "Phase 1 — Passed"}
-          </h1>
-          <div style={{ fontSize: 16, color: "#555" }}>
-            {isFunded
-              ? "This certifies that the trader below has successfully completed all evaluation phases and is now an officially Funded Trader."
-              : "This certifies that the trader below has successfully completed Phase 1 of the Elysium evaluation challenge."}
-          </div>
-        </div>
-
-        {/* Stats grid */}
+        {/* Background glow blob */}
         <div style={{
-          display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 48,
-        }}>
-          {[
-            { label: "Account Size", value: size },
-            { label: "Model", value: model === "2step" ? "2-Step" : "1-Step" },
-            { label: "Profit Split", value: isFunded ? (model === "2step" ? "80%" : "90%") : "—" },
-          ].map((item, i) => (
-            <div key={i} style={{
-              background: "rgba(255,255,255,0.03)",
-              border: `1px solid ${accentColor}20`,
-              borderRadius: 14, padding: "20px 24px", textAlign: "center",
-            }}>
-              <div style={{ color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 10 }}>{item.label}</div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: accentColor }}>{item.value}</div>
-            </div>
-          ))}
+          position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)",
+          width: 400, height: 400, borderRadius: "50%",
+          background: `radial-gradient(circle, ${cfg.glow.replace("0.4", "0.12")} 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }} />
+
+        {/* Top: Logo */}
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
+          <div style={{ fontSize: 13, fontWeight: 900, letterSpacing: "6px", textTransform: "uppercase", color: "#fff" }}>
+            ELYSIUM
+          </div>
         </div>
 
-        {/* Badge */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
+        {/* Middle: Main content */}
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0 }}>
+
+          {/* Big title */}
           <div style={{
-            display: "inline-flex", alignItems: "center", gap: 12,
-            background: `${accentColor}15`,
-            border: `1px solid ${accentColor}40`,
-            borderRadius: 100, padding: "14px 32px",
+            fontSize: 72, fontWeight: 900, lineHeight: 1,
+            letterSpacing: "-2px",
+            background: `linear-gradient(135deg, ${cfg.color1}, ${cfg.color2})`,
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            marginBottom: 4,
           }}>
-            <span style={{ fontSize: 20 }}>{isFunded ? "🏆" : "✓"}</span>
-            <span style={{ fontWeight: 800, fontSize: 15, color: accentColor }}>
-              {isFunded ? "Officially Funded" : "Phase 1 Complete"}
-            </span>
+            {cfg.line1}
+          </div>
+          <div style={{
+            fontSize: 72, fontWeight: 900, lineHeight: 1,
+            letterSpacing: "-2px", color: "#fff",
+            marginBottom: 32,
+          }}>
+            {cfg.line2}
+          </div>
+
+          {/* Name card */}
+          <div style={{
+            backgroundColor: "rgba(255,255,255,0.06)",
+            border: "1px solid rgba(255,255,255,0.1)",
+            borderRadius: 16, padding: "20px 40px",
+            textAlign: "center", width: "100%",
+          }}>
+            {type === "payout" && (
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#888", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 10 }}>
+                {cfg.sub}
+              </div>
+            )}
+            <div style={{ fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: type === "payout" ? 12 : 0 }}>
+              {name}
+            </div>
+            {type !== "payout" && (
+              <div style={{ fontSize: 13, color: "#555", marginTop: 6, fontWeight: 600, letterSpacing: "1px" }}>
+                {cfg.sub}
+              </div>
+            )}
+            {type === "payout" && amount && (
+              <div style={{
+                fontSize: 56, fontWeight: 900, letterSpacing: "-2px",
+                background: `linear-gradient(135deg, ${cfg.color1}, ${cfg.color2})`,
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>
+                {amount}
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Bottom line */}
-        <div style={{ height: 1, background: "rgba(255,255,255,0.05)", marginBottom: 28 }} />
-
-        {/* Footer */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
-            <div style={{ fontSize: 11, color: "#333", marginBottom: 4 }}>Issued by</div>
-            <div style={{ fontSize: 14, fontWeight: 800, color: accentColor }}>Elysium</div>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 11, color: "#333", marginBottom: 4 }}>Date</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#666" }}>{date}</div>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 11, color: "#333", marginBottom: 4 }}>Certificate ID</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: "#555", fontFamily: "monospace" }}>#{id.slice(0, 8).toUpperCase()}</div>
-          </div>
+        {/* Bottom: Date */}
+        <div style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
+          <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 4 }}>{date}</div>
+          <div style={{ fontSize: 11, color: "#444", letterSpacing: "2px", textTransform: "uppercase" }}>Issued Date</div>
         </div>
-
-        {/* Bottom border line */}
-        <div style={{ height: 3, background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`, marginTop: 40, borderRadius: 100 }} />
       </div>
 
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          body { background: #0a0a0a !important; }
+          body { background: #08090e !important; margin: 0; }
         }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
       `}</style>
     </div>
   );
