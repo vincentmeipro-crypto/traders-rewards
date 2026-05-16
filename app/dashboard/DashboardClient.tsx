@@ -298,9 +298,9 @@ export default function DashboardClient({ user }: { user: User }) {
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
 
               {[
-                { type: "phase1",   image: "/PHASE1.png",              label: "Ouvrir Phase 1 →",   btnColor: "#2D7DD2" },
-                { type: "challenge",image: "/CHALLENGE-COMPLETED.png",  label: "Ouvrir Challenge →", btnColor: "#a855f7" },
-                { type: "payout",   image: "/PAYOUT.png",               label: "Ouvrir Payout →",    btnColor: "#C9A84C" },
+                { type: "phase1",   image: "/PHASE1.png",      label: "Ouvrir Phase 1 →",   btnColor: "#2D7DD2" },
+                { type: "challenge",image: "/CERTIFICAT.png",  label: "Ouvrir Challenge →", btnColor: "#a855f7" },
+                { type: "payout",   image: "/PAYOUT.png",      label: "Ouvrir Payout →",    btnColor: "#C9A84C" },
               ].map((cert) => {
                 const firstName = challenge?.client_first_name || "";
                 const lastName = challenge?.client_last_name || "";

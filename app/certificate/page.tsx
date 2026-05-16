@@ -13,15 +13,6 @@ const CERT_CONFIG = {
     dateTop: "90%",
   },
   challenge: {
-    image: "/CHALLENGE-COMPLETED.png",
-    nameColor: "#ffffff",
-    amountColor: "#c084fc",
-    dateColor: "#cccccc",
-    nameTop: "63%",
-    amountTop: "80%",
-    dateTop: "90%",
-  },
-  reward: {
     image: "/CERTIFICAT.png",
     nameColor: "#ffffff",
     amountColor: "#c084fc",
@@ -53,8 +44,6 @@ function CertificateContent() {
   const cfg = CERT_CONFIG[type] || CERT_CONFIG.phase1;
 
   const amountLabel = type === "payout"
-    ? (amount || "$0")
-    : type === "reward"
     ? (amount || "$0")
     : (amount || "$100,000");
 
