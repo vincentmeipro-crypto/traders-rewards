@@ -5,23 +5,23 @@ import { useLanguage } from "@/lib/LanguageContext";
 // Candle data: [bull, bodyY1, bodyY2, wickY1, wickY2]
 // Uptrend pattern, prices rising left→right
 const CANDLES: [boolean, number, number, number, number][] = [
-  [true,  157, 226, 134, 249],
-  [false, 150, 191, 127, 211],
-  [true,  134, 196, 118, 219],
-  [false, 127, 169, 105, 187],
-  [true,  105, 173,  89, 196],
-  [false, 100, 141,  82, 157],
-  [true,   82, 146,  66, 164],
-  [false,  77, 118,  59, 134],
-  [true,   54, 123,  36, 141],
-  [false,  50,  89,  31, 105],
+  [true,  314, 452, 268, 498],
+  [false, 300, 382, 254, 422],
+  [true,  268, 392, 236, 438],
+  [false, 254, 338, 210, 374],
+  [true,  210, 346, 178, 392],
+  [false, 200, 282, 164, 314],
+  [true,  164, 292, 132, 328],
+  [false, 154, 236, 118, 268],
+  [true,  108, 246,  72, 282],
+  [false, 100, 178,  62, 210],
 ];
 
 function CandleChart({ side }: { side: "left" | "right" }) {
-  const W = 240;
-  const H = 320;
-  const candleW = 13;
-  const spacing = 22;
+  const W = 480;
+  const H = 640;
+  const candleW = 26;
+  const spacing = 44;
 
   const isRight = side === "right";
 
@@ -40,7 +40,7 @@ function CandleChart({ side }: { side: "left" | "right" }) {
       <svg width={W} height={H}>
         <defs>
           <linearGradient id={`g-${side}`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+            <stop offset="0%" stopColor="white" stopOpacity="0.25" />
             <stop offset="100%" stopColor="white" stopOpacity="0" />
           </linearGradient>
           <mask id={`m-${side}`}>
