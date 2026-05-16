@@ -33,7 +33,6 @@ export default function Pricing() {
     { label: isFr ? "Règle meilleur jour" : "Best day rule",       value: "≤ 50%",        highlight: false },
     { label: isFr ? "Jours de trading min" : "Min trading days",   value: isFr ? "4 jours" : "4 days", highlight: false },
     { label: isFr ? "Limite de temps" : "Time limit",              value: isFr ? "Illimité" : "Unlimited", highlight: false },
-    { label: isFr ? "Remboursement frais" : "Fee refunded",        value: isFr ? "Non" : "No", highlight: true, green: false },
     { label: isFr ? "Partage des profits" : "Profit split",        value: isFr ? "Jusqu'à 90%" : "Up to 90%", highlight: false },
     { label: isFr ? "Cumul comptes max" : "Max cumulated accounts", value: "$200K",       highlight: false },
   ];
@@ -50,7 +49,6 @@ export default function Pricing() {
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: 16 }}>
             {T.pricing.title} <span className="gold-gradient">{T.pricing.titleGold}</span>
           </h2>
-          <p style={{ color: "#666", fontSize: 16 }}>{T.pricing.sub}</p>
         </div>
 
         {/* Toggle */}
