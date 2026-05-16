@@ -25,6 +25,8 @@ type Challenge = {
   ctrader_login?: string;
   ctrader_password?: string;
   server?: string;
+  client_first_name?: string;
+  client_last_name?: string;
 };
 
 function ProgressBar({ value, max, color = "#2D7DD2", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
