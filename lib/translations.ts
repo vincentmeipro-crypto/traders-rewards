@@ -23,19 +23,19 @@ export const t = {
       sub: 'Access up to $200,000 in simulated capital. Earn rewards up to 90% of your simulated gains.',
       cta1: 'Start Your Challenge',
       cta2: 'How It Works',
-      trust: 'Challenge fee fully refunded on first payout · No time limit · Instant account delivery',
+      trust: 'Challenge fee fully refunded on first reward · No time limit · Instant account delivery',
       maxFunding: 'Max Funding', profitSplit: 'Profit Split', feeRefunded: 'Fee Refunded',
       tagline: 'Pass the challenge. Join the elite.',
     },
     stats: {
-      payouts: 'Total Payouts', traders: 'Funded Traders',
+      payouts: 'Total Rewards', traders: 'Funded Traders',
       satisfaction: 'Satisfaction Rate', support: 'Support Response',
     },
     how: {
       label: 'The Process', title: 'From Zero to', titleGold: 'Funded',
       sub: "Three steps. That's all it takes to join the elite.",
       steps: [
-        { title: 'Choose Your Challenge', desc: 'Select your account size from $10K to $200K. Choose between our 2-Step or 1-Step challenge. Pay the one-time fee — fully refunded at your first payout.' },
+        { title: 'Choose Your Challenge', desc: 'Select your account size from $10K to $200K. Choose between our 2-Step or 1-Step challenge. Pay the one-time fee — fully refunded at your first reward.' },
         { title: 'Pass the Evaluation', desc: 'Trade with discipline. Hit your profit target while respecting the drawdown rules. No time pressure — trade at your own pace with no expiry date.' },
         { title: 'Get Funded & Paid', desc: 'Receive your funded account instantly. Trade real capital and keep up to 90% of your profits. Scale up to $200,000 through our scaling program.' },
       ],
@@ -45,8 +45,8 @@ export const t = {
       sub: 'Challenge fee fully refunded on your first payout.',
       twoStep: '2-STEP', oneStep: '1-STEP ⚡', mostPopular: 'Most Popular',
       account: 'Account', getStarted: 'Get Started', allInclude: 'ALL CHALLENGES INCLUDE',
-      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 4 trading days','No time limit','80% profit split','Fee refunded at 1st payout','Scale up to $200,000'],
-      features1: ['Single phase: +10% profit target','3% max daily loss','10% trailing drawdown','50% best day rule','Minimum 4 trading days','No time limit','90% profit split','Fee refunded at 1st payout','Scale up to $200,000'],
+      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 4 trading days','No time limit','80% profit split','Fee refunded at 1st reward','Scale up to $200,000'],
+      features1: ['Single phase: +10% profit target','3% max daily loss','10% trailing drawdown','50% best day rule','Minimum 4 trading days','No time limit','90% profit split','Fee refunded at 1st reward','Scale up to $200,000'],
     },
     rules: {
       label: 'Transparency First', title: 'Clear', titleGold: 'Rules',
@@ -54,7 +54,7 @@ export const t = {
       allowedList: ['All instruments: Forex, Gold, Indices, Crypto, Oil','Algorithmic trading & Expert Advisors (EAs)','News trading — fully unrestricted','Holding positions overnight & over weekends','Scalping, day trading & swing trading','Multiple strategies simultaneously','No mandatory stop-loss requirement'],
       notAllowedList: ['Copying trades between Elysium accounts','Toxic flow or latency arbitrage strategies','Martingale at extreme risk levels (account-destroying)','Trading on behalf of others / account sharing','Gambling-style behavior (all-in positions)','Coordinated group trading to exploit the rules'],
       ctaTitle: 'Ready to Join the', ctaGold: 'Elite?',
-      ctaSub: 'Join thousands of funded traders. Your challenge fee is refunded at first payout.',
+      ctaSub: 'Join thousands of funded traders. Your challenge fee is refunded at first reward.',
       ctaBtn: 'Start Your Challenge Today',
     },
     footer: {
@@ -81,30 +81,30 @@ export const t = {
       sub: 'Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu\'à 90% de vos gains simulés.',
       cta1: 'Commencer le Challenge',
       cta2: 'Comment ça marche',
-      trust: 'Frais remboursés au 1er retrait · Sans limite de temps · Compte livré instantanément',
+      trust: 'Frais remboursés à la 1ère récompense · Sans limite de temps · Compte livré instantanément',
       maxFunding: 'Capital Max', profitSplit: 'Partage Profit', feeRefunded: 'Frais Remboursés',
       tagline: 'Passe le challenge. Rejoins l\'élite.',
     },
     stats: {
-      payouts: 'Total des Retraits', traders: 'Traders Financés',
+      payouts: 'Total Récompenses', traders: 'Traders Financés',
       satisfaction: 'Taux de Satisfaction', support: 'Réponse Support',
     },
     how: {
       label: 'Le Processus', title: 'De Zéro à', titleGold: 'Financé',
       sub: 'Trois étapes. C\'est tout ce qu\'il faut pour rejoindre l\'élite.',
       steps: [
-        { title: 'Choisissez votre Challenge', desc: 'Sélectionnez votre taille de compte de 10K$ à 200K$. Choisissez entre notre challenge 2 étapes ou 1 étape. Frais remboursés au premier retrait.' },
+        { title: 'Choisissez votre Challenge', desc: 'Sélectionnez votre taille de compte de 10K$ à 200K$. Choisissez entre notre challenge 2 étapes ou 1 étape. Frais remboursés à la première récompense.' },
         { title: 'Réussissez l\'Évaluation', desc: 'Tradez avec discipline. Atteignez votre objectif de profit tout en respectant les règles de drawdown. Aucune pression de temps, pas de date d\'expiration.' },
         { title: 'Soyez Financé et Payé', desc: 'Recevez votre compte financé instantanément. Tradez du vrai capital et gardez jusqu\'à 90% de vos profits. Évoluez jusqu\'à 200 000$.' },
       ],
     },
     pricing: {
       label: 'Choisissez Votre Voie', title: 'Commencez Votre', titleGold: 'Challenge',
-      sub: 'Frais de challenge remboursés à votre premier retrait.',
+      sub: 'Frais de challenge remboursés à votre première récompense.',
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
-      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Frais remboursés au 1er retrait','Évolution jusqu\'à 200 000$'],
-      features1: ['Phase unique : +10% objectif profit','3% perte journalière max','10% drawdown trailing','Règle des 50% meilleur jour','Minimum 4 jours de trading','Sans limite de temps','90% partage des profits','Frais remboursés au 1er retrait','Évolution jusqu\'à 200 000$'],
+      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Frais remboursés à la 1ère récompense','Évolution jusqu\'à 200 000$'],
+      features1: ['Phase unique : +10% objectif profit','3% perte journalière max','10% drawdown trailing','Règle des 50% meilleur jour','Minimum 4 jours de trading','Sans limite de temps','90% partage des profits','Frais remboursés à la 1ère récompense','Évolution jusqu\'à 200 000$'],
     },
     rules: {
       label: 'Transparence Totale', title: 'Règles', titleGold: 'Claires',
@@ -112,7 +112,7 @@ export const t = {
       allowedList: ['Tous les instruments : Forex, Or, Indices, Crypto, Pétrole','Trading algorithmique & Expert Advisors (EAs)','Trading sur les news — sans aucune restriction','Positions overnight et le weekend','Scalping, day trading et swing trading','Plusieurs stratégies simultanément','Pas de stop-loss obligatoire'],
       notAllowedList: ['Copier des trades entre comptes Elysium','Toxic flow ou arbitrage sur la latence','Martingale à risque extrême (destruction du compte)','Trading pour le compte d\'autrui / partage de compte','Comportement de gambling (positions all-in)','Trading de groupe coordonné pour exploiter les règles'],
       ctaTitle: 'Prêt à Rejoindre l\'', ctaGold: 'Élite ?',
-      ctaSub: 'Rejoignez des milliers de traders financés. Frais remboursés au premier retrait.',
+      ctaSub: 'Rejoignez des milliers de traders financés. Frais remboursés à la première récompense.',
       ctaBtn: 'Commencer le Challenge Aujourd\'hui',
     },
     footer: {
@@ -144,7 +144,7 @@ export const t = {
       tagline: 'اجتز التحدي. انضم إلى النخبة.',
     },
     stats: {
-      payouts: 'إجمالي المدفوعات', traders: 'المتداولون الممولون',
+      payouts: 'إجمالي المكافآت', traders: 'المتداولون الممولون',
       satisfaction: 'معدل الرضا', support: 'وقت الدعم',
     },
     how: {
@@ -202,7 +202,7 @@ export const t = {
       tagline: 'Supera el desafío. Únete a la élite.',
     },
     stats: {
-      payouts: 'Total Pagos', traders: 'Traders Financiados',
+      payouts: 'Total Recompensas', traders: 'Traders Financiados',
       satisfaction: 'Tasa de Satisfacción', support: 'Respuesta Soporte',
     },
     how: {
@@ -260,7 +260,7 @@ export const t = {
       tagline: 'Passe o desafio. Entre na elite.',
     },
     stats: {
-      payouts: 'Total de Pagamentos', traders: 'Traders Financiados',
+      payouts: 'Total de Recompensas', traders: 'Traders Financiados',
       satisfaction: 'Taxa de Satisfação', support: 'Resposta Suporte',
     },
     how: {
@@ -318,7 +318,7 @@ export const t = {
       tagline: 'Bestehe die Challenge. Tritt der Elite bei.',
     },
     stats: {
-      payouts: 'Gesamtauszahlungen', traders: 'Finanzierte Trader',
+      payouts: 'Gesamtprämien', traders: 'Finanzierte Trader',
       satisfaction: 'Zufriedenheitsrate', support: 'Support-Antwort',
     },
     how: {
@@ -376,7 +376,7 @@ export const t = {
       tagline: 'Meydan okumayı geç. Elite\'e katıl.',
     },
     stats: {
-      payouts: 'Toplam Ödeme', traders: 'Fonlanan Trader',
+      payouts: 'Toplam Ödül', traders: 'Fonlanan Trader',
       satisfaction: 'Memnuniyet Oranı', support: 'Destek Yanıt',
     },
     how: {

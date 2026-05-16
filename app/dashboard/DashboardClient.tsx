@@ -137,7 +137,7 @@ export default function DashboardClient({ user }: { user: User }) {
             {([
               { icon: <LayoutDashboard size={16} />, label: "Dashboard", tab: "dashboard" },
               { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
-              { icon: <Wallet size={16} />, label: "Payouts", tab: "payouts" },
+              { icon: <Wallet size={16} />, label: "Rewards", tab: "payouts" },
               { icon: <Award size={16} />, label: "Certificates", tab: "certificates" },
               { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
               { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
@@ -179,7 +179,7 @@ export default function DashboardClient({ user }: { user: User }) {
           {([
             { icon: <LayoutDashboard size={20} />, label: "Home", tab: "dashboard" },
             { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
-            { icon: <Wallet size={20} />, label: "Payouts", tab: "payouts" },
+            { icon: <Wallet size={20} />, label: "Rewards", tab: "payouts" },
             { icon: <Award size={20} />, label: "Certifs", tab: "certificates" },
             { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
           ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -250,12 +250,12 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Payouts Tab */}
         {activeTab === "payouts" && (
           <div style={{ maxWidth: 520 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Payouts</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Request a payout from your funded account.</p>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Rewards</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Request a reward from your funded account.</p>
             {challenge?.phase !== "funded" ? (
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
-                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Payouts unlocked when funded</div>
+                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Rewards unlocked when funded</div>
                 <div style={{ color: "#555", fontSize: 14 }}>Complete Phase 1 and Phase 2 to unlock payout requests.</div>
               </div>
             ) : (
@@ -292,7 +292,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 ) : (
                   <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount || !payoutForm.wallet_address}
                     className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, opacity: payoutLoading ? 0.7 : 1 }}>
-                    {payoutLoading ? "Submitting..." : "Submit Request"}
+                    {payoutLoading ? "Submitting..." : "Submit Reward Request"}
                   </button>
                 )}
               </div>
@@ -548,7 +548,7 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Payout Button */}
             <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Request a Payout</div>
+                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Request a Reward</div>
                 <div style={{ color: "#555", fontSize: 13 }}>Submit your payout request — processed within 24-48h</div>
               </div>
               <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ padding: "10px 24px", fontSize: 13 }}>
