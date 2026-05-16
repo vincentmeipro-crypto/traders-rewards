@@ -84,7 +84,7 @@ export default function Pricing() {
                 background: acc.popular
                   ? "linear-gradient(160deg, #1C2535, #21212B)"
                   : "#1E1E26",
-                border: acc.popular ? "1px solid #2D7DD2" : "1px solid #2A2A38",
+                border: acc.popular ? "2px solid rgba(255,255,255,0.9)" : "1px solid rgba(255,255,255,0.15)",
                 borderRadius: 16,
                 padding: "28px 20px 24px",
                 display: "flex",
@@ -97,11 +97,11 @@ export default function Pricing() {
                 {acc.popular && (
                   <div style={{
                     position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
-                    background: "linear-gradient(135deg, #e67e22, #f39c12)",
+                    background: "linear-gradient(135deg, #16a34a, #22c55e)",
                     color: "#fff", fontSize: 11, fontWeight: 800,
                     padding: "5px 14px", borderRadius: 100,
                     letterSpacing: "0.5px", whiteSpace: "nowrap",
-                    boxShadow: "0 4px 12px rgba(230,126,34,0.4)",
+                    boxShadow: "0 4px 12px rgba(34,197,94,0.45)",
                   }}>
                     {isFr ? "Meilleure valeur" : "Best value"} 🏆
                   </div>
