@@ -7,29 +7,28 @@ const CERT_CONFIG = {
     image: "/PHASE1.png",
     nameColor: "#ffffff",
     amountColor: "#4fc3f7",
-    dateColor: "#aaaaaa",
-    // Position des boîtes en % de la hauteur de l'image
-    nameTop: "62%",
-    amountTop: "79%",
-    dateTop: "85%",
+    dateColor: "#cccccc",
+    nameTop: "63%",
+    amountTop: "80%",
+    dateTop: "90%",
   },
   challenge: {
     image: "/CHALLENGE-COMPLETED.png",
     nameColor: "#ffffff",
     amountColor: "#c084fc",
-    dateColor: "#aaaaaa",
-    nameTop: "62%",
-    amountTop: "79%",
-    dateTop: "85%",
+    dateColor: "#cccccc",
+    nameTop: "63%",
+    amountTop: "80%",
+    dateTop: "90%",
   },
   payout: {
     image: "/PAYOUT.png",
     nameColor: "#ffffff",
     amountColor: "#f5c842",
-    dateColor: "#aaaaaa",
-    nameTop: "62%",
+    dateColor: "#cccccc",
+    nameTop: "63%",
     amountTop: "79%",
-    dateTop: "85%",
+    dateTop: "89%",
   },
 };
 
@@ -88,40 +87,33 @@ function CertificateContent() {
           style={{ width: "100%", display: "block", borderRadius: 16 }}
         />
 
-        {/* Name overlay — first box "PROUDLY PRESENTED TO" */}
+        {/* Name — 1er cadre "PROUDLY PRESENTED TO" */}
         <div style={{
           position: "absolute",
-          top: cfg.nameTop,
-          left: "10%",
-          width: "80%",
-          textAlign: "center",
-          transform: "translateY(-50%)",
+          top: cfg.nameTop, left: "12%", width: "76%",
+          textAlign: "center", transform: "translateY(-50%)",
+          display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(16px, 4vw, 22px)",
-            fontWeight: 900,
-            color: cfg.nameColor,
-            letterSpacing: "1px",
-            textShadow: "0 2px 8px rgba(0,0,0,0.8)",
-            lineHeight: 1.2,
+            fontSize: "clamp(15px, 3.8vw, 21px)",
+            fontWeight: 900, color: cfg.nameColor,
+            letterSpacing: "0.5px",
+            textShadow: "0 2px 10px rgba(0,0,0,0.9)",
           }}>
             {name}
           </div>
         </div>
 
-        {/* Amount overlay — second box "VERIFIED FUNDED ACCOUNT" */}
+        {/* Montant — 2ème cadre "VERIFIED FUNDED ACCOUNT" */}
         <div style={{
           position: "absolute",
-          top: cfg.amountTop,
-          left: "10%",
-          width: "80%",
-          textAlign: "center",
-          transform: "translateY(-50%)",
+          top: cfg.amountTop, left: "12%", width: "76%",
+          textAlign: "center", transform: "translateY(-50%)",
+          display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(18px, 4.5vw, 26px)",
-            fontWeight: 900,
-            color: cfg.amountColor,
+            fontSize: "clamp(20px, 5vw, 30px)",
+            fontWeight: 900, color: cfg.amountColor,
             letterSpacing: "-0.5px",
             textShadow: "0 2px 12px rgba(0,0,0,0.9)",
           }}>
@@ -129,14 +121,12 @@ function CertificateContent() {
           </div>
         </div>
 
-        {/* Date overlay — bottom of second box */}
+        {/* Date — SOUS le 2ème cadre */}
         <div style={{
           position: "absolute",
-          top: cfg.dateTop,
-          left: "10%",
-          width: "80%",
-          textAlign: "center",
-          transform: "translateY(-50%)",
+          top: cfg.dateTop, left: "12%", width: "76%",
+          textAlign: "center", transform: "translateY(-50%)",
+          display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
             fontSize: "clamp(11px, 2.5vw, 14px)",
