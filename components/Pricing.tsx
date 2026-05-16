@@ -75,6 +75,7 @@ export default function Pricing() {
           gridTemplateColumns: "repeat(5, 1fr)",
           gap: 12,
           overflowX: "auto",
+          paddingTop: 20,
           paddingBottom: 8,
         }}>
           {accounts.map((acc) => {
