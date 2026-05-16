@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -50,7 +50,7 @@ const STATUS_COLORS: Record<string, string> = {
   failed: "#ef4444",
 };
 
-type Tab = "dashboard" | "challenges" | "payouts" | "rules" | "settings";
+type Tab = "dashboard" | "challenges" | "payouts" | "certificates" | "rules" | "settings";
 
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
@@ -125,6 +125,7 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <LayoutDashboard size={16} />, label: "Dashboard", tab: "dashboard" },
               { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
               { icon: <Wallet size={16} />, label: "Payouts", tab: "payouts" },
+              { icon: <Award size={16} />, label: "Certificates", tab: "certificates" },
               { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
               { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -166,7 +167,7 @@ export default function DashboardClient({ user }: { user: User }) {
             { icon: <LayoutDashboard size={20} />, label: "Home", tab: "dashboard" },
             { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
             { icon: <Wallet size={20} />, label: "Payouts", tab: "payouts" },
-            { icon: <BookOpen size={20} />, label: "Rules", tab: "rules" },
+            { icon: <Award size={20} />, label: "Certifs", tab: "certificates" },
             { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
           ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
             <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
@@ -281,6 +282,100 @@ export default function DashboardClient({ user }: { user: User }) {
                     {payoutLoading ? "Submitting..." : "Submit Request"}
                   </button>
                 )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Certificates Tab */}
+        {activeTab === "certificates" && (
+          <div style={{ maxWidth: 680 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Certificates</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Your achievements and funded account certificates.</p>
+
+            {!challenge || (challenge.phase !== "phase2" && challenge.phase !== "funded") ? (
+              <div className="card" style={{ padding: 40, textAlign: "center" }}>
+                <Award size={48} color="#2D7DD2" style={{ marginBottom: 16, opacity: 0.4 }} />
+                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>No certificates yet</div>
+                <div style={{ color: "#555", fontSize: 14 }}>Pass Phase 1 to unlock your first certificate.</div>
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+                {/* Phase 1 Certificate */}
+                {(challenge.phase === "phase2" || challenge.phase === "funded") && (
+                  <div style={{
+                    background: "linear-gradient(135deg, #0a0a14, #121220)",
+                    border: "1px solid rgba(45,125,210,0.4)",
+                    borderRadius: 20, padding: "36px 40px", position: "relative", overflow: "hidden",
+                    boxShadow: "0 0 40px rgba(45,125,210,0.08)",
+                  }}>
+                    <div style={{ position: "absolute", top: 0, right: 0, width: 200, height: 200, background: "radial-gradient(circle, rgba(45,125,210,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "#2D7DD2", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 8 }}>Certificate of Achievement</div>
+                        <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: "-0.5px" }}>Phase 1 — Passed ✓</div>
+                      </div>
+                      <div style={{ background: "rgba(45,125,210,0.15)", border: "1px solid rgba(45,125,210,0.3)", borderRadius: 12, padding: "10px 14px", textAlign: "center" }}>
+                        <Award size={28} color="#2D7DD2" />
+                      </div>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 28 }}>
+                      {[
+                        { label: "Account Size", value: challenge.account_size },
+                        { label: "Model", value: challenge.model === "2step" ? "2-Step" : "1-Step" },
+                        { label: "Profit Target", value: "+10%" },
+                      ].map((item, i) => (
+                        <div key={i} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "14px 16px" }}>
+                          <div style={{ color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>{item.label}</div>
+                          <div style={{ fontWeight: 700, fontSize: 15 }}>{item.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div style={{ color: "#444", fontSize: 12 }}>Issued by <span style={{ color: "#2D7DD2", fontWeight: 700 }}>Elysium</span></div>
+                      <div style={{ color: "#333", fontSize: 12 }}>#{challenge.id.slice(0, 8).toUpperCase()}</div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Funded Certificate */}
+                {challenge.phase === "funded" && (
+                  <div style={{
+                    background: "linear-gradient(135deg, #0a1408, #101a08)",
+                    border: "1px solid rgba(34,197,94,0.4)",
+                    borderRadius: 20, padding: "36px 40px", position: "relative", overflow: "hidden",
+                    boxShadow: "0 0 40px rgba(34,197,94,0.08)",
+                  }}>
+                    <div style={{ position: "absolute", top: 0, right: 0, width: 200, height: 200, background: "radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+                    <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 28 }}>
+                      <div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "#22c55e", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 8 }}>Funded Trader Certificate</div>
+                        <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: "-0.5px" }}>Challenge Complete 🏆</div>
+                      </div>
+                      <div style={{ background: "rgba(34,197,94,0.15)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12, padding: "10px 14px" }}>
+                        <Trophy size={28} color="#22c55e" />
+                      </div>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 28 }}>
+                      {[
+                        { label: "Account Size", value: challenge.account_size },
+                        { label: "Profit Split", value: challenge.model === "2step" ? "80%" : "90%" },
+                        { label: "Status", value: "Funded ✓" },
+                      ].map((item, i) => (
+                        <div key={i} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "14px 16px" }}>
+                          <div style={{ color: "#444", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>{item.label}</div>
+                          <div style={{ fontWeight: 700, fontSize: 15, color: i === 2 ? "#22c55e" : "#fff" }}>{item.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <div style={{ color: "#444", fontSize: 12 }}>Issued by <span style={{ color: "#22c55e", fontWeight: 700 }}>Elysium</span></div>
+                      <div style={{ color: "#333", fontSize: 12 }}>#{challenge.id.slice(0, 8).toUpperCase()}</div>
+                    </div>
+                  </div>
+                )}
+
               </div>
             )}
           </div>
