@@ -30,7 +30,12 @@ export default function Navbar() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Nom */}
-          <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <img
+              src="/logo-white.jpg"
+              alt="Elysium Funded logo"
+              style={{ width: 32, height: 32, objectFit: "contain", mixBlendMode: "screen" }}
+            />
             <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1 }}>
               Elysium <span style={{ color: "#2D7DD2" }}>Funded</span>
             </span>
