@@ -301,9 +301,12 @@ export default function DashboardClient({ user }: { user: User }) {
                 { type: "challenge", title: "CHALLENGE", sub: "DONE !", color1: "#22c55e", color2: "#4ade80", label: "Challenge Complete" },
                 { type: "payout", title: "PAYOUT", sub: "CERTIFICATE", color1: "#2D7DD2", color2: "#5BA4E8", label: "Payout Earned" },
               ].map((cert) => {
-                const name = user.email?.split("@")[0] || "Trader";
+                const firstName = challenge?.client_first_name || "";
+                const lastName = challenge?.client_last_name || "";
+                const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
                 const date = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
-                const href = `/certificate?type=${cert.type}&name=${encodeURIComponent(name)}&size=${encodeURIComponent(challenge?.account_size || "$100,000")}&date=${encodeURIComponent(date)}&amount=`;
+                const amount = cert.type === "payout" ? "" : (challenge?.account_size || "$100,000");
+                const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`;
                 return (
                   <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                     {/* Square preview */}
