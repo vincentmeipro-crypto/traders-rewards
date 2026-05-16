@@ -21,6 +21,15 @@ const CERT_CONFIG = {
     amountTop: "80%",
     dateTop: "90%",
   },
+  reward: {
+    image: "/CERTIFICAT.png",
+    nameColor: "#ffffff",
+    amountColor: "#c084fc",
+    dateColor: "#aaaaaa",
+    nameTop: "69%",
+    amountTop: "85%",
+    dateTop: "93%",
+  },
   payout: {
     image: "/PAYOUT.png",
     nameColor: "#ffffff",
@@ -44,6 +53,8 @@ function CertificateContent() {
   const cfg = CERT_CONFIG[type] || CERT_CONFIG.phase1;
 
   const amountLabel = type === "payout"
+    ? (amount || "$0")
+    : type === "reward"
     ? (amount || "$0")
     : (amount || "$100,000");
 
