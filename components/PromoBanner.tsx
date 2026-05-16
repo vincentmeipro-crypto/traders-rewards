@@ -7,7 +7,7 @@ const items = [
   { en: "🔥 LIMITED OFFER — 50% OFF all challenges", fr: "🔥 OFFRE LIMITÉE — 50% DE RÉDUCTION sur tous les challenges" },
   { en: "⚡ Use code ELITE50 at checkout", fr: "⚡ Utilisez le code ELITE50 au paiement" },
   { en: "🏆 No time limit · Fee refunded at first payout", fr: "🏆 Aucune limite de temps · Frais remboursés au 1er retrait" },
-  { en: "💰 Up to $200K in funded capital", fr: "💰 Jusqu'à 200 000$ de capital financé" },
+  { en: "💰 Simulated capital", fr: "💰 Capital simulé" },
 ];
 
 export default function PromoBanner() {
