@@ -105,7 +105,7 @@ export default function Pricing() {
                     letterSpacing: "0.5px", whiteSpace: "nowrap",
                     boxShadow: "0 4px 12px rgba(34,197,94,0.45)",
                   }}>
-                    {isFr ? "Meilleure valeur" : "Best value"} 🏆
+                    {isFr ? "Meilleure valeur" : "Best value"}
                   </div>
                 )}
 
