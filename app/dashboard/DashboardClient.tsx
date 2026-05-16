@@ -302,7 +302,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   color: "#2D7DD2",
                   bg: "linear-gradient(135deg, #0a0a14, #121220)",
                   glow: "rgba(45,125,210,0.08)",
-                  unlocked: !!challenge && (challenge.phase === "phase2" || challenge.phase === "funded"),
+                  unlocked: true,
                   certType: "phase1",
                   stats: [
                     { label: "Account Size", value: challenge?.account_size || "—" },
@@ -317,7 +317,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   color: "#a855f7",
                   bg: "linear-gradient(135deg, #0d0a14, #130f20)",
                   glow: "rgba(168,85,247,0.08)",
-                  unlocked: !!challenge && challenge.phase === "funded",
+                  unlocked: true,
                   certType: "phase2",
                   stats: [
                     { label: "Account Size", value: challenge?.account_size || "—" },
@@ -332,7 +332,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   color: "#22c55e",
                   bg: "linear-gradient(135deg, #0a1408, #101a08)",
                   glow: "rgba(34,197,94,0.08)",
-                  unlocked: !!challenge && challenge.phase === "funded",
+                  unlocked: true,
                   certType: "funded",
                   stats: [
                     { label: "Account Size", value: challenge?.account_size || "—" },
