@@ -2,23 +2,46 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
-const cfg = {
-  image: "/CERTIFICAT.png",
-  nameColor: "#ffffff",
-  amountColor: "#7dd3fc",
-  dateColor: "#aaaaaa",
-  nameTop: "58%",
-  amountTop: "72%",
-  dateTop: "87%",
+const CERT_CONFIG = {
+  phase1: {
+    image: "/PASSED-PHASE-1.png",
+    nameColor: "#ffffff",
+    amountColor: "#7dd3fc",
+    dateColor: "#888888",
+    nameTop: "63%",
+    amountTop: "75%",
+    dateTop: "85%",
+  },
+  challenge: {
+    image: "/PASSED-CHALLENGE.png",
+    nameColor: "#ffffff",
+    amountColor: "#7dd3fc",
+    dateColor: "#888888",
+    nameTop: "63%",
+    amountTop: "75%",
+    dateTop: "85%",
+  },
+  reward: {
+    image: "/REWARD-CERTIFICAT.png",
+    nameColor: "#ffffff",
+    amountColor: "#7dd3fc",
+    dateColor: "#888888",
+    nameTop: "63%",
+    amountTop: "75%",
+    dateTop: "85%",
+  },
 };
 
 function CertificateContent() {
   const params = useSearchParams();
+  const type = (params.get("type") || "phase1") as keyof typeof CERT_CONFIG;
   const firstName = params.get("firstname") || "";
   const lastName = params.get("lastname") || "";
   const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (params.get("name") || "Trader");
   const amount = params.get("amount") || "$100,000";
   const date = params.get("date") || new Date().toLocaleDateString("fr-FR");
+
+  const cfg = CERT_CONFIG[type] || CERT_CONFIG.phase1;
 
   return (
     <div style={{
@@ -32,7 +55,6 @@ function CertificateContent() {
       fontFamily: "Inter, system-ui, sans-serif",
     }}>
 
-      {/* Print button */}
       <button
         onClick={() => window.print()}
         className="no-print"
@@ -48,15 +70,14 @@ function CertificateContent() {
         ↓ Télécharger / Imprimer
       </button>
 
-      {/* Certificate wrapper — landscape format */}
       <div style={{ position: "relative", width: "min(700px, 96vw)" }}>
         <img
           src={cfg.image}
           alt="certificate"
-          style={{ width: "100%", display: "block", borderRadius: 16 }}
+          style={{ width: "100%", display: "block", borderRadius: 12 }}
         />
 
-        {/* Nom — cadre "PROUDLY PRESENTED TO" */}
+        {/* Nom */}
         <div style={{
           position: "absolute",
           top: cfg.nameTop, left: "10%", width: "80%",
@@ -64,16 +85,16 @@ function CertificateContent() {
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(14px, 3.5vw, 20px)",
-            fontWeight: 900, color: cfg.nameColor,
-            letterSpacing: "0.5px",
+            fontSize: "clamp(14px, 2.8vw, 22px)",
+            fontWeight: 800, color: cfg.nameColor,
+            letterSpacing: "1px",
             textShadow: "0 2px 10px rgba(0,0,0,0.9)",
           }}>
             {name}
           </div>
         </div>
 
-        {/* Montant — cadre "VERIFIED FUNDED ACCOUNT" */}
+        {/* Montant */}
         <div style={{
           position: "absolute",
           top: cfg.amountTop, left: "10%", width: "80%",
@@ -81,7 +102,7 @@ function CertificateContent() {
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(18px, 4.5vw, 28px)",
+            fontSize: "clamp(16px, 3.2vw, 26px)",
             fontWeight: 900, color: cfg.amountColor,
             letterSpacing: "-0.5px",
             textShadow: "0 2px 12px rgba(0,0,0,0.9)",
@@ -90,7 +111,7 @@ function CertificateContent() {
           </div>
         </div>
 
-        {/* Date — sous le 2ème cadre */}
+        {/* Date */}
         <div style={{
           position: "absolute",
           top: cfg.dateTop, left: "10%", width: "80%",
@@ -98,7 +119,7 @@ function CertificateContent() {
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           <div style={{
-            fontSize: "clamp(11px, 2.5vw, 13px)",
+            fontSize: "clamp(10px, 2vw, 13px)",
             fontWeight: 600,
             color: cfg.dateColor,
             letterSpacing: "1px",

@@ -295,28 +295,32 @@ export default function DashboardClient({ user }: { user: User }) {
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Certificates</h1>
             <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Téléchargez et partagez vos certificats.</p>
 
-            <div style={{ maxWidth: 360 }}>
-              {(() => {
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
+              {[
+                { type: "phase1",   image: "/PASSED-PHASE-1.png",   label: "Phase 1 →",   btnColor: "#2D7DD2" },
+                { type: "challenge",image: "/PASSED-CHALLENGE.png",  label: "Challenge →", btnColor: "#a855f7" },
+                { type: "reward",   image: "/REWARD-CERTIFICAT.png", label: "Reward →",    btnColor: "#C9A84C" },
+              ].map((cert) => {
                 const firstName = challenge?.client_first_name || "";
                 const lastName = challenge?.client_last_name || "";
                 const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
                 const date = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
                 const amount = challenge?.account_size || "$100,000";
-                const href = `/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`;
+                const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`;
                 return (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <a href={href} target="_blank" style={{ display: "block", borderRadius: 16, overflow: "hidden", textDecoration: "none", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", transition: "transform 0.2s" }}
+                  <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <a href={href} target="_blank" style={{ display: "block", borderRadius: 12, overflow: "hidden", textDecoration: "none", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", transition: "transform 0.2s" }}
                       onMouseOver={e => (e.currentTarget.style.transform = "scale(1.02)")}
                       onMouseOut={e => (e.currentTarget.style.transform = "scale(1)")}
                     >
-                      <img src="/CERTIFICAT.png" alt="Challenge Certificate" style={{ width: "100%", display: "block" }} />
+                      <img src={cert.image} alt={cert.label} style={{ width: "100%", display: "block" }} />
                     </a>
-                    <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: "#a855f7", color: "#fff" }}>
-                      Ouvrir mon certificat →
+                    <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: cert.btnColor, color: "#fff" }}>
+                      Ouvrir {cert.label}
                     </a>
                   </div>
                 );
-              })()}
+              })}
             </div>
           </div>
         )}
