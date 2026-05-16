@@ -1,5 +1,5 @@
 const stats = [
-  { value: "$24,800+", label: "Total Payouts" },
+  { value: "$24,800+", label: "Total Rewards" },
   { value: "37+", label: "Funded Traders" },
   { value: "98%", label: "Satisfaction Rate" },
   { value: "<24h", label: "Support Response" },

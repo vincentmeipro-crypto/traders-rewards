@@ -66,10 +66,10 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
 
 export default function TopTraders() {
   const { lang } = useLanguage();
-  const title    = lang === "fr" ? "Derniers Retraits" : "Latest Payouts";
+  const title    = lang === "fr" ? "Dernières Récompenses" : "Latest Rewards";
   const subtitle = lang === "fr"
-    ? "Nos traders financés retirent leurs profits chaque semaine."
-    : "Our funded traders withdraw their profits every week.";
+    ? "Nos traders financés reçoivent leurs récompenses chaque semaine."
+    : "Our funded traders receive their rewards every week.";
 
   const doubled = [...traders, ...traders];
 

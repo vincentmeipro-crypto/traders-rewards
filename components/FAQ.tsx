@@ -27,7 +27,7 @@ const faqData = {
     },
     {
       q: "Is my challenge fee refunded?",
-      a: "Yes. Your challenge fee is fully refunded with your very first payout from your funded account. You essentially get paid to pass the challenge.",
+      a: "Yes. Your challenge fee is fully refunded with your very first reward from your funded account. You essentially get paid to pass the challenge.",
     },
     {
       q: "What instruments can I trade?",
@@ -51,7 +51,7 @@ const faqData = {
     },
     {
       q: "How and when do I get paid?",
-      a: "Your first payout is available from day 14 of trading on your funded account (or the day after your first trade, whichever comes later). After that, you can request a payout every 30 calendar days. Payouts are processed within 24-48 hours via crypto (USDT, BTC) or bank transfer.",
+      a: "Your first reward is available from day 14 of trading on your funded account (or the day after your first trade, whichever comes later). After that, you can request a reward every 30 calendar days. Rewards are processed within 24-48 hours via crypto (USDT, BTC) or bank transfer.",
     },
     {
       q: "What is the profit split?",
@@ -93,7 +93,7 @@ const faqData = {
     },
     {
       q: "Les frais sont-ils remboursés ?",
-      a: "Oui. Les frais de votre challenge sont intégralement remboursés lors de votre tout premier retrait depuis votre compte financé.",
+      a: "Oui. Les frais de votre challenge sont intégralement remboursés lors de votre toute première récompense depuis votre compte financé.",
     },
     {
       q: "Quels instruments peut-on trader ?",
@@ -117,7 +117,7 @@ const faqData = {
     },
     {
       q: "Comment et quand est-ce que je suis payé ?",
-      a: "Votre premier retrait est disponible à partir du 14e jour de trading sur votre compte financé (ou le lendemain de votre premier trade, selon ce qui arrive en dernier). Ensuite, vous pouvez demander un retrait tous les 30 jours calendaires. Les retraits sont traités sous 24-48h par crypto (USDT, BTC) ou virement bancaire.",
+      a: "Votre première récompense est disponible à partir du 14e jour de trading sur votre compte financé (ou le lendemain de votre premier trade, selon ce qui arrive en dernier). Ensuite, vous pouvez demander une récompense tous les 30 jours calendaires. Les récompenses sont traitées sous 24-48h par crypto (USDT, BTC) ou virement bancaire.",
     },
     {
       q: "Quel est le partage des profits ?",

@@ -211,8 +211,8 @@ export default function DashboardClient({ user }: { user: User }) {
                 { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#2D7DD2" /> },
                 { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#2D7DD2" /> },
                 { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#2D7DD2" /> },
-                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first payout.", icon: <Wallet size={20} color="#2D7DD2" /> },
-                { title: "Payout Split", desc: "Funded traders keep 80% of profits. Payouts processed within 24-48h.", icon: <Percent size={20} color="#2D7DD2" /> },
+                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first reward.", icon: <Wallet size={20} color="#2D7DD2" /> },
+                { title: "Reward Split", desc: "Funded traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#2D7DD2" /> },
               ].map((rule, i) => (
                 <div key={i} className="card" style={{ padding: 24 }}>
                   <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
@@ -256,7 +256,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Rewards unlocked when funded</div>
-                <div style={{ color: "#555", fontSize: 14 }}>Complete Phase 1 and Phase 2 to unlock payout requests.</div>
+                <div style={{ color: "#555", fontSize: 14 }}>Complete Phase 1 and Phase 2 to unlock reward requests.</div>
               </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>

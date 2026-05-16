@@ -87,7 +87,7 @@ export default function Hero() {
   const stats = [
     { label: T.hero.maxFunding, value: "$200K" },
     { label: T.hero.profitSplit, value: "Up to 90%" },
-    { label: T.hero.feeRefunded, value: "1st Payout" },
+    { label: T.hero.feeRefunded, value: "1st Reward" },
     { label: "No Time Limit", value: "∞" },
   ];
 

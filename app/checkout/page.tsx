@@ -195,7 +195,7 @@ function CheckoutContent() {
 
           <div style={{ padding: "16px 0", borderBottom: "1px solid #1a1a1a" }}>
             {[
-              { icon: <RefreshCw size={14} />, text: "Fee refunded at first payout" },
+              { icon: <RefreshCw size={14} />, text: "Fee refunded at first reward" },
               { icon: <Clock size={14} />, text: "No time limit — trade at your pace" },
               { icon: <Shield size={14} />, text: "Simulated account — no personal risk" },
             ].map((item, i) => (
