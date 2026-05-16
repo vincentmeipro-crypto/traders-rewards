@@ -58,6 +58,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClient();
   const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [latestPayout, setLatestPayout] = useState<{ amount: number; created_at: string; status: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [payoutForm, setPayoutForm] = useState({ amount: "", wallet_address: "", payment_method: "crypto" });
@@ -83,6 +84,16 @@ export default function DashboardClient({ user }: { user: User }) {
       .then(({ data }) => {
         setChallenge(data);
         setLoading(false);
+      });
+    supabase
+      .from("payouts")
+      .select("amount, created_at, status")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => {
+        if (data) setLatestPayout(data);
       });
   }, [user.id]);
 
@@ -293,37 +304,72 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "certificates" && (
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Certificates</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Téléchargez et partagez vos certificats.</p>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Vos certificats se débloquent automatiquement.</p>
 
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
-              {[
-                { type: "phase1",   image: "/PASSED-PHASE-1.png",   label: "Phase 1 →",   btnColor: "#2D7DD2" },
-                { type: "challenge",image: "/PASSED-CHALLENGE.png",  label: "Challenge →", btnColor: "#a855f7" },
-                { type: "reward",   image: "/REWARD-CERTIFICAT.png", label: "Reward →",    btnColor: "#C9A84C" },
-              ].map((cert) => {
-                const firstName = challenge?.client_first_name || "";
-                const lastName = challenge?.client_last_name || "";
-                const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
-                const date = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
-                const amount = cert.type === "reward"
-                  ? (challenge?.balance ? `$${challenge.balance.toLocaleString()}` : "$0")
-                  : (challenge?.account_size || "$100,000");
-                const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`;
-                return (
-                  <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <a href={href} target="_blank" style={{ display: "block", borderRadius: 12, overflow: "hidden", textDecoration: "none", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", transition: "transform 0.2s" }}
-                      onMouseOver={e => (e.currentTarget.style.transform = "scale(1.02)")}
-                      onMouseOut={e => (e.currentTarget.style.transform = "scale(1)")}
-                    >
-                      <img src={cert.image} alt={cert.label} style={{ width: "100%", display: "block" }} />
-                    </a>
-                    <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: cert.btnColor, color: "#fff" }}>
-                      Ouvrir {cert.label}
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
+            {(() => {
+              const firstName = challenge?.client_first_name || "";
+              const lastName = challenge?.client_last_name || "";
+              const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
+              const challengeDate = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
+              const payoutDate = latestPayout ? new Date(latestPayout.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
+              const payoutAmount = latestPayout ? `$${Number(latestPayout.amount).toLocaleString()}` : "$0";
+
+              const phase = challenge?.phase || "phase1";
+              const unlockedPhase1 = phase === "phase2" || phase === "funded";
+              const unlockedChallenge = phase === "funded";
+              const unlockedReward = !!latestPayout && (latestPayout.status === "approved" || latestPayout.status === "paid");
+
+              const certs = [
+                {
+                  type: "phase1", image: "/PASSED-PHASE-1.png", label: "Phase 1", btnColor: "#2D7DD2",
+                  unlocked: unlockedPhase1,
+                  amount: challenge?.account_size || "$100,000",
+                  date: challengeDate,
+                },
+                {
+                  type: "challenge", image: "/PASSED-CHALLENGE.png", label: "Challenge", btnColor: "#a855f7",
+                  unlocked: unlockedChallenge,
+                  amount: challenge?.account_size || "$100,000",
+                  date: challengeDate,
+                },
+                {
+                  type: "reward", image: "/REWARD-CERTIFICAT.png", label: "Reward", btnColor: "#C9A84C",
+                  unlocked: unlockedReward,
+                  amount: payoutAmount,
+                  date: payoutDate,
+                },
+              ];
+
+              return (
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
+                  {certs.map((cert) => {
+                    const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(cert.amount)}&date=${encodeURIComponent(cert.date)}`;
+                    return (
+                      <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+                          <img src={cert.image} alt={cert.label} style={{ width: "100%", display: "block", filter: cert.unlocked ? "none" : "brightness(0.25)" }} />
+                          {!cert.unlocked && (
+                            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                              <Lock size={28} color="#555" />
+                              <div style={{ color: "#555", fontSize: 12, fontWeight: 700 }}>Pas encore débloqué</div>
+                            </div>
+                          )}
+                        </div>
+                        {cert.unlocked ? (
+                          <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: cert.btnColor, color: "#fff" }}>
+                            Ouvrir {cert.label} →
+                          </a>
+                        ) : (
+                          <div style={{ textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, backgroundColor: "#1a1a1a", color: "#444" }}>
+                            🔒 {cert.label}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
           </div>
         )}
 
