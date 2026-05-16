@@ -34,7 +34,7 @@ export default function Navbar() {
             <img
               src="/logo-white.jpg"
               alt="Elysium Funded logo"
-              style={{ width: 32, height: 32, objectFit: "contain", mixBlendMode: "screen" }}
+              style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }}
             />
             <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1 }}>
               Elysium
