@@ -305,7 +305,9 @@ export default function DashboardClient({ user }: { user: User }) {
                 const lastName = challenge?.client_last_name || "";
                 const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
                 const date = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
-                const amount = challenge?.account_size || "$100,000";
+                const amount = cert.type === "reward"
+                  ? (challenge?.balance ? `$${challenge.balance.toLocaleString()}` : "$0")
+                  : (challenge?.account_size || "$100,000");
                 const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`;
                 return (
                   <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
