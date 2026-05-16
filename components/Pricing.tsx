@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
@@ -12,8 +12,16 @@ const accounts = [
 
 export default function Pricing() {
   const [model, setModel] = useState<"2step" | "1step">("2step");
+  const [isMobile, setIsMobile] = useState(false);
   const { T, lang } = useLanguage();
   const isFr = lang === "fr";
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   type Row = { label: string; value: string; highlight: boolean; green?: boolean };
 
@@ -71,12 +79,14 @@ export default function Pricing() {
 
         {/* Cards */}
         <div style={{
-          display: "grid",
+          display: isMobile ? "flex" : "grid",
           gridTemplateColumns: "repeat(5, 1fr)",
           gap: 12,
-          overflowX: "auto",
+          overflowX: isMobile ? "scroll" : "auto",
           paddingTop: 20,
-          paddingBottom: 8,
+          paddingBottom: isMobile ? 16 : 8,
+          scrollSnapType: isMobile ? "x mandatory" : "none",
+          WebkitOverflowScrolling: "touch",
         }}>
           {accounts.map((acc) => {
             const price = model === "2step" ? acc.price2 : acc.price1;
@@ -84,6 +94,9 @@ export default function Pricing() {
             return (
               <div key={acc.id} style={{
                 position: "relative",
+                flexShrink: 0,
+                width: isMobile ? "82vw" : "auto",
+                scrollSnapAlign: isMobile ? "center" : "none",
                 background: acc.popular
                   ? "linear-gradient(160deg, #1C2535, #21212B)"
                   : "#1E1E26",
@@ -201,9 +214,11 @@ export default function Pricing() {
         </div>
 
         {/* Mobile hint */}
-        <p style={{ textAlign: "center", color: "#333", fontSize: 12, marginTop: 16 }}>
-          {isFr ? "← Faites défiler pour voir tous les comptes →" : "← Scroll to see all accounts →"}
-        </p>
+        {isMobile && (
+          <p style={{ textAlign: "center", color: "#444", fontSize: 12, marginTop: 12 }}>
+            {isFr ? "← Glissez pour voir tous les comptes →" : "← Swipe to see all accounts →"}
+          </p>
+        )}
 
       </div>
     </section>
