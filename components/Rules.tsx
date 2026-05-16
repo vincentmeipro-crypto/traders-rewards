@@ -66,7 +66,7 @@ export default function Rules() {
     { label: labels.tradingDays,  v2: isFr ? "Aucun minimum" : "No minimum", v1: isFr ? "Aucun minimum" : "No minimum" },
     { label: labels.profitSplit,  v2: "80%",                      v1: "90%"                      },
     { label: labels.payout,       v2: labels.payoutVal,           v1: labels.payoutVal           },
-    { label: labels.feeRefund,    v2: labels.feeRefundVal,        v1: labels.feeRefundVal        },
+    { label: labels.feeRefund,    v2: labels.feeRefundVal,        v1: isFr ? "Non" : "No"        },
   ];
 
   const groups = [
