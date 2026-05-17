@@ -1,11 +1,8 @@
 "use client";
-import { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const START_SIZES = [10000, 25000, 50000, 100000, 200000];
-
-// Fixed round-number ladder from $10K to $1M
-const SCALE_LADDER = [10000, 25000, 50000, 100000, 150000, 200000, 250000, 300000, 400000, 500000, 600000, 750000, 1000000];
+// Fixed round-number ladder from $200K to $1M
+const SCALE_LADDER = [200000, 250000, 300000, 400000, 500000, 600000, 750000, 1000000];
 
 function fmt(n: number) {
   if (n >= 1000000) return "$1,000,000";
@@ -33,9 +30,8 @@ function getSteps(start: number) {
 export default function Scaling() {
   const { lang } = useLanguage();
   const isFr = lang === "fr";
-  const [selected, setSelected] = useState(200000);
 
-  const steps = getSteps(selected);
+  const steps = getSteps(200000);
 
   const labels = {
     badge:   isFr ? "PROGRAMME D'ÉLÉVATION" : "ELEVATION PROGRAM",
@@ -44,7 +40,6 @@ export default function Scaling() {
     sub:     isFr
       ? "Chaque trimestre de performance, votre capital certifié évolue vers le palier suivant. Atteignez le million sans changer de stratégie."
       : "Every performance quarter, your certified account moves to the next level. Reach seven figures without changing your strategy.",
-    pick:    isFr ? "Choisissez votre compte de départ" : "Choose your starting account",
     session: isFr ? "Session" : "Session",
     balance: isFr ? "Solde du compte" : "Account Balance",
     daily:   isFr ? "Perte journalière max" : "Max Daily Loss",
@@ -87,22 +82,6 @@ export default function Scaling() {
             {labels.title} <span className="gold-gradient">{labels.gold}</span>
           </h2>
           <p style={{ color: "#555", fontSize: 16, maxWidth: 600, margin: "0 auto" }}>{labels.sub}</p>
-        </div>
-
-        {/* Account size picker */}
-        <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 36, flexWrap: "wrap" }}>
-          <span style={{ color: "#444", fontSize: 13, fontWeight: 600, alignSelf: "center", marginRight: 8 }}>{labels.pick} :</span>
-          {START_SIZES.map(s => (
-            <button key={s} onClick={() => setSelected(s)} style={{
-              padding: "8px 20px", borderRadius: 100, fontWeight: 700, fontSize: 13, cursor: "pointer",
-              border: selected === s ? "1px solid #2D7DD2" : "1px solid #222",
-              backgroundColor: selected === s ? "rgba(45,125,210,0.12)" : "transparent",
-              color: selected === s ? "#2D7DD2" : "#555",
-              transition: "all 0.2s",
-            }}>
-              {fmt(s)}
-            </button>
-          ))}
         </div>
 
         {/* Table */}
@@ -174,7 +153,7 @@ export default function Scaling() {
           <div style={{ backgroundColor: "rgba(45,125,210,0.06)", border: "1px solid rgba(45,125,210,0.2)", borderRadius: 16, padding: 28, display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <div style={{ fontSize: 36, marginBottom: 16 }}>📈</div>
             <h3 style={{ fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 12, letterSpacing: "-0.3px" }}>
-              {fmt(selected)} → $1,000,000
+              $200K → $1,000,000
             </h3>
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.7 }}>{labels.note}</p>
             <div style={{ marginTop: 20, display: "flex", gap: 24, flexWrap: "wrap" }}>
