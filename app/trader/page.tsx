@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,41 +12,33 @@ const TV_LOCALE: Record<string, string> = {
 export default function TraderPage() {
   const { lang } = useLanguage();
   const [tab, setTab] = useState<"calendar" | "platform">("calendar");
-  const calendarRef = useRef<HTMLDivElement>(null);
   const isFr = lang === "fr";
   const locale = TV_LOCALE[lang] || "en";
 
-  useEffect(() => {
-    if (tab !== "calendar" || !calendarRef.current) return;
-    calendarRef.current.innerHTML = "";
-    const script = document.createElement("script");
-    script.src = "https://s.tradingview.com/external-embedding/embed-widget-economic-calendar.js";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
+  const calendarSrc =
+    `https://s.tradingview.com/embed-widget/economic-calendar/?locale=${locale}` +
+    `#${encodeURIComponent(JSON.stringify({
       colorTheme: "dark",
       isTransparent: true,
       width: "100%",
-      height: "700",
-      locale,
+      height: "100%",
       importanceFilter: "-1,0,1",
-    });
-    calendarRef.current.appendChild(script);
-  }, [tab, locale]);
+    }))}`;
 
   const labels = {
-    title:    isFr ? "Espace Trader" : "Trader Hub",
-    calTab:   isFr ? "Annonces Économiques" : "Economic Announcements",
-    platTab:  isFr ? "Plateforme de Trading" : "Trading Platform",
-    mt5Title: "MetaTrader 5",
-    mt5Desc:  isFr
+    title:   isFr ? "Espace Trader" : "Trader Hub",
+    sub:     isFr ? "Vos outils de trading au même endroit." : "Your trading tools in one place.",
+    calTab:  isFr ? "Annonces Économiques" : "Economic Announcements",
+    platTab: isFr ? "Plateforme de Trading" : "Trading Platform",
+    mt5Desc: isFr
       ? "Accédez à votre compte certifié depuis MetaTrader 5, la référence des traders professionnels."
       : "Access your certified account from MetaTrader 5, the reference for professional traders.",
-    mt5Btn:   isFr ? "Télécharger MT5" : "Download MT5",
+    mt5Btn:  isFr ? "Télécharger MT5" : "Download MT5",
     webTitle: isFr ? "Dashboard Elysium" : "Elysium Dashboard",
-    webDesc:  isFr
-      ? "Suivez vos performances, vos récompenses et vos statistiques depuis votre espace personnel."
+    webDesc: isFr
+      ? "Suivez vos performances, récompenses et statistiques depuis votre espace personnel."
       : "Track your performance, rewards and statistics from your personal dashboard.",
-    webBtn:   isFr ? "Accéder au Dashboard" : "Go to Dashboard",
+    webBtn:  isFr ? "Accéder au Dashboard" : "Go to Dashboard",
   };
 
   return (
@@ -59,14 +51,10 @@ export default function TraderPage() {
           <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 900, letterSpacing: "-1px", marginBottom: 8 }}>
             {labels.title}
           </h1>
-          <p style={{ color: "#555", fontSize: 15, marginBottom: 40 }}>
-            {isFr
-              ? "Vos outils de trading au même endroit."
-              : "Your trading tools in one place."}
-          </p>
+          <p style={{ color: "#555", fontSize: 15, marginBottom: 40 }}>{labels.sub}</p>
 
           {/* Tabs */}
-          <div style={{ display: "flex", gap: 0, marginBottom: 32, borderBottom: "1px solid #2A2A38" }}>
+          <div style={{ display: "flex", borderBottom: "1px solid #2A2A38", marginBottom: 32 }}>
             {(["calendar", "platform"] as const).map(t => (
               <button key={t} onClick={() => setTab(t)} style={{
                 padding: "12px 28px",
@@ -88,11 +76,14 @@ export default function TraderPage() {
 
           {/* Economic Calendar */}
           {tab === "calendar" && (
-            <div
-              ref={calendarRef}
-              className="tradingview-widget-container"
-              style={{ minHeight: 700, borderRadius: 16, overflow: "hidden" }}
-            />
+            <div style={{ height: 720, borderRadius: 16, overflow: "hidden", border: "1px solid #2A2A38" }}>
+              <iframe
+                src={calendarSrc}
+                style={{ width: "100%", height: "100%", border: "none" }}
+                allowTransparency
+                frameBorder="0"
+              />
+            </div>
           )}
 
           {/* Trading Platform */}
@@ -100,8 +91,12 @@ export default function TraderPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
 
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <div style={{ fontSize: 52, marginBottom: 20 }}>📊</div>
-                <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>{labels.mt5Title}</h3>
+                <img
+                  src="/MT5.png"
+                  alt="MetaTrader 5"
+                  style={{ height: 80, width: "auto", objectFit: "contain", marginBottom: 20 }}
+                />
+                <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>MetaTrader 5</h3>
                 <p style={{ color: "#666", fontSize: 14, lineHeight: 1.8, marginBottom: 28 }}>{labels.mt5Desc}</p>
                 <a
                   href="https://www.metatrader5.com/fr/download"
