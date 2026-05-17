@@ -179,8 +179,8 @@ export default function Rules() {
               </p>
               <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8, marginTop: 10 }}>
                 {isFr
-                  ? "De manière générale, risquer systématiquement une part importante de la perte journalière maximale sur une seule idée de trading sera considéré comme non viable. Chez Elysium Funded, nous privilégions les traders qui font preuve de constance, de discipline et d'une vision à long terme. Traitez votre compte comme vous le feriez avec votre propre capital réel."
-                  : "In general, consistently risking a significant portion of the maximum daily loss on a single trade idea will be considered unsustainable. At Elysium Funded, we look for traders who demonstrate consistency, discipline, and a long-term vision. Treat your account as you would your own real capital."}
+                  ? "De manière générale, risquer systématiquement une part importante de la perte journalière maximale sur une seule idée de trading sera considéré comme non viable. Chez Elysium, nous privilégions les traders qui font preuve de constance, de discipline et d'une vision à long terme. Traitez votre compte comme vous le feriez avec votre propre capital réel."
+                  : "In general, consistently risking a significant portion of the maximum daily loss on a single trade idea will be considered unsustainable. At Elysium, we look for traders who demonstrate consistency, discipline, and a long-term vision. Treat your account as you would your own real capital."}
               </p>
             </div>
           </div>
