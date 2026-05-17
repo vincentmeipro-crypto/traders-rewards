@@ -7,7 +7,7 @@ const accounts = [
   { size: "$25,000",  id: "25k",  price2: "€250",   old2: null,    price1: "€189",   popular: false },
   { size: "$50,000",  id: "50k",  price2: "€345",   old2: null,    price1: "€299",   popular: false },
   { size: "$100,000", id: "100k", price2: "€439",   old2: "€540",  price1: "€429",   popular: true  },
-  { size: "$200,000", id: "200k", price2: "€1 080", old2: null,    price1: "€899",   popular: false },
+  { size: "$200,000", id: "200k", price2: "€799",   old2: null,    price1: "€749",   popular: false },
 ];
 
 export default function Pricing() {
