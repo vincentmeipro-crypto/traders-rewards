@@ -46,7 +46,6 @@ export default function Navbar() {
             {([
               [T.nav.challenges, "/#pricing"],
               [T.nav.howItWorks, "/#how-it-works"],
-              [T.nav.pricing, "/#pricing"],
               [T.nav.rules, "/#rules"],
               [T.nav.elevation, "/#elevation"],
               [T.nav.faq, "/#faq"],
@@ -132,7 +131,6 @@ export default function Navbar() {
             {([
               [T.nav.challenges, "/#pricing"],
               [T.nav.howItWorks, "/#how-it-works"],
-              [T.nav.pricing, "/#pricing"],
               [T.nav.rules, "/#rules"],
               [T.nav.elevation, "/#elevation"],
             ] as [string, string][]).map(([label, href]) => (
