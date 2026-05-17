@@ -1,36 +1,88 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PromoBanner from "@/components/PromoBanner";
 
-// Investing.com lang codes
-const INV_LANG: Record<string, string> = {
-  en: "1", fr: "5", ar: "14", es: "4", pt: "11", de: "3", tr: "18",
+type CalEvent = {
+  title: string;
+  country: string;
+  date: string;
+  time: string;
+  impact: string;
+  forecast: string;
+  previous: string;
+  actual: string;
 };
+
+const IMPACT_COLOR: Record<string, string> = {
+  High:    "#ef4444",
+  Medium:  "#f97316",
+  Low:     "#22c55e",
+  Holiday: "#555",
+};
+
+const DAYS_FR = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+const DAYS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function groupByDate(events: CalEvent[]) {
+  const map: Record<string, CalEvent[]> = {};
+  for (const ev of events) {
+    if (!map[ev.date]) map[ev.date] = [];
+    map[ev.date].push(ev);
+  }
+  return Object.entries(map).sort(([a], [b]) => a.localeCompare(b));
+}
+
+function formatDate(dateStr: string, isFr: boolean) {
+  const d = new Date(dateStr);
+  const day = isFr ? DAYS_FR[d.getDay()] : DAYS_EN[d.getDay()];
+  return `${day} ${d.getDate()}/${d.getMonth() + 1}`;
+}
 
 export default function TraderPage() {
   const { lang } = useLanguage();
   const [tab, setTab] = useState<"calendar" | "platform">("calendar");
+  const [events, setEvents] = useState<CalEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<"All" | "High" | "Medium" | "Low">("High");
   const isFr = lang === "fr";
-  const invLang = INV_LANG[lang] || "1";
 
-  const calendarSrc =
-    `https://sslecal2.investing.com?columns=exc_flags,exc_currency,exc_importance,exc_actual,exc_forecast,exc_previous` +
-    `&features=datepicker,timezone` +
-    `&countries=25,32,6,37,72,22,17,39,14,10,35,43,56,36,110,11,26,12,4,5` +
-    `&calType=week&timeZone=55&lang=${invLang}`;
+  useEffect(() => {
+    if (tab !== "calendar") return;
+    setLoading(true);
+    fetch("/api/calendar")
+      .then(r => r.json())
+      .then(data => { setEvents(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [tab]);
+
+  const filtered = events.filter(e => filter === "All" || e.impact === filter);
+  const grouped = groupByDate(filtered);
 
   const labels = {
-    title:   isFr ? "Espace Trader" : "Trader Hub",
-    sub:     isFr ? "Vos outils de trading au même endroit." : "Your trading tools in one place.",
-    calTab:  isFr ? "Annonces Économiques" : "Economic Announcements",
-    platTab: isFr ? "Plateforme de Trading" : "Trading Platform",
-    mt5Desc: isFr
+    title:    isFr ? "Espace Trader" : "Trader Hub",
+    sub:      isFr ? "Vos outils de trading au même endroit." : "Your trading tools in one place.",
+    calTab:   isFr ? "Annonces Économiques" : "Economic Announcements",
+    platTab:  isFr ? "Plateforme de Trading" : "Trading Platform",
+    all:      isFr ? "Tout" : "All",
+    high:     isFr ? "Élevé" : "High",
+    medium:   isFr ? "Moyen" : "Medium",
+    low:      isFr ? "Faible" : "Low",
+    time:     isFr ? "Heure" : "Time",
+    currency: isFr ? "Devise" : "Currency",
+    event:    isFr ? "Événement" : "Event",
+    impact:   isFr ? "Impact" : "Impact",
+    actual:   isFr ? "Actuel" : "Actual",
+    forecast: isFr ? "Prévision" : "Forecast",
+    previous: isFr ? "Précédent" : "Previous",
+    loading:  isFr ? "Chargement..." : "Loading...",
+    noData:   isFr ? "Aucun événement pour cette semaine." : "No events for this week.",
+    mt5Desc:  isFr
       ? "Accédez à votre compte certifié depuis MetaTrader 5, la référence des traders professionnels."
       : "Access your certified account from MetaTrader 5, the reference for professional traders.",
-    mt5Btn:  isFr ? "Télécharger MT5" : "Download MT5",
+    mt5Btn:   isFr ? "Télécharger MT5" : "Download MT5",
   };
 
   return (
@@ -60,32 +112,79 @@ export default function TraderPage() {
             ))}
           </div>
 
-          {/* Investing.com Economic Calendar */}
+          {/* ── CALENDAR ── */}
           {tab === "calendar" && (
-            <iframe
-              key={invLang}
-              src={calendarSrc}
-              width="100%"
-              height="740"
-              frameBorder="0"
-              allowTransparency={true}
-              style={{ display: "block", border: "none", borderRadius: 12, width: "100%", height: 740 }}
-            />
+            <div>
+              {/* Filters */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+                {(["All", "High", "Medium", "Low"] as const).map(f => (
+                  <button key={f} onClick={() => setFilter(f)} style={{
+                    padding: "6px 18px", borderRadius: 100, fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s",
+                    border: filter === f ? `1px solid ${f === "All" ? "#2D7DD2" : IMPACT_COLOR[f]}` : "1px solid #222",
+                    backgroundColor: filter === f ? (f === "All" ? "rgba(45,125,210,0.15)" : `${IMPACT_COLOR[f]}22`) : "transparent",
+                    color: filter === f ? (f === "All" ? "#2D7DD2" : IMPACT_COLOR[f]) : "#555",
+                  }}>
+                    {f === "All" ? labels.all : f === "High" ? labels.high : f === "Medium" ? labels.medium : labels.low}
+                  </button>
+                ))}
+              </div>
+
+              {loading ? (
+                <div style={{ textAlign: "center", color: "#555", padding: 80, fontSize: 14 }}>{labels.loading}</div>
+              ) : grouped.length === 0 ? (
+                <div style={{ textAlign: "center", color: "#555", padding: 80, fontSize: 14 }}>{labels.noData}</div>
+              ) : (
+                grouped.map(([date, evs]) => (
+                  <div key={date} style={{ marginBottom: 32 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, borderLeft: "3px solid #2D7DD2", paddingLeft: 12 }}>
+                      <span style={{ fontWeight: 800, fontSize: 15, color: "#fff" }}>{formatDate(date, isFr)}</span>
+                      <span style={{ color: "#444", fontSize: 12 }}>{evs.length} {isFr ? "annonce(s)" : "event(s)"}</span>
+                    </div>
+                    <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+                      <div style={{ overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                          <thead>
+                            <tr style={{ backgroundColor: "#1a1a24", borderBottom: "1px solid #2A2A38" }}>
+                              {[labels.time, labels.currency, labels.event, labels.impact, labels.forecast, labels.previous, labels.actual].map((h, i) => (
+                                <th key={i} style={{ padding: "11px 14px", color: "#2D7DD2", fontWeight: 700, textAlign: i < 3 ? "left" : "center", fontSize: 10, letterSpacing: "0.8px", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {evs.map((ev, i) => (
+                              <tr key={i} style={{ borderBottom: i < evs.length - 1 ? "1px solid #111" : "none", backgroundColor: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)" }}>
+                                <td style={{ padding: "11px 14px", color: "#888", fontWeight: 600, whiteSpace: "nowrap" }}>{ev.time}</td>
+                                <td style={{ padding: "11px 14px" }}>
+                                  <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#2D7DD2", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 4 }}>{ev.country}</span>
+                                </td>
+                                <td style={{ padding: "11px 14px", color: "#ccc", fontWeight: 500, minWidth: 200 }}>{ev.title}</td>
+                                <td style={{ padding: "11px 14px", textAlign: "center" }}>
+                                  <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", backgroundColor: IMPACT_COLOR[ev.impact] || "#555" }} />
+                                </td>
+                                <td style={{ padding: "11px 14px", textAlign: "center", color: "#888" }}>{ev.forecast || "—"}</td>
+                                <td style={{ padding: "11px 14px", textAlign: "center", color: "#888" }}>{ev.previous || "—"}</td>
+                                <td style={{ padding: "11px 14px", textAlign: "center", fontWeight: 700, color: ev.actual ? "#22c55e" : "#333" }}>{ev.actual || "—"}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           )}
 
-          {/* MT5 Platform */}
+          {/* ── PLATFORM ── */}
           {tab === "platform" && (
             <div style={{ maxWidth: 400 }}>
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <img src="/MT5.png" alt="MetaTrader 5" style={{ height: 80, width: "auto", objectFit: "contain", marginBottom: 24 }} />
                 <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>MetaTrader 5</h3>
                 <p style={{ color: "#666", fontSize: 14, lineHeight: 1.8, marginBottom: 28 }}>{labels.mt5Desc}</p>
-                <a
-                  href="https://www.metatrader5.com/fr/download"
-                  target="_blank" rel="noopener noreferrer"
-                  className="btn-primary btn-primary-animated"
-                  style={{ display: "inline-block", padding: "13px 32px", fontSize: 13 }}
-                >
+                <a href="https://www.metatrader5.com/fr/download" target="_blank" rel="noopener noreferrer"
+                  className="btn-primary btn-primary-animated" style={{ display: "inline-block", padding: "13px 32px", fontSize: 13 }}>
                   {labels.mt5Btn}
                 </a>
               </div>
