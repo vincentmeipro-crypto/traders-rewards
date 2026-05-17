@@ -14,7 +14,7 @@ export const t = {
   en: {
     nav: {
       challenges: 'Challenges', howItWorks: 'How it works', pricing: 'Pricing',
-      rules: 'Rules', faq: 'FAQ', logIn: 'LOG IN', startChallenge: 'START CHALLENGE',
+      rules: 'Rules', elevation: 'Elevation', faq: 'FAQ', logIn: 'LOG IN', startChallenge: 'START CHALLENGE',
     },
     hero: {
       badge: 'The Elite Prop Firm',
@@ -72,7 +72,7 @@ export const t = {
   fr: {
     nav: {
       challenges: 'Challenges', howItWorks: 'Comment ça marche', pricing: 'Tarifs',
-      rules: 'Règles', faq: 'FAQ', logIn: 'CONNEXION', startChallenge: 'COMMENCER',
+      rules: 'Règles', elevation: 'Élévation', faq: 'FAQ', logIn: 'CONNEXION', startChallenge: 'COMMENCER',
     },
     hero: {
       badge: 'La Prop Firm Élite',
@@ -130,7 +130,7 @@ export const t = {
   ar: {
     nav: {
       challenges: 'التحديات', howItWorks: 'كيف يعمل', pricing: 'الأسعار',
-      rules: 'القواعد', faq: 'الأسئلة الشائعة', logIn: 'تسجيل الدخول', startChallenge: 'ابدأ التحدي',
+      rules: 'القواعد', elevation: 'الارتقاء', faq: 'الأسئلة الشائعة', logIn: 'تسجيل الدخول', startChallenge: 'ابدأ التحدي',
     },
     hero: {
       badge: 'شركة التداول النخبوية',
@@ -188,7 +188,7 @@ export const t = {
   es: {
     nav: {
       challenges: 'Desafíos', howItWorks: 'Cómo funciona', pricing: 'Precios',
-      rules: 'Reglas', faq: 'FAQ', logIn: 'INICIAR SESIÓN', startChallenge: 'EMPEZAR',
+      rules: 'Reglas', elevation: 'Elevación', faq: 'FAQ', logIn: 'INICIAR SESIÓN', startChallenge: 'EMPEZAR',
     },
     hero: {
       badge: 'La Prop Firm Élite',
@@ -246,7 +246,7 @@ export const t = {
   pt: {
     nav: {
       challenges: 'Desafios', howItWorks: 'Como funciona', pricing: 'Preços',
-      rules: 'Regras', faq: 'FAQ', logIn: 'ENTRAR', startChallenge: 'COMEÇAR',
+      rules: 'Regras', elevation: 'Elevação', faq: 'FAQ', logIn: 'ENTRAR', startChallenge: 'COMEÇAR',
     },
     hero: {
       badge: 'A Prop Firm de Elite',
@@ -304,7 +304,7 @@ export const t = {
   de: {
     nav: {
       challenges: 'Challenges', howItWorks: 'So funktioniert es', pricing: 'Preise',
-      rules: 'Regeln', faq: 'FAQ', logIn: 'ANMELDEN', startChallenge: 'STARTEN',
+      rules: 'Regeln', elevation: 'Aufstieg', faq: 'FAQ', logIn: 'ANMELDEN', startChallenge: 'STARTEN',
     },
     hero: {
       badge: 'Die Elite Prop Firm',
@@ -362,7 +362,7 @@ export const t = {
   tr: {
     nav: {
       challenges: 'Meydan Okumalar', howItWorks: 'Nasıl Çalışır', pricing: 'Fiyatlar',
-      rules: 'Kurallar', faq: 'SSS', logIn: 'GİRİŞ', startChallenge: 'BAŞLA',
+      rules: 'Kurallar', elevation: 'Yükseliş', faq: 'SSS', logIn: 'GİRİŞ', startChallenge: 'BAŞLA',
     },
     hero: {
       badge: 'Elit Prop Firm',

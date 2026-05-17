@@ -48,6 +48,7 @@ export default function Navbar() {
               [T.nav.howItWorks, "/#how-it-works"],
               [T.nav.pricing, "/#pricing"],
               [T.nav.rules, "/#rules"],
+              [T.nav.elevation, "/#elevation"],
               [T.nav.faq, "/#faq"],
             ] as [string, string][]).map(([label, href]) => (
               <a key={href} href={href}
@@ -133,6 +134,7 @@ export default function Navbar() {
               [T.nav.howItWorks, "/#how-it-works"],
               [T.nav.pricing, "/#pricing"],
               [T.nav.rules, "/#rules"],
+              [T.nav.elevation, "/#elevation"],
             ] as [string, string][]).map(([label, href]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ color: "#A0A0A0", fontSize: 16, fontWeight: 500, textDecoration: "none" }}
