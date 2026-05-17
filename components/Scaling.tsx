@@ -66,6 +66,9 @@ export default function Scaling() {
     note: isFr
       ? "Le scaling est automatiquement appliqué dès que toutes les conditions sont validées. Votre stratégie, vos règles et votre partage des profits restent inchangés."
       : "Scaling is automatically applied once all conditions are met. Your strategy, rules, and profit split remain unchanged.",
+    profitNote: isFr
+      ? "Le compteur de profit est cumulatif sur les 4 mois. Si vous faites un retrait en cours de cycle, votre capital de base revient à son niveau initial — mais le profit déjà généré reste comptabilisé. Exemple : vous atteignez +5%, retirez, puis faites encore +5% → total cumulé = 10% → scaling déclenché."
+      : "The profit counter is cumulative over 4 months. If you withdraw during the cycle, your base capital returns to its initial level — but the profit already generated still counts. Example: you reach +5%, withdraw, then generate another +5% → cumulative total = 10% → scaling triggered.",
   };
 
   return (
@@ -137,6 +140,15 @@ export default function Scaling() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Profit note */}
+        <div style={{ marginBottom: 24, backgroundColor: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 16, padding: "20px 28px", display: "flex", gap: 16, alignItems: "flex-start" }}>
+          <span style={{ fontSize: 20, flexShrink: 0 }}>💡</span>
+          <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8, margin: 0 }}>
+            <span style={{ color: "#22c55e", fontWeight: 700 }}>{isFr ? "Profit cumulatif" : "Cumulative profit"} — </span>
+            {labels.profitNote}
+          </p>
         </div>
 
         {/* Conditions */}
