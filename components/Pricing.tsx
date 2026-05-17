@@ -6,7 +6,7 @@ const accounts = [
   { size: "$10,000",  id: "10k",  price2: "€89",    old2: null,    price1: "€69",    popular: false },
   { size: "$25,000",  id: "25k",  price2: "€250",   old2: null,    price1: "€189",   popular: false },
   { size: "$50,000",  id: "50k",  price2: "€345",   old2: null,    price1: "€299",   popular: false },
-  { size: "$100,000", id: "100k", price2: "€439",   old2: "€540",  price1: "€429",   popular: true  },
+  { size: "$100,000", id: "100k", price2: "€439",   old2: "€549",  price1: "€429",   popular: true, discount: "-20%" },
   { size: "$200,000", id: "200k", price2: "€799",   old2: null,    price1: "€749",   popular: false },
 ];
 
@@ -173,8 +173,21 @@ export default function Pricing() {
                       {oldPrice}
                     </div>
                   )}
-                  <div style={{ fontSize: 28, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
-                    {price}
+                  <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ fontSize: 28, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
+                      {price}
+                    </div>
+                    {"discount" in acc && acc.discount && (
+                      <span style={{
+                        fontSize: 13, fontWeight: 800,
+                        color: "#ff6a00",
+                        backgroundColor: "rgba(255,106,0,0.12)",
+                        border: "1px solid rgba(255,106,0,0.3)",
+                        borderRadius: 6, padding: "2px 7px",
+                      }}>
+                        {acc.discount}
+                      </span>
+                    )}
                   </div>
                 </div>
 
