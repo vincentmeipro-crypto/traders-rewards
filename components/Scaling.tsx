@@ -54,12 +54,14 @@ export default function Scaling() {
       "Avoir reçu au moins 2 récompenses pendant la session",
       "Aucune violation des règles de trading",
       "Solde du compte positif en permanence",
+      "Elysium se réserve le droit de restreindre l'accès au programme d'Élévation à l'issue d'une étude approfondie du profil et de l'historique de trading du trader",
     ] : [
       "Achieve at least 10% profit on your certified account balance",
       "Over a quarterly session (3 months)",
       "Have received at least 2 rewards during the session",
       "Zero trading rule violations",
       "Positive account balance maintained throughout",
+      "Elysium reserves the right to restrict access to the Elevation program following a thorough review of the trader's profile and trading history",
     ],
     note: isFr
       ? "L'élévation est automatiquement appliquée dès que toutes les conditions sont validées. Votre stratégie, vos règles et votre partage des profits restent inchangés."

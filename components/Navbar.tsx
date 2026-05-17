@@ -56,7 +56,7 @@ export default function Navbar() {
                 onMouseOut={e => (e.currentTarget.style.color = "#A0A0A0")}
               >
                 {label}
-                {badge && <img src="/CERTIFIED.png" alt="" style={{ height: 14, width: "auto", mixBlendMode: "screen", flexShrink: 0 }} />}
+                {badge && <span style={{ fontSize: 13 }}>🔒</span>}
               </a>
             ))}
           </div>
@@ -141,7 +141,7 @@ export default function Navbar() {
                 style={{ display: "flex", alignItems: "center", gap: 6, color: "#A0A0A0", fontSize: 16, fontWeight: 500, textDecoration: "none" }}
               >
                 {label}
-                {badge && <img src="/CERTIFIED.png" alt="" style={{ height: 16, width: "auto", mixBlendMode: "screen", flexShrink: 0 }} />}
+                {badge && <span style={{ fontSize: 15 }}>🔒</span>}
               </a>
             ))}
             <a href="/login" style={{ color: "#2D7DD2", fontSize: 16, fontWeight: 600, textDecoration: "none" }} onClick={() => setOpen(false)}>{T.nav.logIn}</a>
