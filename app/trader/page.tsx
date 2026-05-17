@@ -26,11 +26,24 @@ const IMPACT_COLOR: Record<string, string> = {
 const DAYS_FR = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 const DAYS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+function normalizeDate(dateStr: string): string {
+  // Handle formats: "2026-05-21", "05/21/2026", "2026-05-21T..."
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+  return dateStr;
+}
+
 function groupByDate(events: CalEvent[]) {
   const map: Record<string, CalEvent[]> = {};
   for (const ev of events) {
-    if (!map[ev.date]) map[ev.date] = [];
-    map[ev.date].push(ev);
+    const key = normalizeDate(ev.date);
+    if (!map[key]) map[key] = [];
+    map[key].push(ev);
   }
   return Object.entries(map).sort(([a], [b]) => a.localeCompare(b));
 }
@@ -46,7 +59,7 @@ export default function TraderPage() {
   const [tab, setTab] = useState<"calendar" | "platform">("calendar");
   const [events, setEvents] = useState<CalEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"All" | "High" | "Medium" | "Low">("High");
+  const [filter, setFilter] = useState<"All" | "High" | "Medium" | "Low">("All");
   const isFr = lang === "fr";
 
   useEffect(() => {
