@@ -44,17 +44,20 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div style={{ display: isMobile ? "none" : "flex", gap: 28, alignItems: "center" }}>
             {([
-              [T.nav.challenges, "/#pricing"],
-              [T.nav.howItWorks, "/#how-it-works"],
-              [T.nav.rules, "/#rules"],
-              [T.nav.elevation, "/#elevation"],
-              [T.nav.faq, "/#faq"],
-            ] as [string, string][]).map(([label, href]) => (
+              [T.nav.challenges, "/#pricing", false],
+              [T.nav.howItWorks, "/#how-it-works", false],
+              [T.nav.rules, "/#rules", false],
+              [T.nav.elevation, "/#elevation", true],
+              [T.nav.faq, "/#faq", false],
+            ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href}
-                style={{ color: "#A0A0A0", fontSize: 13, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
+                style={{ display: "flex", alignItems: "center", gap: 4, color: "#A0A0A0", fontSize: 13, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
                 onMouseOver={e => (e.currentTarget.style.color = "#2D7DD2")}
                 onMouseOut={e => (e.currentTarget.style.color = "#A0A0A0")}
-              >{label}</a>
+              >
+                {label}
+                {badge && <img src="/CERTIFIED.png" alt="" style={{ height: 14, width: "auto", mixBlendMode: "screen", flexShrink: 0 }} />}
+              </a>
             ))}
           </div>
 
@@ -129,14 +132,17 @@ export default function Navbar() {
             ))}
             <hr style={{ borderColor: "#222" }} />
             {([
-              [T.nav.challenges, "/#pricing"],
-              [T.nav.howItWorks, "/#how-it-works"],
-              [T.nav.rules, "/#rules"],
-              [T.nav.elevation, "/#elevation"],
-            ] as [string, string][]).map(([label, href]) => (
+              [T.nav.challenges, "/#pricing", false],
+              [T.nav.howItWorks, "/#how-it-works", false],
+              [T.nav.rules, "/#rules", false],
+              [T.nav.elevation, "/#elevation", true],
+            ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
-                style={{ color: "#A0A0A0", fontSize: 16, fontWeight: 500, textDecoration: "none" }}
-              >{label}</a>
+                style={{ display: "flex", alignItems: "center", gap: 6, color: "#A0A0A0", fontSize: 16, fontWeight: 500, textDecoration: "none" }}
+              >
+                {label}
+                {badge && <img src="/CERTIFIED.png" alt="" style={{ height: 16, width: "auto", mixBlendMode: "screen", flexShrink: 0 }} />}
+              </a>
             ))}
             <a href="/login" style={{ color: "#2D7DD2", fontSize: 16, fontWeight: 600, textDecoration: "none" }} onClick={() => setOpen(false)}>{T.nav.logIn}</a>
             <a href="/#pricing" className="btn-primary" style={{ textAlign: "center" }} onClick={() => setOpen(false)}>{T.nav.startChallenge}</a>
