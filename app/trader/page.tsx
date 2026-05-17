@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,36 +12,22 @@ const TV_LOCALE: Record<string, string> = {
 export default function TraderPage() {
   const { lang } = useLanguage();
   const [tab, setTab] = useState<"calendar" | "platform">("calendar");
-  const containerRef = useRef<HTMLDivElement>(null);
   const isFr = lang === "fr";
   const locale = TV_LOCALE[lang] || "en";
 
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || tab !== "calendar") return;
-
-    container.innerHTML = "";
-
-    const widgetDiv = document.createElement("div");
-    widgetDiv.className = "tradingview-widget-container__widget";
-    container.appendChild(widgetDiv);
-
-    const script = document.createElement("script");
-    script.setAttribute("type", "text/javascript");
-    script.setAttribute("src", "https://s.tradingview.com/external-embedding/embed-widget-economic-calendar.js");
-    script.setAttribute("async", "");
-    script.text = JSON.stringify({
+  const calendarSrc =
+    `https://s.tradingview.com/embed-widget/economic-calendar/?locale=${locale}` +
+    `#${encodeURIComponent(JSON.stringify({
       colorTheme: "dark",
       isTransparent: false,
       width: "100%",
       height: "680",
-      locale,
       importanceFilter: "-1,0,1",
-    });
-    container.appendChild(script);
+      utm_source: "elysium.com",
+      utm_medium: "widget_new",
+      utm_campaign: "economic-calendar",
+    }))}`;
 
-    return () => { if (container) container.innerHTML = ""; };
-  }, [tab, locale]);
 
   const labels = {
     title:   isFr ? "Espace Trader" : "Trader Hub",
@@ -89,10 +75,12 @@ export default function TraderPage() {
 
           {/* Economic Calendar */}
           {tab === "calendar" && (
-            <div
-              ref={containerRef}
-              className="tradingview-widget-container"
-              style={{ minHeight: 680 }}
+            <iframe
+              key={locale}
+              src={calendarSrc}
+              title="Economic Calendar"
+              style={{ width: "100%", height: 700, border: "none", borderRadius: 16, display: "block" }}
+              allowFullScreen
             />
           )}
 
