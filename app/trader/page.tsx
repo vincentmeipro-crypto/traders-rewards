@@ -34,11 +34,6 @@ export default function TraderPage() {
       ? "Accédez à votre compte certifié depuis MetaTrader 5, la référence des traders professionnels."
       : "Access your certified account from MetaTrader 5, the reference for professional traders.",
     mt5Btn:  isFr ? "Télécharger MT5" : "Download MT5",
-    webTitle: isFr ? "Dashboard Elysium" : "Elysium Dashboard",
-    webDesc: isFr
-      ? "Suivez vos performances, récompenses et statistiques depuis votre espace personnel."
-      : "Track your performance, rewards and statistics from your personal dashboard.",
-    webBtn:  isFr ? "Accéder au Dashboard" : "Go to Dashboard",
   };
 
   return (
@@ -109,18 +104,6 @@ export default function TraderPage() {
                 </a>
               </div>
 
-              <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <div style={{ fontSize: 52, marginBottom: 20 }}>🚀</div>
-                <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>{labels.webTitle}</h3>
-                <p style={{ color: "#666", fontSize: 14, lineHeight: 1.8, marginBottom: 28 }}>{labels.webDesc}</p>
-                <a
-                  href="/dashboard"
-                  className="btn-primary btn-primary-animated"
-                  style={{ display: "inline-block", padding: "13px 32px", fontSize: 13 }}
-                >
-                  {labels.webBtn}
-                </a>
-              </div>
 
             </div>
           )}
