@@ -17,8 +17,8 @@ export default function Rules() {
   const isFr = lang === "fr";
 
   const labels = {
-    tabChallenge: isFr ? "Règles du Challenge" : "Challenge Rules",
-    tabFunded: isFr ? "Règles Funded" : "Funded Rules",
+    tabChallenge: isFr ? "Règles Compte Challenge" : "Challenge Account Rules",
+    tabFunded: isFr ? "Règles Compte Certifié" : "Certified Account Rules",
     phase1: isFr ? "Phase 1" : "Phase 1",
     phase2: isFr ? "Phase 2" : "Phase 2",
     oneStep: isFr ? "1 Étape" : "1-Step",
