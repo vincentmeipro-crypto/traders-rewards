@@ -13,9 +13,9 @@ function fmt(n: number) {
 function getSteps(start: number) {
   const startIdx = SCALE_LADDER.indexOf(start);
   const steps: { size: number; daily: number; total: number; target: number; next: number }[] = [];
-  for (let i = startIdx; i < SCALE_LADDER.length - 1; i++) {
+  for (let i = startIdx; i < SCALE_LADDER.length; i++) {
     const cur = SCALE_LADDER[i];
-    const next = SCALE_LADDER[i + 1];
+    const next = i < SCALE_LADDER.length - 1 ? SCALE_LADDER[i + 1] : 1_000_000;
     steps.push({
       size: cur,
       daily: Math.round(cur * 0.05),
@@ -101,7 +101,7 @@ export default function Scaling() {
               </thead>
               <tbody>
                 {steps.map((row, i) => {
-                  const isCap = row.next === 1_000_000;
+                  const isCap = row.size === 1_000_000;
                   return (
                     <tr key={i} style={{ borderBottom: i < steps.length - 1 ? "1px solid #111" : "none", backgroundColor: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)" }}>
                       <td style={{ padding: "13px 16px", textAlign: "center", color: "#555", fontWeight: 700 }}>{i + 1}</td>
