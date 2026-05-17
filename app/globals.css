@@ -23,7 +23,7 @@ body {
   background: radial-gradient(ellipse at 50% 30%, #22222E 0%, #18181F 50%, #0F0F14 100%);
   background-attachment: fixed;
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-inter), 'DM Sans', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
