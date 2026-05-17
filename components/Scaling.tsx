@@ -4,6 +4,9 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const START_SIZES = [10000, 25000, 50000, 100000, 200000];
 
+// Fixed round-number ladder from $10K to $1M
+const SCALE_LADDER = [10000, 25000, 50000, 100000, 150000, 200000, 250000, 300000, 400000, 500000, 600000, 750000, 1000000];
+
 function fmt(n: number) {
   if (n >= 1000000) return "$1,000,000";
   if (n >= 1000) return "$" + (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + "K";
@@ -11,10 +14,11 @@ function fmt(n: number) {
 }
 
 function getSteps(start: number) {
+  const startIdx = SCALE_LADDER.indexOf(start);
   const steps: { size: number; daily: number; total: number; target: number; next: number }[] = [];
-  let cur = start;
-  while (cur < 1_000_000) {
-    const next = Math.min(Math.round(cur * 1.2), 1_000_000);
+  for (let i = startIdx; i < SCALE_LADDER.length - 1; i++) {
+    const cur = SCALE_LADDER[i];
+    const next = SCALE_LADDER[i + 1];
     steps.push({
       size: cur,
       daily: Math.round(cur * 0.05),
@@ -22,7 +26,6 @@ function getSteps(start: number) {
       target: Math.round(cur * 0.10),
       next,
     });
-    cur = next;
   }
   return steps;
 }
@@ -39,36 +42,36 @@ export default function Scaling() {
     title:   isFr ? "Progressez jusqu'à" : "Grow Your Account Up to",
     gold:    "$1,000,000",
     sub:     isFr
-      ? "Chaque trimestre de performance, votre capital certifié augmente de 20%. Atteignez le million sans changer de stratégie."
-      : "Every performance quarter, your certified account grows by 20%. Reach seven figures without changing your strategy.",
+      ? "Chaque trimestre de performance, votre capital certifié évolue vers le palier suivant. Atteignez le million sans changer de stratégie."
+      : "Every performance quarter, your certified account moves to the next level. Reach seven figures without changing your strategy.",
     pick:    isFr ? "Choisissez votre compte de départ" : "Choose your starting account",
-    step:    isFr ? "Palier" : "Step",
+    session: isFr ? "Session" : "Session",
     balance: isFr ? "Solde du compte" : "Account Balance",
     daily:   isFr ? "Perte journalière max" : "Max Daily Loss",
     totalL:  isFr ? "Perte totale max" : "Max Total Loss",
-    scaleAt: isFr ? "Objectif de scaling" : "Scale-up Target",
-    nextBal: isFr ? "Prochain palier" : "Next Balance",
+    scaleAt: isFr ? "Objectif d'élévation" : "Elevation Target",
+    nextBal: isFr ? "Prochain palier" : "Next Level",
     cap:     isFr ? "Plafond atteint" : "Cap Reached",
-    condTitle: isFr ? "Conditions pour scaler" : "Conditions to Scale Up",
+    condTitle: isFr ? "Conditions pour évoluer" : "Conditions to Level Up",
     conds: isFr ? [
       "Réaliser au moins 10% de profit sur le solde du compte certifié",
-      "Sur une période glissante de 4 mois minimum",
-      "Avoir reçu au moins 2 récompenses pendant la période",
+      "Sur une session trimestrielle (3 mois)",
+      "Avoir reçu au moins 2 récompenses pendant la session",
       "Aucune violation des règles de trading",
       "Solde du compte positif en permanence",
     ] : [
       "Achieve at least 10% profit on your certified account balance",
-      "Over a minimum rolling 4-month period",
-      "Have received at least 2 rewards during the period",
+      "Over a quarterly session (3 months)",
+      "Have received at least 2 rewards during the session",
       "Zero trading rule violations",
       "Positive account balance maintained throughout",
     ],
     note: isFr
-      ? "Le scaling est automatiquement appliqué dès que toutes les conditions sont validées. Votre stratégie, vos règles et votre partage des profits restent inchangés."
-      : "Scaling is automatically applied once all conditions are met. Your strategy, rules, and profit split remain unchanged.",
+      ? "L'élévation est automatiquement appliquée dès que toutes les conditions sont validées. Votre stratégie, vos règles et votre partage des profits restent inchangés."
+      : "Elevation is automatically applied once all conditions are met. Your strategy, rules, and profit split remain unchanged.",
     profitNote: isFr
-      ? "Le compteur de profit est cumulatif sur les 4 mois. Si vous faites un retrait en cours de cycle, votre capital de base revient à son niveau initial — mais le profit déjà généré reste comptabilisé. Exemple : vous atteignez +5%, retirez, puis faites encore +5% → total cumulé = 10% → scaling déclenché."
-      : "The profit counter is cumulative over 4 months. If you withdraw during the cycle, your base capital returns to its initial level — but the profit already generated still counts. Example: you reach +5%, withdraw, then generate another +5% → cumulative total = 10% → scaling triggered.",
+      ? "Le compteur de profit est cumulatif sur les 3 mois. Si vous faites un retrait en cours de session, votre capital de base revient à son niveau initial — mais le profit déjà généré reste comptabilisé. Exemple : vous atteignez +5%, retirez, puis faites encore +5% → total cumulé = 10% → élévation déclenchée."
+      : "The profit counter is cumulative over 3 months. If you withdraw during the session, your base capital returns to its initial level — but the profit already generated still counts. Example: you reach +5%, withdraw, then generate another +5% → cumulative total = 10% → elevation triggered.",
   };
 
   return (
@@ -108,7 +111,7 @@ export default function Scaling() {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr style={{ backgroundColor: "#1a1a24", borderBottom: "1px solid #2A2A38" }}>
-                  {[labels.step, labels.balance, labels.daily, labels.totalL, labels.scaleAt, labels.nextBal].map((h, i) => (
+                  {[labels.session, labels.balance, labels.daily, labels.totalL, labels.scaleAt, labels.nextBal].map((h, i) => (
                     <th key={i} style={{ padding: "14px 16px", color: "#2D7DD2", fontWeight: 700, textAlign: i === 0 ? "center" : "right", letterSpacing: "0.5px", textTransform: "uppercase", fontSize: 11, whiteSpace: "nowrap" }}>
                       {h}
                     </th>
@@ -177,11 +180,11 @@ export default function Scaling() {
             <div style={{ marginTop: 20, display: "flex", gap: 24, flexWrap: "wrap" }}>
               <div>
                 <div style={{ color: "#2D7DD2", fontSize: 22, fontWeight: 900 }}>{steps.length}</div>
-                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Paliers" : "Steps"}</div>
+                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Sessions" : "Sessions"}</div>
               </div>
               <div>
-                <div style={{ color: "#22c55e", fontSize: 22, fontWeight: 900 }}>+20%</div>
-                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Par palier" : "Per step"}</div>
+                <div style={{ color: "#22c55e", fontSize: 22, fontWeight: 900 }}>3 {isFr ? "mois" : "months"}</div>
+                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Par session" : "Per session"}</div>
               </div>
               <div>
                 <div style={{ color: "#C9A84C", fontSize: 22, fontWeight: 900 }}>$1M</div>
