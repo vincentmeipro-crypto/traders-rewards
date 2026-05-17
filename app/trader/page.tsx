@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -12,18 +12,36 @@ const TV_LOCALE: Record<string, string> = {
 export default function TraderPage() {
   const { lang } = useLanguage();
   const [tab, setTab] = useState<"calendar" | "platform">("calendar");
+  const containerRef = useRef<HTMLDivElement>(null);
   const isFr = lang === "fr";
   const locale = TV_LOCALE[lang] || "en";
 
-  const calendarSrc =
-    `https://s.tradingview.com/embed-widget/economic-calendar/?locale=${locale}` +
-    `#${encodeURIComponent(JSON.stringify({
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || tab !== "calendar") return;
+
+    container.innerHTML = "";
+
+    const widgetDiv = document.createElement("div");
+    widgetDiv.className = "tradingview-widget-container__widget";
+    container.appendChild(widgetDiv);
+
+    const script = document.createElement("script");
+    script.setAttribute("type", "text/javascript");
+    script.setAttribute("src", "https://s.tradingview.com/external-embedding/embed-widget-economic-calendar.js");
+    script.setAttribute("async", "");
+    script.text = JSON.stringify({
       colorTheme: "dark",
-      isTransparent: true,
+      isTransparent: false,
       width: "100%",
-      height: "100%",
+      height: "680",
+      locale,
       importanceFilter: "-1,0,1",
-    }))}`;
+    });
+    container.appendChild(script);
+
+    return () => { if (container) container.innerHTML = ""; };
+  }, [tab, locale]);
 
   const labels = {
     title:   isFr ? "Espace Trader" : "Trader Hub",
@@ -71,25 +89,21 @@ export default function TraderPage() {
 
           {/* Economic Calendar */}
           {tab === "calendar" && (
-            <div style={{ height: 720, borderRadius: 16, overflow: "hidden", border: "1px solid #2A2A38" }}>
-              <iframe
-                src={calendarSrc}
-                style={{ width: "100%", height: "100%", border: "none" }}
-                allowTransparency
-                frameBorder="0"
-              />
-            </div>
+            <div
+              ref={containerRef}
+              className="tradingview-widget-container"
+              style={{ minHeight: 680 }}
+            />
           )}
 
           {/* Trading Platform */}
           {tab === "platform" && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
-
+            <div style={{ maxWidth: 400 }}>
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <img
                   src="/MT5.png"
                   alt="MetaTrader 5"
-                  style={{ height: 80, width: "auto", objectFit: "contain", marginBottom: 20 }}
+                  style={{ height: 80, width: "auto", objectFit: "contain", marginBottom: 24 }}
                 />
                 <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>MetaTrader 5</h3>
                 <p style={{ color: "#666", fontSize: 14, lineHeight: 1.8, marginBottom: 28 }}>{labels.mt5Desc}</p>
@@ -103,8 +117,6 @@ export default function TraderPage() {
                   {labels.mt5Btn}
                 </a>
               </div>
-
-
             </div>
           )}
 
