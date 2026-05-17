@@ -35,7 +35,7 @@ export default function Scaling() {
   const steps = getSteps(selected);
 
   const labels = {
-    badge:   isFr ? "PROGRAMME DE SCALING" : "SCALING PROGRAM",
+    badge:   isFr ? "PROGRAMME D'ÉLÉVATION" : "ELEVATION PROGRAM",
     title:   isFr ? "Progressez jusqu'à" : "Grow Your Account Up to",
     gold:    "$1,000,000",
     sub:     isFr
@@ -72,7 +72,7 @@ export default function Scaling() {
   };
 
   return (
-    <section id="scaling" style={{ padding: "80px 24px" }}>
+    <section id="elevation" style={{ padding: "80px 24px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
