@@ -6,7 +6,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Elysium Funded <support@elysiumfunded.eu>",
+      from: "Elysium <support@elysiumfunded.eu>",
       to: [to],
       subject,
       html,
@@ -68,13 +68,13 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
 }
 
 export async function sendFundedEmail(to: string, accountSize: string) {
-  await sendEmail(to, "🎉 You're Funded! Welcome to Elysium Funded", buildEmail({
-    title: "🎉 Congratulations — You're Funded!",
+  await sendEmail(to, "🎉 You're Certified! Welcome to Elysium", buildEmail({
+    title: "🎉 Congratulations — You're Certified!",
     titleColor: "#3b82f6",
-    body: `Outstanding performance! You have passed all phases of your ${accountSize} challenge. You are now an official Elysium Funded trader with a 90% profit split.`,
+    body: `Outstanding performance! You have passed all phases of your ${accountSize} challenge. You are now an official Elysium certified trader with a 90% profit split.`,
     details: [
       { label: "Account Size", value: accountSize, color: "#C9A84C" },
-      { label: "Status", value: "Funded Trader ✓", color: "#3b82f6" },
+      { label: "Status", value: "Certified Trader ✓", color: "#3b82f6" },
       { label: "Profit Split", value: "90% for you" },
       { label: "Payouts", value: "Available now" },
     ],

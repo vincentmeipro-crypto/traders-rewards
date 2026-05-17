@@ -10,11 +10,11 @@ export default function TermsPage() {
         {[
           {
             title: "1. Acceptance of Terms",
-            content: `By accessing and using Elysium Funded ("the Platform"), you accept and agree to be bound by these Terms of Service. Elysium Funded is operated by a company registered in Estonia (OÜ). If you do not agree to these terms, please do not use the Platform.`
+            content: `By accessing and using Elysium ("the Platform"), you accept and agree to be bound by these Terms of Service. Elysium is operated by a company registered in Estonia (OÜ). If you do not agree to these terms, please do not use the Platform.`
           },
           {
             title: "2. Nature of the Service",
-            content: `Elysium Funded provides evaluation programs ("Challenges") using simulated trading accounts. All accounts on our platform are 100% simulated — no real funds are traded. The challenges are designed to evaluate a trader's skills and discipline based on predefined rules and objectives.`
+            content: `Elysium provides evaluation programs ("Challenges") using simulated trading accounts. All accounts on our platform are 100% simulated — no real funds are traded. The challenges are designed to evaluate a trader's skills and discipline based on predefined rules and objectives.`
           },
           {
             title: "3. Eligibility",
@@ -30,7 +30,7 @@ export default function TermsPage() {
           },
           {
             title: "6. Payouts",
-            content: `Traders who successfully complete a challenge and meet all requirements may request a profit split payout. Elysium Funded reserves the right to verify trading activity before processing any payout. Payouts are processed within 1-5 business days. Elysium Funded reserves the right to refuse payouts in cases of suspected fraud, manipulation, or violation of trading rules.`
+            content: `Traders who successfully complete a challenge and meet all requirements may request a profit split payout. Elysium reserves the right to verify trading activity before processing any payout. Payouts are processed within 1-5 business days. Elysium reserves the right to refuse payouts in cases of suspected fraud, manipulation, or violation of trading rules.`
           },
           {
             title: "7. Prohibited Activities",
@@ -38,15 +38,15 @@ export default function TermsPage() {
           },
           {
             title: "8. Intellectual Property",
-            content: `All content on the Elysium Funded platform, including but not limited to logos, text, graphics, and software, is the exclusive property of Elysium Funded and is protected by applicable intellectual property laws.`
+            content: `All content on the Elysium platform, including but not limited to logos, text, graphics, and software, is the exclusive property of Elysium and is protected by applicable intellectual property laws.`
           },
           {
             title: "9. Limitation of Liability",
-            content: `Elysium Funded shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the platform. Our total liability shall not exceed the amount paid by you for the challenge in question.`
+            content: `Elysium shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the platform. Our total liability shall not exceed the amount paid by you for the challenge in question.`
           },
           {
             title: "10. Modifications",
-            content: `Elysium Funded reserves the right to modify these Terms at any time. Changes will be effective upon posting to the platform. Continued use of the platform after changes constitutes acceptance of the new terms.`
+            content: `Elysium reserves the right to modify these Terms at any time. Changes will be effective upon posting to the platform. Continued use of the platform after changes constitutes acceptance of the new terms.`
           },
           {
             title: "11. Governing Law",

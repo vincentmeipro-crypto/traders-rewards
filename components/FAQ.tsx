@@ -27,7 +27,7 @@ const faqData = {
     },
     {
       q: "Is my challenge fee refunded?",
-      a: "Yes. Your challenge fee is fully refunded with your very first reward from your funded account. You essentially get paid to pass the challenge.",
+      a: "Yes. Your challenge fee is fully refunded with your very first reward from your certified account. You essentially get paid to pass the challenge.",
     },
     {
       q: "What instruments can I trade?",
@@ -35,7 +35,7 @@ const faqData = {
     },
     {
       q: "Can I trade during news events?",
-      a: "Yes. News trading is fully allowed during the evaluation phases. There are no restrictions on when you can trade.",
+      a: "Yes. News trading is fully allowed during the evaluation phases. However, on certified accounts, trading is suspended 5 minutes before and 5 minutes after major news releases to protect account stability.",
     },
     {
       q: "Can I hold positions overnight or over the weekend?",
@@ -47,19 +47,19 @@ const faqData = {
     },
     {
       q: "Can I use Expert Advisors (EAs) or bots?",
-      a: "Yes. Algorithmic trading and EAs are allowed. However, strategies must reflect legitimate trading and be replicable in real market conditions. Using the same EA across multiple accounts simultaneously may trigger a review.",
+      a: "No. Automated trading robots and Expert Advisors (EAs) are strictly forbidden on all Elysium accounts — both during the challenge and on certified accounts. Only manual trading is permitted.",
     },
     {
       q: "How and when do I get paid?",
-      a: "Your first reward is available from day 14 of trading on your funded account (or the day after your first trade, whichever comes later). After that, you can request a reward every 30 calendar days. Rewards are processed within 24-48 hours via crypto (USDT, BTC) or bank transfer.",
+      a: "Your first reward is available from day 14 of trading on your certified account (or the day after your first trade, whichever comes later). After that, you can request a reward every 30 calendar days. Rewards are processed within 24-48 hours via crypto (USDT, BTC) or bank transfer.",
     },
     {
       q: "What is the profit split?",
-      a: "2-Step funded traders keep 80% of profits. 1-Step funded traders keep 90% of profits. There is no cap on how much you can earn.",
+      a: "2-Step certified traders keep 80% of profits. 1-Step certified traders keep 90% of profits. There is no cap on how much you can earn.",
     },
     {
       q: "Can I scale my account?",
-      a: "Yes. Through our scaling program, consistent funded traders can grow their capital up to $400,000 in total funding.",
+      a: "Yes. Through our scaling program, consistent certified traders can grow their capital up to $400,000 in total allocation.",
     },
     {
       q: "What trading platform is used?",
@@ -81,7 +81,7 @@ const faqData = {
     },
     {
       q: "Quels sont les objectifs de profit ?",
-      a: "2 étapes : Phase 1 exige +10% de profit, Phase 2 exige +5%. Une fois financé, il n'y a plus d'objectif. 1 étape : une seule phase avec +10% d'objectif, puis vous êtes financé.",
+      a: "2 étapes : Phase 1 exige +10% de profit, Phase 2 exige +5%. Une fois certifié, il n'y a plus d'objectif. 1 étape : une seule phase avec +10% d'objectif, puis vous êtes certifié.",
     },
     {
       q: "Quelles sont les règles de drawdown ?",
@@ -93,7 +93,7 @@ const faqData = {
     },
     {
       q: "Les frais sont-ils remboursés ?",
-      a: "Oui. Les frais de votre challenge sont intégralement remboursés lors de votre toute première récompense depuis votre compte financé.",
+      a: "Oui. Les frais de votre challenge sont intégralement remboursés lors de votre toute première récompense depuis votre compte certifié.",
     },
     {
       q: "Quels instruments peut-on trader ?",
@@ -101,7 +101,7 @@ const faqData = {
     },
     {
       q: "Peut-on trader pendant les news ?",
-      a: "Oui. Le trading sur les news est entièrement autorisé pendant les phases d'évaluation. Il n'y a aucune restriction sur les horaires de trading.",
+      a: "Oui. Le trading sur les news est entièrement autorisé pendant les phases d'évaluation. En revanche, sur le compte certifié, le trading est interdit 5 minutes avant et 5 minutes après les publications de news majeures.",
     },
     {
       q: "Peut-on garder des positions overnight ou le weekend ?",
@@ -113,19 +113,19 @@ const faqData = {
     },
     {
       q: "Les EAs et robots de trading sont-ils autorisés ?",
-      a: "Oui. Le trading algorithmique et les EAs sont autorisés. Les stratégies doivent refléter un trading légitime et être reproductibles dans des conditions de marché réelles.",
+      a: "Non. Les robots de trading automatisés et les Expert Advisors (EAs) sont strictement interdits sur tous les comptes Elysium — pendant le challenge comme sur le compte certifié. Seul le trading manuel est autorisé.",
     },
     {
       q: "Comment et quand est-ce que je suis payé ?",
-      a: "Votre première récompense est disponible à partir du 14e jour de trading sur votre compte financé (ou le lendemain de votre premier trade, selon ce qui arrive en dernier). Ensuite, vous pouvez demander une récompense tous les 30 jours calendaires. Les récompenses sont traitées sous 24-48h par crypto (USDT, BTC) ou virement bancaire.",
+      a: "Votre première récompense est disponible à partir du 14e jour de trading sur votre compte certifié (ou le lendemain de votre premier trade, selon ce qui arrive en dernier). Ensuite, vous pouvez demander une récompense tous les 30 jours calendaires. Les récompenses sont traitées sous 24-48h par crypto (USDT, BTC) ou virement bancaire.",
     },
     {
       q: "Quel est le partage des profits ?",
-      a: "Traders financés 2 étapes : 80% des profits. Traders 1 étape : 90% des profits. Il n'y a aucun plafond sur les gains.",
+      a: "Traders certifiés 2 étapes : 80% des profits. Traders certifiés 1 étape : 90% des profits. Il n'y a aucun plafond sur les gains.",
     },
     {
       q: "Peut-on faire évoluer son compte ?",
-      a: "Oui. Via notre programme de scaling, les traders financés réguliers peuvent faire croître leur capital jusqu'à 400 000$ de financement total.",
+      a: "Oui. Via notre programme de scaling, les traders certifiés réguliers peuvent faire croître leur capital jusqu'à 400 000$ d'allocation totale.",
     },
     {
       q: "Quelle plateforme de trading est utilisée ?",

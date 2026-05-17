@@ -28,16 +28,16 @@ export const t = {
       tagline: 'Pass the challenge. Join the elite.',
     },
     stats: {
-      payouts: 'Total Rewards', traders: 'Funded Traders',
+      payouts: 'Total Rewards', traders: 'Certified Traders',
       satisfaction: 'Satisfaction Rate', support: 'Support Response',
     },
     how: {
-      label: 'The Process', title: 'From Zero to', titleGold: 'Funded',
+      label: 'The Process', title: 'From Zero to', titleGold: 'Certified',
       sub: "Three steps. That's all it takes to join the elite.",
       steps: [
         { title: 'Choose Your Challenge', desc: 'Select your account size from $10K to $200K. Choose between our 2-Step or 1-Step challenge. Pay the one-time fee — fully refunded at your first reward.' },
         { title: 'Pass the Evaluation', desc: 'Trade with discipline. Hit your profit target while respecting the drawdown rules. No time pressure — trade at your own pace with no expiry date.' },
-        { title: 'Get Funded & Paid', desc: 'Receive your funded account instantly. Trade real capital and keep up to 90% of your profits. Scale up to $200,000 through our scaling program.' },
+        { title: 'Get Certified & Paid', desc: 'Receive your certified account instantly. Trade real capital and keep up to 90% of your profits. Scale up to $200,000 through our scaling program.' },
       ],
     },
     pricing: {
@@ -54,7 +54,7 @@ export const t = {
       allowedList: ['All instruments: Forex, Gold, Indices, Crypto, Oil','News trading — fully unrestricted','Holding positions overnight & over weekends','Scalping, day trading & swing trading','Multiple strategies simultaneously','No mandatory stop-loss requirement'],
       notAllowedList: ['Automated robots & Expert Advisors (EAs) — strictly forbidden','Copying trades between Elysium accounts','Toxic flow or latency arbitrage strategies','Martingale at extreme risk levels (account-destroying)','Trading on behalf of others / account sharing','Gambling-style behavior (all-in positions)','Coordinated group trading to exploit the rules'],
       ctaTitle: 'Ready to Join the', ctaGold: 'Elite?',
-      ctaSub: 'Join thousands of funded traders. Your challenge fee is refunded at first reward.',
+      ctaSub: 'Join thousands of certified traders. Your challenge fee is refunded at first reward.',
       ctaBtn: 'Start Your Challenge Today',
     },
     footer: {
@@ -63,9 +63,9 @@ export const t = {
       challengeLinks: ['2-Step Challenge','1-Step Challenge','Scaling Program','Pricing'],
       companyLinks: ['About Us','Rules','FAQ','Contact'],
       supportLinks: ['Discord Community','Help Center','Live Chat','Email Support'],
-      copyright: '© 2025 Elysium Funded. All rights reserved. Simulated trading accounts only.',
+      copyright: '© 2025 Elysium. All rights reserved. Simulated trading accounts only.',
       privacy: 'Privacy Policy', terms: 'Terms of Service', risk: 'Risk Disclaimer',
-      disclaimer: 'Risk Disclaimer: Elysium Funded provides simulated trading environments. All accounts are simulated. Past performance is not indicative of future results. Trading involves significant risk of loss.',
+      disclaimer: 'Risk Disclaimer: Elysium provides simulated trading environments. All accounts are simulated. Past performance is not indicative of future results. Trading involves significant risk of loss.',
     },
   },
 
@@ -86,16 +86,16 @@ export const t = {
       tagline: 'Passe le challenge. Rejoins l\'élite.',
     },
     stats: {
-      payouts: 'Total Récompenses', traders: 'Traders Financés',
+      payouts: 'Total Récompenses', traders: 'Traders Certifiés',
       satisfaction: 'Taux de Satisfaction', support: 'Réponse Support',
     },
     how: {
-      label: 'Le Processus', title: 'De Zéro à', titleGold: 'Financé',
+      label: 'Le Processus', title: 'De Zéro à', titleGold: 'Certifié',
       sub: 'Trois étapes. C\'est tout ce qu\'il faut pour rejoindre l\'élite.',
       steps: [
         { title: 'Choisissez votre Challenge', desc: 'Sélectionnez votre taille de compte de 10K$ à 200K$. Choisissez entre notre challenge 2 étapes ou 1 étape. Frais remboursés à la première récompense.' },
         { title: 'Réussissez l\'Évaluation', desc: 'Tradez avec discipline. Atteignez votre objectif de profit tout en respectant les règles de drawdown. Aucune pression de temps, pas de date d\'expiration.' },
-        { title: 'Soyez Financé et Payé', desc: 'Recevez votre compte financé instantanément. Tradez du vrai capital et gardez jusqu\'à 90% de vos profits. Évoluez jusqu\'à 200 000$.' },
+        { title: 'Devenez Certifié et Payé', desc: 'Recevez votre compte certifié instantanément. Tradez du vrai capital et gardez jusqu\'à 90% de vos profits. Évoluez jusqu\'à 200 000$.' },
       ],
     },
     pricing: {
@@ -112,7 +112,7 @@ export const t = {
       allowedList: ['Tous les instruments : Forex, Or, Indices, Crypto, Pétrole','Trading sur les news — sans aucune restriction','Positions overnight et le weekend','Scalping, day trading et swing trading','Plusieurs stratégies simultanément','Pas de stop-loss obligatoire'],
       notAllowedList: ['Robots & Expert Advisors (EAs) — strictement interdits','Copier des trades entre comptes Elysium','Toxic flow ou arbitrage sur la latence','Martingale à risque extrême (destruction du compte)','Trading pour le compte d\'autrui / partage de compte','Comportement de gambling (positions all-in)','Trading de groupe coordonné pour exploiter les règles'],
       ctaTitle: 'Prêt à Rejoindre l\'', ctaGold: 'Élite ?',
-      ctaSub: 'Rejoignez des milliers de traders financés. Frais remboursés à la première récompense.',
+      ctaSub: 'Rejoignez des milliers de traders certifiés. Frais remboursés à la première récompense.',
       ctaBtn: 'Commencer le Challenge Aujourd\'hui',
     },
     footer: {
@@ -121,9 +121,9 @@ export const t = {
       challengeLinks: ['Challenge 2 Étapes','Challenge 1 Étape','Programme de Scaling','Tarifs'],
       companyLinks: ['À Propos','Règles','FAQ','Contact'],
       supportLinks: ['Communauté Discord','Centre d\'Aide','Chat en Direct','Support Email'],
-      copyright: '© 2025 Elysium Funded. Tous droits réservés. Comptes de trading simulés uniquement.',
+      copyright: '© 2025 Elysium. Tous droits réservés. Comptes de trading simulés uniquement.',
       privacy: 'Politique de Confidentialité', terms: 'Conditions d\'Utilisation', risk: 'Avertissement sur les Risques',
-      disclaimer: 'Avertissement : Elysium Funded propose des environnements de trading simulés. Tous les comptes sont simulés. Les performances passées ne préjugent pas des résultats futurs.',
+      disclaimer: 'Avertissement : Elysium propose des environnements de trading simulés. Tous les comptes sont simulés. Les performances passées ne préjugent pas des résultats futurs.',
     },
   },
 
@@ -144,16 +144,16 @@ export const t = {
       tagline: 'اجتز التحدي. انضم إلى النخبة.',
     },
     stats: {
-      payouts: 'إجمالي المكافآت', traders: 'المتداولون الممولون',
+      payouts: 'إجمالي المكافآت', traders: 'المتداولون المعتمدون',
       satisfaction: 'معدل الرضا', support: 'وقت الدعم',
     },
     how: {
-      label: 'العملية', title: 'من الصفر إلى', titleGold: 'التمويل',
+      label: 'العملية', title: 'من الصفر إلى', titleGold: 'الاعتماد',
       sub: 'ثلاث خطوات فقط للانضمام إلى النخبة.',
       steps: [
         { title: 'اختر تحديك', desc: 'اختر حجم حسابك من 10K$ إلى 200K$. اختر بين تحدي خطوتين أو خطوة واحدة. الرسوم مستردة عند أول سحب.' },
         { title: 'اجتز التقييم', desc: 'تداول بانضباط. حقق هدف الربح مع احترام قواعد الحد الأقصى للخسارة. لا ضغط زمني.' },
-        { title: 'احصل على التمويل والمكافأة', desc: 'استلم حسابك الممول فوراً. تداول برأس مال حقيقي واحتفظ بـ 90% من أرباحك. قد إلى 200,000$.' },
+        { title: 'احصل على الاعتماد والمكافأة', desc: 'استلم حسابك المعتمد فوراً. تداول برأس مال حقيقي واحتفظ بـ 90% من أرباحك. قد إلى 200,000$.' },
       ],
     },
     pricing: {
@@ -170,7 +170,7 @@ export const t = {
       allowedList: ['جميع الأدوات (فوركس، ذهب، مؤشرات، كريبتو)','التداول على الأخبار','الاحتفاظ بالمراكز ليلاً وعطلة نهاية الأسبوع','أزواج عملات متعددة','أي استراتيجية تداول'],
       notAllowedList: ['الروبوتات والمستشار الخبير (EA) — محظور تماماً','نسخ الصفقات بين حسابات إليزيوم','خدمات الإشارات المستغلة لقواعدنا','أنماط التداول التلاعبية','المراهنة ضد حساباتك','سلوك المقامرة (all-in)'],
       ctaTitle: 'مستعد للانضمام إلى', ctaGold: 'النخبة؟',
-      ctaSub: 'انضم إلى آلاف المتداولين الممولين. رسومك مستردة عند أول سحب.',
+      ctaSub: 'انضم إلى آلاف المتداولين المعتمدين. رسومك مستردة عند أول سحب.',
       ctaBtn: 'ابدأ تحديك اليوم',
     },
     footer: {
@@ -179,9 +179,9 @@ export const t = {
       challengeLinks: ['تحدي خطوتين','تحدي خطوة واحدة','برنامج التطوير','الأسعار'],
       companyLinks: ['من نحن','القواعد','الأسئلة الشائعة','تواصل معنا'],
       supportLinks: ['مجتمع ديسكورد','مركز المساعدة','محادثة مباشرة','دعم البريد الإلكتروني'],
-      copyright: '© 2025 Elysium Funded. جميع الحقوق محفوظة. حسابات تداول محاكاة فقط.',
+      copyright: '© 2025 Elysium. جميع الحقوق محفوظة. حسابات تداول محاكاة فقط.',
       privacy: 'سياسة الخصوصية', terms: 'شروط الخدمة', risk: 'إخلاء المسؤولية',
-      disclaimer: 'إخلاء المسؤولية: تقدم Elysium Funded بيئات تداول محاكاة. جميع الحسابات محاكاة. الأداء السابق لا يضمن النتائج المستقبلية.',
+      disclaimer: 'إخلاء المسؤولية: تقدم Elysium بيئات تداول محاكاة. جميع الحسابات محاكاة. الأداء السابق لا يضمن النتائج المستقبلية.',
     },
   },
 
@@ -202,16 +202,16 @@ export const t = {
       tagline: 'Supera el desafío. Únete a la élite.',
     },
     stats: {
-      payouts: 'Total Recompensas', traders: 'Traders Financiados',
+      payouts: 'Total Recompensas', traders: 'Traders Certificados',
       satisfaction: 'Tasa de Satisfacción', support: 'Respuesta Soporte',
     },
     how: {
-      label: 'El Proceso', title: 'De Cero a', titleGold: 'Financiado',
+      label: 'El Proceso', title: 'De Cero a', titleGold: 'Certificado',
       sub: 'Tres pasos. Eso es todo lo que necesitas para unirte a la élite.',
       steps: [
         { title: 'Elige tu Desafío', desc: 'Selecciona el tamaño de tu cuenta de $10K a $200K. Elige entre nuestro desafío de 2 pasos o 1 paso. La tarifa se reembolsa en el primer pago.' },
         { title: 'Supera la Evaluación', desc: 'Opera con disciplina. Alcanza tu objetivo de ganancia respetando las reglas de drawdown. Sin presión de tiempo, sin fecha de vencimiento.' },
-        { title: 'Recibe Fondos y Pago', desc: 'Recibe tu cuenta financiada al instante. Opera con capital real y conserva hasta el 90% de tus ganancias. Escala hasta $200,000.' },
+        { title: 'Obtén tu Certificación y Cobra', desc: 'Recibe tu cuenta certificada al instante. Opera con capital real y conserva hasta el 90% de tus ganancias. Escala hasta $200,000.' },
       ],
     },
     pricing: {
@@ -228,7 +228,7 @@ export const t = {
       allowedList: ['Todos los instrumentos (Forex, Oro, Índices, Cripto)','Trading en noticias','Posiciones overnight y fin de semana','Múltiples pares de divisas','Cualquier estrategia de trading'],
       notAllowedList: ['Robots & Expert Advisors (EAs) — estrictamente prohibidos','Copiar operaciones entre cuentas Elysium','Servicios de señales que explotan nuestras reglas','Patrones de trading manipuladores','Apostar contra tus propias cuentas','Comportamiento de gambling (all-in)'],
       ctaTitle: '¿Listo para Unirte a la', ctaGold: 'Élite?',
-      ctaSub: 'Únete a miles de traders financiados. Tu tarifa se reembolsa en el primer pago.',
+      ctaSub: 'Únete a miles de traders certificados. Tu tarifa se reembolsa en el primer pago.',
       ctaBtn: 'Inicia Tu Desafío Hoy',
     },
     footer: {
@@ -237,9 +237,9 @@ export const t = {
       challengeLinks: ['Desafío 2 Pasos','Desafío 1 Paso','Programa de Escala','Precios'],
       companyLinks: ['Sobre Nosotros','Reglas','FAQ','Contacto'],
       supportLinks: ['Comunidad Discord','Centro de Ayuda','Chat en Vivo','Soporte Email'],
-      copyright: '© 2025 Elysium Funded. Todos los derechos reservados. Solo cuentas simuladas.',
+      copyright: '© 2025 Elysium. Todos los derechos reservados. Solo cuentas simuladas.',
       privacy: 'Política de Privacidad', terms: 'Términos de Servicio', risk: 'Aviso de Riesgo',
-      disclaimer: 'Aviso de Riesgo: Elysium Funded ofrece entornos de trading simulados. Todas las cuentas son simuladas. El rendimiento pasado no garantiza resultados futuros.',
+      disclaimer: 'Aviso de Riesgo: Elysium ofrece entornos de trading simulados. Todas las cuentas son simuladas. El rendimiento pasado no garantiza resultados futuros.',
     },
   },
 
@@ -260,16 +260,16 @@ export const t = {
       tagline: 'Passe o desafio. Entre na elite.',
     },
     stats: {
-      payouts: 'Total de Recompensas', traders: 'Traders Financiados',
+      payouts: 'Total de Recompensas', traders: 'Traders Certificados',
       satisfaction: 'Taxa de Satisfação', support: 'Resposta Suporte',
     },
     how: {
-      label: 'O Processo', title: 'Do Zero ao', titleGold: 'Financiamento',
+      label: 'O Processo', title: 'Do Zero à', titleGold: 'Certificação',
       sub: 'Três passos. É tudo que você precisa para entrar na elite.',
       steps: [
         { title: 'Escolha seu Desafio', desc: 'Selecione o tamanho da sua conta de $10K a $200K. Escolha entre nosso desafio de 2 etapas ou 1 etapa. Taxa reembolsada no primeiro pagamento.' },
         { title: 'Passe a Avaliação', desc: 'Opere com disciplina. Atinja sua meta de lucro respeitando as regras de drawdown. Sem pressão de tempo, sem data de expiração.' },
-        { title: 'Receba Financiamento e Pagamento', desc: 'Receba sua conta financiada instantaneamente. Opere com capital real e fique com até 90% dos seus lucros. Escale até $200.000.' },
+        { title: 'Receba sua Certificação e Lucros', desc: 'Receba sua conta certificada instantaneamente. Opere com capital real e fique com até 90% dos seus lucros. Escale até $200.000.' },
       ],
     },
     pricing: {
@@ -286,7 +286,7 @@ export const t = {
       allowedList: ['Todos os instrumentos (Forex, Ouro, Índices, Cripto)','Trading em notícias','Posições overnight e fim de semana','Múltiplos pares de moedas','Qualquer estratégia de trading'],
       notAllowedList: ['Robôs & Expert Advisors (EAs) — estritamente proibidos','Copiar operações entre contas Elysium','Serviços de sinais explorando nossas regras','Padrões de trading manipuladores','Apostar contra suas próprias contas','Comportamento de gambling (all-in)'],
       ctaTitle: 'Pronto para Entrar na', ctaGold: 'Elite?',
-      ctaSub: 'Junte-se a milhares de traders financiados. Sua taxa é reembolsada no primeiro pagamento.',
+      ctaSub: 'Junte-se a milhares de traders certificados. Sua taxa é reembolsada no primeiro pagamento.',
       ctaBtn: 'Inicie Seu Desafio Hoje',
     },
     footer: {
@@ -295,9 +295,9 @@ export const t = {
       challengeLinks: ['Desafio 2 Etapas','Desafio 1 Etapa','Programa de Escala','Preços'],
       companyLinks: ['Sobre Nós','Regras','FAQ','Contato'],
       supportLinks: ['Comunidade Discord','Central de Ajuda','Chat ao Vivo','Suporte por Email'],
-      copyright: '© 2025 Elysium Funded. Todos os direitos reservados. Apenas contas simuladas.',
+      copyright: '© 2025 Elysium. Todos os direitos reservados. Apenas contas simuladas.',
       privacy: 'Política de Privacidade', terms: 'Termos de Serviço', risk: 'Aviso de Risco',
-      disclaimer: 'Aviso de Risco: Elysium Funded oferece ambientes de trading simulados. Todas as contas são simuladas. O desempenho passado não garante resultados futuros.',
+      disclaimer: 'Aviso de Risco: Elysium oferece ambientes de trading simulados. Todas as contas são simuladas. O desempenho passado não garante resultados futuros.',
     },
   },
 
@@ -318,16 +318,16 @@ export const t = {
       tagline: 'Bestehe die Challenge. Tritt der Elite bei.',
     },
     stats: {
-      payouts: 'Gesamtprämien', traders: 'Finanzierte Trader',
+      payouts: 'Gesamtprämien', traders: 'Zertifizierte Trader',
       satisfaction: 'Zufriedenheitsrate', support: 'Support-Antwort',
     },
     how: {
-      label: 'Der Prozess', title: 'Von Null zu', titleGold: 'Finanziert',
+      label: 'Der Prozess', title: 'Von Null zu', titleGold: 'Zertifiziert',
       sub: 'Drei Schritte. Das ist alles, was nötig ist, um der Elite beizutreten.',
       steps: [
         { title: 'Wähle deine Challenge', desc: 'Wähle deine Kontogröße von $10K bis $200K. Entscheide dich für unsere 2-Stufen- oder 1-Stufen-Challenge. Gebühr wird bei erstem Auszahlung erstattet.' },
         { title: 'Bestehe die Bewertung', desc: 'Handle diszipliniert. Erreiche dein Gewinnziel unter Einhaltung der Drawdown-Regeln. Kein Zeitdruck, kein Ablaufdatum.' },
-        { title: 'Finanziert werden und Gewinne erhalten', desc: 'Erhalte dein finanziertes Konto sofort. Handle mit echtem Kapital und behalte bis zu 90% deiner Gewinne. Skaliere bis zu $200.000.' },
+        { title: 'Zertifiziert werden und Gewinne erhalten', desc: 'Erhalte dein zertifiziertes Konto sofort. Handle mit echtem Kapital und behalte bis zu 90% deiner Gewinne. Skaliere bis zu $200.000.' },
       ],
     },
     pricing: {
@@ -344,7 +344,7 @@ export const t = {
       allowedList: ['Alle Instrumente (Forex, Gold, Indizes, Krypto)','News-Trading','Overnight- und Wochenendhaltung','Mehrere Währungspaare','Jede Handelsstrategie'],
       notAllowedList: ['Robots & Expert Advisors (EAs) — streng verboten','Trades zwischen Elysium-Konten kopieren','Signaldienste die unsere Regeln ausnutzen','Manipulative Handelsmuster','Gegen eigene Konten wetten','Glücksspielartige Verhaltensweisen (All-in)'],
       ctaTitle: 'Bereit der', ctaGold: 'Elite Beizutreten?',
-      ctaSub: 'Schließe dich tausenden finanzierten Tradern an. Gebühr wird bei erster Auszahlung erstattet.',
+      ctaSub: 'Schließe dich tausenden zertifizierten Tradern an. Gebühr wird bei erster Auszahlung erstattet.',
       ctaBtn: 'Starte deine Challenge Heute',
     },
     footer: {
@@ -353,9 +353,9 @@ export const t = {
       challengeLinks: ['2-Stufen Challenge','1-Stufen Challenge','Skalierungsprogramm','Preise'],
       companyLinks: ['Über Uns','Regeln','FAQ','Kontakt'],
       supportLinks: ['Discord Community','Hilfecenter','Live-Chat','E-Mail-Support'],
-      copyright: '© 2025 Elysium Funded. Alle Rechte vorbehalten. Nur simulierte Handelskonten.',
+      copyright: '© 2025 Elysium. Alle Rechte vorbehalten. Nur simulierte Handelskonten.',
       privacy: 'Datenschutzrichtlinie', terms: 'Nutzungsbedingungen', risk: 'Risikohinweis',
-      disclaimer: 'Risikohinweis: Elysium Funded bietet simulierte Handelsumgebungen. Alle Konten sind simuliert. Vergangene Leistungen sind keine Garantie für zukünftige Ergebnisse.',
+      disclaimer: 'Risikohinweis: Elysium bietet simulierte Handelsumgebungen. Alle Konten sind simuliert. Vergangene Leistungen sind keine Garantie für zukünftige Ergebnisse.',
     },
   },
 
@@ -376,16 +376,16 @@ export const t = {
       tagline: 'Meydan okumayı geç. Elite\'e katıl.',
     },
     stats: {
-      payouts: 'Toplam Ödül', traders: 'Fonlanan Trader',
+      payouts: 'Toplam Ödül', traders: 'Sertifikalı Trader',
       satisfaction: 'Memnuniyet Oranı', support: 'Destek Yanıt',
     },
     how: {
-      label: 'Süreç', title: 'Sıfırdan', titleGold: 'Fonlanmaya',
+      label: 'Süreç', title: 'Sıfırdan', titleGold: 'Sertifikaya',
       sub: 'Üç adım. Elite\'e katılmak için gereken tek şey bu.',
       steps: [
         { title: 'Meydan Okumanı Seç', desc: '$10K\'dan $200K\'ya hesap büyüklüğünü seç. 2 aşamalı veya 1 aşamalı meydan okuma arasında seç. Ücret ilk ödemede iade edilir.' },
         { title: 'Değerlendirmeyi Geç', desc: 'Disiplinli işlem yap. Drawdown kurallarına uymaya devam ederek kâr hedefine ulaş. Zaman baskısı yok, son tarih yok.' },
-        { title: 'Fon Al ve Kazan', desc: 'Fonlanan hesabını anında al. Gerçek sermaye ile işlem yap ve kârının %90\'ına kadar al. $200.000\'e kadar büyü.' },
+        { title: 'Sertifikanı Al ve Kazan', desc: 'Sertifikalı hesabını anında al. Gerçek sermaye ile işlem yap ve kârının %90\'ına kadar al. $200.000\'e kadar büyü.' },
       ],
     },
     pricing: {
@@ -402,7 +402,7 @@ export const t = {
       allowedList: ['Tüm enstrümanlar (Forex, Altın, Endeksler, Kripto)','Haber işlemi','Gecelik & hafta sonu pozisyon','Birden fazla döviz çifti','Her türlü işlem stratejisi'],
       notAllowedList: ['Robotlar & Expert Advisor (EA) — kesinlikle yasak','Elysium hesapları arasında işlem kopyalama','Kurallarımızı kullanan sinyal servisleri','Manipülatif işlem kalıpları','Kendi hesaplarına karşı bahis','Kumar tarzı davranış (all-in)'],
       ctaTitle: 'Elite\'e Katılmaya', ctaGold: 'Hazır mısın?',
-      ctaSub: 'Binlerce fonlanan trader\'a katıl. Ücretin ilk ödemede iade edilir.',
+      ctaSub: 'Binlerce sertifikalı trader\'a katıl. Ücretin ilk ödemede iade edilir.',
       ctaBtn: 'Meydan Okumana Bugün Başla',
     },
     footer: {
@@ -411,9 +411,9 @@ export const t = {
       challengeLinks: ['2 Aşamalı Meydan Okuma','1 Aşamalı Meydan Okuma','Büyüme Programı','Fiyatlar'],
       companyLinks: ['Hakkımızda','Kurallar','SSS','İletişim'],
       supportLinks: ['Discord Topluluğu','Yardım Merkezi','Canlı Sohbet','E-posta Desteği'],
-      copyright: '© 2025 Elysium Funded. Tüm hakları saklıdır. Yalnızca simüle edilmiş işlem hesapları.',
+      copyright: '© 2025 Elysium. Tüm hakları saklıdır. Yalnızca simüle edilmiş işlem hesapları.',
       privacy: 'Gizlilik Politikası', terms: 'Hizmet Şartları', risk: 'Risk Bildirimi',
-      disclaimer: 'Risk Bildirimi: Elysium Funded simüle edilmiş işlem ortamları sunar. Tüm hesaplar simüle edilmiştir. Geçmiş performans gelecekteki sonuçları garanti etmez.',
+      disclaimer: 'Risk Bildirimi: Elysium simüle edilmiş işlem ortamları sunar. Tüm hesaplar simüle edilmiştir. Geçmiş performans gelecekteki sonuçları garanti etmez.',
     },
   },
 }

@@ -10,7 +10,7 @@ export default function PrivacyPage() {
         {[
           {
             title: "1. Data Controller",
-            content: `Elysium Funded (OÜ, Estonia) is the data controller responsible for your personal data. Contact: support@elysiumfunded.eu`
+            content: `Elysium (OÜ, Estonia) is the data controller responsible for your personal data. Contact: support@elysiumfunded.eu`
           },
           {
             title: "2. Data We Collect",

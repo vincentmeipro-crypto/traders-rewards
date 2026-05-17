@@ -68,8 +68,8 @@ export default function TopTraders() {
   const { lang } = useLanguage();
   const title    = lang === "fr" ? "Dernières Récompenses" : "Latest Rewards";
   const subtitle = lang === "fr"
-    ? "Nos traders financés reçoivent leurs récompenses chaque semaine."
-    : "Our funded traders receive their rewards every week.";
+    ? "Nos traders certifiés reçoivent leurs récompenses chaque semaine."
+    : "Our certified traders receive their rewards every week.";
 
   const doubled = [...traders, ...traders];
 

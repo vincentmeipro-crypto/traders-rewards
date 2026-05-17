@@ -212,7 +212,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#2D7DD2" /> },
                 { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#2D7DD2" /> },
                 { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first reward.", icon: <Wallet size={20} color="#2D7DD2" /> },
-                { title: "Reward Split", desc: "Funded traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#2D7DD2" /> },
+                { title: "Reward Split", desc: "Certified traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#2D7DD2" /> },
               ].map((rule, i) => (
                 <div key={i} className="card" style={{ padding: 24 }}>
                   <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
@@ -251,7 +251,7 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "payouts" && (
           <div style={{ maxWidth: 520 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Rewards</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Request a reward from your funded account.</p>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Request a reward from your certified account.</p>
             {challenge?.phase !== "funded" ? (
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
@@ -463,7 +463,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <Trophy size={20} color="#3b82f6" />
                 <div>
                   <span style={{ color: "#3b82f6", fontWeight: 700 }}>🎉 Congratulations! </span>
-                  <span style={{ color: "#888", fontSize: 14 }}>You are now a Funded Trader. Request your payouts below.</span>
+                  <span style={{ color: "#888", fontSize: 14 }}>You are now a Certified Trader. Request your rewards below.</span>
                 </div>
               </div>
             )}

@@ -183,7 +183,7 @@ function CheckoutContent() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0", borderBottom: "1px solid #1a1a1a" }}>
             <div>
               <div style={{ fontWeight: 700, fontSize: 16 }}>Challenge {challenge.label}</div>
-              <div style={{ color: "#555", fontSize: 13, marginTop: 4 }}>{challenge.model} Model · Elysium Funded</div>
+              <div style={{ color: "#555", fontSize: 13, marginTop: 4 }}>{challenge.model} Model · Elysium</div>
             </div>
             <div style={{ textAlign: "right" }}>
               {discount > 0 && <div style={{ fontSize: 13, color: "#555", textDecoration: "line-through", marginBottom: 2 }}>{challenge.price}</div>}

@@ -8,8 +8,8 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-inter", weight: [
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 export const metadata: Metadata = {
-  title: "Elysium Funded — Where Legends Are Funded",
-  description: "Join the elite. Pass our challenge and trade with up to $400,000 in funded capital.",
+  title: "Elysium — Where Legends Are Certified",
+  description: "Join the elite. Pass our challenge and trade with up to $400,000 in allocated capital.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
