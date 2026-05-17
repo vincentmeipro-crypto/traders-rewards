@@ -17,7 +17,7 @@ export default function Footer() {
           <div>
             <div style={{ marginBottom: 16 }}>
               <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: "2px", textTransform: "uppercase" }}>
-                Elysium <span style={{ color: "#2D7DD2" }}>Funded</span>
+                Elysium
               </span>
             </div>
             <p style={{ color: "#555", fontSize: 14, lineHeight: 1.7, maxWidth: 260 }}>{T.footer.tagline}</p>

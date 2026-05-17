@@ -78,13 +78,9 @@ export default function Logo({ size = 40, full = false }: { size?: number; full?
             ELYSIUM
           </text>
 
-          {/* ── TEXT: — FUNDED — ── */}
-          <line x1="52" y1="218" x2="100" y2="218" stroke="url(#g1)" strokeWidth="1" />
-          <text x="140" y="224" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', serif"
-            fontSize="16" fontWeight="400" letterSpacing="6" fill="url(#g1)">
-            FUNDED
-          </text>
-          <line x1="180" y1="218" x2="228" y2="218" stroke="url(#g1)" strokeWidth="1" />
+          {/* ── decorative lines ── */}
+          <line x1="52" y1="218" x2="115" y2="218" stroke="url(#g1)" strokeWidth="1" />
+          <line x1="165" y1="218" x2="228" y2="218" stroke="url(#g1)" strokeWidth="1" />
         </g>
       ) : (
         /* ── EMBLEM ONLY (navbar / small) ── */
