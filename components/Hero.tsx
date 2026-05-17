@@ -164,7 +164,7 @@ export default function Hero() {
                 width: "auto",
                 verticalAlign: "top",
                 marginTop: "-0.05em",
-                marginLeft: "0.08em",
+                marginLeft: "0.02em",
                 mixBlendMode: "screen",
               }}
             />
