@@ -152,7 +152,33 @@ export default function Hero() {
           marginBottom: 20,
         }}>
           {T.hero.headline1}<br />
-          <span className="gold-gradient">{T.hero.headline2}</span>
+          <span className="gold-gradient">
+            {(() => {
+              const text = T.hero.headline2;
+              const match = text.match(/^(.*?)(Élite|Elite)(.*)$/);
+              if (!match) return text;
+              return (
+                <>
+                  {match[1]}{match[2]}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/CERTIFIED.png"
+                    alt=""
+                    style={{
+                      display: "inline-block",
+                      height: "0.52em",
+                      width: "auto",
+                      verticalAlign: "top",
+                      marginTop: "0.02em",
+                      marginLeft: "0.06em",
+                      mixBlendMode: "screen",
+                    }}
+                  />
+                  {match[3]}
+                </>
+              );
+            })()}
+          </span>
         </h1>
 
         {/* Subtitle */}
