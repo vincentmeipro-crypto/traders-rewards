@@ -583,7 +583,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                   ))}
                 </div>
-                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Télécharge MT5 et connecte-toi avec ces identifiants via IC Markets.</div>
+                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Télécharge MT5 et connecte-toi avec ces identifiants via Eightcap.</div>
               </div>
             )}
 
@@ -593,7 +593,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Télécharge MT5 et connecte-toi avec tes identifiants via IC Markets.</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {[
-                  { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/icmarkets.global.ltd/mt5/icmarketsmt5setup.exe" },
+                  { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/eightcap.pty/mt5/eightcapmt5setup.exe" },
                   { label: "🍎 Mac", href: "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/MetaTrader5.dmg" },
                   { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
                   { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },

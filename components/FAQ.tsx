@@ -63,7 +63,7 @@ const faqData = {
     },
     {
       q: "What trading platform is used?",
-      a: "We use cTrader via IC Markets — one of the world's most reputable brokers. You get institutional-grade execution with ultra-low spreads.",
+      a: "We use MetaTrader 5 via Eightcap — one of the world's most reputable brokers. You get institutional-grade execution with ultra-low spreads.",
     },
     {
       q: "What happens if I fail a challenge?",
@@ -129,7 +129,7 @@ const faqData = {
     },
     {
       q: "Quelle plateforme de trading est utilisée ?",
-      a: "Nous utilisons cTrader via IC Markets — l'un des courtiers les plus réputés au monde. Vous bénéficiez d'une exécution de qualité institutionnelle avec des spreads ultra-bas.",
+      a: "Nous utilisons MetaTrader 5 via Eightcap — l'un des courtiers les plus réputés au monde. Vous bénéficiez d'une exécution de qualité institutionnelle avec des spreads ultra-bas.",
     },
     {
       q: "Que se passe-t-il si j'échoue ?",
