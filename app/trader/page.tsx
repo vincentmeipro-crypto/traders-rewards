@@ -23,19 +23,26 @@ const IMPACT_COLOR: Record<string, string> = {
   Holiday: "#555",
 };
 
+const CURRENCY_FLAG: Record<string, string> = {
+  USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", AUD: "🇦🇺", CAD: "🇨🇦",
+  CHF: "🇨🇭", JPY: "🇯🇵", NZD: "🇳🇿", CNY: "🇨🇳", CNH: "🇨🇳",
+  HKD: "🇭🇰", SGD: "🇸🇬", KRW: "🇰🇷", BRL: "🇧🇷", MXN: "🇲🇽",
+  ZAR: "🇿🇦", TRY: "🇹🇷", SEK: "🇸🇪", NOK: "🇳🇴", DKK: "🇩🇰",
+  INR: "🇮🇳", PLN: "🇵🇱",
+};
+
 const DAYS_FR = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
 const DAYS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function normalizeDate(dateStr: string): string {
-  // Handle formats: "2026-05-21", "05/21/2026", "2026-05-21T..."
-  const d = new Date(dateStr);
-  if (!isNaN(d.getTime())) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
-  }
-  return dateStr;
+  const s = dateStr.trim();
+  // If starts with YYYY-MM-DD, grab just the date part directly (most reliable)
+  const iso = s.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (iso) return iso[1];
+  // Fallback: parse and use UTC date
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  return s;
 }
 
 function groupByDate(events: CalEvent[]) {
@@ -168,7 +175,10 @@ export default function TraderPage() {
                               <tr key={i} style={{ borderBottom: i < evs.length - 1 ? "1px solid #111" : "none", backgroundColor: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)" }}>
                                 <td style={{ padding: "11px 14px", color: "#888", fontWeight: 600, whiteSpace: "nowrap" }}>{ev.time}</td>
                                 <td style={{ padding: "11px 14px" }}>
-                                  <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#2D7DD2", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 4 }}>{ev.country}</span>
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                                    <span style={{ fontSize: 16 }}>{CURRENCY_FLAG[ev.country] || "🏳️"}</span>
+                                    <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#2D7DD2", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 4 }}>{ev.country}</span>
+                                  </span>
                                 </td>
                                 <td style={{ padding: "11px 14px", color: "#ccc", fontWeight: 500, minWidth: 200 }}>{ev.title}</td>
                                 <td style={{ padding: "11px 14px", textAlign: "center" }}>
