@@ -583,7 +583,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                   ))}
                 </div>
-                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Télécharge MT5 et connecte-toi avec ces identifiants via Eightcap.</div>
+                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Télécharge MT5 et connecte-toi avec ces identifiants via Blueberry Markets.</div>
               </div>
             )}
 
@@ -593,10 +593,10 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Télécharge MT5 et connecte-toi avec tes identifiants via IC Markets.</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {[
-                  { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/eightcap.pty/mt5/eightcapmt5setup.exe" },
-                  { label: "🍎 Mac", href: "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/MetaTrader5.dmg" },
-                  { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
-                  { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
+                  { label: "🖥 Windows", href: "https://portal.blueberrymarkets.com/en/trading-platforms" },
+                  { label: "🍎 Mac", href: "https://portal.blueberrymarkets.com/en/trading-platforms" },
+                  { label: "📱 iOS (App Store)", href: "https://portal.blueberrymarkets.com/en/trading-platforms" },
+                  { label: "🤖 Android (Google Play)", href: "https://portal.blueberrymarkets.com/en/trading-platforms" },
                 ].map((item, i) => (
                   <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
                     style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "10px 18px", borderRadius: 8, textDecoration: "none", fontSize: 13, border: "1px solid #2a2a2a", display: "inline-block" }}>
