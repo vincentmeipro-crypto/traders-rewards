@@ -25,8 +25,8 @@ export default function PromoBanner() {
       top: 0, left: 0, right: 0,
       zIndex: 200,
       height: 40,
-      background: "#0047ff",
-      borderBottom: "1px solid rgba(0,80,255,0.6)",
+      background: "#ffffff",
+      borderBottom: "1px solid #e0e0e0",
       display: "flex",
       alignItems: "center",
       overflow: "hidden",
@@ -37,13 +37,13 @@ export default function PromoBanner() {
         {/* Left fade */}
         <div style={{
           position: "absolute", left: 0, top: 0, bottom: 0, width: 60,
-          background: "linear-gradient(to right, #0047ff, transparent)",
+          background: "linear-gradient(to right, #ffffff, transparent)",
           zIndex: 2, pointerEvents: "none",
         }} />
         {/* Right fade */}
         <div style={{
           position: "absolute", right: 32, top: 0, bottom: 0, width: 60,
-          background: "linear-gradient(to left, #0047ff, transparent)",
+          background: "linear-gradient(to left, #ffffff, transparent)",
           zIndex: 2, pointerEvents: "none",
         }} />
 
@@ -56,7 +56,7 @@ export default function PromoBanner() {
               fontSize: 12,
               fontWeight: 700,
               letterSpacing: "0.8px",
-              color: "#fff",
+              color: "#000",
               padding: "0 48px",
             }}>
               {isFr ? item.fr : item.en}
@@ -64,7 +64,7 @@ export default function PromoBanner() {
                 display: "inline-block",
                 width: 4, height: 4,
                 borderRadius: "50%",
-                backgroundColor: "#2D7DD2",
+                backgroundColor: "#000",
                 margin: "0 0 0 48px",
               }} />
             </span>
@@ -77,12 +77,12 @@ export default function PromoBanner() {
         onClick={() => setClosed(true)}
         style={{
           background: "none", border: "none", cursor: "pointer",
-          color: "rgba(255,255,255,0.5)", padding: "0 12px",
+          color: "rgba(0,0,0,0.4)", padding: "0 12px",
           display: "flex", alignItems: "center", flexShrink: 0,
           transition: "color 0.2s",
         }}
-        onMouseOver={e => (e.currentTarget.style.color = "#fff")}
-        onMouseOut={e => (e.currentTarget.style.color = "rgba(255,255,255,0.5)")}
+        onMouseOver={e => (e.currentTarget.style.color = "#000")}
+        onMouseOut={e => (e.currentTarget.style.color = "rgba(0,0,0,0.4)")}
       >
         <X size={14} />
       </button>
