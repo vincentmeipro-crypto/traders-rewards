@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
-  { size: "$10,000",  id: "10k",  price2: "€89",    old2: null,    price1: "€69",    popular: false },
-  { size: "$25,000",  id: "25k",  price2: "€250",   old2: null,    price1: "€189",   popular: false },
-  { size: "$50,000",  id: "50k",  price2: "€345",   old2: null,    price1: "€299",   popular: false },
   { size: "$100,000", id: "100k", price2: "€439",   old2: "€526",  price1: "€429",   popular: true, discount: "-20%" },
   { size: "$200,000", id: "200k", price2: "€799",   old2: null,    price1: "€749",   popular: false },
+  { size: "$50,000",  id: "50k",  price2: "€345",   old2: null,    price1: "€299",   popular: false },
+  { size: "$25,000",  id: "25k",  price2: "€250",   old2: null,    price1: "€189",   popular: false },
+  { size: "$10,000",  id: "10k",  price2: "€89",    old2: null,    price1: "€69",    popular: false },
 ];
 
 export default function Pricing() {
@@ -51,7 +51,7 @@ export default function Pricing() {
 
   return (
     <section id="pricing" style={{ padding: "80px 24px" }}>
-      <div style={{ maxWidth: 1300, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1050, margin: "0 auto" }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
@@ -101,8 +101,8 @@ export default function Pricing() {
                   ? "linear-gradient(160deg, #1C2535, #21212B)"
                   : "#1E1E26",
                 border: acc.popular ? "2px solid rgba(255,255,255,0.9)" : "1px solid rgba(255,255,255,0.15)",
-                borderRadius: 16,
-                padding: "28px 20px 24px",
+                borderRadius: 14,
+                padding: "22px 14px 18px",
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: acc.popular ? "0 0 40px rgba(45,125,210,0.12)" : "none",
@@ -128,7 +128,7 @@ export default function Pricing() {
                   <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 6 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: 19, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
                     {acc.size}
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export default function Pricing() {
                   {rows.map((row, i) => (
                     <div key={i} style={{
                       display: "flex", justifyContent: "space-between", alignItems: "center",
-                      padding: "9px 0",
+                      padding: "7px 0",
                       borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                     }}>
                       <span style={{ color: "#555", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
@@ -174,7 +174,7 @@ export default function Pricing() {
                     </div>
                   )}
                   <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ fontSize: 28, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
                       {price}
                     </div>
                     {"discount" in acc && acc.discount && (
