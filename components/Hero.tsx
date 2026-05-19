@@ -186,25 +186,26 @@ export default function Hero() {
         {/* CTAs */}
         <div style={{
           display: "flex",
+          flexDirection: isMobile ? "column" : "row",
           gap: 12,
-          flexWrap: "wrap",
           justifyContent: "center",
+          alignItems: "center",
           marginBottom: 20,
           width: isMobile ? "100%" : "auto",
         }}>
           <a href="#pricing" className="btn-primary btn-primary-animated"
-            style={{ fontSize: 14, padding: "16px 36px", flex: isMobile ? "1" : "none" }}>
+            style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
             {T.hero.cta1}
           </a>
           <a href="#how-it-works" className="btn-secondary"
-            style={{ fontSize: 14, padding: "16px 36px", flex: isMobile ? "1" : "none" }}>
+            style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
             {T.hero.cta2}
           </a>
         </div>
 
         {/* Promo Banner */}
         <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 0 }}>
-          <img src="/PROMO50.png" alt="Promotion" style={{ width: "75%", display: "block", margin: "0 auto" }} />
+          <img src="/PROMO50.png" alt="Promotion" style={{ width: isMobile ? "100%" : "75%", display: "block", margin: "0 auto" }} />
         </div>
       </div>
     </section>
