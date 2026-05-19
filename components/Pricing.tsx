@@ -201,25 +201,13 @@ export default function Pricing() {
                     padding: "13px 16px", borderRadius: 10,
                     fontSize: 13, fontWeight: 800,
                     textDecoration: "none", letterSpacing: "0.5px",
-                    background: acc.popular
-                      ? "linear-gradient(135deg, #1A5FA8, #2D7DD2)"
-                      : "transparent",
-                    color: acc.popular ? "#fff" : "#2D7DD2",
-                    border: acc.popular ? "none" : "1px solid rgba(45,125,210,0.4)",
+                    background: "#ffffff",
+                    color: "#000000",
+                    border: "none",
                     transition: "all 0.2s",
                   }}
-                  onMouseOver={e => {
-                    if (!acc.popular) {
-                      e.currentTarget.style.background = "rgba(45,125,210,0.1)";
-                      e.currentTarget.style.borderColor = "#2D7DD2";
-                    }
-                  }}
-                  onMouseOut={e => {
-                    if (!acc.popular) {
-                      e.currentTarget.style.background = "transparent";
-                      e.currentTarget.style.borderColor = "rgba(45,125,210,0.4)";
-                    }
-                  }}
+                  onMouseOver={e => { e.currentTarget.style.background = "#e0e0e0"; }}
+                  onMouseOut={e => { e.currentTarget.style.background = "#ffffff"; }}
                 >
                   {isFr ? "Commencer maintenant" : "Get started"}
                 </a>
