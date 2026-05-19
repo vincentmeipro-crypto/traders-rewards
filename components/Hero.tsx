@@ -137,8 +137,8 @@ export default function Hero() {
           padding: "6px 16px",
           marginBottom: 28,
         }}>
-          <span style={{ fontSize: 12 }}>★</span>
-          <span style={{ color: "#fff", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase" }}>
+          <span style={{ fontSize: 12, lineHeight: 1, display: "flex", alignItems: "center" }}>★</span>
+          <span style={{ color: "#fff", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", lineHeight: 1, display: "flex", alignItems: "center" }}>
             {T.hero.badge}
           </span>
         </div>
