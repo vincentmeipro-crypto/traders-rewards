@@ -129,13 +129,15 @@ export default function AdminPage() {
       const t = session.access_token;
       setToken(t);
       const headers = { Authorization: `Bearer ${t}` };
-      const [cRes, pRes] = await Promise.all([
+      const [cRes, pRes, kRes] = await Promise.all([
         fetch("/api/admin/challenges", { headers }),
         fetch("/api/admin/payouts",    { headers }),
+        fetch("/api/admin/kyc",        { headers }),
       ]);
-      const [cData, pData] = await Promise.all([cRes.json(), pRes.json()]);
+      const [cData, pData, kData] = await Promise.all([cRes.json(), pRes.json(), kRes.json()]);
       if (Array.isArray(cData)) setChallenges(cData); else setError(JSON.stringify(cData));
       if (Array.isArray(pData)) setPayouts(pData);
+      if (Array.isArray(kData)) setKycSubmissions(kData);
       setLoading(false);
     });
   }, [router]);
@@ -674,6 +676,64 @@ export default function AdminPage() {
                             </div>
                           </div>
                         </div>
+
+                        {/* KYC */}
+                        {(() => {
+                          const kyc = kycSubmissions.find(k => k.user_email === trader.email);
+                          const kycColor = kyc?.kyc_status === "approved" ? "#22c55e" : kyc?.kyc_status === "rejected" ? "#ef4444" : kyc?.kyc_status === "pending" ? "#f59e0b" : "#333";
+                          const docLabels: [keyof typeof kyc.doc_urls, string][] = kyc ? [["id_front","ID recto"],["id_back","ID verso"],["residence","Domicile"],["selfie","Selfie"]] : [];
+                          return (
+                            <div style={{ padding: "14px 20px", borderBottom: "1px solid #111" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                                <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1 }}>KYC</div>
+                                {kyc ? (
+                                  <span style={{ backgroundColor: `${kycColor}20`, color: kycColor, padding: "2px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{kyc.kyc_status}</span>
+                                ) : (
+                                  <span style={{ color: "#333", fontSize: 12 }}>Non soumis</span>
+                                )}
+                                {kyc?.kyc_submitted_at && <span style={{ color: "#444", fontSize: 11 }}>soumis le {new Date(kyc.kyc_submitted_at).toLocaleDateString("fr-FR")}</span>}
+                              </div>
+
+                              {kyc && (
+                                <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 8, alignItems: "flex-end" }}>
+                                  {/* Liens documents */}
+                                  {docLabels.map(([field, label]) => (
+                                    kyc.doc_urls[field] ? (
+                                      <a key={field} href={kyc.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
+                                        style={{ backgroundColor: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 7, padding: "5px 12px", color: "#38bdf8", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
+                                        📄 {label}
+                                      </a>
+                                    ) : null
+                                  ))}
+
+                                  {kyc.kyc_status === "rejected" && kyc.kyc_rejection_reason && (
+                                    <span style={{ color: "#ef4444", fontSize: 11, marginLeft: 4 }}>Motif : {kyc.kyc_rejection_reason}</span>
+                                  )}
+
+                                  {/* Approuver / Refuser si pending */}
+                                  {kyc.kyc_status === "pending" && (
+                                    <>
+                                      <button onClick={() => updateKyc(kyc.id, "approved")}
+                                        style={{ backgroundColor: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40", borderRadius: 7, padding: "5px 14px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                                        ✓ Approuver
+                                      </button>
+                                      <input
+                                        value={kycRejectReason[kyc.id] || ""}
+                                        onChange={e => setKycRejectReason(r => ({ ...r, [kyc.id]: e.target.value }))}
+                                        placeholder="Motif de refus..."
+                                        style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 7, padding: "5px 10px", color: "#fff", fontSize: 11, outline: "none", width: 160 }}
+                                      />
+                                      <button onClick={() => updateKyc(kyc.id, "rejected", kycRejectReason[kyc.id])}
+                                        style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 7, padding: "5px 14px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                                        ✕ Refuser
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
 
                         {/* Timeline */}
                         <div style={{ padding: "16px 20px" }}>
