@@ -18,7 +18,7 @@ export default function Stats() {
             textAlign: "center", padding: "32px 24px",
             borderRight: i < stats.length - 1 ? "1px solid #2A2A38" : "none",
           }}>
-            <div style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 900, color: "#2D7DD2", letterSpacing: "-1px" }}>
+            <div style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 900, color: "#ffffff", letterSpacing: "-1px" }}>
               {stat.value}
             </div>
             <div style={{ color: "#555", fontSize: 13, marginTop: 8, textTransform: "uppercase", letterSpacing: "1px" }}>
