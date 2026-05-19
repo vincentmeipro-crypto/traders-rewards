@@ -205,7 +205,7 @@ export default function Hero() {
 
         {/* Promo Banner */}
         <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 0 }}>
-          <img src="/PROMO50.png" alt="Promotion" style={{ width: isMobile ? "100%" : "75%", display: "block", margin: "0 auto" }} />
+          <img src="/PROMO502.png" alt="Promotion" style={{ width: isMobile ? "100%" : "75%", display: "block", margin: "0 auto" }} />
         </div>
       </div>
     </section>
