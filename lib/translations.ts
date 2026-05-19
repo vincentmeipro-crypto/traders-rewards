@@ -37,7 +37,7 @@ export const t = {
       steps: [
         { title: 'Choose Your Challenge', desc: 'Select your account size from $10K to $200K. Choose between our 2-Step or 1-Step challenge. Pay the one-time fee — fully refunded at your first reward.' },
         { title: 'Pass the Evaluation', desc: 'Trade with discipline. Hit your profit target while respecting the drawdown rules. No time pressure — trade at your own pace with no expiry date.' },
-        { title: 'Get Certified & Paid', desc: 'Receive your certified account instantly. Trade real capital and keep up to 90% of your profits. Scale up to $200,000 through our scaling program.' },
+        { title: 'Get Certified & Paid', desc: 'Receive your certified account instantly. Keep up to 90% of your simulated profits. Scale up to $200,000 through our scaling program.' },
       ],
     },
     pricing: {
@@ -95,7 +95,7 @@ export const t = {
       steps: [
         { title: 'Choisissez votre Challenge', desc: 'Sélectionnez votre taille de compte de 10K$ à 200K$. Choisissez entre notre challenge 2 étapes ou 1 étape. Frais remboursés à la première récompense.' },
         { title: 'Réussissez l\'Évaluation', desc: 'Tradez avec discipline. Atteignez votre objectif de profit tout en respectant les règles de drawdown. Aucune pression de temps, pas de date d\'expiration.' },
-        { title: 'Devenez Certifié et Payé', desc: 'Recevez votre compte certifié instantanément. Tradez du vrai capital et gardez jusqu\'à 90% de vos profits. Évoluez jusqu\'à 200 000$.' },
+        { title: 'Devenez Certifié et Payé', desc: 'Recevez votre compte certifié instantanément. Gardez jusqu\'à 90% de vos profits simulés. Évoluez jusqu\'à 200 000$.' },
       ],
     },
     pricing: {
