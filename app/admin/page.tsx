@@ -163,7 +163,7 @@ export default function AdminPage() {
   }, [tab, token]);
 
   useEffect(() => {
-    if (tab === "kyc" && token) loadKyc(token);
+    if ((tab === "kyc" || tab === "crm") && token) loadKyc(token);
   }, [tab, token]);
 
   /* ── KPIs ── */
@@ -369,7 +369,11 @@ export default function AdminPage() {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
           {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
+          {token && <button onClick={() => loadKyc(token)} disabled={kycLoading} style={{ backgroundColor: "#1a1a1a", border: "1px solid #f59e0b", borderRadius: 8, color: "#f59e0b", padding: "7px 16px", fontSize: 12, fontWeight: 700, cursor: kycLoading ? "not-allowed" : "pointer", opacity: kycLoading ? 0.6 : 1 }}>
+            {kycLoading ? "..." : "⟳ KYC"}
+          </button>}
           <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "#1a1a1a" : "#1e3a5f", border: "1px solid #38bdf8", borderRadius: 8, color: "#38bdf8", padding: "7px 16px", fontSize: 12, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer", opacity: syncing ? 0.6 : 1 }}>
             {syncing ? "Sync..." : "⟳ Sync MT5"}
           </button>
