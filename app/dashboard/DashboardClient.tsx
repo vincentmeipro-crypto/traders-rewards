@@ -199,8 +199,8 @@ export default function DashboardClient({ user }: { user: User }) {
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
               onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <span style={{ color: activeTab === item.tab ? "#2D7DD2" : "#ffffff" }}>{item.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#2D7DD2" : "#ffffff" }}>{item.label}</span>
+                <span style={{ color: activeTab === item.tab ? "#2D7DD2" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#2D7DD2" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.label}</span>
               </div>
             ))}
           </nav>
@@ -243,7 +243,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
               flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
               padding: "10px 0", background: "none", border: "none", cursor: "pointer",
-              color: activeTab === item.tab ? "#2D7DD2" : "#444",
+              color: activeTab === item.tab ? "#2D7DD2" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#444"),
             }}>
               {item.icon}
               <span style={{ fontSize: 10, marginTop: 3, fontWeight: activeTab === item.tab ? 700 : 400 }}>{item.label}</span>
