@@ -126,22 +126,6 @@ export default function Hero() {
       {/* Content — above candles */}
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
 
-        {/* Badge */}
-        <div style={{
-          display: "inline-flex",
-          alignItems: "center",
-          gap: 8,
-          backgroundColor: "rgba(255,255,255,0.07)",
-          border: "1px solid rgba(255,255,255,0.15)",
-          borderRadius: 100,
-          padding: "6px 16px",
-          marginBottom: 28,
-        }}>
-          <span style={{ fontSize: 12, lineHeight: 1, display: "flex", alignItems: "center" }}>★</span>
-          <span style={{ color: "#fff", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", lineHeight: 1, display: "flex", alignItems: "center" }}>
-            {T.hero.badge}
-          </span>
-        </div>
 
         {/* Title */}
         <h1 style={{
