@@ -176,6 +176,7 @@ export default function Hero() {
           alignItems: "center",
           marginBottom: 20,
           width: isMobile ? "100%" : "auto",
+          padding: isMobile ? "0 16px" : undefined,
         }}>
           <a href="#pricing" className="btn-primary btn-primary-animated"
             style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>

@@ -25,7 +25,7 @@ export default function PromoBanner() {
       top: 0, left: 0, right: 0,
       zIndex: 200,
       height: 40,
-      background: "linear-gradient(90deg, #000d26, #0047ff, #000d26)",
+      background: "#0047ff",
       borderBottom: "1px solid rgba(0,80,255,0.6)",
       display: "flex",
       alignItems: "center",
@@ -37,13 +37,13 @@ export default function PromoBanner() {
         {/* Left fade */}
         <div style={{
           position: "absolute", left: 0, top: 0, bottom: 0, width: 60,
-          background: "linear-gradient(to right, #000d26, transparent)",
+          background: "linear-gradient(to right, #0047ff, transparent)",
           zIndex: 2, pointerEvents: "none",
         }} />
         {/* Right fade */}
         <div style={{
           position: "absolute", right: 32, top: 0, bottom: 0, width: 60,
-          background: "linear-gradient(to left, #000d26, transparent)",
+          background: "linear-gradient(to left, #0047ff, transparent)",
           zIndex: 2, pointerEvents: "none",
         }} />
 
