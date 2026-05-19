@@ -58,7 +58,7 @@ export async function PATCH(req: NextRequest) {
       kyc_reviewed_at: new Date().toISOString(),
       kyc_rejection_reason: rejection_reason || null,
     })
-    .eq("id", user_id)
+    .eq("user_id", user_id)
     .select()
     .single();
 
