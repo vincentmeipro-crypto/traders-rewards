@@ -25,16 +25,13 @@ export async function POST(req: NextRequest) {
   const { doc_id_front, doc_id_back, doc_residence, doc_selfie } = await req.json();
 
   const admin = createAdminClient();
-  const { error } = await admin.from("profiles").upsert({
-    id: user.id,
-    kyc_status: "pending",
-    kyc_submitted_at: new Date().toISOString(),
-    kyc_rejection_reason: null,
-    kyc_doc_id_front: doc_id_front,
-    kyc_doc_id_back: doc_id_back,
-    kyc_doc_residence: doc_residence,
-    kyc_doc_selfie: doc_selfie,
-  }, { onConflict: "id" });
+  const { error } = await admin.rpc("submit_kyc_docs", {
+    p_user_id: user.id,
+    p_doc_id_front: doc_id_front || null,
+    p_doc_id_back: doc_id_back || null,
+    p_doc_residence: doc_residence || null,
+    p_doc_selfie: doc_selfie || null,
+  });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
