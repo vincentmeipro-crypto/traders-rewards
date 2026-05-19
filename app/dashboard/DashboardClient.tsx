@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -52,12 +52,14 @@ const STATUS_COLORS: Record<string, string> = {
   failed: "#ef4444",
 };
 
-type Tab = "dashboard" | "challenges" | "payouts" | "certificates" | "rules" | "settings";
+type Tab = "dashboard" | "challenges" | "payouts" | "certificates" | "history" | "invoices" | "rules" | "settings";
 
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClient();
+  const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
+  const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string }[]>([]);
   const [latestPayout, setLatestPayout] = useState<{ amount: number; created_at: string; status: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -79,21 +81,23 @@ export default function DashboardClient({ user }: { user: User }) {
       .select("*")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(1)
-      .single()
       .then(({ data }) => {
-        setChallenge(data);
+        if (data && data.length > 0) {
+          setAllChallenges(data);
+          setChallenge(data[0]);
+        }
         setLoading(false);
       });
     supabase
       .from("payouts")
-      .select("amount, created_at, status")
+      .select("id, amount, created_at, status")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
-      .limit(1)
-      .single()
       .then(({ data }) => {
-        if (data) setLatestPayout(data);
+        if (data && data.length > 0) {
+          setAllPayouts(data);
+          setLatestPayout(data[0]);
+        }
       });
   }, [user.id]);
 
@@ -139,6 +143,8 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
               { icon: <Wallet size={16} />, label: "Rewards", tab: "payouts" },
               { icon: <Award size={16} />, label: "Certificates", tab: "certificates" },
+              { icon: <History size={16} />, label: "Historique", tab: "history" },
+              { icon: <FileText size={16} />, label: "Factures", tab: "invoices" },
               { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
               { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -180,7 +186,8 @@ export default function DashboardClient({ user }: { user: User }) {
             { icon: <LayoutDashboard size={20} />, label: "Home", tab: "dashboard" },
             { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
             { icon: <Wallet size={20} />, label: "Rewards", tab: "payouts" },
-            { icon: <Award size={20} />, label: "Certifs", tab: "certificates" },
+            { icon: <History size={20} />, label: "Historique", tab: "history" },
+            { icon: <FileText size={20} />, label: "Factures", tab: "invoices" },
             { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
           ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
             <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
@@ -197,6 +204,200 @@ export default function DashboardClient({ user }: { user: User }) {
 
       {/* Main content */}
       <div style={{ marginLeft: isMobile ? 0 : 240, padding: isMobile ? "20px 16px 100px" : "32px 32px" }}>
+
+        {/* ══ HISTORIQUE ══ */}
+        {activeTab === "history" && (
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Historique</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Tous vos challenges et récompenses.</p>
+
+            {allChallenges.length === 0 ? (
+              <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Aucun challenge pour le moment.</div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                {allChallenges.map((c, idx) => {
+                  const profit = c.balance && c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
+                  const phaseReached = c.status === "funded" ? "Certified ✓" : c.phase === "phase2" ? "Phase 2 atteinte" : c.phase === "phase1" ? "Phase 1" : c.phase;
+                  const isLast = idx === allChallenges.length - 1;
+                  const dotColor = c.status === "funded" ? "#3b82f6" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#f59e0b" : "#22c55e";
+                  const relatedPayouts = allPayouts.filter(p => {
+                    const pd = new Date(p.created_at).getTime();
+                    const cd = new Date(c.created_at).getTime();
+                    const nextChallenge = allChallenges[idx - 1];
+                    const nd = nextChallenge ? new Date(nextChallenge.created_at).getTime() : Date.now() + 1;
+                    return pd >= cd && pd < nd;
+                  });
+
+                  return (
+                    <div key={c.id} style={{ display: "flex", gap: 16 }}>
+                      {/* Timeline dot + line */}
+                      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 24, flexShrink: 0 }}>
+                        <div style={{ width: 12, height: 12, borderRadius: "50%", backgroundColor: dotColor, marginTop: 16, flexShrink: 0, boxShadow: `0 0 8px ${dotColor}80` }} />
+                        {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#1a1a1a", minHeight: 32 }} />}
+                      </div>
+
+                      {/* Card */}
+                      <div style={{ flex: 1, backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
+                        {/* Header */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                          <div>
+                            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model}</div>
+                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                              <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{c.status}</span>
+                              <span style={{ backgroundColor: "#1a1a1a", color: "#888", fontSize: 12, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
+                            </div>
+                          </div>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ color: "#555", fontSize: 11, marginBottom: 2 }}>Acheté le</div>
+                            <div style={{ fontWeight: 700, fontSize: 13 }}>{new Date(c.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
+                          </div>
+                        </div>
+
+                        {/* Stats */}
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 12, marginBottom: relatedPayouts.length > 0 ? 16 : 0 }}>
+                          {[
+                            { label: "Balance départ", value: `$${c.start_balance?.toLocaleString()}` },
+                            { label: "Balance finale", value: `$${c.balance?.toLocaleString()}` },
+                            { label: "P&L", value: profit ? `${Number(profit) >= 0 ? "+" : ""}${profit}%` : "—", color: profit ? (Number(profit) >= 0 ? "#22c55e" : "#ef4444") : "#555" },
+                            { label: "Jours tradés", value: c.trading_days?.toString() || "0" },
+                            { label: "Montant payé", value: `€${c.amount_paid}` },
+                          ].map((s, i) => (
+                            <div key={i} style={{ backgroundColor: "#1a1a1a", borderRadius: 10, padding: "10px 14px" }}>
+                              <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
+                              <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#fff" }}>{s.value}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Récompenses liées */}
+                        {relatedPayouts.length > 0 && (
+                          <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 14 }}>
+                            <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Récompenses</div>
+                            {relatedPayouts.map(p => (
+                              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "#1a1a1a", borderRadius: 8, marginBottom: 6 }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                  <Trophy size={14} color="#C9A84C" />
+                                  <span style={{ fontSize: 13, fontWeight: 700, color: "#22c55e" }}>€{p.amount?.toLocaleString()}</span>
+                                  <span style={{ fontSize: 11, color: "#555" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
+                                </div>
+                                <span style={{ backgroundColor: p.status === "paid" ? "#22c55e20" : p.status === "pending" ? "#f59e0b20" : "#ef444420", color: p.status === "paid" ? "#22c55e" : p.status === "pending" ? "#f59e0b" : "#ef4444", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
+                                  {p.status === "paid" ? "Versée" : p.status === "pending" ? "En attente" : "Refusée"}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ══ FACTURES ══ */}
+        {activeTab === "invoices" && (
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Factures</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Historique de vos achats. Chaque challenge donne lieu à une facture.</p>
+
+            {allChallenges.length === 0 ? (
+              <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Aucune facture pour le moment.</div>
+            ) : (
+              <>
+                {/* Liste */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+                  {allChallenges.map((c, idx) => {
+                    const d = new Date(c.created_at);
+                    const invoiceNum = `ELY-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}-${String(allChallenges.length - idx).padStart(3,"0")}`;
+                    return (
+                      <div key={c.id} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+                          <div style={{ backgroundColor: "#1a1a1a", borderRadius: 10, padding: "8px 14px" }}>
+                            <div style={{ color: "#555", fontSize: 10, marginBottom: 2 }}>N° FACTURE</div>
+                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#2D7DD2" }}>{invoiceNum}</div>
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 700, fontSize: 15 }}>Challenge {c.account_size}</div>
+                            <div style={{ color: "#555", fontSize: 13 }}>{c.model} — {d.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                          <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: 20, fontWeight: 900, color: "#22c55e" }}>€{c.amount_paid}</div>
+                            <span style={{ backgroundColor: "#22c55e20", color: "#22c55e", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>PAYÉE</span>
+                          </div>
+                          <button onClick={() => {
+                            const name = `${c.client_first_name || ""} ${c.client_last_name || ""}`.trim() || user.email || "";
+                            const w = window.open("", "_blank");
+                            if (!w) return;
+                            w.document.write(`<!DOCTYPE html><html><head><title>Facture ${invoiceNum}</title><style>
+                              body{font-family:system-ui,sans-serif;background:#fff;color:#111;margin:0;padding:40px}
+                              .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;padding-bottom:20px;border-bottom:2px solid #111}
+                              .logo{font-size:24px;font-weight:900;letter-spacing:-1px}
+                              .badge{background:#111;color:#fff;padding:6px 16px;border-radius:100px;font-size:12px;font-weight:700}
+                              h2{font-size:14px;color:#888;text-transform:uppercase;letter-spacing:1px;margin:0 0 4px}
+                              .info{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:40px}
+                              table{width:100%;border-collapse:collapse;margin-bottom:32px}
+                              th{text-align:left;color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px;padding:10px 16px;border-bottom:1px solid #eee}
+                              td{padding:14px 16px;border-bottom:1px solid #f5f5f5;font-size:14px}
+                              .total{text-align:right;font-size:20px;font-weight:900}
+                              .footer{text-align:center;color:#aaa;font-size:12px;margin-top:60px;padding-top:20px;border-top:1px solid #eee}
+                              @media print{button{display:none}}
+                            </style></head><body>
+                              <div class="header">
+                                <div>
+                                  <div class="logo">ELYSIUM</div>
+                                  <div style="color:#888;font-size:13px;margin-top:4px">elysiumfunded.eu</div>
+                                </div>
+                                <div style="text-align:right">
+                                  <div class="badge">FACTURE ACQUITTÉE</div>
+                                  <div style="font-size:13px;color:#888;margin-top:8px">N° ${invoiceNum}</div>
+                                </div>
+                              </div>
+                              <div class="info">
+                                <div>
+                                  <h2>Émetteur</h2>
+                                  <div style="font-weight:700">ELYSIUM</div>
+                                  <div style="color:#555;font-size:13px">elysiumfunded.eu<br>contact@elysiumfunded.eu</div>
+                                </div>
+                                <div>
+                                  <h2>Client</h2>
+                                  <div style="font-weight:700">${name}</div>
+                                  <div style="color:#555;font-size:13px">${user.email}</div>
+                                </div>
+                              </div>
+                              <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;color:#888">
+                                <span>Date d'émission : <b style="color:#111">${d.toLocaleDateString("fr-FR", { day:"2-digit", month:"long", year:"numeric" })}</b></span>
+                              </div>
+                              <table>
+                                <thead><tr><th>Description</th><th>Quantité</th><th style="text-align:right">Montant</th></tr></thead>
+                                <tbody>
+                                  <tr><td>Challenge de trading ${c.account_size} — ${c.model}<br><span style="color:#888;font-size:12px">Accès à la plateforme de challenge sur compte simulé</span></td><td>1</td><td style="text-align:right;font-weight:700">€${c.amount_paid}</td></tr>
+                                </tbody>
+                              </table>
+                              <div class="total">Total TTC : €${c.amount_paid}</div>
+                              <div class="footer">
+                                ELYSIUM — elysiumfunded.eu — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
+                                Ce document tient lieu de facture acquittée.
+                              </div>
+                              <div style="text-align:center;margin-top:32px"><button onclick="window.print()" style="background:#111;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Imprimer / Télécharger PDF</button></div>
+                            </body></html>`);
+                            w.document.close();
+                          }}
+                            style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 10, padding: "10px 18px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                            Voir la facture →
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Rules Tab */}
         {activeTab === "rules" && (
