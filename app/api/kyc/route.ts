@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { data } = await supabase
+  const admin = createAdminClient();
+  const { data } = await admin
     .from("profiles")
     .select("kyc_status, kyc_rejection_reason, kyc_submitted_at")
     .eq("id", user.id)
@@ -22,7 +24,8 @@ export async function POST(req: NextRequest) {
 
   const { doc_id_front, doc_id_back, doc_residence, doc_selfie } = await req.json();
 
-  const { error } = await supabase.from("profiles").upsert({
+  const admin = createAdminClient();
+  const { error } = await admin.from("profiles").upsert({
     id: user.id,
     kyc_status: "pending",
     kyc_submitted_at: new Date().toISOString(),

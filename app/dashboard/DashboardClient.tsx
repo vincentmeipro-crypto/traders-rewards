@@ -76,6 +76,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const [kycFiles, setKycFiles] = useState<{ id_front: File | null; id_back: File | null; residence: File | null; selfie: File | null }>({ id_front: null, id_back: null, residence: null, selfie: null });
   const [kycSubmitting, setKycSubmitting] = useState(false);
   const [kycSubmitSuccess, setKycSubmitSuccess] = useState(false);
+  const [kycError, setKycError] = useState<string | null>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -141,19 +142,31 @@ export default function DashboardClient({ user }: { user: User }) {
 
   const handleKycSubmit = async () => {
     setKycSubmitting(true);
+    setKycError(null);
     const paths: Record<string, string> = {};
     for (const [key, file] of Object.entries(kycFiles) as [string, File | null][]) {
       if (!file) continue;
       const ext = file.name.split(".").pop() || "jpg";
       const path = `${user.id}/${key}_${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("kyc-documents").upload(path, file, { upsert: true });
-      if (!error) paths[key] = path;
+      if (error) {
+        setKycError(`Upload échoué (${key}): ${error.message}`);
+        setKycSubmitting(false);
+        return;
+      }
+      paths[key] = path;
     }
-    await fetch("/api/kyc", {
+    const res = await fetch("/api/kyc", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ doc_id_front: paths.id_front || null, doc_id_back: paths.id_back || null, doc_residence: paths.residence || null, doc_selfie: paths.selfie || null }),
     });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      setKycError(`Erreur serveur: ${err.error || res.status}`);
+      setKycSubmitting(false);
+      return;
+    }
     setKycStatus("pending");
     setKycSubmitting(false);
     setKycSubmitSuccess(true);
@@ -634,6 +647,11 @@ export default function DashboardClient({ user }: { user: User }) {
                   </div>
                 ))}
 
+                {kycError && (
+                  <div style={{ backgroundColor: "#ef444420", border: "1px solid #ef4444", borderRadius: 10, padding: "12px 16px", color: "#ef4444", fontSize: 13, marginBottom: 8 }}>
+                    {kycError}
+                  </div>
+                )}
                 <button
                   onClick={handleKycSubmit}
                   disabled={kycSubmitting || !kycFiles.id_front || (kycIdType === "card" && !kycFiles.id_back) || !kycFiles.residence || !kycFiles.selfie}
