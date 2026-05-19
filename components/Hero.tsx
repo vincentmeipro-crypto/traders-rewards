@@ -18,8 +18,8 @@ const CANDLES: [boolean, number, number, number, number][] = [
 ];
 
 function CandleChart({ side }: { side: "left" | "right" }) {
-  const W = 480;
-  const H = 640;
+  const W = 520;
+  const H = 900;
   const candleW = 26;
   const spacing = 44;
 
@@ -35,7 +35,7 @@ function CandleChart({ side }: { side: "left" | "right" }) {
       width: W,
       height: H,
       pointerEvents: "none",
-      zIndex: 0,
+      zIndex: 2,
     }}>
       <svg width={W} height={H}>
         <defs>
@@ -189,7 +189,7 @@ export default function Hero() {
           gap: 12,
           flexWrap: "wrap",
           justifyContent: "center",
-          marginBottom: 56,
+          marginBottom: 20,
           width: isMobile ? "100%" : "auto",
         }}>
           <a href="#pricing" className="btn-primary btn-primary-animated"
@@ -203,7 +203,7 @@ export default function Hero() {
         </div>
 
         {/* Promo Banner */}
-        <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 32 }}>
+        <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 0 }}>
           <img src="/PROMO50.png" alt="Promotion" style={{ width: "100%", display: "block" }} />
         </div>
       </div>
