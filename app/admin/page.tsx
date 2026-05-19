@@ -151,9 +151,12 @@ export default function AdminPage() {
     const margeYear  = caYear  > 0 ? Math.round((caYear  - pyYear)  / caYear  * 100) : 0;
     const margeMonth = caMonth > 0 ? Math.round((caMonth - pyMonth) / caMonth * 100) : 0;
 
+    const is1Step = (m: string) => m?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+
     const totalTraders  = new Set(challenges.map(c => c.user_email)).size;
     const activeTraders = new Set(challenges.filter(c => c.status === "active").map(c => c.user_email)).size;
-    const phase1    = challenges.filter(c => c.phase === "phase1" && c.status === "active").length;
+    const phase1    = challenges.filter(c => c.phase === "phase1" && c.status === "active" && !is1Step(c.model)).length;
+    const oneStep   = challenges.filter(c => c.status === "active" && is1Step(c.model)).length;
     const phase2    = challenges.filter(c => c.phase === "phase2" && c.status === "active").length;
     const passed    = challenges.filter(c => c.status === "passed").length;
     const certified = challenges.filter(c => c.status === "funded").length;
@@ -178,7 +181,7 @@ export default function AdminPage() {
       return dd >= limit * 0.75;
     });
 
-    return { caYear, caMonth, margeYear, margeMonth, totalTraders, activeTraders, phase1, phase2, passed, certified, failed, total, pendingPayouts: pendingPayouts.length, pendingAmt, convP1P2, convP2Fund, ltv, alerts };
+    return { caYear, caMonth, margeYear, margeMonth, totalTraders, activeTraders, phase1, oneStep, phase2, passed, certified, failed, total, pendingPayouts: pendingPayouts.length, pendingAmt, convP1P2, convP2Fund, ltv, alerts };
   }, [challenges, payouts]);
 
   /* ── Monthly revenue ── */
@@ -200,6 +203,24 @@ export default function AdminPage() {
     });
     return Array.from(map.entries()).sort(([a], [b]) => a.localeCompare(b)).map(([month, v]) => ({ month, ...v, marge: v.ca > 0 ? Math.round((v.ca - v.payoutsAmt) / v.ca * 100) : 0 }));
   }, [challenges, payouts]);
+
+  /* ── CA par taille de compte ── */
+  const byAccountSize = useMemo(() => {
+    const map = new Map<string, { count: number; revenue: number; active: number; certified: number; failed: number }>();
+    challenges.forEach(c => {
+      const key = c.account_size;
+      const ex = map.get(key) || { count: 0, revenue: 0, active: 0, certified: 0, failed: 0 };
+      ex.count   += 1;
+      ex.revenue += c.amount_paid || 0;
+      if (c.status === "active" || c.status === "passed") ex.active    += 1;
+      if (c.status === "funded")                          ex.certified += 1;
+      if (c.status === "failed")                          ex.failed    += 1;
+      map.set(key, ex);
+    });
+    return Array.from(map.entries())
+      .sort(([a], [b]) => parseInt(a.replace(/\D/g, "")) - parseInt(b.replace(/\D/g, "")))
+      .map(([size, v]) => ({ size, ...v }));
+  }, [challenges]);
 
   /* ── CRM ── */
   const traderCRM = useMemo(() => {
@@ -364,8 +385,9 @@ export default function AdminPage() {
               {[
                 { label: "Total Traders",      value: kpis.totalTraders,  color: "#fff"    },
                 { label: "Traders actifs",     value: kpis.activeTraders, color: "#22c55e" },
-                { label: "Phase 1",            value: kpis.phase1,        color: "#888"    },
-                { label: "Phase 2",            value: kpis.phase2,        color: "#fff"    },
+                { label: "Phase 1 (2-Step)",   value: kpis.phase1,        color: "#888"    },
+                { label: "1-Step actifs",      value: kpis.oneStep,       color: "#a78bfa" },
+                { label: "Phase 2 (2-Step)",   value: kpis.phase2,        color: "#fff"    },
                 { label: "Certified",          value: kpis.certified,     color: "#3b82f6" },
                 { label: "Failed",             value: kpis.failed,        color: "#ef4444" },
                 { label: "Total Challenges",   value: kpis.total,         color: "#555"    },
@@ -401,13 +423,14 @@ export default function AdminPage() {
             {/* Entonnoir */}
             <div style={{ display: "flex", gap: 8, marginBottom: 24, alignItems: "stretch" }}>
               {[
-                { label: "Phase 1",  value: kpis.phase1,    color: "#888"    },
-                { label: "Phase 2",  value: kpis.phase2,    color: "#fff"    },
-                { label: "Passés",   value: kpis.passed,    color: "#f59e0b" },
-                { label: "Certified",value: kpis.certified, color: "#3b82f6" },
-                { label: "Failed",   value: kpis.failed,    color: "#ef4444" },
+                { label: "Phase 1 (2-Step)", value: kpis.phase1,    color: "#888",    fs: "active"  },
+                { label: "1-Step actifs",    value: kpis.oneStep,   color: "#a78bfa", fs: "active"  },
+                { label: "Phase 2 (2-Step)", value: kpis.phase2,    color: "#fff",    fs: "active"  },
+                { label: "Passés",           value: kpis.passed,    color: "#f59e0b", fs: "passed"  },
+                { label: "Certified",        value: kpis.certified, color: "#3b82f6", fs: "funded"  },
+                { label: "Failed",           value: kpis.failed,    color: "#ef4444", fs: "failed"  },
               ].map((s, i) => (
-                <div key={i} onClick={() => setFilterStatus(["active","active","passed","funded","failed"][i])}
+                <div key={i} onClick={() => setFilterStatus(s.fs)}
                   style={{ flex: 1, backgroundColor: "#0f0f0f", border: `1px solid ${s.color}30`, borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}>
                   <div style={{ color: s.color, fontSize: 22, fontWeight: 900 }}>{s.value}</div>
                   <div style={{ color: "#555", fontSize: 11, marginTop: 4 }}>{s.label}</div>
@@ -616,6 +639,45 @@ export default function AdminPage() {
                 <span style={{ fontSize: 10, color: "#ef4444" }}>■ Payouts</span>
                 <span style={{ fontSize: 10, color: "#555" }}>% = marge brute</span>
               </div>
+            </div>
+
+            {/* CA par taille de compte */}
+            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ padding: "16px 20px", color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid #1a1a1a" }}>Répartition par taille de compte</div>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+                    {["Compte", "Challenges vendus", "CA total", "% du CA", "Actifs", "Certified", "Failed"].map(h => (
+                      <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {byAccountSize.map(row => {
+                    const totalCA = challenges.reduce((s, c) => s + (c.amount_paid || 0), 0);
+                    const pct = totalCA > 0 ? Math.round(row.revenue / totalCA * 100) : 0;
+                    return (
+                      <tr key={row.size} style={{ borderBottom: "1px solid #111" }}>
+                        <td style={{ padding: "12px 16px", fontWeight: 800, color: "#fff" }}>{row.size}</td>
+                        <td style={{ padding: "12px 16px", fontWeight: 700, color: "#fff" }}>{row.count}</td>
+                        <td style={{ padding: "12px 16px", color: "#22c55e", fontWeight: 700 }}>€{row.revenue.toLocaleString()}</td>
+                        <td style={{ padding: "12px 16px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <div style={{ flex: 1, backgroundColor: "#1a1a1a", borderRadius: 4, height: 6, maxWidth: 80 }}>
+                              <div style={{ width: `${pct}%`, backgroundColor: "#2D7DD2", height: 6, borderRadius: 4 }} />
+                            </div>
+                            <span style={{ color: "#888", fontSize: 12 }}>{pct}%</span>
+                          </div>
+                        </td>
+                        <td style={{ padding: "12px 16px", color: "#22c55e" }}>{row.active}</td>
+                        <td style={{ padding: "12px 16px", color: "#3b82f6" }}>{row.certified}</td>
+                        <td style={{ padding: "12px 16px", color: "#ef4444" }}>{row.failed}</td>
+                      </tr>
+                    );
+                  })}
+                  {byAccountSize.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucune donnée</td></tr>}
+                </tbody>
+              </table>
             </div>
 
             {/* Tableau mensuel */}
