@@ -40,7 +40,7 @@ function CandleChart({ side }: { side: "left" | "right" }) {
       <svg width={W} height={H}>
         <defs>
           <linearGradient id={`g-${side}`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="white" stopOpacity="0.25" />
+            <stop offset="0%" stopColor="white" stopOpacity="0.5" />
             <stop offset="100%" stopColor="white" stopOpacity="0" />
           </linearGradient>
           <mask id={`m-${side}`}>
@@ -56,12 +56,12 @@ function CandleChart({ side }: { side: "left" | "right" }) {
                 <line
                   x1={cx + candleW / 2} y1={wickY1}
                   x2={cx + candleW / 2} y2={wickY2}
-                  stroke={color} strokeWidth={1.5} strokeOpacity={0.5}
+                  stroke={color} strokeWidth={1.5} strokeOpacity={0.75}
                 />
                 <rect
                   x={cx} y={bodyY1}
                   width={candleW} height={bodyY2 - bodyY1}
-                  fill={color} fillOpacity={0.55}
+                  fill={color} fillOpacity={0.8}
                   rx={2}
                 />
               </g>
