@@ -46,7 +46,17 @@ type Payout = {
   created_at: string;
 };
 
-type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos";
+type KycSubmission = {
+  id: string;
+  user_email: string;
+  kyc_status: string;
+  kyc_rejection_reason: string | null;
+  kyc_submitted_at: string;
+  kyc_reviewed_at: string | null;
+  doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
+};
+
+type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc";
 
 const STATUS_COLORS: Record<string, string> = {
   active:  "#22c55e",
@@ -65,6 +75,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "financier", label: "Financier" },
   { id: "payouts",   label: "Récompenses" },
   { id: "promos",    label: "Promo Codes" },
+  { id: "kyc",       label: "KYC" },
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
@@ -96,6 +107,12 @@ export default function AdminPage() {
   const [newCode, setNewCode] = useState({ code: "", discount_percent: "", max_uses: "", expires_at: "" });
   const [promoMsg, setPromoMsg] = useState("");
   const [promoError, setPromoError] = useState("");
+
+  // KYC state
+  const [kycSubmissions, setKycSubmissions] = useState<KycSubmission[]>([]);
+  const [kycLoading, setKycLoading] = useState(false);
+  const [kycRejectReason, setKycRejectReason] = useState<Record<string, string>>({});
+  const [kycMsg, setKycMsg] = useState("");
 
   // Sync state
   const [syncing, setSyncing] = useState(false);
@@ -131,8 +148,20 @@ export default function AdminPage() {
     setPromosLoading(false);
   };
 
+  const loadKyc = async (t: string) => {
+    setKycLoading(true);
+    const res = await fetch("/api/admin/kyc", { headers: { Authorization: `Bearer ${t}` } });
+    const data = await res.json();
+    if (Array.isArray(data)) setKycSubmissions(data);
+    setKycLoading(false);
+  };
+
   useEffect(() => {
     if (tab === "promos" && token && promos.length === 0) loadPromos(token);
+  }, [tab, token]);
+
+  useEffect(() => {
+    if (tab === "kyc" && token) loadKyc(token);
   }, [tab, token]);
 
   /* ── KPIs ── */
@@ -279,6 +308,16 @@ export default function AdminPage() {
     if (res.ok) setPromos(p => p.map(x => x.id === promo.id ? data : x));
   };
 
+  const updateKyc = async (user_id: string, status: string, rejection_reason?: string) => {
+    if (!token) return;
+    const res = await fetch("/api/admin/kyc", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ user_id, status, rejection_reason }) });
+    if (res.ok) {
+      setKycSubmissions(ks => ks.map(k => k.id === user_id ? { ...k, kyc_status: status, kyc_rejection_reason: rejection_reason || null } : k));
+      setKycMsg(status === "approved" ? "✓ KYC approuvé" : "KYC refusé");
+      setTimeout(() => setKycMsg(""), 3000);
+    }
+  };
+
   const deletePromo = async (id: string) => {
     if (!token || !confirm("Supprimer ce code ?")) return;
     await fetch("/api/admin/promo-codes", { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id }) });
@@ -322,6 +361,7 @@ export default function AdminPage() {
               <button key={t.id} onClick={() => setTab(t.id)} style={{ backgroundColor: tab === t.id ? "#fff" : "transparent", color: tab === t.id ? "#000" : "#555", border: `1px solid ${tab === t.id ? "#fff" : "#222"}`, borderRadius: 8, padding: "5px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                 {t.label}
                 {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: 6, backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
+                {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: 6, backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
               </button>
             ))}
           </div>
@@ -941,6 +981,97 @@ export default function AdminPage() {
             </div>
           </>
         )}
+        {/* ══ KYC ══ */}
+        {tab === "kyc" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 8 }}>
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                {[
+                  { label: "En attente", value: kycSubmissions.filter(k => k.kyc_status === "pending").length, color: "#f59e0b" },
+                  { label: "Approuvés",  value: kycSubmissions.filter(k => k.kyc_status === "approved").length, color: "#22c55e" },
+                  { label: "Refusés",   value: kycSubmissions.filter(k => k.kyc_status === "rejected").length, color: "#ef4444" },
+                ].map((s, i) => (
+                  <div key={i} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 20px" }}>
+                    <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+              {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700 }}>{kycMsg}</span>}
+            </div>
+
+            {kycLoading && <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Chargement...</div>}
+
+            {!kycLoading && kycSubmissions.length === 0 && (
+              <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Aucune soumission KYC</div>
+            )}
+
+            {!kycLoading && kycSubmissions.map(k => {
+              const isPending = k.kyc_status === "pending";
+              const statusColor = k.kyc_status === "approved" ? "#22c55e" : k.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
+              const docLabels: [keyof typeof k.doc_urls, string][] = [
+                ["id_front", "Pièce ID recto"],
+                ["id_back",  "Pièce ID verso"],
+                ["residence","Justificatif domicile"],
+                ["selfie",   "Selfie"],
+              ];
+              return (
+                <div key={k.id} style={{ backgroundColor: "#0f0f0f", border: `1px solid ${isPending ? "#f59e0b30" : "#1a1a1a"}`, borderRadius: 12, padding: "20px 24px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{k.user_email}</div>
+                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", fontSize: 12, color: "#555" }}>
+                        <span>Soumis le {new Date(k.kyc_submitted_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</span>
+                        {k.kyc_reviewed_at && <span>• Révisé le {new Date(k.kyc_reviewed_at).toLocaleDateString("fr-FR")}</span>}
+                      </div>
+                    </div>
+                    <span style={{ backgroundColor: `${statusColor}20`, color: statusColor, padding: "4px 12px", borderRadius: 100, fontSize: 12, fontWeight: 700 }}>{k.kyc_status}</span>
+                  </div>
+
+                  {/* Documents */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
+                    {docLabels.map(([field, label]) => (
+                      k.doc_urls[field] ? (
+                        <a key={field} href={k.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
+                          style={{ backgroundColor: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 8, padding: "8px 14px", color: "#38bdf8", fontSize: 12, fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+                          📄 {label}
+                        </a>
+                      ) : (
+                        <span key={field} style={{ backgroundColor: "#111", border: "1px solid #1a1a1a", borderRadius: 8, padding: "8px 14px", color: "#333", fontSize: 12 }}>{label} —</span>
+                      )
+                    ))}
+                  </div>
+
+                  {k.kyc_status === "rejected" && k.kyc_rejection_reason && (
+                    <div style={{ color: "#ef4444", fontSize: 12, marginBottom: 12 }}>Motif de refus : {k.kyc_rejection_reason}</div>
+                  )}
+
+                  {isPending && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "flex-end" }}>
+                      <button onClick={() => updateKyc(k.id, "approved")}
+                        style={{ backgroundColor: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                        ✓ Approuver
+                      </button>
+                      <div style={{ display: "flex", gap: 8, alignItems: "center", flex: 1, minWidth: 280 }}>
+                        <input
+                          value={kycRejectReason[k.id] || ""}
+                          onChange={e => setKycRejectReason(r => ({ ...r, [k.id]: e.target.value }))}
+                          placeholder="Motif de refus (optionnel)..."
+                          style={{ flex: 1, backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 12, outline: "none" }}
+                        />
+                        <button onClick={() => updateKyc(k.id, "rejected", kycRejectReason[k.id])}
+                          style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                          ✕ Refuser
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
       </div>
     </div>
   );

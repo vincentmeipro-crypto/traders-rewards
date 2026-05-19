@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -52,7 +52,7 @@ const STATUS_COLORS: Record<string, string> = {
   failed: "#ef4444",
 };
 
-type Tab = "dashboard" | "challenges" | "payouts" | "certificates" | "history" | "invoices" | "rules" | "settings";
+type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings";
 
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
@@ -67,6 +67,11 @@ export default function DashboardClient({ user }: { user: User }) {
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [kycStatus, setKycStatus] = useState("not_submitted");
+  const [kycRejectionReason, setKycRejectionReason] = useState<string | null>(null);
+  const [kycFiles, setKycFiles] = useState<{ id_front: File | null; id_back: File | null; residence: File | null; selfie: File | null }>({ id_front: null, id_back: null, residence: null, selfie: null });
+  const [kycSubmitting, setKycSubmitting] = useState(false);
+  const [kycSubmitSuccess, setKycSubmitSuccess] = useState(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -99,6 +104,17 @@ export default function DashboardClient({ user }: { user: User }) {
           setLatestPayout(data[0]);
         }
       });
+    supabase
+      .from("profiles")
+      .select("kyc_status, kyc_rejection_reason")
+      .eq("id", user.id)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setKycStatus(data.kyc_status || "not_submitted");
+          setKycRejectionReason(data.kyc_rejection_reason || null);
+        }
+      });
   }, [user.id]);
 
   const handleLogout = async () => {
@@ -117,6 +133,26 @@ export default function DashboardClient({ user }: { user: User }) {
     setPayoutLoading(false);
     setPayoutSuccess(true);
     setTimeout(() => { setPayoutSuccess(false); }, 2000);
+  };
+
+  const handleKycSubmit = async () => {
+    setKycSubmitting(true);
+    const paths: Record<string, string> = {};
+    for (const [key, file] of Object.entries(kycFiles) as [string, File | null][]) {
+      if (!file) continue;
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${user.id}/${key}_${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("kyc-documents").upload(path, file, { upsert: true });
+      if (!error) paths[key] = path;
+    }
+    await fetch("/api/kyc", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ doc_id_front: paths.id_front || null, doc_id_back: paths.id_back || null, doc_residence: paths.residence || null, doc_selfie: paths.selfie || null }),
+    });
+    setKycStatus("pending");
+    setKycSubmitting(false);
+    setKycSubmitSuccess(true);
   };
 
   const profitAmount = challenge ? challenge.balance - challenge.start_balance : 0;
@@ -142,6 +178,7 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <LayoutDashboard size={16} />, label: "Dashboard", tab: "dashboard" },
               { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
               { icon: <Wallet size={16} />, label: "Rewards", tab: "payouts" },
+              { icon: <ShieldCheck size={16} />, label: "KYC", tab: "kyc" },
               { icon: <Award size={16} />, label: "Certificates", tab: "certificates" },
               { icon: <History size={16} />, label: "Historique", tab: "history" },
               { icon: <FileText size={16} />, label: "Factures", tab: "invoices" },
@@ -186,7 +223,7 @@ export default function DashboardClient({ user }: { user: User }) {
             { icon: <LayoutDashboard size={20} />, label: "Home", tab: "dashboard" },
             { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
             { icon: <Wallet size={20} />, label: "Rewards", tab: "payouts" },
-            { icon: <History size={20} />, label: "Historique", tab: "history" },
+            { icon: <ShieldCheck size={20} />, label: "KYC", tab: "kyc" },
             { icon: <FileText size={20} />, label: "Factures", tab: "invoices" },
             { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
           ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -459,6 +496,21 @@ export default function DashboardClient({ user }: { user: User }) {
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Rewards unlocked when funded</div>
                 <div style={{ color: "#555", fontSize: 14 }}>Complete Phase 1 and Phase 2 to unlock reward requests.</div>
               </div>
+            ) : kycStatus !== "approved" ? (
+              <div className="card" style={{ padding: 40, textAlign: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><ShieldCheck size={40} color="#f59e0b" /></div>
+                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Vérification KYC requise</div>
+                <div style={{ color: "#555", fontSize: 14, marginBottom: 24 }}>
+                  {kycStatus === "pending"
+                    ? "Vos documents KYC sont en cours de vérification (24-48h ouvrées)."
+                    : kycStatus === "rejected"
+                    ? "Votre KYC a été refusé. Veuillez soumettre de nouveaux documents."
+                    : "Vous devez vérifier votre identité avant de demander une récompense."}
+                </div>
+                <button onClick={() => setActiveTab("kyc")} className="btn-primary" style={{ padding: "12px 28px", fontSize: 14 }}>
+                  {kycStatus === "pending" ? "Voir le statut KYC" : "Compléter le KYC →"}
+                </button>
+              </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>
                 <div style={{ marginBottom: 20 }}>
@@ -496,6 +548,84 @@ export default function DashboardClient({ user }: { user: User }) {
                     {payoutLoading ? "Submitting..." : "Submit Reward Request"}
                   </button>
                 )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* KYC Tab */}
+        {activeTab === "kyc" && (
+          <div style={{ maxWidth: 600 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Vérification KYC</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>La vérification d'identité est obligatoire avant toute demande de récompense.</p>
+
+            {kycStatus === "approved" && (
+              <div style={{ backgroundColor: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
+                <CheckCircle size={20} color="#22c55e" />
+                <div>
+                  <div style={{ color: "#22c55e", fontWeight: 700, marginBottom: 4 }}>KYC vérifié ✓</div>
+                  <div style={{ color: "#555", fontSize: 13 }}>Votre identité a été vérifiée avec succès. Vous pouvez demander vos récompenses.</div>
+                </div>
+              </div>
+            )}
+
+            {kycStatus === "pending" && (
+              <div style={{ backgroundColor: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
+                <Clock size={20} color="#f59e0b" />
+                <div>
+                  <div style={{ color: "#f59e0b", fontWeight: 700, marginBottom: 4 }}>Documents en cours de vérification</div>
+                  <div style={{ color: "#555", fontSize: 13 }}>Notre équipe vérifie vos documents. Délai : 24-48h ouvrées.</div>
+                </div>
+              </div>
+            )}
+
+            {kycStatus === "rejected" && (
+              <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 12, padding: "20px 24px", marginBottom: 24 }}>
+                <div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 6 }}>KYC refusé</div>
+                {kycRejectionReason && <div style={{ color: "#888", fontSize: 13, marginBottom: 6 }}>Motif : {kycRejectionReason}</div>}
+                <div style={{ color: "#555", fontSize: 13 }}>Veuillez soumettre de nouveaux documents ci-dessous.</div>
+              </div>
+            )}
+
+            {(kycStatus === "not_submitted" || kycStatus === "rejected") && !kycSubmitSuccess && (
+              <div className="card" style={{ padding: 32, display: "flex", flexDirection: "column", gap: 24 }}>
+                {([
+                  { key: "id_front" as const, label: "Pièce d'identité — recto", hint: "Carte d'identité ou passeport (face avant)", required: true },
+                  { key: "id_back" as const, label: "Pièce d'identité — verso", hint: "Verso de la carte d'identité (non requis pour passeport)", required: false },
+                  { key: "residence" as const, label: "Justificatif de domicile", hint: "Facture EDF/eau, avis d'imposition ou relevé bancaire (moins de 3 mois)", required: true },
+                  { key: "selfie" as const, label: "Selfie avec pièce d'identité", hint: "Photo de vous tenant votre pièce d'identité face caméra", required: true },
+                ]).map(field => (
+                  <div key={field.key}>
+                    <div style={{ color: "#fff", fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
+                      {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
+                    </div>
+                    <div style={{ color: "#555", fontSize: 12, marginBottom: 10 }}>{field.hint}</div>
+                    <label style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", backgroundColor: "#0a0a0a", border: `1px dashed ${kycFiles[field.key] ? "#22c55e" : "#2a2a2a"}`, borderRadius: 10, cursor: "pointer" }}>
+                      <input type="file" accept="image/*,.pdf" style={{ display: "none" }}
+                        onChange={e => setKycFiles(f => ({ ...f, [field.key]: e.target.files?.[0] || null }))} />
+                      <Upload size={16} color={kycFiles[field.key] ? "#22c55e" : "#444"} />
+                      <span style={{ color: kycFiles[field.key] ? "#22c55e" : "#555", fontSize: 13, flex: 1 }}>
+                        {kycFiles[field.key] ? (kycFiles[field.key] as File).name : "Sélectionner un fichier (JPG, PNG, PDF)"}
+                      </span>
+                    </label>
+                  </div>
+                ))}
+
+                <button
+                  onClick={handleKycSubmit}
+                  disabled={kycSubmitting || !kycFiles.id_front || !kycFiles.residence || !kycFiles.selfie}
+                  className="btn-primary"
+                  style={{ padding: "14px 28px", fontSize: 15, width: "100%", opacity: (kycSubmitting || !kycFiles.id_front || !kycFiles.residence || !kycFiles.selfie) ? 0.5 : 1, cursor: (kycSubmitting || !kycFiles.id_front || !kycFiles.residence || !kycFiles.selfie) ? "not-allowed" : "pointer" }}>
+                  {kycSubmitting ? "Envoi en cours..." : "Soumettre les documents"}
+                </button>
+              </div>
+            )}
+
+            {kycSubmitSuccess && (
+              <div className="card" style={{ padding: 40, textAlign: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={48} color="#22c55e" /></div>
+                <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Documents soumis avec succès</div>
+                <div style={{ color: "#555", fontSize: 14 }}>Notre équipe va vérifier vos documents sous 24-48h ouvrées.</div>
               </div>
             )}
           </div>
