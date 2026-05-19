@@ -580,20 +580,123 @@ export default function AdminPage() {
                     </div>
                     <span style={{ color: "#444", fontSize: 16 }}>{isOpen ? "▲" : "▼"}</span>
                   </div>
-                  {isOpen && (
-                    <div style={{ borderTop: "1px solid #1a1a1a", padding: "12px 20px", display: "flex", flexDirection: "column", gap: 8 }}>
-                      {trader.challenges.map(c => (
-                        <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 12, padding: "8px 12px", backgroundColor: "#1a1a1a", borderRadius: 8, flexWrap: "wrap" }}>
-                          <span style={{ fontWeight: 700 }}>{c.account_size}</span>
-                          <span style={{ color: "#888" }}>{c.model}</span>
-                          <span style={{ color: "#888" }}>{c.phase}</span>
-                          {badge(c.status, STATUS_COLORS[c.status] || "#888")}
-                          <span style={{ color: "#22c55e" }}>€{c.amount_paid}</span>
-                          <span style={{ color: "#555" }}>{new Date(c.created_at).toLocaleDateString()}</span>
+                  {isOpen && (() => {
+                    const traderPayouts = payouts.filter(p => p.user_email === trader.email);
+                    const totalPaid = traderPayouts.filter(p => p.status === "paid").reduce((s, p) => s + p.amount, 0);
+                    const firstChallenge = trader.challenges[trader.challenges.length - 1];
+
+                    // Timeline : challenges + payouts mélangés, triés par date
+                    type TLItem =
+                      | { kind: "challenge"; date: string; data: Challenge }
+                      | { kind: "payout";    date: string; data: Payout };
+                    const timeline: TLItem[] = [
+                      ...trader.challenges.map(c => ({ kind: "challenge" as const, date: c.created_at, data: c })),
+                      ...traderPayouts.map(p  => ({ kind: "payout"    as const, date: p.created_at, data: p })),
+                    ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+                    return (
+                      <div style={{ borderTop: "1px solid #1a1a1a" }}>
+
+                        {/* Fiche client */}
+                        <div style={{ padding: "16px 20px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, borderBottom: "1px solid #111" }}>
+                          <div>
+                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Contact</div>
+                            <div style={{ fontWeight: 700 }}>{trader.name || "—"}</div>
+                            <div style={{ color: "#888", fontSize: 12 }}>{trader.email}</div>
+                            {firstChallenge?.client_phone && <div style={{ color: "#888", fontSize: 12 }}>{firstChallenge.client_phone}</div>}
+                          </div>
+                          <div>
+                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Client depuis</div>
+                            <div style={{ fontWeight: 700 }}>{new Date(trader.firstDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
+                          </div>
+                          <div>
+                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Total dépensé (LTV)</div>
+                            <div style={{ fontWeight: 900, fontSize: 18, color: "#22c55e" }}>€{trader.totalSpent}</div>
+                          </div>
+                          <div>
+                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Payouts reçus</div>
+                            <div style={{ fontWeight: 900, fontSize: 18, color: totalPaid > 0 ? "#3b82f6" : "#333" }}>€{totalPaid.toLocaleString()}</div>
+                          </div>
+                          <div>
+                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Challenges</div>
+                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
+                              {[
+                                { label: "Total",    value: trader.challenges.length,                                color: "#fff"    },
+                                { label: "Actifs",   value: activeC,                                                 color: "#22c55e" },
+                                { label: "Certified",value: certC,                                                   color: "#3b82f6" },
+                                { label: "Failed",   value: failedC,                                                 color: "#ef4444" },
+                              ].map(s => s.value > 0 && (
+                                <span key={s.label} style={{ fontSize: 11 }}>
+                                  <span style={{ color: "#555" }}>{s.label} </span>
+                                  <span style={{ color: s.color, fontWeight: 800 }}>{s.value}</span>
+                                </span>
+                              ))}
+                            </div>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+
+                        {/* Timeline */}
+                        <div style={{ padding: "16px 20px" }}>
+                          <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Historique complet</div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+                            {timeline.map((item, idx) => {
+                              const isLast = idx === timeline.length - 1;
+                              if (item.kind === "challenge") {
+                                const c = item.data;
+                                const profit = c.balance && c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
+                                return (
+                                  <div key={c.id} style={{ display: "flex", gap: 12 }}>
+                                    {/* Ligne verticale */}
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
+                                      <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[c.status] || "#444", marginTop: 4, flexShrink: 0 }} />
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#1a1a1a", minHeight: 24 }} />}
+                                    </div>
+                                    {/* Contenu */}
+                                    <div style={{ flex: 1, paddingBottom: 16 }}>
+                                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+                                        <span style={{ fontSize: 11, color: "#555" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
+                                        <span style={{ fontWeight: 700, fontSize: 13 }}>Challenge {c.account_size}</span>
+                                        <span style={{ color: "#888", fontSize: 12 }}>{c.model}</span>
+                                        {badge(c.status, STATUS_COLORS[c.status] || "#888")}
+                                        <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700 }}>€{c.amount_paid} payé</span>
+                                      </div>
+                                      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "#555" }}>
+                                        <span>Phase : <span style={{ color: "#888" }}>{c.phase}</span></span>
+                                        <span>Jours tradés : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span></span>
+                                        {c.balance && <span>Balance : <span style={{ color: "#fff" }}>${c.balance?.toLocaleString()}</span></span>}
+                                        {profit && <span>P&L : <span style={{ color: Number(profit) >= 0 ? "#22c55e" : "#ef4444" }}>{profit}%</span></span>}
+                                        {c.ctrader_account_id && <span>MT5 ID : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.ctrader_account_id}</span></span>}
+                                        {c.ctrader_password  && <span>Password : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.ctrader_password}</span></span>}
+                                        {c.server            && <span>Serveur : <span style={{ color: "#38bdf8" }}>{c.server}</span></span>}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              } else {
+                                const p = item.data;
+                                return (
+                                  <div key={p.id} style={{ display: "flex", gap: 12 }}>
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
+                                      <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[p.status] || "#3b82f6", marginTop: 4, flexShrink: 0 }} />
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#1a1a1a", minHeight: 24 }} />}
+                                    </div>
+                                    <div style={{ flex: 1, paddingBottom: 16 }}>
+                                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                        <span style={{ fontSize: 11, color: "#555" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
+                                        <span style={{ fontWeight: 700, fontSize: 13, color: "#3b82f6" }}>Demande de récompense</span>
+                                        <span style={{ fontWeight: 900, fontSize: 14, color: "#22c55e" }}>€{p.amount?.toLocaleString()}</span>
+                                        {badge(p.status, STATUS_COLORS[p.status] || "#888")}
+                                      </div>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })}
