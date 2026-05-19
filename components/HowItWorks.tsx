@@ -16,12 +16,12 @@ export default function HowItWorks() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
           {T.how.steps.map((step, i) => (
             <div key={i} className="card" style={{ padding: "40px 32px" }}>
-              <div style={{ fontSize: 56, fontWeight: 900, color: "rgba(45,125,210,0.08)", lineHeight: 1, marginBottom: 24, letterSpacing: "-2px" }}>0{i + 1}</div>
+              <div style={{ fontSize: 56, fontWeight: 900, color: "rgba(255,255,255,0.08)", lineHeight: 1, marginBottom: 24, letterSpacing: "-2px" }}>0{i + 1}</div>
               <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #1A5FA8, #2D7DD2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-                <span style={{ color: "#000", fontWeight: 900, fontSize: 16 }}>{i + 1}</span>
+                <span style={{ color: "#fff", fontWeight: 900, fontSize: 16 }}>{i + 1}</span>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, letterSpacing: "-0.5px" }}>{step.title}</h3>
-              <p style={{ color: "#666", fontSize: 15, lineHeight: 1.7 }}>{step.desc}</p>
+              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, letterSpacing: "-0.5px", color: "#ffffff" }}>{step.title}</h3>
+              <p style={{ color: "#aaaaaa", fontSize: 15, lineHeight: 1.7 }}>{step.desc}</p>
             </div>
           ))}
         </div>
