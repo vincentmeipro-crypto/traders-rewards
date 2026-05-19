@@ -39,6 +39,10 @@ function CheckoutContent() {
   const [dialCode, setDialCode] = useState("+33");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [country, setCountry] = useState("");
 
   const DIAL_CODES = [
     { code: "+33", flag: "🇫🇷" }, { code: "+32", flag: "🇧🇪" }, { code: "+41", flag: "🇨🇭" },
@@ -77,7 +81,7 @@ function CheckoutContent() {
     await fetch("/api/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone: fullPhone, email }),
+      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone: fullPhone, email, address, city, postal_code: postalCode, country }),
     });
   };
 
@@ -110,7 +114,7 @@ function CheckoutContent() {
   };
 
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
-  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim();
+  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && address.trim() && city.trim() && country.trim();
 
   const [payError, setPayError] = useState("");
 
@@ -247,6 +251,28 @@ function CheckoutContent() {
               </select>
               <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="6 00 00 00 00"
                 style={{ flex: 1, backgroundColor: "#1a1a1a", border: `1px solid ${phone ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+            </div>
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>ADDRESS *</div>
+            <input value={address} onChange={e => setAddress(e.target.value)} placeholder="12 Rue de la Paix"
+              style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${address ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginTop: 10 }}>
+            <div>
+              <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>CITY *</div>
+              <input value={city} onChange={e => setCity(e.target.value)} placeholder="Paris"
+                style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${city ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+            </div>
+            <div>
+              <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>POSTAL CODE</div>
+              <input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="75001"
+                style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${postalCode ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+            </div>
+            <div>
+              <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>COUNTRY *</div>
+              <input value={country} onChange={e => setCountry(e.target.value)} placeholder="France"
+                style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${country ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
             </div>
           </div>
         </div>

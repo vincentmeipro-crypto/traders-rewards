@@ -114,6 +114,9 @@ export default function AdminPage() {
   const [kycRejectReason, setKycRejectReason] = useState<Record<string, string>>({});
   const [kycMsg, setKycMsg] = useState("");
 
+  // Profiles state
+  const [profiles, setProfiles] = useState<{ user_id: string; email: string | null; first_name: string | null; last_name: string | null; phone: string | null; address: string | null; city: string | null; postal_code: string | null; country: string | null }[]>([]);
+
   // Sync state
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState("");
@@ -129,15 +132,17 @@ export default function AdminPage() {
       const t = session.access_token;
       setToken(t);
       const headers = { Authorization: `Bearer ${t}` };
-      const [cRes, pRes, kRes] = await Promise.all([
+      const [cRes, pRes, kRes, prRes] = await Promise.all([
         fetch("/api/admin/challenges", { headers }),
         fetch("/api/admin/payouts",    { headers }),
         fetch("/api/admin/kyc",        { headers }),
+        fetch("/api/admin/profiles",   { headers }),
       ]);
-      const [cData, pData, kData] = await Promise.all([cRes.json(), pRes.json(), kRes.json()]);
+      const [cData, pData, kData, prData] = await Promise.all([cRes.json(), pRes.json(), kRes.json(), prRes.json()]);
       if (Array.isArray(cData)) setChallenges(cData); else setError(JSON.stringify(cData));
       if (Array.isArray(pData)) setPayouts(pData);
       if (Array.isArray(kData)) setKycSubmissions(kData);
+      if (Array.isArray(prData)) setProfiles(prData);
       setLoading(false);
     });
   }, [router]);
@@ -644,12 +649,16 @@ export default function AdminPage() {
                       <div style={{ borderTop: "1px solid #1a1a1a" }}>
 
                         {/* Fiche client */}
+                        {(() => {
+                          const profile = profiles.find(p => p.email === trader.email);
+                          return (
                         <div style={{ padding: "16px 20px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, borderBottom: "1px solid #111" }}>
                           <div>
                             <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Contact</div>
                             <div style={{ fontWeight: 700 }}>{trader.name || "—"}</div>
                             <div style={{ color: "#888", fontSize: 12 }}>{trader.email}</div>
-                            {firstChallenge?.client_phone && <div style={{ color: "#888", fontSize: 12 }}>{firstChallenge.client_phone}</div>}
+                            {(profile?.phone || firstChallenge?.client_phone) && <div style={{ color: "#888", fontSize: 12 }}>{profile?.phone || firstChallenge?.client_phone}</div>}
+                            {profile?.address && <div style={{ color: "#666", fontSize: 11, marginTop: 4 }}>{profile.address}{profile.postal_code ? `, ${profile.postal_code}` : ""} {profile.city || ""}{profile.country ? ` — ${profile.country}` : ""}</div>}
                           </div>
                           <div>
                             <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Client depuis</div>
@@ -680,6 +689,8 @@ export default function AdminPage() {
                             </div>
                           </div>
                         </div>
+                          );
+                        })()}
 
                         {/* KYC */}
                         {(() => {
