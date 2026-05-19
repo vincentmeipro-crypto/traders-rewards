@@ -109,17 +109,12 @@ export default function DashboardClient({ user }: { user: User }) {
           setLatestPayout(data[0]);
         }
       });
-    supabase
-      .from("profiles")
-      .select("kyc_status, kyc_rejection_reason")
-      .eq("user_id", user.id)
-      .single()
-      .then(({ data }) => {
-        if (data) {
-          setKycStatus(data.kyc_status || "not_submitted");
-          setKycRejectionReason(data.kyc_rejection_reason || null);
-        }
-      });
+    fetch("/api/kyc").then(r => r.json()).then(data => {
+      if (data?.kyc_status) {
+        setKycStatus(data.kyc_status);
+        setKycRejectionReason(data.kyc_rejection_reason || null);
+      }
+    });
   }, [user.id]);
 
   const handleLogout = async () => {
