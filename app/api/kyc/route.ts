@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     kyc_doc_id_back: doc_id_back,
     kyc_doc_residence: doc_residence,
     kyc_doc_selfie: doc_selfie,
-  });
+  }, { onConflict: "id" });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
