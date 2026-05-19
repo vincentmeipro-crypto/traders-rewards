@@ -5,6 +5,15 @@ import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 import { languages, Lang } from "@/lib/translations";
 
+const FLAG_CODES: Record<string, string> = {
+  en: "gb", fr: "fr", ar: "sa", es: "es", pt: "br", de: "de", tr: "tr",
+};
+const FlagImg = ({ code }: { code: string }) => (
+  <img src={`https://flagcdn.com/20x15/${FLAG_CODES[code] ?? code}.png`}
+    width={20} height={15} alt={code}
+    style={{ borderRadius: 2, objectFit: "cover", display: "inline-block" }} />
+);
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -76,7 +85,7 @@ export default function Navbar() {
                   color: "#A0A0A0", fontSize: 13, fontWeight: 600,
                 }}
               >
-                <span>{current.flag}</span>
+                <FlagImg code={current.code} />
                 <span>{current.code.toUpperCase()}</span>
                 <ChevronDown size={12} />
               </button>
@@ -101,7 +110,7 @@ export default function Navbar() {
                       onMouseOver={e => { if (lang !== l.code) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; }}
                       onMouseOut={e => { if (lang !== l.code) e.currentTarget.style.backgroundColor = "transparent"; }}
                     >
-                      <span style={{ fontSize: 18 }}>{l.flag}</span>
+                      <FlagImg code={l.code} />
                       <span style={{ color: lang === l.code ? "#2D7DD2" : "#888", fontSize: 14, fontWeight: 500 }}>{l.label}</span>
                     </button>
                   ))}
@@ -127,7 +136,7 @@ export default function Navbar() {
             {languages.map(l => (
               <button key={l.code} onClick={() => { setLang(l.code as Lang); setOpen(false); }}
                 style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
-                <span>{l.flag}</span>
+                <FlagImg code={l.code} />
                 <span style={{ color: lang === l.code ? "#2D7DD2" : "#666", fontSize: 14 }}>{l.label}</span>
               </button>
             ))}
