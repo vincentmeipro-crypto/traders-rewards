@@ -11,7 +11,7 @@ export async function GET() {
   const { data } = await admin
     .from("profiles")
     .select("kyc_status, kyc_rejection_reason, kyc_submitted_at")
-    .eq("id", user.id)
+    .eq("user_id", user.id)
     .single();
 
   return NextResponse.json(data || { kyc_status: "not_submitted" });
@@ -27,10 +27,10 @@ export async function POST(req: NextRequest) {
   const admin = createAdminClient();
   const { error } = await admin.rpc("submit_kyc_docs", {
     p_user_id: user.id,
-    p_doc_id_front: doc_id_front || null,
-    p_doc_id_back: doc_id_back || null,
-    p_doc_residence: doc_residence || null,
-    p_doc_selfie: doc_selfie || null,
+    p_doc_id_front: doc_id_front ?? null,
+    p_doc_id_back: doc_id_back ?? null,
+    p_doc_residence: doc_residence ?? null,
+    p_doc_selfie: doc_selfie ?? null,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

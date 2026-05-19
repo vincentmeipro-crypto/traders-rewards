@@ -112,7 +112,7 @@ export default function DashboardClient({ user }: { user: User }) {
     supabase
       .from("profiles")
       .select("kyc_status, kyc_rejection_reason")
-      .eq("id", user.id)
+      .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
         if (data) {

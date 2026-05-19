@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
   const { data: profiles } = await admin
     .from("profiles")
-    .select("id, kyc_status, kyc_rejection_reason, kyc_submitted_at, kyc_reviewed_at, kyc_doc_id_front, kyc_doc_id_back, kyc_doc_residence, kyc_doc_selfie")
+    .select("user_id, kyc_status, kyc_rejection_reason, kyc_submitted_at, kyc_reviewed_at, kyc_doc_id_front, kyc_doc_id_back, kyc_doc_residence, kyc_doc_selfie")
     .neq("kyc_status", "not_submitted")
     .order("kyc_submitted_at", { ascending: false });
 
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
         doc_urls[key] = null;
       }
     }
-    return { ...p, user_email: userMap[p.id] || "—", doc_urls };
+    return { ...p, id: p.user_id, user_email: userMap[p.user_id] || "—", doc_urls };
   }));
 
   return NextResponse.json(result);
