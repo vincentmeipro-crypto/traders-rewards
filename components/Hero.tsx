@@ -101,6 +101,7 @@ export default function Hero() {
       padding: isMobile ? "140px 20px 60px" : "120px 24px 80px",
       textAlign: "center",
       position: "relative",
+      backgroundColor: "#000000",
       overflow: "hidden",
     }}>
 
