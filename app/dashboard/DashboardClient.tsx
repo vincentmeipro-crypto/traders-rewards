@@ -614,7 +614,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {([
                   { key: "id_front" as const, label: T.kyc.idFront, hint: T.kyc.idFrontHint, required: true, show: true },
-                  { key: "id_back" as const, label: T.kyc.idBack, hint: T.kyc.idBackHint, required: false, show: kycIdType === "card" },
+                  { key: "id_back" as const, label: T.kyc.idBack, hint: T.kyc.idBackHint, required: kycIdType === "card", show: kycIdType === "card" },
                   { key: "residence" as const, label: T.kyc.residence, hint: T.kyc.residenceHint, required: true, show: true },
                   { key: "selfie" as const, label: T.kyc.selfie, hint: T.kyc.selfieHint, required: true, show: true },
                 ]).filter(f => f.show).map(field => (
@@ -636,9 +636,9 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 <button
                   onClick={handleKycSubmit}
-                  disabled={kycSubmitting || !kycFiles.id_front || !kycFiles.residence || !kycFiles.selfie}
+                  disabled={kycSubmitting || !kycFiles.id_front || (kycIdType === "card" && !kycFiles.id_back) || !kycFiles.residence || !kycFiles.selfie}
                   className="btn-primary"
-                  style={{ padding: "14px 28px", fontSize: 15, width: "100%", opacity: (kycSubmitting || !kycFiles.id_front || !kycFiles.residence || !kycFiles.selfie) ? 0.5 : 1, cursor: (kycSubmitting || !kycFiles.id_front || !kycFiles.residence || !kycFiles.selfie) ? "not-allowed" : "pointer" }}>
+                  style={{ padding: "14px 28px", fontSize: 15, width: "100%", opacity: (kycSubmitting || !kycFiles.id_front || (kycIdType === "card" && !kycFiles.id_back) || !kycFiles.residence || !kycFiles.selfie) ? 0.5 : 1, cursor: (kycSubmitting || !kycFiles.id_front || (kycIdType === "card" && !kycFiles.id_back) || !kycFiles.residence || !kycFiles.selfie) ? "not-allowed" : "pointer" }}>
                   {kycSubmitting ? T.kyc.submitting : T.kyc.submit}
                 </button>
               </div>
