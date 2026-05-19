@@ -201,50 +201,10 @@ export default function Hero() {
           </a>
         </div>
 
-        {/* Stats bar */}
-        {isMobile ? (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            width: "100%",
-            backgroundColor: "rgba(255,255,255,0.03)",
-            border: "1px solid #2A2A38",
-            borderRadius: 16,
-            overflow: "hidden",
-          }}>
-            {stats.map((item, i) => (
-              <div key={item.label} style={{
-                padding: "16px 12px",
-                textAlign: "center",
-                borderRight: i % 2 === 0 ? "1px solid #2A2A38" : "none",
-                borderBottom: i < 2 ? "1px solid #2A2A38" : "none",
-              }}>
-                <div style={{ fontSize: 18, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>{item.value}</div>
-                <div style={{ fontSize: 10, color: "#555", marginTop: 4, textTransform: "uppercase", letterSpacing: "0.8px" }}>{item.label}</div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            backgroundColor: "rgba(255,255,255,0.03)",
-            border: "1px solid #2A2A38",
-            borderRadius: 16,
-            overflow: "hidden",
-          }}>
-            {stats.map((item, i, arr) => (
-              <div key={item.label} style={{
-                padding: "20px 40px",
-                textAlign: "center",
-                borderRight: i < arr.length - 1 ? "1px solid #2A2A38" : "none",
-              }}>
-                <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>{item.value}</div>
-                <div style={{ fontSize: 11, color: "#555", marginTop: 4, textTransform: "uppercase", letterSpacing: "1px" }}>{item.label}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        {/* Promo Banner */}
+        <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 32 }}>
+          <img src="/PROMO50.png" alt="Promotion" style={{ width: "100%", display: "block" }} />
+        </div>
       </div>
     </section>
   );
