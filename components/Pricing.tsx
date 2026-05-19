@@ -100,7 +100,7 @@ export default function Pricing() {
                 background: acc.popular
                   ? "linear-gradient(160deg, #1C2535, #21212B)"
                   : "#1E1E26",
-                border: acc.popular ? "2px solid rgba(255,255,255,0.9)" : "1px solid rgba(255,255,255,0.15)",
+                border: acc.popular ? "2px solid #0047ff" : "1px solid #0047ff",
                 borderRadius: 14,
                 padding: "22px 14px 18px",
                 display: "flex",
