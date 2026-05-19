@@ -82,7 +82,7 @@ export default function Pricing() {
           display: isMobile ? "flex" : "grid",
           gridTemplateColumns: "repeat(5, 1fr)",
           gap: 12,
-          overflowX: isMobile ? "scroll" : "auto",
+          overflowX: isMobile ? "scroll" : "visible",
           paddingTop: 20,
           paddingBottom: isMobile ? 16 : 8,
           scrollSnapType: isMobile ? "x mandatory" : "none",
@@ -94,10 +94,8 @@ export default function Pricing() {
             return (
               <div key={acc.id} style={{
                 position: "relative",
-                flexShrink: 0,
-                flexShrink: 0,
-                width: isMobile ? "78vw" : "auto",
-                scrollSnapAlign: isMobile ? "center" : "none",
+                flex: isMobile ? "0 0 82vw" : undefined,
+                scrollSnapAlign: isMobile ? "start" : "none",
                 background: acc.popular
                   ? "linear-gradient(160deg, #1C2535, #21212B)"
                   : "#1E1E26",
@@ -109,7 +107,6 @@ export default function Pricing() {
                 boxShadow: acc.popular
                   ? "0 0 18px rgba(200,232,255,0.45), 0 0 4px rgba(255,255,255,0.3)"
                   : "0 0 10px rgba(200,232,255,0.2), 0 0 2px rgba(255,255,255,0.15)",
-                minWidth: 0,
               }}>
 
                 {/* Popular badge */}
