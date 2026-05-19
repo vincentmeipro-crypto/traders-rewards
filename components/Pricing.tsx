@@ -79,14 +79,12 @@ export default function Pricing() {
 
         {/* Cards */}
         <div style={{
-          display: isMobile ? "flex" : "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
-          gap: 12,
-          overflowX: isMobile ? "scroll" : "auto",
+          display: "grid",
+          gridTemplateColumns: isMobile ? "repeat(5, 1fr)" : "repeat(5, 1fr)",
+          gap: isMobile ? 6 : 12,
+          overflowX: isMobile ? "auto" : "auto",
           paddingTop: 20,
-          paddingBottom: isMobile ? 16 : 8,
-          scrollSnapType: isMobile ? "x mandatory" : "none",
-          WebkitOverflowScrolling: "touch",
+          paddingBottom: 8,
         }}>
           {accounts.map((acc) => {
             const price = model === "2step" ? acc.price2 : acc.price1;
@@ -95,14 +93,13 @@ export default function Pricing() {
               <div key={acc.id} style={{
                 position: "relative",
                 flexShrink: 0,
-                width: isMobile ? "66vw" : "auto",
-                scrollSnapAlign: isMobile ? "center" : "none",
+                width: "auto",
                 background: acc.popular
                   ? "linear-gradient(160deg, #1C2535, #21212B)"
                   : "#1E1E26",
                 border: acc.popular ? "2px solid #c8e8ff" : "1px solid #c8e8ff",
-                borderRadius: 14,
-                padding: "22px 14px 18px",
+                borderRadius: 10,
+                padding: isMobile ? "14px 6px 12px" : "22px 14px 18px",
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: acc.popular
@@ -126,24 +123,24 @@ export default function Pricing() {
                 )}
 
                 {/* Account size */}
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 6 }}>
+                <div style={{ marginBottom: isMobile ? 10 : 20 }}>
+                  <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 4 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 19, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: isMobile ? 10 : 19, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
                     {acc.size}
                   </div>
                 </div>
 
                 {/* Rules rows */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, marginBottom: 20 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, marginBottom: isMobile ? 8 : 20 }}>
                   {rows.map((row, i) => (
                     <div key={i} style={{
                       display: "flex", justifyContent: "space-between", alignItems: "center",
-                      padding: "7px 0",
+                      padding: isMobile ? "3px 0" : "7px 0",
                       borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                     }}>
-                      <span style={{ color: "#555", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      <span style={{ color: "#555", fontSize: isMobile ? 7 : 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
                         {row.label}
                       </span>
                       {row.highlight ? (
@@ -157,7 +154,7 @@ export default function Pricing() {
                           {row.value}
                         </span>
                       ) : (
-                        <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>
+                        <span style={{ color: "#fff", fontSize: isMobile ? 8 : 13, fontWeight: 700 }}>
                           {row.value}
                         </span>
                       )}
@@ -166,17 +163,17 @@ export default function Pricing() {
                 </div>
 
                 {/* Separator */}
-                <div style={{ height: 1, backgroundColor: "#2A2A38", marginBottom: 20 }} />
+                <div style={{ height: 1, backgroundColor: "#2A2A38", marginBottom: isMobile ? 8 : 20 }} />
 
                 {/* Price */}
-                <div style={{ marginBottom: 16, textAlign: "center" }}>
+                <div style={{ marginBottom: isMobile ? 8 : 16, textAlign: "center" }}>
                   {oldPrice && (
                     <div style={{ color: "#555", fontSize: 13, textDecoration: "line-through", marginBottom: 2 }}>
                       {oldPrice}
                     </div>
                   )}
                   <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ fontSize: 22, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
+                    <div style={{ fontSize: isMobile ? 12 : 22, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
                       {price}
                     </div>
                     {"discount" in acc && acc.discount && (
