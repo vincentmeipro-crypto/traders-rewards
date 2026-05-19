@@ -141,12 +141,15 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg-primary); }
 ::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
 
-/* Chat widget — déplacé à gauche */
-#crisp-chatbox { left: 20px !important; right: auto !important; }
-.crisp-client { left: 20px !important; right: auto !important; }
-#tidio-chat-iframe { left: 20px !important; right: auto !important; }
-.intercom-launcher { left: 20px !important; right: auto !important; }
-iframe[name="intercom-launcher-frame"] { left: 20px !important; right: auto !important; }
+/* Tawk.to — déplacé à gauche */
+#fc_frame,
+.tawk-min-container,
+.tawk-bubble-container,
+iframe[src*="tawk.to"],
+div[id^="tawk-"] {
+  left: 20px !important;
+  right: auto !important;
+}
 
 @media (max-width: 768px) {
   .btn-primary, .btn-secondary {
