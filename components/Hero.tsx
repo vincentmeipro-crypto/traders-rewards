@@ -190,7 +190,9 @@ export default function Hero() {
 
         {/* Promo Banner */}
         <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 0 }}>
-          <img src={isMobile ? "/PROMO50MOBILE.png" : "/PROMO502.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "75%", display: "block", margin: "0 auto" }} />
+          <a href="/#pricing" style={{ display: "block", cursor: "pointer" }}>
+            <img src={isMobile ? "/PROMO50MOBILE.png" : "/PROMO502.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "75%", display: "block", margin: "0 auto" }} />
+          </a>
         </div>
       </div>
     </section>
