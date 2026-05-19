@@ -95,7 +95,7 @@ export default function Pricing() {
               <div key={acc.id} style={{
                 position: "relative",
                 flexShrink: 0,
-                width: isMobile ? "82vw" : "auto",
+                width: isMobile ? "66vw" : "auto",
                 scrollSnapAlign: isMobile ? "center" : "none",
                 background: acc.popular
                   ? "linear-gradient(160deg, #1C2535, #21212B)"
