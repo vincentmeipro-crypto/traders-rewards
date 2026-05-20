@@ -177,7 +177,7 @@ function CheckoutContent() {
 
       <div style={{ width: "100%", maxWidth: 520, position: "relative", zIndex: 1 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <Image src="/logo.jpg" alt="Elysium Funded" width={80} height={80} style={{ objectFit: "contain", mixBlendMode: "screen" }} />
+          <Image src="/logo-white.jpg" alt="Elysium Funded" width={80} height={80} style={{ objectFit: "contain", mixBlendMode: "screen" }} />
         </div>
 
         {/* Order Summary */}
