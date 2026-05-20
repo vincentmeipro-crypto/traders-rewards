@@ -956,14 +956,15 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {/* Download MT5 */}
             <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px" }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Download MetaTrader 5 (MT5)</div>
-              <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Télécharge MT5 et connecte-toi avec tes identifiants via Blueberry Markets.</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Download cTrader</div>
+              <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Télécharge cTrader et connecte-toi avec tes identifiants sur le serveur IC Markets.</div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                 {[
-                  { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/blueberry.markets/mt5/blueberrymarkets5setup.exe" },
-                  { label: "🍎 Mac", href: "https://download.mql5.com/cdn/web/blueberry.markets/mt5/blueberrymarkets5.dmg" },
-                  { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
-                  { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
+                  { label: "🖥 Windows", href: "https://ctrader.com/download/ctrader-windows" },
+                  { label: "🍎 Mac", href: "https://ctrader.com/download/ctrader-mac" },
+                  { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/ctrader/id767428811" },
+                  { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=com.spotware.ct" },
+                  { label: "🌐 Web", href: "https://trade.icmarkets.com" },
                 ].map((item, i) => (
                   <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
                     style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "10px 18px", borderRadius: 8, textDecoration: "none", fontSize: 13, border: "1px solid #2a2a2a", display: "inline-block" }}>
