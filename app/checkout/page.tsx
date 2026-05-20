@@ -88,6 +88,7 @@ function CheckoutContent() {
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [country, setCountry] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -129,7 +130,7 @@ function CheckoutContent() {
     await fetch("/api/profile", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone: fullPhone, email, address, city, postal_code: postalCode, country }),
+      body: JSON.stringify({ first_name: firstName, last_name: lastName, phone: fullPhone, email, address, city, postal_code: postalCode, country, birth_date: birthDate }),
     });
   };
 
@@ -299,6 +300,12 @@ function CheckoutContent() {
               </select>
               <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="6 00 00 00 00" style={{ ...inputStyle, flex: 1 }} />
             </div>
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <label style={labelStyle}>DATE DE NAISSANCE *</label>
+            <input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
+              style={{ ...inputStyle, colorScheme: "dark" }} />
           </div>
           <div style={{ marginBottom: 10 }}>
             <label style={labelStyle}>ADRESSE *</label>
