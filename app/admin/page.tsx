@@ -315,6 +315,14 @@ export default function AdminPage() {
     if (res.ok) setPromos(p => p.map(x => x.id === promo.id ? data : x));
   };
 
+  const [accessEmailMsg, setAccessEmailMsg] = useState<Record<string, string>>({});
+  const sendAccessEmail = async (email: string) => {
+    if (!token) return;
+    const res = await fetch("/api/admin/send-access-email", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ email }) });
+    setAccessEmailMsg(m => ({ ...m, [email]: res.ok ? "✓ Email envoyé" : "Erreur" }));
+    setTimeout(() => setAccessEmailMsg(m => { const n = { ...m }; delete n[email]; return n; }), 4000);
+  };
+
   const updateKyc = async (user_id: string, status: string, rejection_reason?: string) => {
     if (!token) return;
     const res = await fetch("/api/admin/kyc", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ user_id, status, rejection_reason }) });
@@ -659,6 +667,9 @@ export default function AdminPage() {
                             <div style={{ color: "#888", fontSize: 12 }}>{trader.email}</div>
                             {(profile?.phone || firstChallenge?.client_phone) && <div style={{ color: "#888", fontSize: 12 }}>{profile?.phone || firstChallenge?.client_phone}</div>}
                             {profile?.address && <div style={{ color: "#666", fontSize: 11, marginTop: 4 }}>{profile.address}{profile.postal_code ? `, ${profile.postal_code}` : ""} {profile.city || ""}{profile.country ? ` — ${profile.country}` : ""}</div>}
+                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, color: "#C9A84C", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
+                              {accessEmailMsg[trader.email] || "✉ Envoyer email d'accès"}
+                            </button>
                           </div>
                           <div>
                             <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Client depuis</div>

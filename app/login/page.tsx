@@ -92,6 +92,10 @@ export default function LoginPage() {
               </div>
             )}
 
+            <div style={{ backgroundColor: "rgba(201,168,76,0.07)", border: "1px solid rgba(201,168,76,0.25)", borderRadius: 10, padding: "12px 16px", fontSize: 13, color: "#999", lineHeight: 1.6 }}>
+              🔑 <strong style={{ color: "#C9A84C" }}>Premier accès ?</strong> Entre ton email et clique sur <strong style={{ color: "#fff" }}>"Forgot password?"</strong> pour définir ton mot de passe et accéder à ton espace.
+            </div>
+
             {error && (
               <div style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, padding: "12px 16px", color: "#ef4444", fontSize: 14 }}>
                 {error}
