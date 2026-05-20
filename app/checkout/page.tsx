@@ -363,13 +363,6 @@ function CheckoutContent() {
           </p>
         )}
 
-        {!user && profileComplete && (
-          <div style={{ textAlign: "center", marginTop: 12, padding: "12px 16px", backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 10 }}>
-            <span style={{ color: "#C9A84C", fontSize: 13 }}>You need to </span>
-            <a href={`/login?redirect=/checkout?product=${productId}`} style={{ color: "#C9A84C", fontWeight: 700, fontSize: 13 }}>log in</a>
-            <span style={{ color: "#C9A84C", fontSize: 13 }}> to complete your purchase.</span>
-          </div>
-        )}
 
         {payError && (
           <p style={{ textAlign: "center", color: "#ef4444", fontSize: 13, marginTop: 12, padding: "10px", backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 8 }}>
