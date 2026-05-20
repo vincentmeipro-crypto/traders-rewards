@@ -125,27 +125,59 @@ export default function AdminPage() {
   // CRM state
   const [crmExpanded, setCrmExpanded] = useState<string | null>(null);
 
+  // Admin login form state
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminLoginError, setAdminLoginError] = useState("");
+  const [adminLoginLoading, setAdminLoginLoading] = useState(false);
+  const [needsLogin, setNeedsLogin] = useState(false);
+
+  const ADMIN_EMAIL = "vincentmeipro@gmail.com";
+
+  const loadAdminData = async (t: string) => {
+    const headers = { Authorization: `Bearer ${t}` };
+    const [cRes, pRes, kRes, prRes] = await Promise.all([
+      fetch("/api/admin/challenges", { headers }),
+      fetch("/api/admin/payouts",    { headers }),
+      fetch("/api/admin/kyc",        { headers }),
+      fetch("/api/admin/profiles",   { headers }),
+    ]);
+    const [cData, pData, kData, prData] = await Promise.all([cRes.json(), pRes.json(), kRes.json(), prRes.json()]);
+    if (Array.isArray(cData)) setChallenges(cData); else setError(JSON.stringify(cData));
+    if (Array.isArray(pData)) setPayouts(pData);
+    if (Array.isArray(kData)) setKycSubmissions(kData);
+    if (Array.isArray(prData)) setProfiles(prData);
+    setLoading(false);
+  };
+
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session) { router.push("/login"); return; }
+      if (!session || session.user.email !== ADMIN_EMAIL) {
+        setNeedsLogin(true);
+        setLoading(false);
+        return;
+      }
       const t = session.access_token;
       setToken(t);
-      const headers = { Authorization: `Bearer ${t}` };
-      const [cRes, pRes, kRes, prRes] = await Promise.all([
-        fetch("/api/admin/challenges", { headers }),
-        fetch("/api/admin/payouts",    { headers }),
-        fetch("/api/admin/kyc",        { headers }),
-        fetch("/api/admin/profiles",   { headers }),
-      ]);
-      const [cData, pData, kData, prData] = await Promise.all([cRes.json(), pRes.json(), kRes.json(), prRes.json()]);
-      if (Array.isArray(cData)) setChallenges(cData); else setError(JSON.stringify(cData));
-      if (Array.isArray(pData)) setPayouts(pData);
-      if (Array.isArray(kData)) setKycSubmissions(kData);
-      if (Array.isArray(prData)) setProfiles(prData);
-      setLoading(false);
+      await loadAdminData(t);
     });
-  }, [router]);
+  }, []);
+
+  const handleAdminLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminLoginError("");
+    if (adminEmail !== ADMIN_EMAIL) { setAdminLoginError("Accès refusé"); return; }
+    setAdminLoginLoading(true);
+    const supabase = createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({ email: adminEmail, password: adminPassword });
+    if (error || !data.session) { setAdminLoginError("Email ou mot de passe incorrect"); setAdminLoginLoading(false); return; }
+    const t = data.session.access_token;
+    setToken(t);
+    setNeedsLogin(false);
+    setLoading(true);
+    await loadAdminData(t);
+  };
 
   const loadPromos = async (t: string) => {
     setPromosLoading(true);
@@ -360,6 +392,36 @@ export default function AdminPage() {
   });
 
   const maxCA = monthlyRevenue.length > 0 ? Math.max(...monthlyRevenue.map(m => m.ca)) : 1;
+
+  if (needsLogin) return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div style={{ width: "100%", maxWidth: 400 }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <img src="/logo-white.jpg" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
+          <div style={{ color: "#C9A84C", fontWeight: 800, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", marginTop: 12 }}>Admin Panel</div>
+        </div>
+        <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "36px 32px" }}>
+          <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>Connexion Admin</h2>
+          <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
+              <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Email</div>
+              <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} placeholder="vincentmeipro@gmail.com" required
+                style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            </div>
+            <div>
+              <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
+              <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
+                style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            </div>
+            {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
+            <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#C9A84C", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
+              {adminLoginLoading ? "Connexion..." : "ACCÉDER AU PANEL"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 
   if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Chargement...</div>;
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#0f0f0f", border: "1px solid #ef4444", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#888", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
