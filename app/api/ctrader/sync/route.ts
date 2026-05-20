@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail } from "@/lib/mailer";
 
-const ADMIN_EMAIL = "fundedelysium@gmail.com";
+const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
 async function refreshToken(refreshToken: string) {
   const res = await fetch("https://connect.ctrader.com/oauth/token", {
