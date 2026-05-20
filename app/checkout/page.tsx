@@ -43,6 +43,9 @@ function CheckoutContent() {
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [country, setCountry] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   const DIAL_CODES = [
     { code: "+33", flag: "🇫🇷" }, { code: "+32", flag: "🇧🇪" }, { code: "+41", flag: "🇨🇭" },
@@ -114,16 +117,28 @@ function CheckoutContent() {
   };
 
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
-  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && address.trim() && city.trim() && country.trim();
+  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && address.trim() && city.trim() && country.trim() && (user || (password.length >= 8 && password === confirmPassword));
 
   const [payError, setPayError] = useState("");
 
+  const createAccountAndGetUser = async () => {
+    const supabase = createClient();
+    if (password !== confirmPassword) { setPasswordError("Les mots de passe ne correspondent pas"); return null; }
+    if (password.length < 8) { setPasswordError("Minimum 8 caractères"); return null; }
+    setPasswordError("");
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) { setPayError(error.message); return null; }
+    if (!data.session) { setPayError("Vérifie ton email pour confirmer ton compte avant de payer."); return null; }
+    return { id: data.user!.id, email: data.user!.email!, token: data.session.access_token };
+  };
+
   const handleStripe = async () => {
     setPayError("");
-    if (!user) { router.push(`/login?redirect=/checkout?product=${productId}`); return; }
+    let currentUser = user;
+    if (!currentUser) { currentUser = await createAccountAndGetUser(); if (!currentUser) return; setUser(currentUser); }
     if (!profileComplete) return;
     setLoadingStripe(true);
-    await saveProfile(user.token);
+    await saveProfile(currentUser.token);
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -136,10 +151,11 @@ function CheckoutContent() {
 
   const handleCrypto = async () => {
     setPayError("");
-    if (!user) { router.push(`/login?redirect=/checkout?product=${productId}`); return; }
+    let currentUser = user;
+    if (!currentUser) { currentUser = await createAccountAndGetUser(); if (!currentUser) return; setUser(currentUser); }
     if (!profileComplete) return;
     setLoadingCrypto(true);
-    await saveProfile(user.token);
+    await saveProfile(currentUser.token);
     const res = await fetch("/api/crypto/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -275,6 +291,21 @@ function CheckoutContent() {
                 style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${country ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
             </div>
           </div>
+          {!user && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 }}>
+              <div>
+                <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>PASSWORD *</div>
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 8 caractères"
+                  style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${password ? "#333" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+              </div>
+              <div>
+                <div style={{ color: "#555", fontSize: 11, marginBottom: 5 }}>CONFIRMER *</div>
+                <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Répéter le mot de passe"
+                  style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${confirmPassword && confirmPassword === password ? "#22c55e" : confirmPassword ? "#ef4444" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+              </div>
+              {passwordError && <div style={{ gridColumn: "1/-1", color: "#ef4444", fontSize: 12 }}>{passwordError}</div>}
+            </div>
+          )}
         </div>
 
         {/* Promo Code */}

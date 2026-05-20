@@ -54,6 +54,7 @@ export default function RegisterPage() {
   const [confirm, setConfirm] = useState("");
   const [dialCode, setDialCode] = useState("+33");
   const [phone, setPhone] = useState("");
+  const [birthDate, setBirthDate] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -63,6 +64,13 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!birthDate) { setError("Date de naissance requise"); return; }
+    const birth = new Date(birthDate);
+    const today = new Date();
+    const age = today.getFullYear() - birth.getFullYear() - (
+      today < new Date(today.getFullYear(), birth.getMonth(), birth.getDate()) ? 1 : 0
+    );
+    if (age < 18) { setError("Vous devez avoir au moins 18 ans pour vous inscrire."); return; }
     if (password !== confirm) { setError("Passwords do not match"); return; }
     if (password.length < 8) { setError("Password must be at least 8 characters"); return; }
     setLoading(true);
@@ -70,7 +78,7 @@ export default function RegisterPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { phone: fullPhone } },
+      options: { data: { phone: fullPhone, birth_date: birthDate } },
     });
     setLoading(false);
     if (error) { setError(error.message); return; }
@@ -142,6 +150,17 @@ export default function RegisterPage() {
                     onFocus={e => (e.target.style.borderColor = "#C9A84C")}
                     onBlur={e => (e.target.style.borderColor = "#222")} />
                 </div>
+              </div>
+
+              {/* Date de naissance */}
+              <div>
+                <label style={labelStyle}>Date de naissance</label>
+                <input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)}
+                  required max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
+                  style={{ ...inputStyle, colorScheme: "dark" }}
+                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onBlur={e => (e.target.style.borderColor = "#222")} />
+                <p style={{ color: "#555", fontSize: 12, marginTop: 4 }}>Vous devez avoir 18 ans ou plus.</p>
               </div>
 
               {/* Password */}

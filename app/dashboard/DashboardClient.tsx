@@ -7,7 +7,7 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -54,7 +54,7 @@ const STATUS_COLORS: Record<string, string> = {
   failed: "#ef4444",
 };
 
-type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings";
+type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings" | "profile";
 
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
@@ -77,6 +77,23 @@ export default function DashboardClient({ user }: { user: User }) {
   const [kycSubmitting, setKycSubmitting] = useState(false);
   const [kycSubmitSuccess, setKycSubmitSuccess] = useState(false);
   const [kycError, setKycError] = useState<string | null>(null);
+
+  const [profileFirstName, setProfileFirstName] = useState("");
+  const [profileLastName, setProfileLastName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [profileAddress, setProfileAddress] = useState("");
+  const [profileCity, setProfileCity] = useState("");
+  const [profilePostalCode, setProfilePostalCode] = useState("");
+  const [profileCountry, setProfileCountry] = useState("");
+  const [profileBirthDate, setProfileBirthDate] = useState("");
+  const [profileSaving, setProfileSaving] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -114,6 +131,21 @@ export default function DashboardClient({ user }: { user: User }) {
         setKycStatus(data.kyc_status);
         setKycRejectionReason(data.kyc_rejection_reason || null);
       }
+    });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      fetch("/api/profile", { headers: { Authorization: `Bearer ${session.access_token}` } })
+        .then(r => r.json()).then(p => {
+          if (!p) return;
+          setProfileFirstName(p.first_name || "");
+          setProfileLastName(p.last_name || "");
+          setProfilePhone(p.phone || "");
+          setProfileAddress(p.address || "");
+          setProfileCity(p.city || "");
+          setProfilePostalCode(p.postal_code || "");
+          setProfileCountry(p.country || "");
+          setProfileBirthDate(p.birth_date || "");
+        });
     });
   }, [user.id]);
 
@@ -167,6 +199,36 @@ export default function DashboardClient({ user }: { user: User }) {
     setKycSubmitSuccess(true);
   };
 
+  const handleProfileSave = async () => {
+    setProfileSaving(true);
+    setProfileError(null);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setProfileError("Session expirée"); setProfileSaving(false); return; }
+    const res = await fetch("/api/profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
+      body: JSON.stringify({ first_name: profileFirstName, last_name: profileLastName, phone: profilePhone, email: user.email, address: profileAddress, city: profileCity, postal_code: profilePostalCode, country: profileCountry, birth_date: profileBirthDate }),
+    });
+    setProfileSaving(false);
+    if (!res.ok) { const e = await res.json(); setProfileError(e.error || "Erreur"); return; }
+    setProfileSaved(true);
+    setTimeout(() => setProfileSaved(false), 3000);
+  };
+
+  const handlePasswordChange = async () => {
+    if (newPassword !== confirmNewPassword) { setPasswordError("Les mots de passe ne correspondent pas"); return; }
+    if (newPassword.length < 8) { setPasswordError("Minimum 8 caractères"); return; }
+    setPasswordSaving(true);
+    setPasswordError(null);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    setPasswordSaving(false);
+    if (error) { setPasswordError(error.message); return; }
+    setPasswordSaved(true);
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setTimeout(() => setPasswordSaved(false), 3000);
+  };
+
   const profitAmount = challenge ? challenge.balance - challenge.start_balance : 0;
   const profitPct = challenge ? ((profitAmount / challenge.start_balance) * 100).toFixed(2) : "0";
   const targetAmount = challenge ? challenge.start_balance * (1 + challenge.profit_target / 100) : 0;
@@ -195,6 +257,7 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <History size={16} />, label: "Historique", tab: "history" },
               { icon: <FileText size={16} />, label: "Factures", tab: "invoices" },
               { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
+              { icon: <User size={16} />, label: "Mon Profil", tab: "profile" },
               { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
               <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
@@ -245,7 +308,7 @@ export default function DashboardClient({ user }: { user: User }) {
             { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
             { icon: <Wallet size={20} />, label: "Rewards", tab: "payouts" },
             { icon: <ShieldCheck size={20} />, label: "KYC", tab: "kyc" },
-            { icon: <FileText size={20} />, label: "Factures", tab: "invoices" },
+            { icon: <User size={20} />, label: "Profil", tab: "profile" },
             { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
           ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
             <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
@@ -479,6 +542,130 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ color: "#666", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Profile Tab */}
+        {activeTab === "profile" && (
+          <div style={{ maxWidth: 560 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>Informations personnelles</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Gérez vos informations personnelles et votre mot de passe.</p>
+
+            {/* Personal info form */}
+            <div className="card" style={{ padding: 28, marginBottom: 20 }}>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#C9A84C" }}>Informations personnelles</div>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                {[
+                  { label: "Prénom", value: profileFirstName, setter: setProfileFirstName, placeholder: "Jean" },
+                  { label: "Nom", value: profileLastName, setter: setProfileLastName, placeholder: "Dupont" },
+                ].map(f => (
+                  <div key={f.label}>
+                    <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
+                    <input value={f.value} onChange={e => f.setter(e.target.value)} placeholder={f.placeholder}
+                      style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                      onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                      onBlur={e => (e.target.style.borderColor = "#222")} />
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Email</label>
+                <input value={user.email || ""} readOnly
+                  style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 14px", color: "#555", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Téléphone</label>
+                <input value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+33 6 12 34 56 78"
+                  style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onBlur={e => (e.target.style.borderColor = "#222")} />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Date de naissance</label>
+                <input type="date" value={profileBirthDate} onChange={e => setProfileBirthDate(e.target.value)}
+                  style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box", colorScheme: "dark" }}
+                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onBlur={e => (e.target.style.borderColor = "#222")} />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Adresse</label>
+                <input value={profileAddress} onChange={e => setProfileAddress(e.target.value)} placeholder="123 Rue de la Paix"
+                  style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onBlur={e => (e.target.style.borderColor = "#222")} />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
+                {[
+                  { label: "Ville", value: profileCity, setter: setProfileCity, placeholder: "Paris" },
+                  { label: "Code postal", value: profilePostalCode, setter: setProfilePostalCode, placeholder: "75001" },
+                  { label: "Pays", value: profileCountry, setter: setProfileCountry, placeholder: "France" },
+                ].map(f => (
+                  <div key={f.label}>
+                    <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
+                    <input value={f.value} onChange={e => f.setter(e.target.value)} placeholder={f.placeholder}
+                      style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                      onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                      onBlur={e => (e.target.style.borderColor = "#222")} />
+                  </div>
+                ))}
+              </div>
+
+              {profileError && (
+                <div style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, padding: "12px 14px", color: "#ef4444", fontSize: 13, marginBottom: 14 }}>
+                  {profileError}
+                </div>
+              )}
+              {profileSaved && (
+                <div style={{ backgroundColor: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 10, padding: "12px 14px", color: "#22c55e", fontSize: 13, marginBottom: 14 }}>
+                  Informations sauvegardées ✓
+                </div>
+              )}
+
+              <button onClick={handleProfileSave} disabled={profileSaving || !profileFirstName || !profileLastName}
+                className="btn-primary" style={{ width: "100%", padding: "13px", fontSize: 14, opacity: (profileSaving || !profileFirstName || !profileLastName) ? 0.6 : 1 }}>
+                {profileSaving ? "Sauvegarde..." : "Sauvegarder les informations"}
+              </button>
+            </div>
+
+            {/* Password change */}
+            <div className="card" style={{ padding: 28 }}>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#C9A84C" }}>Changer le mot de passe</div>
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Nouveau mot de passe</label>
+                <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Minimum 8 caractères"
+                  style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onBlur={e => (e.target.style.borderColor = "#222")} />
+              </div>
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Confirmer le mot de passe</label>
+                <input type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} placeholder="Répéter le mot de passe"
+                  style={{ width: "100%", backgroundColor: "#141414", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#22c55e" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  onFocus={e => (e.target.style.borderColor = newPassword === confirmNewPassword && confirmNewPassword ? "#22c55e" : "#C9A84C")}
+                  onBlur={e => (e.target.style.borderColor = confirmNewPassword && newPassword === confirmNewPassword ? "#22c55e" : confirmNewPassword ? "#ef4444" : "#222")} />
+              </div>
+
+              {passwordError && (
+                <div style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, padding: "12px 14px", color: "#ef4444", fontSize: 13, marginBottom: 14 }}>
+                  {passwordError}
+                </div>
+              )}
+              {passwordSaved && (
+                <div style={{ backgroundColor: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 10, padding: "12px 14px", color: "#22c55e", fontSize: 13, marginBottom: 14 }}>
+                  Mot de passe mis à jour ✓
+                </div>
+              )}
+
+              <button onClick={handlePasswordChange} disabled={passwordSaving || !newPassword || !confirmNewPassword}
+                className="btn-primary" style={{ width: "100%", padding: "13px", fontSize: 14, opacity: (passwordSaving || !newPassword || !confirmNewPassword) ? 0.6 : 1 }}>
+                {passwordSaving ? "Mise à jour..." : "Changer le mot de passe"}
+              </button>
             </div>
           </div>
         )}
