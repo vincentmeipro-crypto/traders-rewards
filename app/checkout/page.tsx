@@ -3,7 +3,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
-import { Shield, Clock, RefreshCw, ChevronRight, Tag, X, User } from "lucide-react";
+import { ChevronRight, Tag, X, User } from "lucide-react";
 
 const CHALLENGES = {
   "10k-2step":  { label: "$10,000", model: "2-Step", price: "€129", amount: 12900 },
@@ -142,7 +142,7 @@ function CheckoutContent() {
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, userId: user.id, userEmail: user.email, promoCode: appliedCode, discount }),
+      body: JSON.stringify({ productId, userId: currentUser.id, userEmail: currentUser.email, promoCode: appliedCode, discount }),
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
@@ -159,7 +159,7 @@ function CheckoutContent() {
     const res = await fetch("/api/crypto/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, userId: user.id, promoCode: appliedCode, discount }),
+      body: JSON.stringify({ productId, userId: currentUser.id, promoCode: appliedCode, discount }),
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
@@ -211,19 +211,6 @@ function CheckoutContent() {
                 {isFree ? "FREE" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
               </div>
             </div>
-          </div>
-
-          <div style={{ padding: "16px 0", borderBottom: "1px solid #1a1a1a" }}>
-            {[
-              { icon: <RefreshCw size={14} />, text: "Fee refunded at first reward" },
-              { icon: <Clock size={14} />, text: "No time limit — trade at your pace" },
-              { icon: <Shield size={14} />, text: "Simulated account — no personal risk" },
-            ].map((item, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, color: "#666", fontSize: 13 }}>
-                <span style={{ color: "#C9A84C" }}>{item.icon}</span>
-                {item.text}
-              </div>
-            ))}
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 16 }}>
