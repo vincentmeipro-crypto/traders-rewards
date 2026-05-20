@@ -172,10 +172,22 @@ function CheckoutContent() {
     if (password !== confirmPassword) { setPasswordError("Les mots de passe ne correspondent pas"); return null; }
     if (password.length < 8) { setPasswordError("Minimum 8 caractères"); return null; }
     setPasswordError("");
+    // Try signup first
     const { data, error } = await supabase.auth.signUp({ email, password });
+    if (!error && data.session) {
+      return { id: data.user!.id, email: data.user!.email!, token: data.session.access_token };
+    }
+    // If signup fails because user already exists, try signin
+    if (error?.message?.includes("already") || !data.session) {
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) { setPayError("Email déjà utilisé. Connecte-toi d'abord ou vérifie ton mot de passe."); return null; }
+      if (signInData.session) {
+        return { id: signInData.user.id, email: signInData.user.email!, token: signInData.session.access_token };
+      }
+    }
     if (error) { setPayError(error.message); return null; }
-    if (!data.session) { setPayError("Vérifie ton email pour confirmer ton compte avant de payer."); return null; }
-    return { id: data.user!.id, email: data.user!.email!, token: data.session.access_token };
+    setPayError("Confirme ton email puis reviens payer. (Désactive la confirmation email dans Supabase pour éviter ça.)");
+    return null;
   };
 
   const handleStripe = async () => {
@@ -362,37 +374,37 @@ function CheckoutContent() {
 
         {/* Payment buttons */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+          {payError && (
+            <div style={{ textAlign: "center", color: "#ef4444", fontSize: 14, padding: "14px 16px", backgroundColor: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 12 }}>
+              {payError}
+            </div>
+          )}
+
+          {!profileComplete && (
+            <p style={{ textAlign: "center", color: "#888", fontSize: 12, margin: 0 }}>
+              Remplissez tous les champs pour continuer.
+            </p>
+          )}
+
           {isFree ? (
             <button onClick={handleFree} disabled={anyLoading || !profileComplete} className="btn-primary"
               style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.7 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer", backgroundColor: "#22c55e", borderColor: "#22c55e" }}>
-              {loadingFree ? "Setting up your account..." : <><span>🎉</span> Claim Free Access <ChevronRight size={16} /></>}
+              {loadingFree ? "Configuration en cours..." : <><span>🎉</span> Accès gratuit <ChevronRight size={16} /></>}
             </button>
           ) : (
             <>
               <button onClick={handleStripe} disabled={anyLoading || !profileComplete} className="btn-primary"
-                style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.7 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer" }}>
-                {loadingStripe ? "Redirecting..." : <><span>💳</span> Pay with Card <ChevronRight size={16} /></>}
+                style={{ width: "100%", padding: "18px", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.6 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer" }}>
+                {loadingStripe ? "Redirection..." : <><span>💳</span> PAY WITH CARD <ChevronRight size={16} /></>}
               </button>
               <button onClick={handleCrypto} disabled={anyLoading || !profileComplete} className="btn-secondary"
-                style={{ width: "100%", padding: "16px", fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.7 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer" }}>
-                {loadingCrypto ? "Redirecting..." : <><span>₿</span> Pay with Crypto <ChevronRight size={16} /></>}
+                style={{ width: "100%", padding: "18px", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, opacity: (anyLoading || !profileComplete) ? 0.6 : 1, cursor: (anyLoading || !profileComplete) ? "not-allowed" : "pointer" }}>
+                {loadingCrypto ? "Redirection..." : <><span>₿</span> PAY WITH CRYPTO <ChevronRight size={16} /></>}
               </button>
             </>
           )}
         </div>
-
-        {!profileComplete && (
-          <p style={{ textAlign: "center", color: "#555", fontSize: 12, marginTop: 12 }}>
-            Please fill in all fields to continue.
-          </p>
-        )}
-
-
-        {payError && (
-          <p style={{ textAlign: "center", color: "#ef4444", fontSize: 13, marginTop: 12, padding: "10px", backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 8 }}>
-            {payError}
-          </p>
-        )}
 
         <p style={{ textAlign: "center", color: "#333", fontSize: 12, marginTop: 16 }}>
           Secured by Stripe & Crypto · SSL encrypted · No subscription
