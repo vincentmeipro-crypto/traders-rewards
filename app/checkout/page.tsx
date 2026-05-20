@@ -5,6 +5,51 @@ import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import { ChevronRight, Tag, X, User } from "lucide-react";
 
+const CANDLES: [boolean, number, number, number, number][] = [
+  [true,  314, 452, 268, 498],
+  [false, 300, 382, 254, 422],
+  [true,  268, 392, 236, 438],
+  [false, 254, 338, 210, 374],
+  [true,  210, 346, 178, 392],
+  [false, 200, 282, 164, 314],
+  [true,  164, 292, 132, 328],
+  [false, 154, 236, 118, 268],
+  [true,  108, 246,  72, 282],
+  [false, 100, 178,  62, 210],
+];
+
+function CandleChart({ side }: { side: "left" | "right" }) {
+  const W = 520, H = 900, candleW = 26, spacing = 44;
+  const isRight = side === "right";
+  return (
+    <div style={{ position: "fixed", top: "50%", transform: isRight ? "translateY(-50%) scaleX(-1)" : "translateY(-50%)", left: isRight ? undefined : 0, right: isRight ? 0 : undefined, width: W, height: H, pointerEvents: "none", zIndex: 0 }}>
+      <svg width={W} height={H}>
+        <defs>
+          <linearGradient id={`cg-${side}`} x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="white" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </linearGradient>
+          <mask id={`cm-${side}`}>
+            <rect width={W} height={H} fill={`url(#cg-${side})`} />
+          </mask>
+        </defs>
+        <g mask={`url(#cm-${side})`}>
+          {CANDLES.map(([bull, bodyY1, bodyY2, wickY1, wickY2], i) => {
+            const cx = i * spacing + (spacing - candleW) / 2 + 4;
+            const color = bull ? "#2D7DD2" : "#FFFFFF";
+            return (
+              <g key={i}>
+                <line x1={cx + candleW / 2} y1={wickY1} x2={cx + candleW / 2} y2={wickY2} stroke={color} strokeWidth={1.5} strokeOpacity={0.75} />
+                <rect x={cx} y={bodyY1} width={candleW} height={bodyY2 - bodyY1} fill={color} fillOpacity={0.8} rx={2} />
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 const CHALLENGES = {
   "10k-2step":  { label: "$10,000", model: "2-Step", price: "€129", amount: 12900 },
   "25k-2step":  { label: "$25,000", model: "2-Step", price: "€219", amount: 21900 },
@@ -192,7 +237,9 @@ function CheckoutContent() {
   const labelStyle = { color: "#bbb", fontSize: 11, fontWeight: 700, letterSpacing: "0.8px", marginBottom: 6, display: "block" as const };
 
   return (
-    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0a0f 0%, #0d0a14 50%, #080c0a 100%)", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0a0f 0%, #0d0a14 50%, #080c0a 100%)", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px", overflow: "hidden", position: "relative" }}>
+      <CandleChart side="left" />
+      <CandleChart side="right" />
       <div style={{ position: "fixed", top: "20%", left: "30%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
       <div style={{ position: "fixed", top: "60%", left: "60%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(45,125,210,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
 
