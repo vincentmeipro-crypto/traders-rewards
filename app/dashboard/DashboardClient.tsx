@@ -7,7 +7,7 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -257,7 +257,7 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <History size={16} />, label: "Historique", tab: "history" },
               { icon: <FileText size={16} />, label: "Factures", tab: "invoices" },
               { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
-              { icon: <User size={16} />, label: "Mon Profil", tab: "profile" },
+              { icon: <UserIcon size={16} />, label: "Mon Profil", tab: "profile" },
               { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
               <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
@@ -308,7 +308,7 @@ export default function DashboardClient({ user }: { user: User }) {
             { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
             { icon: <Wallet size={20} />, label: "Rewards", tab: "payouts" },
             { icon: <ShieldCheck size={20} />, label: "KYC", tab: "kyc" },
-            { icon: <User size={20} />, label: "Profil", tab: "profile" },
+            { icon: <UserIcon size={20} />, label: "Profil", tab: "profile" },
             { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
           ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
             <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
