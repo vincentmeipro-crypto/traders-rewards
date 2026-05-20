@@ -187,9 +187,14 @@ function CheckoutContent() {
 
   const anyLoading = loadingStripe || loadingCrypto || loadingFree;
 
+  const cardStyle = { borderRadius: 20, marginBottom: 16, overflow: "hidden" as const };
+  const inputStyle = { width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: "11px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const };
+  const labelStyle = { color: "#bbb", fontSize: 11, fontWeight: 700, letterSpacing: "0.8px", marginBottom: 6, display: "block" as const };
+
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
-      <div style={{ position: "fixed", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
+    <div style={{ minHeight: "100vh", background: "linear-gradient(135deg, #0a0a0f 0%, #0d0a14 50%, #080c0a 100%)", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
+      <div style={{ position: "fixed", top: "20%", left: "30%", width: 500, height: 500, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+      <div style={{ position: "fixed", top: "60%", left: "60%", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(45,125,210,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
 
       <div style={{ width: "100%", maxWidth: 520, position: "relative", zIndex: 1 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
@@ -197,118 +202,96 @@ function CheckoutContent() {
         </div>
 
         {/* Order Summary */}
-        <div style={{ backgroundColor: "#111", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 20, padding: "32px", marginBottom: 16 }}>
-          <div style={{ color: "#C9A84C", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 20 }}>Order Summary</div>
+        <div style={{ ...cardStyle, background: "linear-gradient(135deg, rgba(201,168,76,0.15) 0%, rgba(201,168,76,0.05) 100%)", border: "1px solid rgba(201,168,76,0.4)", padding: "28px 32px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20 }}>
+            <div style={{ width: 4, height: 18, backgroundColor: "#C9A84C", borderRadius: 2 }} />
+            <span style={{ color: "#C9A84C", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Order Summary</span>
+          </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0", borderBottom: "1px solid #222" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 16 }}>Challenge {challenge.label}</div>
-              <div style={{ color: "#555", fontSize: 13, marginTop: 4 }}>{challenge.model} Model · Elysium</div>
+              <div style={{ fontWeight: 800, fontSize: 17 }}>Challenge {challenge.label}</div>
+              <div style={{ color: "#888", fontSize: 13, marginTop: 4 }}>{challenge.model} Model · Elysium Funded</div>
             </div>
             <div style={{ textAlign: "right" }}>
-              {discount > 0 && <div style={{ fontSize: 13, color: "#555", textDecoration: "line-through", marginBottom: 2 }}>{challenge.price}</div>}
-              <div style={{ fontSize: 24, fontWeight: 900, color: isFree ? "#22c55e" : "#C9A84C" }}>
+              {discount > 0 && <div style={{ fontSize: 13, color: "#666", textDecoration: "line-through", marginBottom: 2 }}>{challenge.price}</div>}
+              <div style={{ fontSize: 26, fontWeight: 900, color: isFree ? "#22c55e" : "#C9A84C" }}>
                 {isFree ? "FREE" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
               </div>
             </div>
           </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 16 }}>
-            <span style={{ color: "#888", fontWeight: 600 }}>Total</span>
-            <span style={{ fontSize: 28, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
+            <span style={{ color: "#aaa", fontWeight: 600, fontSize: 15 }}>Total</span>
+            <span style={{ fontSize: 30, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
               {isFree ? "FREE" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
             </span>
           </div>
         </div>
 
         {/* Personal Info */}
-        <div style={{ backgroundColor: "#111", border: "1px solid #2a2a2a", borderRadius: 20, padding: "20px 24px", marginBottom: 16 }}>
-          <div style={{ color: "#aaa", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-            <User size={12} /> Your Information
+        <div style={{ ...cardStyle, background: "linear-gradient(135deg, rgba(45,125,210,0.1) 0%, rgba(45,125,210,0.03) 100%)", border: "1px solid rgba(45,125,210,0.3)", padding: "24px 28px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18 }}>
+            <div style={{ width: 4, height: 18, backgroundColor: "#2D7DD2", borderRadius: 2 }} />
+            <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Vos informations</span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10, marginBottom: 10 }}>
-            <div>
-              <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>FIRST NAME *</div>
-              <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean"
-                style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${firstName ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-            </div>
-            <div>
-              <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>LAST NAME *</div>
-              <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont"
-                style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${lastName ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+            <div><label style={labelStyle}>PRÉNOM *</label><input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" style={inputStyle} /></div>
+            <div><label style={labelStyle}>NOM *</label><input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" style={inputStyle} /></div>
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <label style={labelStyle}>EMAIL *</label>
+            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com" style={inputStyle} />
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <label style={labelStyle}>TÉLÉPHONE *</label>
+            <div style={{ display: "flex", gap: 8 }}>
+              <select value={dialCode} onChange={e => setDialCode(e.target.value)}
+                style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: "11px 8px", color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", flexShrink: 0, width: 90 }}>
+                {DIAL_CODES.map(c => (<option key={c.code} value={c.code}>{c.flag} {c.code}</option>))}
+              </select>
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="6 00 00 00 00" style={{ ...inputStyle, flex: 1 }} />
             </div>
           </div>
           <div style={{ marginBottom: 10 }}>
-            <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>EMAIL *</div>
-            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com"
-              style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${email ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            <label style={labelStyle}>ADRESSE *</label>
+            <input value={address} onChange={e => setAddress(e.target.value)} placeholder="12 Rue de la Paix" style={inputStyle} />
           </div>
-          <div>
-            <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>PHONE *</div>
-            <div style={{ display: "flex", gap: 8 }}>
-              <select value={dialCode} onChange={e => setDialCode(e.target.value)}
-                style={{ backgroundColor: "#1c1c1c", border: "1px solid #2e2e2e", borderRadius: 8, padding: "10px 8px", color: "#fff", fontSize: 13, outline: "none", cursor: "pointer", flexShrink: 0, width: 90 }}>
-                {DIAL_CODES.map(c => (
-                  <option key={c.code} value={c.code}>{c.flag} {c.code}</option>
-                ))}
-              </select>
-              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="6 00 00 00 00"
-                style={{ flex: 1, backgroundColor: "#1c1c1c", border: `1px solid ${phone ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
-            </div>
-          </div>
-          <div style={{ marginTop: 10 }}>
-            <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>ADDRESS *</div>
-            <input value={address} onChange={e => setAddress(e.target.value)} placeholder="12 Rue de la Paix"
-              style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${address ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginTop: 10 }}>
-            <div>
-              <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>CITY *</div>
-              <input value={city} onChange={e => setCity(e.target.value)} placeholder="Paris"
-                style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${city ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
-            </div>
-            <div>
-              <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>POSTAL CODE</div>
-              <input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="75001"
-                style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${postalCode ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
-            </div>
-            <div>
-              <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>COUNTRY *</div>
-              <input value={country} onChange={e => setCountry(e.target.value)} placeholder="France"
-                style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${country ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
-            </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 10 }}>
+            <div><label style={labelStyle}>VILLE *</label><input value={city} onChange={e => setCity(e.target.value)} placeholder="Paris" style={inputStyle} /></div>
+            <div><label style={labelStyle}>CODE POSTAL</label><input value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="75001" style={inputStyle} /></div>
+            <div><label style={labelStyle}>PAYS *</label><input value={country} onChange={e => setCountry(e.target.value)} placeholder="France" style={inputStyle} /></div>
           </div>
           {!user && (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 }}>
-              <div>
-                <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>PASSWORD *</div>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 8 caractères"
-                  style={{ width: "100%", backgroundColor: "#1c1c1c", border: `1px solid ${password ? "#444" : "#2e2e2e"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 12, marginTop: 4 }}>
+              <div style={{ color: "#2D7DD2", fontSize: 11, fontWeight: 700, letterSpacing: "1px", marginBottom: 10 }}>CRÉER VOTRE COMPTE</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <div><label style={labelStyle}>MOT DE PASSE *</label><input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimum 8 caractères" style={inputStyle} /></div>
+                <div><label style={labelStyle}>CONFIRMER *</label>
+                  <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Répéter"
+                    style={{ ...inputStyle, border: `1px solid ${confirmPassword && confirmPassword === password ? "rgba(34,197,94,0.5)" : confirmPassword ? "rgba(239,68,68,0.5)" : "rgba(255,255,255,0.1)"}` }} />
+                </div>
+                {passwordError && <div style={{ gridColumn: "1/-1", color: "#ef4444", fontSize: 12 }}>{passwordError}</div>}
               </div>
-              <div>
-                <div style={{ color: "#aaa", fontSize: 11, marginBottom: 5 }}>CONFIRMER *</div>
-                <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Répéter le mot de passe"
-                  style={{ width: "100%", backgroundColor: "#1a1a1a", border: `1px solid ${confirmPassword && confirmPassword === password ? "#22c55e" : confirmPassword ? "#ef4444" : "#222"}`, borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" as const }} />
-              </div>
-              {passwordError && <div style={{ gridColumn: "1/-1", color: "#ef4444", fontSize: 12 }}>{passwordError}</div>}
             </div>
           )}
         </div>
 
         {/* Promo Code */}
-        <div style={{ backgroundColor: "#111", border: `1px solid ${promoStatus === "valid" ? "#22c55e44" : "#2a2a2a"}`, borderRadius: 20, padding: "20px 24px", marginBottom: 16 }}>
-          <div style={{ color: "#aaa", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-            <Tag size={12} /> Promo Code
+        <div style={{ ...cardStyle, background: promoStatus === "valid" ? "linear-gradient(135deg, rgba(34,197,94,0.12) 0%, rgba(34,197,94,0.04) 100%)" : "rgba(255,255,255,0.03)", border: `1px solid ${promoStatus === "valid" ? "rgba(34,197,94,0.4)" : "rgba(255,255,255,0.08)"}`, padding: "20px 24px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+            <div style={{ width: 4, height: 18, backgroundColor: promoStatus === "valid" ? "#22c55e" : "#888", borderRadius: 2 }} />
+            <span style={{ color: promoStatus === "valid" ? "#22c55e" : "#aaa", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Code Promo</span>
           </div>
 
           {promoStatus !== "valid" ? (
             <div style={{ display: "flex", gap: 8 }}>
               <input value={promoInput} onChange={e => { setPromoInput(e.target.value.toUpperCase()); setPromoStatus("idle"); setPromoError(""); }}
-                onKeyDown={e => e.key === "Enter" && applyPromo()} placeholder="ENTER CODE"
-                style={{ flex: 1, backgroundColor: "#1c1c1c", border: "1px solid #2e2e2e", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", fontWeight: 700, letterSpacing: "2px", fontFamily: "monospace" }} />
+                onKeyDown={e => e.key === "Enter" && applyPromo()} placeholder="ENTRER LE CODE"
+                style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", fontWeight: 700, letterSpacing: "2px", fontFamily: "monospace" }} />
               <button onClick={applyPromo} disabled={!promoInput.trim() || promoStatus === "loading"}
-                style={{ backgroundColor: "#1c1c1c", border: "1px solid #3a3a3a", borderRadius: 10, padding: "12px 20px", color: "#C9A84C", fontSize: 14, fontWeight: 700, cursor: promoInput.trim() ? "pointer" : "not-allowed", opacity: promoInput.trim() ? 1 : 0.5, whiteSpace: "nowrap" }}>
-                {promoStatus === "loading" ? "..." : "Apply"}
+                style={{ background: "linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.1))", border: "1px solid rgba(201,168,76,0.4)", borderRadius: 10, padding: "12px 20px", color: "#C9A84C", fontSize: 14, fontWeight: 700, cursor: promoInput.trim() ? "pointer" : "not-allowed", opacity: promoInput.trim() ? 1 : 0.5, whiteSpace: "nowrap" }}>
+                {promoStatus === "loading" ? "..." : "Appliquer"}
               </button>
             </div>
           ) : (
