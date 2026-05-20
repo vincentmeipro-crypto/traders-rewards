@@ -47,7 +47,7 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <Image src="/logo.jpg" alt="Elysium Funded" width={100} height={100} style={{ objectFit: "contain", mixBlendMode: "screen" }} />
+          <Image src="/logo-white.jpg" alt="Elysium Funded" width={100} height={100} style={{ objectFit: "contain", mixBlendMode: "screen" }} />
         </div>
 
         <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "40px 36px" }}>
