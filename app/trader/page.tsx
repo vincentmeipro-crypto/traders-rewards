@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import PromoBanner from "@/components/PromoBanner";
 
 type CalEvent = {
   title: string;
@@ -107,7 +106,6 @@ export default function TraderPage() {
 
   return (
     <>
-      <PromoBanner />
       <Navbar />
       <main style={{ minHeight: "100vh", paddingTop: 140, paddingBottom: 80, paddingLeft: 24, paddingRight: 24 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
