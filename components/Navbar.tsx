@@ -126,9 +126,14 @@ export default function Navbar() {
             </a>
           </div>
 
-          <button onClick={() => setOpen(!open)} style={{ display: isMobile ? "flex" : "none", background: "none", border: "none", color: "#fff", cursor: "pointer", alignItems: "center" }}>
-            {open ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <div style={{ display: isMobile ? "flex" : "none", alignItems: "center", gap: 10 }}>
+            <a href="/login" style={{ color: "#2D7DD2", fontSize: 13, fontWeight: 700, textDecoration: "none", letterSpacing: "0.5px" }}>
+              {T.nav.logIn}
+            </a>
+            <button onClick={() => setOpen(!open)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center" }}>
+              {open ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {open && (
