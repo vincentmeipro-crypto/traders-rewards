@@ -983,10 +983,10 @@ export default function DashboardClient({ user }: { user: User }) {
         ) : (activeTab === "dashboard") && challenge && (
           <>
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>My Challenge</h1>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                   <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#2D7DD2", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
                     {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}
                   </span>
@@ -996,167 +996,187 @@ export default function DashboardClient({ user }: { user: User }) {
                   </span>
                 </div>
               </div>
-              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", gap: 8 }}>
-                Buy New Challenge <ChevronRight size={14} />
+              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                + New <ChevronRight size={14} />
               </a>
             </div>
 
-            {/* Phase Banner for Phase 2 / Funded */}
+            {/* Phase Banner */}
             {challenge.phase === "phase2" && (
-              <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "16px 24px", marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={20} color="#2D7DD2" />
-                <div>
-                  <span style={{ color: "#2D7DD2", fontWeight: 700 }}>Phase 1 Passed! </span>
-                  <span style={{ color: "#888", fontSize: 14 }}>You are now in Phase 2 — reach 5% profit to get funded.</span>
-                </div>
+              <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
+                <Trophy size={18} color="#2D7DD2" />
+                <span style={{ color: "#2D7DD2", fontWeight: 700, fontSize: 14 }}>Phase 1 Passed! </span>
+                <span style={{ color: "#888", fontSize: 13 }}>Now in Phase 2 — reach 5% profit to get funded.</span>
               </div>
             )}
             {challenge.phase === "funded" && (
-              <div style={{ backgroundColor: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 12, padding: "16px 24px", marginBottom: 24, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={20} color="#3b82f6" />
-                <div>
-                  <span style={{ color: "#3b82f6", fontWeight: 700 }}>🎉 Congratulations! </span>
-                  <span style={{ color: "#888", fontSize: 14 }}>You are now a Certified Trader. Request your rewards below.</span>
-                </div>
+              <div style={{ backgroundColor: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
+                <Trophy size={18} color="#3b82f6" />
+                <span style={{ color: "#3b82f6", fontWeight: 700, fontSize: 14 }}>Congratulations! </span>
+                <span style={{ color: "#888", fontSize: 13 }}>You are a Certified Trader. Request your rewards.</span>
               </div>
             )}
 
-            {/* KPI Cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 24 }}>
-              {[
-                { icon: <TrendingUp size={20} color="#2D7DD2" />, label: "Current Balance", value: `$${challenge.balance.toLocaleString()}`, sub: `${profitAmount >= 0 ? "+" : ""}$${profitAmount.toLocaleString()} (${profitAmount >= 0 ? "+" : ""}${profitPct}%)`, subColor: profitAmount >= 0 ? "#22c55e" : "#ef4444" },
-                { icon: <Trophy size={20} color="#2D7DD2" />, label: "Profit Target", value: `${challenge.profit_target}%`, sub: `${targetPct}% completed`, subColor: "#2D7DD2" },
-                { icon: <ShieldCheck size={20} color="#2D7DD2" />, label: "Trading Days", value: `${challenge.trading_days}`, sub: `Min. 4 required ${challenge.trading_days >= 4 ? "✓" : ""}`, subColor: challenge.trading_days >= 4 ? "#22c55e" : "#888" },
-                { icon: <Clock size={20} color="#2D7DD2" />, label: "Time Remaining", value: "Unlimited", sub: "No expiry date", subColor: "#555" },
-              ].map((card, i) => (
-                <div key={i} className="card" style={{ padding: "24px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
-                    <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10 }}>{card.icon}</div>
+            {/* 2-column layout */}
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, alignItems: "start" }}>
+
+              {/* LEFT: Balance + Progress bars */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+                {/* Balance card */}
+                <div className="card" style={{ padding: 28 }}>
+                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>Balance actuelle</div>
+                  <div style={{ fontSize: 40, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
+                    ${challenge.balance.toLocaleString()}
                   </div>
-                  <div style={{ color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{card.label}</div>
-                  <div style={{ fontSize: 26, fontWeight: 800, marginBottom: 4 }}>{card.value}</div>
-                  <div style={{ fontSize: 13, color: card.subColor }}>{card.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Progress Section */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 24 }}>
-              <div className="card" style={{ padding: 28 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 700 }}>Profit Target</h3>
-                  <span style={{ color: "#2D7DD2", fontWeight: 700, fontSize: 15 }}>{profitPct}% / {challenge.profit_target}%</span>
-                </div>
-                <ProgressBar value={parseFloat(profitPct)} max={challenge.profit_target} />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
-                  <span>Start: ${challenge.start_balance.toLocaleString()}</span>
-                  <span>Target: ${targetAmount.toLocaleString()}</span>
-                </div>
-              </div>
-
-              <div className="card" style={{ padding: 28 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 700 }}>Daily Drawdown</h3>
-                  <span style={{ color: dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e", fontWeight: 700, fontSize: 15 }}>
-                    {dailyDrawdownPct}% / {challenge.daily_drawdown_limit}%
-                  </span>
-                </div>
-                <ProgressBar value={dailyDrawdownPct} max={challenge.daily_drawdown_limit} danger />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
-                  <span>Used today</span>
-                  <span>Max allowed: {challenge.daily_drawdown_limit}%</span>
-                </div>
-              </div>
-
-              <div className="card" style={{ padding: 28 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-                  <h3 style={{ fontSize: 15, fontWeight: 700 }}>Total Drawdown</h3>
-                  <span style={{ color: parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e", fontWeight: 700, fontSize: 15 }}>
-                    {totalDrawdownPct}% / {challenge.total_drawdown_limit}%
-                  </span>
-                </div>
-                <ProgressBar value={parseFloat(totalDrawdownPct)} max={challenge.total_drawdown_limit} danger />
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: 12, fontSize: 13, color: "#555" }}>
-                  <span>Max loss: ${(challenge.start_balance * (1 - challenge.total_drawdown_limit / 100)).toLocaleString()}</span>
-                  <span>Current: ${challenge.balance.toLocaleString()}</span>
-                </div>
-              </div>
-
-              <div className="card" style={{ padding: 28 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 700, marginBottom: 20 }}>Rules Status</h3>
-                {[
-                  { label: `Profit target (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? "passed ✓" : "in progress" },
-                  { label: "Min. trading days (4)", ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? "passed ✓" : `${challenge.trading_days}/4 days` },
-                  { label: `Daily drawdown (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: "within limit ✓" },
-                  { label: `Total drawdown (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? "within limit ✓" : "❌ violated" },
-                ].map((rule, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
-                    <span style={{ color: "#888", fontSize: 14 }}>{rule.label}</span>
-                    <span style={{ color: rule.ok ? "#22c55e" : "#2D7DD2", fontSize: 13, fontWeight: 600 }}>{rule.status}</span>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#22c55e" : "#ef4444", marginBottom: 20 }}>
+                    {profitAmount >= 0 ? "+" : ""}${profitAmount.toLocaleString()} ({profitAmount >= 0 ? "+" : ""}{profitPct}%)
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Payout Button */}
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Request a Reward</div>
-                <div style={{ color: "#555", fontSize: 13 }}>Submit your payout request — processed within 24-48h</div>
-              </div>
-              <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ padding: "10px 24px", fontSize: 13 }}>
-                Request Payout
-              </button>
-            </div>
-
-            {/* Identifiants cTrader */}
-            {!challenge.ctrader_account_id ? (
-              <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
-                  <Clock size={18} color="#2D7DD2" />
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>Trading Account — Pending Setup</div>
+                  <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#555", borderTop: "1px solid #1a1a1a", paddingTop: 16 }}>
+                    <span>Départ : <b style={{ color: "#888" }}>${challenge.start_balance.toLocaleString()}</b></span>
+                    <span>Jours : <b style={{ color: challenge.trading_days >= 4 ? "#22c55e" : "#888" }}>{challenge.trading_days}/4 min</b></span>
+                  </div>
                 </div>
-                <div style={{ color: "#555", fontSize: 13 }}>Your trading account is being configured. You will receive your login credentials shortly.</div>
-              </div>
-            ) : (
-              <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
-                  <CheckCircle size={16} /> Trading Account Ready
+
+                {/* Progress bars */}
+                <div className="card" style={{ padding: 28, display: "flex", flexDirection: "column", gap: 24 }}>
+
+                  {/* Profit Target */}
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Target size={14} color="#2D7DD2" />
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>Profit Target</span>
+                      </div>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: parseFloat(profitPct) >= challenge.profit_target ? "#22c55e" : "#2D7DD2" }}>
+                        {profitPct}% / {challenge.profit_target}%
+                      </span>
+                    </div>
+                    <ProgressBar value={parseFloat(profitPct)} max={challenge.profit_target} color="#2D7DD2" />
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 12, color: "#444" }}>
+                      <span>${challenge.start_balance.toLocaleString()}</span>
+                      <span>Target : ${targetAmount.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  {/* Daily Drawdown */}
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <TrendingDown size={14} color={dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e"} />
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>Daily Drawdown</span>
+                      </div>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e" }}>
+                        {dailyDrawdownPct}% / {challenge.daily_drawdown_limit}%
+                      </span>
+                    </div>
+                    <ProgressBar value={dailyDrawdownPct} max={challenge.daily_drawdown_limit} danger />
+                    <div style={{ fontSize: 12, color: "#444", marginTop: 6 }}>Max autorisé aujourd&apos;hui : {challenge.daily_drawdown_limit}%</div>
+                  </div>
+
+                  {/* Total Drawdown */}
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Shield size={14} color={parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e"} />
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>Total Drawdown</span>
+                      </div>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e" }}>
+                        {totalDrawdownPct}% / {challenge.total_drawdown_limit}%
+                      </span>
+                    </div>
+                    <ProgressBar value={parseFloat(totalDrawdownPct)} max={challenge.total_drawdown_limit} danger />
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 12, color: "#444" }}>
+                      <span>Plancher : ${(challenge.start_balance * (1 - challenge.total_drawdown_limit / 100)).toLocaleString()}</span>
+                      <span>Actuel : ${challenge.balance.toLocaleString()}</span>
+                    </div>
+                  </div>
+
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+              </div>
+
+              {/* RIGHT: Rules + Trading account + Download */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+                {/* Rules checklist */}
+                <div className="card" style={{ padding: 28 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, color: "#fff" }}>Rules Status</div>
                   {[
-                    { label: "Platform", value: "MT5" },
-                    { label: "Account ID", value: challenge.ctrader_account_id || "—" },
-                    { label: "Password", value: challenge.ctrader_password || "—" },
-                    { label: "MT5 Server", value: challenge.server || "—" },
-                  ].map((item, i) => (
-                    <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "12px 16px" }}>
-                      <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>{item.label}</div>
-                      <div style={{ fontSize: 14, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8", textShadow: "0 0 8px rgba(56,189,248,0.6)" }}>{item.value}</div>
+                    { label: `Profit target (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? "passed ✓" : `${profitPct}% / ${challenge.profit_target}%` },
+                    { label: "Min. trading days (4)", ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? "passed ✓" : `${challenge.trading_days} / 4 jours` },
+                    { label: `Daily drawdown (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: dailyDrawdownPct < challenge.daily_drawdown_limit ? "OK ✓" : "violé ❌" },
+                    { label: `Total drawdown (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? "OK ✓" : "violé ❌" },
+                  ].map((rule, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
+                        <span style={{ color: "#888", fontSize: 13 }}>{rule.label}</span>
+                      </div>
+                      <span style={{ color: rule.ok ? "#22c55e" : "#f59e0b", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
                     </div>
                   ))}
+                  {challenge.phase === "funded" ? (
+                    <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 18 }}>
+                      Request Reward →
+                    </button>
+                  ) : (
+                    <div style={{ marginTop: 18, backgroundColor: "#1a1a1a", borderRadius: 10, padding: "12px 16px", fontSize: 12, color: "#555", display: "flex", alignItems: "center", gap: 8 }}>
+                      <Clock size={12} color="#555" />
+                      Pas de limite de temps — tradez à votre rythme.
+                    </div>
+                  )}
                 </div>
-                <div style={{ marginTop: 12, color: "#555", fontSize: 12 }}>Télécharge MT5 et connecte-toi avec ces identifiants via Blueberry Markets.</div>
-              </div>
-            )}
 
-            {/* Download MT5 */}
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px" }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>Download cTrader</div>
-              <div style={{ color: "#555", fontSize: 13, marginBottom: 16 }}>Télécharge cTrader et connecte-toi avec tes identifiants sur le serveur IC Markets.</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                {[
-                  { label: "🖥 Windows", href: "https://ctrader.com/download/ctrader-windows" },
-                  { label: "🍎 Mac", href: "https://ctrader.com/download/ctrader-mac" },
-                  { label: "📱 iOS (App Store)", href: "https://apps.apple.com/app/ctrader/id767428811" },
-                  { label: "🤖 Android (Google Play)", href: "https://play.google.com/store/apps/details?id=com.spotware.ct" },
-                  { label: "🌐 Web", href: "https://trade.icmarkets.com" },
-                ].map((item, i) => (
-                  <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
-                    style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "10px 18px", borderRadius: 8, textDecoration: "none", fontSize: 13, border: "1px solid #2a2a2a", display: "inline-block" }}>
-                    {item.label}
-                  </a>
-                ))}
+                {/* Trading account */}
+                {!challenge.ctrader_account_id ? (
+                  <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                      <Clock size={16} color="#2D7DD2" />
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>Compte de trading — En attente</div>
+                    </div>
+                    <div style={{ color: "#555", fontSize: 13 }}>Votre compte est en cours de configuration. Vous recevrez vos identifiants par email.</div>
+                  </div>
+                ) : (
+                  <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 14, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
+                      <CheckCircle size={14} /> Compte prêt
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                      {[
+                        { label: "Platform", value: "cTrader" },
+                        { label: "Account ID", value: challenge.ctrader_account_id || "—" },
+                        { label: "Password", value: challenge.ctrader_password || "—" },
+                        { label: "Server", value: challenge.server || "—" },
+                      ].map((item, i) => (
+                        <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "10px 14px" }}>
+                          <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8" }}>{item.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Download cTrader */}
+                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Télécharger cTrader</div>
+                  <div style={{ color: "#555", fontSize: 13, marginBottom: 14 }}>Connecte-toi avec tes identifiants sur le serveur IC Markets.</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {[
+                      { label: "🖥 Windows", href: "https://ctrader.com/download/ctrader-windows" },
+                      { label: "🍎 Mac", href: "https://ctrader.com/download/ctrader-mac" },
+                      { label: "📱 iOS", href: "https://apps.apple.com/app/ctrader/id767428811" },
+                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=com.spotware.ct" },
+                      { label: "🌐 Web", href: "https://trade.icmarkets.com" },
+                    ].map((item, i) => (
+                      <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
+                        style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid #2a2a2a", display: "inline-block" }}>
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
               </div>
             </div>
           </>
