@@ -249,16 +249,16 @@ export default function DashboardClient({ user }: { user: User }) {
 
           <nav style={{ padding: "20px 12px", flex: 1 }}>
             {([
-              { icon: <LayoutDashboard size={16} />, label: "Dashboard", tab: "dashboard" },
-              { icon: <TrendingUp size={16} />, label: "My Challenges", tab: "challenges" },
-              { icon: <Wallet size={16} />, label: "Rewards", tab: "payouts" },
-              { icon: <ShieldCheck size={16} />, label: "KYC", tab: "kyc" },
-              { icon: <Award size={16} />, label: "Certificates", tab: "certificates" },
-              { icon: <History size={16} />, label: "Historique", tab: "history" },
-              { icon: <FileText size={16} />, label: "Factures", tab: "invoices" },
-              { icon: <BookOpen size={16} />, label: "Rules", tab: "rules" },
-              { icon: <UserIcon size={16} />, label: "Mon Profil", tab: "profile" },
-              { icon: <Settings size={16} />, label: "Settings", tab: "settings" },
+              { icon: <LayoutDashboard size={16} />, label: T.dash.dashboard, tab: "dashboard" },
+              { icon: <TrendingUp size={16} />, label: T.dash.challenges, tab: "challenges" },
+              { icon: <Wallet size={16} />, label: T.dash.rewards, tab: "payouts" },
+              { icon: <ShieldCheck size={16} />, label: T.dash.kyc, tab: "kyc" },
+              { icon: <Award size={16} />, label: T.dash.certificates, tab: "certificates" },
+              { icon: <History size={16} />, label: T.dash.history, tab: "history" },
+              { icon: <FileText size={16} />, label: T.dash.invoices, tab: "invoices" },
+              { icon: <BookOpen size={16} />, label: T.dash.rules, tab: "rules" },
+              { icon: <UserIcon size={16} />, label: T.dash.profile, tab: "profile" },
+              { icon: <Settings size={16} />, label: T.dash.settings, tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
               <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
                 display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
@@ -322,11 +322,11 @@ export default function DashboardClient({ user }: { user: User }) {
       {isMobile && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderTop: "1px solid #1a1a1a", display: "flex", zIndex: 50, paddingBottom: "env(safe-area-inset-bottom)" }}>
           {([
-            { icon: <LayoutDashboard size={20} />, label: "Home", tab: "dashboard" },
-            { icon: <TrendingUp size={20} />, label: "Challenge", tab: "challenges" },
-            { icon: <Wallet size={20} />, label: "Rewards", tab: "payouts" },
-            { icon: <ShieldCheck size={20} />, label: "KYC", tab: "kyc" },
-            { icon: <UserIcon size={20} />, label: "Profil", tab: "profile" },
+            { icon: <LayoutDashboard size={20} />, label: T.dash.dashboard, tab: "dashboard" },
+            { icon: <TrendingUp size={20} />, label: T.dash.challenges, tab: "challenges" },
+            { icon: <Wallet size={20} />, label: T.dash.rewards, tab: "payouts" },
+            { icon: <ShieldCheck size={20} />, label: T.dash.kyc, tab: "kyc" },
+            { icon: <UserIcon size={20} />, label: T.dash.profile, tab: "profile" },
             { icon: <Settings size={20} />, label: "Settings", tab: "settings" },
           ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
             <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
@@ -1043,7 +1043,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Balance card */}
                 <div className="card" style={{ padding: 28 }}>
-                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>Balance actuelle</div>
+                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>{T.dash.balance}</div>
                   <div style={{ fontSize: 40, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
                     ${challenge.balance.toLocaleString()}
                   </div>
@@ -1051,8 +1051,8 @@ export default function DashboardClient({ user }: { user: User }) {
                     {profitAmount >= 0 ? "+" : ""}${profitAmount.toLocaleString()} ({profitAmount >= 0 ? "+" : ""}{profitPct}%)
                   </div>
                   <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#555", borderTop: "1px solid #1a1a1a", paddingTop: 16 }}>
-                    <span>Départ : <b style={{ color: "#888" }}>${challenge.start_balance.toLocaleString()}</b></span>
-                    <span>Jours : <b style={{ color: challenge.trading_days >= 4 ? "#22c55e" : "#888" }}>{challenge.trading_days}/4 min</b></span>
+                    <span>Start : <b style={{ color: "#888" }}>${challenge.start_balance.toLocaleString()}</b></span>
+                    <span>{T.dash.tradingDays} : <b style={{ color: challenge.trading_days >= 4 ? "#22c55e" : "#888" }}>{challenge.trading_days}/4 {T.dash.minDays}</b></span>
                   </div>
                 </div>
 
@@ -1064,7 +1064,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <Target size={14} color="#2D7DD2" />
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>Profit Target</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>{T.dash.profitTarget}</span>
                       </div>
                       <span style={{ fontSize: 13, fontWeight: 700, color: parseFloat(profitPct) >= challenge.profit_target ? "#22c55e" : "#2D7DD2" }}>
                         {profitPct}% / {challenge.profit_target}%
@@ -1082,7 +1082,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <TrendingDown size={14} color={dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e"} />
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>Daily Drawdown</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>{T.dash.dailyDrawdown}</span>
                       </div>
                       <span style={{ fontSize: 13, fontWeight: 700, color: dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e" }}>
                         {dailyDrawdownPct}% / {challenge.daily_drawdown_limit}%
@@ -1097,7 +1097,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <Shield size={14} color={parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e"} />
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>Total Drawdown</span>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>{T.dash.totalDrawdown}</span>
                       </div>
                       <span style={{ fontSize: 13, fontWeight: 700, color: parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e" }}>
                         {totalDrawdownPct}% / {challenge.total_drawdown_limit}%
@@ -1118,12 +1118,12 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Rules checklist */}
                 <div className="card" style={{ padding: 28 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, color: "#fff" }}>Rules Status</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, color: "#fff" }}>{T.dash.rulesStatus}</div>
                   {[
-                    { label: `Profit target (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? "passed ✓" : `${profitPct}% / ${challenge.profit_target}%` },
-                    { label: "Min. trading days (4)", ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? "passed ✓" : `${challenge.trading_days} / 4 jours` },
-                    { label: `Daily drawdown (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: dailyDrawdownPct < challenge.daily_drawdown_limit ? "OK ✓" : "violé ❌" },
-                    { label: `Total drawdown (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? "OK ✓" : "violé ❌" },
+                    { label: `${T.dash.profitTarget} (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%` },
+                    { label: `Min. ${T.dash.tradingDays} (4)`, ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4` },
+                    { label: `${T.dash.dailyDrawdown} (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: dailyDrawdownPct < challenge.daily_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
+                    { label: `${T.dash.totalDrawdown} (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
                   ].map((rule, i) => (
                     <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -1135,12 +1135,12 @@ export default function DashboardClient({ user }: { user: User }) {
                   ))}
                   {challenge.phase === "funded" ? (
                     <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 18 }}>
-                      Request Reward →
+                      {T.dash.requestReward}
                     </button>
                   ) : (
                     <div style={{ marginTop: 18, backgroundColor: "#1a1a1a", borderRadius: 10, padding: "12px 16px", fontSize: 12, color: "#555", display: "flex", alignItems: "center", gap: 8 }}>
                       <Clock size={12} color="#555" />
-                      Pas de limite de temps — tradez à votre rythme.
+                      {T.dash.noTimeLimit}
                     </div>
                   )}
                 </div>
@@ -1150,14 +1150,14 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
                       <Clock size={16} color="#2D7DD2" />
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>Compte de trading — En attente</div>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{T.dash.accountPending}</div>
                     </div>
-                    <div style={{ color: "#555", fontSize: 13 }}>Votre compte est en cours de configuration. Vous recevrez vos identifiants par email.</div>
+                    <div style={{ color: "#555", fontSize: 13 }}>{T.dash.accountPendingMsg}</div>
                   </div>
                 ) : (
                   <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px" }}>
                     <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 14, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
-                      <CheckCircle size={14} /> Compte prêt
+                      <CheckCircle size={14} /> {T.dash.accountReady}
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                       {[
@@ -1177,8 +1177,8 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Download cTrader */}
                 <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px" }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Télécharger cTrader</div>
-                  <div style={{ color: "#555", fontSize: 13, marginBottom: 14 }}>Connecte-toi avec tes identifiants sur le serveur IC Markets.</div>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{T.dash.downloadTitle}</div>
+                  <div style={{ color: "#555", fontSize: 13, marginBottom: 14 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
                       { label: "🖥 Windows", href: "https://ctrader.com/download/ctrader-windows" },
