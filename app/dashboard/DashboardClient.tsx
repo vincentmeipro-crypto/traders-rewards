@@ -300,6 +300,24 @@ export default function DashboardClient({ user }: { user: User }) {
         </div>
       )}
 
+      {/* Top bar — mobile only */}
+      {isMobile && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
+          <img src="/logo-white.jpg" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {languages.map(l => (
+              <button key={l.code} onClick={() => setLang(l.code)}
+                style={{ background: "none", border: lang === l.code ? "1px solid #2D7DD2" : "1px solid #1a1a1a", borderRadius: 6, padding: "3px 7px", cursor: "pointer", display: "flex", alignItems: "center", opacity: lang === l.code ? 1 : 0.4 }}>
+                <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code === "ar" ? "sa" : l.code === "pt" ? "br" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
+              </button>
+            ))}
+          </div>
+          <button onClick={handleLogout} style={{ background: "none", border: "none", cursor: "pointer", color: "#555", display: "flex", alignItems: "center" }}>
+            <LogOut size={18} />
+          </button>
+        </div>
+      )}
+
       {/* Bottom nav — mobile only */}
       {isMobile && (
         <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderTop: "1px solid #1a1a1a", display: "flex", zIndex: 50, paddingBottom: "env(safe-area-inset-bottom)" }}>
@@ -324,7 +342,7 @@ export default function DashboardClient({ user }: { user: User }) {
       )}
 
       {/* Main content */}
-      <div style={{ marginLeft: isMobile ? 0 : 240, padding: isMobile ? "20px 16px 100px" : "32px 32px" }}>
+      <div style={{ marginLeft: isMobile ? 0 : 240, padding: isMobile ? "76px 16px 100px" : "32px 32px" }}>
 
         {/* ══ HISTORIQUE ══ */}
         {activeTab === "history" && (
