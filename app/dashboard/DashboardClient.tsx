@@ -41,6 +41,144 @@ function ProgressBar({ value, max, color = "#2D7DD2", danger = false }: { value:
   );
 }
 
+function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boolean }) {
+  const W = 400;
+  const H = 200;
+  const PAD = { top: 24, right: 56, bottom: 36, left: 56 };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+
+  const startBal = challenge.start_balance;
+  const currentBal = challenge.balance;
+  const targetBal = startBal * (1 + challenge.profit_target / 100);
+  const floorBal = startBal * (1 - challenge.total_drawdown_limit / 100);
+
+  const N = 14;
+  const pts: { x: number; y: number }[] = [];
+  for (let i = 0; i <= N; i++) {
+    const t = i / N;
+    const noise = (Math.sin(i * 2.3) * 0.4 + Math.cos(i * 1.6) * 0.3) * 0.008 * startBal * t;
+    pts.push({ x: i, y: startBal + (currentBal - startBal) * t + noise });
+  }
+
+  const minY = Math.min(floorBal * 0.998, ...pts.map(p => p.y));
+  const maxY = Math.max(targetBal * 1.002, ...pts.map(p => p.y));
+  const range = maxY - minY || 1;
+
+  const toX = (i: number) => PAD.left + (i / N) * chartW;
+  const toY = (v: number) => PAD.top + ((maxY - v) / range) * chartH;
+
+  const linePath = pts.map((p, i) => `${i === 0 ? "M" : "L"}${toX(p.x).toFixed(1)},${toY(p.y).toFixed(1)}`).join(" ");
+  const areaPath = linePath + ` L${toX(N).toFixed(1)},${(PAD.top + chartH).toFixed(1)} L${PAD.left},${(PAD.top + chartH).toFixed(1)} Z`;
+
+  const tY = toY(targetBal);
+  const fY = toY(floorBal);
+  const sY = toY(startBal);
+  const cX = toX(N);
+  const cY = toY(currentBal);
+
+  const fmt = (v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v.toFixed(0)}`;
+
+  return (
+    <div style={{ position: "relative" }}>
+      <style>{`
+        @keyframes pulseDot { 0%,100%{r:5;opacity:1} 50%{r:8;opacity:0.5} }
+        @keyframes pulseRing { 0%{r:10;opacity:0.6} 100%{r:18;opacity:0} }
+      `}</style>
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", display: "block" }}>
+        <defs>
+          <linearGradient id="cgGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#2D7DD2" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#2D7DD2" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="cgLine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#2D7DD2" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#2D7DD2" />
+          </linearGradient>
+        </defs>
+
+        {/* Grid */}
+        {[0, 0.25, 0.5, 0.75, 1].map(r => (
+          <line key={r} x1={PAD.left} y1={PAD.top + r * chartH} x2={PAD.left + chartW} y2={PAD.top + r * chartH}
+            stroke="#1e1e1e" strokeWidth={1} />
+        ))}
+
+        {/* Zone between floor and target: green tint */}
+        <rect x={PAD.left} y={tY} width={chartW} height={fY - tY}
+          fill="rgba(34,197,94,0.03)" />
+
+        {/* Target line */}
+        <line x1={PAD.left} y1={tY} x2={PAD.left + chartW} y2={tY}
+          stroke="#22c55e" strokeWidth={1.5} strokeDasharray="5,4" />
+        <text x={PAD.left + chartW + 6} y={tY + 4} fill="#22c55e" fontSize={9} fontWeight={800}>{fmt(targetBal)}</text>
+        <text x={PAD.left - 6} y={tY + 4} fill="#22c55e" fontSize={8} textAnchor="end" fontWeight={700}>
+          {isFr ? "OBJECTIF" : "TARGET"}
+        </text>
+
+        {/* Floor line */}
+        <line x1={PAD.left} y1={fY} x2={PAD.left + chartW} y2={fY}
+          stroke="#ef4444" strokeWidth={1.5} strokeDasharray="5,4" />
+        <text x={PAD.left + chartW + 6} y={fY + 4} fill="#ef4444" fontSize={9} fontWeight={800}>{fmt(floorBal)}</text>
+        <text x={PAD.left - 6} y={fY + 4} fill="#ef4444" fontSize={8} textAnchor="end" fontWeight={700}>
+          {isFr ? "PLANCHER" : "FLOOR"}
+        </text>
+
+        {/* Start line (faint) */}
+        <line x1={PAD.left} y1={sY} x2={PAD.left + chartW} y2={sY}
+          stroke="#333" strokeWidth={1} strokeDasharray="3,6" />
+        <text x={PAD.left - 6} y={sY + 4} fill="#444" fontSize={8} textAnchor="end">{fmt(startBal)}</text>
+
+        {/* Area fill */}
+        <path d={areaPath} fill="url(#cgGrad)" />
+
+        {/* Balance line */}
+        <path d={linePath} fill="none" stroke="url(#cgLine)" strokeWidth={2.5}
+          strokeLinecap="round" strokeLinejoin="round" />
+
+        {/* Pulse ring on current point */}
+        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#2D7DD2" strokeOpacity={0}>
+          <animate attributeName="r" values="8;18" dur="1.8s" repeatCount="indefinite" />
+          <animate attributeName="stroke-opacity" values="0.5;0" dur="1.8s" repeatCount="indefinite" />
+        </circle>
+
+        {/* Current point dot */}
+        <circle cx={cX} cy={cY} r={5} fill="#2D7DD2" stroke="#000" strokeWidth={2} />
+
+        {/* Current value label */}
+        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#2D7DD2" />
+        <text x={cX} y={cY - 13} fill="#fff" fontSize={9} textAnchor="middle" fontWeight={800}>
+          {fmt(currentBal)}
+        </text>
+
+        {/* X-axis labels */}
+        <text x={PAD.left} y={H - 6} fill="#333" fontSize={9} textAnchor="middle">
+          {isFr ? "Jour 1" : "Day 1"}
+        </text>
+        <text x={cX} y={H - 6} fill="#2D7DD2" fontSize={9} textAnchor="middle" fontWeight={700}>
+          {isFr ? `J.${challenge.trading_days}` : `D.${challenge.trading_days}`}
+        </text>
+      </svg>
+
+      {/* Legend */}
+      <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 8 }}>
+        {[
+          { color: "#2D7DD2", label: isFr ? "Solde" : "Balance" },
+          { color: "#22c55e", label: isFr ? "Objectif" : "Target", dashed: true },
+          { color: "#ef4444", label: isFr ? "Plancher" : "Floor", dashed: true },
+        ].map((item, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <svg width={24} height={10}>
+              <line x1={0} y1={5} x2={24} y2={5} stroke={item.color} strokeWidth={item.dashed ? 1.5 : 2.5}
+                strokeDasharray={item.dashed ? "4,3" : undefined} />
+            </svg>
+            <span style={{ fontSize: 10, color: "#555", fontWeight: 600 }}>{item.label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const PHASE_LABELS: Record<string, string> = {
   phase1: "Phase 1",
   phase2: "Phase 2",
@@ -60,6 +198,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClient();
   const { T, lang, setLang } = useLanguage();
+  const isFr = lang === "fr";
   const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string }[]>([]);
@@ -1057,60 +1196,15 @@ export default function DashboardClient({ user }: { user: User }) {
                   </div>
                 </div>
 
-                {/* Progress bars */}
-                <div className="card" style={{ padding: 28, display: "flex", flexDirection: "column", gap: 24 }}>
-
-                  {/* Profit Target */}
-                  <div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <Target size={14} color="#2D7DD2" />
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>{T.dash.profitTarget}</span>
-                      </div>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: parseFloat(profitPct) >= challenge.profit_target ? "#22c55e" : "#2D7DD2" }}>
-                        {profitPct}% / {challenge.profit_target}%
-                      </span>
-                    </div>
-                    <ProgressBar value={parseFloat(profitPct)} max={challenge.profit_target} color="#2D7DD2" />
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 12, color: "#444" }}>
-                      <span>${challenge.start_balance.toLocaleString()}</span>
-                      <span>Target : ${targetAmount.toLocaleString()}</span>
-                    </div>
+                {/* Challenge evolution chart */}
+                <div className="card" style={{ padding: 24 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
+                    {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
                   </div>
-
-                  {/* Daily Drawdown */}
-                  <div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <TrendingDown size={14} color={dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e"} />
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>{T.dash.dailyDrawdown}</span>
-                      </div>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: dailyDrawdownPct > challenge.daily_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e" }}>
-                        {dailyDrawdownPct}% / {challenge.daily_drawdown_limit}%
-                      </span>
-                    </div>
-                    <ProgressBar value={dailyDrawdownPct} max={challenge.daily_drawdown_limit} danger />
-                    <div style={{ fontSize: 12, color: "#444", marginTop: 6 }}>Max autorisé aujourd&apos;hui : {challenge.daily_drawdown_limit}%</div>
+                  <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
+                    {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
                   </div>
-
-                  {/* Total Drawdown */}
-                  <div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <Shield size={14} color={parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e"} />
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#ccc" }}>{T.dash.totalDrawdown}</span>
-                      </div>
-                      <span style={{ fontSize: 13, fontWeight: 700, color: parseFloat(totalDrawdownPct) > challenge.total_drawdown_limit * 0.7 ? "#ef4444" : "#22c55e" }}>
-                        {totalDrawdownPct}% / {challenge.total_drawdown_limit}%
-                      </span>
-                    </div>
-                    <ProgressBar value={parseFloat(totalDrawdownPct)} max={challenge.total_drawdown_limit} danger />
-                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 12, color: "#444" }}>
-                      <span>Plancher : ${(challenge.start_balance * (1 - challenge.total_drawdown_limit / 100)).toLocaleString()}</span>
-                      <span>Actuel : ${challenge.balance.toLocaleString()}</span>
-                    </div>
-                  </div>
-
+                  <ChallengeChart challenge={challenge} isFr={isFr} />
                 </div>
               </div>
 
