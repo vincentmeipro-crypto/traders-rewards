@@ -303,7 +303,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {/* Top bar — mobile only */}
       {isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
-          <img src="/logo-white.jpg" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} />
+          <a href="/"><img src="/logo-white.jpg" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} /></a>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {languages.map(l => (
               <button key={l.code} onClick={() => setLang(l.code)}
