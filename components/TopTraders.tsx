@@ -2,21 +2,21 @@
 import { useLanguage } from "@/lib/LanguageContext";
 
 const traders = [
-  { name: "Karim B.",       flag: "FR", payout: "$840",   size: "$100K", color: "#2D7DD2", initials: "KB" },
-  { name: "Marco V.",       flag: "IT", payout: "$1,620", size: "$200K", color: "#3b82f6", initials: "MV" },
-  { name: "Sarah L.",       flag: "GB", payout: "$490",   size: "$50K",  color: "#22c55e", initials: "SL" },
-  { name: "Ahmed R.",       flag: "SA", payout: "$2,100", size: "$200K", color: "#a855f7", initials: "AR" },
-  { name: "Lucas M.",       flag: "BR", payout: "$750",   size: "$100K", color: "#f59e0b", initials: "LM" },
-  { name: "TheBullTrader",  flag: "DE", payout: "$3,200", size: "$200K", color: "#ef4444", initials: "TB" },
-  { name: "Yuki T.",        flag: "JP", payout: "$980",   size: "$100K", color: "#06b6d4", initials: "YT" },
-  { name: "Carlos G.",      flag: "ES", payout: "$560",   size: "$50K",  color: "#2D7DD2", initials: "CG" },
-  { name: "PipHunterPro",   flag: "US", payout: "$2,750", size: "$200K", color: "#22c55e", initials: "PH" },
-  { name: "Fatima A.",      flag: "MA", payout: "$870",   size: "$100K", color: "#f59e0b", initials: "FA" },
-  { name: "Dmitri K.",      flag: "RU", payout: "$1,340", size: "$200K", color: "#3b82f6", initials: "DK" },
-  { name: "Lena H.",        flag: "DE", payout: "$310",   size: "$25K",  color: "#a855f7", initials: "LH" },
-  { name: "Jean-Pierre D.", flag: "FR", payout: "$1,900", size: "$200K", color: "#ef4444", initials: "JP" },
-  { name: "GoldScalper",    flag: "AE", payout: "$4,100", size: "$200K", color: "#2D7DD2", initials: "GS" },
-  { name: "Min-jun L.",     flag: "KR", payout: "$1,190", size: "$100K", color: "#06b6d4", initials: "ML" },
+  { name: "Karim B.",       flag: "FR", payout: "$4,820",  size: "$100K", color: "#2D7DD2", initials: "KB" },
+  { name: "Marco V.",       flag: "IT", payout: "$9,640",  size: "$200K", color: "#3b82f6", initials: "MV" },
+  { name: "Sarah L.",       flag: "GB", payout: "$2,350",  size: "$50K",  color: "#22c55e", initials: "SL" },
+  { name: "Ahmed R.",       flag: "SA", payout: "$10,200", size: "$200K", color: "#a855f7", initials: "AR" },
+  { name: "Lucas M.",       flag: "BR", payout: "$4,480",  size: "$100K", color: "#f59e0b", initials: "LM" },
+  { name: "TheBullTrader",  flag: "DE", payout: "$11,360", size: "$200K", color: "#ef4444", initials: "TB" },
+  { name: "Yuki T.",        flag: "JP", payout: "$5,100",  size: "$100K", color: "#06b6d4", initials: "YT" },
+  { name: "Carlos G.",      flag: "ES", payout: "$2,720",  size: "$50K",  color: "#2D7DD2", initials: "CG" },
+  { name: "PipHunterPro",   flag: "US", payout: "$8,960",  size: "$200K", color: "#22c55e", initials: "PH" },
+  { name: "Fatima A.",      flag: "MA", payout: "$4,650",  size: "$100K", color: "#f59e0b", initials: "FA" },
+  { name: "Dmitri K.",      flag: "RU", payout: "$9,280",  size: "$200K", color: "#3b82f6", initials: "DK" },
+  { name: "Lena H.",        flag: "DE", payout: "$1,180",  size: "$25K",  color: "#a855f7", initials: "LH" },
+  { name: "Jean-Pierre D.", flag: "FR", payout: "$10,850", size: "$200K", color: "#ef4444", initials: "JP" },
+  { name: "GoldScalper",    flag: "AE", payout: "$12,100", size: "$200K", color: "#2D7DD2", initials: "GS" },
+  { name: "Min-jun L.",     flag: "KR", payout: "$5,340",  size: "$100K", color: "#06b6d4", initials: "ML" },
 ];
 
 function TraderCard({ trader }: { trader: typeof traders[0] }) {
@@ -73,8 +73,51 @@ export default function TopTraders() {
 
   const doubled = [...traders, ...traders];
 
+  const tableRows = [
+    { size: "$10K",  profit: "$600",    reward: "~$480" },
+    { size: "$25K",  profit: "$1,500",  reward: "~$1,200" },
+    { size: "$50K",  profit: "$3,000",  reward: "~$2,400" },
+    { size: "$100K", profit: "$6,000",  reward: "~$4,800" },
+    { size: "$200K", profit: "$12,000", reward: "~$9,600" },
+  ];
+
   return (
     <section style={{ padding: "60px 0", overflow: "hidden" }}>
+
+      {/* Earnings table */}
+      <div style={{ maxWidth: 680, margin: "0 auto 56px", padding: "0 24px" }}>
+        <p style={{ color: "#555", fontSize: 15, lineHeight: 1.8, marginBottom: 28, textAlign: "center" }}>
+          {lang === "fr"
+            ? "Basé sur une performance moyenne de 6% par mois, voici ce que nos traders certifiés touchent en récompense selon leur taille de compte — avec un partage de profit allant jusqu'à 90%."
+            : "Based on an average monthly performance of 6%, here is what our certified traders earn in rewards depending on their account size — with a profit split of up to 90%."}
+        </p>
+        <div style={{ border: "1px solid #1a1a1a", borderRadius: 16, overflow: "hidden" }}>
+          {/* Header */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", backgroundColor: "#0f0f0f", borderBottom: "1px solid #1a1a1a" }}>
+            {[
+              lang === "fr" ? "Compte" : "Account",
+              lang === "fr" ? "Profit mensuel (6%)" : "Monthly profit (6%)",
+              lang === "fr" ? "Votre récompense (80%)" : "Your reward (80%)",
+            ].map((h, i) => (
+              <div key={i} style={{ padding: "12px 20px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "1px", textAlign: i === 0 ? "left" : "center" }}>
+                {h}
+              </div>
+            ))}
+          </div>
+          {/* Rows */}
+          {tableRows.map((row, i) => (
+            <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderBottom: i < tableRows.length - 1 ? "1px solid #111" : "none", backgroundColor: i % 2 === 0 ? "#0a0a0a" : "#080808" }}>
+              <div style={{ padding: "14px 20px", fontWeight: 800, fontSize: 15, color: "#fff" }}>{row.size}</div>
+              <div style={{ padding: "14px 20px", fontWeight: 600, fontSize: 15, color: "#888", textAlign: "center" }}>{row.profit}</div>
+              <div style={{ padding: "14px 20px", fontWeight: 800, fontSize: 15, color: "#22c55e", textAlign: "center" }}>{row.reward}</div>
+            </div>
+          ))}
+        </div>
+        <p style={{ color: "#333", fontSize: 12, marginTop: 10, textAlign: "center" }}>
+          {lang === "fr" ? "* Estimations basées sur 6% de profit mensuel et 80% de partage. Les performances varient selon les traders." : "* Estimates based on 6% monthly profit and 80% split. Results vary per trader."}
+        </p>
+      </div>
+
       <div style={{ textAlign: "center", marginBottom: 36, padding: "0 24px" }}>
         <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 12 }}>
           {lang === "fr" ? "Communauté" : "Community"}
