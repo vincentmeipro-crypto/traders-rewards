@@ -17,16 +17,6 @@ const CANDLES: [boolean, number, number, number, number][] = [
   [false, 100, 178,  62, 210],
 ];
 
-const FLOATING_LABELS = [
-  { text: "10K",  color: "#22c55e", x: 48,  top: "7%",  delay: 0,   dur: 7 },
-  { text: "200K", color: "#ef4444", x: 190, top: "16%", delay: 2.6, dur: 8 },
-  { text: "50K",  color: "#C9A84C", x: 90,  top: "42%", delay: 1.1, dur: 6.5 },
-  { text: "25K",  color: "#2D7DD2", x: 230, top: "58%", delay: 4.2, dur: 7.5 },
-  { text: "100K", color: "#a855f7", x: 55,  top: "74%", delay: 0.7, dur: 8 },
-  { text: "200K", color: "#ef4444", x: 170, top: "88%", delay: 3.3, dur: 6.5 },
-  { text: "10K",  color: "#22c55e", x: 300, top: "30%", delay: 5,   dur: 7 },
-  { text: "100K", color: "#a855f7", x: 310, top: "70%", delay: 1.8, dur: 7.5 },
-];
 
 function CandleChart({ side }: { side: "left" | "right" }) {
   const W = 520;
@@ -54,40 +44,7 @@ function CandleChart({ side }: { side: "left" | "right" }) {
           0%, 100% { transform: translateY(0px); opacity: 1; }
           50%       { transform: translateY(22px); opacity: 0.6; }
         }
-        @keyframes labelBounce {
-          0%   { opacity: 0; transform: scale(0.5) translateY(16px); }
-          14%  { opacity: 1; transform: scale(1.14) translateY(-7px); }
-          24%  { opacity: 1; transform: scale(1)    translateY(0px); }
-          62%  { opacity: 1; transform: scale(1)    translateY(0px); }
-          82%  { opacity: 0; transform: scale(0.88) translateY(-14px); }
-          100% { opacity: 0; transform: scale(0.5)  translateY(16px); }
-        }
       `}</style>
-
-      {/* Floating account size labels */}
-      {FLOATING_LABELS.map((l, i) => (
-        <div key={i} style={{
-          position: "absolute",
-          left: l.x,
-          top: l.top,
-          color: l.color,
-          fontWeight: 900,
-          fontSize: 13,
-          fontFamily: "Inter, sans-serif",
-          letterSpacing: "0.5px",
-          backgroundColor: `${l.color}18`,
-          border: `1px solid ${l.color}55`,
-          borderRadius: 100,
-          padding: "4px 11px",
-          opacity: 0,
-          animation: `labelBounce ${l.dur}s ease-in-out infinite`,
-          animationDelay: `${l.delay}s`,
-          whiteSpace: "nowrap",
-          backdropFilter: "blur(4px)",
-        }}>
-          {l.text}
-        </div>
-      ))}
 
       <svg width={W} height={H}>
         <defs>
