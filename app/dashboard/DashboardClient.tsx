@@ -1178,41 +1178,22 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* 2-column layout */}
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, alignItems: "start" }}>
 
-              {/* LEFT: Balance + Progress bars */}
+              {/* LEFT: Balance + Rules + Account + Download */}
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
                 {/* Balance card */}
-                <div className="card" style={{ padding: 28 }}>
+                <div className="card" style={{ padding: 28, border: "1.5px solid rgba(255,255,255,0.18)" }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>{T.dash.balance}</div>
                   <div style={{ fontSize: 40, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
                     ${challenge.balance.toLocaleString()}
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#22c55e" : "#ef4444", marginBottom: 20 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#22c55e" : "#ef4444" }}>
                     {profitAmount >= 0 ? "+" : ""}${profitAmount.toLocaleString()} ({profitAmount >= 0 ? "+" : ""}{profitPct}%)
                   </div>
-                  <div style={{ display: "flex", gap: 24, fontSize: 13, color: "#555", borderTop: "1px solid #1a1a1a", paddingTop: 16 }}>
-                    <span>Start : <b style={{ color: "#888" }}>${challenge.start_balance.toLocaleString()}</b></span>
-                    <span>{T.dash.tradingDays} : <b style={{ color: challenge.trading_days >= 4 ? "#22c55e" : "#888" }}>{challenge.trading_days}/4 {T.dash.minDays}</b></span>
-                  </div>
                 </div>
-
-                {/* Challenge evolution chart */}
-                <div className="card" style={{ padding: 24 }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
-                    {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
-                  </div>
-                  <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
-                    {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
-                  </div>
-                  <ChallengeChart challenge={challenge} isFr={isFr} />
-                </div>
-              </div>
-
-              {/* RIGHT: Rules + Trading account + Download */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
                 {/* Rules checklist */}
-                <div className="card" style={{ padding: 28 }}>
+                <div className="card" style={{ padding: 28, border: "1.5px solid rgba(255,255,255,0.18)" }}>
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, color: "#fff" }}>{T.dash.rulesStatus}</div>
                   {[
                     { label: `${T.dash.profitTarget} (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%` },
@@ -1228,15 +1209,10 @@ export default function DashboardClient({ user }: { user: User }) {
                       <span style={{ color: rule.ok ? "#22c55e" : "#f59e0b", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
                     </div>
                   ))}
-                  {challenge.phase === "funded" ? (
+                  {challenge.phase === "funded" && (
                     <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 18 }}>
                       {T.dash.requestReward}
                     </button>
-                  ) : (
-                    <div style={{ marginTop: 18, backgroundColor: "#1a1a1a", borderRadius: 10, padding: "12px 16px", fontSize: 12, color: "#555", display: "flex", alignItems: "center", gap: 8 }}>
-                      <Clock size={12} color="#555" />
-                      {T.dash.noTimeLimit}
-                    </div>
                   )}
                 </div>
 
@@ -1291,6 +1267,20 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
 
               </div>
+
+              {/* RIGHT: Chart */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
+                    {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
+                    {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
+                  </div>
+                  <ChallengeChart challenge={challenge} isFr={isFr} />
+                </div>
+              </div>
+
             </div>
           </>
         )}
