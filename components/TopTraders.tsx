@@ -84,40 +84,6 @@ export default function TopTraders() {
   return (
     <section style={{ padding: "60px 0", overflow: "hidden" }}>
 
-      {/* Earnings table */}
-      <div style={{ maxWidth: 680, margin: "0 auto 56px", padding: "0 24px" }}>
-        <p style={{ color: "#555", fontSize: 15, lineHeight: 1.8, marginBottom: 28, textAlign: "center" }}>
-          {lang === "fr"
-            ? "Basé sur une performance moyenne de 6% par mois, voici ce que nos traders certifiés touchent en récompense selon leur taille de compte — avec un partage de profit allant jusqu'à 90%."
-            : "Based on an average monthly performance of 6%, here is what our certified traders earn in rewards depending on their account size — with a profit split of up to 90%."}
-        </p>
-        <div style={{ border: "1px solid #1a1a1a", borderRadius: 16, overflow: "hidden" }}>
-          {/* Header */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", backgroundColor: "#0f0f0f", borderBottom: "1px solid #1a1a1a" }}>
-            {[
-              lang === "fr" ? "Compte" : "Account",
-              lang === "fr" ? "Profit mensuel (6%)" : "Monthly profit (6%)",
-              lang === "fr" ? "Votre récompense (80%)" : "Your reward (80%)",
-            ].map((h, i) => (
-              <div key={i} style={{ padding: "12px 20px", fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: "1px", textAlign: i === 0 ? "left" : "center" }}>
-                {h}
-              </div>
-            ))}
-          </div>
-          {/* Rows */}
-          {tableRows.map((row, i) => (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderBottom: i < tableRows.length - 1 ? "1px solid #111" : "none", backgroundColor: i % 2 === 0 ? "#0a0a0a" : "#080808" }}>
-              <div style={{ padding: "14px 20px", fontWeight: 800, fontSize: 15, color: "#fff" }}>{row.size}</div>
-              <div style={{ padding: "14px 20px", fontWeight: 600, fontSize: 15, color: "#888", textAlign: "center" }}>{row.profit}</div>
-              <div style={{ padding: "14px 20px", fontWeight: 800, fontSize: 15, color: "#22c55e", textAlign: "center" }}>{row.reward}</div>
-            </div>
-          ))}
-        </div>
-        <p style={{ color: "#333", fontSize: 12, marginTop: 10, textAlign: "center" }}>
-          {lang === "fr" ? "* Estimations basées sur 6% de profit mensuel et 80% de partage. Les performances varient selon les traders." : "* Estimates based on 6% monthly profit and 80% split. Results vary per trader."}
-        </p>
-      </div>
-
       <div style={{ textAlign: "center", marginBottom: 36, padding: "0 24px" }}>
         <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 12 }}>
           {lang === "fr" ? "Communauté" : "Community"}
@@ -130,16 +96,69 @@ export default function TopTraders() {
 
       {/* Ticker */}
       <div style={{ position: "relative" }}>
-        {/* Fade left */}
         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 120, zIndex: 2, background: "linear-gradient(to right, #16161C, transparent)", pointerEvents: "none" }} />
-        {/* Fade right */}
         <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 120, zIndex: 2, background: "linear-gradient(to left, #16161C, transparent)", pointerEvents: "none" }} />
-
         <div style={{ display: "flex", gap: 16, animation: "ticker 40s linear infinite", width: "max-content", padding: "8px 16px" }}>
           {doubled.map((trader, i) => (
             <TraderCard key={i} trader={trader} />
           ))}
         </div>
+      </div>
+
+      {/* ── Earnings cards ── */}
+      <div style={{ maxWidth: 900, margin: "64px auto 0", padding: "0 24px" }}>
+
+        <div style={{ textAlign: "center", marginBottom: 36 }}>
+          <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 10 }}>
+            {lang === "fr" ? "Potentiel de gains" : "Earnings potential"}
+          </span>
+          <h3 style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: 12 }}>
+            {lang === "fr" ? "Combien pouvez-vous gagner ?" : "How much can you earn?"}
+          </h3>
+          <p style={{ color: "#555", fontSize: 14, maxWidth: 520, margin: "0 auto", lineHeight: 1.7 }}>
+            {lang === "fr"
+              ? "À 6% de profit mensuel en moyenne, voici ce que nos traders certifiés touchent — avec jusqu'à 90% des gains."
+              : "At an average 6% monthly profit, here is what our certified traders earn — keeping up to 90% of gains."}
+          </p>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
+          {tableRows.map((row, i) => {
+            const colors = ["#2D7DD2", "#a855f7", "#22c55e", "#f59e0b", "#22c55e"];
+            const glows  = ["#2D7DD222", "#a855f722", "#22c55e22", "#f59e0b22", "#22c55e22"];
+            return (
+              <div key={i} style={{
+                background: `linear-gradient(145deg, #0f0f0f, #111)`,
+                border: `1px solid ${colors[i]}33`,
+                borderRadius: 18,
+                padding: "24px 16px",
+                textAlign: "center",
+                position: "relative",
+                overflow: "hidden",
+              }}>
+                {/* Glow top */}
+                <div style={{ position: "absolute", top: -30, left: "50%", transform: "translateX(-50%)", width: 80, height: 80, borderRadius: "50%", background: glows[i], filter: "blur(20px)", pointerEvents: "none" }} />
+                <div style={{ fontSize: 13, fontWeight: 800, color: colors[i], marginBottom: 16, letterSpacing: "1px" }}>{row.size}</div>
+                <div style={{ fontSize: 11, color: "#444", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
+                  {lang === "fr" ? "Profit moyen" : "Avg. profit"}
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#888", marginBottom: 16 }}>{row.profit}</div>
+                <div style={{ width: "100%", height: 1, background: `linear-gradient(to right, transparent, ${colors[i]}44, transparent)`, marginBottom: 16 }} />
+                <div style={{ fontSize: 11, color: "#444", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>
+                  {lang === "fr" ? "Votre récompense" : "Your reward"}
+                </div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: "#22c55e", letterSpacing: "-0.5px" }}>{row.reward}</div>
+                <div style={{ fontSize: 10, color: "#333", marginTop: 4 }}>{lang === "fr" ? "/ mois" : "/ month"}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        <p style={{ color: "#2a2a2a", fontSize: 11, marginTop: 16, textAlign: "center" }}>
+          {lang === "fr"
+            ? "* Estimations basées sur 6% de profit mensuel et 80% de partage. Les performances varient selon les traders."
+            : "* Estimates based on 6% monthly profit and 80% split. Results vary per trader."}
+        </p>
       </div>
 
       <style>{`
