@@ -1176,15 +1176,15 @@ export default function DashboardClient({ user }: { user: User }) {
             )}
 
             {/* 2-column layout */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, alignItems: "start" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 10, alignItems: "start" }}>
 
-              {/* LEFT: Balance + Rules + Account + Download */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {/* LEFT: Balance + Account + Rules */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
                 {/* Balance card */}
-                <div className="card" style={{ padding: 28, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>{T.dash.balance}</div>
-                  <div style={{ fontSize: 40, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
+                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
+                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 6 }}>{T.dash.balance}</div>
+                  <div style={{ fontSize: 38, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
                     ${challenge.balance.toLocaleString()}
                   </div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#22c55e" : "#ef4444" }}>
@@ -1192,45 +1192,21 @@ export default function DashboardClient({ user }: { user: User }) {
                   </div>
                 </div>
 
-                {/* Rules checklist */}
-                <div className="card" style={{ padding: 28, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, color: "#fff" }}>{T.dash.rulesStatus}</div>
-                  {[
-                    { label: `${T.dash.profitTarget} (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%` },
-                    { label: `Min. ${T.dash.tradingDays} (4)`, ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4` },
-                    { label: `${T.dash.dailyDrawdown} (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: dailyDrawdownPct < challenge.daily_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
-                    { label: `${T.dash.totalDrawdown} (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
-                  ].map((rule, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
-                        <span style={{ color: "#888", fontSize: 13 }}>{rule.label}</span>
-                      </div>
-                      <span style={{ color: rule.ok ? "#22c55e" : "#f59e0b", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
-                    </div>
-                  ))}
-                  {challenge.phase === "funded" && (
-                    <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 18 }}>
-                      {T.dash.requestReward}
-                    </button>
-                  )}
-                </div>
-
                 {/* Trading account */}
                 {!challenge.ctrader_account_id ? (
-                  <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "20px 24px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                  <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "16px 20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                       <Clock size={16} color="#2D7DD2" />
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{T.dash.accountPending}</div>
                     </div>
                     <div style={{ color: "#555", fontSize: 13 }}>{T.dash.accountPendingMsg}</div>
                   </div>
                 ) : (
-                  <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "20px 24px" }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 14, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "16px 20px" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: "#22c55e", display: "flex", alignItems: "center", gap: 8 }}>
                       <CheckCircle size={14} /> {T.dash.accountReady}
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                       {[
                         { label: T.dash.platform, value: "cTrader" },
                         { label: T.dash.accountId, value: challenge.ctrader_account_id || "—" },
@@ -1246,10 +1222,50 @@ export default function DashboardClient({ user }: { user: User }) {
                   </div>
                 )}
 
-                {/* Download cTrader */}
-                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px" }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{T.dash.downloadTitle}</div>
-                  <div style={{ color: "#555", fontSize: 13, marginBottom: 14 }}>{T.dash.downloadSub}</div>
+                {/* Rules checklist */}
+                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#fff" }}>{T.dash.rulesStatus}</div>
+                  {[
+                    { label: `${T.dash.profitTarget} (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%` },
+                    { label: `Min. ${T.dash.tradingDays} (4)`, ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4` },
+                    { label: `${T.dash.dailyDrawdown} (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: dailyDrawdownPct < challenge.daily_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
+                    { label: `${T.dash.totalDrawdown} (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
+                  ].map((rule, i) => (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
+                        <span style={{ color: "#888", fontSize: 13 }}>{rule.label}</span>
+                      </div>
+                      <span style={{ color: rule.ok ? "#22c55e" : "#f59e0b", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
+                    </div>
+                  ))}
+                  {challenge.phase === "funded" && (
+                    <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 14 }}>
+                      {T.dash.requestReward}
+                    </button>
+                  )}
+                </div>
+
+              </div>
+
+              {/* RIGHT: Chart + Download */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+
+                {/* Chart */}
+                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
+                    {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
+                  </div>
+                  <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
+                    {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
+                  </div>
+                  <ChallengeChart challenge={challenge} isFr={isFr} />
+                </div>
+
+                {/* Download platforms */}
+                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 14, padding: "16px 20px" }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 3 }}>{isFr ? "Télécharger les plateformes" : "Download platforms"}</div>
+                  <div style={{ color: "#555", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
                       { label: "🖥 Windows", href: "https://ctrader.com/download/ctrader-windows" },
@@ -1266,19 +1282,6 @@ export default function DashboardClient({ user }: { user: User }) {
                   </div>
                 </div>
 
-              </div>
-
-              {/* RIGHT: Chart */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
-                    {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
-                  </div>
-                  <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
-                    {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
-                  </div>
-                  <ChallengeChart challenge={challenge} isFr={isFr} />
-                </div>
               </div>
 
             </div>
