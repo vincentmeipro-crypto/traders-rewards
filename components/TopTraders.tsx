@@ -130,34 +130,36 @@ export default function TopTraders() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(5, 1fr)", gap: isMobile ? 10 : 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(5, 1fr)", gap: isMobile ? 12 : 12 }}>
           {tableRows.map((row, i) => {
             const colors = ["#2D7DD2", "#a855f7", "#22c55e", "#f59e0b", "#22c55e"];
             const glows  = ["#2D7DD222", "#a855f722", "#22c55e22", "#f59e0b22", "#22c55e22"];
             return (
               <div key={i} style={{
                 background: `linear-gradient(145deg, #0f0f0f, #111)`,
-                border: `1px solid ${colors[i]}33`,
+                border: `1px solid ${colors[i]}55`,
                 borderRadius: 18,
-                padding: isMobile ? "18px 10px" : "24px 16px",
+                padding: isMobile ? "22px 16px" : "24px 16px",
                 textAlign: "center",
                 position: "relative",
                 overflow: "hidden",
-                gridColumn: isMobile && i === 4 ? "2 / 3" : undefined,
+                gridColumn: isMobile && i === 4 ? "1 / 3" : undefined,
+                maxWidth: isMobile && i === 4 ? 200 : undefined,
+                margin: isMobile && i === 4 ? "0 auto" : undefined,
+                width: isMobile && i === 4 ? "100%" : undefined,
               }}>
-                {/* Glow top */}
-                <div style={{ position: "absolute", top: -30, left: "50%", transform: "translateX(-50%)", width: 80, height: 80, borderRadius: "50%", background: glows[i], filter: "blur(20px)", pointerEvents: "none" }} />
-                <div style={{ fontSize: 13, fontWeight: 800, color: colors[i], marginBottom: 16, letterSpacing: "1px" }}>{row.size}</div>
-                <div style={{ fontSize: 11, color: "#444", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
+                <div style={{ position: "absolute", top: -30, left: "50%", transform: "translateX(-50%)", width: 100, height: 100, borderRadius: "50%", background: glows[i], filter: "blur(24px)", pointerEvents: "none" }} />
+                <div style={{ fontSize: isMobile ? 16 : 13, fontWeight: 800, color: colors[i], marginBottom: 14, letterSpacing: "1px" }}>{row.size}</div>
+                <div style={{ fontSize: 10, color: "#aaa", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
                   {lang === "fr" ? "Profit moyen" : "Avg. profit"}
                 </div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: "#888", marginBottom: 16 }}>{row.profit}</div>
-                <div style={{ width: "100%", height: 1, background: `linear-gradient(to right, transparent, ${colors[i]}44, transparent)`, marginBottom: 16 }} />
-                <div style={{ fontSize: 11, color: "#444", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>
+                <div style={{ fontSize: isMobile ? 17 : 18, fontWeight: 700, color: "#fff", marginBottom: 14 }}>{row.profit}</div>
+                <div style={{ width: "100%", height: 1, background: `linear-gradient(to right, transparent, ${colors[i]}66, transparent)`, marginBottom: 14 }} />
+                <div style={{ fontSize: 10, color: "#aaa", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>
                   {lang === "fr" ? "Votre récompense" : "Your reward"}
                 </div>
-                <div style={{ fontSize: 26, fontWeight: 900, color: "#22c55e", letterSpacing: "-0.5px" }}>{row.reward}</div>
-                <div style={{ fontSize: 10, color: "#333", marginTop: 4 }}>{lang === "fr" ? "/ mois" : "/ month"}</div>
+                <div style={{ fontSize: isMobile ? 24 : 26, fontWeight: 900, color: "#22c55e", letterSpacing: "-0.5px" }}>{row.reward}</div>
+                <div style={{ fontSize: 11, color: "#888", marginTop: 4 }}>{lang === "fr" ? "/ mois" : "/ month"}</div>
               </div>
             );
           })}
