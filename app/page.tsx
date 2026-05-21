@@ -1,5 +1,4 @@
 import Navbar from "@/components/Navbar";
-import PromoBanner from "@/components/PromoBanner";
 import DisclaimerBanner from "@/components/DisclaimerBanner";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
@@ -14,8 +13,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main style={{ minHeight: "100vh" }}>
-      <PromoBanner />
-      <Navbar />
+<Navbar />
       <Hero />
       <Stats />
       <TopTraders />
