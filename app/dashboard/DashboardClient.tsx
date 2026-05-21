@@ -554,25 +554,32 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {/* Personal info form */}
             <div className="card" style={{ padding: 28, marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#C9A84C" }}>Informations personnelles</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#C9A84C" }}>Informations personnelles</div>
+              <div style={{ color: "#555", fontSize: 12, marginBottom: 20 }}>Les champs verrouillés ne peuvent pas être modifiés pour des raisons de conformité KYC.</div>
+
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 14, marginBottom: 14 }}>
                 {[
-                  { label: "Prénom", value: profileFirstName, setter: setProfileFirstName, placeholder: "Jean" },
-                  { label: "Nom", value: profileLastName, setter: setProfileLastName, placeholder: "Dupont" },
+                  { label: "Prénom", value: profileFirstName },
+                  { label: "Nom", value: profileLastName },
                 ].map(f => (
                   <div key={f.label}>
-                    <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
-                    <input value={f.value} onChange={e => f.setter(e.target.value)} placeholder={f.placeholder}
-                      style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                      onFocus={e => (e.target.style.borderColor = "#C9A84C")}
-                      onBlur={e => (e.target.style.borderColor = "#222")} />
+                    <label style={{ display: "block", color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>
+                      {f.label} <span style={{ color: "#333", fontSize: 10 }}>🔒</span>
+                    </label>
+                    <input value={f.value} readOnly style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 14px", color: "#555", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
                   </div>
                 ))}
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Email</label>
+                <label style={{ display: "block", color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Email <span style={{ color: "#333", fontSize: 10 }}>🔒</span></label>
                 <input value={user.email || ""} readOnly
+                  style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 14px", color: "#555", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
+              </div>
+
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: "block", color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Date de naissance <span style={{ color: "#333", fontSize: 10 }}>🔒</span></label>
+                <input value={profileBirthDate} readOnly
                   style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 14px", color: "#555", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
               </div>
 
@@ -580,14 +587,6 @@ export default function DashboardClient({ user }: { user: User }) {
                 <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Téléphone</label>
                 <input value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+33 6 12 34 56 78"
                   style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
-                  onBlur={e => (e.target.style.borderColor = "#222")} />
-              </div>
-
-              <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Date de naissance</label>
-                <input type="date" value={profileBirthDate} onChange={e => setProfileBirthDate(e.target.value)}
-                  style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box", colorScheme: "dark" }}
                   onFocus={e => (e.target.style.borderColor = "#C9A84C")}
                   onBlur={e => (e.target.style.borderColor = "#222")} />
               </div>
