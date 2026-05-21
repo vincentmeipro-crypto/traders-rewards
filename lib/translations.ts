@@ -88,7 +88,7 @@ export const t = {
     dash: {
       dashboard: 'Dashboard', challenges: 'My Challenges', rewards: 'Rewards',
       kyc: 'KYC', certificates: 'Certificates', history: 'History', invoices: 'Invoices',
-      rules: 'Rules', profile: 'My Profile', settings: 'Settings',
+      rules: 'Rules', profile: 'My Profile', settings: 'Settings', myChallenge: 'My Challenge',
       balance: 'Current Balance', tradingDays: 'Trading days', minDays: 'min',
       profitTarget: 'Profit Target', dailyDrawdown: 'Daily Drawdown', totalDrawdown: 'Total Drawdown',
       rulesStatus: 'Rules Status', passed: 'passed ✓', inProgress: 'in progress',
@@ -177,7 +177,7 @@ export const t = {
     dash: {
       dashboard: 'Dashboard', challenges: 'Mes Challenges', rewards: 'Récompenses',
       kyc: 'KYC', certificates: 'Certificats', history: 'Historique', invoices: 'Factures',
-      rules: 'Règles', profile: 'Mon Profil', settings: 'Paramètres',
+      rules: 'Règles', profile: 'Mon Profil', settings: 'Paramètres', myChallenge: 'Mon Challenge',
       balance: 'Balance actuelle', tradingDays: 'Jours tradés', minDays: 'min',
       profitTarget: 'Objectif de profit', dailyDrawdown: 'Drawdown journalier', totalDrawdown: 'Drawdown total',
       rulesStatus: 'Statut des règles', passed: 'atteint ✓', inProgress: 'en cours',
@@ -266,7 +266,7 @@ export const t = {
     dash: {
       dashboard: 'لوحة القيادة', challenges: 'تحدياتي', rewards: 'المكافآت',
       kyc: 'KYC', certificates: 'الشهادات', history: 'السجل', invoices: 'الفواتير',
-      rules: 'القواعد', profile: 'ملفي', settings: 'الإعدادات',
+      rules: 'القواعد', profile: 'ملفي', settings: 'الإعدادات', myChallenge: 'تحديي',
       balance: 'الرصيد الحالي', tradingDays: 'أيام التداول', minDays: 'حد أدنى',
       profitTarget: 'هدف الربح', dailyDrawdown: 'الخسارة اليومية', totalDrawdown: 'إجمالي الخسارة',
       rulesStatus: 'حالة القواعد', passed: 'تم ✓', inProgress: 'جارٍ',
@@ -355,7 +355,7 @@ export const t = {
     dash: {
       dashboard: 'Dashboard', challenges: 'Mis Desafíos', rewards: 'Recompensas',
       kyc: 'KYC', certificates: 'Certificados', history: 'Historial', invoices: 'Facturas',
-      rules: 'Reglas', profile: 'Mi Perfil', settings: 'Ajustes',
+      rules: 'Reglas', profile: 'Mi Perfil', settings: 'Ajustes', myChallenge: 'Mi Desafío',
       balance: 'Balance actual', tradingDays: 'Días operados', minDays: 'mín',
       profitTarget: 'Objetivo de ganancia', dailyDrawdown: 'Drawdown diario', totalDrawdown: 'Drawdown total',
       rulesStatus: 'Estado de las reglas', passed: 'superado ✓', inProgress: 'en progreso',
@@ -444,7 +444,7 @@ export const t = {
     dash: {
       dashboard: 'Dashboard', challenges: 'Meus Desafios', rewards: 'Recompensas',
       kyc: 'KYC', certificates: 'Certificados', history: 'Histórico', invoices: 'Faturas',
-      rules: 'Regras', profile: 'Meu Perfil', settings: 'Configurações',
+      rules: 'Regras', profile: 'Meu Perfil', settings: 'Configurações', myChallenge: 'Meu Desafio',
       balance: 'Saldo atual', tradingDays: 'Dias operados', minDays: 'mín',
       profitTarget: 'Meta de lucro', dailyDrawdown: 'Drawdown diário', totalDrawdown: 'Drawdown total',
       rulesStatus: 'Status das regras', passed: 'atingido ✓', inProgress: 'em andamento',
@@ -533,7 +533,7 @@ export const t = {
     dash: {
       dashboard: 'Dashboard', challenges: 'Meine Challenges', rewards: 'Prämien',
       kyc: 'KYC', certificates: 'Zertifikate', history: 'Verlauf', invoices: 'Rechnungen',
-      rules: 'Regeln', profile: 'Mein Profil', settings: 'Einstellungen',
+      rules: 'Regeln', profile: 'Mein Profil', settings: 'Einstellungen', myChallenge: 'Meine Challenge',
       balance: 'Aktuelles Guthaben', tradingDays: 'Handelstage', minDays: 'min',
       profitTarget: 'Gewinnziel', dailyDrawdown: 'Täglicher Drawdown', totalDrawdown: 'Gesamter Drawdown',
       rulesStatus: 'Regelstatus', passed: 'erreicht ✓', inProgress: 'in Bearbeitung',
@@ -622,7 +622,7 @@ export const t = {
     dash: {
       dashboard: 'Dashboard', challenges: 'Meydan Okumalarım', rewards: 'Ödüller',
       kyc: 'KYC', certificates: 'Sertifikalar', history: 'Geçmiş', invoices: 'Faturalar',
-      rules: 'Kurallar', profile: 'Profilim', settings: 'Ayarlar',
+      rules: 'Kurallar', profile: 'Profilim', settings: 'Ayarlar', myChallenge: 'Meydan Okumam',
       balance: 'Mevcut Bakiye', tradingDays: 'İşlem günleri', minDays: 'min',
       profitTarget: 'Kâr Hedefi', dailyDrawdown: 'Günlük Drawdown', totalDrawdown: 'Toplam Drawdown',
       rulesStatus: 'Kural Durumu', passed: 'tamamlandı ✓', inProgress: 'devam ediyor',
