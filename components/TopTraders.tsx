@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const traders = [
@@ -66,6 +67,13 @@ function TraderCard({ trader }: { trader: typeof traders[0] }) {
 
 export default function TopTraders() {
   const { lang } = useLanguage();
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
   const title    = lang === "fr" ? "Dernières Récompenses" : "Latest Rewards";
   const subtitle = lang === "fr"
     ? "Nos traders certifiés reçoivent leurs récompenses chaque semaine."
@@ -122,7 +130,7 @@ export default function TopTraders() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(3, 1fr)" : "repeat(5, 1fr)", gap: isMobile ? 10 : 12 }}>
           {tableRows.map((row, i) => {
             const colors = ["#2D7DD2", "#a855f7", "#22c55e", "#f59e0b", "#22c55e"];
             const glows  = ["#2D7DD222", "#a855f722", "#22c55e22", "#f59e0b22", "#22c55e22"];
@@ -131,10 +139,11 @@ export default function TopTraders() {
                 background: `linear-gradient(145deg, #0f0f0f, #111)`,
                 border: `1px solid ${colors[i]}33`,
                 borderRadius: 18,
-                padding: "24px 16px",
+                padding: isMobile ? "18px 10px" : "24px 16px",
                 textAlign: "center",
                 position: "relative",
                 overflow: "hidden",
+                gridColumn: isMobile && i === 4 ? "2 / 3" : undefined,
               }}>
                 {/* Glow top */}
                 <div style={{ position: "absolute", top: -30, left: "50%", transform: "translateX(-50%)", width: 80, height: 80, borderRadius: "50%", background: glows[i], filter: "blur(20px)", pointerEvents: "none" }} />
