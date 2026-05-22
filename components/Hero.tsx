@@ -149,22 +149,8 @@ export default function Hero() {
           marginBottom: 20,
         }}>
           {T.hero.headline1}<br />
-          <span className="gold-gradient" style={{ position: "relative", display: "inline" }}>
+          <span className="gold-gradient">
             {T.hero.headline2}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/CERTIFIED.png"
-              alt=""
-              style={{
-                display: "inline-block",
-                height: "1.0em",
-                width: "auto",
-                verticalAlign: "top",
-                marginTop: "-0.05em",
-                marginLeft: "-0.2em",
-                mixBlendMode: "screen",
-              }}
-            />
           </span>
         </h1>
 
