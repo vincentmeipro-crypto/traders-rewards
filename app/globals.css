@@ -59,11 +59,11 @@ body {
 
 .btn-secondary {
   background: transparent;
-  color: var(--accent-light);
+  color: #ffffff;
   font-weight: 600;
   padding: 13px 32px;
   border-radius: 8px;
-  border: 1px solid var(--border-accent);
+  border: 1px solid rgba(255,255,255,0.6);
   cursor: pointer;
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
@@ -74,8 +74,8 @@ body {
 }
 
 .btn-secondary:hover {
-  background: rgba(45, 125, 210, 0.1);
-  border-color: var(--accent);
+  background: rgba(255,255,255,0.08);
+  border-color: #ffffff;
 }
 
 .card {
