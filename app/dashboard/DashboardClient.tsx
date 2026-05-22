@@ -1155,7 +1155,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
               </div>
               <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                + New <ChevronRight size={14} />
+                {T.dash.newChallenge} <ChevronRight size={14} />
               </a>
             </div>
 
