@@ -18,8 +18,8 @@ export const t = {
     },
     hero: {
       badge: 'The Elite Prop Firm',
-      headline1: 'Perform on demo.',
-      headline2: 'Receive real rewards.',
+      headline1: 'Perform Your Trading Demo.',
+      headline2: 'Receive Real Rewards.',
       sub: 'Access up to $200,000 in simulated capital. Earn rewards up to 90% of your simulated gains.',
       cta1: 'Start Your Challenge',
       cta2: 'How It Works',
@@ -137,7 +137,7 @@ export const t = {
     },
     hero: {
       badge: 'La Prop Firm Élite',
-      headline1: 'Performez en démo.',
+      headline1: 'Performez votre Trading Démo.',
       headline2: 'Recevez de vraies récompenses.',
       sub: 'Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu\'à 90% de vos gains simulés.',
       cta1: 'Commencer le Challenge',
@@ -256,7 +256,7 @@ export const t = {
     },
     hero: {
       badge: 'شركة التداول النخبوية',
-      headline1: 'تداول على حساب تجريبي.',
+      headline1: 'أدِّ صفقاتك التجريبية.',
       headline2: 'احصل على مكافآت حقيقية.',
       sub: 'اجتز تحديناً واحصل على رأس مال يصل إلى 200,000$. احتفظ بما يصل إلى 90% من أرباحك. بدون مخاطر شخصية.',
       cta1: 'ابدأ تحديك',
@@ -374,7 +374,7 @@ export const t = {
     },
     hero: {
       badge: 'La Prop Firm Élite',
-      headline1: 'Opera en demo.',
+      headline1: 'Realiza tu Trading Demo.',
       headline2: 'Recibe recompensas reales.',
       sub: 'Supera nuestro desafío y accede a $200,000 en capital financiado. Quédate hasta el 90% de tus ganancias. Sin riesgo personal.',
       cta1: 'Iniciar Desafío',
@@ -492,7 +492,7 @@ export const t = {
     },
     hero: {
       badge: 'A Prop Firm de Elite',
-      headline1: 'Opere em demo.',
+      headline1: 'Execute seu Trading Demo.',
       headline2: 'Receba recompensas reais.',
       sub: 'Passe nosso desafio e acesse até $200.000 em capital financiado. Fique com até 90% dos seus lucros. Sem risco pessoal.',
       cta1: 'Iniciar Desafio',
@@ -610,8 +610,8 @@ export const t = {
     },
     hero: {
       badge: 'Die Elite Prop Firm',
-      headline1: 'Handeln Sie auf Demo.',
-      headline2: 'Erhalten Sie echte Prämien.',
+      headline1: 'Ihr Trading Demo.',
+      headline2: 'Echte Prämien erhalten.',
       sub: 'Bestehe unsere Challenge und erhalte Zugang zu $200.000 an finanziertem Kapital. Behalte bis zu 90% deiner Gewinne. Kein persönliches Risiko.',
       cta1: 'Challenge Starten',
       cta2: 'So Funktioniert Es',
@@ -728,8 +728,8 @@ export const t = {
     },
     hero: {
       badge: 'Elit Prop Firm',
-      headline1: 'Demo\'da işlem yapın.',
-      headline2: 'Gerçek ödüller kazanın.',
+      headline1: 'Demo Ticaretinizi Yapın.',
+      headline2: 'Gerçek Ödüller Kazanın.',
       sub: 'Meydan okumamızı geç ve $200.000\'e kadar fonlu sermayeye eriş. Kârının %90\'ına kadar al. Kişisel risk yok.',
       cta1: 'Meydan Okumayı Başlat',
       cta2: 'Nasıl Çalışır',

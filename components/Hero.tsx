@@ -141,17 +141,15 @@ export default function Hero() {
 
         {/* Title */}
         <h1 style={{
-          fontSize: isMobile ? "clamp(2.4rem, 11vw, 3.4rem)" : "clamp(3.2rem, 6vw, 5.2rem)",
+          fontSize: isMobile ? "clamp(2.4rem, 11vw, 3.4rem)" : "clamp(3.8rem, 7vw, 6.5rem)",
           fontWeight: 900,
-          letterSpacing: "-2px",
-          lineHeight: 1.1,
-          maxWidth: 1100,
+          letterSpacing: "-3px",
+          lineHeight: 1.05,
+          maxWidth: 1200,
           marginBottom: 20,
         }}>
           {T.hero.headline1}<br />
-          <span className="gold-gradient">
-            {T.hero.headline2}
-          </span>
+          {T.hero.headline2}
         </h1>
 
         {/* Subtitle */}
