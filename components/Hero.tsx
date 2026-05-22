@@ -141,7 +141,7 @@ export default function Hero() {
 
         {/* Title */}
         <h1 style={{
-          fontSize: isMobile ? "clamp(2.6rem, 12vw, 3.5rem)" : "clamp(3rem, 8vw, 5.5rem)",
+          fontSize: isMobile ? "clamp(2.2rem, 10vw, 3rem)" : "clamp(2.6rem, 5.5vw, 4.2rem)",
           fontWeight: 900,
           letterSpacing: "-2px",
           lineHeight: 1.05,
