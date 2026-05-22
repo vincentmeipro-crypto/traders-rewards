@@ -79,7 +79,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
-  <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
+  <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
 );
 
 const badge = (label: string, color: string) => (
@@ -400,18 +400,18 @@ export default function AdminPage() {
           <img src="/logo-white.jpg" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
           <div style={{ color: "#C9A84C", fontWeight: 800, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", marginTop: 12 }}>Admin Panel</div>
         </div>
-        <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "36px 32px" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1px solid #1e1e1e", borderRadius: 20, padding: "36px 32px" }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>Connexion Admin</h2>
           <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div>
               <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Email</div>
               <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} placeholder="vincentmeipro@gmail.com" required
-                style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
             <div>
               <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
               <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
-                style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
             {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
             <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#C9A84C", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
@@ -423,50 +423,59 @@ export default function AdminPage() {
     </div>
   );
 
-  if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Chargement...</div>;
-  if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#0f0f0f", border: "1px solid #ef4444", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#888", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
+  if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#111827" }}>Chargement...</div>;
+  if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#fff", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#6b7280", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#070707", color: "#fff", fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif" }}>
 
-      {/* ── HEADER ── */}
-      <div style={{ backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", padding: "14px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <span style={{ fontSize: 18, fontWeight: 900, letterSpacing: "-0.5px" }}>ELYSIUM <span style={{ color: "#555" }}>ADMIN</span></span>
-          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-            {TABS.map(t => (
-              <button key={t.id} onClick={() => setTab(t.id)} style={{ backgroundColor: tab === t.id ? "#fff" : "transparent", color: tab === t.id ? "#000" : "#555", border: `1px solid ${tab === t.id ? "#fff" : "#222"}`, borderRadius: 8, padding: "5px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                {t.label}
-                {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: 6, backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
-                {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: 6, backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
-              </button>
-            ))}
+      {/* ── SIDEBAR ── */}
+      <div style={{ width: 220, backgroundColor: "#111827", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
+        <div style={{ padding: "20px 16px", borderBottom: "1px solid #1f2937", display: "flex", alignItems: "center", gap: 10 }}>
+          <img src="/logo-white.jpg" style={{ width: 34, height: 34, objectFit: "contain", mixBlendMode: "screen" }} />
+          <div>
+            <div style={{ color: "#fff", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Elysium</div>
+            <div style={{ color: "#C9A84C", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
-          {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
-          {token && <button onClick={() => loadKyc(token)} disabled={kycLoading} style={{ backgroundColor: "#1a1a1a", border: "1px solid #f59e0b", borderRadius: 8, color: "#f59e0b", padding: "7px 16px", fontSize: 12, fontWeight: 700, cursor: kycLoading ? "not-allowed" : "pointer", opacity: kycLoading ? 0.6 : 1 }}>
-            {kycLoading ? "..." : "⟳ KYC"}
-          </button>}
-          <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "#1a1a1a" : "#1e3a5f", border: "1px solid #38bdf8", borderRadius: 8, color: "#38bdf8", padding: "7px 16px", fontSize: 12, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer", opacity: syncing ? 0.6 : 1 }}>
-            {syncing ? "Sync..." : "⟳ Sync MT5"}
-          </button>
-          <a href="/dashboard" style={{ color: "#555", fontSize: 12, textDecoration: "none" }}>← Dashboard</a>
+        <nav style={{ padding: "12px 8px", flex: 1 }}>
+          {TABS.map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(45,125,210,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#2D7DD2" : "transparent"}`, color: tab === t.id ? "#2D7DD2" : "#9ca3af", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
+              {t.label}
+              {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
+              {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
+            </button>
+          ))}
+        </nav>
+        <div style={{ padding: "16px 12px", borderTop: "1px solid #1f2937", display: "flex", flexDirection: "column", gap: 8 }}>
+          {token && <button onClick={() => loadKyc(token)} disabled={kycLoading} style={{ backgroundColor: "transparent", border: "1px solid #f59e0b", borderRadius: 8, color: "#f59e0b", padding: "7px 12px", fontSize: 11, fontWeight: 700, cursor: kycLoading ? "not-allowed" : "pointer" }}>{kycLoading ? "..." : "⟳ KYC"}</button>}
+          <button onClick={runSync} disabled={syncing} style={{ backgroundColor: "transparent", border: "1px solid #38bdf8", borderRadius: 8, color: "#38bdf8", padding: "7px 12px", fontSize: 11, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>{syncing ? "Sync..." : "⟳ Sync MT5"}</button>
+          <a href="/dashboard" style={{ color: "#6b7280", fontSize: 11, textDecoration: "none", textAlign: "center" }}>← Dashboard</a>
         </div>
       </div>
 
-      {syncDetail && (
-        <div style={{ margin: "0 32px", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ color: "#555", fontSize: 11, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
-            <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "#555", cursor: "pointer" }}>✕</button>
+      {/* ── MAIN ── */}
+      <div style={{ flex: 1, backgroundColor: "#f1f5f9", overflowY: "auto", color: "#111827" }}>
+        <div style={{ backgroundColor: "#fff", borderBottom: "1px solid #e5e7eb", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Admin</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#111827" }}>{TABS.find(t => t.id === tab)?.label}</div>
           </div>
-          <pre style={{ color: "#38bdf8", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
+            {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
+          </div>
         </div>
-      )}
-
-      <div style={{ padding: "28px 32px" }}>
+        {syncDetail && (
+          <div style={{ margin: "16px 32px 0", backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: 16 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+              <span style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
+              <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>✕</button>
+            </div>
+            <pre style={{ color: "#2D7DD2", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
+          </div>
+        )}
+        <div style={{ padding: "28px 32px" }}>
 
         {/* ══ VUE D'ENSEMBLE ══ */}
         {tab === "overview" && (
@@ -494,7 +503,7 @@ export default function AdminPage() {
                 { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#22c55e" },
                 { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#22c55e" },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: "18px 22px" }}>
+                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 28, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
@@ -513,7 +522,7 @@ export default function AdminPage() {
                 { label: "Failed",             value: kpis.failed,        color: "#ef4444" },
                 { label: "Total Challenges",   value: kpis.total,         color: "#555"    },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: "16px 20px" }}>
+                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 20px" }}>
                   <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                   <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
@@ -528,7 +537,7 @@ export default function AdminPage() {
                 { label: "LTV moyen / trader",        value: `€${Math.round(kpis.ltv)}`,          sub: "dépense totale moyenne"    },
                 { label: "Payouts en attente",        value: kpis.pendingPayouts,                  sub: `€${kpis.pendingAmt.toLocaleString()} à valider` },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: "18px 22px" }}>
+                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 26, fontWeight: 900, color: "#fff", marginBottom: 4 }}>{s.value}</div>
                   <div style={{ fontSize: 11, color: "#444" }}>{s.sub}</div>
@@ -552,7 +561,7 @@ export default function AdminPage() {
                 { label: "Failed",           value: kpis.failed,    color: "#ef4444", fs: "failed"  },
               ].map((s, i) => (
                 <div key={i} onClick={() => setFilterStatus(s.fs)}
-                  style={{ flex: 1, backgroundColor: "#0f0f0f", border: `1px solid ${s.color}30`, borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}>
+                  style={{ flex: 1, backgroundColor: "#ffffff", border: `1px solid ${s.color}30`, borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}>
                   <div style={{ color: s.color, fontSize: 22, fontWeight: 900 }}>{s.value}</div>
                   <div style={{ color: "#555", fontSize: 11, marginTop: 4 }}>{s.label}</div>
                 </div>
@@ -562,9 +571,9 @@ export default function AdminPage() {
             {/* Filters */}
             <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
               <input placeholder="Recherche email / nom..." value={search} onChange={e => setSearch(e.target.value)}
-                style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none", minWidth: 220 }} />
+                style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none", minWidth: 220 }} />
               <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none" }}>
+                style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none" }}>
                 <option value="all">Tous les statuts</option>
                 <option value="active">Active</option>
                 <option value="passed">Passed</option>
@@ -575,11 +584,11 @@ export default function AdminPage() {
             </div>
 
             {/* Table */}
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+                    <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
                       {["Trader", "Compte", "Modèle", "Phase", "Statut", "Balance", "Payé", "Jours", "Account ID", "Password", "Serveur", "Date", "Actions"].map(h => (
                         <th key={h} style={{ padding: "13px 14px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
                       ))}
@@ -601,7 +610,7 @@ export default function AdminPage() {
                                   { label: "Balance", value: c.account_size.replace("$","").replace(",","") },
                                 ].map((f, i) => (
                                   <button key={i} onClick={() => copyToClipboard(f.value)}
-                                    style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "3px 8px", color: "#888", fontSize: 11, cursor: "pointer" }}>
+                                    style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "3px 8px", color: "#888", fontSize: 11, cursor: "pointer" }}>
                                     <span style={{ color: "#555", fontSize: 10 }}>{f.label}: </span>
                                     <span style={{ color: "#fff", fontWeight: 600 }}>{f.value}</span>
                                     <span style={{ color: "#444", fontSize: 10 }}> ⎘</span>
@@ -617,38 +626,38 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px", color: "#888" }}>{c.model}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
+                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
                               : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#fff" : "#888", fontWeight: 600, fontSize: 12 }}>{c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
+                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
                               : badge(c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
+                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
                               : `$${c.balance?.toLocaleString()}`}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#22c55e" }}>€{c.amount_paid}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
+                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
                               : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.ctrader_account_id ?? c.ctrader_account_id ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_account_id: e.target.value }))} style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                              ? <input type="text" value={editData.ctrader_account_id ?? c.ctrader_account_id ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_account_id: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
                               : <span style={{ color: c.ctrader_account_id ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.ctrader_account_id || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.ctrader_password ?? c.ctrader_password ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))} style={{ backgroundColor: "#1a1a1a", border: "1px solid #ffffff55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                              ? <input type="text" value={editData.ctrader_password ?? c.ctrader_password ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ffffff55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
                               : <span style={{ color: c.ctrader_password ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.ctrader_password || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.server ?? c.server ?? ""} onChange={e => setEditData(d => ({ ...d, server: e.target.value }))} style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 140 }} />
+                              ? <input type="text" value={editData.server ?? c.server ?? ""} onChange={e => setEditData(d => ({ ...d, server: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 140 }} />
                               : <span style={{ color: c.server ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.server || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#555", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
@@ -659,8 +668,8 @@ export default function AdminPage() {
                                   <button onClick={() => { setEditing(null); setEditData({}); }} style={{ backgroundColor: "transparent", color: "#555", border: "1px solid #333", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>
                               : <div style={{ display: "flex", gap: 6 }}>
-                                  <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "#1a1a1a", color: "#fff", border: "1px solid #333", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
-                                  <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "#1a1a1a", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                  <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "#f3f4f6", color: "#fff", border: "1px solid #333", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
+                                  <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "#f3f4f6", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
                           </td>
                         </tr>
@@ -684,7 +693,7 @@ export default function AdminPage() {
               const failedC   = trader.challenges.filter(c => c.status === "failed").length;
               const isOpen    = crmExpanded === trader.email;
               return (
-                <div key={trader.email} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, overflow: "hidden" }}>
+                <div key={trader.email} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
                   <div onClick={() => setCrmExpanded(isOpen ? null : trader.email)}
                     style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
                     <div style={{ flex: 1, minWidth: 200 }}>
@@ -729,7 +738,7 @@ export default function AdminPage() {
                             <div style={{ color: "#888", fontSize: 12 }}>{trader.email}</div>
                             {(profile?.phone || firstChallenge?.client_phone) && <div style={{ color: "#888", fontSize: 12 }}>{profile?.phone || firstChallenge?.client_phone}</div>}
                             {profile?.address && <div style={{ color: "#666", fontSize: 11, marginTop: 4 }}>{profile.address}{profile.postal_code ? `, ${profile.postal_code}` : ""} {profile.city || ""}{profile.country ? ` — ${profile.country}` : ""}</div>}
-                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 6, color: "#C9A84C", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
+                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, color: "#C9A84C", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
                               {accessEmailMsg[trader.email] || "✉ Envoyer email d'accès"}
                             </button>
                           </div>
@@ -780,7 +789,7 @@ export default function AdminPage() {
                               {kyc && docFields.map(([field, label]) => (
                                 kyc.doc_urls[field] ? (
                                   <a key={field} href={kyc.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
-                                    style={{ backgroundColor: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 7, padding: "4px 10px", color: "#38bdf8", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
+                                    style={{ backgroundColor: "#f3f4f6", border: "1px solid #2a2a2a", borderRadius: 7, padding: "4px 10px", color: "#38bdf8", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
                                     📄 {label}
                                   </a>
                                 ) : null
@@ -797,7 +806,7 @@ export default function AdminPage() {
                                     ✓ Approuver
                                   </button>
                                   <input value={kycRejectReason[kyc.id] || ""} onChange={e => setKycRejectReason(r => ({ ...r, [kyc.id]: e.target.value }))}
-                                    placeholder="Motif de refus..." style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 7, padding: "4px 10px", color: "#fff", fontSize: 11, outline: "none", width: 150 }} />
+                                    placeholder="Motif de refus..." style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 7, padding: "4px 10px", color: "#fff", fontSize: 11, outline: "none", width: 150 }} />
                                   <button onClick={() => updateKyc(kyc.id, "rejected", kycRejectReason[kyc.id])}
                                     style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 7, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                                     ✕ Refuser
@@ -822,7 +831,7 @@ export default function AdminPage() {
                                     {/* Ligne verticale */}
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
                                       <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[c.status] || "#444", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#1a1a1a", minHeight: 24 }} />}
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#f3f4f6", minHeight: 24 }} />}
                                     </div>
                                     {/* Contenu */}
                                     <div style={{ flex: 1, paddingBottom: 16 }}>
@@ -851,7 +860,7 @@ export default function AdminPage() {
                                   <div key={p.id} style={{ display: "flex", gap: 12 }}>
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
                                       <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[p.status] || "#3b82f6", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#1a1a1a", minHeight: 24 }} />}
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#f3f4f6", minHeight: 24 }} />}
                                     </div>
                                     <div style={{ flex: 1, paddingBottom: 16 }}>
                                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -887,7 +896,7 @@ export default function AdminPage() {
                 { label: "Marge brute totale",value: `${kpis.margeYear}%` },
                 { label: "Nb challenges total",value: challenges.length },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: "18px 22px" }}>
+                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 26, fontWeight: 900 }}>{s.value}</div>
                 </div>
@@ -895,7 +904,7 @@ export default function AdminPage() {
             </div>
 
             {/* Graphique CA mensuel */}
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: "20px 24px" }}>
+            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "20px 24px" }}>
               <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 20 }}>CA mensuel</div>
               {monthlyRevenue.length === 0
                 ? <div style={{ color: "#555", textAlign: "center", padding: 20 }}>Aucune donnée</div>
@@ -918,11 +927,11 @@ export default function AdminPage() {
             </div>
 
             {/* CA par taille de compte */}
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, overflow: "hidden" }}>
-              <div style={{ padding: "16px 20px", color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid #1a1a1a" }}>Répartition par taille de compte</div>
+            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ padding: "16px 20px", color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid #e5e7eb" }}>Répartition par taille de compte</div>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
                     {["Compte", "Challenges vendus", "CA total", "% du CA", "Actifs", "Certified", "Failed"].map(h => (
                       <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
@@ -939,7 +948,7 @@ export default function AdminPage() {
                         <td style={{ padding: "12px 16px", color: "#22c55e", fontWeight: 700 }}>€{row.revenue.toLocaleString()}</td>
                         <td style={{ padding: "12px 16px" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <div style={{ flex: 1, backgroundColor: "#1a1a1a", borderRadius: 4, height: 6, maxWidth: 80 }}>
+                            <div style={{ flex: 1, backgroundColor: "#f3f4f6", borderRadius: 4, height: 6, maxWidth: 80 }}>
                               <div style={{ width: `${pct}%`, backgroundColor: "#2D7DD2", height: 6, borderRadius: 4 }} />
                             </div>
                             <span style={{ color: "#888", fontSize: 12 }}>{pct}%</span>
@@ -957,10 +966,10 @@ export default function AdminPage() {
             </div>
 
             {/* Tableau mensuel */}
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, overflow: "hidden" }}>
+            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
                     {["Mois", "Challenges", "CA", "Payouts versés", "Marge brute"].map(h => (
                       <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
@@ -993,17 +1002,17 @@ export default function AdminPage() {
                 { label: "Refusés",     value: payouts.filter(p=>p.status==="rejected").length, color: "#ef4444" },
                 { label: "Montant total versé", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: "#fff" },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
+                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                   <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
               ))}
             </div>
 
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 12, overflow: "hidden" }}>
+            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
                     {["Trader", "Montant", "Statut", "Date", "Actions"].map(h => (
                       <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
@@ -1042,7 +1051,7 @@ export default function AdminPage() {
         {/* ══ PROMO CODES ══ */}
         {tab === "promos" && (
           <>
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 16, padding: 24, marginBottom: 24 }}>
+            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, padding: 24, marginBottom: 24 }}>
               <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 18 }}>Créer un code promo</div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 16 }}>
                 {[
@@ -1055,7 +1064,7 @@ export default function AdminPage() {
                     <div style={{ color: "#555", fontSize: 10, marginBottom: 6 }}>{f.label}</div>
                     <input type={f.type || "text"} value={(newCode as Record<string,string>)[f.key]} placeholder={f.placeholder}
                       onChange={e => setNewCode(n => ({ ...n, [f.key]: f.transform ? f.transform(e.target.value) : e.target.value }))}
-                      style={{ width: "100%", backgroundColor: "#1a1a1a", border: "1px solid #222", borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
+                      style={{ width: "100%", backgroundColor: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
                   </div>
                 ))}
               </div>
@@ -1069,12 +1078,12 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
               {promosLoading ? <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Chargement...</div> : (
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
-                      <tr style={{ borderBottom: "1px solid #1a1a1a" }}>
+                      <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
                         {["Code", "Remise", "Utilisé", "Max", "Expire", "Statut", "Créé", "Actions"].map(h => (
                           <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
                         ))}
@@ -1097,10 +1106,10 @@ export default function AdminPage() {
                             <td style={{ padding: "13px 16px", color: "#555", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
                             <td style={{ padding: "13px 16px" }}>
                               <div style={{ display: "flex", gap: 8 }}>
-                                <button onClick={() => togglePromo(p)} style={{ backgroundColor: "#1a1a1a", color: p.active ? "#ef4444" : "#22c55e", border: `1px solid ${p.active ? "#ef444433" : "#22c55e33"}`, borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
+                                <button onClick={() => togglePromo(p)} style={{ backgroundColor: "#f3f4f6", color: p.active ? "#ef4444" : "#22c55e", border: `1px solid ${p.active ? "#ef444433" : "#22c55e33"}`, borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
                                   {p.active ? "Révoquer" : "Restaurer"}
                                 </button>
-                                <button onClick={() => deletePromo(p.id)} style={{ backgroundColor: "#1a1a1a", color: "#555", border: "1px solid #222", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Suppr.</button>
+                                <button onClick={() => deletePromo(p.id)} style={{ backgroundColor: "#f3f4f6", color: "#555", border: "1px solid #e5e7eb", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Suppr.</button>
                               </div>
                             </td>
                           </tr>
@@ -1124,7 +1133,7 @@ export default function AdminPage() {
                   { label: "Approuvés",  value: kycSubmissions.filter(k => k.kyc_status === "approved").length, color: "#22c55e" },
                   { label: "Refusés",   value: kycSubmissions.filter(k => k.kyc_status === "rejected").length, color: "#ef4444" },
                 ].map((s, i) => (
-                  <div key={i} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 20px" }}>
+                  <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 20px" }}>
                     <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
                     <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
@@ -1149,7 +1158,7 @@ export default function AdminPage() {
                 ["selfie",   "Selfie"],
               ];
               return (
-                <div key={k.id} style={{ backgroundColor: "#0f0f0f", border: `1px solid ${isPending ? "#f59e0b30" : "#1a1a1a"}`, borderRadius: 12, padding: "20px 24px" }}>
+                <div key={k.id} style={{ backgroundColor: "#ffffff", border: `1px solid ${isPending ? "#f59e0b30" : "#1a1a1a"}`, borderRadius: 12, padding: "20px 24px" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{k.user_email}</div>
@@ -1166,11 +1175,11 @@ export default function AdminPage() {
                     {docLabels.map(([field, label]) => (
                       k.doc_urls[field] ? (
                         <a key={field} href={k.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
-                          style={{ backgroundColor: "#1a1a1a", border: "1px solid #2a2a2a", borderRadius: 8, padding: "8px 14px", color: "#38bdf8", fontSize: 12, fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+                          style={{ backgroundColor: "#f3f4f6", border: "1px solid #2a2a2a", borderRadius: 8, padding: "8px 14px", color: "#38bdf8", fontSize: 12, fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
                           📄 {label}
                         </a>
                       ) : (
-                        <span key={field} style={{ backgroundColor: "#111", border: "1px solid #1a1a1a", borderRadius: 8, padding: "8px 14px", color: "#333", fontSize: 12 }}>{label} —</span>
+                        <span key={field} style={{ backgroundColor: "#111", border: "1px solid #e5e7eb", borderRadius: 8, padding: "8px 14px", color: "#333", fontSize: 12 }}>{label} —</span>
                       )
                     ))}
                   </div>
@@ -1190,7 +1199,7 @@ export default function AdminPage() {
                           value={kycRejectReason[k.id] || ""}
                           onChange={e => setKycRejectReason(r => ({ ...r, [k.id]: e.target.value }))}
                           placeholder="Motif de refus (optionnel)..."
-                          style={{ flex: 1, backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 12, outline: "none" }}
+                          style={{ flex: 1, backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 12, outline: "none" }}
                         />
                         <button onClick={() => updateKyc(k.id, "rejected", kycRejectReason[k.id])}
                           style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
@@ -1205,6 +1214,7 @@ export default function AdminPage() {
           </div>
         )}
 
+        </div>
       </div>
     </div>
   );
