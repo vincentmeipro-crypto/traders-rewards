@@ -138,7 +138,7 @@ export const t = {
     hero: {
       badge: 'La Prop Firm Élite',
       headline1: 'Performez votre Trading Démo.',
-      headline2: 'Recevez de vraies récompenses.',
+      headline2: 'Recevez vos récompenses.',
       sub: 'Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu\'à 90% de vos gains simulés.',
       cta1: 'Commencer le Challenge',
       cta2: 'Comment ça marche',
