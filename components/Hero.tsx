@@ -145,7 +145,7 @@ export default function Hero() {
           fontWeight: 900,
           letterSpacing: "-2px",
           lineHeight: 1.1,
-          maxWidth: 1000,
+          maxWidth: 1300,
           marginBottom: 20,
         }}>
           {T.hero.headline1}<br />
