@@ -535,7 +535,7 @@ export default function AdminPage() {
                 { label: "Taux conversion P1→P2",    value: `${kpis.convP1P2}%`,                 sub: "des challenges achetés"    },
                 { label: "Taux conversion P2→Funded", value: `${kpis.convP2Fund}%`,               sub: "des traders en phase 2"    },
                 { label: "LTV moyen / trader",        value: `€${Math.round(kpis.ltv)}`,          sub: "dépense totale moyenne"    },
-                { label: "Payouts en attente",        value: kpis.pendingPayouts,                  sub: `€${kpis.pendingAmt.toLocaleString()} à valider` },
+                { label: "Récompenses en attente",    value: kpis.pendingPayouts,                  sub: `€${kpis.pendingAmt.toLocaleString()} à valider` },
               ].map((s, i) => (
                 <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
@@ -751,7 +751,7 @@ export default function AdminPage() {
                             <div style={{ fontWeight: 900, fontSize: 18, color: "#22c55e" }}>€{trader.totalSpent}</div>
                           </div>
                           <div>
-                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Payouts reçus</div>
+                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Récompenses reçues</div>
                             <div style={{ fontWeight: 900, fontSize: 18, color: totalPaid > 0 ? "#3b82f6" : "#333" }}>€{totalPaid.toLocaleString()}</div>
                           </div>
                           <div>
@@ -892,7 +892,7 @@ export default function AdminPage() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               {[
                 { label: "CA Total",          value: `€${challenges.reduce((s,c) => s + (c.amount_paid||0),0).toLocaleString()}` },
-                { label: "Payouts versés",     value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}` },
+                { label: "Récompenses versées", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}` },
                 { label: "Marge brute totale",value: `${kpis.margeYear}%` },
                 { label: "Nb challenges total",value: challenges.length },
               ].map((s, i) => (
@@ -913,7 +913,7 @@ export default function AdminPage() {
                       <div key={m.month} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 60 }}>
                         <div style={{ fontSize: 10, color: "#22c55e", fontWeight: 700 }}>€{Math.round(m.ca/1000)}k</div>
                         <div style={{ width: 44, backgroundColor: "#2D7DD2", borderRadius: "4px 4px 0 0", height: Math.max(4, m.ca / maxCA * 140) }} title={`€${m.ca}`} />
-                        {m.payoutsAmt > 0 && <div style={{ width: 44, backgroundColor: "#ef4444", borderRadius: "0 0 4px 4px", height: Math.max(2, m.payoutsAmt / maxCA * 140), marginTop: -4 }} title={`Payouts: €${m.payoutsAmt}`} />}
+                        {m.payoutsAmt > 0 && <div style={{ width: 44, backgroundColor: "#ef4444", borderRadius: "0 0 4px 4px", height: Math.max(2, m.payoutsAmt / maxCA * 140), marginTop: -4 }} title={`Récompenses: €${m.payoutsAmt}`} />}
                         <div style={{ fontSize: 9, color: "#555", textAlign: "center" }}>{m.month.slice(5)}/{m.month.slice(2,4)}</div>
                         <div style={{ fontSize: 9, color: m.marge > 50 ? "#22c55e" : "#888" }}>{m.marge}%</div>
                       </div>
@@ -921,7 +921,7 @@ export default function AdminPage() {
                   </div>}
               <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
                 <span style={{ fontSize: 10, color: "#2D7DD2" }}>■ CA</span>
-                <span style={{ fontSize: 10, color: "#ef4444" }}>■ Payouts</span>
+                <span style={{ fontSize: 10, color: "#ef4444" }}>■ Récompenses</span>
                 <span style={{ fontSize: 10, color: "#555" }}>% = marge brute</span>
               </div>
             </div>
@@ -970,7 +970,7 @@ export default function AdminPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
-                    {["Mois", "Challenges", "CA", "Payouts versés", "Marge brute"].map(h => (
+                    {["Mois", "Challenges", "CA", "Récompenses versées", "Marge brute"].map(h => (
                       <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
                   </tr>
@@ -992,7 +992,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ══ RÉCOMPENSES / PAYOUTS ══ */}
+        {/* ══ RÉCOMPENSES ══ */}
         {tab === "payouts" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
@@ -1041,7 +1041,7 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   ))}
-                  {payouts.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucun payout</td></tr>}
+                  {payouts.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucune récompense</td></tr>}
                 </tbody>
               </table>
             </div>
