@@ -447,10 +447,8 @@ export default function AdminPage() {
             </button>
           ))}
         </nav>
-        <div style={{ padding: "16px 12px", borderTop: "1px solid #1f2937", display: "flex", flexDirection: "column", gap: 8 }}>
-          {token && <button onClick={() => loadKyc(token)} disabled={kycLoading} style={{ backgroundColor: "transparent", border: "1px solid #f59e0b", borderRadius: 8, color: "#f59e0b", padding: "7px 12px", fontSize: 11, fontWeight: 700, cursor: kycLoading ? "not-allowed" : "pointer" }}>{kycLoading ? "..." : "⟳ KYC"}</button>}
-          <button onClick={runSync} disabled={syncing} style={{ backgroundColor: "transparent", border: "1px solid #38bdf8", borderRadius: 8, color: "#38bdf8", padding: "7px 12px", fontSize: 11, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>{syncing ? "Sync..." : "⟳ Sync MT5"}</button>
-          <a href="/dashboard" style={{ color: "#6b7280", fontSize: 11, textDecoration: "none", textAlign: "center" }}>← Dashboard</a>
+        <div style={{ padding: "16px 12px", borderTop: "1px solid #1f2937" }}>
+          <a href="/dashboard" style={{ color: "#6b7280", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
         </div>
       </div>
 
