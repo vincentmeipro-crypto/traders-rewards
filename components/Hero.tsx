@@ -181,7 +181,7 @@ export default function Hero() {
         {/* Promo Banner */}
         <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 0 }}>
           <a href="/#pricing" style={{ display: "block", cursor: "pointer" }}>
-            <img src={isMobile ? "/PROMO40MOBILE-v2.jpg" : "/PROMO40PC-v2.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
+            <img src={isMobile ? "/PROMOMOBILE40.jpg" : "/PROMO40PC.jpg"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
           </a>
           <div style={{ padding: isMobile ? "0 16px 24px" : "0 20% 32px" }}>
             <a href="/#pricing" style={{ display: "block", width: "100%", padding: isMobile ? "18px 0" : "20px 0", backgroundColor: "#7c3aed", border: "2px solid #fff", borderRadius: 12, textAlign: "center", color: "#fff", fontWeight: 900, fontSize: isMobile ? 15 : 18, letterSpacing: "1px", textDecoration: "none", textTransform: "uppercase", boxSizing: "border-box" }}>
