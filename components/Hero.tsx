@@ -110,11 +110,12 @@ export default function Hero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      padding: isMobile ? "120px 20px 60px" : "180px 24px 80px",
+      padding: isMobile ? "90px 20px 20px" : "180px 24px 80px",
       textAlign: "center",
       position: "relative",
       backgroundColor: "#000000",
       overflow: "hidden",
+      justifyContent: isMobile ? "flex-start" : "center",
     }}>
 
       {/* Candlestick decorations - desktop only */}
@@ -158,7 +159,7 @@ export default function Hero() {
           fontSize: isMobile ? 15 : 18,
           maxWidth: 560,
           lineHeight: 1.7,
-          marginBottom: 40,
+          marginBottom: isMobile ? 20 : 40,
         }}>
           {T.hero.sub}
         </p>
@@ -170,7 +171,7 @@ export default function Hero() {
           gap: 12,
           justifyContent: "center",
           alignItems: "center",
-          marginBottom: 20,
+          marginBottom: isMobile ? 12 : 20,
           width: isMobile ? "100%" : "auto",
           padding: isMobile ? "0 16px" : undefined,
         }}>
