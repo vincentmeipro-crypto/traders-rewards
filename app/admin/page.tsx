@@ -511,18 +511,18 @@ export default function AdminPage() {
             {/* Pipeline stats */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
               {[
-                { label: "Total Traders",      value: kpis.totalTraders,  color: "#fff"    },
-                { label: "Traders actifs",     value: kpis.activeTraders, color: "#22c55e" },
-                { label: "Phase 1 (2-Step)",   value: kpis.phase1,        color: "#888"    },
-                { label: "1-Step actifs",      value: kpis.oneStep,       color: "#a78bfa" },
-                { label: "Phase 2 (2-Step)",   value: kpis.phase2,        color: "#fff"    },
-                { label: "Certified",          value: kpis.certified,     color: "#3b82f6" },
-                { label: "Failed",             value: kpis.failed,        color: "#ef4444" },
-                { label: "Total Challenges",   value: kpis.total,         color: "#555"    },
+                { label: "Total Traders",      value: kpis.totalTraders  },
+                { label: "Traders actifs",     value: kpis.activeTraders },
+                { label: "Phase 1 (2-Step)",   value: kpis.phase1        },
+                { label: "1-Step actifs",      value: kpis.oneStep       },
+                { label: "Phase 2 (2-Step)",   value: kpis.phase2        },
+                { label: "Certified",          value: kpis.certified     },
+                { label: "Failed",             value: kpis.failed        },
+                { label: "Total Challenges",   value: kpis.total         },
               ].map((s, i) => (
                 <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 20px" }}>
-                  <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
+                  <div style={{ color: "#111827", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: "#111827" }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -537,8 +537,8 @@ export default function AdminPage() {
               ].map((s, i) => (
                 <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 26, fontWeight: 900, color: "#fff", marginBottom: 4 }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: "#444" }}>{s.sub}</div>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: "#111827", marginBottom: 4 }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: "#6b7280" }}>{s.sub}</div>
                 </div>
               ))}
             </div>
