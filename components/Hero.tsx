@@ -96,26 +96,18 @@ export default function Hero() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const stats = [
-    { label: T.hero.maxFunding, value: "$200K" },
-    { label: T.hero.profitSplit, value: "Up to 90%" },
-    { label: T.hero.feeRefunded, value: "1st Reward" },
-    { label: "No Time Limit", value: "∞" },
-  ];
-
   return (
     <section style={{
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: isMobile ? "flex-start" : "center",
       padding: isMobile ? "90px 20px 20px" : "180px 24px 80px",
       textAlign: "center",
       position: "relative",
       backgroundColor: "#000000",
       overflow: "hidden",
-      justifyContent: isMobile ? "flex-start" : "center",
     }}>
 
       {/* Candlestick decorations - desktop only */}
