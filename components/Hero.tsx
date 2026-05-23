@@ -192,7 +192,7 @@ export default function Hero() {
           </a>
           <div style={{ padding: isMobile ? "0 16px 24px" : "0 20% 32px" }}>
             <a href="/#pricing" style={{ display: "block", width: "100%", padding: isMobile ? "18px 0" : "20px 0", backgroundColor: "#7c3aed", border: "2px solid #fff", borderRadius: 12, textAlign: "center", color: "#fff", fontWeight: 900, fontSize: isMobile ? 15 : 18, letterSpacing: "1px", textDecoration: "none", textTransform: "uppercase", boxSizing: "border-box" }}>
-              PROFITEZ MAINTENANT DE LA PROMOTION −50%
+              PROFITEZ MAINTENANT DE LA PROMOTION −40%
             </a>
           </div>
         </div>
