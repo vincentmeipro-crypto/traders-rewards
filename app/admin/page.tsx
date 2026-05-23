@@ -427,7 +427,7 @@ export default function AdminPage() {
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#fff", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#6b7280", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#111827" }}>
 
       {/* ── SIDEBAR ── */}
       <div style={{ width: 220, backgroundColor: "#111827", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
@@ -498,11 +498,11 @@ export default function AdminPage() {
               {[
                 { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#fff"    },
                 { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#fff"    },
-                { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#22c55e" },
-                { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#22c55e" },
+                { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#4ade80" },
+                { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#4ade80" },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
-                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
+                <div key={i} style={{ background: "linear-gradient(135deg, #1f2937 0%, #374151 100%)", borderRadius: 12, padding: "18px 22px" }}>
+                  <div style={{ color: "#9ca3af", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 28, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
               ))}
