@@ -9,16 +9,30 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-inter", weight: [
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 export const metadata: Metadata = {
-  title: "Elysium — Where Legends Are Certified",
-  description: "Join the elite. Pass our challenge and trade with up to $400,000 in allocated capital.",
+  metadataBase: new URL("https://elysium-funded.vercel.app"),
+  title: "Elysium Funded — Performez votre Trading Démo. Recevez de vraies récompenses.",
+  description: "Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Elysium",
+    title: "Elysium Funded",
   },
   other: {
     "mobile-web-app-capable": "yes",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Elysium Funded",
+    title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
+    description: "Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
+    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: "Elysium Funded" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
+    description: "Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
+    images: ["/icon-512.png"],
   },
 };
 
