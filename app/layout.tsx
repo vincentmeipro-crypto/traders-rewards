@@ -10,29 +10,29 @@ const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://elysium-funded.vercel.app"),
-  title: "Elysium Funded — Performez votre Trading Démo. Recevez de vraies récompenses.",
+  title: "Elysium — Performez votre Trading Démo. Recevez de vraies récompenses.",
   description: "Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Elysium Funded",
+    title: "Elysium",
   },
   other: {
     "mobile-web-app-capable": "yes",
   },
   openGraph: {
     type: "website",
-    siteName: "Elysium Funded",
+    siteName: "Elysium",
     title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
     description: "Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
-    images: [{ url: "/icon-512.png", width: 512, height: 512, alt: "Elysium Funded" }],
+    images: [{ url: "/logo-white.jpg", width: 1080, height: 1080, alt: "Elysium" }],
   },
   twitter: {
     card: "summary",
     title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
     description: "Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
-    images: ["/icon-512.png"],
+    images: ["/logo-white.jpg"],
   },
 };
 
