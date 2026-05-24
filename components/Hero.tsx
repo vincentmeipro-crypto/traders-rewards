@@ -207,8 +207,6 @@ function CandleChart({ side }: { side: "left" | "right" }) {
   const candleW = 26;
   const spacing = 44;
   const isRight = side === "right";
-  const DURATION = 2.8;
-  const STEP = 0.18;
 
   return (
     <div style={{
@@ -222,12 +220,6 @@ function CandleChart({ side }: { side: "left" | "right" }) {
       pointerEvents: "none",
       zIndex: 2,
     }}>
-      <style>{`
-        @keyframes candleWave {
-          0%, 100% { transform: translateY(0px); opacity: 1; }
-          50%       { transform: translateY(22px); opacity: 0.6; }
-        }
-      `}</style>
 
       <svg width={W} height={H}>
         <defs>
@@ -244,10 +236,7 @@ function CandleChart({ side }: { side: "left" | "right" }) {
             const cx = i * spacing + (spacing - candleW) / 2 + 4;
             const color = bull ? "#2D7DD2" : "#FFFFFF";
             return (
-              <g key={i} style={{
-                animation: `candleWave ${DURATION}s ease-in-out infinite`,
-                animationDelay: `${i * STEP - CANDLES.length * STEP}s`,
-              }}>
+              <g key={i}>
                 <line
                   x1={cx + candleW / 2} y1={wickY1}
                   x2={cx + candleW / 2} y2={wickY2}
