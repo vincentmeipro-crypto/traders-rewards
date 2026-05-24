@@ -406,12 +406,12 @@ export default function AdminPage() {
             <div>
               <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Email</div>
               <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} placeholder="vincentmeipro@gmail.com" required
-                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
             <div>
               <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
               <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
-                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
             {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
             <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#C9A84C", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
@@ -569,9 +569,9 @@ export default function AdminPage() {
             {/* Filters */}
             <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
               <input placeholder="Recherche email / nom..." value={search} onChange={e => setSearch(e.target.value)}
-                style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none", minWidth: 220 }} />
+                style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", color: "#111", fontSize: 13, outline: "none", minWidth: 220 }} />
               <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none" }}>
+                style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 16px", color: "#111", fontSize: 13, outline: "none" }}>
                 <option value="all">Tous les statuts</option>
                 <option value="active">Active</option>
                 <option value="passed">Passed</option>
@@ -624,38 +624,38 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px", color: "#888" }}>{c.model}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
+                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
                               : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#fff" : "#888", fontWeight: 600, fontSize: 12 }}>{c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
+                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
                               : badge(c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
+                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 90 }} />
                               : `$${c.balance?.toLocaleString()}`}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#22c55e" }}>€{c.amount_paid}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
+                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 55 }} />
                               : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.ctrader_account_id ?? c.ctrader_account_id ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_account_id: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                              ? <input type="text" value={editData.ctrader_account_id ?? c.ctrader_account_id ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_account_id: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
                               : <span style={{ color: c.ctrader_account_id ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.ctrader_account_id || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.ctrader_password ?? c.ctrader_password ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ffffff55", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                              ? <input type="text" value={editData.ctrader_password ?? c.ctrader_password ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
                               : <span style={{ color: c.ctrader_password ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.ctrader_password || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.server ?? c.server ?? ""} onChange={e => setEditData(d => ({ ...d, server: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 140 }} />
+                              ? <input type="text" value={editData.server ?? c.server ?? ""} onChange={e => setEditData(d => ({ ...d, server: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 140 }} />
                               : <span style={{ color: c.server ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.server || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#555", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
@@ -666,7 +666,7 @@ export default function AdminPage() {
                                   <button onClick={() => { setEditing(null); setEditData({}); }} style={{ backgroundColor: "transparent", color: "#555", border: "1px solid #333", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>
                               : <div style={{ display: "flex", gap: 6 }}>
-                                  <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "#f3f4f6", color: "#fff", border: "1px solid #333", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
+                                  <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "#f3f4f6", color: "#111", border: "1px solid #ccc", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
                                   <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "#f3f4f6", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
                           </td>
@@ -804,7 +804,7 @@ export default function AdminPage() {
                                     ✓ Approuver
                                   </button>
                                   <input value={kycRejectReason[kyc.id] || ""} onChange={e => setKycRejectReason(r => ({ ...r, [kyc.id]: e.target.value }))}
-                                    placeholder="Motif de refus..." style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 7, padding: "4px 10px", color: "#fff", fontSize: 11, outline: "none", width: 150 }} />
+                                    placeholder="Motif de refus..." style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 7, padding: "4px 10px", color: "#111", fontSize: 11, outline: "none", width: 150 }} />
                                   <button onClick={() => updateKyc(kyc.id, "rejected", kycRejectReason[kyc.id])}
                                     style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 7, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                                     ✕ Refuser
@@ -1062,7 +1062,7 @@ export default function AdminPage() {
                     <div style={{ color: "#555", fontSize: 10, marginBottom: 6 }}>{f.label}</div>
                     <input type={f.type || "text"} value={(newCode as Record<string,string>)[f.key]} placeholder={f.placeholder}
                       onChange={e => setNewCode(n => ({ ...n, [f.key]: f.transform ? f.transform(e.target.value) : e.target.value }))}
-                      style={{ width: "100%", backgroundColor: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
+                      style={{ width: "100%", backgroundColor: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 12px", color: "#111", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
                   </div>
                 ))}
               </div>
@@ -1197,7 +1197,7 @@ export default function AdminPage() {
                           value={kycRejectReason[k.id] || ""}
                           onChange={e => setKycRejectReason(r => ({ ...r, [k.id]: e.target.value }))}
                           placeholder="Motif de refus (optionnel)..."
-                          style={{ flex: 1, backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 12, outline: "none" }}
+                          style={{ flex: 1, backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 8, padding: "8px 12px", color: "#111", fontSize: 12, outline: "none" }}
                         />
                         <button onClick={() => updateKyc(k.id, "rejected", kycRejectReason[k.id])}
                           style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
