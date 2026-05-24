@@ -86,12 +86,14 @@ function CheckoutContent() {
   const [promoError, setPromoError] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
   const isFree = discount === 100;
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && address.trim() && city.trim() && country.trim() && (user || (password.length >= 8 && password === confirmPassword));
   const anyLoading = loadingStripe || loadingCrypto || loadingFree;
+  const canPay = profileComplete && agreedToTerms;
 
   useEffect(() => {
     const supabase = createClient();
@@ -377,6 +379,39 @@ function CheckoutContent() {
             {promoStatus === "error" && <div style={{ marginTop: 6, color: "#ef4444", fontSize: 12 }}>{promoError}</div>}
           </div>
 
+          {/* CGV Box */}
+          <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              Conditions Générales
+            </div>
+            <div style={{ background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 12px", maxHeight: 110, overflowY: "auto", marginBottom: 10 }}>
+              <p style={{ color: "#6b7280", fontSize: 11, lineHeight: 1.7, margin: 0 }}>
+                <strong style={{ color: "#374151" }}>Résumé des points clés :</strong><br />
+                • Le trading sur notre plateforme est <strong style={{ color: "#374151" }}>100% simulé</strong> — aucun capital réel, aucun ordre exécuté sur les marchés.<br />
+                • Les Frais de Challenge sont <strong style={{ color: "#374151" }}>non remboursables</strong> dès l&apos;ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).<br />
+                • La récompense est de <strong style={{ color: "#374151" }}>80% (2 Étapes)</strong> ou <strong style={{ color: "#374151" }}>90% (1 Étape)</strong> des profits simulés.<br />
+                • Le capital simulé total est limité à <strong style={{ color: "#374151" }}>200 000 USD</strong> par client.<br />
+                • En cas de violation des règles, nous pouvons résilier votre compte sans indemnité.<br />
+                • Droit applicable : <strong style={{ color: "#374151" }}>loi estonienne</strong>.
+              </p>
+            </div>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={agreedToTerms}
+                onChange={e => setAgreedToTerms(e.target.checked)}
+                style={{ marginTop: 2, accentColor: "#2563eb", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }}
+              />
+              <span style={{ color: "#6b7280", fontSize: 11, lineHeight: 1.5 }}>
+                J&apos;ai lu et j&apos;accepte les{" "}
+                <a href="/legal/terms" target="_blank" rel="noopener noreferrer"
+                  style={{ color: "#2563eb", textDecoration: "underline", fontWeight: 700 }}>
+                  Conditions Générales de Vente et d&apos;Utilisation
+                </a>
+              </span>
+            </label>
+          </div>
+
           {/* Pay buttons */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
             {payError && (
@@ -387,20 +422,23 @@ function CheckoutContent() {
             {!profileComplete && (
               <p style={{ textAlign: "center", color: "#9ca3af", fontSize: 12, margin: 0 }}>Remplissez tous les champs pour continuer.</p>
             )}
+            {profileComplete && !agreedToTerms && (
+              <p style={{ textAlign: "center", color: "#f59e0b", fontSize: 12, margin: 0 }}>Acceptez les CGV pour continuer.</p>
+            )}
 
             {isFree ? (
-              <button onClick={handleFree} disabled={anyLoading || !profileComplete}
-                style={{ width: "100%", padding: "14px", fontSize: 14, fontWeight: 800, background: "#16a34a", color: "#fff", border: "none", borderRadius: 10, cursor: profileComplete ? "pointer" : "not-allowed", opacity: (anyLoading || !profileComplete) ? 0.6 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+              <button onClick={handleFree} disabled={anyLoading || !canPay}
+                style={{ width: "100%", padding: "14px", fontSize: 14, fontWeight: 800, background: "#16a34a", color: "#fff", border: "none", borderRadius: 10, cursor: canPay ? "pointer" : "not-allowed", opacity: (anyLoading || !canPay) ? 0.6 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                 {loadingFree ? "Configuration..." : <><span>🎉</span> Accès gratuit <ChevronRight size={16} /></>}
               </button>
             ) : (
               <>
-                <button onClick={handleStripe} disabled={anyLoading || !profileComplete}
-                  style={{ width: "100%", padding: "14px", fontSize: 14, fontWeight: 800, background: "#2563eb", color: "#fff", border: "none", borderRadius: 10, cursor: profileComplete ? "pointer" : "not-allowed", opacity: (anyLoading || !profileComplete) ? 0.6 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <button onClick={handleStripe} disabled={anyLoading || !canPay}
+                  style={{ width: "100%", padding: "14px", fontSize: 14, fontWeight: 800, background: "#2563eb", color: "#fff", border: "none", borderRadius: 10, cursor: canPay ? "pointer" : "not-allowed", opacity: (anyLoading || !canPay) ? 0.6 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   {loadingStripe ? "Redirection..." : <><span>💳</span> Payer par carte <ChevronRight size={16} /></>}
                 </button>
-                <button onClick={handleCrypto} disabled={anyLoading || !profileComplete}
-                  style={{ width: "100%", padding: "14px", fontSize: 14, fontWeight: 800, background: "#fff", color: "#111", border: "1.5px solid #e5e7eb", borderRadius: 10, cursor: profileComplete ? "pointer" : "not-allowed", opacity: (anyLoading || !profileComplete) ? 0.6 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <button onClick={handleCrypto} disabled={anyLoading || !canPay}
+                  style={{ width: "100%", padding: "14px", fontSize: 14, fontWeight: 800, background: "#fff", color: "#111", border: "1.5px solid #e5e7eb", borderRadius: 10, cursor: canPay ? "pointer" : "not-allowed", opacity: (anyLoading || !canPay) ? 0.6 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   {loadingCrypto ? "Redirection..." : <><span>₿</span> Payer en crypto <ChevronRight size={16} /></>}
                 </button>
               </>
