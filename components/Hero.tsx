@@ -275,7 +275,7 @@ export default function Hero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: isMobile ? "flex-start" : "center",
-      padding: isMobile ? "90px 20px 20px" : "100px 24px 40px",
+      padding: isMobile ? "90px 20px 20px" : "80px 24px 40px",
       textAlign: "center",
       position: "relative",
       backgroundColor: "#000000",
