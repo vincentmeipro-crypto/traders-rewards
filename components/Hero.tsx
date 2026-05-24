@@ -40,8 +40,8 @@ const HOLD_MS  = 2800;
 const EXIT_MS  = 450;
 const TOTAL_MS = ENTER_MS + HOLD_MS + EXIT_MS;
 
-function RewardCard({ lang, isMobile }: { lang: string; isMobile: boolean }) {
-  const [idx, setIdx]       = useState(0);
+function RewardCard({ lang, isMobile, startIdx = 0 }: { lang: string; isMobile: boolean; startIdx?: number }) {
+  const [idx, setIdx]       = useState(startIdx);
   const [amount, setAmount] = useState(0);
   const rafRef = useRef<number | null>(null);
 
@@ -314,62 +314,55 @@ export default function Hero() {
       {/* Content */}
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
 
-        {/* Title */}
-        <h1 style={{
-          fontSize: isMobile ? "clamp(2.2rem, 9vw, 3rem)" : "clamp(2.8rem, 4.5vw, 4.2rem)",
-          fontWeight: 900,
-          letterSpacing: "-2px",
-          lineHeight: 1.1,
-          maxWidth: 1300,
-          marginBottom: 20,
-        }}>
-          {T.hero.headline1}<br />
-          {T.hero.headline2}
-        </h1>
+        {isMobile ? (
+          /* ── MOBILE : colonne unique ── */
+          <>
+            <h1 style={{ fontSize: "clamp(2.2rem, 9vw, 3rem)", fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.1, maxWidth: 1300, marginBottom: 20 }}>
+              {T.hero.headline1}<br />{T.hero.headline2}
+            </h1>
+            <p style={{ color: "#666", fontSize: 15, maxWidth: 560, lineHeight: 1.7, marginBottom: 20 }}>
+              {T.hero.sub}
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, justifyContent: "center", alignItems: "center", marginBottom: 20, width: "100%", padding: "0 16px" }}>
+              <a href="#pricing" className="btn-primary btn-primary-animated" style={{ fontSize: 14, padding: "16px 36px", width: "100%", textAlign: "center" }}>{T.hero.cta1}</a>
+              <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 36px", width: "100%", textAlign: "center" }}>{T.hero.cta2}</a>
+            </div>
+            <div style={{ width: "100%", maxWidth: 480, marginBottom: 20, padding: "0 16px" }}>
+              <RewardCard lang={lang} isMobile={true} startIdx={0} />
+            </div>
+          </>
+        ) : (
+          /* ── DESKTOP : 3 colonnes — carte | contenu | carte ── */
+          <div style={{ display: "flex", alignItems: "center", gap: 36, width: "100%", maxWidth: 1280, margin: "0 auto", marginBottom: 40 }}>
 
-        {/* Subtitle */}
-        <p style={{
-          color: "#666",
-          fontSize: isMobile ? 15 : 18,
-          maxWidth: 560,
-          lineHeight: 1.7,
-          marginBottom: isMobile ? 20 : 32,
-        }}>
-          {T.hero.sub}
-        </p>
+            {/* Left reward card */}
+            <div style={{ flex: "0 0 340px" }}>
+              <RewardCard lang={lang} isMobile={false} startIdx={0} />
+            </div>
 
-        {/* CTAs */}
-        <div style={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          gap: 12,
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: isMobile ? 20 : 28,
-          width: isMobile ? "100%" : "auto",
-          padding: isMobile ? "0 16px" : undefined,
-        }}>
-          <a href="#pricing" className="btn-primary btn-primary-animated"
-            style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
-            {T.hero.cta1}
-          </a>
-          <a href="#how-it-works" className="btn-secondary"
-            style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
-            {T.hero.cta2}
-          </a>
-        </div>
+            {/* Center content */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+              <h1 style={{ fontSize: "clamp(2.8rem, 4.5vw, 4.2rem)", fontWeight: 900, letterSpacing: "-2px", lineHeight: 1.1, maxWidth: 700, marginBottom: 20 }}>
+                {T.hero.headline1}<br />{T.hero.headline2}
+              </h1>
+              <p style={{ color: "#666", fontSize: 18, maxWidth: 520, lineHeight: 1.7, marginBottom: 32 }}>
+                {T.hero.sub}
+              </p>
+              <div style={{ display: "flex", flexDirection: "row", gap: 12, justifyContent: "center", alignItems: "center" }}>
+                <a href="#pricing" className="btn-primary btn-primary-animated" style={{ fontSize: 14, padding: "16px 36px", textAlign: "center" }}>{T.hero.cta1}</a>
+                <a href="#how-it-works" className="btn-secondary" style={{ fontSize: 14, padding: "16px 36px", textAlign: "center" }}>{T.hero.cta2}</a>
+              </div>
+            </div>
 
-        {/* Reward card animation */}
-        <div style={{
-          width: "100%",
-          maxWidth: 480,
-          marginBottom: isMobile ? 20 : 32,
-          padding: isMobile ? "0 16px" : undefined,
-        }}>
-          <RewardCard lang={lang} isMobile={isMobile} />
-        </div>
+            {/* Right reward card */}
+            <div style={{ flex: "0 0 340px" }}>
+              <RewardCard lang={lang} isMobile={false} startIdx={6} />
+            </div>
 
-        {/* Promo Banner */}
+          </div>
+        )}
+
+        {/* Promo Banner — mobile + desktop */}
         <div style={{
           width: `calc(100% + ${isMobile ? 40 : 48}px)`,
           marginLeft: isMobile ? -20 : -24,
@@ -380,14 +373,11 @@ export default function Hero() {
           <div style={{ padding: isMobile ? "0 16px 24px" : "0 20% 32px" }}>
             <a href="/#pricing" style={{
               display: "block", width: "100%", padding: isMobile ? "16px 0" : "18px 0",
-              background: "#ffffff",
-              borderRadius: 14,
-              textAlign: "center", color: "#000", fontWeight: 800,
-              fontSize: isMobile ? 14 : 16, letterSpacing: "1.5px",
+              background: "#ffffff", borderRadius: 14, textAlign: "center", color: "#000",
+              fontWeight: 800, fontSize: isMobile ? 14 : 16, letterSpacing: "1.5px",
               textDecoration: "none", textTransform: "uppercase", boxSizing: "border-box",
               boxShadow: "0 4px 24px rgba(255,255,255,0.18), 0 1px 4px rgba(0,0,0,0.18)",
-              border: "none",
-              transition: "box-shadow 0.2s, transform 0.2s",
+              border: "none", transition: "box-shadow 0.2s, transform 0.2s",
             }}
               onMouseOver={e => { e.currentTarget.style.boxShadow = "0 8px 36px rgba(255,255,255,0.28)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
               onMouseOut={e => { e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,255,255,0.18), 0 1px 4px rgba(0,0,0,0.18)"; e.currentTarget.style.transform = "translateY(0)"; }}
