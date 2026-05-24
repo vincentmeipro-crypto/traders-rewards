@@ -20,62 +20,52 @@ const TRADERS = [
   { name: "Lena H.",        flag: "de", payout: 1180,  size: "$25K",  color: "#a855f7", initials: "LH" },
 ];
 
-function sleep(ms: number) {
-  return new Promise<void>(r => setTimeout(r, ms));
-}
-
-function fmt(n: number) {
+function fmt(n: number): string {
   return "$" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+const ENTER_MS  = 600;
+const HOLD_MS   = 2600;
+const EXIT_MS   = 500;
+const TOTAL_MS  = ENTER_MS + HOLD_MS + EXIT_MS; // 3700ms
+
 function TraderSpotlight({ lang }: { lang: string }) {
-  const [idx, setIdx] = useState(0);
-  const [amount, setAmount] = useState(0);
-  const [show, setShow] = useState(false);
+  const [idx, setIdx]           = useState(0);
+  const [displayAmount, setAmt] = useState(0);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    const t = TRADERS[idx];
+    const trader = TRADERS[idx];
 
-    (async () => {
-      setShow(false);
-      setAmount(0);
-      await sleep(220);
+    // Start counting right when card is visible
+    const t1 = setTimeout(() => {
       if (cancelled) return;
-
-      setShow(true);
-      await sleep(380);
-      if (cancelled) return;
-
-      // Count up from 0 → payout
       const start = performance.now();
-      const dur = 700;
-      await new Promise<void>(res => {
-        const tick = (now: number) => {
-          if (cancelled) { res(); return; }
-          const p = Math.min((now - start) / dur, 1);
-          const ease = 1 - Math.pow(1 - p, 3);
-          setAmount(Math.round(ease * t.payout));
-          if (p < 1) rafRef.current = requestAnimationFrame(tick);
-          else { setAmount(t.payout); res(); }
-        };
-        rafRef.current = requestAnimationFrame(tick);
-      });
-      if (cancelled) return;
+      const dur   = 750;
+      const tick  = (now: number) => {
+        if (cancelled) return;
+        const p    = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        setAmt(Math.round(ease * trader.payout));
+        if (p < 1) rafRef.current = requestAnimationFrame(tick);
+        else        setAmt(trader.payout);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+    }, ENTER_MS);
 
-      await sleep(2500);
-      if (cancelled) return;
-
-      setShow(false);
-      await sleep(650);
-      if (cancelled) return;
-
-      setIdx(i => (i + 1) % TRADERS.length);
-    })();
+    // Advance to next trader after full cycle
+    const t2 = setTimeout(() => {
+      if (!cancelled) {
+        setAmt(0);
+        setIdx(i => (i + 1) % TRADERS.length);
+      }
+    }, TOTAL_MS + 80);
 
     return () => {
       cancelled = true;
+      clearTimeout(t1);
+      clearTimeout(t2);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
   }, [idx]);
@@ -85,73 +75,71 @@ function TraderSpotlight({ lang }: { lang: string }) {
   return (
     <div style={{
       display: "flex", justifyContent: "center", alignItems: "center",
-      padding: "48px 24px", minHeight: 360, position: "relative",
+      padding: "48px 24px", minHeight: 380, position: "relative",
     }}>
-      {/* Ambient glow */}
+
+      {/* Ambient background glow */}
       <div style={{
         position: "absolute", top: "50%", left: "50%",
-        width: 720, height: 360,
+        width: 700, height: 380,
         transform: "translate(-50%, -50%)",
-        background: `radial-gradient(ellipse, ${t.color}14 0%, transparent 65%)`,
+        background: `radial-gradient(ellipse, ${t.color}18 0%, transparent 68%)`,
         pointerEvents: "none",
         transition: "background 1s ease",
       }} />
 
-      {/* Card */}
-      <div style={{
-        width: "100%", maxWidth: 560,
-        background: "linear-gradient(160deg, #09090f 0%, #0e1220 100%)",
-        border: `1.5px solid ${t.color}55`,
-        borderRadius: 28,
-        padding: "40px 44px",
-        textAlign: "center",
-        position: "relative",
-        overflow: "hidden",
-        opacity: show ? 1 : 0,
-        transform: show ? "translateY(0px) scale(1)" : "translateY(48px) scale(0.88)",
-        boxShadow: show ? `0 0 90px ${t.color}22, 0 28px 80px rgba(0,0,0,0.7)` : "0 0 0px transparent",
-        transition: show
-          ? "opacity 0.55s ease, transform 0.55s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.6s ease, border-color 0.6s ease"
-          : "opacity 0.38s ease, transform 0.38s ease",
-      }}>
-
-        {/* Top glow bar */}
+      {/* Card — key={idx} forces remount → CSS animation fires fresh every time */}
+      <div
+        key={idx}
+        style={{
+          width: "100%", maxWidth: 560,
+          background: "linear-gradient(160deg, #08080e 0%, #0d1120 100%)",
+          border: `1.5px solid ${t.color}60`,
+          borderRadius: 28,
+          padding: "40px 44px",
+          textAlign: "center",
+          position: "relative",
+          overflow: "hidden",
+          zIndex: 1,
+          boxShadow: `0 0 100px ${t.color}28, 0 30px 90px rgba(0,0,0,0.75)`,
+          animation: `spotlightCycle ${TOTAL_MS}ms linear forwards`,
+        }}
+      >
+        {/* Top accent bar */}
         <div style={{
           position: "absolute", top: 0, left: "15%", right: "15%", height: 2,
           background: `linear-gradient(to right, transparent, ${t.color}, transparent)`,
-          transition: "background 0.6s ease",
         }} />
 
         {/* RÉCOMPENSE badge */}
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 9,
-          background: `${t.color}12`,
-          border: `1px solid ${t.color}38`,
+          background: `${t.color}14`,
+          border: `1px solid ${t.color}40`,
           borderRadius: 100, padding: "7px 20px", marginBottom: 30,
-          transition: "background 0.6s ease, border-color 0.6s ease",
         }}>
           <span style={{
             display: "inline-block", width: 8, height: 8, borderRadius: "50%",
             background: "#22c55e",
-            boxShadow: "0 0 8px #22c55e, 0 0 18px #22c55e70",
-            animation: "pulseDot 1.6s ease-in-out infinite",
+            boxShadow: "0 0 10px #22c55e, 0 0 20px #22c55e80",
+            animation: "pulseDot 1.5s ease-in-out infinite",
             flexShrink: 0,
           }} />
-          <span style={{ color: t.color, fontSize: 11, fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase", transition: "color 0.6s ease" }}>
+          <span style={{ color: t.color, fontSize: 11, fontWeight: 800, letterSpacing: "2.5px", textTransform: "uppercase" }}>
             {lang === "fr" ? "Récompense versée" : "Reward Paid"}
           </span>
         </div>
 
-        {/* TRADER row */}
+        {/* Trader row */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 30 }}>
           <div style={{ position: "relative", flexShrink: 0 }}>
             <div style={{
               width: 60, height: 60, borderRadius: "50%",
-              background: `${t.color}18`, border: `2.5px solid ${t.color}55`,
+              background: `${t.color}1a`,
+              border: `2.5px solid ${t.color}55`,
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 17, fontWeight: 900, color: t.color,
-              boxShadow: `0 0 22px ${t.color}35`,
-              transition: "all 0.6s ease",
+              boxShadow: `0 0 24px ${t.color}40`,
             }}>
               {t.initials}
             </div>
@@ -169,34 +157,32 @@ function TraderSpotlight({ lang }: { lang: string }) {
             <div style={{
               fontSize: 10, fontWeight: 800, letterSpacing: "2.5px",
               textTransform: "uppercase", color: t.color, marginBottom: 4,
-              transition: "color 0.6s ease",
             }}>
               Trader
             </div>
-            <div style={{ fontWeight: 800, fontSize: 18, color: "#fff", lineHeight: 1.2 }}>{t.name}</div>
-            <div style={{ fontSize: 12, color: "#383848", marginTop: 3 }}>
+            <div style={{ fontWeight: 800, fontSize: 18, color: "#fff", lineHeight: 1.2 }}>
+              {t.name}
+            </div>
+            <div style={{ fontSize: 12, color: "#35354a", marginTop: 3 }}>
               {lang === "fr" ? "Compte" : "Account"} {t.size}
             </div>
           </div>
         </div>
 
-        {/* BIG amount counter */}
+        {/* BIG counter */}
         <div style={{
-          fontSize: "clamp(3.6rem, 13vw, 5.4rem)",
-          fontWeight: 900,
-          color: "#22c55e",
-          lineHeight: 1,
-          letterSpacing: "-3px",
-          marginBottom: 6,
+          fontSize: "clamp(3.8rem, 13vw, 5.6rem)",
+          fontWeight: 900, color: "#22c55e", lineHeight: 1,
+          letterSpacing: "-3px", marginBottom: 6,
           fontVariantNumeric: "tabular-nums",
-          textShadow: "0 0 60px rgba(34,197,94,0.55), 0 0 120px rgba(34,197,94,0.2)",
+          textShadow: "0 0 60px rgba(34,197,94,0.6), 0 0 130px rgba(34,197,94,0.25)",
         }}>
-          {fmt(amount)}
+          {fmt(displayAmount)}
         </div>
 
         <div style={{
           fontSize: 10, fontWeight: 800, letterSpacing: "3px",
-          textTransform: "uppercase", color: "#222232", marginBottom: 28,
+          textTransform: "uppercase", color: "#1e1e2e", marginBottom: 28,
         }}>
           {lang === "fr" ? "Récompense reçue" : "Reward Received"}
         </div>
@@ -204,8 +190,7 @@ function TraderSpotlight({ lang }: { lang: string }) {
         {/* Divider */}
         <div style={{
           width: "50%", height: 1, margin: "0 auto 22px",
-          background: `linear-gradient(to right, transparent, ${t.color}50, transparent)`,
-          transition: "background 0.6s ease",
+          background: `linear-gradient(to right, transparent, ${t.color}55, transparent)`,
         }} />
 
         {/* Bottom badges */}
@@ -222,7 +207,7 @@ function TraderSpotlight({ lang }: { lang: string }) {
               {lang === "fr" ? "Trader certifié" : "Certified Trader"}
             </span>
           </div>
-          <span style={{ fontSize: 11, color: "#252535", fontWeight: 600 }}>
+          <span style={{ fontSize: 11, color: "#222232", fontWeight: 600 }}>
             · {lang === "fr" ? "Versé cette semaine" : "Paid this week"}
           </span>
         </div>
@@ -230,15 +215,35 @@ function TraderSpotlight({ lang }: { lang: string }) {
         {/* Bottom bar */}
         <div style={{
           position: "absolute", bottom: 0, left: "15%", right: "15%", height: 1,
-          background: `linear-gradient(to right, transparent, ${t.color}35, transparent)`,
-          transition: "background 0.6s ease",
+          background: `linear-gradient(to right, transparent, ${t.color}38, transparent)`,
         }} />
       </div>
 
       <style>{`
+        @keyframes spotlightCycle {
+          0%   {
+            opacity: 0;
+            transform: translateY(52px) scale(0.87);
+            animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+          }
+          ${((ENTER_MS / TOTAL_MS) * 100).toFixed(2)}% {
+            opacity: 1;
+            transform: translateY(0px) scale(1);
+            animation-timing-function: linear;
+          }
+          ${(((ENTER_MS + HOLD_MS) / TOTAL_MS) * 100).toFixed(2)}% {
+            opacity: 1;
+            transform: translateY(0px) scale(1);
+            animation-timing-function: ease-in;
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-22px) scale(0.96);
+          }
+        }
         @keyframes pulseDot {
           0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.55; transform: scale(0.8); }
+          50%       { opacity: 0.5; transform: scale(0.75); }
         }
       `}</style>
     </div>
@@ -249,7 +254,7 @@ function TraderCard({ trader }: { trader: typeof TRADERS[0] }) {
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: 14,
-      backgroundColor: "#0e0e14", border: "1px solid rgba(255,255,255,0.06)",
+      backgroundColor: "#0c0c12", border: "1px solid rgba(255,255,255,0.06)",
       borderRadius: 14, padding: "14px 20px",
       minWidth: 210, flexShrink: 0,
     }}>
@@ -274,11 +279,11 @@ function TraderCard({ trader }: { trader: typeof TRADERS[0] }) {
         />
       </div>
       <div>
-        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4, color: "#ddd" }}>{trader.name}</div>
+        <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4, color: "#ccc" }}>{trader.name}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ color: "#22c55e", fontWeight: 800, fontSize: 15 }}>{fmt(trader.payout)}</span>
-          <span style={{ color: "#1a1a2a", fontSize: 11 }}>·</span>
-          <span style={{ color: "#2a2a3a", fontSize: 11 }}>{trader.size}</span>
+          <span style={{ color: "#1a1a28", fontSize: 11 }}>·</span>
+          <span style={{ color: "#282838", fontSize: 11 }}>{trader.size}</span>
         </div>
       </div>
     </div>
@@ -307,17 +312,17 @@ export default function TopTraders() {
   const doubled = [...TRADERS, ...TRADERS];
 
   return (
-    <section style={{ padding: "60px 0", overflow: "hidden", background: "#000" }}>
+    <section style={{ padding: "60px 0 0", overflow: "hidden", background: "#000" }}>
 
       {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 8, padding: "0 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: 4, padding: "0 24px" }}>
         <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 12 }}>
           {lang === "fr" ? "Communauté" : "Community"}
         </span>
         <h2 style={{ fontSize: "clamp(1.6rem, 4vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: 10 }}>
           {lang === "fr" ? "Dernières Récompenses" : "Latest Rewards"}
         </h2>
-        <p style={{ color: "#333", fontSize: 14, maxWidth: 460, margin: "0 auto" }}>
+        <p style={{ color: "#2a2a3a", fontSize: 14, maxWidth: 460, margin: "0 auto" }}>
           {lang === "fr"
             ? "Nos traders certifiés reçoivent leurs récompenses chaque semaine."
             : "Our certified traders receive their rewards every week."}
@@ -328,7 +333,7 @@ export default function TopTraders() {
       <TraderSpotlight lang={lang} />
 
       {/* Ticker */}
-      <div style={{ position: "relative", marginBottom: 0 }}>
+      <div style={{ position: "relative" }}>
         <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 100, zIndex: 2, background: "linear-gradient(to right, #000, transparent)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: 100, zIndex: 2, background: "linear-gradient(to left, #000, transparent)", pointerEvents: "none" }} />
         <div style={{ display: "flex", gap: 14, animation: "ticker 50s linear infinite", width: "max-content", padding: "8px 16px" }}>
@@ -339,7 +344,7 @@ export default function TopTraders() {
       </div>
 
       {/* Earnings potential */}
-      <div style={{ maxWidth: 900, margin: "72px auto 0", padding: "0 24px" }}>
+      <div style={{ maxWidth: 900, margin: "72px auto 0", padding: "0 24px 80px" }}>
         <div style={{ textAlign: "center", marginBottom: 36 }}>
           <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 10 }}>
             {lang === "fr" ? "Potentiel de gains" : "Earnings potential"}
@@ -360,7 +365,7 @@ export default function TopTraders() {
             const glows  = ["#2D7DD222", "#a855f722", "#22c55e22", "#f59e0b22", "#22c55e22"];
             return (
               <div key={i} style={{
-                background: "linear-gradient(145deg, #0a0a0a, #0e0e0e)",
+                background: "linear-gradient(145deg, #080808, #0c0c0c)",
                 border: `1px solid ${colors[i]}44`,
                 borderRadius: 18,
                 padding: isMobile ? "22px 16px" : "24px 16px",
@@ -374,22 +379,22 @@ export default function TopTraders() {
               }}>
                 <div style={{ position: "absolute", top: -30, left: "50%", transform: "translateX(-50%)", width: 100, height: 100, borderRadius: "50%", background: glows[i], filter: "blur(24px)", pointerEvents: "none" }} />
                 <div style={{ fontSize: isMobile ? 16 : 13, fontWeight: 800, color: colors[i], marginBottom: 14, letterSpacing: "1px" }}>{row.size}</div>
-                <div style={{ fontSize: 10, color: "#555", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
+                <div style={{ fontSize: 10, color: "#444", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
                   {lang === "fr" ? "Profit moyen" : "Avg. profit"}
                 </div>
                 <div style={{ fontSize: isMobile ? 17 : 18, fontWeight: 700, color: "#fff", marginBottom: 14 }}>{row.profit}</div>
                 <div style={{ width: "100%", height: 1, background: `linear-gradient(to right, transparent, ${colors[i]}55, transparent)`, marginBottom: 14 }} />
-                <div style={{ fontSize: 10, color: "#555", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>
+                <div style={{ fontSize: 10, color: "#444", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 6 }}>
                   {lang === "fr" ? "Votre récompense" : "Your reward"}
                 </div>
                 <div style={{ fontSize: isMobile ? 24 : 26, fontWeight: 900, color: "#22c55e", letterSpacing: "-0.5px" }}>{row.reward}</div>
-                <div style={{ fontSize: 11, color: "#333", marginTop: 4 }}>{lang === "fr" ? "/ mois" : "/ month"}</div>
+                <div style={{ fontSize: 11, color: "#2a2a2a", marginTop: 4 }}>{lang === "fr" ? "/ mois" : "/ month"}</div>
               </div>
             );
           })}
         </div>
 
-        <p style={{ color: "#1a1a1a", fontSize: 11, marginTop: 16, textAlign: "center" }}>
+        <p style={{ color: "#151515", fontSize: 11, marginTop: 16, textAlign: "center" }}>
           {lang === "fr"
             ? "* Estimations basées sur 6% de profit mensuel et 80% de partage. Les performances varient selon les traders."
             : "* Estimates based on 6% monthly profit and 80% split. Results vary per trader."}
