@@ -10,7 +10,7 @@ const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://elysiumfunded.eu"),
-  title: "Elysium — Performez votre Trading Démo. Recevez de vraies récompenses.",
+  title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
   description: "Accédez à 200 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
   manifest: "/manifest.json",
   appleWebApp: {
