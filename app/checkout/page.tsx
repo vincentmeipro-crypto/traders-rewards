@@ -292,24 +292,14 @@ function CheckoutContent() {
                 </div>
               </div>
             )}
+            {user && (
+              <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 10, marginTop: 10, display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#16a34a" }} />
+                <span style={{ fontSize: 12, color: "#16a34a", fontWeight: 600 }}>Connecté en tant que {user.email}</span>
+              </div>
+            )}
           </div>
 
-          {/* Support */}
-          <div style={{ background: "#eff6ff", borderRadius: 12, border: "1px solid #bfdbfe", padding: "12px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 36, height: 36, background: "#2563eb", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <MessageCircle size={18} color="#fff" />
-              </div>
-              <div>
-                <div style={{ fontWeight: 700, fontSize: 13, color: "#1e3a8a" }}>Besoin d&apos;aide ?</div>
-                <div style={{ color: "#3b82f6", fontSize: 12 }}>Support disponible 7j/7 — réponse immédiate</div>
-              </div>
-            </div>
-            <a href="mailto:support@elysium-funded.com"
-              style={{ background: "#2563eb", color: "#fff", borderRadius: 8, padding: "8px 18px", fontSize: 12, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}>
-              Nous écrire
-            </a>
-          </div>
         </div>
 
         {/* RIGHT COLUMN */}
@@ -418,9 +408,34 @@ function CheckoutContent() {
           </div>
 
           {/* Trust */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 4 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
             <ShieldCheck size={14} color="#9ca3af" />
             <span style={{ color: "#9ca3af", fontSize: 11 }}>Sécurisé par Stripe · SSL · Aucun abonnement</span>
+          </div>
+
+          {/* Support + Chat */}
+          <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
+            <div style={{ fontWeight: 700, fontSize: 12, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.5px" }}>Besoin d&apos;aide ?</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <button
+                onClick={() => { if (typeof window !== "undefined" && (window as any).Tawk_API) (window as any).Tawk_API.toggle(); }}
+                style={{ width: "100%", padding: "11px 16px", background: "#eff6ff", border: "1.5px solid #bfdbfe", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, color: "#1e3a8a", fontWeight: 700, fontSize: 13 }}>
+                <MessageCircle size={16} color="#2563eb" />
+                <div style={{ textAlign: "left" }}>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "#1e3a8a" }}>Chat en direct</div>
+                  <div style={{ fontWeight: 400, fontSize: 11, color: "#3b82f6" }}>Réponse immédiate — disponible maintenant</div>
+                </div>
+                <div style={{ marginLeft: "auto", width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
+              </button>
+              <a href="mailto:support@elysium-funded.com"
+                style={{ width: "100%", padding: "10px 16px", background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, display: "flex", alignItems: "center", gap: 10, textDecoration: "none", boxSizing: "border-box" }}>
+                <span style={{ fontSize: 15 }}>✉️</span>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 13, color: "#374151" }}>support@elysium-funded.com</div>
+                  <div style={{ fontSize: 11, color: "#9ca3af" }}>Réponse sous 24h</div>
+                </div>
+              </a>
+            </div>
           </div>
         </div>
       </div>
