@@ -42,7 +42,7 @@ export default function Navbar() {
           <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
             <img
               src="/logo-white.jpg"
-              alt="Elysium Funded logo"
+              alt="Elysium logo"
               style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }}
             />
             <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1, color: "#fff" }}>

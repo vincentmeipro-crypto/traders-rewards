@@ -189,7 +189,7 @@ function CheckoutContent() {
       {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
         <Image src="/logo-black.jpg" alt="Elysium" width={28} height={28} style={{ objectFit: "contain", borderRadius: 4 }} />
-        <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Elysium Funded</span>
+        <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Elysium</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>
         <span style={{ color: "#6b7280", fontSize: 13 }}>Commencer le challenge</span>
         <a href="/#pricing" style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12, textDecoration: "none" }}>← Changer de compte</a>
@@ -206,7 +206,7 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>Challenge {challenge.label}</div>
-                <div style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>{challenge.model} — Elysium Funded · MetaTrader 5</div>
+                <div style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>{challenge.model} — Elysium · MetaTrader 5</div>
               </div>
               <span style={{ background: "#eff6ff", color: "#2563eb", fontSize: 11, fontWeight: 800, padding: "4px 10px", borderRadius: 6, border: "1px solid #bfdbfe" }}>
                 {challenge.model}
@@ -427,14 +427,6 @@ function CheckoutContent() {
                 </div>
                 <div style={{ marginLeft: "auto", width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
               </button>
-              <a href="mailto:support@elysium-funded.com"
-                style={{ width: "100%", padding: "10px 16px", background: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, display: "flex", alignItems: "center", gap: 10, textDecoration: "none", boxSizing: "border-box" }}>
-                <span style={{ fontSize: 15 }}>✉️</span>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: "#374151" }}>support@elysium-funded.com</div>
-                  <div style={{ fontSize: 11, color: "#9ca3af" }}>Réponse sous 24h</div>
-                </div>
-              </a>
             </div>
           </div>
         </div>

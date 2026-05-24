@@ -5,7 +5,7 @@ export default function CancelPage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ textAlign: "center", maxWidth: 440 }}>
-        <Image src="/logo-white.jpg" alt="Elysium Funded" width={80} height={80} style={{ objectFit: "contain", mixBlendMode: "screen", marginBottom: 32 }} />
+        <Image src="/logo-white.jpg" alt="Elysium" width={80} height={80} style={{ objectFit: "contain", mixBlendMode: "screen", marginBottom: 32 }} />
 
         <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "48px 40px" }}>
           <XCircle size={56} color="#ef4444" style={{ marginBottom: 24 }} />
