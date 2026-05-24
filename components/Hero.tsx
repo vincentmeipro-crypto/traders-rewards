@@ -184,7 +184,20 @@ export default function Hero() {
             <img src={isMobile ? "/PROMO40MOBILE.png" : "/PROMO40PC.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
           </a>
           <div style={{ padding: isMobile ? "0 16px 24px" : "0 20% 32px" }}>
-            <a href="/#pricing" style={{ display: "block", width: "100%", padding: isMobile ? "18px 0" : "20px 0", backgroundColor: "#7c3aed", border: "2px solid #fff", borderRadius: 12, textAlign: "center", color: "#fff", fontWeight: 900, fontSize: isMobile ? 15 : 18, letterSpacing: "1px", textDecoration: "none", textTransform: "uppercase", boxSizing: "border-box" }}>
+            <a href="/#pricing" style={{
+              display: "block", width: "100%", padding: isMobile ? "16px 0" : "18px 0",
+              background: "#ffffff",
+              borderRadius: 14,
+              textAlign: "center", color: "#000", fontWeight: 800,
+              fontSize: isMobile ? 14 : 16, letterSpacing: "1.5px",
+              textDecoration: "none", textTransform: "uppercase", boxSizing: "border-box",
+              boxShadow: "0 4px 24px rgba(255,255,255,0.18), 0 1px 4px rgba(0,0,0,0.18)",
+              border: "none",
+              transition: "box-shadow 0.2s, transform 0.2s",
+            }}
+              onMouseOver={e => { e.currentTarget.style.boxShadow = "0 8px 36px rgba(255,255,255,0.28)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+              onMouseOut={e => { e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,255,255,0.18), 0 1px 4px rgba(0,0,0,0.18)"; e.currentTarget.style.transform = "translateY(0)"; }}
+            >
               PROFITEZ MAINTENANT DE LA PROMOTION −40%
             </a>
           </div>
