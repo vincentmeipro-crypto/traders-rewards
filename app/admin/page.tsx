@@ -599,7 +599,7 @@ export default function AdminPage() {
                           <tr key={`${c.id}-icm`} style={{ backgroundColor: "rgba(201,168,76,0.03)" }}>
                             <td colSpan={14} style={{ padding: "8px 14px" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Blueberry →</span>
+                                <span style={{ color: "#2D7DD2", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Blueberry →</span>
                                 {[
                                   { label: "Prénom", value: c.client_first_name },
                                   { label: "Nom", value: c.client_last_name },
@@ -608,10 +608,10 @@ export default function AdminPage() {
                                   { label: "Balance", value: c.account_size.replace("$","").replace(",","") },
                                 ].map((f, i) => (
                                   <button key={i} onClick={() => copyToClipboard(f.value)}
-                                    style={{ backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, padding: "3px 8px", color: "#888", fontSize: 11, cursor: "pointer" }}>
-                                    <span style={{ color: "#555", fontSize: 10 }}>{f.label}: </span>
-                                    <span style={{ color: "#fff", fontWeight: 600 }}>{f.value}</span>
-                                    <span style={{ color: "#444", fontSize: 10 }}> ⎘</span>
+                                    style={{ backgroundColor: "#f3f4f6", border: "1px solid #ddd", borderRadius: 6, padding: "3px 8px", color: "#555", fontSize: 11, cursor: "pointer" }}>
+                                    <span style={{ color: "#888", fontSize: 10 }}>{f.label}: </span>
+                                    <span style={{ color: "#111", fontWeight: 600 }}>{f.value}</span>
+                                    <span style={{ color: "#999", fontSize: 10 }}> ⎘</span>
                                   </button>
                                 ))}
                               </div>
