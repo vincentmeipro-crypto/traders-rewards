@@ -121,7 +121,7 @@ export default function Navbar() {
             <a href="/login" style={{ color: "#2D7DD2", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.5px" }}>
               {T.nav.logIn}
             </a>
-            <a href="/#pricing" className="btn-primary btn-primary-animated" style={{ padding: "10px 22px", fontSize: 13 }}>
+            <a href="/#pricing" className="btn-primary" style={{ padding: "10px 22px", fontSize: 13 }}>
               {T.nav.startChallenge}
             </a>
           </div>
