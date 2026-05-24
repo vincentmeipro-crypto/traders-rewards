@@ -40,7 +40,7 @@ const HOLD_MS  = 2800;
 const EXIT_MS  = 450;
 const TOTAL_MS = ENTER_MS + HOLD_MS + EXIT_MS;
 
-function RewardCard({ lang }: { lang: string }) {
+function RewardCard({ lang, isMobile }: { lang: string; isMobile: boolean }) {
   const [idx, setIdx]       = useState(0);
   const [amount, setAmount] = useState(0);
   const rafRef = useRef<number | null>(null);
@@ -103,10 +103,10 @@ function RewardCard({ lang }: { lang: string }) {
           background: "linear-gradient(160deg, #09090f 0%, #0d1120 100%)",
           border: `1.5px solid ${t.color}55`,
           borderRadius: 20,
-          padding: "22px 28px",
+          padding: isMobile ? "16px 16px" : "22px 28px",
           display: "flex",
           alignItems: "center",
-          gap: 20,
+          gap: isMobile ? 12 : 20,
           position: "relative",
           overflow: "hidden",
           boxShadow: `0 0 70px ${t.color}22, 0 16px 50px rgba(0,0,0,0.7)`,
@@ -122,11 +122,11 @@ function RewardCard({ lang }: { lang: string }) {
         {/* Left: avatar + flag */}
         <div style={{ position: "relative", flexShrink: 0 }}>
           <div style={{
-            width: 52, height: 52, borderRadius: "50%",
+            width: isMobile ? 40 : 52, height: isMobile ? 40 : 52, borderRadius: "50%",
             background: `${t.color}1a`,
             border: `2px solid ${t.color}55`,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 14, fontWeight: 900, color: t.color,
+            fontSize: isMobile ? 11 : 14, fontWeight: 900, color: t.color,
             boxShadow: `0 0 20px ${t.color}40`,
           }}>
             {t.initials}
@@ -136,7 +136,7 @@ function RewardCard({ lang }: { lang: string }) {
             alt=""
             style={{
               position: "absolute", bottom: -3, right: -7,
-              width: 20, height: 15, borderRadius: 3,
+              width: 18, height: 13, borderRadius: 3,
               border: "1px solid rgba(255,255,255,0.18)", objectFit: "cover",
             }}
           />
@@ -159,22 +159,23 @@ function RewardCard({ lang }: { lang: string }) {
               {lang === "fr" ? "Récompense versée" : "Reward Paid"}
             </span>
           </div>
-          <div style={{ fontWeight: 800, fontSize: 15, color: "#fff", lineHeight: 1.2 }}>
+          <div style={{ fontWeight: 800, fontSize: isMobile ? 12 : 15, color: "#fff", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: isMobile ? 88 : 160 }}>
             {t.name}
           </div>
-          <div style={{ fontSize: 11, color: "#30304a", marginTop: 2 }}>
-            Trader · {lang === "fr" ? "Compte" : "Account"} {t.size}
+          <div style={{ fontSize: isMobile ? 10 : 11, color: "#30304a", marginTop: 2 }}>
+            Trader · {t.size}
           </div>
         </div>
 
         {/* Right: BIG amount */}
         <div style={{ textAlign: "right", flexShrink: 0 }}>
           <div style={{
-            fontSize: "clamp(1.8rem, 5vw, 2.4rem)",
+            fontSize: isMobile ? "clamp(1.3rem, 5.5vw, 1.6rem)" : "clamp(1.8rem, 5vw, 2.4rem)",
             fontWeight: 900, color: "#22c55e", lineHeight: 1,
-            letterSpacing: "-1.5px",
+            letterSpacing: "-1px",
             fontVariantNumeric: "tabular-nums",
             textShadow: "0 0 40px rgba(34,197,94,0.7), 0 0 80px rgba(34,197,94,0.3)",
+            whiteSpace: "nowrap",
           }}>
             {fmt(amount)}
           </div>
@@ -365,7 +366,7 @@ export default function Hero() {
           marginBottom: isMobile ? 20 : 32,
           padding: isMobile ? "0 16px" : undefined,
         }}>
-          <RewardCard lang={lang} />
+          <RewardCard lang={lang} isMobile={isMobile} />
         </div>
 
         {/* Promo Banner */}
