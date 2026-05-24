@@ -188,7 +188,7 @@ function CheckoutContent() {
 
       {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-        <Image src="/logo-white.jpg" alt="Elysium" width={28} height={28} style={{ objectFit: "contain", borderRadius: 4 }} />
+        <Image src="/logo-black.jpg" alt="Elysium" width={28} height={28} style={{ objectFit: "contain", borderRadius: 4 }} />
         <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Elysium Funded</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>
         <span style={{ color: "#6b7280", fontSize: 13 }}>Commencer le challenge</span>
