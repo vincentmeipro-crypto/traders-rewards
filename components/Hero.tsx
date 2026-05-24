@@ -1,9 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 // Candle data: [bull, bodyY1, bodyY2, wickY1, wickY2]
-// Uptrend pattern, prices rising left→right
 const CANDLES: [boolean, number, number, number, number][] = [
   [true,  314, 452, 268, 498],
   [false, 300, 382, 254, 422],
@@ -17,6 +16,189 @@ const CANDLES: [boolean, number, number, number, number][] = [
   [false, 100, 178,  62, 210],
 ];
 
+const TRADERS = [
+  { name: "TheBullTrader",  flag: "de", payout: 11360, size: "$200K", color: "#ef4444", initials: "TB" },
+  { name: "GoldScalper",    flag: "ae", payout: 12100, size: "$200K", color: "#2D7DD2", initials: "GS" },
+  { name: "Ahmed R.",       flag: "sa", payout: 10200, size: "$200K", color: "#a855f7", initials: "AR" },
+  { name: "Jean-Pierre D.", flag: "fr", payout: 10850, size: "$200K", color: "#f59e0b", initials: "JP" },
+  { name: "Marco V.",       flag: "it", payout: 9640,  size: "$200K", color: "#3b82f6", initials: "MV" },
+  { name: "PipHunterPro",   flag: "us", payout: 8960,  size: "$200K", color: "#22c55e", initials: "PH" },
+  { name: "Dmitri K.",      flag: "ru", payout: 9280,  size: "$200K", color: "#06b6d4", initials: "DK" },
+  { name: "Yuki T.",        flag: "jp", payout: 5100,  size: "$100K", color: "#06b6d4", initials: "YT" },
+  { name: "Karim B.",       flag: "fr", payout: 4820,  size: "$100K", color: "#2D7DD2", initials: "KB" },
+  { name: "Lucas M.",       flag: "br", payout: 4480,  size: "$100K", color: "#f59e0b", initials: "LM" },
+  { name: "Sarah L.",       flag: "gb", payout: 2350,  size: "$50K",  color: "#22c55e", initials: "SL" },
+  { name: "Carlos G.",      flag: "es", payout: 2720,  size: "$50K",  color: "#2D7DD2", initials: "CG" },
+];
+
+function fmt(n: number): string {
+  return "$" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+const ENTER_MS = 550;
+const HOLD_MS  = 2800;
+const EXIT_MS  = 450;
+const TOTAL_MS = ENTER_MS + HOLD_MS + EXIT_MS;
+
+function RewardCard({ lang }: { lang: string }) {
+  const [idx, setIdx]       = useState(0);
+  const [amount, setAmount] = useState(0);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const trader = TRADERS[idx];
+
+    const t1 = setTimeout(() => {
+      if (cancelled) return;
+      const start = performance.now();
+      const dur = 700;
+      const tick = (now: number) => {
+        if (cancelled) return;
+        const p    = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        setAmount(Math.round(ease * trader.payout));
+        if (p < 1) rafRef.current = requestAnimationFrame(tick);
+        else        setAmount(trader.payout);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+    }, ENTER_MS);
+
+    const t2 = setTimeout(() => {
+      if (!cancelled) {
+        setAmount(0);
+        setIdx(i => (i + 1) % TRADERS.length);
+      }
+    }, TOTAL_MS + 80);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(t1);
+      clearTimeout(t2);
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [idx]);
+
+  const t = TRADERS[idx];
+  const enterPct = ((ENTER_MS / TOTAL_MS) * 100).toFixed(2);
+  const holdPct  = (((ENTER_MS + HOLD_MS) / TOTAL_MS) * 100).toFixed(2);
+
+  return (
+    <div style={{ width: "100%", maxWidth: 420, margin: "0 auto", position: "relative" }}>
+
+      {/* Glow behind card */}
+      <div style={{
+        position: "absolute", top: "50%", left: "50%",
+        width: 420, height: 200,
+        transform: "translate(-50%, -50%)",
+        background: `radial-gradient(ellipse, ${t.color}20 0%, transparent 70%)`,
+        pointerEvents: "none",
+        transition: "background 1s ease",
+      }} />
+
+      {/* Card */}
+      <div
+        key={idx}
+        style={{
+          background: "linear-gradient(160deg, #09090f 0%, #0d1120 100%)",
+          border: `1.5px solid ${t.color}55`,
+          borderRadius: 20,
+          padding: "22px 28px",
+          display: "flex",
+          alignItems: "center",
+          gap: 20,
+          position: "relative",
+          overflow: "hidden",
+          boxShadow: `0 0 70px ${t.color}22, 0 16px 50px rgba(0,0,0,0.7)`,
+          animation: `heroReward ${TOTAL_MS}ms linear forwards`,
+        }}
+      >
+        {/* Top bar */}
+        <div style={{
+          position: "absolute", top: 0, left: "10%", right: "10%", height: 2,
+          background: `linear-gradient(to right, transparent, ${t.color}, transparent)`,
+        }} />
+
+        {/* Left: avatar + flag */}
+        <div style={{ position: "relative", flexShrink: 0 }}>
+          <div style={{
+            width: 52, height: 52, borderRadius: "50%",
+            background: `${t.color}1a`,
+            border: `2px solid ${t.color}55`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 14, fontWeight: 900, color: t.color,
+            boxShadow: `0 0 20px ${t.color}40`,
+          }}>
+            {t.initials}
+          </div>
+          <img
+            src={`https://flagcdn.com/24x18/${t.flag}.png`}
+            alt=""
+            style={{
+              position: "absolute", bottom: -3, right: -7,
+              width: 20, height: 15, borderRadius: 3,
+              border: "1px solid rgba(255,255,255,0.18)", objectFit: "cover",
+            }}
+          />
+        </div>
+
+        {/* Center: name + badge */}
+        <div style={{ flex: 1, textAlign: "left" }}>
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 6,
+            marginBottom: 4,
+          }}>
+            <span style={{
+              display: "inline-block", width: 6, height: 6, borderRadius: "50%",
+              background: "#22c55e",
+              boxShadow: "0 0 8px #22c55e",
+              animation: "heroPulseDot 1.5s ease-in-out infinite",
+              flexShrink: 0,
+            }} />
+            <span style={{ color: t.color, fontSize: 9, fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase" }}>
+              {lang === "fr" ? "Récompense versée" : "Reward Paid"}
+            </span>
+          </div>
+          <div style={{ fontWeight: 800, fontSize: 15, color: "#fff", lineHeight: 1.2 }}>
+            {t.name}
+          </div>
+          <div style={{ fontSize: 11, color: "#30304a", marginTop: 2 }}>
+            Trader · {lang === "fr" ? "Compte" : "Account"} {t.size}
+          </div>
+        </div>
+
+        {/* Right: BIG amount */}
+        <div style={{ textAlign: "right", flexShrink: 0 }}>
+          <div style={{
+            fontSize: "clamp(1.8rem, 5vw, 2.4rem)",
+            fontWeight: 900, color: "#22c55e", lineHeight: 1,
+            letterSpacing: "-1.5px",
+            fontVariantNumeric: "tabular-nums",
+            textShadow: "0 0 40px rgba(34,197,94,0.7), 0 0 80px rgba(34,197,94,0.3)",
+          }}>
+            {fmt(amount)}
+          </div>
+          <div style={{ fontSize: 9, color: "#1e1e2e", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginTop: 3 }}>
+            {lang === "fr" ? "Récompense" : "Reward"}
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes heroReward {
+          0%          { opacity: 0; transform: translateY(32px) scale(0.9);  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
+          ${enterPct}% { opacity: 1; transform: translateY(0px)  scale(1);   animation-timing-function: linear; }
+          ${holdPct}%  { opacity: 1; transform: translateY(0px)  scale(1);   animation-timing-function: ease-in; }
+          100%        { opacity: 0; transform: translateY(-18px) scale(0.96); }
+        }
+        @keyframes heroPulseDot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%      { opacity: 0.45; transform: scale(0.7); }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 function CandleChart({ side }: { side: "left" | "right" }) {
   const W = 520;
@@ -86,7 +268,7 @@ function CandleChart({ side }: { side: "left" | "right" }) {
 }
 
 export default function Hero() {
-  const { T } = useLanguage();
+  const { T, lang } = useLanguage();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -128,9 +310,8 @@ export default function Hero() {
         zIndex: 0,
       }} />
 
-      {/* Content — above candles */}
-      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
-
+      {/* Content */}
+      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
 
         {/* Title */}
         <h1 style={{
@@ -151,7 +332,7 @@ export default function Hero() {
           fontSize: isMobile ? 15 : 18,
           maxWidth: 560,
           lineHeight: 1.7,
-          marginBottom: isMobile ? 20 : 40,
+          marginBottom: isMobile ? 20 : 32,
         }}>
           {T.hero.sub}
         </p>
@@ -163,7 +344,7 @@ export default function Hero() {
           gap: 12,
           justifyContent: "center",
           alignItems: "center",
-          marginBottom: isMobile ? 12 : 20,
+          marginBottom: isMobile ? 20 : 28,
           width: isMobile ? "100%" : "auto",
           padding: isMobile ? "0 16px" : undefined,
         }}>
@@ -177,6 +358,15 @@ export default function Hero() {
           </a>
         </div>
 
+        {/* Reward card animation */}
+        <div style={{
+          width: "100%",
+          maxWidth: 480,
+          marginBottom: isMobile ? 20 : 32,
+          padding: isMobile ? "0 16px" : undefined,
+        }}>
+          <RewardCard lang={lang} />
+        </div>
 
         {/* Promo Banner */}
         <div style={{ width: "100vw", position: "relative", left: "50%", transform: "translateX(-50%)", marginTop: 0 }}>
