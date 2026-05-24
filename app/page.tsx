@@ -15,8 +15,8 @@ export default function Home() {
     <main style={{ minHeight: "100vh" }}>
 <Navbar />
       <Hero />
-      <Stats />
       <TopTraders />
+      <Stats />
       <HowItWorks />
       <Pricing />
       <Rules />
