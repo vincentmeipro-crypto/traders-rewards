@@ -4,19 +4,19 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
   { name: "Karim B.",       flag: "fr", payout: 4820,  size: "$100K", color: "#2D7DD2", initials: "KB" },
-  { name: "Marco V.",       flag: "it", payout: 9640,  size: "$200K", color: "#3b82f6", initials: "MV" },
+  { name: "Marco V.",       flag: "it", payout: 7240,  size: "$100K", color: "#3b82f6", initials: "MV" },
   { name: "Sarah L.",       flag: "gb", payout: 2350,  size: "$50K",  color: "#22c55e", initials: "SL" },
-  { name: "Ahmed R.",       flag: "sa", payout: 10200, size: "$200K", color: "#a855f7", initials: "AR" },
-  { name: "Lucas M.",       flag: "br", payout: 4480,  size: "$100K", color: "#f59e0b", initials: "LM" },
-  { name: "TheBullTrader",  flag: "de", payout: 11360, size: "$200K", color: "#ef4444", initials: "TB" },
-  { name: "Yuki T.",        flag: "jp", payout: 5100,  size: "$100K", color: "#06b6d4", initials: "YT" },
+  { name: "Antoine M.",     flag: "be", payout: 7680,  size: "$100K", color: "#a855f7", initials: "AM" },
+  { name: "Thomas N.",      flag: "nl", payout: 4480,  size: "$100K", color: "#f59e0b", initials: "TN" },
+  { name: "TheBullTrader",  flag: "de", payout: 8960,  size: "$100K", color: "#ef4444", initials: "TB" },
+  { name: "Stefan B.",      flag: "at", payout: 5100,  size: "$100K", color: "#06b6d4", initials: "SB" },
   { name: "Carlos G.",      flag: "es", payout: 2720,  size: "$50K",  color: "#2D7DD2", initials: "CG" },
-  { name: "PipHunterPro",   flag: "us", payout: 8960,  size: "$200K", color: "#22c55e", initials: "PH" },
-  { name: "Fatima A.",      flag: "ma", payout: 4650,  size: "$100K", color: "#f59e0b", initials: "FA" },
-  { name: "Jean-Pierre D.", flag: "fr", payout: 10850, size: "$200K", color: "#ef4444", initials: "JP" },
-  { name: "GoldScalper",    flag: "ae", payout: 12100, size: "$200K", color: "#2D7DD2", initials: "GS" },
-  { name: "Min-jun L.",     flag: "kr", payout: 5340,  size: "$100K", color: "#06b6d4", initials: "ML" },
-  { name: "Dmitri K.",      flag: "ru", payout: 9280,  size: "$200K", color: "#3b82f6", initials: "DK" },
+  { name: "NordTrader",     flag: "se", payout: 6720,  size: "$100K", color: "#22c55e", initials: "NT" },
+  { name: "Sofia R.",       flag: "pt", payout: 4650,  size: "$100K", color: "#f59e0b", initials: "SR" },
+  { name: "Jean-Pierre D.", flag: "fr", payout: 8150,  size: "$100K", color: "#ef4444", initials: "JP" },
+  { name: "ChartMaster",    flag: "pl", payout: 9100,  size: "$100K", color: "#2D7DD2", initials: "CM" },
+  { name: "Andrei P.",      flag: "ro", payout: 5340,  size: "$100K", color: "#06b6d4", initials: "AP" },
+  { name: "Lukas W.",       flag: "ch", payout: 6960,  size: "$100K", color: "#3b82f6", initials: "LW" },
   { name: "Lena H.",        flag: "de", payout: 1180,  size: "$25K",  color: "#a855f7", initials: "LH" },
 ];
 
@@ -302,11 +302,10 @@ export default function TopTraders() {
   }, []);
 
   const tableRows = [
-    { size: "$10K",  profit: "$600",    reward: "~$480" },
-    { size: "$25K",  profit: "$1,500",  reward: "~$1,200" },
-    { size: "$50K",  profit: "$3,000",  reward: "~$2,400" },
-    { size: "$100K", profit: "$6,000",  reward: "~$4,800" },
-    { size: "$200K", profit: "$12,000", reward: "~$9,600" },
+    { size: "$10K",  profit: "$600",   reward: "~$480" },
+    { size: "$25K",  profit: "$1,500", reward: "~$1,200" },
+    { size: "$50K",  profit: "$3,000", reward: "~$2,400" },
+    { size: "$100K", profit: "$6,000", reward: "~$4,800" },
   ];
 
   const doubled = [...TRADERS, ...TRADERS];
@@ -359,10 +358,10 @@ export default function TopTraders() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(5, 1fr)", gap: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 12 }}>
           {tableRows.map((row, i) => {
-            const colors = ["#2D7DD2", "#a855f7", "#22c55e", "#f59e0b", "#22c55e"];
-            const glows  = ["#2D7DD222", "#a855f722", "#22c55e22", "#f59e0b22", "#22c55e22"];
+            const colors = ["#2D7DD2", "#a855f7", "#22c55e", "#f59e0b"];
+            const glows  = ["#2D7DD222", "#a855f722", "#22c55e22", "#f59e0b22"];
             return (
               <div key={i} style={{
                 background: "linear-gradient(145deg, #080808, #0c0c0c)",
@@ -372,10 +371,6 @@ export default function TopTraders() {
                 textAlign: "center",
                 position: "relative",
                 overflow: "hidden",
-                gridColumn: isMobile && i === 4 ? "1 / 3" : undefined,
-                maxWidth: isMobile && i === 4 ? 200 : undefined,
-                margin: isMobile && i === 4 ? "0 auto" : undefined,
-                width: isMobile && i === 4 ? "100%" : undefined,
               }}>
                 <div style={{ position: "absolute", top: -30, left: "50%", transform: "translateX(-50%)", width: 100, height: 100, borderRadius: "50%", background: glows[i], filter: "blur(24px)", pointerEvents: "none" }} />
                 <div style={{ fontSize: isMobile ? 16 : 13, fontWeight: 800, color: colors[i], marginBottom: 14, letterSpacing: "1px" }}>{row.size}</div>
