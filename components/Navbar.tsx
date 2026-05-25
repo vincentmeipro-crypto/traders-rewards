@@ -45,9 +45,14 @@ export default function Navbar() {
               alt="Elysium logo"
               style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }}
             />
-            <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1, color: "#fff" }}>
-              Elysium
-            </span>
+            <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1, color: "#fff" }}>
+                Elysium
+              </span>
+              <span style={{ fontSize: 10, fontWeight: 600, color: "#A0A0A0", letterSpacing: "1px", display: "flex", alignItems: "center", gap: 4 }}>
+                🇫🇷 PropFirm Française
+              </span>
+            </div>
           </a>
 
           {/* Desktop Nav */}
