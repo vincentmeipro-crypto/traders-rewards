@@ -168,7 +168,7 @@ function RewardCard({ lang, isMobile }: { lang: string; isMobile: boolean }) {
         </div>
 
         {/* Right: BIG amount */}
-        <div style={{ textAlign: "right", flexShrink: 0, width: isMobile ? 110 : 165 }}>
+        <div style={{ textAlign: "right", flexShrink: 0, marginLeft: "auto", minWidth: isMobile ? 90 : 165 }}>
           <div style={{
             fontSize: isMobile ? "clamp(1.3rem, 5.5vw, 1.6rem)" : "clamp(1.8rem, 5vw, 2.4rem)",
             fontWeight: 900, color: "#22c55e", lineHeight: 1,
