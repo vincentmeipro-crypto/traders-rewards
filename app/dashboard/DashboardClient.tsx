@@ -690,7 +690,6 @@ export default function DashboardClient({ user }: { user: User }) {
                 { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#2D7DD2" /> },
                 { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#2D7DD2" /> },
                 { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#2D7DD2" /> },
-                { title: "Mandatory Stop-Loss", desc: "A stop-loss must be placed within 1 minute of entering any position. Accounts without a stop-loss may be considered in breach of the rules.", icon: <AlertTriangle size={20} color="#ef4444" /> },
                 { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first reward.", icon: <Wallet size={20} color="#2D7DD2" /> },
                 { title: "Reward Split", desc: "Certified traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#2D7DD2" /> },
               ].map((rule, i) => (
