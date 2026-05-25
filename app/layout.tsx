@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { DM_Sans, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
@@ -11,7 +11,7 @@ const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-
 export const metadata: Metadata = {
   metadataBase: new URL("https://elysiumfunded.eu"),
   title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
-  description: "Accédez à 100 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
+  description: "Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -25,13 +25,13 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Elysium",
     title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
-    description: "Accédez à 100 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
+    description: "Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
     images: [{ url: "/logo-white.jpg", width: 1080, height: 1080, alt: "Elysium" }],
   },
   twitter: {
     card: "summary",
     title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
-    description: "Accédez à 100 000$ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
+    description: "Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
     images: ["/logo-white.jpg"],
   },
 };
