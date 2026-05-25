@@ -10,12 +10,10 @@ const CHALLENGES: Record<string, { label: string; model: "2-Step" | "1-Step"; pr
   "25k-2step":  { label: "$25,000",  model: "2-Step", price: "€219", amount: 21900 },
   "50k-2step":  { label: "$50,000",  model: "2-Step", price: "€299", amount: 29900 },
   "100k-2step": { label: "$100,000", model: "2-Step", price: "€449", amount: 44900 },
-  "200k-2step": { label: "$200,000", model: "2-Step", price: "€899", amount: 89900 },
   "10k-1step":  { label: "$10,000",  model: "1-Step", price: "€69",  amount: 6900  },
   "25k-1step":  { label: "$25,000",  model: "1-Step", price: "€149", amount: 14900 },
   "50k-1step":  { label: "$50,000",  model: "1-Step", price: "€249", amount: 24900 },
   "100k-1step": { label: "$100,000", model: "1-Step", price: "€399", amount: 39900 },
-  "200k-1step": { label: "$200,000", model: "1-Step", price: "€849", amount: 84900 },
 };
 
 const RULES_2STEP = [

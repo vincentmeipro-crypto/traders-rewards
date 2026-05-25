@@ -7,7 +7,7 @@ const faqData = {
   en: [
     {
       q: "How do I get started?",
-      a: "Choose your challenge (2-Step or 1-Step), select your account size ($10K to $200K), complete payment, and receive your trading account credentials instantly by email.",
+      a: "Choose your challenge (2-Step or 1-Step), select your account size ($10K to $100K), complete payment, and receive your trading account credentials instantly by email.",
     },
     {
       q: "Is there a time limit to pass the challenge?",
@@ -73,7 +73,7 @@ const faqData = {
   fr: [
     {
       q: "Comment commencer ?",
-      a: "Choisissez votre challenge (2 étapes ou 1 étape), sélectionnez la taille de votre compte (10K$ à 200K$), effectuez le paiement et recevez immédiatement vos identifiants de compte par email.",
+      a: "Choisissez votre challenge (2 étapes ou 1 étape), sélectionnez la taille de votre compte (10K$ à 100K$), effectuez le paiement et recevez immédiatement vos identifiants de compte par email.",
     },
     {
       q: "Y a-t-il une limite de temps ?",

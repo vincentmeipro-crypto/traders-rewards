@@ -4,7 +4,6 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
   { size: "$100,000", id: "100k", price2: "€439",   old2: "€526",  price1: "€429",   popular: true, discount: "-20%" },
-  { size: "$200,000", id: "200k", price2: "€799",   old2: null,    price1: "€749",   popular: false },
   { size: "$50,000",  id: "50k",  price2: "€345",   old2: null,    price1: "€299",   popular: false },
   { size: "$25,000",  id: "25k",  price2: "€250",   old2: null,    price1: "€189",   popular: false },
   { size: "$10,000",  id: "10k",  price2: "€89",    old2: null,    price1: "€69",    popular: false },
@@ -80,7 +79,7 @@ export default function Pricing() {
         {/* Cards */}
         <div style={{
           display: isMobile ? "flex" : "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
+          gridTemplateColumns: "repeat(4, 1fr)",
           gap: 12,
           overflowX: isMobile ? "scroll" : "auto",
           paddingTop: 20,

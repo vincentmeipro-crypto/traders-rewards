@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     const sizeMap: Record<string, number> = {
       "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
-      "$100,000": 100000, "$200,000": 200000,
+      "$100,000": 100000,
     };
     const size = sizeMap[accountSize] || 10000;
 
