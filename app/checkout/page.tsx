@@ -95,10 +95,25 @@ function CheckoutContent() {
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         setUser({ id: session.user.id, email: session.user.email!, token: session.access_token });
         setEmail(session.user.email!);
+        const res = await fetch("/api/profile", { headers: { Authorization: `Bearer ${session.access_token}` } });
+        if (res.ok) {
+          const p = await res.json();
+          if (p.first_name) setFirstName(p.first_name);
+          if (p.last_name) setLastName(p.last_name);
+          if (p.address) setAddress(p.address);
+          if (p.city) setCity(p.city);
+          if (p.postal_code) setPostalCode(p.postal_code);
+          if (p.country) setCountry(p.country);
+          if (p.birth_date) setBirthDate(p.birth_date);
+          if (p.phone) {
+            const match = p.phone.match(/^(\+\d+)\s(.+)$/);
+            if (match) { setDialCode(match[1]); setPhone(match[2]); }
+          }
+        }
       }
     });
   }, []);
@@ -388,7 +403,7 @@ function CheckoutContent() {
                 • Le trading sur notre plateforme est <strong style={{ color: "#374151" }}>100% simulé</strong> — aucun capital réel, aucun ordre exécuté sur les marchés.<br />
                 • Les Frais de Challenge sont <strong style={{ color: "#374151" }}>non remboursables</strong> dès l&apos;ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).<br />
                 • La récompense est de <strong style={{ color: "#374151" }}>80% (2 Étapes)</strong> ou <strong style={{ color: "#374151" }}>90% (1 Étape)</strong> des profits simulés.<br />
-                • Le capital simulé total est limité à <strong style={{ color: "#374151" }}>200 000 USD</strong> par client.<br />
+                • Le capital simulé total est limité à <strong style={{ color: "#374151" }}>100 000 USD</strong> par client.<br />
                 • En cas de violation des règles, nous pouvons résilier votre compte sans indemnité.<br />
                 • Droit applicable : <strong style={{ color: "#374151" }}>loi estonienne</strong>.
               </p>
