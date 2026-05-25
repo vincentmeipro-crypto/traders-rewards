@@ -32,7 +32,7 @@ const TRADERS = [
 ];
 
 function fmt(n: number): string {
-  return "$" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return "€" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 const ENTER_MS = 550;
