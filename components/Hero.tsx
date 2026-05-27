@@ -286,6 +286,22 @@ export default function Hero() {
       {!isMobile && <CandleChart side="left" />}
       {!isMobile && <CandleChart side="right" />}
 
+      {!isMobile && (
+        <img
+          src="/propfirm-badge-neon.png"
+          alt="PropFirm créée et gérée par des traders français"
+          style={{
+            position: "absolute",
+            left: 40,
+            top: 155,
+            transform: "translateY(-50%)",
+            width: 156,
+            zIndex: 3,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+
 
       {/* Subtle radial glow */}
       <div style={{
