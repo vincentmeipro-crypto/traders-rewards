@@ -45,14 +45,15 @@ export default function Navbar() {
               alt="Elysium logo"
               style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }}
             />
-            <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
               <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1, color: "#fff" }}>
                 Elysium
               </span>
-              <span style={{ fontSize: 10, fontWeight: 600, color: "#A0A0A0", letterSpacing: "1px", display: "flex", alignItems: "center", gap: 5 }}>
-                <img src="https://flagcdn.com/20x15/fr.png" width={14} height={11} alt="FR" style={{ borderRadius: 1, objectFit: "cover" }} />
-                PropFirm Française
-              </span>
+              <img
+                src="/propfirm-francaise.png"
+                alt="PropFirm créée et gérée par des traders français"
+                style={{ height: 22, width: "auto", objectFit: "contain" }}
+              />
             </div>
           </a>
 
