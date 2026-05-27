@@ -39,21 +39,15 @@ export default function Navbar() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Nom */}
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
             <img
               src="/logo-white.jpg"
               alt="Elysium logo"
-              style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }}
+              style={{ width: 26, height: 26, objectFit: "contain", mixBlendMode: "screen" }}
             />
-            <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <span style={{ fontFamily: "var(--font-bebas)", fontSize: 26, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1, color: "#fff" }}>
-                Elysium
-              </span>
-              <span style={{ fontSize: 10, fontWeight: 600, color: "#A0A0A0", letterSpacing: "1px", display: "flex", alignItems: "center", gap: 5 }}>
-                <img src="https://flagcdn.com/20x15/fr.png" width={14} height={11} alt="FR" style={{ borderRadius: 1, objectFit: "cover" }} />
-                PropFirm Française
-              </span>
-            </div>
+            <span style={{ fontSize: 22, fontWeight: 400, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1, color: "#fff", fontFamily: "Arial, sans-serif" }}>
+              ELYSIUM
+            </span>
           </a>
 
           {/* Desktop Nav */}
