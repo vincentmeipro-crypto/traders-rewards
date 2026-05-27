@@ -296,7 +296,7 @@ export default function Hero() {
             left: 40,
             top: 155,
             transform: "translateY(-50%)",
-            width: 240,
+            width: 120,
             zIndex: 3,
             pointerEvents: "none",
           }}
