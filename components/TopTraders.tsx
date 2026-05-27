@@ -3,21 +3,24 @@ import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
-  { name: "Karim B.",       flag: "fr", payout: 4820,  size: "$100K", color: "#2D7DD2", initials: "KB" },
-  { name: "Marco V.",       flag: "it", payout: 7240,  size: "$100K", color: "#3b82f6", initials: "MV" },
-  { name: "Thomas D.",      flag: "fr", payout: 2350,  size: "$50K",  color: "#22c55e", initials: "TD" },
-  { name: "Antoine M.",     flag: "be", payout: 7680,  size: "$100K", color: "#a855f7", initials: "AM" },
-  { name: "Mathieu R.",     flag: "fr", payout: 4480,  size: "$100K", color: "#f59e0b", initials: "MR" },
-  { name: "Alexandre P.",   flag: "fr", payout: 8960,  size: "$100K", color: "#ef4444", initials: "AP" },
-  { name: "Sarah L.",       flag: "gb", payout: 5100,  size: "$100K", color: "#06b6d4", initials: "SL" },
-  { name: "Carlos G.",      flag: "es", payout: 2720,  size: "$50K",  color: "#2D7DD2", initials: "CG" },
-  { name: "Camille F.",     flag: "fr", payout: 6720,  size: "$100K", color: "#22c55e", initials: "CF" },
+  { name: "Karim B.",       flag: "fr", payout: 3200,  size: "$100K", color: "#2D7DD2", initials: "KB" },
+  { name: "Marco V.",       flag: "it", payout: 3100,  size: "$100K", color: "#3b82f6", initials: "MV" },
+  { name: "Thomas D.",      flag: "fr", payout: 1850,  size: "$50K",  color: "#22c55e", initials: "TD" },
+  { name: "Antoine M.",     flag: "be", payout: 4200,  size: "$100K", color: "#a855f7", initials: "AM" },
+  { name: "Mathieu R.",     flag: "fr", payout: 3750,  size: "$100K", color: "#f59e0b", initials: "MR" },
+  { name: "Alexandre P.",   flag: "fr", payout: 3850,  size: "$100K", color: "#ef4444", initials: "AP" },
+  { name: "Sarah L.",       flag: "gb", payout: 2200,  size: "$50K",  color: "#06b6d4", initials: "SL" },
+  { name: "Carlos G.",      flag: "es", payout: 1450,  size: "$50K",  color: "#2D7DD2", initials: "CG" },
+  { name: "Camille F.",     flag: "fr", payout: 2950,  size: "$100K", color: "#22c55e", initials: "CF" },
   { name: "Nicolas B.",     flag: "fr", payout: 4650,  size: "$100K", color: "#f59e0b", initials: "NB" },
-  { name: "Jean-Pierre D.", flag: "fr", payout: 8150,  size: "$100K", color: "#ef4444", initials: "JP" },
-  { name: "Lukas W.",       flag: "ch", payout: 9100,  size: "$100K", color: "#2D7DD2", initials: "LW" },
-  { name: "Julien M.",      flag: "fr", payout: 5340,  size: "$100K", color: "#06b6d4", initials: "JM" },
-  { name: "Andrei P.",      flag: "ro", payout: 6960,  size: "$100K", color: "#3b82f6", initials: "AP" },
-  { name: "Lena H.",        flag: "de", payout: 1180,  size: "$25K",  color: "#a855f7", initials: "LH" },
+  { name: "Jean-Pierre D.", flag: "fr", payout: 4650,  size: "$100K", color: "#ef4444", initials: "JP" },
+  { name: "Lukas W.",       flag: "ch", payout: 3600,  size: "$100K", color: "#2D7DD2", initials: "LW" },
+  { name: "Julien M.",      flag: "fr", payout: 2600,  size: "$100K", color: "#06b6d4", initials: "JM" },
+  { name: "Andrei P.",      flag: "ro", payout:  980,  size: "$25K",  color: "#3b82f6", initials: "AP" },
+  { name: "Lena H.",        flag: "de", payout: 1150,  size: "$25K",  color: "#a855f7", initials: "LH" },
+  { name: "Lucas M.",       flag: "fr", payout:  420,  size: "$10K",  color: "#22c55e", initials: "LM" },
+  { name: "Emma R.",        flag: "fr", payout:  360,  size: "$10K",  color: "#f59e0b", initials: "ER" },
+  { name: "Yann T.",        flag: "fr", payout:  470,  size: "$10K",  color: "#2D7DD2", initials: "YT" },
 ];
 
 function fmt(n: number): string {
