@@ -17,18 +17,18 @@ const CANDLES: [boolean, number, number, number, number][] = [
 ];
 
 const TRADERS = [
-  { name: "TheBullTrader",  flag: "de", payout: 11360, size: "$100K", color: "#ef4444", initials: "TB" },
-  { name: "Alexandre P.",   flag: "fr", payout: 9800,  size: "$100K", color: "#2D7DD2", initials: "AP" },
-  { name: "Thomas N.",      flag: "nl", payout: 7650,  size: "$100K", color: "#a855f7", initials: "TN" },
-  { name: "Jean-Pierre D.", flag: "fr", payout: 10850, size: "$100K", color: "#f59e0b", initials: "JP" },
-  { name: "Marco V.",       flag: "it", payout: 9640,  size: "$100K", color: "#3b82f6", initials: "MV" },
-  { name: "Mathieu R.",     flag: "fr", payout: 8960,  size: "$100K", color: "#22c55e", initials: "MR" },
-  { name: "Nicolas B.",     flag: "fr", payout: 7280,  size: "$100K", color: "#06b6d4", initials: "NB" },
-  { name: "Camille F.",     flag: "fr", payout: 5100,  size: "$100K", color: "#06b6d4", initials: "CF" },
-  { name: "Karim B.",       flag: "fr", payout: 4820,  size: "$100K", color: "#2D7DD2", initials: "KB" },
-  { name: "Stefan B.",      flag: "at", payout: 4480,  size: "$100K", color: "#f59e0b", initials: "SB" },
-  { name: "Sarah L.",       flag: "gb", payout: 2350,  size: "$50K",  color: "#22c55e", initials: "SL" },
-  { name: "Carlos G.",      flag: "es", payout: 2720,  size: "$50K",  color: "#2D7DD2", initials: "CG" },
+  { name: "TheBullTrader",  flag: "de", payout: 4200, size: "$100K", color: "#ef4444", initials: "TB" },
+  { name: "Alexandre P.",   flag: "fr", payout: 3850, size: "$100K", color: "#2D7DD2", initials: "AP" },
+  { name: "Thomas N.",      flag: "nl", payout: 2600, size: "$100K", color: "#a855f7", initials: "TN" },
+  { name: "Jean-Pierre D.", flag: "fr", payout: 4650, size: "$100K", color: "#f59e0b", initials: "JP" },
+  { name: "Marco V.",       flag: "it", payout: 3100, size: "$100K", color: "#3b82f6", initials: "MV" },
+  { name: "Mathieu R.",     flag: "fr", payout: 3750, size: "$100K", color: "#22c55e", initials: "MR" },
+  { name: "Nicolas B.",     flag: "fr", payout: 2950, size: "$100K", color: "#06b6d4", initials: "NB" },
+  { name: "Camille F.",     flag: "fr", payout: 1850, size: "$50K",  color: "#06b6d4", initials: "CF" },
+  { name: "Karim B.",       flag: "fr", payout: 2200, size: "$50K",  color: "#2D7DD2", initials: "KB" },
+  { name: "Stefan B.",      flag: "at", payout: 4100, size: "$100K", color: "#f59e0b", initials: "SB" },
+  { name: "Sarah L.",       flag: "gb", payout:  980, size: "$25K",  color: "#22c55e", initials: "SL" },
+  { name: "Carlos G.",      flag: "es", payout: 1450, size: "$50K",  color: "#2D7DD2", initials: "CG" },
 ];
 
 function fmt(n: number): string {
