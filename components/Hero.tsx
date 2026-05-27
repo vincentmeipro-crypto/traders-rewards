@@ -29,6 +29,9 @@ const TRADERS = [
   { name: "Stefan B.",      flag: "at", payout: 4100, size: "$100K", color: "#f59e0b", initials: "SB" },
   { name: "Sarah L.",       flag: "gb", payout:  980, size: "$25K",  color: "#22c55e", initials: "SL" },
   { name: "Carlos G.",      flag: "es", payout: 1450, size: "$50K",  color: "#2D7DD2", initials: "CG" },
+  { name: "Lucas M.",       flag: "fr", payout:  420, size: "$10K",  color: "#22c55e", initials: "LM" },
+  { name: "Emma R.",        flag: "fr", payout:  360, size: "$10K",  color: "#f59e0b", initials: "ER" },
+  { name: "Yann T.",        flag: "fr", payout:  480, size: "$10K",  color: "#2D7DD2", initials: "YT" },
 ];
 
 function fmt(n: number): string {
