@@ -289,7 +289,7 @@ export default function Hero() {
       {/* Badge PropFirm française - desktop only, aligné avec le titre */}
       {!isMobile && (
         <img
-          src="/propfirm-francaise.png"
+          src="/propfirm-badge-neon.png"
           alt="PropFirm créée et gérée par des traders français"
           style={{
             position: "absolute",
