@@ -293,7 +293,7 @@ export default function Hero() {
           style={{
             position: "absolute",
             left: 40,
-            top: 155,
+            top: 210,
             transform: "translateY(-50%)",
             width: 156,
             zIndex: 3,
