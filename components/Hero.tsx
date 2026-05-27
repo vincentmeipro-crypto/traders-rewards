@@ -286,7 +286,7 @@ export default function Hero() {
       {!isMobile && <CandleChart side="left" />}
       {!isMobile && <CandleChart side="right" />}
 
-      {/* Badge PropFirm française - desktop only */}
+      {/* Badge PropFirm française - desktop only, aligné avec le titre */}
       {!isMobile && (
         <img
           src="/propfirm-francaise2.png"
@@ -294,9 +294,9 @@ export default function Hero() {
           style={{
             position: "absolute",
             left: 40,
-            top: "50%",
+            top: 155,
             transform: "translateY(-50%)",
-            width: 180,
+            width: 240,
             zIndex: 3,
             pointerEvents: "none",
           }}
