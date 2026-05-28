@@ -49,19 +49,19 @@ export default function Pricing() {
   const rows = model === "2step" ? rows2step : rows1step;
 
   return (
-    <section id="pricing" style={{ padding: "80px 24px" }}>
-      <div style={{ maxWidth: 1050, margin: "0 auto" }}>
+    <section id="pricing" style={{ padding: "40px 24px" }}>
+      <div style={{ maxWidth: 1150, margin: "0 auto" }}>
 
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.pricing.label}</span>
-          <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: 0 }}>
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <span style={{ color: "#2D7DD2", fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 8 }}>{T.pricing.label}</span>
+          <h2 style={{ fontSize: "clamp(1.6rem, 4vw, 2.2rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: 0 }}>
             {T.pricing.title} <span className="gold-gradient">{T.pricing.titleGold}</span>
           </h2>
         </div>
 
         {/* Toggle */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 48 }}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
           <div style={{ backgroundColor: "#1E1E26", border: "1px solid #2A2A38", borderRadius: 12, padding: 4, display: "flex", gap: 4 }}>
             {(["2step", "1step"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
@@ -101,7 +101,7 @@ export default function Pricing() {
                   : "#1E1E26",
                 border: acc.popular ? "2px solid #c8e8ff" : "1px solid #c8e8ff",
                 borderRadius: 14,
-                padding: "22px 14px 18px",
+                padding: "16px 12px 12px",
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: acc.popular
@@ -125,38 +125,38 @@ export default function Pricing() {
                 )}
 
                 {/* Account size */}
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 6 }}>
+                <div style={{ marginBottom: 10 }}>
+                  <div style={{ color: "#555", fontSize: 10, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 19, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px" }}>
                     {acc.size}
                   </div>
                 </div>
 
                 {/* Rules rows */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, marginBottom: 20 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, marginBottom: 10 }}>
                   {rows.map((row, i) => (
                     <div key={i} style={{
                       display: "flex", justifyContent: "space-between", alignItems: "center",
-                      padding: "7px 0",
+                      padding: "4px 0",
                       borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                     }}>
-                      <span style={{ color: "#555", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      <span style={{ color: "#555", fontSize: 9.5, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
                         {row.label}
                       </span>
                       {row.highlight ? (
                         <span style={{
                           backgroundColor: row.green ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.12)",
                           color: row.green ? "#22c55e" : "#ef4444",
-                          fontSize: 11, fontWeight: 800,
-                          padding: "2px 8px", borderRadius: 6,
+                          fontSize: 10, fontWeight: 800,
+                          padding: "1px 6px", borderRadius: 6,
                           border: `1px solid ${row.green ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.25)"}`,
                         }}>
                           {row.value}
                         </span>
                       ) : (
-                        <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>
+                        <span style={{ color: "#fff", fontSize: 11, fontWeight: 700 }}>
                           {row.value}
                         </span>
                       )}
@@ -165,17 +165,17 @@ export default function Pricing() {
                 </div>
 
                 {/* Separator */}
-                <div style={{ height: 1, backgroundColor: "#2A2A38", marginBottom: 20 }} />
+                <div style={{ height: 1, backgroundColor: "#2A2A38", marginBottom: 10 }} />
 
                 {/* Price */}
-                <div style={{ marginBottom: 16, textAlign: "center" }}>
+                <div style={{ marginBottom: 10, textAlign: "center" }}>
                   {oldPrice && (
                     <div style={{ color: "#555", fontSize: 13, textDecoration: "line-through", marginBottom: 2 }}>
                       {oldPrice}
                     </div>
                   )}
                   <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ fontSize: 22, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
                       {price}
                     </div>
                     {"discount" in acc && acc.discount && (
@@ -197,8 +197,8 @@ export default function Pricing() {
                   href={`/checkout?product=${acc.id}-${model}`}
                   style={{
                     display: "block", textAlign: "center",
-                    padding: "13px 16px", borderRadius: 10,
-                    fontSize: 13, fontWeight: 800,
+                    padding: "9px 16px", borderRadius: 10,
+                    fontSize: 12, fontWeight: 800,
                     textDecoration: "none", letterSpacing: "0.5px",
                     background: "#ffffff",
                     color: "#000000",
