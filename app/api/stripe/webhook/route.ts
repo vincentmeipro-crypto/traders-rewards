@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
+import { createMT5Account, getMT5Group } from "@/lib/mt5";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -28,6 +29,34 @@ export async function POST(req: NextRequest) {
     };
     const size = sizeMap[accountSize] || 10000;
 
+    // Récupérer les infos du user pour MT5
+    const { data: userData } = await admin.auth.admin.getUserById(userId);
+    const firstName = userData?.user?.user_metadata?.first_name || "Trader";
+    const lastName  = userData?.user?.user_metadata?.last_name  || "";
+    const email     = userData?.user?.email || session.customer_details?.email || "";
+
+    // Créer le compte MT5
+    let mt5Login: number | null = null;
+    let mt5Password: string | null = null;
+    let mt5PasswordInvestor: string | null = null;
+    let mt5Server: string | null = null;
+
+    try {
+      const mt5Account = await createMT5Account({
+        firstName,
+        lastName,
+        email,
+        leverage: 100,
+        group: getMT5Group(model, accountSize),
+      });
+      mt5Login           = mt5Account.login;
+      mt5Password        = mt5Account.password;
+      mt5PasswordInvestor = mt5Account.password_investor;
+      mt5Server          = mt5Account.server;
+    } catch (e) {
+      console.error("MT5 account creation failed:", e);
+    }
+
     await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
@@ -42,6 +71,10 @@ export async function POST(req: NextRequest) {
       trading_days: 0,
       stripe_session_id: session.id,
       amount_paid: (session.amount_total || 0) / 100,
+      mt5_login:            mt5Login,
+      mt5_password:         mt5Password,
+      mt5_password_investor: mt5PasswordInvestor,
+      mt5_server:           mt5Server,
     });
 
     // Increment promo code usage if applicable
