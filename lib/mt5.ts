@@ -60,6 +60,24 @@ export async function disableMT5Account(login: number): Promise<void> {
   if (!res.ok) throw new Error(`MT5 disable failed: ${await res.text()}`);
 }
 
+export async function addMT5Balance(login: number, amount: number, comment = "Deposit"): Promise<void> {
+  const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    body: JSON.stringify({ login, amount, comment }),
+  });
+  if (!res.ok) throw new Error(`MT5 add-balance failed: ${await res.text()}`);
+}
+
+export async function withdrawMT5Balance(login: number, amount: number, comment = "Withdrawal"): Promise<void> {
+  const res = await fetch(`${MT5_URL}/accounts/withdraw-balance`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    body: JSON.stringify({ login, amount, comment }),
+  });
+  if (!res.ok) throw new Error(`MT5 withdraw-balance failed: ${await res.text()}`);
+}
+
 export async function getMT5Account(login: number) {
   const res = await fetch(`${MT5_URL}/accounts/${login}`, {
     headers: { "x-api-key": MT5_SECRET },
