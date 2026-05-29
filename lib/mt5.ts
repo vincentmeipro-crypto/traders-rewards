@@ -9,12 +9,6 @@ const GROUP_MAP: Record<string, Record<string, string>> = {
     "$50,000":  "demo\\challenge_50k_p1",
     "$100,000": "demo\\challenge_100k_p1",
   },
-  "1step": {
-    "$10,000":  "demo\\instant_10k",
-    "$25,000":  "demo\\instant_25k",
-    "$50,000":  "demo\\instant_50k",
-    "$100,000": "demo\\instant_100k",
-  },
 };
 
 export function getMT5Group(model: string, accountSize: string): string {
