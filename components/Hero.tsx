@@ -312,7 +312,7 @@ export default function Hero() {
         <img
           src="/logo-elysium-rewards.png"
           alt="Elysium Rewards"
-          style={{ order: 1, height: isMobile ? 110 : 200, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : -50 }}
+          style={{ order: 1, height: isMobile ? 110 : 200, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : -38 }}
         />
 
         {/* Reward card — order 2 desktop, order 5 mobile */}
@@ -320,7 +320,7 @@ export default function Hero() {
           order: isMobile ? 5 : 2,
           width: "100%",
           maxWidth: 480,
-          marginBottom: isMobile ? 20 : 28,
+          marginBottom: isMobile ? 20 : 20,
           padding: isMobile ? "0 16px" : undefined,
         }}>
           <RewardCard lang={lang} isMobile={isMobile} />
