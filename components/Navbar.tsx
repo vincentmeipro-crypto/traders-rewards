@@ -32,11 +32,11 @@ export default function Navbar() {
     <>
       <style>{`
         @keyframes flagFloat {
-          0%, 100% { transform: translateY(0px) rotate(-3deg); }
-          50% { transform: translateY(-4px) rotate(3deg); }
+          0%, 100% { transform: translateY(0px) translateZ(0); }
+          50% { transform: translateY(-4px) translateZ(0); }
         }
-        .flag-float-1 { animation: flagFloat 2.8s ease-in-out infinite; }
-        .flag-float-2 { animation: flagFloat 2.8s ease-in-out infinite 0.4s; }
+        .flag-float-1 { animation: flagFloat 2.8s ease-in-out infinite; will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; image-rendering: -webkit-optimize-contrast; }
+        .flag-float-2 { animation: flagFloat 2.8s ease-in-out infinite 0.4s; will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; image-rendering: -webkit-optimize-contrast; }
       `}</style>
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
