@@ -365,6 +365,8 @@ export default function Hero() {
           marginBottom: isMobile ? 10 : 28,
           width: isMobile ? "100%" : "auto",
           padding: isMobile ? "0 16px" : undefined,
+          position: "relative",
+          zIndex: 2,
         }}>
           <a href="#pricing" className="btn-primary btn-primary-animated"
             style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
