@@ -6,7 +6,6 @@ import HowItWorks from "@/components/HowItWorks";
 import Pricing from "@/components/Pricing";
 import TopTraders from "@/components/TopTraders";
 import Rules from "@/components/Rules";
-import Scaling from "@/components/Scaling";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 
@@ -20,7 +19,6 @@ export default function Home() {
       <HowItWorks />
       <Pricing />
       <Rules />
-      <Scaling />
       <FAQ />
       <Footer />
       <DisclaimerBanner />
