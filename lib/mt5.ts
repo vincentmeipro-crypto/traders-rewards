@@ -1,6 +1,12 @@
 const MT5_URL    = process.env.MT5_API_URL!;
 const MT5_SECRET = process.env.MT5_API_SECRET!;
 
+const MT5_HEADERS = {
+  "Content-Type": "application/json",
+  "x-api-key": MT5_SECRET,
+  "bypass-tunnel-reminder": "true",
+};
+
 // Mapping accountSize + model → groupe MT5 (Starwave gray label)
 // grp1=10K  grp2=25K  grp3=50K  grp4=100K  grp5=200K
 // À mettre à jour avec les groupes Phase 2 quand Allan confirme
@@ -33,7 +39,7 @@ export async function createMT5Account(params: {
 }): Promise<{ login: number; password: string; password_investor: string; server: string }> {
   const res = await fetch(`${MT5_URL}/accounts/create`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    headers: MT5_HEADERS,
     body: JSON.stringify({
       first_name:   params.firstName,
       last_name:    params.lastName,
@@ -55,7 +61,7 @@ export async function createMT5Account(params: {
 export async function changeMT5Group(login: number, newGroup: string): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/change-group`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    headers: MT5_HEADERS,
     body: JSON.stringify({ login, new_group: newGroup }),
   });
   if (!res.ok) throw new Error(`MT5 change-group failed: ${await res.text()}`);
@@ -64,7 +70,7 @@ export async function changeMT5Group(login: number, newGroup: string): Promise<v
 export async function disableMT5Account(login: number): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/disable`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    headers: MT5_HEADERS,
     body: JSON.stringify({ login }),
   });
   if (!res.ok) throw new Error(`MT5 disable failed: ${await res.text()}`);
@@ -73,7 +79,7 @@ export async function disableMT5Account(login: number): Promise<void> {
 export async function addMT5Balance(login: number, amount: number, comment = "Deposit"): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    headers: MT5_HEADERS,
     body: JSON.stringify({ login, amount, comment }),
   });
   if (!res.ok) throw new Error(`MT5 add-balance failed: ${await res.text()}`);
@@ -82,7 +88,7 @@ export async function addMT5Balance(login: number, amount: number, comment = "De
 export async function withdrawMT5Balance(login: number, amount: number, comment = "Withdrawal"): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/withdraw-balance`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    headers: MT5_HEADERS,
     body: JSON.stringify({ login, amount, comment }),
   });
   if (!res.ok) throw new Error(`MT5 withdraw-balance failed: ${await res.text()}`);
@@ -90,7 +96,7 @@ export async function withdrawMT5Balance(login: number, amount: number, comment 
 
 export async function getMT5Account(login: number) {
   const res = await fetch(`${MT5_URL}/accounts/${login}`, {
-    headers: { "x-api-key": MT5_SECRET },
+    headers: MT5_HEADERS,
   });
   if (!res.ok) throw new Error(`MT5 get failed: ${await res.text()}`);
   return res.json();
