@@ -10,8 +10,18 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  const handleForgotPassword = async () => {
+    if (!email) { setError("Entre ton email d'abord"); return; }
+    setError("");
+    await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://elysium-rewards.com/reset-password",
+    });
+    setResetSent(true);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +82,20 @@ export default function LoginPage() {
 {error && (
               <div style={{ backgroundColor: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, padding: "12px 16px", color: "#ef4444", fontSize: 14 }}>
                 {error}
+              </div>
+            )}
+
+            <div style={{ textAlign: "right", marginTop: -8 }}>
+              <button type="button" onClick={handleForgotPassword}
+                style={{ background: "none", border: "none", color: "#555", fontSize: 13, cursor: "pointer", padding: 0 }}
+                onMouseOver={e => (e.currentTarget.style.color = "#C9A84C")}
+                onMouseOut={e => (e.currentTarget.style.color = "#555")}>
+                Mot de passe oublié ?
+              </button>
+            </div>
+            {resetSent && (
+              <div style={{ backgroundColor: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 10, padding: "12px 16px", color: "#22c55e", fontSize: 14 }}>
+                Email envoyé sur {email}
               </div>
             )}
 
