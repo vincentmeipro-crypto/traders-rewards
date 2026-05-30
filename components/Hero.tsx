@@ -337,7 +337,7 @@ export default function Hero() {
           letterSpacing: "-2px",
           lineHeight: 1.1,
           maxWidth: 1300,
-          marginBottom: isMobile ? 10 : 20,
+          marginBottom: isMobile ? 6 : 20,
         }}>
           {T.hero.headline1}<br />
           {T.hero.headline2}
