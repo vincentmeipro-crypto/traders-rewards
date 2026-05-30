@@ -28,7 +28,7 @@ export default function Logo({ size = 40, full = false }: { size?: number; full?
       </defs>
 
       {full ? (
-        /* ── FULL LOGO (emblem + ELYSIUM FUNDED text) ── */
+        /* ── FULL LOGO (emblem + ELYSIUM REWARDS text) ── */
         <g>
           {/* Circle — open at top-right for sparkle */}
           <path

@@ -397,7 +397,7 @@ export default function AdminPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ width: "100%", maxWidth: 400 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <img src="/logo-white.jpg" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
+          <img src="/logo-icon.png" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
           <div style={{ color: "#C9A84C", fontWeight: 800, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", marginTop: 12 }}>Admin Panel</div>
         </div>
         <div style={{ backgroundColor: "#ffffff", border: "1px solid #1e1e1e", borderRadius: 20, padding: "36px 32px" }}>
@@ -432,7 +432,7 @@ export default function AdminPage() {
       {/* ── SIDEBAR ── */}
       <div style={{ width: 220, backgroundColor: "#111827", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
         <div style={{ padding: "20px 16px", borderBottom: "1px solid #1f2937", display: "flex", alignItems: "center", gap: 10 }}>
-          <img src="/logo-white.jpg" style={{ width: 34, height: 34, objectFit: "contain", mixBlendMode: "screen" }} />
+          <img src="/logo-icon.png" style={{ width: 34, height: 34, objectFit: "contain", mixBlendMode: "screen" }} />
           <div>
             <div style={{ color: "#fff", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Elysium</div>
             <div style={{ color: "#C9A84C", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>

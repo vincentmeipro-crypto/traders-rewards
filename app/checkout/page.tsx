@@ -211,7 +211,9 @@ function CheckoutContent() {
 
       {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: isMobile ? "10px 16px" : "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-        <Image src="/logo-black.jpg" alt="Elysium" width={28} height={28} style={{ objectFit: "contain", borderRadius: 4 }} />
+        <div style={{ width: 28, height: 28, background: "#0d0d0d", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Image src="/logo-icon.png" alt="Elysium" width={22} height={22} style={{ objectFit: "contain" }} />
+          </div>
         <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Elysium</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>
         <span style={{ color: "#6b7280", fontSize: isMobile ? 11 : 13 }}>Commencer le challenge</span>
