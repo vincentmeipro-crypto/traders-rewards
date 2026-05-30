@@ -69,8 +69,6 @@ export default function Navbar() {
               [T.nav.challenges, "/#pricing", false],
               [T.nav.howItWorks, "/#how-it-works", false],
               [T.nav.rules, "/#rules", false],
-              [T.nav.elevation, "/#elevation", true],
-              [T.nav.trader, "/trader", false],
               [T.nav.faq, "/#faq", false],
             ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href}
@@ -163,8 +161,7 @@ export default function Navbar() {
               [T.nav.challenges, "/#pricing", false],
               [T.nav.howItWorks, "/#how-it-works", false],
               [T.nav.rules, "/#rules", false],
-              [T.nav.elevation, "/#elevation", true],
-              [T.nav.trader, "/trader", false],
+              [T.nav.faq, "/#faq", false],
             ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ display: "flex", alignItems: "center", gap: 6, color: "#A0A0A0", fontSize: 16, fontWeight: 500, textDecoration: "none" }}
