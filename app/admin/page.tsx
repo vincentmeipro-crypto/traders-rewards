@@ -374,7 +374,7 @@ export default function AdminPage() {
   const runSync = async () => {
     setSyncing(true); setSyncMsg(""); setSyncDetail("");
     try {
-      const res = await fetch("/api/metaapi/sync", { headers: { Authorization: `Bearer admin-fundedelysium@gmail.com` } });
+      const res = await fetch("/api/metaapi/sync", { headers: { Authorization: `Bearer admin-vincentmeipro@gmail.com` } });
       const data = await res.json();
       setSyncMsg(`✓ ${data.synced ?? 0}/${data.total ?? 0} synchronisé(s)`);
       setSyncDetail(JSON.stringify(data.results ?? data, null, 2));

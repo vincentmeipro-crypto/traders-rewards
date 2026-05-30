@@ -248,7 +248,7 @@ export async function GET(req: NextRequest) {
   const auth = req.headers.get("Authorization");
   if (
     auth !== `Bearer ${process.env.CRON_SECRET}` &&
-    auth !== `Bearer admin-fundedelysium@gmail.com`
+    auth !== `Bearer admin-vincentmeipro@gmail.com`
   ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

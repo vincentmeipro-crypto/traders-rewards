@@ -30,7 +30,7 @@ export default function LoginPage() {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) { setError("Invalid email or password"); return; }
-    if (data.user?.email === "fundedelysium@gmail.com") {
+    if (data.user?.email === "vincentmeipro@gmail.com") {
       router.push("/admin");
     } else {
       router.push("/dashboard");
