@@ -32,8 +32,8 @@ export default function Navbar() {
     <>
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        backgroundColor: "#000000",
-        boxShadow: "0 1px 0 0 rgba(255,255,255,0.08), 0 4px 20px 0 rgba(0,0,0,0.8)",
+        backgroundColor: "#0d0d0d",
+        borderBottom: "1px solid rgba(255,255,255,0.12)",
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
