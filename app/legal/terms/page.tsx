@@ -181,12 +181,12 @@ export default function TermsPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", color: "#fff", fontFamily: "var(--font-inter), DM Sans, system-ui, sans-serif" }}>
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "80px 24px 120px" }}>
 
-        <a href="/" style={{ color: "#2D7DD2", fontSize: 13, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 48 }}>
+        <a href="/" style={{ color: "#00C2FF", fontSize: 13, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 48 }}>
           ← Retour à l&apos;accueil
         </a>
 
         <div style={{ marginBottom: 56 }}>
-          <div style={{ display: "inline-block", background: "rgba(45,125,210,0.1)", border: "1px solid rgba(45,125,210,0.3)", borderRadius: 6, padding: "4px 12px", fontSize: 12, color: "#2D7DD2", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>
+          <div style={{ display: "inline-block", background: "rgba(45,125,210,0.1)", border: "1px solid rgba(45,125,210,0.3)", borderRadius: 6, padding: "4px 12px", fontSize: 12, color: "#00C2FF", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>
             Légal
           </div>
           <h1 style={{ fontSize: 42, fontWeight: 900, marginBottom: 12, lineHeight: 1.1 }}>
@@ -210,7 +210,7 @@ export default function TermsPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
           {sections.map((section, i) => (
             <div key={i}>
-              <h2 style={{ fontSize: 17, fontWeight: 800, color: "#2D7DD2", marginBottom: 16, paddingBottom: 10, borderBottom: "1px solid #1a1a28" }}>
+              <h2 style={{ fontSize: 17, fontWeight: 800, color: "#00C2FF", marginBottom: 16, paddingBottom: 10, borderBottom: "1px solid #1a1a28" }}>
                 {section.title}
               </h2>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -226,7 +226,7 @@ export default function TermsPage() {
 
         {/* Footer note */}
         <div style={{ marginTop: 64, paddingTop: 32, borderTop: "1px solid #1a1a28", color: "#444", fontSize: 13, lineHeight: 1.7 }}>
-          <p>Pour toute question relative aux présentes CGV : <a href="mailto:support@elysium-rewards.com" style={{ color: "#2D7DD2" }}>support@elysium-rewards.com</a></p>
+          <p>Pour toute question relative aux présentes CGV : <a href="mailto:support@elysium-rewards.com" style={{ color: "#00C2FF" }}>support@elysium-rewards.com</a></p>
           <p style={{ marginTop: 8 }}>Elysium OÜ · République d&apos;Estonie · Version 1.0 — 24 mai 2026</p>
         </div>
       </div>

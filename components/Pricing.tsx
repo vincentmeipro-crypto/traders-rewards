@@ -54,7 +54,7 @@ export default function Pricing() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.pricing.label}</span>
+          <span style={{ color: "#00C2FF", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.pricing.label}</span>
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: 0 }}>
             {T.pricing.title} <span className="gold-gradient">{T.pricing.titleGold}</span>
           </h2>
@@ -67,7 +67,7 @@ export default function Pricing() {
               <button key={m} onClick={() => setModel(m)} style={{
                 padding: "10px 32px", borderRadius: 8, border: "none", cursor: "pointer",
                 fontSize: 14, fontWeight: 700, letterSpacing: "0.5px", transition: "all 0.2s",
-                backgroundColor: model === m ? "#2D7DD2" : "transparent",
+                backgroundColor: model === m ? "#00C2FF" : "transparent",
                 color: model === m ? "#fff" : "#555",
               }}>
                 {m === "2step" ? T.pricing.twoStep : T.pricing.oneStep}
@@ -175,7 +175,7 @@ export default function Pricing() {
                     </div>
                   )}
                   <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ fontSize: 22, fontWeight: 900, color: acc.popular ? "#2D7DD2" : "#fff", letterSpacing: "-1px" }}>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: acc.popular ? "#00C2FF" : "#fff", letterSpacing: "-1px" }}>
                       {price}
                     </div>
                     {"discount" in acc && acc.discount && (

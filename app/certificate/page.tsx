@@ -60,7 +60,7 @@ function CertificateContent() {
         className="no-print"
         style={{
           position: "fixed", top: 24, right: 24, zIndex: 100,
-          backgroundColor: "#2D7DD2", color: "#fff",
+          backgroundColor: "#00C2FF", color: "#fff",
           border: "none", borderRadius: 10, padding: "12px 28px",
           fontSize: 14, fontWeight: 800, cursor: "pointer",
           boxShadow: "0 4px 20px rgba(45,125,210,0.4)",

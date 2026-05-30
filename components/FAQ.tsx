@@ -154,7 +154,7 @@ export default function FAQ() {
     <section id="faq" style={{ padding: "80px 24px" }}>
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 60 }}>
-          <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{label}</span>
+          <span style={{ color: "#00C2FF", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{label}</span>
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px" }}>
             {title} <span className="gold-gradient">{titleGold}</span>
           </h2>
@@ -166,7 +166,7 @@ export default function FAQ() {
               onClick={() => setOpenIndex(openIndex === i ? null : i)}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "20px 24px" }}>
                 <span style={{ fontWeight: 600, fontSize: 15, paddingRight: 16 }}>{item.q}</span>
-                <ChevronDown size={18} color="#2D7DD2" style={{ flexShrink: 0, transition: "transform 0.2s", transform: openIndex === i ? "rotate(180deg)" : "rotate(0deg)" }} />
+                <ChevronDown size={18} color="#00C2FF" style={{ flexShrink: 0, transition: "transform 0.2s", transform: openIndex === i ? "rotate(180deg)" : "rotate(0deg)" }} />
               </div>
               {openIndex === i && (
                 <div style={{ padding: "0 24px 20px", color: "#888", fontSize: 14, lineHeight: 1.7, borderTop: "1px solid #2A2A38" }}>

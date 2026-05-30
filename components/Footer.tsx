@@ -28,7 +28,7 @@ export default function Footer() {
               <h4 style={{ color: "#888", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>{sec.title}</h4>
               {sec.links.map(item => (
                 <a key={item} href="#" style={{ display: "block", color: "#555", fontSize: 14, marginBottom: 12, textDecoration: "none", transition: "color 0.2s" }}
-                  onMouseOver={e => (e.currentTarget.style.color = "#2D7DD2")}
+                  onMouseOver={e => (e.currentTarget.style.color = "#00C2FF")}
                   onMouseOut={e => (e.currentTarget.style.color = "#555")}>
                   {item}
                 </a>
@@ -48,7 +48,7 @@ export default function Footer() {
               { label: T.footer.risk,    href: "/legal/risk" },
             ].map(item => (
               <a key={item.label} href={item.href} style={{ color: "#444", fontSize: 13, textDecoration: "none" }}
-                onMouseOver={e => (e.currentTarget.style.color = "#2D7DD2")}
+                onMouseOver={e => (e.currentTarget.style.color = "#00C2FF")}
                 onMouseOut={e => (e.currentTarget.style.color = "#444")}>
                 {item.label}
               </a>

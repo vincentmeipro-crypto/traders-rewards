@@ -120,8 +120,8 @@ export default function TraderPage() {
             {(["calendar", "platform"] as const).map(t => (
               <button key={t} onClick={() => setTab(t)} style={{
                 padding: "12px 28px", background: "none", border: "none",
-                borderBottom: tab === t ? "2px solid #2D7DD2" : "2px solid transparent",
-                color: tab === t ? "#2D7DD2" : "#555",
+                borderBottom: tab === t ? "2px solid #00C2FF" : "2px solid transparent",
+                color: tab === t ? "#00C2FF" : "#555",
                 fontWeight: 700, fontSize: 14, cursor: "pointer",
                 marginBottom: -1, letterSpacing: "0.3px", transition: "color 0.2s",
               }}>
@@ -138,9 +138,9 @@ export default function TraderPage() {
                 {(["All", "High", "Medium", "Low"] as const).map(f => (
                   <button key={f} onClick={() => setFilter(f)} style={{
                     padding: "6px 18px", borderRadius: 100, fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s",
-                    border: filter === f ? `1px solid ${f === "All" ? "#2D7DD2" : IMPACT_COLOR[f]}` : "1px solid #222",
+                    border: filter === f ? `1px solid ${f === "All" ? "#00C2FF" : IMPACT_COLOR[f]}` : "1px solid #222",
                     backgroundColor: filter === f ? (f === "All" ? "rgba(45,125,210,0.15)" : `${IMPACT_COLOR[f]}22`) : "transparent",
-                    color: filter === f ? (f === "All" ? "#2D7DD2" : IMPACT_COLOR[f]) : "#555",
+                    color: filter === f ? (f === "All" ? "#00C2FF" : IMPACT_COLOR[f]) : "#555",
                   }}>
                     {f === "All" ? labels.all : f === "High" ? labels.high : f === "Medium" ? labels.medium : labels.low}
                   </button>
@@ -154,7 +154,7 @@ export default function TraderPage() {
               ) : (
                 grouped.map(([date, evs]) => (
                   <div key={date} style={{ marginBottom: 32 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, borderLeft: "3px solid #2D7DD2", paddingLeft: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, borderLeft: "3px solid #00C2FF", paddingLeft: 12 }}>
                       <span style={{ fontWeight: 800, fontSize: 15, color: "#fff" }}>{formatDate(date, isFr)}</span>
                       <span style={{ color: "#444", fontSize: 12 }}>{evs.length} {isFr ? "annonce(s)" : "event(s)"}</span>
                     </div>
@@ -164,7 +164,7 @@ export default function TraderPage() {
                           <thead>
                             <tr style={{ backgroundColor: "#1a1a24", borderBottom: "1px solid #2A2A38" }}>
                               {[labels.time, labels.currency, labels.event, labels.impact, labels.forecast, labels.previous, labels.actual].map((h, i) => (
-                                <th key={i} style={{ padding: "11px 14px", color: "#2D7DD2", fontWeight: 700, textAlign: i < 3 ? "left" : "center", fontSize: 10, letterSpacing: "0.8px", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                                <th key={i} style={{ padding: "11px 14px", color: "#00C2FF", fontWeight: 700, textAlign: i < 3 ? "left" : "center", fontSize: 10, letterSpacing: "0.8px", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                               ))}
                             </tr>
                           </thead>
@@ -175,7 +175,7 @@ export default function TraderPage() {
                                 <td style={{ padding: "11px 14px" }}>
                                   <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
                                     <span style={{ fontSize: 16 }}>{CURRENCY_FLAG[ev.country] || "🏳️"}</span>
-                                    <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#2D7DD2", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 4 }}>{ev.country}</span>
+                                    <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#00C2FF", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 4 }}>{ev.country}</span>
                                   </span>
                                 </td>
                                 <td style={{ padding: "11px 14px", color: "#ccc", fontWeight: 500, minWidth: 200 }}>{ev.title}</td>

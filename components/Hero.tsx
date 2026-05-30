@@ -18,20 +18,20 @@ const CANDLES: [boolean, number, number, number, number][] = [
 
 const TRADERS = [
   { name: "TheBullTrader",  flag: "de", payout: 4200, size: "$100K", color: "#ef4444", initials: "TB" },
-  { name: "Alexandre P.",   flag: "fr", payout: 3850, size: "$100K", color: "#2D7DD2", initials: "AP" },
+  { name: "Alexandre P.",   flag: "fr", payout: 3850, size: "$100K", color: "#00C2FF", initials: "AP" },
   { name: "Thomas N.",      flag: "nl", payout: 2600, size: "$100K", color: "#a855f7", initials: "TN" },
   { name: "Jean-Pierre D.", flag: "fr", payout: 4650, size: "$100K", color: "#f59e0b", initials: "JP" },
   { name: "Marco V.",       flag: "it", payout: 3100, size: "$100K", color: "#3b82f6", initials: "MV" },
   { name: "Mathieu R.",     flag: "fr", payout: 3750, size: "$100K", color: "#22c55e", initials: "MR" },
   { name: "Nicolas B.",     flag: "fr", payout: 2950, size: "$100K", color: "#06b6d4", initials: "NB" },
   { name: "Camille F.",     flag: "fr", payout: 1850, size: "$50K",  color: "#06b6d4", initials: "CF" },
-  { name: "Karim B.",       flag: "fr", payout: 2200, size: "$50K",  color: "#2D7DD2", initials: "KB" },
+  { name: "Karim B.",       flag: "fr", payout: 2200, size: "$50K",  color: "#00C2FF", initials: "KB" },
   { name: "Stefan B.",      flag: "at", payout: 4100, size: "$100K", color: "#f59e0b", initials: "SB" },
   { name: "Sarah L.",       flag: "gb", payout:  980, size: "$25K",  color: "#22c55e", initials: "SL" },
-  { name: "Carlos G.",      flag: "es", payout: 1450, size: "$50K",  color: "#2D7DD2", initials: "CG" },
+  { name: "Carlos G.",      flag: "es", payout: 1450, size: "$50K",  color: "#00C2FF", initials: "CG" },
   { name: "Lucas M.",       flag: "fr", payout:  420, size: "$10K",  color: "#22c55e", initials: "LM" },
   { name: "Emma R.",        flag: "fr", payout:  360, size: "$10K",  color: "#f59e0b", initials: "ER" },
-  { name: "Yann T.",        flag: "fr", payout:  480, size: "$10K",  color: "#2D7DD2", initials: "YT" },
+  { name: "Yann T.",        flag: "fr", payout:  480, size: "$10K",  color: "#00C2FF", initials: "YT" },
 ];
 
 function fmt(n: number): string {
@@ -237,7 +237,7 @@ function CandleChart({ side }: { side: "left" | "right" }) {
         <g mask={`url(#m-${side})`}>
           {CANDLES.map(([bull, bodyY1, bodyY2, wickY1, wickY2], i) => {
             const cx = i * spacing + (spacing - candleW) / 2 + 4;
-            const color = bull ? "#2D7DD2" : "#FFFFFF";
+            const color = bull ? "#00C2FF" : "#FFFFFF";
             return (
               <g key={i}>
                 <line

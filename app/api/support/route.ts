@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         <table style="width:100%;border-collapse:collapse;">
           <tr><td style="padding:8px 0;color:#888;font-size:13px;width:130px;">Prénom</td><td style="padding:8px 0;color:#fff;font-size:14px;font-weight:600;">${firstName}</td></tr>
           <tr><td style="padding:8px 0;color:#888;font-size:13px;">Nom</td><td style="padding:8px 0;color:#fff;font-size:14px;font-weight:600;">${lastName}</td></tr>
-          <tr><td style="padding:8px 0;color:#888;font-size:13px;">Email</td><td style="padding:8px 0;color:#2D7DD2;font-size:14px;font-weight:600;">${email}</td></tr>
+          <tr><td style="padding:8px 0;color:#888;font-size:13px;">Email</td><td style="padding:8px 0;color:#00C2FF;font-size:14px;font-weight:600;">${email}</td></tr>
         </table>
         <div style="margin-top:24px;background:#1a1a1a;border-radius:10px;padding:20px;border-left:3px solid #C9A84C;">
           <div style="color:#888;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">Message</div>

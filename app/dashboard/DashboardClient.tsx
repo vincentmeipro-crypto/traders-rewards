@@ -31,7 +31,7 @@ type Challenge = {
   client_last_name?: string;
 };
 
-function ProgressBar({ value, max, color = "#2D7DD2", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
+function ProgressBar({ value, max, color = "#00C2FF", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
   const pct = Math.min((value / max) * 100, 100);
   const barColor = danger && pct > 70 ? "#ef4444" : danger && pct > 40 ? "#f59e0b" : color;
   return (
@@ -88,12 +88,12 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", display: "block" }}>
         <defs>
           <linearGradient id="cgGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2D7DD2" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#2D7DD2" stopOpacity="0" />
+            <stop offset="0%" stopColor="#00C2FF" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#00C2FF" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="cgLine" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#2D7DD2" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#2D7DD2" />
+            <stop offset="0%" stopColor="#00C2FF" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#00C2FF" />
           </linearGradient>
         </defs>
 
@@ -136,16 +136,16 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
           strokeLinecap="round" strokeLinejoin="round" />
 
         {/* Pulse ring on current point */}
-        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#2D7DD2" strokeOpacity={0}>
+        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#00C2FF" strokeOpacity={0}>
           <animate attributeName="r" values="8;18" dur="1.8s" repeatCount="indefinite" />
           <animate attributeName="stroke-opacity" values="0.5;0" dur="1.8s" repeatCount="indefinite" />
         </circle>
 
         {/* Current point dot */}
-        <circle cx={cX} cy={cY} r={5} fill="#2D7DD2" stroke="#000" strokeWidth={2} />
+        <circle cx={cX} cy={cY} r={5} fill="#00C2FF" stroke="#000" strokeWidth={2} />
 
         {/* Current value label */}
-        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#2D7DD2" />
+        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#00C2FF" />
         <text x={cX} y={cY - 13} fill="#fff" fontSize={9} textAnchor="middle" fontWeight={800}>
           {fmt(currentBal)}
         </text>
@@ -154,7 +154,7 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
         <text x={PAD.left} y={H - 6} fill="#333" fontSize={9} textAnchor="middle">
           {isFr ? "Jour 1" : "Day 1"}
         </text>
-        <text x={cX} y={H - 6} fill="#2D7DD2" fontSize={9} textAnchor="middle" fontWeight={700}>
+        <text x={cX} y={H - 6} fill="#00C2FF" fontSize={9} textAnchor="middle" fontWeight={700}>
           {isFr ? `J.${challenge.trading_days}` : `D.${challenge.trading_days}`}
         </text>
       </svg>
@@ -162,7 +162,7 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
       {/* Legend */}
       <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 8 }}>
         {[
-          { color: "#2D7DD2", label: isFr ? "Solde" : "Balance" },
+          { color: "#00C2FF", label: isFr ? "Solde" : "Balance" },
           { color: "#22c55e", label: isFr ? "Objectif" : "Target", dashed: true },
           { color: "#ef4444", label: isFr ? "Plancher" : "Floor", dashed: true },
         ].map((item, i) => (
@@ -187,7 +187,7 @@ const PHASE_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   active: "#22c55e",
-  passed: "#2D7DD2",
+  passed: "#00C2FF",
   funded: "#3b82f6",
   failed: "#ef4444",
 };
@@ -403,14 +403,14 @@ export default function DashboardClient({ user }: { user: User }) {
                 display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
                 borderRadius: 10, marginBottom: 4, cursor: "pointer",
                 backgroundColor: activeTab === item.tab ? "rgba(201,168,76,0.1)" : "transparent",
-                borderLeft: activeTab === item.tab ? "2px solid #2D7DD2" : "2px solid transparent",
+                borderLeft: activeTab === item.tab ? "2px solid #00C2FF" : "2px solid transparent",
                 transition: "all 0.15s",
               }}
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
               onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <span style={{ color: activeTab === item.tab ? "#2D7DD2" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#2D7DD2" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.label}</span>
+                <span style={{ color: activeTab === item.tab ? "#00C2FF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#00C2FF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.label}</span>
               </div>
             ))}
           </nav>
@@ -420,7 +420,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <div style={{ padding: "10px 16px", marginBottom: 4, display: "flex", flexWrap: "wrap", gap: 6 }}>
               {languages.map(l => (
                 <button key={l.code} onClick={() => setLang(l.code)}
-                  style={{ background: "none", border: lang === l.code ? "1px solid #2D7DD2" : "1px solid #1a1a1a", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
+                  style={{ background: "none", border: lang === l.code ? "1px solid #00C2FF" : "1px solid #1a1a1a", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
                   <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code === "ar" ? "sa" : l.code === "pt" ? "br" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
                 </button>
               ))}
@@ -446,7 +446,7 @@ export default function DashboardClient({ user }: { user: User }) {
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {languages.map(l => (
               <button key={l.code} onClick={() => setLang(l.code)}
-                style={{ background: "none", border: lang === l.code ? "1px solid #2D7DD2" : "1px solid #1a1a1a", borderRadius: 6, padding: "3px 7px", cursor: "pointer", display: "flex", alignItems: "center", opacity: lang === l.code ? 1 : 0.4 }}>
+                style={{ background: "none", border: lang === l.code ? "1px solid #00C2FF" : "1px solid #1a1a1a", borderRadius: 6, padding: "3px 7px", cursor: "pointer", display: "flex", alignItems: "center", opacity: lang === l.code ? 1 : 0.4 }}>
                 <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code === "ar" ? "sa" : l.code === "pt" ? "br" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
               </button>
             ))}
@@ -471,7 +471,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
               flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
               padding: "10px 0", background: "none", border: "none", cursor: "pointer",
-              color: activeTab === item.tab ? "#2D7DD2" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#444"),
+              color: activeTab === item.tab ? "#00C2FF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#444"),
             }}>
               {item.icon}
               <span style={{ fontSize: 10, marginTop: 3, fontWeight: activeTab === item.tab ? 700 : 400 }}>{item.label}</span>
@@ -594,7 +594,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
                           <div style={{ backgroundColor: "#1a1a1a", borderRadius: 10, padding: "8px 14px" }}>
                             <div style={{ color: "#555", fontSize: 10, marginBottom: 2 }}>N° FACTURE</div>
-                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#2D7DD2" }}>{invoiceNum}</div>
+                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#00C2FF" }}>{invoiceNum}</div>
                           </div>
                           <div>
                             <div style={{ fontWeight: 700, fontSize: 15 }}>Challenge {c.account_size}</div>
@@ -684,14 +684,14 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.tradingRulesSub}</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
-                { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#2D7DD2" /> },
-                { title: "Minimum Trading Days", desc: "You must trade at least 4 different days before passing a phase.", icon: <Calendar size={20} color="#2D7DD2" /> },
-                { title: "Daily Drawdown", desc: "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#2D7DD2" /> },
-                { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#2D7DD2" /> },
-                { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#2D7DD2" /> },
-                { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#2D7DD2" /> },
-                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first reward.", icon: <Wallet size={20} color="#2D7DD2" /> },
-                { title: "Reward Split", desc: "Certified traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#2D7DD2" /> },
+                { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#00C2FF" /> },
+                { title: "Minimum Trading Days", desc: "You must trade at least 4 different days before passing a phase.", icon: <Calendar size={20} color="#00C2FF" /> },
+                { title: "Daily Drawdown", desc: "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#00C2FF" /> },
+                { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#00C2FF" /> },
+                { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#00C2FF" /> },
+                { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#00C2FF" /> },
+                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first reward.", icon: <Wallet size={20} color="#00C2FF" /> },
+                { title: "Reward Split", desc: "Certified traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#00C2FF" /> },
               ].map((rule, i) => (
                 <div key={i} className="card" style={{ padding: 24 }}>
                   <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
@@ -956,7 +956,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ display: "flex", gap: 10 }}>
                     {([["card", T.kyc.idCard], ["passport", T.kyc.passport]] as const).map(([val, label]) => (
                       <button key={val} onClick={() => { setKycIdType(val); if (val === "passport") setKycFiles(f => ({ ...f, id_back: null })); }}
-                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #2D7DD2" : "1px solid #2a2a2a", backgroundColor: kycIdType === val ? "rgba(45,125,210,0.1)" : "#0a0a0a", color: kycIdType === val ? "#2D7DD2" : "#555", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
+                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #00C2FF" : "1px solid #2a2a2a", backgroundColor: kycIdType === val ? "rgba(45,125,210,0.1)" : "#0a0a0a", color: kycIdType === val ? "#00C2FF" : "#555", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
                         {label}
                       </button>
                     ))}
@@ -1031,7 +1031,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
               const certs = [
                 {
-                  type: "phase1", image: "/PASSED-PHASE-1.png", label: "Phase 1", btnColor: "#2D7DD2",
+                  type: "phase1", image: "/PASSED-PHASE-1.png", label: "Phase 1", btnColor: "#00C2FF",
                   unlocked: unlockedPhase1,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
@@ -1095,7 +1095,7 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
             {!challenge ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <Trophy size={48} color="#2D7DD2" style={{ marginBottom: 16, opacity: 0.5 }} />
+                <Trophy size={48} color="#00C2FF" style={{ marginBottom: 16, opacity: 0.5 }} />
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.noChallenge}</div>
                 <div style={{ color: "#555", fontSize: 14 }}>{T.dash.noChallengeSub}</div>
               </div>
@@ -1105,7 +1105,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{challenge.account_size} — {challenge.model === "2step" ? "2-Step" : "1-Step"}</div>
                     <div style={{ display: "flex", gap: 8 }}>
-                      <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#2D7DD2", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[challenge.phase] || challenge.phase}</span>
+                      <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[challenge.phase] || challenge.phase}</span>
                       <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{challenge.status}</span>
                     </div>
                   </div>
@@ -1127,12 +1127,12 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Dashboard Tab */}
         {(activeTab === "dashboard") && loading ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-            <div style={{ color: "#2D7DD2", fontSize: 16 }}>Loading...</div>
+            <div style={{ color: "#00C2FF", fontSize: 16 }}>Loading...</div>
           </div>
         ) : (activeTab === "dashboard") && !challenge ? (
           /* No challenge yet */
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", textAlign: "center" }}>
-            <Trophy size={64} color="#2D7DD2" style={{ marginBottom: 24, opacity: 0.5 }} />
+            <Trophy size={64} color="#00C2FF" style={{ marginBottom: 24, opacity: 0.5 }} />
             <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{T.dash.noChallengeTitle}</h2>
             <p style={{ color: "#555", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
             <a href="/#pricing" className="btn-primary" style={{ padding: "14px 32px", fontSize: 15 }}>{T.dash.startChallenge}</a>
@@ -1144,7 +1144,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.myChallenge}</h1>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#2D7DD2", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
+                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
                     {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}
                   </span>
                   <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 6 }}>
@@ -1161,8 +1161,8 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Phase Banner */}
             {challenge.phase === "phase2" && (
               <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={18} color="#2D7DD2" />
-                <span style={{ color: "#2D7DD2", fontWeight: 700, fontSize: 14 }}>{T.dash.phase1PassedMsg} </span>
+                <Trophy size={18} color="#00C2FF" />
+                <span style={{ color: "#00C2FF", fontWeight: 700, fontSize: 14 }}>{T.dash.phase1PassedMsg} </span>
                 <span style={{ color: "#888", fontSize: 13 }}>{T.dash.phase2Msg}</span>
               </div>
             )}
@@ -1195,7 +1195,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 {!challenge.ctrader_account_id ? (
                   <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "16px 20px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                      <Clock size={16} color="#2D7DD2" />
+                      <Clock size={16} color="#00C2FF" />
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{T.dash.accountPending}</div>
                     </div>
                     <div style={{ color: "#555", fontSize: 13 }}>{T.dash.accountPendingMsg}</div>

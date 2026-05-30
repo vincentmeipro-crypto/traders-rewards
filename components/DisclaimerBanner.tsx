@@ -77,7 +77,7 @@ export default function DisclaimerBanner() {
         }}
         style={{
           flexShrink: 0,
-          backgroundColor: "#2D7DD2",
+          backgroundColor: "#00C2FF",
           color: "#fff",
           border: "none",
           borderRadius: 8,

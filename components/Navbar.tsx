@@ -74,7 +74,7 @@ export default function Navbar() {
             ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href}
                 style={{ display: "flex", alignItems: "center", gap: 4, color: "#A0A0A0", fontSize: 13, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
-                onMouseOver={e => (e.currentTarget.style.color = "#2D7DD2")}
+                onMouseOver={e => (e.currentTarget.style.color = "#00C2FF")}
                 onMouseOut={e => (e.currentTarget.style.color = "#A0A0A0")}
               >
                 {label}
@@ -116,21 +116,21 @@ export default function Navbar() {
                         width: "100%", padding: "12px 16px", background: "none",
                         border: "none", cursor: "pointer", textAlign: "left",
                         backgroundColor: lang === l.code ? "rgba(201,168,76,0.1)" : "transparent",
-                        borderLeft: lang === l.code ? "2px solid #2D7DD2" : "2px solid transparent",
+                        borderLeft: lang === l.code ? "2px solid #00C2FF" : "2px solid transparent",
                         transition: "background 0.15s",
                       }}
                       onMouseOver={e => { if (lang !== l.code) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; }}
                       onMouseOut={e => { if (lang !== l.code) e.currentTarget.style.backgroundColor = "transparent"; }}
                     >
                       <FlagImg code={l.code} />
-                      <span style={{ color: lang === l.code ? "#2D7DD2" : "#888", fontSize: 14, fontWeight: 500 }}>{l.label}</span>
+                      <span style={{ color: lang === l.code ? "#00C2FF" : "#888", fontSize: 14, fontWeight: 500 }}>{l.label}</span>
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            <a href="/login" style={{ color: "#2D7DD2", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.5px" }}>
+            <a href="/login" style={{ color: "#00C2FF", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.5px" }}>
               {T.nav.logIn}
             </a>
             <a href="/#pricing" className="btn-primary" style={{ padding: "10px 22px", fontSize: 13 }}>
@@ -139,7 +139,7 @@ export default function Navbar() {
           </div>
 
           <div style={{ display: isMobile ? "flex" : "none", alignItems: "center", gap: 10 }}>
-            <a href="/login" style={{ color: "#2D7DD2", fontSize: 13, fontWeight: 700, textDecoration: "none", letterSpacing: "0.5px" }}>
+            <a href="/login" style={{ color: "#00C2FF", fontSize: 13, fontWeight: 700, textDecoration: "none", letterSpacing: "0.5px" }}>
               {T.nav.logIn}
             </a>
             <button onClick={() => setOpen(!open)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center" }}>
@@ -154,7 +154,7 @@ export default function Navbar() {
               <button key={l.code} onClick={() => { setLang(l.code as Lang); setOpen(false); }}
                 style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", padding: 0 }}>
                 <FlagImg code={l.code} />
-                <span style={{ color: lang === l.code ? "#2D7DD2" : "#666", fontSize: 14 }}>{l.label}</span>
+                <span style={{ color: lang === l.code ? "#00C2FF" : "#666", fontSize: 14 }}>{l.label}</span>
               </button>
             ))}
             <hr style={{ borderColor: "#222" }} />
@@ -172,7 +172,7 @@ export default function Navbar() {
                 {badge && <span style={{ fontSize: 15 }}>🔒</span>}
               </a>
             ))}
-            <a href="/login" style={{ color: "#2D7DD2", fontSize: 16, fontWeight: 600, textDecoration: "none" }} onClick={() => setOpen(false)}>{T.nav.logIn}</a>
+            <a href="/login" style={{ color: "#00C2FF", fontSize: 16, fontWeight: 600, textDecoration: "none" }} onClick={() => setOpen(false)}>{T.nav.logIn}</a>
             <a href="/#pricing" className="btn-primary" style={{ textAlign: "center" }} onClick={() => setOpen(false)}>{T.nav.startChallenge}</a>
           </div>
         )}

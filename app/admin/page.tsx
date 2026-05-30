@@ -440,7 +440,7 @@ export default function AdminPage() {
         </div>
         <nav style={{ padding: "12px 8px", flex: 1 }}>
           {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(45,125,210,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#2D7DD2" : "transparent"}`, color: tab === t.id ? "#2D7DD2" : "#9ca3af", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
+            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(45,125,210,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#00C2FF" : "transparent"}`, color: tab === t.id ? "#00C2FF" : "#9ca3af", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
               {t.label}
               {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
               {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
@@ -470,7 +470,7 @@ export default function AdminPage() {
               <span style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
               <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>✕</button>
             </div>
-            <pre style={{ color: "#2D7DD2", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
+            <pre style={{ color: "#00C2FF", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
           </div>
         )}
         <div style={{ padding: "28px 32px" }}>
@@ -599,7 +599,7 @@ export default function AdminPage() {
                           <tr key={`${c.id}-icm`} style={{ backgroundColor: "rgba(201,168,76,0.03)" }}>
                             <td colSpan={14} style={{ padding: "8px 14px" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                <span style={{ color: "#2D7DD2", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Blueberry →</span>
+                                <span style={{ color: "#00C2FF", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Blueberry →</span>
                                 {[
                                   { label: "Prénom", value: c.client_first_name },
                                   { label: "Nom", value: c.client_last_name },
@@ -910,7 +910,7 @@ export default function AdminPage() {
                     {monthlyRevenue.map(m => (
                       <div key={m.month} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 60 }}>
                         <div style={{ fontSize: 10, color: "#22c55e", fontWeight: 700 }}>€{Math.round(m.ca/1000)}k</div>
-                        <div style={{ width: 44, backgroundColor: "#2D7DD2", borderRadius: "4px 4px 0 0", height: Math.max(4, m.ca / maxCA * 140) }} title={`€${m.ca}`} />
+                        <div style={{ width: 44, backgroundColor: "#00C2FF", borderRadius: "4px 4px 0 0", height: Math.max(4, m.ca / maxCA * 140) }} title={`€${m.ca}`} />
                         {m.payoutsAmt > 0 && <div style={{ width: 44, backgroundColor: "#ef4444", borderRadius: "0 0 4px 4px", height: Math.max(2, m.payoutsAmt / maxCA * 140), marginTop: -4 }} title={`Récompenses: €${m.payoutsAmt}`} />}
                         <div style={{ fontSize: 9, color: "#555", textAlign: "center" }}>{m.month.slice(5)}/{m.month.slice(2,4)}</div>
                         <div style={{ fontSize: 9, color: m.marge > 50 ? "#22c55e" : "#888" }}>{m.marge}%</div>
@@ -918,7 +918,7 @@ export default function AdminPage() {
                     ))}
                   </div>}
               <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
-                <span style={{ fontSize: 10, color: "#2D7DD2" }}>■ CA</span>
+                <span style={{ fontSize: 10, color: "#00C2FF" }}>■ CA</span>
                 <span style={{ fontSize: 10, color: "#ef4444" }}>■ Récompenses</span>
                 <span style={{ fontSize: 10, color: "#555" }}>% = marge brute</span>
               </div>
@@ -947,7 +947,7 @@ export default function AdminPage() {
                         <td style={{ padding: "12px 16px" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                             <div style={{ flex: 1, backgroundColor: "#f3f4f6", borderRadius: 4, height: 6, maxWidth: 80 }}>
-                              <div style={{ width: `${pct}%`, backgroundColor: "#2D7DD2", height: 6, borderRadius: 4 }} />
+                              <div style={{ width: `${pct}%`, backgroundColor: "#00C2FF", height: 6, borderRadius: 4 }} />
                             </div>
                             <span style={{ color: "#888", fontSize: 12 }}>{pct}%</span>
                           </div>

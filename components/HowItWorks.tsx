@@ -7,7 +7,7 @@ export default function HowItWorks() {
     <section id="how-it-works" style={{ padding: "80px 24px" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 72 }}>
-          <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.how.label}</span>
+          <span style={{ color: "#00C2FF", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.how.label}</span>
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px" }}>
             {T.how.title} <span className="gold-gradient">{T.how.titleGold}</span>
           </h2>
@@ -17,7 +17,7 @@ export default function HowItWorks() {
           {T.how.steps.map((step, i) => (
             <div key={i} className="card" style={{ padding: "40px 32px" }}>
               <div style={{ fontSize: 56, fontWeight: 900, color: "rgba(255,255,255,0.08)", lineHeight: 1, marginBottom: 24, letterSpacing: "-2px" }}>0{i + 1}</div>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #1A5FA8, #2D7DD2)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #1A5FA8, #00C2FF)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
                 <span style={{ color: "#fff", fontWeight: 900, fontSize: 16 }}>{i + 1}</span>
               </div>
               <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, letterSpacing: "-0.5px", color: "#ffffff" }}>{step.title}</h3>

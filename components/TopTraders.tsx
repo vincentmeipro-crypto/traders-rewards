@@ -3,24 +3,24 @@ import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
-  { name: "Karim B.",       flag: "fr", payout: 3200,  size: "$100K", color: "#2D7DD2", initials: "KB" },
+  { name: "Karim B.",       flag: "fr", payout: 3200,  size: "$100K", color: "#00C2FF", initials: "KB" },
   { name: "Marco V.",       flag: "it", payout: 3100,  size: "$100K", color: "#3b82f6", initials: "MV" },
   { name: "Thomas D.",      flag: "fr", payout: 1850,  size: "$50K",  color: "#22c55e", initials: "TD" },
   { name: "Antoine M.",     flag: "be", payout: 4200,  size: "$100K", color: "#a855f7", initials: "AM" },
   { name: "Mathieu R.",     flag: "fr", payout: 3750,  size: "$100K", color: "#f59e0b", initials: "MR" },
   { name: "Alexandre P.",   flag: "fr", payout: 3850,  size: "$100K", color: "#ef4444", initials: "AP" },
   { name: "Sarah L.",       flag: "gb", payout: 2200,  size: "$50K",  color: "#06b6d4", initials: "SL" },
-  { name: "Carlos G.",      flag: "es", payout: 1450,  size: "$50K",  color: "#2D7DD2", initials: "CG" },
+  { name: "Carlos G.",      flag: "es", payout: 1450,  size: "$50K",  color: "#00C2FF", initials: "CG" },
   { name: "Camille F.",     flag: "fr", payout: 2950,  size: "$100K", color: "#22c55e", initials: "CF" },
   { name: "Nicolas B.",     flag: "fr", payout: 4650,  size: "$100K", color: "#f59e0b", initials: "NB" },
   { name: "Jean-Pierre D.", flag: "fr", payout: 4650,  size: "$100K", color: "#ef4444", initials: "JP" },
-  { name: "Lukas W.",       flag: "ch", payout: 3600,  size: "$100K", color: "#2D7DD2", initials: "LW" },
+  { name: "Lukas W.",       flag: "ch", payout: 3600,  size: "$100K", color: "#00C2FF", initials: "LW" },
   { name: "Julien M.",      flag: "fr", payout: 2600,  size: "$100K", color: "#06b6d4", initials: "JM" },
   { name: "Andrei P.",      flag: "ro", payout:  980,  size: "$25K",  color: "#3b82f6", initials: "AP" },
   { name: "Lena H.",        flag: "de", payout: 1150,  size: "$25K",  color: "#a855f7", initials: "LH" },
   { name: "Lucas M.",       flag: "fr", payout:  420,  size: "$10K",  color: "#22c55e", initials: "LM" },
   { name: "Emma R.",        flag: "fr", payout:  360,  size: "$10K",  color: "#f59e0b", initials: "ER" },
-  { name: "Yann T.",        flag: "fr", payout:  470,  size: "$10K",  color: "#2D7DD2", initials: "YT" },
+  { name: "Yann T.",        flag: "fr", payout:  470,  size: "$10K",  color: "#00C2FF", initials: "YT" },
 ];
 
 function fmt(n: number): string {
@@ -318,7 +318,7 @@ export default function TopTraders() {
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 4, padding: "0 24px" }}>
-        <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 12 }}>
+        <span style={{ color: "#00C2FF", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 12 }}>
           {lang === "fr" ? "Communauté" : "Community"}
         </span>
         <h2 style={{ fontSize: "clamp(1.6rem, 4vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.5px", marginBottom: 10 }}>
@@ -363,8 +363,8 @@ export default function TopTraders() {
 
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)", gap: 12 }}>
           {tableRows.map((row, i) => {
-            const colors = ["#2D7DD2", "#a855f7", "#22c55e", "#f59e0b"];
-            const glows  = ["#2D7DD222", "#a855f722", "#22c55e22", "#f59e0b22"];
+            const colors = ["#00C2FF", "#a855f7", "#22c55e", "#f59e0b"];
+            const glows  = ["#00C2FF22", "#a855f722", "#22c55e22", "#f59e0b22"];
             return (
               <div key={i} style={{
                 background: "linear-gradient(145deg, #080808, #0c0c0c)",

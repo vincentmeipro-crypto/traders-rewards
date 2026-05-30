@@ -77,7 +77,7 @@ export default function Scaling() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <span style={{ color: "#2D7DD2", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>
+          <span style={{ color: "#00C2FF", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>
             {labels.badge}
           </span>
           <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px", marginBottom: 16 }}>
@@ -93,7 +93,7 @@ export default function Scaling() {
               <thead>
                 <tr style={{ backgroundColor: "#1a1a24", borderBottom: "1px solid #2A2A38" }}>
                   {[labels.session, labels.balance, labels.daily, labels.totalL, labels.scaleAt, labels.nextBal].map((h, i) => (
-                    <th key={i} style={{ padding: "14px 16px", color: "#2D7DD2", fontWeight: 700, textAlign: i === 0 ? "center" : "right", letterSpacing: "0.5px", textTransform: "uppercase", fontSize: 11, whiteSpace: "nowrap" }}>
+                    <th key={i} style={{ padding: "14px 16px", color: "#00C2FF", fontWeight: 700, textAlign: i === 0 ? "center" : "right", letterSpacing: "0.5px", textTransform: "uppercase", fontSize: 11, whiteSpace: "nowrap" }}>
                       {h}
                     </th>
                   ))}
@@ -115,7 +115,7 @@ export default function Scaling() {
                             {labels.cap} 🏆
                           </span>
                         ) : (
-                          <span style={{ color: "#2D7DD2", fontWeight: 800 }}>{fmt(row.next)}</span>
+                          <span style={{ color: "#00C2FF", fontWeight: 800 }}>{fmt(row.next)}</span>
                         )}
                       </td>
                     </tr>
@@ -139,7 +139,7 @@ export default function Scaling() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
 
           <div className="card" style={{ padding: 28 }}>
-            <h3 style={{ fontSize: 13, fontWeight: 700, color: "#2D7DD2", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 20 }}>
+            <h3 style={{ fontSize: 13, fontWeight: 700, color: "#00C2FF", textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 20 }}>
               {labels.condTitle}
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -160,7 +160,7 @@ export default function Scaling() {
             <p style={{ color: "#888", fontSize: 14, lineHeight: 1.7 }}>{labels.note}</p>
             <div style={{ marginTop: 20, display: "flex", gap: 24, flexWrap: "wrap" }}>
               <div>
-                <div style={{ color: "#2D7DD2", fontSize: 22, fontWeight: 900 }}>{steps.length}</div>
+                <div style={{ color: "#00C2FF", fontSize: 22, fontWeight: 900 }}>{steps.length}</div>
                 <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Sessions" : "Sessions"}</div>
               </div>
               <div>
