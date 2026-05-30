@@ -278,7 +278,7 @@ export default function Hero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: isMobile ? "flex-start" : "center",
-      padding: isMobile ? "56px 20px 20px" : "100px 24px 40px",
+      padding: isMobile ? "56px 20px 20px" : "60px 24px 40px",
       textAlign: "center",
       position: "relative",
       backgroundColor: "#000000",
@@ -312,7 +312,7 @@ export default function Hero() {
         <img
           src="/logo-elysium-rewards.png"
           alt="Elysium Rewards"
-          style={{ order: 1, height: isMobile ? 110 : 232, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : 16 }}
+          style={{ order: 1, height: isMobile ? 110 : 200, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : 0 }}
         />
 
         {/* Reward card — order 2 desktop, order 5 mobile */}
