@@ -278,7 +278,7 @@ export default function Hero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: isMobile ? "flex-start" : "center",
-      padding: isMobile ? "90px 20px 20px" : "100px 24px 40px",
+      padding: isMobile ? "80px 20px 20px" : "100px 24px 40px",
       textAlign: "center",
       position: "relative",
       backgroundColor: "#000000",
@@ -327,7 +327,7 @@ export default function Hero() {
         <img
           src="/logo-elysium-rewards.png"
           alt="Elysium Rewards"
-          style={{ height: isMobile ? 87 : 116, width: "auto", objectFit: "contain", marginBottom: 24 }}
+          style={{ height: isMobile ? 87 : 116, width: "auto", objectFit: "contain", marginBottom: isMobile ? 12 : 24 }}
         />
 
         {/* Title */}
