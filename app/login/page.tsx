@@ -104,8 +104,8 @@ export default function LoginPage() {
           </form>
 
           <p style={{ textAlign: "center", color: "#555", fontSize: 14, marginTop: 24 }}>
-            No account yet?{" "}
-            <a href="/register" style={{ color: "#C9A84C", fontWeight: 600, textDecoration: "none" }}>Create one</a>
+            Pas encore de compte ?{" "}
+            <a href="/#pricing" style={{ color: "#C9A84C", fontWeight: 600, textDecoration: "none" }}>Acheter un challenge</a>
           </p>
         </div>
 
