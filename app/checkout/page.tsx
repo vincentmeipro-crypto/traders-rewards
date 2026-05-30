@@ -59,6 +59,7 @@ function CheckoutContent() {
   const challenge = CHALLENGES[productId] || CHALLENGES["50k-2step"];
   const rules = challenge.model === "2-Step" ? RULES_2STEP : RULES_1STEP;
 
+  const [isMobile, setIsMobile] = useState(false);
   const [loadingStripe, setLoadingStripe] = useState(false);
   const [loadingCrypto, setLoadingCrypto] = useState(false);
   const [loadingFree, setLoadingFree] = useState(false);
@@ -92,6 +93,13 @@ function CheckoutContent() {
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && address.trim() && city.trim() && country.trim() && (user || (password.length >= 8 && password === confirmPassword));
   const anyLoading = loadingStripe || loadingCrypto || loadingFree;
   const canPay = profileComplete && agreedToTerms;
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     const supabase = createClient();
@@ -199,22 +207,45 @@ function CheckoutContent() {
   const card: React.CSSProperties = { background: "#fff", borderRadius: 12, border: "1px solid #e5e7eb", padding: "16px 20px" };
 
   return (
-    <div style={{ height: "100vh", background: "#f3f4f6", display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: "system-ui, -apple-system, sans-serif", color: "#111" }}>
+    <div style={{ minHeight: "100vh", background: "#f3f4f6", display: "flex", flexDirection: "column", fontFamily: "system-ui, -apple-system, sans-serif", color: "#111" }}>
 
       {/* Header */}
-      <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+      <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: isMobile ? "10px 16px" : "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
         <Image src="/logo-black.jpg" alt="Elysium" width={28} height={28} style={{ objectFit: "contain", borderRadius: 4 }} />
         <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Elysium</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>
-        <span style={{ color: "#6b7280", fontSize: 13 }}>Commencer le challenge</span>
-        <a href="/#pricing" style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12, textDecoration: "none" }}>← Changer de compte</a>
+        <span style={{ color: "#6b7280", fontSize: isMobile ? 11 : 13 }}>Commencer le challenge</span>
+        <a href="/#pricing" style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12, textDecoration: "none", whiteSpace: "nowrap" }}>← Changer</a>
       </div>
 
       {/* Body */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: isMobile ? "column" : "row" }}>
+
+        {/* On mobile: show RIGHT column first (summary + payment), then LEFT (form) */}
+        {isMobile && (
+          <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: "16px 16px", display: "flex", flexDirection: "column", gap: 12 }}>
+            {/* Résumé compact mobile */}
+            <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>Résumé de la commande</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f3f4f6" }}>
+              <div style={{ width: 36, height: 36, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏆</div>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>Elysium Challenge</div>
+                <div style={{ color: "#6b7280", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
+              </div>
+              <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: isFree ? "#16a34a" : "#111" }}>
+                  {isFree ? "GRATUIT" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
+                </div>
+                {discount > 0 && !isFree && (
+                  <div style={{ color: "#9ca3af", fontSize: 11, textDecoration: "line-through" }}>{challenge.price}</div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* LEFT COLUMN */}
-        <div style={{ flex: "0 0 58%", overflowY: "auto", padding: "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ flex: isMobile ? "unset" : "0 0 58%", width: isMobile ? "100%" : undefined, overflowY: isMobile ? "unset" : "auto", padding: isMobile ? "14px 16px" : "16px 20px", display: "flex", flexDirection: "column", gap: 12 }}>
 
           {/* Challenge + Rules */}
           <div style={card}>
@@ -227,7 +258,7 @@ function CheckoutContent() {
                 {challenge.model}
               </span>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 24px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 0 : "0 24px" }}>
               {rules.map((r, i) => (
                 <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: "1px solid #f3f4f6" }}>
                   <span style={{ color: "#6b7280", fontSize: 12 }}>{r.label}</span>
@@ -241,7 +272,7 @@ function CheckoutContent() {
           <div style={card}>
             <div style={{ fontWeight: 700, fontSize: 12, color: "#374151", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.5px" }}>Informations de facturation</div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 10px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "8px 10px" }}>
               <div>
                 <label style={lbl}>Prénom *</label>
                 <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" style={inp} />
@@ -293,7 +324,7 @@ function CheckoutContent() {
             {!user && (
               <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 10, marginTop: 10 }}>
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#2563eb", letterSpacing: "0.5px", textTransform: "uppercase", marginBottom: 8 }}>Créer votre compte</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 10px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "8px 10px" }}>
                   <div>
                     <label style={lbl}>Mot de passe *</label>
                     <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 caractères" style={inp} />
@@ -318,10 +349,10 @@ function CheckoutContent() {
         </div>
 
         {/* RIGHT COLUMN */}
-        <div style={{ flex: "0 0 42%", borderLeft: "1px solid #e5e7eb", background: "#fff", overflowY: "auto", padding: "16px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{ flex: isMobile ? "unset" : "0 0 42%", width: isMobile ? "100%" : undefined, borderLeft: isMobile ? "none" : "1px solid #e5e7eb", borderTop: isMobile ? "1px solid #e5e7eb" : "none", background: "#fff", overflowY: isMobile ? "unset" : "auto", padding: isMobile ? "14px 16px" : "16px 24px", display: "flex", flexDirection: "column", gap: 12 }}>
 
-          {/* Résumé */}
-          <div>
+          {/* Résumé — hidden on mobile (shown as compact banner above) */}
+          <div style={{ display: isMobile ? "none" : "block" }}>
             <div style={{ fontWeight: 800, fontSize: 16, color: "#111", marginBottom: 14 }}>Résumé de la commande</div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #f3f4f6" }}>
               <div style={{ width: 40, height: 40, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🏆</div>
