@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Elysium Support <support@elysium-rewards.com>",
+      from: "Elysium Support <onboarding@resend.dev>",
       to: ["vincentmeipro@gmail.com"],
       reply_to: email,
       subject: `[Support] ${firstName} ${lastName} — nouveau message`,
