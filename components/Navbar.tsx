@@ -46,20 +46,20 @@ export default function Navbar() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Logo + drapeaux */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 6 : 10 }}>
             <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
               <img
                 src="/logo-icon.png"
                 alt="Elysium icon"
-                style={{ height: 60, width: "auto", objectFit: "contain" }}
+                style={{ height: isMobile ? 44 : 60, width: "auto", objectFit: "contain" }}
               />
             </a>
             <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                <img className="flag-float-1" src="https://flagcdn.com/24x18/fr.png" width={24} height={18} alt="France" style={{ borderRadius: 3, display: "inline-block", boxShadow: "0 1px 4px rgba(0,0,0,0.4)" }} />
-                <img className="flag-float-2" src="https://flagcdn.com/24x18/eu.png" width={24} height={18} alt="EU" style={{ borderRadius: 3, display: "inline-block", boxShadow: "0 1px 4px rgba(0,0,0,0.4)" }} />
+              <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+                <img className="flag-float-1" src={`https://flagcdn.com/${isMobile ? "20x15" : "24x18"}/fr.png`} width={isMobile ? 20 : 24} height={isMobile ? 15 : 18} alt="France" style={{ borderRadius: 2, display: "inline-block", boxShadow: "0 1px 4px rgba(0,0,0,0.4)" }} />
+                <img className="flag-float-2" src={`https://flagcdn.com/${isMobile ? "20x15" : "24x18"}/eu.png`} width={isMobile ? 20 : 24} height={isMobile ? 15 : 18} alt="EU" style={{ borderRadius: 2, display: "inline-block", boxShadow: "0 1px 4px rgba(0,0,0,0.4)" }} />
               </div>
-              <span style={{ color: "#A0A0A0", fontSize: 9, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", whiteSpace: "nowrap" }}>PropFirm Française</span>
+              <span style={{ color: "#A0A0A0", fontSize: isMobile ? 7 : 9, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", whiteSpace: "nowrap" }}>PropFirm Française</span>
             </div>
           </div>
 

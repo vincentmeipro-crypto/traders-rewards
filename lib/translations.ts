@@ -133,7 +133,7 @@ export const t = {
   fr: {
     nav: {
       challenges: 'Challenges', howItWorks: 'Comment ça marche', pricing: 'Tarifs',
-      rules: 'Règles', elevation: 'Élévation', trader: 'Trader', faq: 'FAQ', logIn: 'CONNEXION', startChallenge: 'COMMENCER',
+      rules: 'Règles', elevation: 'Élévation', trader: 'Trader', faq: 'FAQ', logIn: 'LOGIN', startChallenge: 'COMMENCER',
     },
     hero: {
       badge: 'La Prop Firm Élite',

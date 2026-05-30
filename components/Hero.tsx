@@ -315,9 +315,9 @@ export default function Hero() {
           style={{ order: 1, height: isMobile ? 110 : 200, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : -38 }}
         />
 
-        {/* Reward card — order 2 desktop, order 5 mobile */}
+        {/* Reward card — order 2 */}
         <div style={{
-          order: isMobile ? 5 : 2,
+          order: 2,
           width: "100%",
           maxWidth: 480,
           marginBottom: isMobile ? 20 : 20,
@@ -326,9 +326,9 @@ export default function Hero() {
           <RewardCard lang={lang} isMobile={isMobile} />
         </div>
 
-        {/* Title — order 3 desktop, order 2 mobile */}
+        {/* Title — order 3 */}
         <h1 style={{
-          order: isMobile ? 2 : 3,
+          order: 3,
           fontSize: isMobile ? "clamp(2rem, 8.5vw, 2.6rem)" : "clamp(2.8rem, 4.5vw, 4.2rem)",
           fontWeight: 900,
           letterSpacing: "-2px",
@@ -340,23 +340,23 @@ export default function Hero() {
           {T.hero.headline2}
         </h1>
 
-        {/* Subtitle — order 4 desktop, order 3 mobile */}
+        {/* Subtitle — order 4 */}
         <p style={{
-          order: isMobile ? 3 : 4,
-          color: isMobile ? "#666" : "#00C2FF",
-          fontSize: isMobile ? 15 : 17,
-          maxWidth: isMobile ? 560 : "none",
+          order: 4,
+          color: "#00C2FF",
+          fontSize: isMobile ? 14 : 17,
+          maxWidth: isMobile ? 340 : "none",
           whiteSpace: isMobile ? "normal" : "nowrap",
           lineHeight: 1.7,
           marginBottom: isMobile ? 10 : 24,
-          textShadow: isMobile ? "none" : "0 0 24px rgba(0,194,255,0.45)",
+          textShadow: "0 0 24px rgba(0,194,255,0.45)",
         }}>
           {T.hero.sub}
         </p>
 
-        {/* CTAs — order 5 desktop, order 4 mobile */}
+        {/* CTAs — order 5 */}
         <div style={{
-          order: isMobile ? 4 : 5,
+          order: 5,
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
           gap: 12,
