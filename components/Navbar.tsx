@@ -70,6 +70,7 @@ export default function Navbar() {
               [T.nav.howItWorks, "/#how-it-works", false],
               [T.nav.rules, "/#rules", false],
               [T.nav.faq, "/#faq", false],
+              ["Support", "/support", false],
             ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href}
                 style={{ display: "flex", alignItems: "center", gap: 4, color: "#A0A0A0", fontSize: 13, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
@@ -162,6 +163,7 @@ export default function Navbar() {
               [T.nav.howItWorks, "/#how-it-works", false],
               [T.nav.rules, "/#rules", false],
               [T.nav.faq, "/#faq", false],
+              ["Support", "/support", false],
             ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ display: "flex", alignItems: "center", gap: 6, color: "#A0A0A0", fontSize: 16, fontWeight: 500, textDecoration: "none" }}
