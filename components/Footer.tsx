@@ -32,10 +32,10 @@ export default function Footer() {
   return (
     <footer style={{ borderTop: "1px solid #2A2A38", padding: "60px 24px 40px" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 48, marginBottom: 60 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 48, marginBottom: 60, alignItems: "start" }}>
 
           <div>
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: 8 }}>
               <img src="/logo-elysium-rewards.png" alt="Elysium Rewards" style={{ height: 96, width: "auto", objectFit: "contain" }} />
             </div>
             <p style={{ color: "#555", fontSize: 14, lineHeight: 1.7, maxWidth: 260 }}>{T.footer.tagline}</p>
