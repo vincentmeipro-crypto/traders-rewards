@@ -189,11 +189,13 @@ function CheckoutContent() {
   };
 
   const handleFree = async () => {
-    if (!user) { router.push("/login"); return; }
+    setPayError("");
+    let u = user;
+    if (!u) { u = await createAccountAndGetUser(); if (!u) return; setUser(u); }
     if (!profileComplete) return;
     setLoadingFree(true);
-    await saveProfile(user.token);
-    const res = await fetch("/api/promo/free", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: user.id, promoCode: appliedCode }) });
+    await saveProfile(u.token);
+    const res = await fetch("/api/promo/free", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, promoCode: appliedCode }) });
     const data = await res.json();
     if (data.ok) router.push("/dashboard");
     else { setPromoStatus("error"); setPromoError(data.error || "Erreur"); setLoadingFree(false); }
