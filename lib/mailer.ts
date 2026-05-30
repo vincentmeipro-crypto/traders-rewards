@@ -108,7 +108,7 @@ function buildEmail({ title, titleColor, body, details, cta }: {
   return `
     <div style="background:#070707;color:#fff;font-family:Arial,sans-serif;padding:40px;max-width:600px;margin:0 auto;">
       <div style="text-align:center;margin-bottom:32px;">
-        <h1 style="color:#C9A84C;font-size:28px;margin:0;">ELYSIUM FUNDED</h1>
+        <h1 style="color:#C9A84C;font-size:28px;margin:0;">ELYSIUM REWARDS</h1>
         <p style="color:#555;font-size:12px;letter-spacing:2px;margin-top:4px;">THE ELITE PROP FIRM</p>
       </div>
       <div style="background:#0f0f0f;border:1px solid #1a1a1a;border-radius:16px;padding:32px;margin-bottom:24px;">
