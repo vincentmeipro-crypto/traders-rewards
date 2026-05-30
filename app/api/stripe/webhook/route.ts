@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
         email,
         leverage: 100,
         group: getMT5Group(model, accountSize),
+        account_size: accountSize,
       });
       mt5Login           = mt5Account.login;
       mt5Password        = mt5Account.password;
@@ -91,7 +92,14 @@ export async function POST(req: NextRequest) {
 
     const userEmail = session.customer_email || session.customer_details?.email;
     if (userEmail) {
-      try { await sendWelcomeEmail(userEmail, accountSize, model); } catch (e) { console.error("Email error:", e); }
+      try {
+        await sendWelcomeEmail(
+          userEmail, accountSize, model,
+          mt5Login && mt5Password && mt5Server
+            ? { login: mt5Login, password: mt5Password, server: mt5Server }
+            : undefined
+        );
+      } catch (e) { console.error("Email error:", e); }
     }
   }
 

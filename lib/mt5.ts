@@ -1,13 +1,21 @@
 const MT5_URL    = process.env.MT5_API_URL!;
 const MT5_SECRET = process.env.MT5_API_SECRET!;
 
-// Mapping accountSize + model → groupe MT5
+// Mapping accountSize + model → groupe MT5 (Starwave gray label)
+// grp1=10K  grp2=25K  grp3=50K  grp4=100K  grp5=200K
+// À mettre à jour avec les groupes Phase 2 quand Allan confirme
 const GROUP_MAP: Record<string, Record<string, string>> = {
   "2step": {
-    "$10,000":  "demo\\challenge_10k_p1",
-    "$25,000":  "demo\\challenge_25k_p1",
-    "$50,000":  "demo\\challenge_50k_p1",
-    "$100,000": "demo\\challenge_100k_p1",
+    "$10,000":  "Starwave\\demo\\FX1\\grp1",
+    "$25,000":  "Starwave\\demo\\FX1\\grp2",
+    "$50,000":  "Starwave\\demo\\FX1\\grp3",
+    "$100,000": "Starwave\\demo\\FX1\\grp4",
+  },
+  "1step": {
+    "$10,000":  "Starwave\\demo\\FX1\\grp1",
+    "$25,000":  "Starwave\\demo\\FX1\\grp2",
+    "$50,000":  "Starwave\\demo\\FX1\\grp3",
+    "$100,000": "Starwave\\demo\\FX1\\grp4",
   },
 };
 
@@ -21,16 +29,18 @@ export async function createMT5Account(params: {
   email: string;
   leverage: number;
   group: string;
+  account_size?: string;
 }): Promise<{ login: number; password: string; password_investor: string; server: string }> {
   const res = await fetch(`${MT5_URL}/accounts/create`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
     body: JSON.stringify({
-      first_name: params.firstName,
-      last_name:  params.lastName,
-      email:      params.email,
-      leverage:   params.leverage,
-      group:      params.group,
+      first_name:   params.firstName,
+      last_name:    params.lastName,
+      email:        params.email,
+      leverage:     params.leverage,
+      group:        params.group,
+      account_size: params.account_size,
     }),
   });
 

@@ -18,18 +18,31 @@ async function sendEmail(to: string, subject: string, html: string) {
   }
 }
 
-export async function sendWelcomeEmail(to: string, accountSize: string, model: string) {
+export async function sendWelcomeEmail(
+  to: string,
+  accountSize: string,
+  model: string,
+  mt5?: { login: number; password: string; server: string }
+) {
   const modelLabel = model === "1step" ? "1-Step" : "2-Step";
+  const details: { label: string; value: string; color?: string }[] = [
+    { label: "Account Size", value: accountSize, color: "#C9A84C" },
+    { label: "Model", value: modelLabel },
+    { label: "Profit Target", value: "10%" },
+    { label: "Daily Drawdown", value: model === "1step" ? "3%" : "5%" },
+  ];
+  if (mt5) {
+    details.push(
+      { label: "MT5 Server",   value: mt5.server,            color: "#00C2FF" },
+      { label: "MT5 Login",    value: String(mt5.login),     color: "#00C2FF" },
+      { label: "MT5 Password", value: mt5.password,          color: "#00C2FF" },
+    );
+  }
   await sendEmail(to, "🎯 Your Elysium Challenge is Ready!", buildEmail({
-    title: "✅ Payment Confirmed",
+    title: "✅ Payment Confirmed — Your MT5 Account is Ready",
     titleColor: "#22c55e",
-    body: `Welcome to the elite. Your challenge account has been created and is ready to trade.`,
-    details: [
-      { label: "Account Size", value: accountSize, color: "#C9A84C" },
-      { label: "Model", value: modelLabel },
-      { label: "Profit Target", value: "10%" },
-      { label: "Daily Drawdown", value: model === "1step" ? "3%" : "5%" },
-    ],
+    body: `Welcome to the elite. Your challenge account has been created. Connect to MT5 with the credentials below and start trading.`,
+    details,
     cta: { text: "Access My Dashboard →", href: "https://elysium-rewards.com/dashboard" },
   }));
 }
