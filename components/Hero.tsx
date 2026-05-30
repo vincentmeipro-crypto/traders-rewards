@@ -289,21 +289,6 @@ export default function Hero() {
       {!isMobile && <CandleChart side="left" />}
       {!isMobile && <CandleChart side="right" />}
 
-      {!isMobile && (
-        <img
-          src="/propfirm-badge-neon.png"
-          alt="PropFirm créée et gérée par des traders français"
-          style={{
-            position: "absolute",
-            left: 40,
-            top: 210,
-            transform: "translateY(-50%)",
-            width: 156,
-            zIndex: 3,
-            pointerEvents: "none",
-          }}
-        />
-      )}
 
 
       {/* Subtle radial glow */}
@@ -323,39 +308,53 @@ export default function Hero() {
       {/* Content */}
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
 
-        {/* Logo texte */}
+        {/* Logo texte — order 1 */}
         <img
           src="/logo-elysium-rewards.png"
           alt="Elysium Rewards"
-          style={{ height: isMobile ? 110 : 232, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : 24 }}
+          style={{ order: 1, height: isMobile ? 110 : 232, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : 16 }}
         />
 
-        {/* Title */}
+        {/* Reward card — order 2 desktop, order 5 mobile */}
+        <div style={{
+          order: isMobile ? 5 : 2,
+          width: "100%",
+          maxWidth: 480,
+          marginBottom: isMobile ? 20 : 28,
+          padding: isMobile ? "0 16px" : undefined,
+        }}>
+          <RewardCard lang={lang} isMobile={isMobile} />
+        </div>
+
+        {/* Title — order 3 desktop, order 2 mobile */}
         <h1 style={{
+          order: isMobile ? 2 : 3,
           fontSize: isMobile ? "clamp(2rem, 8.5vw, 2.6rem)" : "clamp(2.8rem, 4.5vw, 4.2rem)",
           fontWeight: 900,
           letterSpacing: "-2px",
           lineHeight: 1.1,
           maxWidth: 1300,
-          marginBottom: isMobile ? 6 : 20,
+          marginBottom: isMobile ? 6 : 16,
         }}>
           {T.hero.headline1}<br />
           {T.hero.headline2}
         </h1>
 
-        {/* Subtitle */}
+        {/* Subtitle — order 4 desktop, order 3 mobile */}
         <p style={{
+          order: isMobile ? 3 : 4,
           color: "#666",
           fontSize: isMobile ? 15 : 18,
           maxWidth: 560,
           lineHeight: 1.7,
-          marginBottom: isMobile ? 10 : 32,
+          marginBottom: isMobile ? 10 : 24,
         }}>
           {T.hero.sub}
         </p>
 
-        {/* CTAs */}
+        {/* CTAs — order 5 desktop, order 4 mobile */}
         <div style={{
+          order: isMobile ? 4 : 5,
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
           gap: 12,
@@ -373,16 +372,6 @@ export default function Hero() {
             style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
             {T.hero.cta2}
           </a>
-        </div>
-
-        {/* Reward card animation */}
-        <div style={{
-          width: "100%",
-          maxWidth: 480,
-          marginBottom: isMobile ? 20 : 32,
-          padding: isMobile ? "0 16px" : undefined,
-        }}>
-          <RewardCard lang={lang} isMobile={isMobile} />
         </div>
 
         {/* Promo Banner */}
