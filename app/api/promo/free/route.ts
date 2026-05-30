@@ -94,7 +94,9 @@ export async function POST(req: NextRequest) {
             ? { login: mt5Login, password: mt5Password, server: mt5Server }
             : undefined
         );
-      } catch {}
+      } catch (emailErr) {
+        console.error("Welcome email failed:", emailErr);
+      }
     }
 
     return NextResponse.json({ ok: true });

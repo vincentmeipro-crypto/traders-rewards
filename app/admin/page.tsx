@@ -18,6 +18,10 @@ type Challenge = {
   client_phone: string;
   created_at: string;
   trading_days: number;
+  mt5_login: number;
+  mt5_password: string;
+  mt5_password_investor: string;
+  mt5_server: string;
   ctrader_account_id: string;
   ctrader_login: string;
   ctrader_password: string;
@@ -645,18 +649,18 @@ export default function AdminPage() {
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.ctrader_account_id ?? c.ctrader_account_id ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_account_id: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
-                              : <span style={{ color: c.ctrader_account_id ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.ctrader_account_id || "—"}</span>}
+                              ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 120 }} />
+                              : <span style={{ color: c.mt5_login ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_login || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.ctrader_password ?? c.ctrader_password ?? ""} onChange={e => setEditData(d => ({ ...d, ctrader_password: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
-                              : <span style={{ color: c.ctrader_password ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.ctrader_password || "—"}</span>}
+                              ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
+                              : <span style={{ color: c.mt5_password ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_password || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.server ?? c.server ?? ""} onChange={e => setEditData(d => ({ ...d, server: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 140 }} />
-                              : <span style={{ color: c.server ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.server || "—"}</span>}
+                              ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 140 }} />
+                              : <span style={{ color: c.mt5_server ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_server || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#555", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
                           <td style={{ padding: "13px 14px" }}>
@@ -845,9 +849,9 @@ export default function AdminPage() {
                                         <span>Jours tradés : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span></span>
                                         {c.balance && <span>Balance : <span style={{ color: "#fff" }}>${c.balance?.toLocaleString()}</span></span>}
                                         {profit && <span>P&L : <span style={{ color: Number(profit) >= 0 ? "#22c55e" : "#ef4444" }}>{profit}%</span></span>}
-                                        {c.ctrader_account_id && <span>MT5 ID : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.ctrader_account_id}</span></span>}
-                                        {c.ctrader_password  && <span>Password : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.ctrader_password}</span></span>}
-                                        {c.server            && <span>Serveur : <span style={{ color: "#38bdf8" }}>{c.server}</span></span>}
+                                        {c.mt5_login    && <span>MT5 Login : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_login}</span></span>}
+                                        {c.mt5_password && <span>Password : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_password}</span></span>}
+                                        {c.mt5_server   && <span>Serveur : <span style={{ color: "#38bdf8" }}>{c.mt5_server}</span></span>}
                                       </div>
                                     </div>
                                   </div>
