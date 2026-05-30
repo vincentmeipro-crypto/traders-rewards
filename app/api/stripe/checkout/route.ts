@@ -14,7 +14,7 @@ const PRODUCTS = {
   "100k-1step": { name: "Challenge $100,000 — 1-Step",amount: 39900,  accountSize: "$100,000", model: "1step" },
 };
 
-const SITE_URL = "https://elysiumfunded.eu";
+const SITE_URL = "https://elysium-rewards.com";
 
 export async function POST(req: NextRequest) {
   try {

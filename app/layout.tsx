@@ -9,7 +9,7 @@ const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-inter", weight: [
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://elysiumfunded.eu"),
+  metadataBase: new URL("https://elysium-rewards.com"),
   title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
   description: "Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
   manifest: "/manifest.json",

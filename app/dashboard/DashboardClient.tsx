@@ -627,7 +627,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               <div class="header">
                                 <div>
                                   <div class="logo">ELYSIUM</div>
-                                  <div style="color:#888;font-size:13px;margin-top:4px">elysiumfunded.eu</div>
+                                  <div style="color:#888;font-size:13px;margin-top:4px">elysium-rewards.com</div>
                                 </div>
                                 <div style="text-align:right">
                                   <div class="badge">FACTURE ACQUITTÉE</div>
@@ -638,7 +638,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                 <div>
                                   <h2>Émetteur</h2>
                                   <div style="font-weight:700">ELYSIUM</div>
-                                  <div style="color:#555;font-size:13px">elysiumfunded.eu<br>contact@elysiumfunded.eu</div>
+                                  <div style="color:#555;font-size:13px">elysium-rewards.com<br>contact@elysium-rewards.com</div>
                                 </div>
                                 <div>
                                   <h2>Client</h2>
@@ -657,7 +657,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               </table>
                               <div class="total">Total TTC : €${c.amount_paid}</div>
                               <div class="footer">
-                                ELYSIUM — elysiumfunded.eu — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
+                                ELYSIUM — elysium-rewards.com — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
                                 Ce document tient lieu de facture acquittée.
                               </div>
                               <div style="text-align:center;margin-top:32px"><button onclick="window.print()" style="background:#111;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Imprimer / Télécharger PDF</button></div>

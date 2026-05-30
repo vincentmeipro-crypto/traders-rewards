@@ -6,7 +6,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Elysium <support@elysiumfunded.eu>",
+      from: "Elysium <support@elysium-rewards.com>",
       to: [to],
       subject,
       html,
@@ -30,7 +30,7 @@ export async function sendWelcomeEmail(to: string, accountSize: string, model: s
       { label: "Profit Target", value: "10%" },
       { label: "Daily Drawdown", value: model === "1step" ? "3%" : "5%" },
     ],
-    cta: { text: "Access My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
+    cta: { text: "Access My Dashboard →", href: "https://elysium-rewards.com/dashboard" },
   }));
 }
 
@@ -45,7 +45,7 @@ export async function sendPhase2Email(to: string, accountSize: string) {
       { label: "New Profit Target", value: "5%" },
       { label: "Balance Reset", value: "✓ Done" },
     ],
-    cta: { text: "View My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
+    cta: { text: "View My Dashboard →", href: "https://elysium-rewards.com/dashboard" },
   }));
 }
 
@@ -63,7 +63,7 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
       { label: "Reason", value: reasonLabel, color: "#ef4444" },
       { label: "Status", value: "Challenge Closed" },
     ],
-    cta: { text: "Start a New Challenge →", href: "https://elysiumfunded.eu/#pricing" },
+    cta: { text: "Start a New Challenge →", href: "https://elysium-rewards.com/#pricing" },
   }));
 }
 
@@ -78,7 +78,7 @@ export async function sendFundedEmail(to: string, accountSize: string) {
       { label: "Profit Split", value: "90% for you" },
       { label: "Payouts", value: "Available now" },
     ],
-    cta: { text: "Request Your First Payout →", href: "https://elysiumfunded.eu/dashboard" },
+    cta: { text: "Request Your First Payout →", href: "https://elysium-rewards.com/dashboard" },
   }));
 }
 
@@ -96,7 +96,7 @@ export async function sendDailyUpdateEmail(to: string, accountSize: string, phas
       { label: "Phase", value: phaseLabel, color: "#C9A84C" },
       { label: "Trading Days", value: `${tradingDays}`, color: "#fff" },
     ],
-    cta: { text: "View My Dashboard →", href: "https://elysiumfunded.eu/dashboard" },
+    cta: { text: "View My Dashboard →", href: "https://elysium-rewards.com/dashboard" },
   }));
 }
 
@@ -125,7 +125,7 @@ function buildEmail({ title, titleColor, body, details, cta }: {
         <a href="${cta.href}" style="display:block;background:#C9A84C;color:#000;text-align:center;padding:14px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">${cta.text}</a>
       </div>
       <p style="color:#333;font-size:12px;text-align:center;">
-        Questions? <a href="mailto:support@elysiumfunded.eu" style="color:#C9A84C;">support@elysiumfunded.eu</a>
+        Questions? <a href="mailto:support@elysium-rewards.com" style="color:#C9A84C;">support@elysium-rewards.com</a>
       </p>
     </div>
   `;
