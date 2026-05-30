@@ -23,6 +23,10 @@ type Challenge = {
   trading_days: number;
   amount_paid: number;
   created_at: string;
+  mt5_login?: number;
+  mt5_password?: string;
+  mt5_password_investor?: string;
+  mt5_server?: string;
   ctrader_account_id?: string;
   ctrader_login?: string;
   ctrader_password?: string;
@@ -1192,7 +1196,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
 
                 {/* Trading account */}
-                {!challenge.ctrader_account_id ? (
+                {!challenge.mt5_login ? (
                   <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "16px 20px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
                       <Clock size={16} color="#00C2FF" />
@@ -1207,14 +1211,14 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                       {[
-                        { label: T.dash.platform, value: "cTrader" },
-                        { label: T.dash.accountId, value: challenge.ctrader_account_id || "—" },
-                        { label: T.dash.password, value: challenge.ctrader_password || "—" },
-                        { label: T.dash.server, value: challenge.server || "—" },
+                        { label: T.dash.platform, value: "MetaTrader 5" },
+                        { label: "Login", value: String(challenge.mt5_login) },
+                        { label: T.dash.password, value: challenge.mt5_password || "—" },
+                        { label: T.dash.server, value: challenge.mt5_server || "—" },
                       ].map((item, i) => (
                         <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "10px 14px" }}>
                           <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}</div>
-                          <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8" }}>{item.value}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8", wordBreak: "break-all" }}>{item.value}</div>
                         </div>
                       ))}
                     </div>
