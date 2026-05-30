@@ -323,6 +323,13 @@ export default function Hero() {
       {/* Content */}
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
 
+        {/* Logo texte */}
+        <img
+          src="/logo-elysium-rewards.png"
+          alt="Elysium Rewards"
+          style={{ height: isMobile ? 48 : 64, width: "auto", objectFit: "contain", marginBottom: 24 }}
+        />
+
         {/* Title */}
         <h1 style={{
           fontSize: isMobile ? "clamp(2.2rem, 9vw, 3rem)" : "clamp(2.8rem, 4.5vw, 4.2rem)",
