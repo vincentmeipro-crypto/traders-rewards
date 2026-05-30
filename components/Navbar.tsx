@@ -43,7 +43,7 @@ export default function Navbar() {
             <img
               src="/logo-icon.png"
               alt="Elysium icon"
-              style={{ height: 36, width: "auto", objectFit: "contain" }}
+              style={{ height: 60, width: "auto", objectFit: "contain" }}
             />
           </a>
 
