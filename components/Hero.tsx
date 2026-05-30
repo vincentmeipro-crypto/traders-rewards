@@ -327,7 +327,7 @@ export default function Hero() {
         <img
           src="/logo-elysium-rewards.png"
           alt="Elysium Rewards"
-          style={{ height: isMobile ? 110 : 232, width: "auto", objectFit: "contain", marginBottom: isMobile ? 8 : 24 }}
+          style={{ height: isMobile ? 110 : 232, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : 24 }}
         />
 
         {/* Title */}
