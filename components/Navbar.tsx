@@ -32,9 +32,11 @@ export default function Navbar() {
     <>
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        backgroundColor: "rgba(20,20,28,0.92)",
-        backdropFilter: "blur(20px)",
-        borderBottom: "1px solid #2A2A38",
+        backgroundColor: "#000000",
+        borderBottom: "1px solid transparent",
+        backgroundImage: "linear-gradient(#000, #000), linear-gradient(90deg, transparent 0%, #C9A84C 30%, #C9A84C 70%, transparent 100%)",
+        backgroundOrigin: "border-box",
+        backgroundClip: "padding-box, border-box",
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
