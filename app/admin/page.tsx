@@ -649,7 +649,7 @@ export default function AdminPage() {
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 120 }} />
+                              ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 120 }} />
                               : <span style={{ color: c.mt5_login ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_login || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
