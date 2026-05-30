@@ -3,10 +3,34 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 export default function Footer() {
   const { T } = useLanguage();
+
   const sections = [
-    { title: T.footer.challenges, links: T.footer.challengeLinks },
-    { title: T.footer.company,    links: T.footer.companyLinks },
-    { title: T.footer.support,    links: T.footer.supportLinks },
+    {
+      title: T.footer.challenges,
+      links: [
+        { label: T.footer.challengeLinks[0], href: "/#pricing" },
+        { label: T.footer.challengeLinks[1], href: "/#pricing" },
+        { label: T.footer.challengeLinks[2], href: "/#pricing" },
+      ],
+    },
+    {
+      title: T.footer.company,
+      links: [
+        { label: T.footer.companyLinks[0], href: "/#how-it-works" },
+        { label: T.footer.companyLinks[1], href: "/#rules" },
+        { label: T.footer.companyLinks[2], href: "/#faq" },
+        { label: T.footer.companyLinks[3], href: "/support" },
+      ],
+    },
+    {
+      title: T.footer.support,
+      links: [
+        { label: T.footer.supportLinks[0], href: "https://discord.gg/elysium-rewards", target: "_blank" },
+        { label: T.footer.supportLinks[1], href: "/support" },
+        { label: T.footer.supportLinks[2], href: "/support" },
+        { label: T.footer.supportLinks[3], href: "mailto:support@elysium-rewards.com" },
+      ],
+    },
   ];
 
   return (
@@ -16,9 +40,7 @@ export default function Footer() {
 
           <div>
             <div style={{ marginBottom: 16 }}>
-              <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: "2px", textTransform: "uppercase" }}>
-                Elysium
-              </span>
+              <img src="/logo-elysium-rewards.png" alt="Elysium Rewards" style={{ height: 48, width: "auto", objectFit: "contain" }} />
             </div>
             <p style={{ color: "#555", fontSize: 14, lineHeight: 1.7, maxWidth: 260 }}>{T.footer.tagline}</p>
           </div>
@@ -27,10 +49,11 @@ export default function Footer() {
             <div key={i}>
               <h4 style={{ color: "#888", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>{sec.title}</h4>
               {sec.links.map(item => (
-                <a key={item} href="#" style={{ display: "block", color: "#555", fontSize: 14, marginBottom: 12, textDecoration: "none", transition: "color 0.2s" }}
+                <a key={item.label} href={item.href} target={(item as any).target} rel={(item as any).target === "_blank" ? "noopener noreferrer" : undefined}
+                  style={{ display: "block", color: "#555", fontSize: 14, marginBottom: 12, textDecoration: "none", transition: "color 0.2s" }}
                   onMouseOver={e => (e.currentTarget.style.color = "#00C2FF")}
                   onMouseOut={e => (e.currentTarget.style.color = "#555")}>
-                  {item}
+                  {item.label}
                 </a>
               ))}
             </div>
