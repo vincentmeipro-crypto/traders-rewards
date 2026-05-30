@@ -383,7 +383,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {!isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#0a0a0a", borderRight: "1px solid #1a1a1a", display: "flex", flexDirection: "column", zIndex: 50 }}>
           <div style={{ padding: "24px 20px", borderBottom: "1px solid #1a1a1a" }}>
-            <img src="/logo-white.jpg" alt="Elysium" style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }} />
+            <img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }} />
           </div>
 
           <nav style={{ padding: "20px 12px", flex: 1 }}>
@@ -442,7 +442,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {/* Top bar — mobile only */}
       {isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
-          <a href="/"><img src="/logo-white.jpg" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} /></a>
+          <a href="/"><img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} /></a>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             {languages.map(l => (
               <button key={l.code} onClick={() => setLang(l.code)}

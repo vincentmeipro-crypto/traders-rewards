@@ -41,7 +41,7 @@ export default function Navbar() {
           {/* Nom */}
           <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
             <img
-              src="/logo-white.jpg"
+              src="/logo-elysium-rewards.png"
               alt="Elysium logo"
               style={{ width: 26, height: 26, objectFit: "contain", mixBlendMode: "screen" }}
             />

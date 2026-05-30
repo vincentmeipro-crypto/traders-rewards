@@ -26,13 +26,13 @@ export const metadata: Metadata = {
     siteName: "Elysium",
     title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
     description: "Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
-    images: [{ url: "/logo-white.jpg", width: 1080, height: 1080, alt: "Elysium" }],
+    images: [{ url: "/logo-elysium-rewards.png", width: 1080, height: 1080, alt: "Elysium" }],
   },
   twitter: {
     card: "summary",
     title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
     description: "Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
-    images: ["/logo-white.jpg"],
+    images: ["/logo-elysium-rewards.png"],
   },
 };
 
