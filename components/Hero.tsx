@@ -374,8 +374,9 @@ export default function Hero() {
           </a>
         </div>
 
-        {/* Promo Banner */}
+        {/* Promo Banner — order 6 (toujours en dernier) */}
         <div style={{
+          order: 6,
           width: `calc(100% + ${isMobile ? 40 : 48}px)`,
           marginLeft: isMobile ? -20 : -24,
         }}>
