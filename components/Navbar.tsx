@@ -161,8 +161,9 @@ export default function Navbar() {
         )}
       </nav>
       <div style={{
-        position: "fixed", top: 72, left: 0, right: 0, zIndex: 100, height: 1,
-        background: "linear-gradient(90deg, transparent 0%, #C9A84C 25%, #C9A84C 75%, transparent 100%)",
+        position: "fixed", top: 72, left: 0, right: 0, zIndex: 99, height: 2,
+        background: "linear-gradient(90deg, transparent 0%, #C9A84C 20%, #FFD700 50%, #C9A84C 80%, transparent 100%)",
+        opacity: 0.9,
       }} />
 
     </>
