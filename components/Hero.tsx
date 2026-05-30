@@ -278,7 +278,7 @@ export default function Hero() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: isMobile ? "flex-start" : "center",
-      padding: isMobile ? "80px 20px 20px" : "100px 24px 40px",
+      padding: isMobile ? "74px 20px 20px" : "100px 24px 40px",
       textAlign: "center",
       position: "relative",
       backgroundColor: "#000000",
@@ -327,17 +327,17 @@ export default function Hero() {
         <img
           src="/logo-elysium-rewards.png"
           alt="Elysium Rewards"
-          style={{ height: isMobile ? 87 : 116, width: "auto", objectFit: "contain", marginBottom: isMobile ? 12 : 24 }}
+          style={{ height: isMobile ? 55 : 116, width: "auto", objectFit: "contain", marginBottom: isMobile ? 8 : 24 }}
         />
 
         {/* Title */}
         <h1 style={{
-          fontSize: isMobile ? "clamp(2.2rem, 9vw, 3rem)" : "clamp(2.8rem, 4.5vw, 4.2rem)",
+          fontSize: isMobile ? "clamp(2rem, 8.5vw, 2.6rem)" : "clamp(2.8rem, 4.5vw, 4.2rem)",
           fontWeight: 900,
           letterSpacing: "-2px",
           lineHeight: 1.1,
           maxWidth: 1300,
-          marginBottom: 20,
+          marginBottom: isMobile ? 10 : 20,
         }}>
           {T.hero.headline1}<br />
           {T.hero.headline2}
@@ -349,7 +349,7 @@ export default function Hero() {
           fontSize: isMobile ? 15 : 18,
           maxWidth: 560,
           lineHeight: 1.7,
-          marginBottom: isMobile ? 20 : 32,
+          marginBottom: isMobile ? 10 : 32,
         }}>
           {T.hero.sub}
         </p>
@@ -361,7 +361,7 @@ export default function Hero() {
           gap: 12,
           justifyContent: "center",
           alignItems: "center",
-          marginBottom: isMobile ? 20 : 28,
+          marginBottom: isMobile ? 10 : 28,
           width: isMobile ? "100%" : "auto",
           padding: isMobile ? "0 16px" : undefined,
         }}>
