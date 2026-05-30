@@ -30,6 +30,14 @@ export default function Navbar() {
 
   return (
     <>
+      <style>{`
+        @keyframes flagFloat {
+          0%, 100% { transform: translateY(0px) rotate(-3deg); }
+          50% { transform: translateY(-4px) rotate(3deg); }
+        }
+        .flag-float-1 { animation: flagFloat 2.8s ease-in-out infinite; }
+        .flag-float-2 { animation: flagFloat 2.8s ease-in-out infinite 0.4s; }
+      `}</style>
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
         backgroundColor: "#0d0d0d",
@@ -37,14 +45,23 @@ export default function Navbar() {
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
-          {/* Nom */}
-          <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-            <img
-              src="/logo-icon.png"
-              alt="Elysium icon"
-              style={{ height: 60, width: "auto", objectFit: "contain" }}
-            />
-          </a>
+          {/* Logo + drapeaux */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+              <img
+                src="/logo-icon.png"
+                alt="Elysium icon"
+                style={{ height: 60, width: "auto", objectFit: "contain" }}
+              />
+            </a>
+            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+                <span className="flag-float-1" style={{ fontSize: 18, display: "inline-block" }}>🇫🇷</span>
+                <span className="flag-float-2" style={{ fontSize: 18, display: "inline-block" }}>🇪🇺</span>
+              </div>
+              <span style={{ color: "#A0A0A0", fontSize: 9, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", whiteSpace: "nowrap" }}>PropFirm Française</span>
+            </div>
+          </div>
 
           {/* Desktop Nav */}
           <div style={{ display: isMobile ? "none" : "flex", gap: 28, alignItems: "center" }}>
