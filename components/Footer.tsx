@@ -19,15 +19,11 @@ export default function Footer() {
         { label: T.footer.companyLinks[0], href: "/#how-it-works" },
         { label: T.footer.companyLinks[1], href: "/#rules" },
         { label: T.footer.companyLinks[2], href: "/#faq" },
-        { label: T.footer.companyLinks[3], href: "/support" },
       ],
     },
     {
       title: T.footer.support,
       links: [
-        { label: T.footer.supportLinks[0], href: "https://discord.gg/elysium-rewards", target: "_blank" },
-        { label: T.footer.supportLinks[1], href: "/support" },
-        { label: T.footer.supportLinks[2], href: "/support" },
         { label: T.footer.supportLinks[3], href: "mailto:support@elysium-rewards.com" },
       ],
     },
