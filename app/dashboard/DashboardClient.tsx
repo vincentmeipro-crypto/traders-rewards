@@ -1097,32 +1097,44 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
               <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", textDecoration: "none" }}>{T.dash.newChallenge}</a>
             </div>
-            {!challenge ? (
+            {allChallenges.length === 0 ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <Trophy size={48} color="#00C2FF" style={{ marginBottom: 16, opacity: 0.5 }} />
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.noChallenge}</div>
                 <div style={{ color: "#555", fontSize: 14 }}>{T.dash.noChallengeSub}</div>
               </div>
             ) : (
-              <div className="card" style={{ padding: 28 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{challenge.account_size} — {challenge.model === "2step" ? "2-Step" : "1-Step"}</div>
-                    <div style={{ display: "flex", gap: 8 }}>
-                      <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[challenge.phase] || challenge.phase}</span>
-                      <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{challenge.status}</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {allChallenges.map(c => {
+                  const profitAmt = c.balance && c.start_balance ? c.balance - c.start_balance : 0;
+                  const profitPct = c.start_balance ? ((profitAmt / c.start_balance) * 100).toFixed(2) : "0.00";
+                  const isSelected = challenge?.id === c.id;
+                  return (
+                    <div key={c.id} onClick={() => { setChallenge(c); setActiveTab("dashboard"); }}
+                      className="card" style={{ padding: 24, cursor: "pointer", border: isSelected ? "1.5px solid #00C2FF" : "1.5px solid rgba(255,255,255,0.07)", transition: "border 0.2s" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "2step" ? "2-Step" : "1-Step"}</div>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[c.phase] || c.phase}</span>
+                            <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status}</span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontSize: 22, fontWeight: 800 }}>${c.balance.toLocaleString()}</div>
+                          <div style={{ color: Number(profitPct) >= 0 ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700 }}>
+                            {Number(profitPct) >= 0 ? "+" : ""}{profitPct}%
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #1a1a1a", display: "flex", gap: 24, color: "#555", fontSize: 13, flexWrap: "wrap" }}>
+                        <span>{T.dash.tradingDays}: <b style={{ color: "#888" }}>{c.trading_days}</b></span>
+                        {c.mt5_login && <span>MT5: <b style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_login}</b></span>}
+                        <span>{T.dash.startedOn}: <b style={{ color: "#888" }}>{new Date(c.created_at).toLocaleDateString("en-GB")}</b></span>
+                      </div>
                     </div>
-                  </div>
-                  <div style={{ textAlign: "right" }}>
-                    <div style={{ fontSize: 22, fontWeight: 800 }}>${challenge.balance.toLocaleString()}</div>
-                    <div style={{ color: "#555", fontSize: 13 }}>{T.dash.currentBalance}</div>
-                  </div>
-                </div>
-                <div style={{ marginTop: 20, paddingTop: 20, borderTop: "1px solid #1a1a1a", display: "flex", gap: 24, color: "#555", fontSize: 13 }}>
-                  <span>{T.dash.tradingDays}: <b style={{ color: "#888" }}>{challenge.trading_days}</b></span>
-                  <span>{T.dash.profitTarget}: <b style={{ color: "#888" }}>{challenge.profit_target}%</b></span>
-                  <span>{T.dash.startedOn}: <b style={{ color: "#888" }}>{new Date(challenge.created_at).toLocaleDateString("en-GB")}</b></span>
-                </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -1143,6 +1155,22 @@ export default function DashboardClient({ user }: { user: User }) {
           </div>
         ) : (activeTab === "dashboard") && challenge && (
           <>
+            {/* Challenge selector if multiple */}
+            {allChallenges.length > 1 && (
+              <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
+                {allChallenges.map(c => (
+                  <button key={c.id} onClick={() => setChallenge(c)} style={{
+                    padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer",
+                    border: challenge.id === c.id ? "1.5px solid #00C2FF" : "1.5px solid #333",
+                    backgroundColor: challenge.id === c.id ? "rgba(0,194,255,0.1)" : "transparent",
+                    color: challenge.id === c.id ? "#00C2FF" : "#555",
+                    transition: "all 0.15s",
+                  }}>
+                    {c.account_size} · {c.model === "2step" ? "2-Step" : "1-Step"}
+                  </button>
+                ))}
+              </div>
+            )}
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
               <div>
