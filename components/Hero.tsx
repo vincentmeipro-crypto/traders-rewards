@@ -312,7 +312,7 @@ export default function Hero() {
         <img
           src="/logo-elysium-rewards.png"
           alt="Elysium Rewards"
-          style={{ order: 1, height: isMobile ? 80 : 200, width: "auto", objectFit: "contain", marginBottom: isMobile ? -8 : -38 }}
+          style={{ order: 1, height: isMobile ? 110 : 200, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : -38 }}
         />
 
         {/* Reward card — order 2 */}
@@ -320,7 +320,7 @@ export default function Hero() {
           order: 2,
           width: "100%",
           maxWidth: 480,
-          marginBottom: isMobile ? 10 : 20,
+          marginBottom: isMobile ? 20 : 20,
           padding: isMobile ? "0 16px" : undefined,
         }}>
           <RewardCard lang={lang} isMobile={isMobile} />
@@ -334,7 +334,7 @@ export default function Hero() {
           letterSpacing: "-2px",
           lineHeight: 1.1,
           maxWidth: 1300,
-          marginBottom: isMobile ? 2 : 16,
+          marginBottom: isMobile ? 6 : 16,
         }}>
           {T.hero.headline1}<br />
           {T.hero.headline2}
@@ -348,7 +348,7 @@ export default function Hero() {
           maxWidth: isMobile ? "100%" : "none",
           whiteSpace: isMobile ? "normal" : "nowrap",
           lineHeight: 1.7,
-          marginBottom: isMobile ? 4 : 24,
+          marginBottom: isMobile ? 10 : 24,
           textShadow: "0 0 24px rgba(0,194,255,0.45)",
         }}>
           {T.hero.sub}
@@ -362,7 +362,7 @@ export default function Hero() {
           gap: 12,
           justifyContent: "center",
           alignItems: "center",
-          marginBottom: isMobile ? 4 : 28,
+          marginBottom: isMobile ? 10 : 28,
           width: isMobile ? "100%" : "auto",
           padding: isMobile ? "0 16px" : undefined,
         }}>
@@ -381,6 +381,7 @@ export default function Hero() {
           order: 6,
           width: `calc(100% + ${isMobile ? 40 : 48}px)`,
           marginLeft: isMobile ? -20 : -24,
+          marginTop: isMobile ? -60 : 0,
         }}>
           <a href="/#pricing" style={{ display: "block", cursor: "pointer" }}>
             <img src={isMobile ? "/PROMO40MOBILE.png" : "/PROMO40PC.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
