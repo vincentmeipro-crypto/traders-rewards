@@ -32,18 +32,19 @@ export default function Footer() {
   return (
     <footer style={{ borderTop: "1px solid #2A2A38", padding: "60px 24px 40px" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 48, marginBottom: 60, alignItems: "start" }}>
+        {/* Logo seul en haut */}
+        <div style={{ marginBottom: 32 }}>
+          <img src="/logo-elysium-rewards.png" alt="Elysium Rewards" style={{ height: 80, width: "auto", objectFit: "contain" }} />
+        </div>
 
-          <div>
-            <div style={{ marginBottom: 8 }}>
-              <img src="/logo-elysium-rewards.png" alt="Elysium Rewards" style={{ height: 96, width: "auto", objectFit: "contain" }} />
-            </div>
-            <p style={{ color: "#555", fontSize: 14, lineHeight: 1.7, maxWidth: 260 }}>{T.footer.tagline}</p>
-          </div>
+        {/* Tagline + colonnes alignés sur la même ligne */}
+        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 48, marginBottom: 60, alignItems: "start" }}>
+
+          <p style={{ color: "#555", fontSize: 14, lineHeight: 1.7, maxWidth: 280, margin: 0 }}>{T.footer.tagline}</p>
 
           {sections.map((sec, i) => (
             <div key={i}>
-              <h4 style={{ color: "#888", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>{sec.title}</h4>
+              <h4 style={{ color: "#888", fontSize: 12, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20, marginTop: 0 }}>{sec.title}</h4>
               {sec.links.map(item => (
                 <a key={item.label} href={item.href} target={(item as any).target} rel={(item as any).target === "_blank" ? "noopener noreferrer" : undefined}
                   style={{ display: "block", color: "#555", fontSize: 14, marginBottom: 12, textDecoration: "none", transition: "color 0.2s" }}
