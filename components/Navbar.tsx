@@ -39,15 +39,12 @@ export default function Navbar() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Nom */}
-          <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
+          <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
             <img
               src="/logo-elysium-rewards.png"
-              alt="Elysium logo"
-              style={{ width: 26, height: 26, objectFit: "contain", mixBlendMode: "screen" }}
+              alt="Elysium Rewards"
+              style={{ height: 40, width: "auto", objectFit: "contain" }}
             />
-            <span style={{ fontSize: 22, fontWeight: 400, letterSpacing: "3px", textTransform: "uppercase", lineHeight: 1, color: "#fff", fontFamily: "Arial, sans-serif" }}>
-              ELYSIUM
-            </span>
           </a>
 
           {/* Desktop Nav */}
