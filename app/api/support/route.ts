@@ -45,7 +45,9 @@ export async function POST(req: NextRequest) {
   });
 
   if (!res.ok) {
-    return NextResponse.json({ error: "Erreur lors de l'envoi." }, { status: 500 });
+    const errBody = await res.json().catch(() => ({}));
+    console.error("Resend error:", res.status, JSON.stringify(errBody));
+    return NextResponse.json({ error: `Resend ${res.status}: ${JSON.stringify(errBody)}` }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });
