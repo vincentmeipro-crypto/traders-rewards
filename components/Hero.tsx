@@ -344,10 +344,9 @@ export default function Hero() {
         <p style={{
           order: 4,
           color: "#00C2FF",
-          fontSize: isMobile ? 14 : 17,
+          fontSize: isMobile ? "clamp(11px, 3.1vw, 13px)" : 17,
           maxWidth: isMobile ? "100%" : "none",
           whiteSpace: isMobile ? "normal" : "nowrap",
-          padding: isMobile ? "0 4px" : undefined,
           lineHeight: 1.7,
           marginBottom: isMobile ? 10 : 24,
           textShadow: "0 0 24px rgba(0,194,255,0.45)",
