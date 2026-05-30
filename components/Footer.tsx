@@ -36,7 +36,7 @@ export default function Footer() {
 
           <div>
             <div style={{ marginBottom: 16 }}>
-              <img src="/logo-elysium-rewards.png" alt="Elysium Rewards" style={{ height: 48, width: "auto", objectFit: "contain" }} />
+              <img src="/logo-elysium-rewards.png" alt="Elysium Rewards" style={{ height: 96, width: "auto", objectFit: "contain" }} />
             </div>
             <p style={{ color: "#555", fontSize: 14, lineHeight: 1.7, maxWidth: 260 }}>{T.footer.tagline}</p>
           </div>
