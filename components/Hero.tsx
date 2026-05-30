@@ -343,11 +343,13 @@ export default function Hero() {
         {/* Subtitle — order 4 desktop, order 3 mobile */}
         <p style={{
           order: isMobile ? 3 : 4,
-          color: "#666",
-          fontSize: isMobile ? 15 : 18,
-          maxWidth: 560,
+          color: isMobile ? "#666" : "#00C2FF",
+          fontSize: isMobile ? 15 : 17,
+          maxWidth: isMobile ? 560 : "none",
+          whiteSpace: isMobile ? "normal" : "nowrap",
           lineHeight: 1.7,
           marginBottom: isMobile ? 10 : 24,
+          textShadow: isMobile ? "none" : "0 0 24px rgba(0,194,255,0.45)",
         }}>
           {T.hero.sub}
         </p>
