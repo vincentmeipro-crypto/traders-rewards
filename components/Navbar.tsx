@@ -33,6 +33,7 @@ export default function Navbar() {
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
         backgroundColor: "#000000",
+        borderBottom: "1px solid #C9A84C",
       }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
@@ -160,11 +161,6 @@ export default function Navbar() {
           </div>
         )}
       </nav>
-      <div style={{
-        position: "fixed", top: 72, left: 0, right: 0, zIndex: 99, height: 2,
-        background: "linear-gradient(90deg, transparent 0%, #C9A84C 20%, #FFD700 50%, #C9A84C 80%, transparent 100%)",
-        opacity: 0.9,
-      }} />
 
     </>
   );
