@@ -1299,7 +1299,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover" }} />
                     <div style={{ fontWeight: 700, fontSize: 14 }}>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</div>
                   </div>
-                  <div style={{ color: "#555", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
+                  <div style={{ color: "#00C2FF", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
                       { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe" },
