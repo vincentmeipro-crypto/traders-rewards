@@ -6,7 +6,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Elysium Rewards <onboarding@resend.dev>",
+      from: "Elysium Rewards <support@elysium-rewards.com>",
       to: [to],
       subject,
       html,
