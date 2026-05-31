@@ -118,28 +118,46 @@ function buildEmail({ title, titleColor, body, details, cta }: {
   details: { label: string; value: string; color?: string }[];
   cta: { text: string; href: string };
 }) {
+  const LOGO = "https://elysium-rewards.com/LOGO%20ELYSIUM%20REWARDS%20TEXTE%20NOIR%20SUR%20BLANC.png";
   return `
-    <div style="background:#070707;color:#fff;font-family:Arial,sans-serif;padding:40px;max-width:600px;margin:0 auto;">
-      <div style="text-align:center;margin-bottom:32px;">
-        <h1 style="color:#C9A84C;font-size:28px;margin:0;">ELYSIUM REWARDS</h1>
-        <p style="color:#555;font-size:12px;letter-spacing:2px;margin-top:4px;">THE ELITE PROP FIRM</p>
-      </div>
-      <div style="background:#0f0f0f;border:1px solid #1a1a1a;border-radius:16px;padding:32px;margin-bottom:24px;">
-        <h2 style="color:${titleColor};margin-top:0;">${title}</h2>
-        <p style="color:#888;line-height:1.6;">${body}</p>
-        <div style="background:#070707;border-radius:10px;padding:20px;margin:24px 0;">
-          ${details.map(d => `
-            <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
-              <span style="color:#555;">${d.label}</span>
-              <span style="color:${d.color || "#fff"};font-weight:700;">${d.value}</span>
-            </div>
-          `).join("")}
+    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;min-height:100vh;">
+      <div style="max-width:580px;margin:0 auto;">
+
+        <!-- Logo -->
+        <div style="text-align:center;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:60px;width:auto;display:inline-block;" />
         </div>
-        <a href="${cta.href}" style="display:block;background:#C9A84C;color:#000;text-align:center;padding:14px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">${cta.text}</a>
+
+        <!-- Card -->
+        <div style="background:#ffffff;border-radius:12px;padding:40px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+
+          <h2 style="color:${titleColor};font-size:22px;font-weight:700;margin:0 0 12px 0;">${title}</h2>
+          <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 28px 0;">${body}</p>
+
+          <!-- Details -->
+          <div style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
+            ${details.map(d => `
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #e8e8e8;">
+                <span style="color:#777;font-size:14px;">${d.label}</span>
+                <span style="color:${d.color || "#111"};font-size:14px;font-weight:700;font-family:monospace;">${d.value}</span>
+              </div>
+            `).join("")}
+          </div>
+
+          <!-- CTA -->
+          <a href="${cta.href}" style="display:block;background:#C9A84C;color:#ffffff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;letter-spacing:0.5px;">${cta.text}</a>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top:32px;padding:0 8px;">
+          <p style="color:#555;font-size:14px;margin:0 0 8px 0;">💬 Besoin d'aide ?</p>
+          <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 20px 0;">
+            Contactez-nous à tout moment à <a href="mailto:support@elysium-rewards.com" style="color:#C9A84C;text-decoration:none;">support@elysium-rewards.com</a>
+          </p>
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+        </div>
+
       </div>
-      <p style="color:#333;font-size:12px;text-align:center;">
-        Questions? <a href="mailto:support@elysium-rewards.com" style="color:#C9A84C;">support@elysium-rewards.com</a>
-      </p>
     </div>
   `;
 }
