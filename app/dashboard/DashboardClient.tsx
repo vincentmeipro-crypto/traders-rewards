@@ -1299,11 +1299,11 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ color: "#555", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
-                      { label: "🖥 Windows", href: "https://ctrader.com/download/ctrader-windows" },
-                      { label: "🍎 Mac", href: "https://ctrader.com/download/ctrader-mac" },
-                      { label: "📱 iOS", href: "https://apps.apple.com/app/ctrader/id767428811" },
-                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=com.spotware.ct" },
-                      { label: "🌐 Web", href: "https://trade.icmarkets.com" },
+                      { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe" },
+                      { label: "🍎 Mac", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
+                      { label: "📱 iOS", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
+                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
+                      { label: "🌐 Web", href: "https://metatraderweb.app" },
                     ].map((item, i) => (
                       <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
                         style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid #2a2a2a", display: "inline-block" }}>
