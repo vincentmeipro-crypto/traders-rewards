@@ -61,7 +61,7 @@ export default function Pricing() {
         </div>
 
         {/* Toggle */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 48 }}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 16, marginBottom: 48 }}>
           <div style={{ backgroundColor: "#1E1E26", border: "1px solid #2A2A38", borderRadius: 12, padding: 4, display: "flex", gap: 4 }}>
             {(["2step", "1step"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
@@ -74,6 +74,7 @@ export default function Pricing() {
               </button>
             ))}
           </div>
+          <img src="/MT5.png" alt="MT5" style={{ width: 44, height: 44, borderRadius: 12, objectFit: "cover" }} />
         </div>
 
         {/* Cards */}
