@@ -126,7 +126,7 @@ function buildEmail({ title, titleColor, body, details, cta }: {
       <div style="max-width:580px;margin:0 auto;">
 
         <div style="text-align:center;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:64px;width:auto;display:inline-block;" />
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
         </div>
 
         <div style="background:#ffffff;border-radius:12px;padding:40px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
