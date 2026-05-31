@@ -1294,8 +1294,11 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
 
                 {/* Download platforms */}
-                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 14, padding: "16px 20px" }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 3 }}>{isFr ? "Télécharger les plateformes" : "Download platforms"}</div>
+                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 20, padding: "16px 20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 3 }}>
+                    <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover" }} />
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</div>
+                  </div>
                   <div style={{ color: "#555", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
