@@ -1,5 +1,5 @@
 const SITE = "https://www.elysium-rewards.com";
-const LOGO = "https://www.elysium-rewards.com/LOGO%20ELYSIUM%20REWARDS%20TEXTE%20NOIR%20SUR%20BLANC.png";
+const LOGO = "https://www.elysium-rewards.com/LOGO%20TEXTE%20NOIR%20PNG%20TRANSPARENT.png";
 
 async function sendEmail(to: string, subject: string, html: string) {
   const res = await fetch("https://api.resend.com/emails", {
@@ -133,14 +133,14 @@ function buildEmail({ title, titleColor, body, details, cta }: {
           <h2 style="color:${titleColor};font-size:22px;font-weight:700;margin:0 0 12px 0;">${title}</h2>
           <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 28px 0;">${body}</p>
 
-          <div style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
+          <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
             ${details.map(d => `
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #e8e8e8;">
-                <span style="color:#777;font-size:14px;">${d.label}</span>
-                <span style="color:${d.color || "#111"};font-size:14px;font-weight:700;font-family:monospace;">${d.value}</span>
-              </div>
+              <tr>
+                <td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;width:55%;">${d.label} :</td>
+                <td style="color:${d.color || "#111"};font-size:14px;font-weight:700;font-family:monospace;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${d.value}</td>
+              </tr>
             `).join("")}
-          </div>
+          </table>
 
           <a href="${cta.href}" style="display:block;background:#C9A84C;color:#ffffff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">${cta.text}</a>
         </div>
