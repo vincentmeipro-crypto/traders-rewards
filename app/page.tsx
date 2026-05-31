@@ -15,8 +15,8 @@ export default function Home() {
 <Navbar />
       <Hero />
       <TopTraders />
-      <Stats />
       <Pricing />
+      <Stats />
       <HowItWorks />
       <Rules />
       <FAQ />
