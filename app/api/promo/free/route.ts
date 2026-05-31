@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         lastName,
         email,
         leverage: 100,
-        group: getMT5Group(product.model, product.accountSize),
+        group: getMT5Group(product.model),
         account_size: product.accountSize,
       });
       mt5Login            = mt5Account.login;

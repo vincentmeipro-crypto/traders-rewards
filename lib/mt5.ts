@@ -7,26 +7,22 @@ const MT5_HEADERS = {
   "bypass-tunnel-reminder": "true",
 };
 
-// Mapping accountSize + model → groupe MT5 (Starwave gray label)
-// grp1=10K  grp2=25K  grp3=50K  grp4=100K  grp5=200K
-// À mettre à jour avec les groupes Phase 2 quand Allan confirme
-const GROUP_MAP: Record<string, Record<string, string>> = {
-  "2step": {
-    "$10,000":  "Starwave\\demo\\FX1\\grp1",
-    "$25,000":  "Starwave\\demo\\FX1\\grp2",
-    "$50,000":  "Starwave\\demo\\FX1\\grp3",
-    "$100,000": "Starwave\\demo\\FX1\\grp4",
-  },
-  "1step": {
-    "$10,000":  "Starwave\\demo\\FX1\\grp1",
-    "$25,000":  "Starwave\\demo\\FX1\\grp2",
-    "$50,000":  "Starwave\\demo\\FX1\\grp3",
-    "$100,000": "Starwave\\demo\\FX1\\grp4",
-  },
+// grp1 = Challenge 2-Step  (DD daily 5%, DD max 10%)
+// grp2 = Challenge 1-Step  (DD daily 3%, DD max 10%)
+// grp3 = Certified 2-Step  (règles funded)
+// grp4 = Certified 1-Step  (règles funded)
+// grp5 = Comptes désactivés / breach
+const GROUP_MAP: Record<string, string> = {
+  "2step":         "Starwave\\demo\\FX1\\grp1",
+  "1step":         "Starwave\\demo\\FX1\\grp2",
+  "funded_2step":  "Starwave\\demo\\FX1\\grp3",
+  "funded_1step":  "Starwave\\demo\\FX1\\grp4",
+  "disabled":      "Starwave\\demo\\FX1\\grp5",
 };
 
-export function getMT5Group(model: string, accountSize: string): string {
-  return GROUP_MAP[model]?.[accountSize] ?? "demo\\challenge_10k_p1";
+export function getMT5Group(model: string, phase = "challenge"): string {
+  if (phase === "funded") return GROUP_MAP[`funded_${model}`] ?? GROUP_MAP["2step"];
+  return GROUP_MAP[model] ?? GROUP_MAP["2step"];
 }
 
 export async function createMT5Account(params: {
