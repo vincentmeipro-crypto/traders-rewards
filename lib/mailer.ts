@@ -105,7 +105,7 @@ export async function sendDailyUpdateEmail(
   balance: number,
   profitPct: number,
   tradingDays: number,
-  opts?: { model?: string; highestBalance?: number; totalLimit?: number }
+  opts?: { model?: string; highestBalance?: number; totalLimit?: number; startBalance?: number }
 ) {
   const phaseLabel = phase === "phase1" ? "Phase 1" : phase === "phase2" ? "Phase 2" : "Certifié";
   const profitColor = profitPct >= 0 ? "#22c55e" : "#ef4444";
@@ -119,7 +119,8 @@ export async function sendDailyUpdateEmail(
   ];
 
   if (opts?.model === "1step" && opts.highestBalance && opts.totalLimit) {
-    const floor = opts.highestBalance * (1 - opts.totalLimit / 100);
+    const riskAmount = Math.round((opts.startBalance ?? opts.highestBalance) * opts.totalLimit / 100);
+    const floor = opts.highestBalance - riskAmount;
     const buffer = balance - floor;
     details.push(
       { label: "Plus haut EOD", value: `$${Math.round(opts.highestBalance).toLocaleString()}`, color: "#22c55e" },

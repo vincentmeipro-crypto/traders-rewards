@@ -138,6 +138,7 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
       model,
       highestBalance: newHighest,
       totalLimit,
+      startBalance,
     }).catch(() => {});
   }
 
