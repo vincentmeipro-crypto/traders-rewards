@@ -53,7 +53,7 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" style={{ padding: "24px 24px 80px", scrollMarginTop: "80px" }}>
+    <section id="pricing" style={{ padding: "24px 24px 80px", scrollMarginTop: "0px" }}>
       <div style={{ maxWidth: 1050, margin: "0 auto" }}>
 
         {/* Header */}
