@@ -386,7 +386,7 @@ export default function Hero() {
           marginTop: isMobile ? -60 : 0,
         }}>
           <a href="/#pricing" style={{ display: "block", cursor: "pointer" }}>
-            <img src={isMobile ? "/PROMO40MOBILE.png" : "/PROMO40PC.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
+            <img src={isMobile ? "/promo-50-mobile.png" : "/promo-50-pc.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
           </a>
           <div style={{ padding: isMobile ? "0 16px 24px" : "0 20% 32px" }}>
             <a href="/#pricing" style={{
@@ -403,7 +403,7 @@ export default function Hero() {
               onMouseOver={e => { e.currentTarget.style.boxShadow = "0 8px 36px rgba(255,255,255,0.28)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
               onMouseOut={e => { e.currentTarget.style.boxShadow = "0 4px 24px rgba(255,255,255,0.18), 0 1px 4px rgba(0,0,0,0.18)"; e.currentTarget.style.transform = "translateY(0)"; }}
             >
-              PROFITEZ MAINTENANT DE LA PROMOTION −40%
+              PROFITEZ MAINTENANT DE LA PROMOTION −50%
             </a>
           </div>
         </div>
