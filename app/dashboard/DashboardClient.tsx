@@ -1328,7 +1328,9 @@ export default function DashboardClient({ user }: { user: User }) {
                         usd: `-$${dailyUSD.toLocaleString()}`,
                         usdColor: "#ef4444",
                         ok: dailyDrawdownPct < challenge.daily_drawdown_limit,
-                        status: dailyDrawdownPct < challenge.daily_drawdown_limit ? T.dash.withinLimit : T.dash.violated,
+                        status: dailyDrawdownPct < challenge.daily_drawdown_limit
+                          ? `${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`
+                          : T.dash.violated,
                       },
                       {
                         label: T.dash.totalDrawdown,
@@ -1336,7 +1338,9 @@ export default function DashboardClient({ user }: { user: User }) {
                         usd: `-$${totalUSD.toLocaleString()}`,
                         usdColor: "#ef4444",
                         ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit,
-                        status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? T.dash.withinLimit : T.dash.violated,
+                        status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit
+                          ? `${totalDrawdownPct}% / ${challenge.total_drawdown_limit}%`
+                          : T.dash.violated,
                       },
                     ];
                     return rules.map((rule, i) => (
