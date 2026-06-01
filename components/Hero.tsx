@@ -383,7 +383,7 @@ export default function Hero() {
           order: 6,
           width: `calc(100% + ${isMobile ? 40 : 48}px)`,
           marginLeft: isMobile ? -20 : -24,
-          marginTop: isMobile ? -60 : 0,
+          marginTop: isMobile ? -40 : 0,
         }}>
           <a href="/#pricing" style={{ display: "block", cursor: "pointer" }}>
             <img src={isMobile ? "/promo-50-mobile.png" : "/promo-50-pc.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
