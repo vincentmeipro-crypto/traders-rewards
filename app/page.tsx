@@ -17,6 +17,7 @@ export default function Home() {
       <Pricing />
       <TopTraders />
       <Stats />
+      <Pricing />
       <HowItWorks />
       <Rules />
       <FAQ />
