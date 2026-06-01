@@ -220,6 +220,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [kycStatus, setKycStatus] = useState("not_submitted");
   const [kycRejectionReason, setKycRejectionReason] = useState<string | null>(null);
   const [kycIdType, setKycIdType] = useState<"card" | "passport">("card");
@@ -454,47 +455,78 @@ export default function DashboardClient({ user }: { user: User }) {
 
       {/* Top bar — mobile only */}
       {isMobile && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
-          <a href="/"><img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} /></a>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            {languages.map(l => (
-              <button key={l.code} onClick={() => setLang(l.code)}
-                style={{ background: "none", border: lang === l.code ? "1px solid #00C2FF" : "1px solid #1a1a1a", borderRadius: 6, padding: "3px 7px", cursor: "pointer", display: "flex", alignItems: "center", opacity: lang === l.code ? 1 : 0.4 }}>
-                <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code === "ar" ? "sa" : l.code === "pt" ? "br" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
-              </button>
-            ))}
-          </div>
-          <button onClick={handleLogout} style={{ background: "none", border: "none", cursor: "pointer", color: "#555", display: "flex", alignItems: "center" }}>
-            <LogOut size={18} />
-          </button>
-        </div>
-      )}
-
-      {/* Bottom nav — mobile only */}
-      {isMobile && (
-        <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderTop: "1px solid #1a1a1a", display: "flex", zIndex: 50, paddingBottom: "env(safe-area-inset-bottom)" }}>
-          {([
-            { icon: <LayoutDashboard size={20} />, label: T.dash.dashboard, tab: "dashboard" },
-            { icon: <TrendingUp size={20} />, label: T.dash.challenges, tab: "challenges" },
-            { icon: <Wallet size={20} />, label: T.dash.rewards, tab: "payouts" },
-            { icon: <ShieldCheck size={20} />, label: T.dash.kyc, tab: "kyc" },
-            { icon: <UserIcon size={20} />, label: T.dash.profile, tab: "profile" },
-            { icon: <Settings size={20} />, label: T.dash.settings, tab: "settings" },
-          ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
-            <button key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
-              flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-              padding: "10px 0", background: "none", border: "none", cursor: "pointer",
-              color: activeTab === item.tab ? "#00C2FF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#444"),
-            }}>
-              {item.icon}
-              <span style={{ fontSize: 10, marginTop: 3, fontWeight: activeTab === item.tab ? 700 : 400 }}>{item.label}</span>
+        <>
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
+            <a href="/"><img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} /></a>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#00C2FF" }}>
+              {([
+                { tab: "dashboard", label: T.dash.dashboard },
+                { tab: "challenges", label: T.dash.challenges },
+                { tab: "payouts", label: T.dash.rewards },
+                { tab: "kyc", label: T.dash.kyc },
+                { tab: "certificates", label: T.dash.certificates },
+                { tab: "history", label: T.dash.history },
+                { tab: "invoices", label: T.dash.invoices },
+                { tab: "rules", label: T.dash.rules },
+                { tab: "affiliate", label: isFr ? "Affiliation" : "Affiliate" },
+                { tab: "profile", label: T.dash.profile },
+                { tab: "settings", label: T.dash.settings },
+              ] as { tab: Tab; label: string }[]).find(i => i.tab === activeTab)?.label}
+            </div>
+            <button onClick={() => setMenuOpen(o => !o)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: 5, padding: 4 }}>
+              {menuOpen ? (
+                <span style={{ color: "#00C2FF", fontSize: 22, lineHeight: 1 }}>✕</span>
+              ) : (
+                <>
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#00C2FF", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#00C2FF", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#00C2FF", borderRadius: 2 }} />
+                </>
+              )}
             </button>
-          ))}
-        </div>
+          </div>
+
+          {/* Dropdown menu */}
+          {menuOpen && (
+            <div style={{ position: "fixed", top: 57, left: 0, right: 0, bottom: 0, backgroundColor: "#070707", zIndex: 99, overflowY: "auto", padding: "12px 0 40px" }}>
+              {([
+                { icon: <LayoutDashboard size={20} />, label: T.dash.dashboard, tab: "dashboard" },
+                { icon: <TrendingUp size={20} />, label: T.dash.challenges, tab: "challenges" },
+                { icon: <Wallet size={20} />, label: T.dash.rewards, tab: "payouts" },
+                { icon: <ShieldCheck size={20} />, label: T.dash.kyc, tab: "kyc" },
+                { icon: <Award size={20} />, label: T.dash.certificates, tab: "certificates" },
+                { icon: <History size={20} />, label: T.dash.history, tab: "history" },
+                { icon: <FileText size={20} />, label: T.dash.invoices, tab: "invoices" },
+                { icon: <BookOpen size={20} />, label: T.dash.rules, tab: "rules" },
+                { icon: <Users size={20} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
+                { icon: <UserIcon size={20} />, label: T.dash.profile, tab: "profile" },
+                { icon: <Settings size={20} />, label: T.dash.settings, tab: "settings" },
+              ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
+                <button key={item.tab} onClick={() => { setActiveTab(item.tab); setMenuOpen(false); }} style={{
+                  display: "flex", alignItems: "center", gap: 16, width: "100%",
+                  padding: "16px 24px", background: "none", border: "none", cursor: "pointer",
+                  borderBottom: "1px solid #111",
+                  backgroundColor: activeTab === item.tab ? "rgba(0,194,255,0.08)" : "transparent",
+                  borderLeft: activeTab === item.tab ? "3px solid #00C2FF" : "3px solid transparent",
+                }}>
+                  <span style={{ color: activeTab === item.tab ? "#00C2FF" : "#555" }}>{item.icon}</span>
+                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#00C2FF" : "#fff" }}>{item.label}</span>
+                  {activeTab === item.tab && <ChevronRight size={16} color="#00C2FF" style={{ marginLeft: "auto" }} />}
+                </button>
+              ))}
+              <div style={{ padding: "16px 24px", borderTop: "1px solid #1a1a1a", marginTop: 8 }}>
+                <div style={{ fontSize: 12, color: "#333", marginBottom: 12 }}>{user.email}</div>
+                <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 15, fontWeight: 600, padding: 0 }}>
+                  <LogOut size={18} /> {T.dash.logOut}
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* Main content */}
-      <div style={{ marginLeft: isMobile ? 0 : 240, padding: isMobile ? "76px 16px 100px" : "32px 32px" }}>
+      <div style={{ marginLeft: isMobile ? 0 : 240, padding: isMobile ? "76px 16px 32px" : "32px 32px" }}>
 
         {/* ══ HISTORIQUE ══ */}
         {activeTab === "history" && (
