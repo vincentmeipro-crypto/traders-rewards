@@ -1364,10 +1364,10 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             )}
 
-            {/* 2-column layout */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 10, alignItems: "start" }}>
+            {/* TOP 2-column layout */}
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 10, alignItems: "start", marginBottom: 10 }}>
 
-              {/* LEFT: Balance + Account + Rules */}
+              {/* LEFT: Balance + Account + Download */}
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
                 {/* Balance card */}
@@ -1410,6 +1410,34 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                   </div>
                 )}
+
+                {/* Download platforms */}
+                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 20, padding: "16px 20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 3 }}>
+                    <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover" }} />
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</div>
+                  </div>
+                  <div style={{ color: "#00C2FF", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                    {[
+                      { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe" },
+                      { label: "🍎 Mac", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
+                      { label: "📱 iOS", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
+                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
+                      { label: "🌐 Web", href: "https://metatraderweb.app" },
+                    ].map((item, i) => (
+                      <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
+                        style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid #2a2a2a", display: "inline-block" }}>
+                        {item.label}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* RIGHT: Rules checklist */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
                 {/* Rules checklist */}
                 <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
@@ -1548,45 +1576,17 @@ export default function DashboardClient({ user }: { user: User }) {
 
               </div>
 
-              {/* RIGHT: Chart + Download */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            </div>
 
-                {/* Chart */}
-                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
-                    {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
-                  </div>
-                  <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
-                    {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
-                  </div>
-                  <ChallengeChart challenge={challenge} isFr={isFr} />
-                </div>
-
-                {/* Download platforms */}
-                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 20, padding: "16px 20px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 3 }}>
-                    <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover" }} />
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</div>
-                  </div>
-                  <div style={{ color: "#00C2FF", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    {[
-                      { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe" },
-                      { label: "🍎 Mac", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
-                      { label: "📱 iOS", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
-                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
-                      { label: "🌐 Web", href: "https://metatraderweb.app" },
-                    ].map((item, i) => (
-                      <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
-                        style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid #2a2a2a", display: "inline-block" }}>
-                        {item.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
+            {/* BOTTOM: Chart full width */}
+            <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
+                {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
               </div>
-
+              <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
+                {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
+              </div>
+              <ChallengeChart challenge={challenge} isFr={isFr} />
             </div>
           </>
         )}
