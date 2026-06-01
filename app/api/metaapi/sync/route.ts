@@ -57,7 +57,7 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
   }).eq("id", id);
 
   // ── daily_dd in a separate update (won't block base if column missing) ────
-  await admin.from("challenges").update({ daily_dd: dailyDDRounded }).eq("id", id).catch(() => {});
+  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded }).eq("id", id); } catch { /* column may not exist yet */ }
 
   // ── Daily drawdown breach ─────────────────────────────────────────────────
   if (dailyDD >= dailyLimit) {
