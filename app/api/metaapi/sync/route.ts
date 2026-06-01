@@ -45,19 +45,27 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
 
   // ── Daily drawdown ────────────────────────────────────────────────────────
   const dailyDD = prevBalance > 0 ? ((prevBalance - newEquity) / prevBalance) * 100 : 0;
+  const dailyDDRounded = parseFloat(dailyDD.toFixed(2));
 
+  // ── Base update (always runs, never blocked by optional columns) ──────────
+  const baseNow = new Date().toISOString();
+  await admin.from("challenges").update({
+    balance: newBalance,
+    highest_balance: newHighest,
+    trading_days: newTradingDays,
+    last_synced_at: baseNow,
+  }).eq("id", id);
+
+  // ── daily_dd in a separate update (won't block base if column missing) ────
+  await admin.from("challenges").update({ daily_dd: dailyDDRounded }).eq("id", id).catch(() => {});
+
+  // ── Daily drawdown breach ─────────────────────────────────────────────────
   if (dailyDD >= dailyLimit) {
     await disableMT5Account(login).catch(() => {});
-    const now = new Date().toISOString();
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({
       status: "failed",
-      balance: newBalance,
-      highest_balance: newHighest,
-      trading_days: newTradingDays,
-      last_synced_at: now,
-      daily_dd: parseFloat(dailyDD.toFixed(2)),
-      ...(!alreadyFailed && { breach_at: now, breach_reason: "daily_drawdown", breach_value: parseFloat(dailyDD.toFixed(2)) }),
+      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded }),
     }).eq("id", id);
     if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "daily_drawdown").catch(() => {});
     return { status: "failed", reason: "daily_drawdown", pct: dailyDD.toFixed(2) };
@@ -65,42 +73,25 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
 
   // ── Total / Trailing drawdown ─────────────────────────────────────────────
   let totalViolated = false;
+  let totalDD = 0;
   if (model === "1step") {
-    const trailing = newHighest > 0 ? ((newHighest - newEquity) / newHighest) * 100 : 0;
-    if (trailing >= totalLimit) totalViolated = true;
+    totalDD = newHighest > 0 ? ((newHighest - newEquity) / newHighest) * 100 : 0;
+    if (totalDD >= totalLimit) totalViolated = true;
   } else {
-    const total = startBalance > 0 ? ((startBalance - newBalance) / startBalance) * 100 : 0;
-    if (total >= totalLimit) totalViolated = true;
+    totalDD = startBalance > 0 ? ((startBalance - newBalance) / startBalance) * 100 : 0;
+    if (totalDD >= totalLimit) totalViolated = true;
   }
 
   if (totalViolated) {
     await disableMT5Account(login).catch(() => {});
-    const now = new Date().toISOString();
-    const totalDD = model === "1step"
-      ? parseFloat((((newHighest - newEquity) / newHighest) * 100).toFixed(2))
-      : parseFloat((((startBalance - newBalance) / startBalance) * 100).toFixed(2));
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({
       status: "failed",
-      balance: newBalance,
-      highest_balance: newHighest,
-      trading_days: newTradingDays,
-      last_synced_at: now,
-      daily_dd: parseFloat(dailyDD.toFixed(2)),
-      ...(!alreadyFailed && { breach_at: now, breach_reason: "total_drawdown", breach_value: totalDD }),
+      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)) }),
     }).eq("id", id);
     if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "total_drawdown").catch(() => {});
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
   }
-
-  // ── Save updated data ─────────────────────────────────────────────────────
-  await admin.from("challenges").update({
-    balance: newBalance,
-    highest_balance: newHighest,
-    trading_days: newTradingDays,
-    last_synced_at: new Date().toISOString(),
-    daily_dd: parseFloat(dailyDD.toFixed(2)),
-  }).eq("id", id);
 
   // ── Phase transitions ─────────────────────────────────────────────────────
   const profitPct   = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
