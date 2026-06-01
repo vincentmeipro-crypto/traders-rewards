@@ -395,11 +395,11 @@ export default function DashboardClient({ user }: { user: User }) {
       {/* Sidebar — desktop only */}
       {!isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#0a0a0a", borderRight: "1px solid #1a1a1a", display: "flex", flexDirection: "column", zIndex: 50 }}>
-          <div style={{ padding: "24px 20px", borderBottom: "1px solid #1a1a1a" }}>
-            <img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 48, height: 48, objectFit: "contain", mixBlendMode: "screen" }} />
+          <div style={{ padding: "20px 20px", borderBottom: "1px solid #1a1a1a" }}>
+            <img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 80, height: 80, objectFit: "contain", mixBlendMode: "screen" }} />
           </div>
 
-          <nav style={{ padding: "20px 12px", flex: 1 }}>
+          <nav style={{ padding: "16px 12px", flex: 1, overflowY: "auto" }}>
             {([
               { icon: <LayoutDashboard size={16} />, label: T.dash.dashboard, tab: "dashboard" },
               { icon: <TrendingUp size={16} />, label: T.dash.challenges, tab: "challenges" },
@@ -429,7 +429,7 @@ export default function DashboardClient({ user }: { user: User }) {
             ))}
           </nav>
 
-          <div style={{ padding: "16px 12px", borderTop: "1px solid #1a1a1a" }}>
+          <div style={{ padding: "12px 12px", borderTop: "1px solid #1a1a1a", flexShrink: 0 }}>
             {/* Language selector */}
             <div style={{ padding: "10px 16px", marginBottom: 4, display: "flex", flexWrap: "wrap", gap: 6 }}>
               {languages.map(l => (
@@ -439,9 +439,9 @@ export default function DashboardClient({ user }: { user: User }) {
                 </button>
               ))}
             </div>
-            <div style={{ padding: "12px 16px", marginBottom: 8 }}>
-              <div style={{ fontSize: 12, color: "#444", marginBottom: 4 }}>{T.dash.loggedInAs}</div>
-              <div style={{ fontSize: 13, color: "#888", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
+            <div style={{ padding: "8px 16px", marginBottom: 4 }}>
+              <div style={{ fontSize: 11, color: "#555", marginBottom: 3 }}>{T.dash.loggedInAs}</div>
+              <div style={{ fontSize: 12, color: "#888", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
             </div>
             <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "#555" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
