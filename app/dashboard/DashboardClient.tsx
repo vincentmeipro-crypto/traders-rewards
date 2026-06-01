@@ -1256,20 +1256,61 @@ export default function DashboardClient({ user }: { user: User }) {
                 {/* Rules checklist */}
                 <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#fff" }}>{T.dash.rulesStatus}</div>
-                  {[
-                    { label: `${T.dash.profitTarget} (${challenge.profit_target}%)`, ok: parseFloat(profitPct) >= challenge.profit_target, status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%` },
-                    { label: `Min. ${T.dash.tradingDays} (4)`, ok: challenge.trading_days >= 4, status: challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4` },
-                    { label: `${T.dash.dailyDrawdown} (${challenge.daily_drawdown_limit}%)`, ok: dailyDrawdownPct < challenge.daily_drawdown_limit, status: dailyDrawdownPct < challenge.daily_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
-                    { label: `${T.dash.totalDrawdown} (${challenge.total_drawdown_limit}%)`, ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit, status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? T.dash.withinLimit : T.dash.violated },
-                  ].map((rule, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
-                        <span style={{ color: "#888", fontSize: 13 }}>{rule.label}</span>
+                  {(() => {
+                    const b = challenge.start_balance;
+                    const profitUSD  = Math.round(b * challenge.profit_target / 100);
+                    const dailyUSD   = Math.round(b * challenge.daily_drawdown_limit / 100);
+                    const totalUSD   = Math.round(b * challenge.total_drawdown_limit / 100);
+                    const rules = [
+                      {
+                        label: T.dash.profitTarget,
+                        pct: `${challenge.profit_target}%`,
+                        usd: `+$${profitUSD.toLocaleString()}`,
+                        usdColor: "#22c55e",
+                        ok: parseFloat(profitPct) >= challenge.profit_target,
+                        status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%`,
+                      },
+                      {
+                        label: `Min. ${T.dash.tradingDays}`,
+                        pct: "4 jours",
+                        usd: null,
+                        usdColor: "#fff",
+                        ok: challenge.trading_days >= 4,
+                        status: challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4`,
+                      },
+                      {
+                        label: T.dash.dailyDrawdown,
+                        pct: `${challenge.daily_drawdown_limit}%`,
+                        usd: `-$${dailyUSD.toLocaleString()}`,
+                        usdColor: "#ef4444",
+                        ok: dailyDrawdownPct < challenge.daily_drawdown_limit,
+                        status: dailyDrawdownPct < challenge.daily_drawdown_limit ? T.dash.withinLimit : T.dash.violated,
+                      },
+                      {
+                        label: T.dash.totalDrawdown,
+                        pct: `${challenge.total_drawdown_limit}%`,
+                        usd: `-$${totalUSD.toLocaleString()}`,
+                        usdColor: "#ef4444",
+                        ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit,
+                        status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit ? T.dash.withinLimit : T.dash.violated,
+                      },
+                    ];
+                    return rules.map((rule, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < rules.length - 1 ? "1px solid #1a1a1a" : "none" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
+                          <div>
+                            <div style={{ color: "#888", fontSize: 13 }}>{rule.label}</div>
+                            <div style={{ fontSize: 11, marginTop: 2, display: "flex", gap: 6 }}>
+                              <span style={{ color: "#555" }}>{rule.pct}</span>
+                              {rule.usd && <span style={{ color: rule.usdColor, fontWeight: 700 }}>{rule.usd}</span>}
+                            </div>
+                          </div>
+                        </div>
+                        <span style={{ color: rule.ok ? "#22c55e" : "#f59e0b", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
                       </div>
-                      <span style={{ color: rule.ok ? "#22c55e" : "#f59e0b", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
-                    </div>
-                  ))}
+                    ));
+                  })()}
                   {challenge.phase === "funded" && (
                     <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 14 }}>
                       {T.dash.requestReward}
