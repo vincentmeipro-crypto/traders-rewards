@@ -606,7 +606,7 @@ export default function AdminPage() {
                           <tr key={`${c.id}-icm`} style={{ backgroundColor: "rgba(201,168,76,0.03)" }}>
                             <td colSpan={14} style={{ padding: "8px 14px" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                <span style={{ color: "#00C2FF", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Blueberry →</span>
+                                <span style={{ color: "#00C2FF", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Eightcap →</span>
                                 {[
                                   { label: "Prénom", value: c.client_first_name },
                                   { label: "Nom", value: c.client_last_name },

@@ -204,7 +204,7 @@ export default function TraderPage() {
                 <img src="/MT5.png" alt="MetaTrader 5" style={{ height: 80, width: "auto", objectFit: "contain", marginBottom: 24 }} />
                 <h3 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>MetaTrader 5</h3>
                 <p style={{ color: "#666", fontSize: 14, lineHeight: 1.8, marginBottom: 28 }}>{labels.mt5Desc}</p>
-                <a href="https://download.mql5.com/cdn/web/blueberry.markets/mt5/blueberrymarkets5setup.exe" target="_blank" rel="noopener noreferrer"
+                <a href="https://download.mql5.com/cdn/web/metaquotes.software.corp/mt5/mt5setup.exe" target="_blank" rel="noopener noreferrer"
                   className="btn-primary btn-primary-animated" style={{ display: "inline-block", padding: "13px 32px", fontSize: 13 }}>
                   {labels.mt5Btn}
                 </a>
