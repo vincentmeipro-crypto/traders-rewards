@@ -1329,11 +1329,9 @@ export default function DashboardClient({ user }: { user: User }) {
                         usdColor: "#ef4444",
                         ok: dailyDrawdownPct < challenge.daily_drawdown_limit,
                         violated: dailyDrawdownPct >= challenge.daily_drawdown_limit,
-                        status: challenge.daily_dd == null
-                          ? "—"
-                          : dailyDrawdownPct >= challenge.daily_drawdown_limit
-                            ? T.dash.violated
-                            : `-${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`,
+                        status: dailyDrawdownPct >= challenge.daily_drawdown_limit
+                          ? T.dash.violated
+                          : `-${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`,
                       },
                       {
                         label: T.dash.totalDrawdown,
