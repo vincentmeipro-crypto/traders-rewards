@@ -40,6 +40,7 @@ type Challenge = {
   daily_dd?: number;
   highest_balance?: number;
   breach_equity?: number;
+  best_day_profit?: number;
 };
 
 function ProgressBar({ value, max, color = "#00C2FF", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -1459,6 +1460,40 @@ export default function DashboardClient({ user }: { user: User }) {
                           ? T.dash.violated
                           : `-${totalDrawdownPct}% / ${challenge.total_drawdown_limit}%`,
                       },
+                      ...(challenge.model === "1step" ? [
+                        (() => {
+                          const maxBestDay = b * challenge.profit_target / 100 * 0.5;
+                          const bestDay = challenge.best_day_profit ?? 0;
+                          const bestDayPct = b > 0 ? ((bestDay / b) * 100) : 0;
+                          const violated = bestDay > maxBestDay;
+                          return {
+                            label: isFr ? "Règle meilleur jour" : "Best day rule",
+                            pct: "≤ 50%",
+                            usd: `≤ $${Math.round(maxBestDay).toLocaleString()}`,
+                            usdColor: "#f59e0b",
+                            ok: !violated,
+                            violated,
+                            isDrawdown: false,
+                            status: bestDay === 0 ? "—" : violated ? T.dash.violated : `+${bestDayPct.toFixed(2)}% / ${(challenge.profit_target * 0.5).toFixed(1)}%`,
+                          };
+                        })(),
+                        (() => {
+                          const highest = challenge.highest_balance ?? b;
+                          const riskAmount = Math.round(b * challenge.total_drawdown_limit / 100);
+                          const floor = highest - riskAmount;
+                          const floorPct = b > 0 ? (((highest - b) / b) * 100) : 0;
+                          return {
+                            label: isFr ? "Plancher trailing EOD" : "Trailing EOD floor",
+                            pct: `${challenge.total_drawdown_limit}% trailing`,
+                            usd: `$${Math.round(floor).toLocaleString()}`,
+                            usdColor: "#f59e0b",
+                            ok: true,
+                            violated: false,
+                            isDrawdown: true,
+                            status: `$${Math.round(floor).toLocaleString()} (high: $${Math.round(highest).toLocaleString()})`,
+                          };
+                        })(),
+                      ] : []),
                     ];
                     return rules.map((rule, i) => (
                       <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < rules.length - 1 ? "1px solid #1a1a1a" : "none" }}>

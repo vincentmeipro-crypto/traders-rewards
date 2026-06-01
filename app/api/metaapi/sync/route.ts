@@ -38,10 +38,13 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
   const newEquity   = info.equity  as number;
   const newHighest  = Math.max(prevHighest, newEquity);
 
-  // 2. Count trading days: if balance changed since last sync → traded today
+  // 2. Count trading days + best day profit tracking
   const prevTradingDays = challenge.trading_days as number;
   const tradedToday = Math.abs(newBalance - prevBalance) > 0.01;
   const newTradingDays = tradedToday ? prevTradingDays + 1 : prevTradingDays;
+  const dayProfit = newBalance - prevBalance;
+  const prevBestDay = (challenge.best_day_profit as number | null) ?? 0;
+  const newBestDay = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
 
   // ── Daily drawdown ────────────────────────────────────────────────────────
   const dailyDD = prevBalance > 0 ? ((prevBalance - newEquity) / prevBalance) * 100 : 0;
@@ -56,8 +59,8 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
     last_synced_at: baseNow,
   }).eq("id", id);
 
-  // ── daily_dd in a separate update (won't block base if column missing) ────
-  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded }).eq("id", id); } catch { /* column may not exist yet */ }
+  // ── daily_dd + best_day_profit in separate updates (won't block base) ────
+  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch { /* columns may not exist yet */ }
 
   // ── Daily drawdown breach ─────────────────────────────────────────────────
   if (dailyDD >= dailyLimit) {
