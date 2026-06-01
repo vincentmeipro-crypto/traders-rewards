@@ -1578,16 +1578,6 @@ export default function DashboardClient({ user }: { user: User }) {
 
             </div>
 
-            {/* BOTTOM: Chart full width */}
-            <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2, color: "#fff" }}>
-                {isFr ? "Évolution du Challenge" : "Challenge Evolution"}
-              </div>
-              <div style={{ fontSize: 11, color: "#444", marginBottom: 16 }}>
-                {isFr ? "Progression vs objectifs" : "Progression vs objectives"}
-              </div>
-              <ChallengeChart challenge={challenge} isFr={isFr} />
-            </div>
           </>
         )}
       </div>
