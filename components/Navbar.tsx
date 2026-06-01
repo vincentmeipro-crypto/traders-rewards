@@ -73,9 +73,9 @@ export default function Navbar() {
               ["Support", "/support", false],
             ] as [string, string, boolean][]).map(([label, href, badge]) => (
               <a key={href} href={href}
-                style={{ display: "flex", alignItems: "center", gap: 4, color: "#A0A0A0", fontSize: 13, fontWeight: 500, textDecoration: "none", transition: "color 0.2s" }}
-                onMouseOver={e => (e.currentTarget.style.color = "#00C2FF")}
-                onMouseOut={e => (e.currentTarget.style.color = "#A0A0A0")}
+                style={{ display: "flex", alignItems: "center", gap: 4, color: "#fff", fontSize: 13, fontWeight: 600, textDecoration: "none", padding: "6px 14px", borderRadius: 100, backgroundColor: "rgba(0,194,255,0.12)", border: "1px solid rgba(0,194,255,0.3)", backdropFilter: "blur(8px)", transition: "all 0.2s" }}
+                onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(0,194,255,0.25)"; e.currentTarget.style.borderColor = "rgba(0,194,255,0.7)"; e.currentTarget.style.boxShadow = "0 0 12px rgba(0,194,255,0.3)"; }}
+                onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(0,194,255,0.12)"; e.currentTarget.style.borderColor = "rgba(0,194,255,0.3)"; e.currentTarget.style.boxShadow = "none"; }}
               >
                 {label}
                 {badge && <span style={{ fontSize: 13 }}>🔒</span>}
