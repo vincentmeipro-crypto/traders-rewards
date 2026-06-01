@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
-  { size: "$100,000", id: "100k", price2: "€439",   old2: "€526",  price1: "€429",   popular: true, discount: "-20%" },
-  { size: "$50,000",  id: "50k",  price2: "€345",   old2: null,    price1: "€299",   popular: false },
-  { size: "$25,000",  id: "25k",  price2: "€250",   old2: null,    price1: "€189",   popular: false },
-  { size: "$10,000",  id: "10k",  price2: "€89",    old2: null,    price1: "€69",    popular: false },
+  { size: "$100,000", id: "100k", price2: "€439",   old2: null,  price1: "€429",   popular: true,  discount: null },
+  { size: "$50,000",  id: "50k",  price2: "€299",   old2: null,  price1: "€249",   popular: false, discount: null },
+  { size: "$25,000",  id: "25k",  price2: "€199",   old2: null,  price1: "€169",   popular: false, discount: null },
+  { size: "$10,000",  id: "10k",  price2: "€99",    old2: null,  price1: "€79",    popular: false, discount: null },
 ];
 
 export default function Pricing() {
