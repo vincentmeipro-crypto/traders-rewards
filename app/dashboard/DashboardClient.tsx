@@ -1328,9 +1328,12 @@ export default function DashboardClient({ user }: { user: User }) {
                         usd: `-$${dailyUSD.toLocaleString()}`,
                         usdColor: "#ef4444",
                         ok: dailyDrawdownPct < challenge.daily_drawdown_limit,
-                        status: dailyDrawdownPct < challenge.daily_drawdown_limit
-                          ? `${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`
-                          : T.dash.violated,
+                        violated: dailyDrawdownPct >= challenge.daily_drawdown_limit,
+                        status: challenge.daily_dd == null
+                          ? "—"
+                          : dailyDrawdownPct >= challenge.daily_drawdown_limit
+                            ? T.dash.violated
+                            : `-${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`,
                       },
                       {
                         label: T.dash.totalDrawdown,
@@ -1338,15 +1341,16 @@ export default function DashboardClient({ user }: { user: User }) {
                         usd: `-$${totalUSD.toLocaleString()}`,
                         usdColor: "#ef4444",
                         ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit,
-                        status: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit
-                          ? `${totalDrawdownPct}% / ${challenge.total_drawdown_limit}%`
-                          : T.dash.violated,
+                        violated: parseFloat(totalDrawdownPct) >= challenge.total_drawdown_limit,
+                        status: parseFloat(totalDrawdownPct) >= challenge.total_drawdown_limit
+                          ? T.dash.violated
+                          : `-${totalDrawdownPct}% / ${challenge.total_drawdown_limit}%`,
                       },
                     ];
                     return rules.map((rule, i) => (
                       <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < rules.length - 1 ? "1px solid #1a1a1a" : "none" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
+                          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
                           <div>
                             <div style={{ color: "#888", fontSize: 13 }}>{rule.label}</div>
                             <div style={{ fontSize: 11, marginTop: 2, display: "flex", gap: 6 }}>
@@ -1355,7 +1359,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </div>
                           </div>
                         </div>
-                        <span style={{ color: rule.ok ? "#22c55e" : "#f59e0b", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
+                        <span style={{ color: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.status === "—" ? "#444" : rule.ok ? "#f59e0b" : "#ef4444", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
                       </div>
                     ));
                   })()}
