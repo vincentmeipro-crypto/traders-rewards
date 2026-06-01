@@ -22,31 +22,35 @@ export default function Pricing() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  type Row = { label: string; value: string; highlight: boolean; green?: boolean };
+  type Row = { label: string; value: string; highlight: boolean; green?: boolean; pct?: number };
 
   const rows2step: Row[] = [
-    { label: isFr ? "ÉTAPE 1" : "PHASE 1",          value: "10%",                        highlight: false },
-    { label: isFr ? "ÉTAPE 2" : "PHASE 2",          value: "5%",                         highlight: false },
-    { label: isFr ? "Perte journalière max" : "Max daily loss",    value: "5%",           highlight: false },
-    { label: isFr ? "Perte totale max" : "Max total loss",         value: "10%",          highlight: false },
-    { label: isFr ? "Jours de trading min" : "Min trading days",   value: isFr ? "4 jours" : "4 days", highlight: false },
-    { label: isFr ? "Limite de temps" : "Time limit",              value: isFr ? "Illimité" : "Unlimited", highlight: false },
-    { label: isFr ? "Remboursement frais" : "Fee refunded",        value: "YES 100%",     highlight: true, green: true },
-    { label: isFr ? "Partage des profits" : "Profit split",        value: isFr ? "Jusqu'à 80%" : "Up to 80%", highlight: false },
+    { label: isFr ? "ÉTAPE 1" : "PHASE 1",          value: "10%",   pct: 0.10, highlight: false },
+    { label: isFr ? "ÉTAPE 2" : "PHASE 2",          value: "5%",    pct: 0.05, highlight: false },
+    { label: isFr ? "Perte journalière max" : "Max daily loss",  value: "5%",  pct: -0.05, highlight: false },
+    { label: isFr ? "Perte totale max" : "Max total loss",       value: "10%", pct: -0.10, highlight: false },
+    { label: isFr ? "Jours de trading min" : "Min trading days", value: isFr ? "4 jours" : "4 days", highlight: false },
+    { label: isFr ? "Limite de temps" : "Time limit",            value: isFr ? "Illimité" : "Unlimited", highlight: false },
+    { label: isFr ? "Remboursement frais" : "Fee refunded",      value: "YES 100%", highlight: true, green: true },
+    { label: isFr ? "Partage des profits" : "Profit split",      value: isFr ? "Jusqu'à 80%" : "Up to 80%", highlight: false },
   ];
 
   const rows1step: Row[] = [
-    { label: isFr ? "Objectif de profit" : "Profit target",        value: "10%",          highlight: false },
-    { label: isFr ? "Perte journalière max" : "Max daily loss",    value: "3%",           highlight: false },
-    { label: isFr ? "Perte totale (trailing)" : "Total loss (trailing)", value: "10%",   highlight: false },
-    { label: isFr ? "Règle meilleur jour" : "Best day rule",       value: "≤ 50%",        highlight: false },
-    { label: isFr ? "Jours de trading min" : "Min trading days",   value: isFr ? "4 jours" : "4 days", highlight: false },
-    { label: isFr ? "Limite de temps" : "Time limit",              value: isFr ? "Illimité" : "Unlimited", highlight: false },
-    { label: isFr ? "Partage des profits" : "Profit split",        value: isFr ? "Jusqu'à 90%" : "Up to 90%", highlight: false },
-    { label: isFr ? "Cumul comptes max" : "Max cumulated accounts", value: "$200K",       highlight: false },
+    { label: isFr ? "Objectif de profit" : "Profit target",           value: "10%",  pct: 0.10,  highlight: false },
+    { label: isFr ? "Perte journalière max" : "Max daily loss",       value: "3%",   pct: -0.03, highlight: false },
+    { label: isFr ? "Perte totale (trailing)" : "Total loss (trailing)", value: "10%", pct: -0.10, highlight: false },
+    { label: isFr ? "Règle meilleur jour" : "Best day rule",          value: "≤ 50%", highlight: false },
+    { label: isFr ? "Jours de trading min" : "Min trading days",      value: isFr ? "4 jours" : "4 days", highlight: false },
+    { label: isFr ? "Limite de temps" : "Time limit",                 value: isFr ? "Illimité" : "Unlimited", highlight: false },
+    { label: isFr ? "Partage des profits" : "Profit split",           value: isFr ? "Jusqu'à 90%" : "Up to 90%", highlight: false },
+    { label: isFr ? "Cumul comptes max" : "Max cumulated accounts",   value: "$200K", highlight: false },
   ];
 
   const rows = model === "2step" ? rows2step : rows1step;
+
+  const sizeToNumber: Record<string, number> = {
+    "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000,
+  };
 
   return (
     <section id="pricing" style={{ padding: "80px 24px" }}>
@@ -137,32 +141,40 @@ export default function Pricing() {
 
                 {/* Rules rows */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 0, flex: 1, marginBottom: 20 }}>
-                  {rows.map((row, i) => (
-                    <div key={i} style={{
-                      display: "flex", justifyContent: "space-between", alignItems: "center",
-                      padding: "7px 0",
-                      borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                    }}>
-                      <span style={{ color: "#555", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                        {row.label}
-                      </span>
-                      {row.highlight ? (
-                        <span style={{
-                          backgroundColor: row.green ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.12)",
-                          color: row.green ? "#22c55e" : "#ef4444",
-                          fontSize: 11, fontWeight: 800,
-                          padding: "2px 8px", borderRadius: 6,
-                          border: `1px solid ${row.green ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.25)"}`,
-                        }}>
-                          {row.value}
+                  {rows.map((row, i) => {
+                    const accountNum = sizeToNumber[acc.size] ?? 0;
+                    const usdAmt = row.pct != null ? Math.round(accountNum * Math.abs(row.pct)) : null;
+                    const usdStr = usdAmt != null ? `${row.pct! < 0 ? "-" : "+"}$${usdAmt.toLocaleString()}` : null;
+                    return (
+                      <div key={i} style={{
+                        display: "flex", justifyContent: "space-between", alignItems: "center",
+                        padding: "7px 0",
+                        borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                      }}>
+                        <span style={{ color: "#555", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          {row.label}
                         </span>
-                      ) : (
-                        <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>
-                          {row.value}
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                        <div style={{ textAlign: "right" }}>
+                          {row.highlight ? (
+                            <span style={{
+                              backgroundColor: row.green ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.12)",
+                              color: row.green ? "#22c55e" : "#ef4444",
+                              fontSize: 11, fontWeight: 800,
+                              padding: "2px 8px", borderRadius: 6,
+                              border: `1px solid ${row.green ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.25)"}`,
+                            }}>
+                              {row.value}
+                            </span>
+                          ) : (
+                            <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>{row.value}</span>
+                          )}
+                          {usdStr && (
+                            <div style={{ color: "#444", fontSize: 10, fontWeight: 600, marginTop: 1 }}>{usdStr}</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* Separator */}
