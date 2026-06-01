@@ -1195,11 +1195,15 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
                 {isFr ? "Prêt à collaborer ?" : "Ready to collaborate?"}
               </div>
-              <div style={{ color: "#555", fontSize: 14, lineHeight: 1.6 }}>
+              <div style={{ color: "#555", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
                 {isFr
-                  ? "Contactez-nous via le chat en bas à droite pour soumettre votre candidature. Nous vous répondons sous 48h."
-                  : "Contact us via the chat at the bottom right to submit your application. We reply within 48h."}
+                  ? "Contactez-nous pour soumettre votre candidature. Nous vous répondons sous 48h."
+                  : "Contact us to submit your application. We reply within 48h."}
               </div>
+              <a href="mailto:support@elysium-rewards.com?subject=Demande%20collaboration%20affiliation"
+                style={{ display: "inline-block", backgroundColor: "#00C2FF", color: "#000", fontWeight: 800, fontSize: 14, padding: "14px 36px", borderRadius: 12, textDecoration: "none" }}>
+                support@elysium-rewards.com
+              </a>
             </div>
           </div>
         )}
