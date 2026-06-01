@@ -39,6 +39,7 @@ type Challenge = {
   breach_value?: number;
   daily_dd?: number;
   highest_balance?: number;
+  breach_equity?: number;
 };
 
 function ProgressBar({ value, max, color = "#00C2FF", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -59,7 +60,7 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
   const chartH = H - PAD.top - PAD.bottom;
 
   const startBal = challenge.start_balance;
-  const currentBal = challenge.balance;
+  const currentBal = (challenge.status === "failed" && challenge.breach_equity != null) ? challenge.breach_equity : challenge.balance;
   const targetBal = startBal * (1 + challenge.profit_target / 100);
   const floorBal = startBal * (1 - challenge.total_drawdown_limit / 100);
 
@@ -378,12 +379,13 @@ export default function DashboardClient({ user }: { user: User }) {
     setTimeout(() => setPasswordSaved(false), 3000);
   };
 
-  const profitAmount = challenge ? challenge.balance - challenge.start_balance : 0;
+  const effectiveBalance = challenge ? (challenge.status === "failed" && challenge.breach_equity != null ? challenge.breach_equity : challenge.balance) : 0;
+  const profitAmount = challenge ? effectiveBalance - challenge.start_balance : 0;
   const profitPct = challenge ? ((profitAmount / challenge.start_balance) * 100).toFixed(2) : "0";
   const targetAmount = challenge ? challenge.start_balance * (1 + challenge.profit_target / 100) : 0;
   const targetPct = challenge ? Math.min(((profitAmount / (targetAmount - challenge.start_balance)) * 100), 100).toFixed(0) : "0";
   const dailyDrawdownPct = challenge?.daily_dd ?? 0;
-  const totalDrawdownRaw = challenge ? ((challenge.start_balance - challenge.balance) / challenge.start_balance) * 100 : 0;
+  const totalDrawdownRaw = challenge ? ((challenge.start_balance - effectiveBalance) / challenge.start_balance) * 100 : 0;
   const totalDrawdownPct = Math.max(0, totalDrawdownRaw).toFixed(2);
 
   return (
@@ -1261,7 +1263,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
                   <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 6 }}>{T.dash.balance}</div>
                   <div style={{ fontSize: 38, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
-                    ${challenge.balance.toLocaleString()}
+                    ${effectiveBalance.toLocaleString()}
                   </div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#22c55e" : "#ef4444" }}>
                     {profitAmount >= 0 ? "+" : ""}${profitAmount.toLocaleString()} ({profitAmount >= 0 ? "+" : ""}{profitPct}%)
