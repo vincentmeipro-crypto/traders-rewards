@@ -134,7 +134,11 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
     ? new Date(lastSynced).toDateString() === new Date().toDateString()
     : false;
   if (!alreadySentToday) {
-    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays).catch(() => {});
+    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, {
+      model,
+      highestBalance: newHighest,
+      totalLimit,
+    }).catch(() => {});
   }
 
   return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2) };

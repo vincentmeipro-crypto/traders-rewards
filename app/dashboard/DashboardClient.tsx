@@ -38,6 +38,7 @@ type Challenge = {
   breach_reason?: string;
   breach_value?: number;
   daily_dd?: number;
+  highest_balance?: number;
 };
 
 function ProgressBar({ value, max, color = "#00C2FF", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -1361,6 +1362,33 @@ export default function DashboardClient({ user }: { user: User }) {
                       </div>
                     ));
                   })()}
+                  {challenge.model === "1step" && challenge.highest_balance && (
+                    (() => {
+                      const floor = Math.round(challenge.highest_balance! * (1 - challenge.total_drawdown_limit / 100));
+                      const buffer = Math.round(challenge.balance - floor);
+                      return (
+                        <div style={{ marginTop: 14, padding: "12px 14px", backgroundColor: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 10 }}>
+                          <div style={{ fontSize: 11, color: "#555", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
+                            {isFr ? "Trailing EOD — 1-Step" : "Trailing EOD — 1-Step"}
+                          </div>
+                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                            <div style={{ flex: 1, minWidth: 100 }}>
+                              <div style={{ fontSize: 10, color: "#555", marginBottom: 2 }}>{isFr ? "Plus haut EOD" : "EOD High"}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: "#22c55e" }}>${Math.round(challenge.highest_balance!).toLocaleString()}</div>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 100 }}>
+                              <div style={{ fontSize: 10, color: "#555", marginBottom: 2 }}>{isFr ? "Plancher actuel" : "Current floor"}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: "#f59e0b" }}>${floor.toLocaleString()}</div>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 100 }}>
+                              <div style={{ fontSize: 10, color: "#555", marginBottom: 2 }}>{isFr ? "Marge restante" : "Buffer left"}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: buffer > 0 ? "#22c55e" : "#ef4444" }}>${buffer.toLocaleString()}</div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()
+                  )}
                   {challenge.phase === "funded" && (
                     <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 14 }}>
                       {T.dash.requestReward}

@@ -98,20 +98,41 @@ export async function sendFundedEmail(to: string, accountSize: string) {
   }));
 }
 
-export async function sendDailyUpdateEmail(to: string, accountSize: string, phase: string, balance: number, profitPct: number, tradingDays: number) {
+export async function sendDailyUpdateEmail(
+  to: string,
+  accountSize: string,
+  phase: string,
+  balance: number,
+  profitPct: number,
+  tradingDays: number,
+  opts?: { model?: string; highestBalance?: number; totalLimit?: number }
+) {
   const phaseLabel = phase === "phase1" ? "Phase 1" : phase === "phase2" ? "Phase 2" : "Certifié";
   const profitColor = profitPct >= 0 ? "#22c55e" : "#ef4444";
   const profitSign = profitPct >= 0 ? "+" : "";
+
+  const details: { label: string; value: string; color?: string }[] = [
+    { label: "Balance actuelle", value: `$${balance.toLocaleString()}` },
+    { label: "Profit / Perte", value: `${profitSign}${profitPct.toFixed(2)}%`, color: profitColor },
+    { label: "Phase", value: phaseLabel, color: "#C9A84C" },
+    { label: "Jours de trading", value: `${tradingDays}` },
+  ];
+
+  if (opts?.model === "1step" && opts.highestBalance && opts.totalLimit) {
+    const floor = opts.highestBalance * (1 - opts.totalLimit / 100);
+    const buffer = balance - floor;
+    details.push(
+      { label: "Plus haut EOD", value: `$${Math.round(opts.highestBalance).toLocaleString()}`, color: "#22c55e" },
+      { label: "Plancher trailing actuel", value: `$${Math.round(floor).toLocaleString()}`, color: "#f59e0b" },
+      { label: "Marge avant plancher", value: `$${Math.round(buffer).toLocaleString()}`, color: buffer > 0 ? "#22c55e" : "#ef4444" },
+    );
+  }
+
   await sendEmail(to, `📊 Récap journalier — Challenge ${accountSize}`, buildEmail({
     title: "📊 Récapitulatif journalier",
     titleColor: "#C9A84C",
     body: `Voici votre résumé de performance du jour pour votre challenge ${accountSize}.`,
-    details: [
-      { label: "Balance actuelle", value: `$${balance.toLocaleString()}` },
-      { label: "Profit / Perte", value: `${profitSign}${profitPct.toFixed(2)}%`, color: profitColor },
-      { label: "Phase", value: phaseLabel, color: "#C9A84C" },
-      { label: "Jours de trading", value: `${tradingDays}` },
-    ],
+    details,
     cta: { text: "Voir mon Dashboard →", href: `${SITE}/dashboard` },
   }));
 }
