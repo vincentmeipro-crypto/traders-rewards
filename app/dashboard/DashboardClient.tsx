@@ -33,6 +33,10 @@ type Challenge = {
   server?: string;
   client_first_name?: string;
   client_last_name?: string;
+  last_synced_at?: string;
+  breach_at?: string;
+  breach_reason?: string;
+  breach_value?: number;
 };
 
 function ProgressBar({ value, max, color = "#00C2FF", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -1203,6 +1207,45 @@ export default function DashboardClient({ user }: { user: User }) {
                 <Trophy size={18} color="#3b82f6" />
                 <span style={{ color: "#3b82f6", fontWeight: 700, fontSize: 14 }}>{T.dash.congratulations} </span>
                 <span style={{ color: "#888", fontSize: 13 }}>{T.dash.fundedMsg}</span>
+              </div>
+            )}
+            {challenge.status === "failed" && (
+              <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.35)", borderRadius: 12, padding: "16px 20px", marginBottom: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: challenge.breach_reason ? 10 : 0 }}>
+                  <AlertTriangle size={16} color="#ef4444" />
+                  <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 14 }}>
+                    {isFr ? "Challenge échoué — compte désactivé" : "Challenge failed — account disabled"}
+                  </span>
+                </div>
+                {challenge.breach_reason && (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+                    <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
+                      <span style={{ color: "#888" }}>{isFr ? "Raison : " : "Reason: "}</span>
+                      <span style={{ color: "#ef4444", fontWeight: 700 }}>
+                        {challenge.breach_reason === "daily_drawdown"
+                          ? (isFr ? "Drawdown journalier dépassé" : "Daily drawdown breached")
+                          : (isFr ? "Drawdown total dépassé" : "Total drawdown breached")}
+                      </span>
+                    </div>
+                    {challenge.breach_value != null && (
+                      <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
+                        <span style={{ color: "#888" }}>{isFr ? "Valeur atteinte : " : "Value reached: "}</span>
+                        <span style={{ color: "#ef4444", fontWeight: 700 }}>{challenge.breach_value.toFixed(2)}%</span>
+                        <span style={{ color: "#555", fontSize: 12, marginLeft: 6 }}>
+                          (limite : {challenge.breach_reason === "daily_drawdown" ? challenge.daily_drawdown_limit : challenge.total_drawdown_limit}%)
+                        </span>
+                      </div>
+                    )}
+                    {challenge.breach_at && (
+                      <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
+                        <span style={{ color: "#888" }}>{isFr ? "Déclenché le : " : "Triggered on: "}</span>
+                        <span style={{ color: "#fff", fontWeight: 600 }}>
+                          {new Date(challenge.breach_at).toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
