@@ -396,7 +396,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {!isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#0a0a0a", borderRight: "1px solid #1a1a1a", display: "flex", flexDirection: "column", zIndex: 50 }}>
           <div style={{ padding: "20px 20px", borderBottom: "1px solid #1a1a1a" }}>
-            <img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 80, height: 80, objectFit: "contain", mixBlendMode: "screen" }} />
+            <img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 160, height: 160, objectFit: "contain", mixBlendMode: "screen" }} />
           </div>
 
           <nav style={{ padding: "16px 12px", flex: 1, overflowY: "auto" }}>
