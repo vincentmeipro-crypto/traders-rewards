@@ -40,6 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${dmSans.variable} ${bebas.variable}`}>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#070707" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
