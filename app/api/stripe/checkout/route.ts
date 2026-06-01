@@ -4,14 +4,14 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const PRODUCTS = {
-  "10k-2step":  { name: "Challenge $10,000 — 2-Step", amount: 12900,  accountSize: "$10,000",  model: "2step" },
-  "25k-2step":  { name: "Challenge $25,000 — 2-Step", amount: 21900,  accountSize: "$25,000",  model: "2step" },
+  "10k-2step":  { name: "Challenge $10,000 — 2-Step", amount: 9900,   accountSize: "$10,000",  model: "2step" },
+  "25k-2step":  { name: "Challenge $25,000 — 2-Step", amount: 19900,  accountSize: "$25,000",  model: "2step" },
   "50k-2step":  { name: "Challenge $50,000 — 2-Step", amount: 29900,  accountSize: "$50,000",  model: "2step" },
-  "100k-2step": { name: "Challenge $100,000 — 2-Step",amount: 44900,  accountSize: "$100,000", model: "2step" },
-  "10k-1step":  { name: "Challenge $10,000 — 1-Step", amount: 6900,   accountSize: "$10,000",  model: "1step" },
-  "25k-1step":  { name: "Challenge $25,000 — 1-Step", amount: 14900,  accountSize: "$25,000",  model: "1step" },
+  "100k-2step": { name: "Challenge $100,000 — 2-Step",amount: 43900,  accountSize: "$100,000", model: "2step" },
+  "10k-1step":  { name: "Challenge $10,000 — 1-Step", amount: 7900,   accountSize: "$10,000",  model: "1step" },
+  "25k-1step":  { name: "Challenge $25,000 — 1-Step", amount: 16900,  accountSize: "$25,000",  model: "1step" },
   "50k-1step":  { name: "Challenge $50,000 — 1-Step", amount: 24900,  accountSize: "$50,000",  model: "1step" },
-  "100k-1step": { name: "Challenge $100,000 — 1-Step",amount: 39900,  accountSize: "$100,000", model: "1step" },
+  "100k-1step": { name: "Challenge $100,000 — 1-Step",amount: 42900,  accountSize: "$100,000", model: "1step" },
 };
 
 const SITE_URL = "https://elysium-rewards.com";
