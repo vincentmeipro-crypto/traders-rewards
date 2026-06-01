@@ -1179,6 +1179,24 @@ export default function DashboardClient({ user }: { user: User }) {
                 ))}
               </div>
             )}
+            {/* Loyalty banner */}
+            {allChallenges.length >= 1 && (
+              <div style={{ backgroundColor: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.25)", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
+                <span style={{ fontSize: 20 }}>🎖️</span>
+                <div>
+                  <div style={{ color: "#22c55e", fontWeight: 700, fontSize: 13 }}>
+                    {isFr ? "Remise fidélité −20% à vie" : "Lifetime loyalty discount −20%"}
+                  </div>
+                  <div style={{ color: "#555", fontSize: 12 }}>
+                    {isFr ? "Appliquée automatiquement sur tous vos prochains challenges (hors promo en cours)" : "Automatically applied on all future challenges (excluding active promos)"}
+                  </div>
+                </div>
+                <a href="/#pricing" style={{ marginLeft: "auto", backgroundColor: "rgba(34,197,94,0.15)", color: "#22c55e", fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 8, textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
+                  {isFr ? "Nouveau challenge →" : "New challenge →"}
+                </a>
+              </div>
+            )}
+
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
               <div>

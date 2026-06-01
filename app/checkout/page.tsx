@@ -6,14 +6,14 @@ import Image from "next/image";
 import { ChevronRight, X, MessageCircle, ShieldCheck } from "lucide-react";
 
 const CHALLENGES: Record<string, { label: string; model: "2-Step" | "1-Step"; price: string; amount: number }> = {
-  "10k-2step":  { label: "$10,000",  model: "2-Step", price: "€129", amount: 12900 },
-  "25k-2step":  { label: "$25,000",  model: "2-Step", price: "€219", amount: 21900 },
+  "10k-2step":  { label: "$10,000",  model: "2-Step", price: "€99",  amount: 9900  },
+  "25k-2step":  { label: "$25,000",  model: "2-Step", price: "€199", amount: 19900 },
   "50k-2step":  { label: "$50,000",  model: "2-Step", price: "€299", amount: 29900 },
-  "100k-2step": { label: "$100,000", model: "2-Step", price: "€449", amount: 44900 },
-  "10k-1step":  { label: "$10,000",  model: "1-Step", price: "€69",  amount: 6900  },
-  "25k-1step":  { label: "$25,000",  model: "1-Step", price: "€149", amount: 14900 },
+  "100k-2step": { label: "$100,000", model: "2-Step", price: "€439", amount: 43900 },
+  "10k-1step":  { label: "$10,000",  model: "1-Step", price: "€79",  amount: 7900  },
+  "25k-1step":  { label: "$25,000",  model: "1-Step", price: "€169", amount: 16900 },
   "50k-1step":  { label: "$50,000",  model: "1-Step", price: "€249", amount: 24900 },
-  "100k-1step": { label: "$100,000", model: "1-Step", price: "€399", amount: 39900 },
+  "100k-1step": { label: "$100,000", model: "1-Step", price: "€429", amount: 42900 },
 };
 
 const RULES_2STEP = [
@@ -87,6 +87,7 @@ function CheckoutContent() {
   const [promoError, setPromoError] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [loyaltyActive, setLoyaltyActive] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
@@ -124,6 +125,12 @@ function CheckoutContent() {
             if (match) { setDialCode(match[1]); setPhone(match[2]); }
           }
         }
+        // Vérifier si le client a déjà acheté un challenge → loyalty -20%
+        const { count } = await supabase.from("challenges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id);
+        if (count && count >= 1) {
+          setLoyaltyActive(true);
+          setDiscount(20);
+        }
       }
     });
   }, []);
@@ -146,7 +153,10 @@ function CheckoutContent() {
     else { setPromoStatus("error"); setPromoError(data.error || "Code invalide"); }
   };
 
-  const removePromo = () => { setPromoInput(""); setAppliedCode(""); setDiscount(0); setPromoStatus("idle"); setPromoError(""); };
+  const removePromo = () => {
+    setPromoInput(""); setAppliedCode(""); setPromoStatus("idle"); setPromoError("");
+    setDiscount(loyaltyActive ? 20 : 0);
+  };
 
   const createAccountAndGetUser = async () => {
     const supabase = createClient();
@@ -413,6 +423,17 @@ function CheckoutContent() {
               </div>
             </div>
           </div>
+
+          {/* Loyalty badge */}
+          {loyaltyActive && promoStatus !== "valid" && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, background: "#f0fdf4", border: "1px solid #86efac", borderRadius: 8, padding: "10px 14px" }}>
+              <span style={{ fontSize: 16 }}>🎖️</span>
+              <div>
+                <div style={{ color: "#16a34a", fontWeight: 800, fontSize: 13 }}>Remise fidélité −20% appliquée</div>
+                <div style={{ color: "#6b7280", fontSize: 11 }}>Client existant — remise automatique à vie</div>
+              </div>
+            </div>
+          )}
 
           {/* Promo */}
           <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
