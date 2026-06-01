@@ -7,7 +7,7 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, AlertTriangle } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, AlertTriangle, Users } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -203,7 +203,7 @@ const STATUS_COLORS: Record<string, string> = {
   failed: "#ef4444",
 };
 
-type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings" | "profile";
+type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings" | "profile" | "affiliate";
 
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
@@ -408,6 +408,7 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <History size={16} />, label: T.dash.history, tab: "history" },
               { icon: <FileText size={16} />, label: T.dash.invoices, tab: "invoices" },
               { icon: <BookOpen size={16} />, label: T.dash.rules, tab: "rules" },
+              { icon: <Users size={16} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
               { icon: <UserIcon size={16} />, label: T.dash.profile, tab: "profile" },
               { icon: <Settings size={16} />, label: T.dash.settings, tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -1145,6 +1146,68 @@ export default function DashboardClient({ user }: { user: User }) {
                 })}
               </div>
             )}
+          </div>
+        )}
+
+        {/* ══ AFFILIATION ══ */}
+        {activeTab === "affiliate" && (
+          <div style={{ maxWidth: 680 }}>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{isFr ? "Programme Affiliation" : "Affiliate Program"}</h1>
+            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>
+              {isFr ? "Devenez partenaire Elysium et gagnez des commissions sur chaque vente générée." : "Become an Elysium partner and earn commissions on every sale you generate."}
+            </p>
+
+            {/* Tiers */}
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 14, marginBottom: 32 }}>
+              {[
+                { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 challenges" : "1 to 10 challenges", pct: "10%", color: "#00C2FF", glow: "rgba(0,194,255,0.15)" },
+                { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 20 challenges" : "11 to 20 challenges", pct: "15%", color: "#a855f7", glow: "rgba(168,85,247,0.15)" },
+                { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ challenges" : "30+ challenges", pct: "20%", color: "#C9A84C", glow: "rgba(201,168,76,0.15)" },
+              ].map((t, i) => (
+                <div key={i} style={{ backgroundColor: t.glow, border: `1px solid ${t.color}40`, borderRadius: 16, padding: "24px 20px", textAlign: "center" }}>
+                  <div style={{ fontSize: 11, color: t.color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>{t.tier}</div>
+                  <div style={{ fontSize: 42, fontWeight: 900, color: t.color, letterSpacing: "-2px", marginBottom: 6 }}>{t.pct}</div>
+                  <div style={{ fontSize: 12, color: "#666" }}>{t.range}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Règles */}
+            <div className="card" style={{ padding: 24, marginBottom: 24 }}>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#C9A84C" }}>
+                {isFr ? "Comment ça fonctionne" : "How it works"}
+              </div>
+              {[
+                { icon: "🔗", text: isFr ? "Vous recevez un lien de parrainage unique après validation de votre demande." : "You receive a unique referral link after your application is approved." },
+                { icon: "💰", text: isFr ? "Vous touchez une commission sur chaque challenge acheté via votre lien." : "You earn a commission on every challenge purchased through your link." },
+                { icon: "📈", text: isFr ? "Votre taux augmente automatiquement avec le nombre de ventes générées." : "Your rate increases automatically with the number of sales generated." },
+                { icon: "💳", text: isFr ? "Retrait possible dès 100€ de commissions validées, en crypto ou virement." : "Withdrawal available from €100 in validated commissions, via crypto or bank transfer." },
+              ].map((item, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
+                  <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
+                  <span style={{ color: "#888", fontSize: 14, lineHeight: 1.6 }}>{item.text}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div className="card" style={{ padding: 28, textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
+                {isFr ? "Prêt à collaborer ?" : "Ready to collaborate?"}
+              </div>
+              <div style={{ color: "#555", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+                {isFr
+                  ? "Envoyez-nous une demande par email avec votre profil (réseau social, audience, niche trading). Nous vous répondons sous 48h."
+                  : "Send us a request by email with your profile (social media, audience, trading niche). We reply within 48h."}
+              </div>
+              <a
+                href={`mailto:fundedelysium@gmail.com?subject=${encodeURIComponent("Demande de collaboration affiliation Elysium")}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite rejoindre le programme d'affiliation Elysium.\n\nMon profil :\n- Nom / Pseudo : \n- Réseau social / chaîne : \n- Audience estimée : \n- Niche : \n\nCordialement,\n${user.email}`)}`}
+                style={{ display: "inline-block", backgroundColor: "#00C2FF", color: "#000", fontWeight: 800, fontSize: 14, padding: "14px 36px", borderRadius: 12, textDecoration: "none", letterSpacing: "0.5px" }}
+              >
+                {isFr ? "Envoyer ma demande →" : "Send my application →"}
+              </a>
+              <div style={{ color: "#333", fontSize: 11, marginTop: 12 }}>fundedelysium@gmail.com</div>
+            </div>
           </div>
         )}
 
