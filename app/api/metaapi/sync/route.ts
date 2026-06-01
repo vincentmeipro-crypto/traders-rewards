@@ -137,8 +137,14 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
     return { status: "synced", transition: "phase2→funded", balance: newBalance };
   }
 
-  // ── Daily recap email ─────────────────────────────────────────────────────
-  await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays).catch(() => {});
+  // ── Daily recap email — once per day only ────────────────────────────────
+  const lastSynced = challenge.last_synced_at as string | null;
+  const alreadySentToday = lastSynced
+    ? new Date(lastSynced).toDateString() === new Date().toDateString()
+    : false;
+  if (!alreadySentToday) {
+    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays).catch(() => {});
+  }
 
   return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2) };
 }
