@@ -49,17 +49,17 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
   if (dailyDD >= dailyLimit) {
     await disableMT5Account(login).catch(() => {});
     const now = new Date().toISOString();
+    const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({
       status: "failed",
       balance: newBalance,
       highest_balance: newHighest,
       trading_days: newTradingDays,
       last_synced_at: now,
-      breach_at: now,
-      breach_reason: "daily_drawdown",
-      breach_value: parseFloat(dailyDD.toFixed(2)),
+      daily_dd: parseFloat(dailyDD.toFixed(2)),
+      ...(!alreadyFailed && { breach_at: now, breach_reason: "daily_drawdown", breach_value: parseFloat(dailyDD.toFixed(2)) }),
     }).eq("id", id);
-    await sendFailedEmail(userEmail, accountSize, "daily_drawdown").catch(() => {});
+    if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "daily_drawdown").catch(() => {});
     return { status: "failed", reason: "daily_drawdown", pct: dailyDD.toFixed(2) };
   }
 
@@ -79,17 +79,17 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
     const totalDD = model === "1step"
       ? parseFloat((((newHighest - newEquity) / newHighest) * 100).toFixed(2))
       : parseFloat((((startBalance - newBalance) / startBalance) * 100).toFixed(2));
+    const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({
       status: "failed",
       balance: newBalance,
       highest_balance: newHighest,
       trading_days: newTradingDays,
       last_synced_at: now,
-      breach_at: now,
-      breach_reason: "total_drawdown",
-      breach_value: totalDD,
+      daily_dd: parseFloat(dailyDD.toFixed(2)),
+      ...(!alreadyFailed && { breach_at: now, breach_reason: "total_drawdown", breach_value: totalDD }),
     }).eq("id", id);
-    await sendFailedEmail(userEmail, accountSize, "total_drawdown").catch(() => {});
+    if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "total_drawdown").catch(() => {});
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
   }
 
@@ -99,6 +99,7 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
     highest_balance: newHighest,
     trading_days: newTradingDays,
     last_synced_at: new Date().toISOString(),
+    daily_dd: parseFloat(dailyDD.toFixed(2)),
   }).eq("id", id);
 
   // ── Phase transitions ─────────────────────────────────────────────────────
