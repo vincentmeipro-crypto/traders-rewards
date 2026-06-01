@@ -131,12 +131,13 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
     return { status: "synced", transition: "phase2→funded", balance: newBalance };
   }
 
-  // ── Daily recap email — once per day only ────────────────────────────────
+  // ── Daily recap email — once per day, not on day of purchase ─────────────
   const lastSynced = challenge.last_synced_at as string | null;
-  const alreadySentToday = lastSynced
-    ? new Date(lastSynced).toDateString() === new Date().toDateString()
-    : false;
-  if (!alreadySentToday) {
+  const createdAt = challenge.created_at as string | null;
+  const today = new Date().toDateString();
+  const alreadySentToday = lastSynced ? new Date(lastSynced).toDateString() === today : false;
+  const purchasedToday = createdAt ? new Date(createdAt).toDateString() === today : false;
+  if (!alreadySentToday && !purchasedToday) {
     await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, {
       model,
       highestBalance: newHighest,
