@@ -466,6 +466,9 @@ export default function AdminPage() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
             {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
+            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "#e5e7eb" : "#111827", color: syncing ? "#9ca3af" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
+              {syncing ? "Syncing..." : "Sync MT5"}
+            </button>
           </div>
         </div>
         {syncDetail && (
