@@ -30,7 +30,7 @@ const RULES_2STEP = [
 const RULES_1STEP = [
   { label: "Objectif de profit", value: "10%" },
   { label: "Perte journalière max", value: "3%" },
-  { label: "Perte totale (trailing)", value: "10%" },
+  { label: "Perte totale (trailing EOD)", value: "10%" },
   { label: "Règle meilleur jour", value: "≤ 50%" },
   { label: "Jours de trading min", value: "4 jours" },
   { label: "Limite de temps", value: "Illimitée" },

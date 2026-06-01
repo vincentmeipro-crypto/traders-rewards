@@ -38,7 +38,7 @@ export default function Pricing() {
   const rows1step: Row[] = [
     { label: isFr ? "Objectif de profit" : "Profit target",           value: "10%",  pct: 0.10,  highlight: false },
     { label: isFr ? "Perte journalière max" : "Max daily loss",       value: "3%",   pct: -0.03, highlight: false },
-    { label: isFr ? "Perte totale (trailing)" : "Total loss (trailing)", value: "10%", pct: -0.10, highlight: false },
+    { label: isFr ? "Perte totale (trailing EOD)" : "Total loss (trailing EOD)", value: "10%", pct: -0.10, highlight: false },
     { label: isFr ? "Règle meilleur jour" : "Best day rule",          value: "≤ 50%", highlight: false },
     { label: isFr ? "Jours de trading min" : "Min trading days",      value: isFr ? "4 jours" : "4 days", highlight: false },
     { label: isFr ? "Limite de temps" : "Time limit",                 value: isFr ? "Illimité" : "Unlimited", highlight: false },
