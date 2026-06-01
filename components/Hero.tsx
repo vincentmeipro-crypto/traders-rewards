@@ -386,7 +386,7 @@ export default function Hero() {
           marginTop: isMobile ? -40 : 0,
         }}>
           <a href="/#pricing" style={{ display: "block", cursor: "pointer" }}>
-            <img src={isMobile ? "/promo-50-mobile.png" : "/promo-50-pc.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
+            <img src={isMobile ? "/promo-50-mobile-v2.png" : "/promo-50-pc.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
           </a>
           <div style={{ padding: isMobile ? "0 16px 24px" : "0 20% 32px" }}>
             <a href="/#pricing" style={{
