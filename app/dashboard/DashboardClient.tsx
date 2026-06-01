@@ -1442,6 +1442,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         usdColor: "#ef4444",
                         ok: dailyDrawdownPct < challenge.daily_drawdown_limit,
                         violated: dailyDrawdownPct >= challenge.daily_drawdown_limit,
+                        isDrawdown: true,
                         status: dailyDrawdownPct >= challenge.daily_drawdown_limit
                           ? T.dash.violated
                           : `-${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`,
@@ -1453,6 +1454,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         usdColor: "#ef4444",
                         ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit,
                         violated: parseFloat(totalDrawdownPct) >= challenge.total_drawdown_limit,
+                        isDrawdown: true,
                         status: parseFloat(totalDrawdownPct) >= challenge.total_drawdown_limit
                           ? T.dash.violated
                           : `-${totalDrawdownPct}% / ${challenge.total_drawdown_limit}%`,
@@ -1470,7 +1472,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </div>
                           </div>
                         </div>
-                        <span style={{ color: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.status === "—" ? "#444" : rule.ok ? "#f59e0b" : "#ef4444", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
+                        <span style={{ color: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.status === "—" ? "#444" : (rule as {isDrawdown?: boolean}).isDrawdown ? (rule.ok ? "#22c55e" : "#ef4444") : (rule.ok ? "#22c55e" : "#f59e0b"), fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
                       </div>
                     ));
                   })()}
