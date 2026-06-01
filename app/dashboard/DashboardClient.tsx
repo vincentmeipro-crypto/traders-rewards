@@ -1195,18 +1195,11 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
                 {isFr ? "Prêt à collaborer ?" : "Ready to collaborate?"}
               </div>
-              <div style={{ color: "#555", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+              <div style={{ color: "#555", fontSize: 14, lineHeight: 1.6 }}>
                 {isFr
-                  ? "Envoyez-nous une demande par email avec votre profil (réseau social, audience, niche trading). Nous vous répondons sous 48h."
-                  : "Send us a request by email with your profile (social media, audience, trading niche). We reply within 48h."}
+                  ? "Contactez-nous via le chat en bas à droite pour soumettre votre candidature. Nous vous répondons sous 48h."
+                  : "Contact us via the chat at the bottom right to submit your application. We reply within 48h."}
               </div>
-              <a
-                href={`mailto:fundedelysium@gmail.com?subject=${encodeURIComponent("Demande de collaboration affiliation Elysium")}&body=${encodeURIComponent(`Bonjour,\n\nJe souhaite rejoindre le programme d'affiliation Elysium.\n\nMon profil :\n- Nom / Pseudo : \n- Réseau social / chaîne : \n- Audience estimée : \n- Niche : \n\nCordialement,\n${user.email}`)}`}
-                style={{ display: "inline-block", backgroundColor: "#00C2FF", color: "#000", fontWeight: 800, fontSize: 14, padding: "14px 36px", borderRadius: 12, textDecoration: "none", letterSpacing: "0.5px" }}
-              >
-                {isFr ? "Envoyer ma demande →" : "Send my application →"}
-              </a>
-              <div style={{ color: "#333", fontSize: 11, marginTop: 12 }}>fundedelysium@gmail.com</div>
             </div>
           </div>
         )}
