@@ -50,7 +50,7 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
-    <section id="pricing" style={{ padding: "48px 24px 100px", backgroundColor: "transparent", scrollMarginTop: "0px" }}>
+    <section id="pricing" style={{ padding: "92px 24px 100px", backgroundColor: "transparent", scrollMarginTop: "0px" }}>
       <div style={{ maxWidth: 1350, margin: "0 auto" }}>
 
         {/* Header */}

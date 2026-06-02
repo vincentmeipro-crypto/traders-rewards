@@ -66,7 +66,7 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
       transform: visible ? "translateY(0) scale(1)" : "translateY(-8px) scale(0.98)",
       transition: "opacity 0.4s ease, transform 0.4s ease",
       background: "#fff",
-      border: "1px solid rgba(27,79,216,0.15)",
+      border: "1.5px solid #1565C0",
       borderRadius: 16,
       padding: isMobile ? "14px 16px" : "18px 22px",
       boxShadow: "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.04)",
@@ -173,8 +173,8 @@ export default function Hero() {
                 : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
           </h1>
 
-          {/* Carte animée */}
-          <div className="hero-animate-2" style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          {/* Carte animée — à cheval sur la frontière */}
+          <div className="hero-animate-2" style={{ width: "100%", display: "flex", justifyContent: "center", position: "relative", zIndex: 10, marginBottom: -44 }}>
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
