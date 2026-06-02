@@ -138,6 +138,108 @@ export async function sendDailyUpdateEmail(
   }));
 }
 
+export async function sendPhase1CertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, date: string) {
+  const name = `${firstName} ${lastName}`.trim();
+  const certUrl = `${SITE}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
+  await sendEmail(to, `🏆 Félicitations ${firstName} — Certificat Phase 1 obtenu !`, `
+    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+      <div style="max-width:580px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
+        </div>
+        <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+          <img src="${SITE}/cert-phase1.png" alt="Certificat Phase 1" style="width:100%;display:block;" />
+          <div style="padding:32px 36px;">
+            <h2 style="color:#00C2FF;font-size:22px;font-weight:700;margin:0 0 12px 0;">Phase 1 validée — Bravo ${firstName} !</h2>
+            <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+              Vous avez réussi la Phase 1 de votre challenge <strong>${accountSize}</strong> en date du <strong>${date}</strong>.<br/>
+              Votre compte est maintenant élevé en Phase 2.
+            </p>
+            <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;width:55%;">Trader :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${name}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Compte :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${accountSize}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;">Date :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;text-align:right;">${date}</td></tr>
+            </table>
+            <a href="${certUrl}" style="display:block;background:#00C2FF;color:#000;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">Télécharger mon certificat →</a>
+          </div>
+        </div>
+        <div style="margin-top:24px;padding:0 8px;">
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+export async function sendChallengeCertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, date: string) {
+  const name = `${firstName} ${lastName}`.trim();
+  const certUrl = `${SITE}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
+  await sendEmail(to, `🎉 ${firstName} — Vous êtes Certifié Elysium !`, `
+    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+      <div style="max-width:580px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
+        </div>
+        <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+          <img src="${SITE}/cert-challenge.png" alt="Certificat Challenge" style="width:100%;display:block;" />
+          <div style="padding:32px 36px;">
+            <h2 style="color:#a855f7;font-size:22px;font-weight:700;margin:0 0 12px 0;">Challenge validé — ${firstName}, vous êtes Certifié !</h2>
+            <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+              Félicitations ! Vous avez brillamment réussi toutes les étapes du challenge <strong>${accountSize}</strong>.<br/>
+              Vous êtes maintenant un trader certifié Elysium Rewards.
+            </p>
+            <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;width:55%;">Trader :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${name}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Compte :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${accountSize}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;">Date :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;text-align:right;">${date}</td></tr>
+            </table>
+            <a href="${certUrl}" style="display:block;background:#a855f7;color:#fff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">Télécharger mon certificat →</a>
+          </div>
+        </div>
+        <div style="margin-top:24px;padding:0 8px;">
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
+export async function sendRewardCertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, grossAmount: number, model: string, date: string) {
+  const name = `${firstName} ${lastName}`.trim();
+  const splitPct = model === "1step" ? 90 : 80;
+  const netAmount = Math.round(grossAmount * splitPct / 100);
+  const certUrl = `${SITE}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}`;
+  await sendEmail(to, `💰 ${firstName} — Votre récompense de $${netAmount.toLocaleString()} est en cours !`, `
+    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+      <div style="max-width:580px;margin:0 auto;">
+        <div style="text-align:center;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
+        </div>
+        <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+          <img src="${SITE}/cert-reward.png" alt="Certificat Récompense" style="width:100%;display:block;" />
+          <div style="padding:32px 36px;">
+            <h2 style="color:#C9A84C;font-size:22px;font-weight:700;margin:0 0 12px 0;">Récompense validée — $${netAmount.toLocaleString()} pour vous !</h2>
+            <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
+              Votre récompense a été validée et est en cours de traitement. Elle sera versée sous 24-48h.
+            </p>
+            <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;width:55%;">Trader :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${name}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Compte :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${accountSize}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Profit brut :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">$${grossAmount.toLocaleString()}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Partage (${splitPct}%) :</td><td style="color:#22c55e;font-size:16px;font-weight:800;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">$${netAmount.toLocaleString()}</td></tr>
+              <tr><td style="color:#777;font-size:14px;padding:12px 0;">Date :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;text-align:right;">${date}</td></tr>
+            </table>
+            <a href="${certUrl}" style="display:block;background:#C9A84C;color:#000;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">Télécharger mon certificat →</a>
+          </div>
+        </div>
+        <div style="margin-top:24px;padding:0 8px;">
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+        </div>
+      </div>
+    </div>
+  `);
+}
+
 function buildEmail({ title, titleColor, body, details, cta }: {
   title: string; titleColor: string; body: string;
   details: { label: string; value: string; color?: string }[];

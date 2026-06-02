@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 const CERT_CONFIG = {
   phase1: {
-    image: "/PASSED-PHASE-1.png",
+    image: "/cert-phase1.png",
     nameColor: "#ffffff",
     amountColor: "#7dd3fc",
     dateColor: "#888888",
@@ -13,7 +13,7 @@ const CERT_CONFIG = {
     dateTop: "79%",
   },
   challenge: {
-    image: "/PASSED-CHALLENGE.png",
+    image: "/cert-challenge.png",
     nameColor: "#ffffff",
     amountColor: "#7dd3fc",
     dateColor: "#888888",
@@ -22,7 +22,7 @@ const CERT_CONFIG = {
     dateTop: "79%",
   },
   reward: {
-    image: "/REWARD-CERTIFICAT.png",
+    image: "/cert-reward.png",
     nameColor: "#ffffff",
     amountColor: "#7dd3fc",
     dateColor: "#888888",
