@@ -101,17 +101,14 @@ export default function Navbar() {
               <div style={{ position: "relative", paddingTop: 14 }}>
                 {/* Drapeaux flottants */}
                 <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 4 }}>
-                  <img src="https://flagcdn.com/20x15/fr.png" alt="FR" className="flag-float-1"
-                    style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover", boxShadow: "0 1px 4px rgba(0,0,0,0.15)" }} />
-                  <img src="https://flagcdn.com/20x15/eu.png" alt="EU" className="flag-float-2"
-                    style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover", boxShadow: "0 1px 4px rgba(0,0,0,0.15)" }} />
+                  <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1"
+                    style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                  <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2"
+                    style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                 </div>
                 <div style={{
                   fontSize: 10, fontWeight: 700, color: "#0D1B3E",
                   letterSpacing: "0.8px", whiteSpace: "nowrap",
-                  background: "rgba(21,101,192,0.07)",
-                  border: "1px solid rgba(21,101,192,0.18)",
-                  borderRadius: 6, padding: "4px 10px",
                 }}>
                   PropFirm Française
                 </div>
