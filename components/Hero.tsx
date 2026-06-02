@@ -147,12 +147,18 @@ export default function Hero() {
         paddingTop: 72,
       }}>
 
-        {/* Content — centré vertical */}
+        {/* Content — 2 colonnes : texte gauche, image droite */}
         <div style={{
-          position: "relative", zIndex: 1, width: "100%", maxWidth: 1100,
-          display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "28px 24px 60px" : "32px 24px 60px",
+          position: "relative", zIndex: 1, width: "100%", maxWidth: 1200,
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          alignItems: "center",
+          padding: isMobile ? "28px 24px 60px" : "32px 60px 60px",
+          gap: isMobile ? 32 : 0,
         }}>
+
+          {/* Colonne gauche */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", textAlign: isMobile ? "center" : "left" }}>
 
           {/* H1 */}
           <h1 className="hero-animate-1" style={{
@@ -176,7 +182,14 @@ export default function Hero() {
           {/* Carte animée — positionnée en absolue au bas du hero */}
           <div className="hero-animate-2" style={{ position: "absolute", bottom: -44, left: 0, right: 0, margin: "0 auto", zIndex: 20, display: "flex", justifyContent: "center" }}>
             <LiveRewardCard isMobile={isMobile} />
-          </div>
+          </div>{/* fin colonne gauche */}
+
+          {/* Colonne droite — image 400K */}
+          {!isMobile && (
+            <div className="hero-animate-2" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <img src="/4OOK.png" alt="400K capital simulé" style={{ width: "100%", maxWidth: 520, height: "auto", objectFit: "contain" }} />
+            </div>
+          )}
 
         </div>
       </section>
