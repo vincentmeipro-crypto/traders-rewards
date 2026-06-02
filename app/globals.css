@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --bg-primary: #F2F8FF;
-  --bg-secondary: #E6F1FF;
+  --bg-primary: #F0F8FF;
+  --bg-secondary: #E0F2FF;
   --bg-card: #FFFFFF;
-  --bg-card-hover: #F0F7FF;
-  --accent: #1A72F5;
-  --accent-light: #5BA0FF;
-  --accent-dark: #0B2250;
-  --accent-glow: rgba(26, 114, 245, 0.25);
-  --text-primary: #0B2250;
+  --bg-card-hover: #EBF6FF;
+  --accent: #1565C0;
+  --accent-light: #42A5F5;
+  --accent-dark: #0D1B3E;
+  --accent-glow: rgba(21, 101, 192, 0.22);
+  --text-primary: #0D1B3E;
   --text-secondary: #3a5070;
   --text-muted: #7a90b0;
-  --border: rgba(26, 114, 245, 0.12);
-  --border-accent: rgba(26, 114, 245, 0.28);
+  --border: rgba(21, 101, 192, 0.13);
+  --border-accent: rgba(21, 101, 192, 0.28);
   --gold: #C9A84C;
 }
 
@@ -21,7 +21,7 @@
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
-  background: linear-gradient(180deg, #ffffff 0%, #EBF5FF 40%, #D8ECFF 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #D6EDFF 55%, #B8DFFF 100%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-outfit), 'Outfit', system-ui, -apple-system, sans-serif;

@@ -75,7 +75,7 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
     }}>
       <div style={{
         width: 44, height: 44, borderRadius: "50%",
-        background: "linear-gradient(135deg, #1B4FD8, #3b82f6)",
+        background: "linear-gradient(135deg, #1565C0, #42A5F5)",
         display: "flex", alignItems: "center", justifyContent: "center",
         color: "#fff", fontWeight: 800, fontSize: 14, flexShrink: 0,
       }}>{t.initials}</div>
@@ -129,18 +129,18 @@ export default function Hero() {
         .hero-cta {
           display: inline-flex; align-items: center; gap: 10px;
           background: #0D1B3E; color: #fff;
-          padding: 16px 40px; border-radius: 6px;
-          font-size: 12px; font-weight: 700; letter-spacing: 2px;
+          padding: 16px 40px; border-radius: 8px;
+          font-size: 13px; font-weight: 700; letter-spacing: 1px;
           text-transform: uppercase; text-decoration: none;
           transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
-          box-shadow: 0 4px 20px rgba(13,27,62,0.25);
+          box-shadow: 0 4px 20px rgba(13,27,62,0.22);
         }
-        .hero-cta:hover { background: #1B4FD8; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(27,79,216,0.35); }
+        .hero-cta:hover { background: #1565C0; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(21,101,192,0.32); }
       `}</style>
 
       <section style={{
         minHeight: "100vh",
-        backgroundColor: "#FAFBFD",
+        background: "linear-gradient(180deg, #ffffff 0%, #D6EDFF 60%, #B8DFFF 100%)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -150,25 +150,11 @@ export default function Hero() {
         paddingTop: 72,
       }}>
 
-        {/* Wave background SVG */}
-        <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
-          xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#dce8ff" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#f0f6ff" stopOpacity="0.2" />
-            </linearGradient>
-            <linearGradient id="waveGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#e8f0ff" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#fafbfd" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path d="M-100,400 C200,200 400,600 700,350 C1000,100 1200,500 1540,300 L1540,900 L-100,900 Z"
-            fill="url(#waveGrad1)" style={{ animation: "waveMove 12s ease-in-out infinite" }} />
-          <path d="M-100,550 C150,350 500,700 800,480 C1100,260 1300,600 1540,420 L1540,900 L-100,900 Z"
-            fill="url(#waveGrad2)" style={{ animation: "waveMove 16s ease-in-out infinite reverse" }} />
-        </svg>
+        {/* Subtle radial glow */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: "radial-gradient(ellipse 80% 60% at 50% 80%, rgba(100,181,246,0.18) 0%, transparent 70%)",
+        }} />
 
         {/* Content */}
         <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: isMobile ? "40px 24px" : "60px 24px", maxWidth: 860, width: "100%" }}>
@@ -212,8 +198,8 @@ export default function Hero() {
               margin: "0 auto",
             }}>
               {isFr
-                ? <>Performez votre trading démo.<br />Recevez de vraies <span style={{ color: "#1B4FD8", fontStyle: "normal", fontWeight: 600 }}>récompenses.</span></>
-                : <>Where Trading Performance Meets<br /><span style={{ color: "#1B4FD8", fontStyle: "normal", fontWeight: 600 }}>Real Rewards.</span></>}
+                ? <>Performez votre trading démo.<br />Recevez de vraies <span style={{ color: "#1565C0", fontStyle: "normal", fontWeight: 600 }}>récompenses.</span></>
+                : <>Where Trading Performance Meets<br /><span style={{ color: "#1565C0", fontStyle: "normal", fontWeight: 600 }}>Real Rewards.</span></>}
             </p>
           </div>
 
