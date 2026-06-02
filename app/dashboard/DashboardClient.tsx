@@ -653,7 +653,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             <span style={{ backgroundColor: "#1565C020", color: "#1565C0", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{T.dash.paidBadge}</span>
                           </div>
                           <button onClick={() => {
-                            const name = `${c.client_first_name || ""} ${c.client_last_name || ""}`.trim() || user.email || "";
+                            const clientName = `${c.client_first_name || ""} ${c.client_last_name || ""}`.trim() || "—";
                             const w = window.open("", "_blank");
                             if (!w) return;
                             w.document.write(`<!DOCTYPE html><html><head><title>Facture ${invoiceNum}</title><style>
@@ -684,11 +684,11 @@ export default function DashboardClient({ user }: { user: User }) {
                                 <div>
                                   <h2>Émetteur</h2>
                                   <div style="font-weight:700">ELYSIUM</div>
-                                  <div style="color:#555;font-size:13px">elysium-rewards.com<br>contact@elysium-rewards.com</div>
+                                  <div style="color:#555;font-size:13px">elysium-rewards.com<br>support@elysium-rewards.com</div>
                                 </div>
                                 <div>
                                   <h2>Client</h2>
-                                  <div style="font-weight:700">${name}</div>
+                                  <div style="font-weight:700">${clientName}</div>
                                   <div style="color:#555;font-size:13px">${user.email}</div>
                                 </div>
                               </div>
