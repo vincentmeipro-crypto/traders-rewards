@@ -59,51 +59,58 @@ function SpotlightCard({ lang }: { lang: string }) {
   const t = TRADERS[idx];
   return (
     <div key={idx} style={{
-      background: "#0D1B3E",
-      borderRadius: 24, padding: "44px 40px",
-      textAlign: "center", position: "relative", overflow: "hidden",
-      boxShadow: "0 30px 80px rgba(13,27,62,0.35)",
+      background: "#fff",
+      border: "1px solid #3a3f4d",
+      borderRadius: 16,
+      padding: "28px 28px 24px",
+      textAlign: "center",
+      position: "relative",
+      overflow: "hidden",
+      boxShadow: "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.06)",
       animation: `spotCycle ${TOTAL_MS}ms linear forwards`,
     }}>
-      <div style={{
-        position: "absolute", top: 0, left: "20%", right: "20%", height: 1,
-        background: "linear-gradient(to right, transparent, rgba(201,168,76,0.6), transparent)",
-      }} />
+
+      {/* Top accent line */}
+      <div style={{ position: "absolute", top: 0, left: "15%", right: "15%", height: 2, background: "linear-gradient(to right, transparent, #1B4FD8, transparent)", borderRadius: "0 0 4px 4px" }} />
 
       {/* Badge */}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.06)", borderRadius: 100, padding: "6px 18px", marginBottom: 28 }}>
-        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 8px #22c55e" }} />
-        <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 11, fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase" }}>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 100, padding: "5px 14px", marginBottom: 22 }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 6px #22c55e" }} />
+        <span style={{ color: "#16a34a", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
           {lang === "fr" ? "Récompense versée" : "Reward Paid"}
         </span>
       </div>
 
       {/* Trader */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 28 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 24, padding: "14px 20px", background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.05)" }}>
         <div style={{ position: "relative", flexShrink: 0 }}>
-          <div style={{ width: 54, height: 54, borderRadius: "50%", background: "rgba(255,255,255,0.08)", border: "1.5px solid rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, color: "#fff" }}>{t.initials}</div>
-          <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -4, right: -8, width: 20, height: 15, borderRadius: 3, border: "1px solid rgba(255,255,255,0.2)", objectFit: "cover" }} />
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(27,79,216,0.08)", border: "1.5px solid rgba(27,79,216,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "#1B4FD8" }}>{t.initials}</div>
+          <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -3, right: -7, width: 18, height: 14, borderRadius: 3, border: "1px solid rgba(0,0,0,0.1)", objectFit: "cover" }} />
         </div>
         <div style={{ textAlign: "left" }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", color: "#C9A84C", marginBottom: 4, textTransform: "uppercase" }}>Trader</div>
-          <div style={{ fontWeight: 800, fontSize: 18, color: "#fff" }}>{t.name}</div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{lang === "fr" ? "Compte" : "Account"} {t.size}</div>
+          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "2px", color: "#C9A84C", marginBottom: 3, textTransform: "uppercase" }}>Trader</div>
+          <div style={{ fontWeight: 800, fontSize: 16, color: "#0D1B3E" }}>{t.name}</div>
+          <div style={{ fontSize: 11, color: "#8a96aa", marginTop: 1 }}>{lang === "fr" ? "Compte" : "Account"} {t.size}</div>
         </div>
       </div>
 
       {/* Amount */}
-      <div style={{ fontSize: "clamp(3.5rem, 12vw, 5rem)", fontWeight: 900, color: "#22c55e", lineHeight: 1, letterSpacing: "-3px", marginBottom: 8, fontVariantNumeric: "tabular-nums" }}>
-        {fmt(amt)}
+      <div style={{ marginBottom: 6 }}>
+        <div style={{ fontSize: "clamp(2.8rem, 10vw, 4rem)", fontWeight: 900, color: "#22c55e", lineHeight: 1, letterSpacing: "-2px", fontVariantNumeric: "tabular-nums" }}>
+          {fmt(amt)}
+        </div>
       </div>
-      <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "3px", color: "rgba(255,255,255,0.2)", textTransform: "uppercase", marginBottom: 24 }}>
+      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "3px", color: "#8a96aa", textTransform: "uppercase", marginBottom: 20 }}>
         {lang === "fr" ? "Récompense reçue" : "Reward Received"}
       </div>
 
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "6px 14px" }}>
-        <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader certifié" : "Certified Trader"}</span>
-      </div>
+      {/* Divider */}
+      <div style={{ height: 1, background: "rgba(0,0,0,0.06)", marginBottom: 16 }} />
 
-      <div style={{ position: "absolute", bottom: 0, left: "20%", right: "20%", height: 1, background: "linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent)" }} />
+      {/* Certified badge */}
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(27,79,216,0.06)", border: "1px solid rgba(27,79,216,0.15)", borderRadius: 8, padding: "6px 14px" }}>
+        <span style={{ fontSize: 11, color: "#1B4FD8", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader certifié" : "Certified Trader"}</span>
+      </div>
 
       <style>{`
         @keyframes spotCycle {
@@ -129,10 +136,11 @@ export default function TopTraders() {
   }, []);
 
   const tableRows = [
-    { size: "$10K",  profit: "€600",   reward: "~€480" },
-    { size: "$25K",  profit: "€1,500", reward: "~€1,200" },
-    { size: "$50K",  profit: "€3,000", reward: "~€2,400" },
-    { size: "$100K", profit: "€6,000", reward: "~€4,800" },
+    { size: "$10K",  profit: "€600",    reward: "~€480" },
+    { size: "$25K",  profit: "€1,500",  reward: "~€1,200" },
+    { size: "$50K",  profit: "€3,000",  reward: "~€2,400" },
+    { size: "$100K", profit: "€6,000",  reward: "~€4,800" },
+    { size: "$200K", profit: "€12,000", reward: "~€9,600" },
   ];
 
   const doubled = [...TRADERS, ...TRADERS];
@@ -164,13 +172,13 @@ export default function TopTraders() {
             </h3>
             <p style={{ color: "#4a5568", fontSize: 14, lineHeight: 1.7 }}>
               {lang === "fr"
-                ? "Atteignez 10% de profit et récupérez jusqu'à 90% de vos gains simulés."
-                : "Hit 10% profit and keep up to 90% of your simulated gains."}
+                ? "Basé sur 6% de profit moyen, après les 20% de partage avec Elysium."
+                : "Based on 6% average profit, after the 20% split with Elysium."}
             </p>
           </div>
           <div style={{ background: "#fff", borderRadius: 16, border: "1px solid rgba(0,0,0,0.07)", overflow: "hidden", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(0,0,0,0.02)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-              {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit 10%" : "10% Profit", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
+              {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
                 <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#8a96aa", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
               ))}
             </div>
