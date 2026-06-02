@@ -11,7 +11,7 @@ export default function Stats() {
   ];
 
   return (
-    <section style={{ padding: "0 24px 80px", backgroundColor: "transparent" }}>
+    <section style={{ padding: "40px 24px 80px", backgroundColor: "transparent" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{
           display: "grid",

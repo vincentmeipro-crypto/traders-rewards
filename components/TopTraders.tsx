@@ -197,11 +197,14 @@ export default function TopTraders() {
       <div style={{ overflow: "hidden", borderTop: "1px solid rgba(26,114,245,0.1)", borderBottom: "1px solid rgba(26,114,245,0.1)", padding: "20px 0", background: "rgba(255,255,255,0.7)" }}>
         <div className="marquee-track">
           {doubled.map((t, i) => (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, marginRight: 32, flexShrink: 0, padding: "4px 20px 4px 4px", background: "rgba(0,0,0,0.02)", borderRadius: 100, border: "1px solid rgba(0,0,0,0.05)" }}>
-              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(27,79,216,0.08)", border: "1.5px solid rgba(27,79,216,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#1B4FD8", flexShrink: 0 }}>{t.initials}</div>
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 28, flexShrink: 0, padding: "5px 16px 5px 5px", background: "rgba(255,255,255,0.8)", borderRadius: 100, border: "1px solid rgba(21,101,192,0.1)" }}>
+              <div style={{ position: "relative", flexShrink: 0 }}>
+                <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(21,101,192,0.09)", border: "1.5px solid rgba(21,101,192,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "#1565C0" }}>{t.initials}</div>
+                <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -2, right: -6, width: 16, height: 12, borderRadius: 2, objectFit: "cover", border: "1px solid rgba(255,255,255,0.8)" }} />
+              </div>
               <div>
                 <div style={{ fontWeight: 700, fontSize: 13, color: "#0D1B3E" }}>{t.name}</div>
-                <div style={{ fontSize: 12, color: "#1565C0", fontWeight: 700 }}>{fmt(t.payout)} · {t.size}</div>
+                <div style={{ fontSize: 11, color: "#1565C0", fontWeight: 600 }}>{fmt(t.payout)} · {t.size}</div>
               </div>
             </div>
           ))}
