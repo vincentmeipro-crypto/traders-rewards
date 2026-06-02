@@ -153,80 +153,83 @@ export default function Hero() {
           background: "radial-gradient(ellipse 80% 60% at 50% 80%, rgba(100,181,246,0.18) 0%, transparent 70%)",
         }} />
 
-        {/* Content */}
-        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: isMobile ? "24px 24px 40px" : "32px 24px 60px", maxWidth: 860, width: "100%" }}>
+        {/* Content — 2 colonnes style FundingPips */}
+        <div style={{
+          position: "relative", zIndex: 1, width: "100%", maxWidth: 1200,
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+          gap: isMobile ? 40 : 80,
+          alignItems: "center",
+          padding: isMobile ? "40px 24px 60px" : "0 80px",
+        }}>
 
-          {/* Logo transparent */}
-          <div className="hero-animate-1">
-            <img src="/logo-noir-transparent.png" alt="Elysium Rewards" style={{ height: isMobile ? 64 : 88, width: "auto", marginBottom: 20 }} />
-          </div>
+          {/* Colonne gauche */}
+          <div style={{ textAlign: isMobile ? "center" : "left" }}>
 
-          {/* ELYSIUM REWARDS Typography */}
-          <div className="hero-animate-2" style={{ marginBottom: 28 }}>
-            <div style={{
-              fontSize: isMobile ? 48 : 76,
-              fontWeight: 700,
-              letterSpacing: isMobile ? "10px" : "18px",
+            <h1 className="hero-animate-1" style={{
+              fontSize: isMobile ? "clamp(2.4rem, 9vw, 3rem)" : "clamp(3rem, 4.5vw, 4.8rem)",
+              fontWeight: 800,
               color: "#0D1B3E",
-              lineHeight: 1,
-              textTransform: "uppercase",
-              marginBottom: 10,
-            }}>
-              ELYSIUM
-            </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
-              <div style={{ height: 1, width: isMobile ? 40 : 70, background: "linear-gradient(to right, transparent, #8a96aa)" }} />
-              <span style={{ fontSize: isMobile ? 11 : 13, fontWeight: 600, letterSpacing: "6px", color: "#8a96aa", textTransform: "uppercase" }}>REWARDS</span>
-              <div style={{ height: 1, width: isMobile ? 40 : 70, background: "linear-gradient(to left, transparent, #8a96aa)" }} />
-            </div>
-          </div>
-
-          {/* Live Reward Card — sous le titre */}
-          <div className="hero-animate-3" style={{ marginBottom: 32, width: "100%", display: "flex", justifyContent: "center" }}>
-            <LiveRewardCard isMobile={isMobile} />
-          </div>
-
-          {/* Tagline */}
-          <div className="hero-animate-3" style={{ marginBottom: 32 }}>
-            <p style={{
-              fontSize: isMobile ? 18 : 22,
-              fontWeight: 400,
-              color: "#3a5070",
-              lineHeight: 1.6,
-              maxWidth: 480,
-              margin: "0 auto",
+              lineHeight: 1.1,
+              letterSpacing: "-1.5px",
+              marginBottom: 24,
             }}>
               {isFr
-                ? <>Performez votre trading démo.<br />Recevez de vraies <strong style={{ color: "#1565C0", fontWeight: 700 }}>récompenses.</strong></>
-                : <>Where Trading Performance Meets<br /><strong style={{ color: "#1565C0", fontWeight: 700 }}>Real Rewards.</strong></>}
+                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#1565C0" }}>vraies récompenses.</span></>
+                : <>Turn your trading<br />skills into<br /><span style={{ color: "#1565C0" }}>real rewards.</span></>}
+            </h1>
+
+            <p className="hero-animate-2" style={{
+              fontSize: isMobile ? 15 : 17,
+              color: "#5a7090",
+              lineHeight: 1.7,
+              marginBottom: 36,
+              maxWidth: 440,
+              margin: isMobile ? "0 auto 36px" : "0 0 36px",
+            }}>
+              {isFr
+                ? "Tradez dans un environnement 100% simulé et recevez jusqu'à 90% de vos gains sous forme de récompenses."
+                : "Trade in a fully simulated environment and earn up to 90% rewards on your performance."}
             </p>
-          </div>
 
-          {/* CTA */}
-          <div className="hero-animate-4" style={{ marginBottom: 48 }}>
-            <a href="/#pricing" className="hero-cta">
-              {isFr ? "Commencer le challenge" : "Start Challenge"}
-              <span style={{ fontSize: 16 }}>→</span>
-            </a>
-          </div>
+            <div className="hero-animate-3" style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: isMobile ? "center" : "flex-start", marginBottom: 40 }}>
+              <a href="/#pricing" className="hero-cta">{isFr ? "Commencer le challenge" : "Start Challenge"}</a>
+              <a href="/login" style={{
+                display: "inline-flex", alignItems: "center",
+                background: "transparent", color: "#0D1B3E",
+                padding: "16px 28px", borderRadius: 8,
+                fontSize: 13, fontWeight: 600,
+                textDecoration: "none", border: "1.5px solid rgba(13,27,62,0.2)",
+                transition: "all 0.2s",
+              }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = "#1565C0"; e.currentTarget.style.color = "#1565C0"; }}
+                onMouseOut={e => { e.currentTarget.style.borderColor = "rgba(13,27,62,0.2)"; e.currentTarget.style.color = "#0D1B3E"; }}
+              >
+                {isFr ? "Mon espace" : "Login"}
+              </a>
+            </div>
 
-          {/* Stats bar */}
-          <div className="hero-animate-5" style={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            gap: 0, flexWrap: "wrap",
-            borderTop: "1px solid rgba(21,101,192,0.12)",
-            borderBottom: "1px solid rgba(21,101,192,0.12)",
-            padding: "20px 0", width: "100%",
-          }}>
-            {stats.map((s, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center" }}>
-                <div style={{ textAlign: "center", padding: isMobile ? "8px 24px" : "8px 44px" }}>
-                  <div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px" }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: "#7a90b0", fontWeight: 500, marginTop: 2, letterSpacing: "0.5px" }}>{s.label}</div>
+            <div className="hero-animate-4" style={{
+              display: "flex", gap: 0,
+              borderTop: "1px solid rgba(21,101,192,0.12)",
+              paddingTop: 24,
+              justifyContent: isMobile ? "center" : "flex-start",
+            }}>
+              {stats.map((s, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ paddingRight: 28 }}>
+                    <div style={{ fontSize: isMobile ? 20 : 26, fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px" }}>{s.value}</div>
+                    <div style={{ fontSize: 11, color: "#7a90b0", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
+                  </div>
+                  {i < stats.length - 1 && <div style={{ width: 1, height: 36, background: "rgba(21,101,192,0.15)", marginRight: 28 }} />}
                 </div>
-                {i < stats.length - 1 && <div style={{ width: 1, height: 36, background: "rgba(21,101,192,0.15)" }} />}
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Colonne droite — carte animée */}
+          <div className="hero-animate-2" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <LiveRewardCard isMobile={isMobile} />
           </div>
 
         </div>
