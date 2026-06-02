@@ -1,8 +1,16 @@
 "use client";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useState, useEffect } from "react";
 
 export default function Footer() {
   const { T } = useLanguage();
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const sections = [
     {
@@ -32,10 +40,10 @@ export default function Footer() {
   return (
     <footer style={{ backgroundColor: "#0D1B3E", padding: "72px 24px 40px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr 1fr", gap: 48, marginBottom: 64, alignItems: "start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 32 : 48, marginBottom: 64, alignItems: "start" }}>
 
           {/* Logo + tagline */}
-          <div>
+          <div style={{ gridColumn: isMobile ? "1 / -1" : "auto" }}>
             <div style={{ marginBottom: 20 }}>
               <div style={{ marginBottom: 8 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "4px", color: "#fff", textTransform: "uppercase" }}>ELYSIUM</div>
@@ -63,9 +71,9 @@ export default function Footer() {
 
         <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 32 }} />
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "center", gap: 16, marginBottom: 20 }}>
           <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>{T.footer.copyright}</p>
-          <div style={{ display: "flex", gap: 24 }}>
+          <div style={{ display: "flex", gap: isMobile ? 16 : 24, flexWrap: "wrap" }}>
             {[
               { label: T.footer.privacy, href: "/legal/privacy" },
               { label: T.footer.terms,   href: "/legal/terms" },
