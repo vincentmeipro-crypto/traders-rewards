@@ -174,7 +174,7 @@ export default function Hero() {
           </h1>
 
           {/* Carte animée — positionnée en absolue au bas du hero */}
-          <div className="hero-animate-2" style={{ position: "absolute", bottom: -44, left: "50%", transform: "translateX(-50%)", zIndex: 20, width: isMobile ? "90vw" : "auto" }}>
+          <div className="hero-animate-2" style={{ position: "absolute", bottom: -44, left: 0, right: 0, margin: "0 auto", zIndex: 20, display: "flex", justifyContent: "center" }}>
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
