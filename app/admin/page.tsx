@@ -1116,7 +1116,7 @@ export default function AdminPage() {
                         const isExhausted = p.max_uses !== null && p.used_count >= p.max_uses;
                         return (
                           <tr key={p.id} style={{ borderBottom: "1px solid #111", opacity: (!p.active || isExpired || isExhausted) ? 0.5 : 1 }}>
-                            <td style={{ padding: "13px 16px", fontWeight: 800, fontFamily: "monospace", letterSpacing: 1 }}>{p.code}</td>
+                            <td style={{ padding: "13px 16px" }}><button onClick={() => { navigator.clipboard.writeText(p.code); }} title="Copier" style={{ fontWeight: 800, fontFamily: "monospace", letterSpacing: 1, background: "none", border: "none", cursor: "pointer", color: "#111", fontSize: 13, padding: 0 }}>{p.code} ⎘</button></td>
                             <td style={{ padding: "13px 16px", fontWeight: 700, color: p.discount_percent === 100 ? "#22c55e" : "#fff" }}>{p.discount_percent === 100 ? "100% (GRATUIT)" : `${p.discount_percent}%`}</td>
                             <td style={{ padding: "13px 16px", color: "#888" }}>{p.used_count}</td>
                             <td style={{ padding: "13px 16px", color: "#555" }}>{p.max_uses ?? "∞"}</td>
