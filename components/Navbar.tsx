@@ -88,7 +88,7 @@ export default function Navbar() {
 
           {/* Logo + badge PropFirm */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <a href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
+            <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
               <img src="/logo-noir-transparent.png" alt="Elysium Rewards" style={{ height: 38, width: "auto" }} />
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "4px", color: "#0D1B3E", textTransform: "uppercase", lineHeight: 1 }}>ELYSIUM</span>
