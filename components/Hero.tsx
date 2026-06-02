@@ -73,21 +73,17 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
       display: "flex", alignItems: "center", gap: 14,
       minWidth: isMobile ? 240 : 280,
     }}>
-      <div style={{ position: "relative", flexShrink: 0 }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: "linear-gradient(135deg, #1565C0, #42A5F5)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          color: "#fff", fontWeight: 800, fontSize: 14,
-        }}>{t.initials}</div>
-        <img src={`https://flagcdn.com/40x30/${t.flag}.png`} alt="" style={{
-          position: "absolute", bottom: -3, right: -7,
-          width: 18, height: 14, borderRadius: 2, objectFit: "cover",
-          border: "1.5px solid #fff",
-        }} />
-      </div>
+      <div style={{
+        width: 44, height: 44, borderRadius: "50%", flexShrink: 0,
+        background: "linear-gradient(135deg, #1565C0, #42A5F5)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: "#fff", fontWeight: 800, fontSize: 14,
+      }}>{t.initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ color: "#0D1B3E", fontWeight: 700, fontSize: 14, marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+          <span style={{ color: "#0D1B3E", fontWeight: 700, fontSize: 14, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</span>
+          <img src={`https://flagcdn.com/40x30/${t.flag}.png`} alt="" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover", flexShrink: 0 }} />
+        </div>
         <div style={{ color: "#8a96aa", fontSize: 12 }}>{t.size} · Récompense reçue</div>
       </div>
       <div style={{ color: "#1565C0", fontWeight: 900, fontSize: isMobile ? 16 : 18, flexShrink: 0 }}>{fmt(amount)}</div>
