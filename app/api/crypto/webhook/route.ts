@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
+import { createMT5Account, getMT5Group } from "@/lib/mt5";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "10k-2step":  { accountSize: "$10,000",  model: "2step" },
@@ -88,8 +89,43 @@ export async function POST(req: NextRequest) {
 
     const { data: { users } } = await admin.auth.admin.listUsers();
     const user = users.find(u => u.id === userId);
-    if (user?.email) {
-      try { await sendWelcomeEmail(user.email, accountSize, model); } catch {}
+    const userEmail = user?.email || "";
+    const firstName = user?.user_metadata?.first_name || "Trader";
+    const lastName = user?.user_metadata?.last_name || "";
+
+    let mt5Login: number | null = null;
+    let mt5Password: string | null = null;
+    let mt5PasswordInvestor: string | null = null;
+    let mt5Server: string | null = null;
+
+    try {
+      const mt5Account = await createMT5Account({
+        firstName, lastName, email: userEmail,
+        leverage: 100,
+        group: getMT5Group(model),
+        account_size: accountSize,
+      });
+      mt5Login = mt5Account.login;
+      mt5Password = mt5Account.password;
+      mt5PasswordInvestor = mt5Account.password_investor;
+      mt5Server = mt5Account.server;
+    } catch (e) { console.error("MT5 creation error:", e); }
+
+    await admin.from("challenges").update({
+      mt5_login: mt5Login,
+      mt5_password: mt5Password,
+      mt5_password_investor: mt5PasswordInvestor,
+      mt5_server: mt5Server,
+    }).eq("user_id", userId).eq("account_size", accountSize).order("created_at", { ascending: false }).limit(1);
+
+    if (userEmail) {
+      try {
+        await sendWelcomeEmail(userEmail, accountSize, model,
+          mt5Login && mt5Password && mt5Server
+            ? { login: mt5Login, password: mt5Password, server: mt5Server }
+            : undefined
+        );
+      } catch {}
     }
 
     return NextResponse.json({ received: true });
