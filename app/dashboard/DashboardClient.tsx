@@ -194,7 +194,7 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
 const PHASE_LABELS: Record<string, string> = {
   phase1: "Phase 1",
   phase2: "Phase 2",
-  funded: "Funded",
+  funded: "Certified",
 };
 
 const STATUS_COLORS: Record<string, string> = {
