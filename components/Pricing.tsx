@@ -50,16 +50,15 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
-    <section id="pricing" style={{ padding: "100px 24px", backgroundColor: "transparent", scrollMarginTop: "0px" }}>
+    <section id="pricing" style={{ padding: "48px 24px 100px", backgroundColor: "transparent", scrollMarginTop: "0px" }}>
       <div style={{ maxWidth: 1350, margin: "0 auto" }}>
 
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <span className="section-label" style={{ display: "block", marginBottom: 16 }}>{T.pricing.label}</span>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px", marginBottom: 12 }}>
-            {T.pricing.title} <em style={{ color: "#1B4FD8", fontStyle: "italic" }}>{T.pricing.titleGold}</em>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px", marginBottom: 10 }}>
+            {T.pricing.title} <span style={{ color: "#1565C0" }}>{T.pricing.titleGold}</span>
           </h2>
-          <p style={{ color: "#4a5568", fontSize: 15, maxWidth: 440, margin: "0 auto" }}>{T.pricing.sub}</p>
+          <p style={{ color: "#5a7090", fontSize: 15, maxWidth: 440, margin: "0 auto" }}>{T.pricing.sub}</p>
         </div>
 
         {/* Toggle */}

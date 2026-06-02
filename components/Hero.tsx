@@ -180,43 +180,65 @@ export default function Hero() {
           </h1>
 
           {/* Carte animée */}
-          <div className="hero-animate-2" style={{ marginBottom: 32, width: "100%", display: "flex", justifyContent: "center" }}>
+          <div className="hero-animate-2" style={{ marginBottom: 40, width: "100%", display: "flex", justifyContent: "center" }}>
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
-          {/* CTA */}
-          <div className="hero-animate-3" style={{ marginBottom: 32 }}>
-            <a href="/#pricing" className="hero-cta">{isFr ? "Commencer le challenge" : "Start Challenge"}</a>
-          </div>
+          {/* Ligne de séparation */}
+          <div style={{ width: "100%", height: 1, background: "rgba(21,101,192,0.12)", marginBottom: 36 }} />
 
-          {/* Sous-titre */}
-          <p className="hero-animate-4" style={{
-            fontSize: isMobile ? 15 : 17,
-            color: "#5a7090",
-            lineHeight: 1.7,
-            marginBottom: 36,
-            maxWidth: 480,
+          {/* 2 colonnes : stats à gauche, phrase en cercle à droite */}
+          <div className="hero-animate-3" style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+            gap: isMobile ? 32 : 48,
+            width: "100%",
+            alignItems: "center",
           }}>
-            {isFr
-              ? "Tradez dans un environnement 100% simulé et recevez jusqu'à 90% de vos gains sous forme de récompenses."
-              : "Trade in a fully simulated environment and earn up to 90% rewards on your performance."}
-          </p>
 
-          {/* Stats */}
-          <div className="hero-animate-5" style={{
-            display: "flex", gap: 0, justifyContent: "center",
-            borderTop: "1px solid rgba(21,101,192,0.12)",
-            paddingTop: 24, width: "100%",
-          }}>
-            {stats.map((s, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center" }}>
-                <div style={{ textAlign: "center", paddingRight: 28 }}>
-                  <div style={{ fontSize: isMobile ? 20 : 26, fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px" }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: "#7a90b0", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
+            {/* Stats stylisés à gauche */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: isMobile ? "center" : "flex-start" }}>
+              {stats.map((s, i) => (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: 16,
+                  background: "rgba(255,255,255,0.7)",
+                  border: "1px solid rgba(21,101,192,0.12)",
+                  borderRadius: 14, padding: "14px 22px",
+                  backdropFilter: "blur(8px)",
+                  width: isMobile ? "80%" : "100%",
+                }}>
+                  <div style={{ fontSize: isMobile ? 26 : 30, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px", minWidth: 80 }}>{s.value}</div>
+                  <div style={{ fontSize: 13, color: "#7a90b0", fontWeight: 500 }}>{s.label}</div>
                 </div>
-                {i < stats.length - 1 && <div style={{ width: 1, height: 36, background: "rgba(21,101,192,0.15)", marginRight: 28 }} />}
+              ))}
+            </div>
+
+            {/* Phrase en cercle stylé à droite */}
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <div style={{
+                width: isMobile ? 220 : 260,
+                height: isMobile ? 220 : 260,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.75)",
+                border: "1.5px solid rgba(21,101,192,0.18)",
+                backdropFilter: "blur(12px)",
+                boxShadow: "0 8px 40px rgba(21,101,192,0.1)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                padding: 28, textAlign: "center",
+              }}>
+                <p style={{
+                  fontSize: isMobile ? 13 : 14,
+                  color: "#3a5070",
+                  lineHeight: 1.7,
+                  fontWeight: 500,
+                }}>
+                  {isFr
+                    ? "Tradez dans un environnement 100% simulé et recevez jusqu'à 90% de vos gains."
+                    : "Trade in a fully simulated environment and earn up to 90% rewards."}
+                </p>
               </div>
-            ))}
+            </div>
+
           </div>
 
         </div>
