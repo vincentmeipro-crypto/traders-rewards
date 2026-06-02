@@ -147,27 +147,21 @@ export default function Hero() {
         paddingTop: 72,
       }}>
 
-        {/* Content — 2 colonnes : texte gauche, image droite */}
+        {/* Content — centré */}
         <div style={{
           position: "relative", zIndex: 1, width: "100%", maxWidth: 1200,
-          display: "grid",
-          gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-          alignItems: "center",
-          padding: isMobile ? "28px 24px 60px" : "32px 60px 60px",
-          gap: isMobile ? 32 : 0,
+          display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
+          padding: isMobile ? "28px 24px 60px" : "32px 40px 60px",
         }}>
 
-          {/* Colonne gauche */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start", textAlign: isMobile ? "center" : "left" }}>
-
-          {/* H1 */}
+          {/* H1 — centré pleine largeur */}
           <h1 className="hero-animate-1" style={{
             fontSize: isMobile ? "clamp(2.2rem, 8vw, 2.8rem)" : "clamp(3.6rem, 5.2vw, 5.2rem)",
             fontWeight: 800,
             color: "#0D1B3E",
             lineHeight: 1.1,
             letterSpacing: "-2px",
-            marginBottom: 20,
+            marginBottom: 28,
             whiteSpace: isMobile ? "normal" : "nowrap",
           }}>
             {isFr
@@ -179,17 +173,21 @@ export default function Hero() {
                 : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
           </h1>
 
-          {/* Carte animée — positionnée en absolue au bas du hero */}
-          <div className="hero-animate-2" style={{ position: "absolute", bottom: -44, left: 0, right: 0, margin: "0 auto", zIndex: 20, display: "flex", justifyContent: "center" }}>
+          {/* Carte + image côte à côte, à cheval sur la frontière */}
+          <div className="hero-animate-2" style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 32,
+            zIndex: 20,
+            position: "relative",
+            marginBottom: -44,
+          }}>
             <LiveRewardCard isMobile={isMobile} />
-          </div>{/* fin colonne gauche */}
-
-          {/* Colonne droite — image 400K */}
-          {!isMobile && (
-            <div className="hero-animate-2" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <img src="/4OOK.png" alt="400K capital simulé" style={{ width: "100%", maxWidth: 520, height: "auto", objectFit: "contain" }} />
-            </div>
-          )}
+            {!isMobile && (
+              <img src="/4OOK.png" alt="400K" style={{ height: 120, width: "auto", objectFit: "contain" }} />
+            )}
+          </div>
 
         </div>
       </section>
