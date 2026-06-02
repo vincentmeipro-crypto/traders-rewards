@@ -136,7 +136,7 @@ export default function Hero() {
       `}</style>
 
       <section style={{
-        minHeight: "100vh",
+        minHeight: "auto",
         background: "linear-gradient(180deg, #ffffff 0%, #D6EDFF 60%, #B8DFFF 100%)",
         display: "flex",
         flexDirection: "column",
@@ -151,7 +151,7 @@ export default function Hero() {
         <div style={{
           position: "relative", zIndex: 1, width: "100%", maxWidth: 1100,
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "28px 24px 40px" : "32px 24px 40px",
+          padding: isMobile ? "28px 24px 16px" : "32px 24px 0px",
         }}>
 
           {/* H1 */}
@@ -174,13 +174,8 @@ export default function Hero() {
           </h1>
 
           {/* Carte animée */}
-          <div className="hero-animate-2" style={{ marginBottom: 20, width: "100%", display: "flex", justifyContent: "center" }}>
+          <div className="hero-animate-2" style={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <LiveRewardCard isMobile={isMobile} />
-          </div>
-
-          {/* CTA */}
-          <div className="hero-animate-3">
-            <a href="/#pricing" className="hero-cta">{isFr ? "Commencer votre challenge" : "Start your challenge"}</a>
           </div>
 
         </div>
