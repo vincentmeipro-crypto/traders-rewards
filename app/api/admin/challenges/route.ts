@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendPhase2Email, sendFundedEmail, sendFailedEmail } from "@/lib/mailer";
+import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail } from "@/lib/mailer";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -14,7 +14,7 @@ async function checkAdmin(req: NextRequest) {
   return { ok: true, reason: "ok" };
 }
 
-async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail: string) {
+async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail: string, firstName: string, lastName: string) {
   const admin = createAdminClient();
   const balance = challenge.balance as number;
   const startBalance = challenge.start_balance as number;
@@ -25,6 +25,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const id = challenge.id as string;
 
   const profitPct = ((balance - startBalance) / startBalance) * 100;
+  const certDate = new Date().toLocaleDateString("fr-FR");
 
   // Phase 1 → Phase 2
   if (phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
@@ -37,6 +38,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     }).eq("id", id);
 
     try { await sendPhase2Email(userEmail, accountSize); } catch (e) { console.error("Email error:", e); }
+    try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch (e) { console.error("Cert email error:", e); }
     return "phase2";
   }
 
@@ -48,6 +50,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     }).eq("id", id);
 
     try { await sendFundedEmail(userEmail, accountSize); } catch (e) { console.error("Email error:", e); }
+    try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch (e) { console.error("Cert email error:", e); }
     return "funded";
   }
 
@@ -110,10 +113,14 @@ export async function PATCH(req: NextRequest) {
   const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Get user email for notifications
+  // Get user email and profile for notifications
   const { data: { users } } = await admin.auth.admin.listUsers();
   const userMap = Object.fromEntries(users.map(u => [u.id, u.email]));
   const userEmail = userMap[data.user_id] || "";
+
+  const { data: profile } = await admin.from("profiles").select("first_name, last_name").eq("user_id", data.user_id).single();
+  const firstName = profile?.first_name || "";
+  const lastName = profile?.last_name || "";
 
   // Check drawdown violations
   if (updates.balance !== undefined && current) {
@@ -136,7 +143,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   // Auto-transition check after update
-  const transitioned = await autoTransitionPhase(data, userEmail);
+  const transitioned = await autoTransitionPhase(data, userEmail, firstName, lastName);
 
   // Return updated challenge
   const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();

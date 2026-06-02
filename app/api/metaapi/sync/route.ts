@@ -6,6 +6,8 @@ import {
   sendFundedEmail,
   sendFailedEmail,
   sendDailyUpdateEmail,
+  sendPhase1CertificateEmail,
+  sendChallengeCertificateEmail,
 } from "@/lib/mailer";
 
 const FUNDED_GROUP: Record<string, string> = {
@@ -15,7 +17,7 @@ const FUNDED_GROUP: Record<string, string> = {
 
 type Challenge = Record<string, unknown>;
 
-async function processChallenge(challenge: Challenge, userEmail: string) {
+async function processChallenge(challenge: Challenge, userEmail: string, firstName: string, lastName: string) {
   const admin = createAdminClient();
 
   const id             = challenge.id as string;
@@ -101,11 +103,14 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
   const targetMet   = profitPct >= profitTarget;
   const daysMet     = newTradingDays >= 4;
 
+  const certDate = new Date().toLocaleDateString("fr-FR");
+
   // 1-Step: phase1 → funded
   if (model === "1step" && phase === "phase1" && targetMet && daysMet) {
     await changeMT5Group(login, FUNDED_GROUP["1step"]).catch(() => {});
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
     await sendFundedEmail(userEmail, accountSize).catch(() => {});
+    await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
     return { status: "synced", transition: "phase1→funded (1-step)", balance: newBalance };
   }
 
@@ -120,6 +125,7 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
       status: "active",
     }).eq("id", id);
     await sendPhase2Email(userEmail, accountSize).catch(() => {});
+    await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
     return { status: "synced", transition: "phase1→phase2", balance: newBalance };
   }
 
@@ -128,6 +134,7 @@ async function processChallenge(challenge: Challenge, userEmail: string) {
     await changeMT5Group(login, FUNDED_GROUP["2step"]).catch(() => {});
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
     await sendFundedEmail(userEmail, accountSize).catch(() => {});
+    await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
     return { status: "synced", transition: "phase2→funded", balance: newBalance };
   }
 
@@ -171,13 +178,19 @@ export async function GET(req: NextRequest) {
   const { data: { users } } = await admin.auth.admin.listUsers();
   const userMap = Object.fromEntries(users.map(u => [u.id, u.email ?? ""]));
 
+  const { data: profiles } = await admin.from("profiles").select("user_id, first_name, last_name");
+  const profileMap = Object.fromEntries((profiles || []).map((p: Record<string, string>) => [p.user_id, p]));
+
   let synced = 0;
   const results: unknown[] = [];
 
   for (const challenge of challenges) {
     try {
       const userEmail = userMap[challenge.user_id as string] ?? "";
-      const result = await processChallenge(challenge as Challenge, userEmail);
+      const profile = profileMap[challenge.user_id as string] || {};
+      const firstName = (profile as Record<string, string>).first_name || "";
+      const lastName = (profile as Record<string, string>).last_name || "";
+      const result = await processChallenge(challenge as Challenge, userEmail, firstName, lastName);
       results.push({ id: challenge.id, login: challenge.mt5_login, ...result });
       if ((result as { status: string }).status !== "balance_unavailable") synced++;
     } catch (e) {
