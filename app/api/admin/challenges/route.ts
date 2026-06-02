@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail } from "@/lib/mailer";
+import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
+import { createMT5Account, getMT5Group } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -82,6 +83,74 @@ export async function GET(req: NextRequest) {
   }));
 
   return NextResponse.json(result);
+}
+
+export async function POST(req: NextRequest) {
+  const check = await checkAdmin(req);
+  if (!check.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { userEmail, accountSize, model, amountPaid, createMT5 } = await req.json();
+  const admin = createAdminClient();
+
+  const { data: { users } } = await admin.auth.admin.listUsers();
+  const user = users.find(u => u.email === userEmail);
+  if (!user) return NextResponse.json({ error: `Utilisateur introuvable : ${userEmail}` }, { status: 404 });
+
+  const sizeMap: Record<string, number> = {
+    "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000,
+  };
+  const size = sizeMap[accountSize] || 10000;
+  const firstName = user.user_metadata?.first_name || "Trader";
+  const lastName = user.user_metadata?.last_name || "";
+
+  let mt5Login: number | null = null;
+  let mt5Password: string | null = null;
+  let mt5PasswordInvestor: string | null = null;
+  let mt5Server: string | null = null;
+
+  if (createMT5) {
+    try {
+      const mt5Account = await createMT5Account({
+        firstName, lastName, email: userEmail,
+        leverage: 100,
+        group: getMT5Group(model),
+        account_size: accountSize,
+      });
+      mt5Login = mt5Account.login;
+      mt5Password = mt5Account.password;
+      mt5PasswordInvestor = mt5Account.password_investor;
+      mt5Server = mt5Account.server;
+    } catch (e) { console.error("MT5 error:", e); }
+  }
+
+  const { data, error } = await admin.from("challenges").insert({
+    user_id: user.id,
+    account_size: accountSize,
+    model,
+    status: "active",
+    phase: "phase1",
+    balance: size,
+    start_balance: size,
+    profit_target: 10,
+    daily_drawdown_limit: model === "1step" ? 3 : 5,
+    total_drawdown_limit: 10,
+    trading_days: 0,
+    amount_paid: amountPaid || 0,
+    mt5_login: mt5Login,
+    mt5_password: mt5Password,
+    mt5_password_investor: mt5PasswordInvestor,
+    mt5_server: mt5Server,
+  }).select().single();
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  try {
+    await sendWelcomeEmail(userEmail, accountSize, model,
+      mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined
+    );
+  } catch {}
+
+  return NextResponse.json({ ok: true, challenge: data });
 }
 
 export async function DELETE(req: NextRequest) {

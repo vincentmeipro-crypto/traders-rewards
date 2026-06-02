@@ -60,7 +60,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc";
+type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create";
 
 const STATUS_COLORS: Record<string, string> = {
   active:  "#22c55e",
@@ -80,6 +80,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "payouts",   label: "Récompenses" },
   { id: "promos",    label: "Promo Codes" },
   { id: "kyc",       label: "KYC" },
+  { id: "create",    label: "➕ Créer Challenge" },
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
@@ -128,6 +129,12 @@ export default function AdminPage() {
 
   // CRM state
   const [crmExpanded, setCrmExpanded] = useState<string | null>(null);
+
+  // Create challenge state
+  const [createForm, setCreateForm] = useState({ userEmail: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true });
+  const [createLoading, setCreateLoading] = useState(false);
+  const [createMsg, setCreateMsg] = useState("");
+  const [createError, setCreateError] = useState("");
 
   // Admin login form state
   const [adminEmail, setAdminEmail] = useState("");
@@ -333,6 +340,16 @@ export default function AdminPage() {
     const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id, status }) });
     const data = await res.json();
     if (res.ok) setPayouts(ps => ps.map(p => p.id === id ? { ...p, ...data } : p));
+  };
+
+  const createChallenge = async () => {
+    if (!token || !createForm.userEmail || !createForm.accountSize) return;
+    setCreateLoading(true); setCreateError(""); setCreateMsg("");
+    const res = await fetch("/api/admin/challenges", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
+    const data = await res.json();
+    setCreateLoading(false);
+    if (res.ok) { setCreateMsg("✅ Challenge créé ! Email envoyé au trader."); setCreateForm(f => ({ ...f, userEmail: "", amountPaid: "" })); }
+    else setCreateError(data.error || "Erreur");
   };
 
   const createPromo = async () => {
@@ -1215,6 +1232,36 @@ export default function AdminPage() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* ══ CRÉER CHALLENGE ══ */}
+        {tab === "create" && (
+          <div style={{ maxWidth: 520 }}>
+            {card(<>
+              <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 20, color: "#111" }}>Créer un challenge manuellement</div>
+              {[
+                { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option>$10,000</option><option>$25,000</option><option>$50,000</option><option>$100,000</option></select> },
+                { label: "Modèle", el: <select value={createForm.model} onChange={e => setCreateForm(f => ({ ...f, model: e.target.value }))} style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option value="1step">1-Step</option><option value="2step">2-Step</option></select> },
+                { label: "Montant payé (€)", el: <input type="number" value={createForm.amountPaid} onChange={e => setCreateForm(f => ({ ...f, amountPaid: e.target.value }))} placeholder="ex: 6.90" style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
+              ].map((f, i) => (
+                <div key={i} style={{ marginBottom: 16 }}>
+                  <div style={{ color: "#555", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{f.label}</div>
+                  {f.el}
+                </div>
+              ))}
+              <label style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24, cursor: "pointer" }}>
+                <input type="checkbox" checked={createForm.createMT5} onChange={e => setCreateForm(f => ({ ...f, createMT5: e.target.checked }))} style={{ width: 16, height: 16 }} />
+                <span style={{ color: "#333", fontSize: 14 }}>Créer le compte MT5 automatiquement</span>
+              </label>
+              {createError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#ef444410", borderRadius: 8 }}>{createError}</div>}
+              {createMsg && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#22c55e10", borderRadius: 8 }}>{createMsg}</div>}
+              <button onClick={createChallenge} disabled={createLoading || !createForm.userEmail}
+                style={{ width: "100%", backgroundColor: "#C9A84C", color: "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
+                {createLoading ? "Création en cours..." : "Créer le challenge"}
+              </button>
+            </>)}
           </div>
         )}
 
