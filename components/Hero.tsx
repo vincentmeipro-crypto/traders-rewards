@@ -141,33 +141,27 @@ export default function Hero() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         position: "relative",
         overflow: "hidden",
         paddingTop: 72,
       }}>
 
-        {/* Subtle radial glow */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          background: "radial-gradient(ellipse 80% 60% at 50% 80%, rgba(100,181,246,0.18) 0%, transparent 70%)",
-        }} />
-
         {/* Content — centré vertical */}
         <div style={{
           position: "relative", zIndex: 1, width: "100%", maxWidth: 1100,
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "40px 24px 60px" : "40px 24px 60px",
+          padding: isMobile ? "28px 24px 40px" : "32px 24px 40px",
         }}>
 
-          {/* H1 — 2 lignes, centré, très grand */}
+          {/* H1 */}
           <h1 className="hero-animate-1" style={{
             fontSize: isMobile ? "clamp(2.2rem, 8vw, 2.8rem)" : "clamp(3.6rem, 5.2vw, 5.2rem)",
             fontWeight: 800,
             color: "#0D1B3E",
             lineHeight: 1.1,
             letterSpacing: "-2px",
-            marginBottom: 32,
+            marginBottom: 20,
             whiteSpace: isMobile ? "normal" : "nowrap",
           }}>
             {isFr
@@ -180,10 +174,14 @@ export default function Hero() {
           </h1>
 
           {/* Carte animée */}
-          <div className="hero-animate-2" style={{ marginBottom: 40, width: "100%", display: "flex", justifyContent: "center" }}>
+          <div className="hero-animate-2" style={{ marginBottom: 20, width: "100%", display: "flex", justifyContent: "center" }}>
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
+          {/* CTA */}
+          <div className="hero-animate-3">
+            <a href="/#pricing" className="hero-cta">{isFr ? "Commencer votre challenge" : "Start your challenge"}</a>
+          </div>
 
         </div>
       </section>
