@@ -58,7 +58,6 @@ export default function Pricing() {
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px", marginBottom: 10 }}>
             {T.pricing.title} <span style={{ color: "#1565C0" }}>{T.pricing.titleGold}</span>
           </h2>
-          <p style={{ color: "#5a7090", fontSize: 15, maxWidth: 440, margin: "0 auto" }}>{T.pricing.sub}</p>
         </div>
 
         {/* Toggle */}
