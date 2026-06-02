@@ -162,12 +162,13 @@ export default function Hero() {
 
           {/* H1 — 2 lignes, centré, très grand */}
           <h1 className="hero-animate-1" style={{
-            fontSize: isMobile ? "clamp(2.4rem, 9vw, 3rem)" : "clamp(3.2rem, 5vw, 5rem)",
+            fontSize: isMobile ? "clamp(2rem, 7vw, 2.6rem)" : "clamp(2.8rem, 3.8vw, 3.8rem)",
             fontWeight: 800,
             color: "#0D1B3E",
-            lineHeight: 1.1,
-            letterSpacing: "-1.5px",
+            lineHeight: 1.12,
+            letterSpacing: "-1px",
             marginBottom: 32,
+            whiteSpace: isMobile ? "normal" : "nowrap",
           }}>
             {isFr
               ? <>Transformez votre trading démo<br />en <span style={{ color: "#1565C0" }}>vraies récompenses.</span></>
