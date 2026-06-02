@@ -37,12 +37,9 @@ export default function Footer() {
           {/* Logo + tagline */}
           <div>
             <div style={{ marginBottom: 20 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                <img src="/er-monogram.svg" alt="ER" style={{ height: 36, width: "auto", filter: "brightness(0) invert(1) opacity(0.9)" }} />
-                <div>
-                  <div style={{ fontFamily: "var(--font-cormorant)", fontSize: 14, fontWeight: 600, letterSpacing: "4px", color: "#fff", textTransform: "uppercase" }}>ELYSIUM</div>
-                  <div style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>— REWARDS —</div>
-                </div>
+              <div style={{ marginBottom: 8 }}>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "4px", color: "#fff", textTransform: "uppercase" }}>ELYSIUM</div>
+                <div style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>— REWARDS —</div>
               </div>
             </div>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>{T.footer.tagline}</p>
