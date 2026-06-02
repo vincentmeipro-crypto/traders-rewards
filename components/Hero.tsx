@@ -2,266 +2,95 @@
 import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-// Candle data: [bull, bodyY1, bodyY2, wickY1, wickY2]
-const CANDLES: [boolean, number, number, number, number][] = [
-  [true,  314, 452, 268, 498],
-  [false, 300, 382, 254, 422],
-  [true,  268, 392, 236, 438],
-  [false, 254, 338, 210, 374],
-  [true,  210, 346, 178, 392],
-  [false, 200, 282, 164, 314],
-  [true,  164, 292, 132, 328],
-  [false, 154, 236, 118, 268],
-  [true,  108, 246,  72, 282],
-  [false, 100, 178,  62, 210],
-];
-
 const TRADERS = [
-  { name: "TheBullTrader",  flag: "de", payout: 4200, size: "$100K", color: "#ef4444", initials: "TB" },
-  { name: "Alexandre P.",   flag: "fr", payout: 3850, size: "$100K", color: "#00C2FF", initials: "AP" },
-  { name: "Thomas N.",      flag: "nl", payout: 2600, size: "$100K", color: "#a855f7", initials: "TN" },
-  { name: "Jean-Pierre D.", flag: "fr", payout: 4650, size: "$100K", color: "#f59e0b", initials: "JP" },
-  { name: "Marco V.",       flag: "it", payout: 3100, size: "$100K", color: "#3b82f6", initials: "MV" },
-  { name: "Mathieu R.",     flag: "fr", payout: 3750, size: "$100K", color: "#22c55e", initials: "MR" },
-  { name: "Nicolas B.",     flag: "fr", payout: 2950, size: "$100K", color: "#06b6d4", initials: "NB" },
-  { name: "Camille F.",     flag: "fr", payout: 1850, size: "$50K",  color: "#06b6d4", initials: "CF" },
-  { name: "Karim B.",       flag: "fr", payout: 2200, size: "$50K",  color: "#00C2FF", initials: "KB" },
-  { name: "Stefan B.",      flag: "at", payout: 4100, size: "$100K", color: "#f59e0b", initials: "SB" },
-  { name: "Sarah L.",       flag: "gb", payout:  980, size: "$25K",  color: "#22c55e", initials: "SL" },
-  { name: "Carlos G.",      flag: "es", payout: 1450, size: "$50K",  color: "#00C2FF", initials: "CG" },
-  { name: "Lucas M.",       flag: "fr", payout:  420, size: "$10K",  color: "#22c55e", initials: "LM" },
-  { name: "Emma R.",        flag: "fr", payout:  360, size: "$10K",  color: "#f59e0b", initials: "ER" },
-  { name: "Yann T.",        flag: "fr", payout:  480, size: "$10K",  color: "#00C2FF", initials: "YT" },
+  { name: "TheBullTrader",  flag: "de", payout: 4200, size: "$100K", initials: "TB" },
+  { name: "Alexandre P.",   flag: "fr", payout: 3850, size: "$100K", initials: "AP" },
+  { name: "Thomas N.",      flag: "nl", payout: 2600, size: "$100K", initials: "TN" },
+  { name: "Jean-Pierre D.", flag: "fr", payout: 4650, size: "$100K", initials: "JP" },
+  { name: "Marco V.",       flag: "it", payout: 3100, size: "$100K", initials: "MV" },
+  { name: "Mathieu R.",     flag: "fr", payout: 3750, size: "$100K", initials: "MR" },
+  { name: "Nicolas B.",     flag: "fr", payout: 2950, size: "$100K", initials: "NB" },
+  { name: "Camille F.",     flag: "fr", payout: 1850, size: "$50K",  initials: "CF" },
+  { name: "Karim B.",       flag: "fr", payout: 2200, size: "$50K",  initials: "KB" },
+  { name: "Stefan B.",      flag: "at", payout: 4100, size: "$100K", initials: "SB" },
 ];
 
-function fmt(n: number): string {
+function fmt(n: number) {
   return "€" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const ENTER_MS = 550;
-const HOLD_MS  = 2800;
-const EXIT_MS  = 450;
+const ENTER_MS = 500;
+const HOLD_MS  = 3000;
+const EXIT_MS  = 400;
 const TOTAL_MS = ENTER_MS + HOLD_MS + EXIT_MS;
 
-function RewardCard({ lang, isMobile }: { lang: string; isMobile: boolean }) {
+function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
   const [idx, setIdx]       = useState(0);
   const [amount, setAmount] = useState(0);
+  const [visible, setVisible] = useState(true);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    setVisible(true);
     const trader = TRADERS[idx];
 
     const t1 = setTimeout(() => {
       if (cancelled) return;
       const start = performance.now();
-      const dur = 700;
       const tick = (now: number) => {
         if (cancelled) return;
-        const p    = Math.min((now - start) / dur, 1);
+        const p = Math.min((now - start) / 700, 1);
         const ease = 1 - Math.pow(1 - p, 3);
         setAmount(Math.round(ease * trader.payout));
         if (p < 1) rafRef.current = requestAnimationFrame(tick);
-        else        setAmount(trader.payout);
+        else setAmount(trader.payout);
       };
       rafRef.current = requestAnimationFrame(tick);
     }, ENTER_MS);
 
     const t2 = setTimeout(() => {
       if (!cancelled) {
-        setAmount(0);
-        setIdx(i => (i + 1) % TRADERS.length);
+        setVisible(false);
+        setTimeout(() => { if (!cancelled) { setAmount(0); setIdx(i => (i + 1) % TRADERS.length); } }, EXIT_MS);
       }
-    }, TOTAL_MS + 80);
+    }, TOTAL_MS);
 
-    return () => {
-      cancelled = true;
-      clearTimeout(t1);
-      clearTimeout(t2);
-      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    };
+    return () => { cancelled = true; clearTimeout(t1); clearTimeout(t2); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [idx]);
 
   const t = TRADERS[idx];
-  const enterPct = ((ENTER_MS / TOTAL_MS) * 100).toFixed(2);
-  const holdPct  = (((ENTER_MS + HOLD_MS) / TOTAL_MS) * 100).toFixed(2);
-
-  return (
-    <div style={{ width: "100%", maxWidth: 420, margin: "0 auto", position: "relative" }}>
-
-      {/* Glow behind card */}
-      <div style={{
-        position: "absolute", top: "50%", left: "50%",
-        width: 420, height: 200,
-        transform: "translate(-50%, -50%)",
-        background: `radial-gradient(ellipse, ${t.color}20 0%, transparent 70%)`,
-        pointerEvents: "none",
-        transition: "background 1s ease",
-      }} />
-
-      {/* Card */}
-      <div
-        key={idx}
-        style={{
-          background: "linear-gradient(160deg, #09090f 0%, #0d1120 100%)",
-          border: `1.5px solid ${t.color}55`,
-          borderRadius: 20,
-          padding: isMobile ? "16px 16px" : "22px 28px",
-          display: "flex",
-          alignItems: "center",
-          gap: isMobile ? 12 : 20,
-          position: "relative",
-          overflow: "hidden",
-          boxShadow: `0 0 70px ${t.color}22, 0 16px 50px rgba(0,0,0,0.7)`,
-          animation: `heroReward ${TOTAL_MS}ms linear forwards`,
-        }}
-      >
-        {/* Top bar */}
-        <div style={{
-          position: "absolute", top: 0, left: "10%", right: "10%", height: 2,
-          background: `linear-gradient(to right, transparent, ${t.color}, transparent)`,
-        }} />
-
-        {/* Left: avatar + flag */}
-        <div style={{ position: "relative", flexShrink: 0 }}>
-          <div style={{
-            width: isMobile ? 40 : 52, height: isMobile ? 40 : 52, borderRadius: "50%",
-            background: `${t.color}1a`,
-            border: `2px solid ${t.color}55`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: isMobile ? 11 : 14, fontWeight: 900, color: t.color,
-            boxShadow: `0 0 20px ${t.color}40`,
-          }}>
-            {t.initials}
-          </div>
-          <img
-            src={`https://flagcdn.com/24x18/${t.flag}.png`}
-            alt=""
-            style={{
-              position: "absolute", bottom: -3, right: -7,
-              width: 18, height: 13, borderRadius: 3,
-              border: "1px solid rgba(255,255,255,0.18)", objectFit: "cover",
-            }}
-          />
-        </div>
-
-        {/* Center: name + badge */}
-        <div style={{ flex: 1, textAlign: "left" }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 6,
-            marginBottom: 4,
-          }}>
-            <span style={{
-              display: "inline-block", width: 6, height: 6, borderRadius: "50%",
-              background: "#22c55e",
-              boxShadow: "0 0 8px #22c55e",
-              animation: "heroPulseDot 1.5s ease-in-out infinite",
-              flexShrink: 0,
-            }} />
-            <span style={{ color: t.color, fontSize: 9, fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase" }}>
-              {lang === "fr" ? "Récompense versée" : "Reward Paid"}
-            </span>
-          </div>
-          <div style={{ fontWeight: 800, fontSize: isMobile ? 12 : 15, color: "#fff", lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: isMobile ? 88 : 160 }}>
-            {t.name}
-          </div>
-          <div style={{ fontSize: isMobile ? 10 : 11, color: "#30304a", marginTop: 2 }}>
-            Trader · {t.size}
-          </div>
-        </div>
-
-        {/* Right: BIG amount */}
-        <div style={{ textAlign: "right", flexShrink: 0, marginLeft: "auto", minWidth: isMobile ? 90 : 165 }}>
-          <div style={{
-            fontSize: isMobile ? "clamp(1.3rem, 5.5vw, 1.6rem)" : "clamp(1.8rem, 5vw, 2.4rem)",
-            fontWeight: 900, color: "#22c55e", lineHeight: 1,
-            letterSpacing: "-1px",
-            fontVariantNumeric: "tabular-nums",
-            textShadow: "0 0 40px rgba(34,197,94,0.7), 0 0 80px rgba(34,197,94,0.3)",
-            whiteSpace: "nowrap",
-          }}>
-            {fmt(amount)}
-          </div>
-          <div style={{ fontSize: 9, color: "#1e1e2e", fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", marginTop: 3 }}>
-            {lang === "fr" ? "Récompense" : "Reward"}
-          </div>
-        </div>
-      </div>
-
-      <style>{`
-        @keyframes heroReward {
-          0%          { opacity: 0; transform: translateY(32px) scale(0.9);  animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1); }
-          ${enterPct}% { opacity: 1; transform: translateY(0px)  scale(1);   animation-timing-function: linear; }
-          ${holdPct}%  { opacity: 1; transform: translateY(0px)  scale(1);   animation-timing-function: ease-in; }
-          100%        { opacity: 0; transform: translateY(-18px) scale(0.96); }
-        }
-        @keyframes heroPulseDot {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50%      { opacity: 0.45; transform: scale(0.7); }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function CandleChart({ side }: { side: "left" | "right" }) {
-  const W = 520;
-  const H = 900;
-  const candleW = 26;
-  const spacing = 44;
-  const isRight = side === "right";
-
   return (
     <div style={{
-      position: "absolute",
-      top: "50%",
-      transform: isRight ? "translateY(-50%) scaleX(-1)" : "translateY(-50%)",
-      left: isRight ? undefined : 0,
-      right: isRight ? 0 : undefined,
-      width: W,
-      height: H,
-      pointerEvents: "none",
-      zIndex: 2,
+      opacity: visible ? 1 : 0,
+      transform: visible ? "translateY(0) scale(1)" : "translateY(-8px) scale(0.98)",
+      transition: "opacity 0.4s ease, transform 0.4s ease",
+      background: "#fff",
+      border: "1px solid rgba(27,79,216,0.15)",
+      borderRadius: 16,
+      padding: isMobile ? "14px 16px" : "18px 22px",
+      boxShadow: "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.04)",
+      display: "flex", alignItems: "center", gap: 14,
+      minWidth: isMobile ? 240 : 280,
     }}>
-
-      <svg width={W} height={H}>
-        <defs>
-          <linearGradient id={`g-${side}`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="white" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="white" stopOpacity="0" />
-          </linearGradient>
-          <mask id={`m-${side}`}>
-            <rect width={W} height={H} fill={`url(#g-${side})`} />
-          </mask>
-        </defs>
-        <g mask={`url(#m-${side})`}>
-          {CANDLES.map(([bull, bodyY1, bodyY2, wickY1, wickY2], i) => {
-            const cx = i * spacing + (spacing - candleW) / 2 + 4;
-            const color = bull ? "#00C2FF" : "#FFFFFF";
-            return (
-              <g key={i}>
-                <line
-                  x1={cx + candleW / 2} y1={wickY1}
-                  x2={cx + candleW / 2} y2={wickY2}
-                  stroke={color} strokeWidth={1.5} strokeOpacity={0.75}
-                />
-                <rect
-                  x={cx} y={bodyY1}
-                  width={candleW} height={bodyY2 - bodyY1}
-                  fill={color} fillOpacity={0.8}
-                  rx={2}
-                />
-              </g>
-            );
-          })}
-        </g>
-      </svg>
+      <div style={{
+        width: 44, height: 44, borderRadius: "50%",
+        background: "linear-gradient(135deg, #1B4FD8, #3b82f6)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        color: "#fff", fontWeight: 800, fontSize: 14, flexShrink: 0,
+      }}>{t.initials}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ color: "#0D1B3E", fontWeight: 700, fontSize: 14, marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
+        <div style={{ color: "#8a96aa", fontSize: 12 }}>{t.size} · Récompense reçue</div>
+      </div>
+      <div style={{ color: "#22c55e", fontWeight: 900, fontSize: isMobile ? 16 : 18, flexShrink: 0 }}>{fmt(amount)}</div>
     </div>
   );
 }
 
 export default function Hero() {
   const { T, lang } = useLanguage();
+  const isFr = lang === "fr";
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -271,126 +100,169 @@ export default function Hero() {
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  const stats = [
+    { value: "200K€", label: isFr ? "Capital simulé" : "Simulated Capital" },
+    { value: "90%", label: isFr ? "Partage profit" : "Profit Split" },
+    { value: "24h", label: isFr ? "Récompenses" : "Payouts" },
+    { value: "150+", label: isFr ? "Actifs" : "Trading Assets" },
+  ];
+
+  const media = ["Bloomberg", "Yahoo Finance", "Benzinga", "MarketWatch", "TradingView"];
+
   return (
-    <section style={{
-      minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: isMobile ? "flex-start" : "center",
-      padding: isMobile ? "56px 20px 20px" : "60px 24px 40px",
-      textAlign: "center",
-      position: "relative",
-      backgroundColor: "#000000",
-      overflow: "hidden",
-    }}>
+    <>
+      <style>{`
+        @keyframes waveMove {
+          0% { transform: translateX(0) translateY(0); }
+          50% { transform: translateX(-30px) translateY(10px); }
+          100% { transform: translateX(0) translateY(0); }
+        }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .hero-animate-1 { animation: fadeUp 0.8s ease forwards; }
+        .hero-animate-2 { animation: fadeUp 0.8s ease 0.15s forwards; opacity: 0; }
+        .hero-animate-3 { animation: fadeUp 0.8s ease 0.3s forwards; opacity: 0; }
+        .hero-animate-4 { animation: fadeUp 0.8s ease 0.45s forwards; opacity: 0; }
+        .hero-animate-5 { animation: fadeUp 0.8s ease 0.6s forwards; opacity: 0; }
+        .hero-cta {
+          display: inline-flex; align-items: center; gap: 10px;
+          background: #0D1B3E; color: #fff;
+          padding: 16px 40px; border-radius: 6px;
+          font-size: 12px; font-weight: 700; letter-spacing: 2px;
+          text-transform: uppercase; text-decoration: none;
+          transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
+          box-shadow: 0 4px 20px rgba(13,27,62,0.25);
+        }
+        .hero-cta:hover { background: #1B4FD8; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(27,79,216,0.35); }
+      `}</style>
 
-      {/* Candlestick decorations - desktop only */}
-      {!isMobile && <CandleChart side="left" />}
-      {!isMobile && <CandleChart side="right" />}
+      <section style={{
+        minHeight: "100vh",
+        backgroundColor: "#FAFBFD",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        overflow: "hidden",
+        paddingTop: 72,
+      }}>
 
+        {/* Wave background SVG */}
+        <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
+          xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#dce8ff" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#f0f6ff" stopOpacity="0.2" />
+            </linearGradient>
+            <linearGradient id="waveGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#e8f0ff" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#fafbfd" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <path d="M-100,400 C200,200 400,600 700,350 C1000,100 1200,500 1540,300 L1540,900 L-100,900 Z"
+            fill="url(#waveGrad1)" style={{ animation: "waveMove 12s ease-in-out infinite" }} />
+          <path d="M-100,550 C150,350 500,700 800,480 C1100,260 1300,600 1540,420 L1540,900 L-100,900 Z"
+            fill="url(#waveGrad2)" style={{ animation: "waveMove 16s ease-in-out infinite reverse" }} />
+        </svg>
 
+        {/* Content */}
+        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: isMobile ? "40px 24px" : "60px 24px", maxWidth: 860, width: "100%" }}>
 
-      {/* Subtle radial glow */}
-      <div style={{
-        position: "absolute",
-        top: "40%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 600,
-        height: 600,
-        borderRadius: "50%",
-        background: "radial-gradient(circle, rgba(45,125,210,0.08) 0%, transparent 70%)",
-        pointerEvents: "none",
-        zIndex: 0,
-      }} />
+          {/* ER Monogram */}
+          <div className="hero-animate-1">
+            <img src="/er-monogram.svg" alt="Elysium ER" style={{ height: isMobile ? 80 : 110, width: "auto", marginBottom: 28 }} />
+          </div>
 
-      {/* Content */}
-      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%" }}>
+          {/* ELYSIUM REWARDS Typography */}
+          <div className="hero-animate-2" style={{ marginBottom: 24 }}>
+            <div style={{
+              fontFamily: "var(--font-cormorant)",
+              fontSize: isMobile ? 52 : 82,
+              fontWeight: 600,
+              letterSpacing: isMobile ? "12px" : "20px",
+              color: "#0D1B3E",
+              lineHeight: 1,
+              textTransform: "uppercase",
+              marginBottom: 10,
+            }}>
+              ELYSIUM
+            </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+              <div style={{ height: 1, width: isMobile ? 40 : 70, background: "linear-gradient(to right, transparent, #8a96aa)" }} />
+              <span style={{ fontSize: isMobile ? 11 : 13, fontWeight: 600, letterSpacing: "6px", color: "#8a96aa", textTransform: "uppercase" }}>REWARDS</span>
+              <div style={{ height: 1, width: isMobile ? 40 : 70, background: "linear-gradient(to left, transparent, #8a96aa)" }} />
+            </div>
+          </div>
 
-        {/* Logo texte — order 1 */}
-        <img
-          src="/logo-elysium-rewards.png"
-          alt="Elysium Rewards"
-          style={{ order: 1, height: isMobile ? 110 : 200, width: "auto", objectFit: "contain", marginBottom: isMobile ? -18 : -38 }}
-        />
+          {/* Tagline */}
+          <div className="hero-animate-3" style={{ marginBottom: 36 }}>
+            <p style={{
+              fontFamily: "var(--font-cormorant)",
+              fontSize: isMobile ? 20 : 26,
+              fontWeight: 400,
+              fontStyle: "italic",
+              color: "#4a5568",
+              lineHeight: 1.5,
+              maxWidth: 520,
+              margin: "0 auto",
+            }}>
+              {isFr
+                ? <>Performez votre trading démo.<br />Recevez de vraies <span style={{ color: "#1B4FD8", fontStyle: "normal", fontWeight: 600 }}>récompenses.</span></>
+                : <>Where Trading Performance Meets<br /><span style={{ color: "#1B4FD8", fontStyle: "normal", fontWeight: 600 }}>Real Rewards.</span></>}
+            </p>
+          </div>
 
-        {/* Reward card — order 2 */}
-        <div style={{
-          order: 2,
-          width: "100%",
-          maxWidth: 480,
-          marginBottom: isMobile ? 20 : 20,
-          padding: isMobile ? "0 16px" : undefined,
-        }}>
-          <RewardCard lang={lang} isMobile={isMobile} />
+          {/* CTA */}
+          <div className="hero-animate-4" style={{ marginBottom: 52 }}>
+            <a href="/#pricing" className="hero-cta">
+              {isFr ? "Commencer le challenge" : "Start Challenge"}
+              <span style={{ fontSize: 16 }}>→</span>
+            </a>
+          </div>
+
+          {/* Live Reward Card */}
+          <div className="hero-animate-4" style={{ marginBottom: 52 }}>
+            <LiveRewardCard isMobile={isMobile} />
+          </div>
+
+          {/* Stats bar */}
+          <div className="hero-animate-5" style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            gap: 0, flexWrap: "wrap",
+            borderTop: "1px solid rgba(0,0,0,0.07)",
+            borderBottom: "1px solid rgba(0,0,0,0.07)",
+            padding: "20px 0", width: "100%",
+          }}>
+            {stats.map((s, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center" }}>
+                <div style={{ textAlign: "center", padding: isMobile ? "8px 20px" : "8px 36px" }}>
+                  <div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px" }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: "#8a96aa", fontWeight: 500, marginTop: 2, letterSpacing: "0.5px" }}>{s.label}</div>
+                </div>
+                {i < stats.length - 1 && <div style={{ width: 1, height: 36, background: "rgba(0,0,0,0.1)" }} />}
+              </div>
+            ))}
+          </div>
+
+          {/* Media logos */}
+          <div className="hero-animate-5" style={{ marginTop: 32 }}>
+            <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "2.5px", color: "#b0b8c8", textTransform: "uppercase", marginBottom: 16 }}>
+              Trusted by traders worldwide
+            </p>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? 16 : 32, flexWrap: "wrap" }}>
+              {media.map((m, i) => (
+                <span key={i} style={{ fontSize: isMobile ? 12 : 14, fontWeight: 700, color: "#c0c8d8", letterSpacing: "0.5px", fontFamily: "Georgia, serif" }}>{m}</span>
+              ))}
+            </div>
+          </div>
+
         </div>
-
-        {/* Title — order 3 */}
-        <h1 style={{
-          order: 3,
-          fontSize: isMobile ? "clamp(2rem, 8.5vw, 2.6rem)" : "clamp(2.8rem, 4.5vw, 4.2rem)",
-          fontWeight: 900,
-          letterSpacing: "-2px",
-          lineHeight: 1.1,
-          maxWidth: 1300,
-          marginBottom: isMobile ? 6 : 16,
-        }}>
-          {T.hero.headline1}<br />
-          {T.hero.headline2}
-        </h1>
-
-        {/* Subtitle — order 4 */}
-        <p style={{
-          order: 4,
-          color: "#00C2FF",
-          fontSize: isMobile ? "clamp(11px, 3.1vw, 13px)" : 17,
-          maxWidth: isMobile ? "100%" : "none",
-          whiteSpace: isMobile ? "normal" : "nowrap",
-          lineHeight: 1.7,
-          marginBottom: isMobile ? 10 : 24,
-          textShadow: "0 0 24px rgba(0,194,255,0.45)",
-        }}>
-          {T.hero.sub}
-        </p>
-
-        {/* CTAs — order 5 */}
-        <div style={{
-          order: 5,
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          gap: 12,
-          justifyContent: "center",
-          alignItems: "center",
-          marginBottom: isMobile ? 10 : 28,
-          width: isMobile ? "100%" : "auto",
-          padding: isMobile ? "0 16px" : undefined,
-          position: "relative",
-          zIndex: 2,
-        }}>
-          <a href="#pricing" className="btn-primary btn-primary-animated"
-            style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
-            {T.hero.cta1}
-          </a>
-          <a href="#how-it-works" className="btn-secondary"
-            style={{ fontSize: 14, padding: "16px 36px", width: isMobile ? "100%" : "auto", textAlign: "center" }}>
-            {T.hero.cta2}
-          </a>
-        </div>
-
-        {/* Promo Banner — order 6 (toujours en dernier) */}
-        <div style={{
-          order: 6,
-          width: `calc(100% + ${isMobile ? 40 : 48}px)`,
-          marginLeft: isMobile ? -20 : -24,
-          marginTop: isMobile ? -40 : 0,
-        }}>
-          <a href="/#pricing" style={{ display: "block", cursor: "pointer" }}>
-            <img src={isMobile ? "/promo-50-mobile-v2.png" : "/promo-50-pc.png"} alt="Promotion" style={{ width: isMobile ? "100%" : "51%", display: "block", margin: "0 auto" }} />
-          </a>
-        </div>
-
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

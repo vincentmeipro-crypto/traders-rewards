@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from "next";
-import { DM_Sans, Bebas_Neue } from "next/font/google";
+import { DM_Sans, Bebas_Neue, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import CrispChat from "@/components/CrispChat";
@@ -7,6 +7,7 @@ import PWARegister from "@/components/PWARegister";
 
 const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-inter", weight: ["400", "500", "600", "700", "800", "900"] });
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
+const cormorant = Cormorant_Garamond({ subsets: ["latin"], variable: "--font-cormorant", weight: ["300", "400", "500", "600", "700"], style: ["normal", "italic"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.elysium-rewards.com"),
@@ -38,13 +39,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${bebas.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${bebas.variable} ${cormorant.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#070707" />
+        <meta name="theme-color" content="#FAFBFD" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={`${dmSans.variable} ${bebas.variable}`} style={{ backgroundColor: "#070707" }}>
+      <body className={`${dmSans.variable} ${bebas.variable} ${cormorant.variable}`} style={{ backgroundColor: "#FAFBFD" }}>
         <LanguageProvider>
           {children}
         </LanguageProvider>
