@@ -171,8 +171,12 @@ export default function Hero() {
             whiteSpace: isMobile ? "normal" : "nowrap",
           }}>
             {isFr
-              ? <>Transformez votre trading démo<br />en <span style={{ color: "#1565C0" }}>vraies récompenses.</span></>
-              : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards.</span></>}
+              ? isMobile
+                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#1565C0" }}>vraies récompenses</span></>
+                : <>Transformez votre trading démo<br />en <span style={{ color: "#1565C0" }}>vraies récompenses</span></>
+              : isMobile
+                ? <>Turn your trading<br />skills into<br /><span style={{ color: "#1565C0" }}>real rewards</span></>
+                : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
           </h1>
 
           {/* Carte animée */}
