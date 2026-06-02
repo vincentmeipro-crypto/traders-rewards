@@ -143,7 +143,7 @@ export default function Hero() {
         alignItems: "center",
         justifyContent: "flex-start",
         position: "relative",
-        overflow: "hidden",
+        overflow: "visible",
         paddingTop: 72,
       }}>
 
@@ -151,7 +151,7 @@ export default function Hero() {
         <div style={{
           position: "relative", zIndex: 1, width: "100%", maxWidth: 1100,
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "28px 24px 16px" : "32px 24px 0px",
+          padding: isMobile ? "28px 24px 60px" : "32px 24px 60px",
         }}>
 
           {/* H1 */}
@@ -173,8 +173,8 @@ export default function Hero() {
                 : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
           </h1>
 
-          {/* Carte animée — à cheval sur la frontière */}
-          <div className="hero-animate-2" style={{ width: "100%", display: "flex", justifyContent: "center", position: "relative", zIndex: 20, marginBottom: -44 }}>
+          {/* Carte animée — positionnée en absolue au bas du hero */}
+          <div className="hero-animate-2" style={{ position: "absolute", bottom: -44, left: "50%", transform: "translateX(-50%)", zIndex: 20, width: isMobile ? "90vw" : "auto" }}>
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
