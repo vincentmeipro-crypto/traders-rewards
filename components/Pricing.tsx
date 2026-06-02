@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
-  { size: "$200,000", id: "200k", price2: "€799", price1: "€779", popular: false },
-  { size: "$100,000", id: "100k", price2: "€439", price1: "€429", popular: true  },
-  { size: "$50,000",  id: "50k",  price2: "€299", price1: "€249", popular: false },
-  { size: "$25,000",  id: "25k",  price2: "€199", price1: "€169", popular: false },
-  { size: "$10,000",  id: "10k",  price2: "€99",  price1: "€79",  popular: false },
+  { size: "$200,000", id: "200k", price2: "€799", price1: "€779", popular: false, reward: "~€9,600" },
+  { size: "$100,000", id: "100k", price2: "€439", price1: "€429", popular: true,  reward: "~€4,800" },
+  { size: "$50,000",  id: "50k",  price2: "€299", price1: "€249", popular: false, reward: "~€2,400" },
+  { size: "$25,000",  id: "25k",  price2: "€199", price1: "€169", popular: false, reward: "~€1,200" },
+  { size: "$10,000",  id: "10k",  price2: "€99",  price1: "€79",  popular: false, reward: "~€480"   },
 ];
 
 export default function Pricing() {
@@ -170,8 +170,21 @@ export default function Pricing() {
                 <div style={{ height: 1, backgroundColor: acc.popular ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)", marginBottom: 20 }} />
 
                 {/* Price */}
-                <div style={{ textAlign: "center", marginBottom: 12 }}>
+                <div style={{ textAlign: "center", marginBottom: 10 }}>
                   <div style={{ fontSize: 20, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
+                </div>
+
+                {/* Récompense moyenne */}
+                <div style={{
+                  background: "rgba(21,101,192,0.08)",
+                  border: "1px solid rgba(21,101,192,0.2)",
+                  borderRadius: 8, padding: "8px 12px",
+                  textAlign: "center", marginBottom: 10,
+                }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "#7a90b0", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 2 }}>
+                    {isFr ? "Récompense moy." : "Avg. reward"}
+                  </div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: "#1565C0", letterSpacing: "-0.5px" }}>{acc.reward}</div>
                 </div>
 
                 {/* CTA */}
