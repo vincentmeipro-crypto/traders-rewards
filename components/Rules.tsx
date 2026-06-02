@@ -76,14 +76,14 @@ export default function Rules() {
   ];
 
   return (
-    <section id="rules" style={{ padding: "80px 24px" }}>
+    <section id="rules" style={{ padding: "100px 24px", backgroundColor: "#F3F6FB" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <span style={{ color: "#00C2FF", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.rules.label}</span>
-          <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px" }}>
-            {T.rules.title} <span className="gold-gradient">{T.rules.titleGold}</span>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <span className="section-label" style={{ display: "block", marginBottom: 16 }}>{T.rules.label}</span>
+          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px" }}>
+            {T.rules.title} <em style={{ color: "#1B4FD8", fontStyle: "italic" }}>{T.rules.titleGold}</em>
           </h2>
         </div>
 
@@ -91,11 +91,12 @@ export default function Rules() {
         <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 40 }}>
           {(["challenge", "funded"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
-              padding: "10px 28px", borderRadius: 100, fontWeight: 700, fontSize: 14, cursor: "pointer",
-              border: tab === t ? "1px solid #00C2FF" : "1px solid #222",
-              backgroundColor: tab === t ? "rgba(45,125,210,0.12)" : "transparent",
-              color: tab === t ? "#00C2FF" : "#555",
+              padding: "10px 28px", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer",
+              border: tab === t ? "1px solid #0D1B3E" : "1px solid rgba(0,0,0,0.1)",
+              backgroundColor: tab === t ? "#0D1B3E" : "#fff",
+              color: tab === t ? "#fff" : "#4a5568",
               transition: "all 0.2s",
+              boxShadow: tab === t ? "0 4px 16px rgba(13,27,62,0.2)" : "none",
             }}>
               {t === "challenge" ? labels.tabChallenge : labels.tabFunded}
             </button>
@@ -107,36 +108,36 @@ export default function Rules() {
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 24, marginBottom: 40 }}>
 
             {/* 2-Step table */}
-            <div className="card" style={{ padding: 28 }}>
+            <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
-                <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100 }}>{labels.twoStep}</span>
+                <span style={{ backgroundColor: "rgba(27,79,216,0.08)", color: "#1B4FD8", fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 100, border: "1px solid rgba(27,79,216,0.2)" }}>{labels.twoStep}</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
-                <div style={{ padding: "10px 0", color: "#444", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", borderBottom: "1px solid #2A2A38" }}>{isFr ? "Critère" : "Criteria"}</div>
-                <div style={{ padding: "10px 0", color: "#00C2FF", fontSize: 12, fontWeight: 700, textAlign: "center", borderBottom: "1px solid #2A2A38" }}>{labels.phase1}</div>
-                <div style={{ padding: "10px 0", color: "#00C2FF", fontSize: 12, fontWeight: 700, textAlign: "center", borderBottom: "1px solid #2A2A38" }}>{labels.phase2}</div>
+                <div style={{ padding: "10px 0", color: "#8a96aa", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{isFr ? "Critère" : "Criteria"}</div>
+                <div style={{ padding: "10px 0", color: "#1B4FD8", fontSize: 11, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{labels.phase1}</div>
+                <div style={{ padding: "10px 0", color: "#1B4FD8", fontSize: 11, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{labels.phase2}</div>
                 {challengeRows2Step.map((row, i) => (
                   <>
-                    <div key={`l${i}`} style={{ padding: "12px 0", color: "#666", fontSize: 13, borderBottom: i < challengeRows2Step.length - 1 ? "1px solid #111" : "none" }}>{row.label}</div>
-                    <div key={`p1${i}`} style={{ padding: "12px 0", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid #111" : "none" }}>{row.p1}</div>
-                    <div key={`p2${i}`} style={{ padding: "12px 0", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid #111" : "none" }}>{row.p2}</div>
+                    <div key={`l${i}`} style={{ padding: "12px 0", color: "#4a5568", fontSize: 13, borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.label}</div>
+                    <div key={`p1${i}`} style={{ padding: "12px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.p1}</div>
+                    <div key={`p2${i}`} style={{ padding: "12px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.p2}</div>
                   </>
                 ))}
               </div>
             </div>
 
             {/* 1-Step table */}
-            <div className="card" style={{ padding: 28 }}>
+            <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
-                <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100 }}>{labels.oneStep} ⚡</span>
+                <span style={{ backgroundColor: "rgba(27,79,216,0.08)", color: "#1B4FD8", fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 100, border: "1px solid rgba(27,79,216,0.2)" }}>{labels.oneStep} ⚡</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-                <div style={{ padding: "10px 0", color: "#444", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", borderBottom: "1px solid #2A2A38" }}>{isFr ? "Critère" : "Criteria"}</div>
-                <div style={{ padding: "10px 0", color: "#00C2FF", fontSize: 12, fontWeight: 700, textAlign: "center", borderBottom: "1px solid #2A2A38" }}>{isFr ? "Valeur" : "Value"}</div>
+                <div style={{ padding: "10px 0", color: "#8a96aa", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{isFr ? "Critère" : "Criteria"}</div>
+                <div style={{ padding: "10px 0", color: "#1B4FD8", fontSize: 11, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{isFr ? "Valeur" : "Value"}</div>
                 {challengeRows1Step.map((row, i) => (
                   <>
-                    <div key={`l${i}`} style={{ padding: "12px 0", color: "#666", fontSize: 13, borderBottom: i < challengeRows1Step.length - 1 ? "1px solid #111" : "none" }}>{row.label}</div>
-                    <div key={`v${i}`} style={{ padding: "12px 0", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", borderBottom: i < challengeRows1Step.length - 1 ? "1px solid #111" : "none" }}>{row.val}</div>
+                    <div key={`l${i}`} style={{ padding: "12px 0", color: "#4a5568", fontSize: 13, borderBottom: i < challengeRows1Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.label}</div>
+                    <div key={`v${i}`} style={{ padding: "12px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows1Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.val}</div>
                   </>
                 ))}
               </div>
@@ -148,16 +149,16 @@ export default function Rules() {
         {/* Funded Tab */}
         {tab === "funded" && (
           <div style={{ marginBottom: 40 }}>
-            <div className="card" style={{ padding: 28 }}>
+            <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 0 }}>
-                <div style={{ padding: "10px 0", color: "#444", fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.5px", borderBottom: "1px solid #2A2A38" }}>{isFr ? "Critère" : "Criteria"}</div>
-                <div style={{ padding: "10px 0", color: "#00C2FF", fontSize: 12, fontWeight: 700, textAlign: "center", borderBottom: "1px solid #2A2A38" }}>{labels.twoStep}</div>
-                <div style={{ padding: "10px 0", color: "#00C2FF", fontSize: 12, fontWeight: 700, textAlign: "center", borderBottom: "1px solid #2A2A38" }}>{labels.oneStep} ⚡</div>
+                <div style={{ padding: "10px 0", color: "#8a96aa", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{isFr ? "Critère" : "Criteria"}</div>
+                <div style={{ padding: "10px 0", color: "#1B4FD8", fontSize: 11, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{labels.twoStep}</div>
+                <div style={{ padding: "10px 0", color: "#1B4FD8", fontSize: 11, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{labels.oneStep} ⚡</div>
                 {fundedRows.map((row, i) => (
                   <>
-                    <div key={`l${i}`} style={{ padding: "14px 0", color: "#666", fontSize: 13, borderBottom: i < fundedRows.length - 1 ? "1px solid #111" : "none" }}>{row.label}</div>
-                    <div key={`v2${i}`} style={{ padding: "14px 0", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid #111" : "none" }}>{row.v2}</div>
-                    <div key={`v1${i}`} style={{ padding: "14px 0", color: "#fff", fontSize: 13, fontWeight: 600, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid #111" : "none" }}>{row.v1}</div>
+                    <div key={`l${i}`} style={{ padding: "14px 0", color: "#4a5568", fontSize: 13, borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.label}</div>
+                    <div key={`v2${i}`} style={{ padding: "14px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.v2}</div>
+                    <div key={`v1${i}`} style={{ padding: "14px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.v1}</div>
                   </>
                 ))}
               </div>
@@ -166,19 +167,19 @@ export default function Rules() {
         )}
 
         {/* Risk Philosophy Block */}
-        <div style={{ marginBottom: 32, backgroundColor: "rgba(45,125,210,0.06)", border: "1px solid rgba(45,125,210,0.2)", borderRadius: 16, padding: "28px 32px" }}>
+        <div style={{ marginBottom: 32, backgroundColor: "rgba(27,79,216,0.04)", border: "1px solid rgba(27,79,216,0.12)", borderRadius: 16, padding: "28px 32px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
             <span style={{ fontSize: 22, flexShrink: 0 }}>⚖️</span>
             <div>
-              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#00C2FF", marginBottom: 10, letterSpacing: "-0.3px" }}>
+              <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1B4FD8", marginBottom: 10, letterSpacing: "-0.3px" }}>
                 {isFr ? "Notre approche sur la gestion du risque" : "Our approach to risk management"}
               </h3>
-              <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8 }}>
+              <p style={{ color: "#4a5568", fontSize: 14, lineHeight: 1.8 }}>
                 {isFr
                   ? "Il n'existe pas de règle fixe sur la taille de vos positions. Nous surveillons activement l'activité de chaque trader et nous nous réservons le droit d'examiner tout compte présentant des signes de gestion du risque insuffisante ou non viable. Cet examen est mené au cas par cas."
                   : "There is no fixed rule on position sizing. We actively monitor every trader's activity and reserve the right to review any account showing signs of insufficient or unsustainable risk management. Each review is conducted on a case-by-case basis."}
               </p>
-              <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8, marginTop: 10 }}>
+              <p style={{ color: "#4a5568", fontSize: 14, lineHeight: 1.8, marginTop: 10 }}>
                 {isFr
                   ? "De manière générale, risquer systématiquement une part importante de la perte journalière maximale sur une seule idée de trading sera considéré comme non viable. Chez Elysium, nous privilégions les traders qui font preuve de constance, de discipline et d'une vision à long terme. Traitez votre compte comme vous le feriez avec votre propre capital réel."
                   : "In general, consistently risking a significant portion of the maximum daily loss on a single trade idea will be considered unsustainable. At Elysium, we look for traders who demonstrate consistency, discipline, and a long-term vision. Treat your account as you would your own real capital."}
@@ -190,13 +191,13 @@ export default function Rules() {
         {/* Allowed / Not Allowed */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {groups.map((group, i) => (
-            <div key={i} className="card" style={{ padding: "32px" }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, marginBottom: 24, color: group.color, textTransform: "uppercase", letterSpacing: "1.5px" }}>{group.title}</h3>
+            <div key={i} style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 32, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+              <h3 style={{ fontSize: 11, fontWeight: 700, marginBottom: 24, color: group.color, textTransform: "uppercase", letterSpacing: "2px" }}>{group.title}</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {group.items.map((rule, j) => (
                   <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                    <span style={{ color: group.color, fontSize: 16, marginTop: 1, flexShrink: 0 }}>{group.icon}</span>
-                    <span style={{ color: "#888", fontSize: 14, lineHeight: 1.5 }}>{rule}</span>
+                    <span style={{ color: group.color, fontSize: 15, marginTop: 1, flexShrink: 0, fontWeight: 700 }}>{group.icon}</span>
+                    <span style={{ color: "#4a5568", fontSize: 14, lineHeight: 1.6 }}>{rule}</span>
                   </div>
                 ))}
               </div>
@@ -205,12 +206,15 @@ export default function Rules() {
         </div>
 
         {/* CTA */}
-        <div style={{ marginTop: 60, border: "1px solid rgba(45,125,210,0.2)", borderRadius: 20, padding: "48px 40px", textAlign: "center", background: "linear-gradient(145deg, #21212B, #141208)" }}>
-          <h3 style={{ fontSize: "clamp(1.5rem, 4vw, 2.2rem)", fontWeight: 800, marginBottom: 16, letterSpacing: "-1px" }}>
-            {T.rules.ctaTitle} <span className="gold-gradient">{T.rules.ctaGold}</span>
+        <div style={{ marginTop: 60, border: "1px solid rgba(13,27,62,0.12)", borderRadius: 20, padding: "56px 40px", textAlign: "center", background: "#0D1B3E" }}>
+          <h3 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: 600, color: "#fff", marginBottom: 16, letterSpacing: "1px" }}>
+            {T.rules.ctaTitle} <em style={{ color: "#C9A84C", fontStyle: "italic" }}>{T.rules.ctaGold}</em>
           </h3>
-          <p style={{ color: "#666", fontSize: 16, marginBottom: 32 }}>{T.rules.ctaSub}</p>
-          <a href="/#pricing" className="btn-primary" style={{ fontSize: 15, padding: "16px 48px" }}>{T.rules.ctaBtn}</a>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 16, marginBottom: 32 }}>{T.rules.ctaSub}</p>
+          <a href="/#pricing" style={{ display: "inline-block", background: "#fff", color: "#0D1B3E", padding: "15px 48px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
+            onMouseOver={e => { e.currentTarget.style.background = "#C9A84C"; }}
+            onMouseOut={e => { e.currentTarget.style.background = "#fff"; }}
+          >{T.rules.ctaBtn}</a>
         </div>
 
       </div>

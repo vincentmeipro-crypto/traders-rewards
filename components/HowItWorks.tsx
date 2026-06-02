@@ -1,30 +1,83 @@
 "use client";
 import { useLanguage } from "@/lib/LanguageContext";
 
+const ICONS = ["◎", "◈", "◉"];
+
 export default function HowItWorks() {
   const { T } = useLanguage();
   return (
-    <section id="how-it-works" style={{ padding: "80px 24px" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+    <section id="how-it-works" style={{ padding: "100px 24px", backgroundColor: "#F3F6FB" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+
+        {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 72 }}>
-          <span style={{ color: "#00C2FF", fontSize: 12, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", display: "block", marginBottom: 16 }}>{T.how.label}</span>
-          <h2 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, letterSpacing: "-1px" }}>
-            {T.how.title} <span className="gold-gradient">{T.how.titleGold}</span>
+          <span className="section-label" style={{ display: "block", marginBottom: 16 }}>{T.how.label}</span>
+          <h2 style={{
+            fontFamily: "var(--font-cormorant)",
+            fontSize: "clamp(2.2rem, 5vw, 3.4rem)",
+            fontWeight: 600,
+            color: "#0D1B3E",
+            letterSpacing: "1px",
+            marginBottom: 16,
+          }}>
+            {T.how.title} <em style={{ color: "#1B4FD8", fontStyle: "italic" }}>{T.how.titleGold}</em>
           </h2>
-          <p style={{ color: "#666", marginTop: 16, fontSize: 16, maxWidth: 500, margin: "16px auto 0" }}>{T.how.sub}</p>
+          <p style={{ color: "#4a5568", fontSize: 17, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>{T.how.sub}</p>
         </div>
+
+        {/* Steps */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
           {T.how.steps.map((step, i) => (
-            <div key={i} className="card" style={{ padding: "40px 32px" }}>
-              <div style={{ fontSize: 56, fontWeight: 900, color: "rgba(255,255,255,0.08)", lineHeight: 1, marginBottom: 24, letterSpacing: "-2px" }}>0{i + 1}</div>
-              <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg, #1A5FA8, #00C2FF)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-                <span style={{ color: "#fff", fontWeight: 900, fontSize: 16 }}>{i + 1}</span>
+            <div key={i} style={{
+              background: "#fff",
+              border: "1px solid rgba(0,0,0,0.07)",
+              borderRadius: 20,
+              padding: "44px 36px",
+              position: "relative",
+              boxShadow: "0 2px 20px rgba(0,0,0,0.04)",
+              transition: "all 0.25s ease",
+            }}
+              onMouseOver={e => { e.currentTarget.style.boxShadow = "0 12px 40px rgba(27,79,216,0.1)"; e.currentTarget.style.transform = "translateY(-4px)"; }}
+              onMouseOut={e => { e.currentTarget.style.boxShadow = "0 2px 20px rgba(0,0,0,0.04)"; e.currentTarget.style.transform = "none"; }}
+            >
+              {/* Step number */}
+              <div style={{
+                fontSize: 72,
+                fontWeight: 900,
+                color: "rgba(27,79,216,0.06)",
+                lineHeight: 1,
+                marginBottom: 24,
+                fontFamily: "var(--font-cormorant)",
+                letterSpacing: "-2px",
+              }}>0{i + 1}</div>
+
+              {/* Icon badge */}
+              <div style={{
+                width: 48, height: 48, borderRadius: 12,
+                background: i === 1 ? "#0D1B3E" : "rgba(27,79,216,0.08)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                marginBottom: 20,
+                border: i === 1 ? "none" : "1px solid rgba(27,79,216,0.15)",
+              }}>
+                <span style={{ color: i === 1 ? "#fff" : "#1B4FD8", fontSize: 20 }}>{ICONS[i]}</span>
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 700, marginBottom: 12, letterSpacing: "-0.5px", color: "#ffffff" }}>{step.title}</h3>
-              <p style={{ color: "#aaaaaa", fontSize: 15, lineHeight: 1.7 }}>{step.desc}</p>
+
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0D1B3E", marginBottom: 12, letterSpacing: "-0.3px" }}>{step.title}</h3>
+              <p style={{ color: "#4a5568", fontSize: 15, lineHeight: 1.75 }}>{step.desc}</p>
+
+              {/* Connector line (not last) */}
+              {i < T.how.steps.length - 1 && (
+                <div style={{
+                  position: "absolute", right: -12, top: "50%",
+                  width: 24, height: 1,
+                  background: "linear-gradient(to right, rgba(27,79,216,0.2), transparent)",
+                  display: "none",
+                }} />
+              )}
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );
