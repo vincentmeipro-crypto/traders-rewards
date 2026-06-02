@@ -50,7 +50,7 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
-    <section id="pricing" style={{ padding: "100px 24px", backgroundColor: "#FAFBFD", scrollMarginTop: "0px" }}>
+    <section id="pricing" style={{ padding: "100px 24px", backgroundColor: "#fff", scrollMarginTop: "0px" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
@@ -97,16 +97,18 @@ export default function Pricing() {
                 flexShrink: 0,
                 width: isMobile ? "82vw" : "auto",
                 scrollSnapAlign: isMobile ? "center" : "none",
-                background: acc.popular ? "#0D1B3E" : "#fff",
-                border: acc.popular ? "none" : "1px solid rgba(0,0,0,0.08)",
-                borderRadius: 20,
-                padding: "28px 20px 24px",
+                background: "#fff",
+                border: "1px solid #3a3f4d",
+                borderRadius: 16,
+                padding: "20px 16px 18px",
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: acc.popular
-                  ? "0 20px 60px rgba(13,27,62,0.3)"
-                  : "0 4px 20px rgba(0,0,0,0.05)",
-              }}>
+                boxShadow: "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.06)",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+                onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 20px 60px rgba(27,79,216,0.15), 0 4px 16px rgba(0,0,0,0.08)"; }}
+                onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.06)"; }}
+              >
 
                 {/* Popular badge */}
                 {acc.popular && (
@@ -122,17 +124,17 @@ export default function Pricing() {
                 )}
 
                 {/* Account size */}
-                <div style={{ marginBottom: 20 }}>
-                  <div style={{ color: acc.popular ? "rgba(255,255,255,0.4)" : "#8a96aa", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>
+                <div style={{ marginBottom: 14 }}>
+                  <div style={{ color: "#8a96aa", fontSize: 9, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: acc.popular ? "#fff" : "#0D1B3E", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
                     {acc.size}
                   </div>
                 </div>
 
                 {/* Rules rows */}
-                <div style={{ flex: 1, marginBottom: 20 }}>
+                <div style={{ flex: 1, marginBottom: 14 }}>
                   {rows.map((row, i) => {
                     const accountNum = sizeMap[acc.size] ?? 0;
                     const usdAmt = row.pct != null ? Math.round(accountNum * Math.abs(row.pct)) : null;
@@ -140,25 +142,25 @@ export default function Pricing() {
                     return (
                       <div key={i} style={{
                         display: "flex", justifyContent: "space-between", alignItems: "center",
-                        padding: "7px 0",
-                        borderBottom: i < rows.length - 1 ? `1px solid ${acc.popular ? "rgba(255,255,255,0.07)" : "rgba(0,0,0,0.06)"}` : "none",
+                        padding: "5px 0",
+                        borderBottom: i < rows.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
                       }}>
-                        <span style={{ color: acc.popular ? "rgba(255,255,255,0.45)" : "#8a96aa", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                        <span style={{ color: "#8a96aa", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
                           {row.label}
                         </span>
                         <div style={{ textAlign: "right" }}>
                           {row.highlight ? (
                             <span style={{
-                              backgroundColor: "rgba(34,197,94,0.15)",
+                              backgroundColor: "rgba(34,197,94,0.12)",
                               color: "#16a34a",
                               fontSize: 11, fontWeight: 800,
                               padding: "2px 8px", borderRadius: 6,
-                              border: "1px solid rgba(34,197,94,0.3)",
+                              border: "1px solid rgba(34,197,94,0.25)",
                             }}>{row.value}</span>
                           ) : (
-                            <span style={{ color: acc.popular ? "#fff" : "#0D1B3E", fontSize: 13, fontWeight: 700 }}>{row.value}</span>
+                            <span style={{ color: "#0D1B3E", fontSize: 13, fontWeight: 700 }}>{row.value}</span>
                           )}
-                          {usdStr && <div style={{ color: acc.popular ? "rgba(255,255,255,0.25)" : "#b0b8c8", fontSize: 10, marginTop: 1 }}>{usdStr}</div>}
+                          {usdStr && <div style={{ color: "#b0b8c8", fontSize: 10, marginTop: 1 }}>{usdStr}</div>}
                         </div>
                       </div>
                     );
@@ -168,8 +170,8 @@ export default function Pricing() {
                 <div style={{ height: 1, backgroundColor: acc.popular ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)", marginBottom: 20 }} />
 
                 {/* Price */}
-                <div style={{ textAlign: "center", marginBottom: 16 }}>
-                  <div style={{ fontSize: 26, fontWeight: 900, color: acc.popular ? "#C9A84C" : "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
+                <div style={{ textAlign: "center", marginBottom: 12 }}>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
                 </div>
 
                 {/* CTA */}
@@ -178,12 +180,11 @@ export default function Pricing() {
                   padding: "13px 16px", borderRadius: 8,
                   fontSize: 12, fontWeight: 800,
                   textDecoration: "none", letterSpacing: "1.5px", textTransform: "uppercase",
-                  background: acc.popular ? "#fff" : "#0D1B3E",
-                  color: acc.popular ? "#0D1B3E" : "#fff",
+                  background: "#0D1B3E", color: "#fff",
                   transition: "all 0.2s",
                 }}
-                  onMouseOver={e => { e.currentTarget.style.background = acc.popular ? "#f0f0f0" : "#1B4FD8"; }}
-                  onMouseOut={e => { e.currentTarget.style.background = acc.popular ? "#fff" : "#0D1B3E"; }}
+                  onMouseOver={e => { e.currentTarget.style.background = "#1B4FD8"; }}
+                  onMouseOut={e => { e.currentTarget.style.background = "#0D1B3E"; }}
                 >
                   {isFr ? "Commencer" : "Get Started"}
                 </a>
