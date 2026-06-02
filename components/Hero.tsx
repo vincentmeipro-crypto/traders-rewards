@@ -151,7 +151,7 @@ export default function Hero() {
         <div style={{
           position: "relative", zIndex: 1, width: "100%", maxWidth: 1200,
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "28px 24px 60px" : "32px 40px 60px",
+          padding: isMobile ? "28px 24px 60px" : "32px 24px 60px",
         }}>
 
           {/* H1 — centré pleine largeur */}
@@ -173,19 +173,14 @@ export default function Hero() {
                 : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
           </h1>
 
-          {/* Carte + image côte à côte, à cheval sur la frontière */}
+          {/* Carte + image — absolute à cheval */}
           <div className="hero-animate-2" style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 32,
-            zIndex: 20,
-            position: "relative",
-            marginBottom: -44,
+            position: "absolute", bottom: -44, left: 0, right: 0,
+            zIndex: 20, display: "flex", justifyContent: "center", alignItems: "center", gap: 24,
           }}>
             <LiveRewardCard isMobile={isMobile} />
             {!isMobile && (
-              <img src="/4OOK.png" alt="400K" style={{ height: 120, width: "auto", objectFit: "contain" }} />
+              <img src="/4OOK.png" alt="" style={{ height: 110, width: "auto", objectFit: "contain" }} />
             )}
           </div>
 
