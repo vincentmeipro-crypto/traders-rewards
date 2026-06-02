@@ -84,7 +84,7 @@ export default function Navbar() {
         backdropFilter: "blur(16px)",
         transition: "all 0.3s ease",
       }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 0 12px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
+        <div style={{ width: "100%", padding: "0 32px 0 0", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Logo + badge PropFirm */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
