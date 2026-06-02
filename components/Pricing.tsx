@@ -32,7 +32,6 @@ export default function Pricing() {
     { label: isFr ? "Perte totale"         : "Max total loss",  value: "10%",               pct: -0.10 },
     { label: isFr ? "Jours min"            : "Min days",        value: isFr ? "4 jours" : "4 days" },
     { label: isFr ? "Limite de temps"      : "Time limit",      value: isFr ? "Illimité" : "Unlimited" },
-    { label: isFr ? "Remboursement frais"  : "Fee refunded",    value: "100%", highlight: true, green: true },
     { label: isFr ? "Partage profits"      : "Profit split",    value: isFr ? "80%" : "80%" },
   ];
 
