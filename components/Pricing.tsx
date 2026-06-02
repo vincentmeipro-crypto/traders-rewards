@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
+  { size: "$200,000", id: "200k", price2: "€799", price1: "€779", popular: false },
   { size: "$100,000", id: "100k", price2: "€439", price1: "€429", popular: true  },
   { size: "$50,000",  id: "50k",  price2: "€299", price1: "€249", popular: false },
   { size: "$25,000",  id: "25k",  price2: "€199", price1: "€169", popular: false },
@@ -47,11 +48,11 @@ export default function Pricing() {
   ];
 
   const rows = model === "2step" ? rows2step : rows1step;
-  const sizeMap: Record<string, number> = { "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
+  const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
     <section id="pricing" style={{ padding: "100px 24px", backgroundColor: "#fff", scrollMarginTop: "0px" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1350, margin: "0 auto" }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 56 }}>
@@ -82,8 +83,8 @@ export default function Pricing() {
         {/* Cards */}
         <div style={{
           display: isMobile ? "flex" : "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 16,
+          gridTemplateColumns: "repeat(5, 1fr)",
+          gap: 12,
           overflowX: isMobile ? "scroll" : "auto",
           paddingTop: 16,
           paddingBottom: isMobile ? 16 : 8,
@@ -101,7 +102,7 @@ export default function Pricing() {
                 background: "#fff",
                 border: "1px solid #3a3f4d",
                 borderRadius: 16,
-                padding: acc.popular ? "28px 16px 18px" : "20px 16px 18px",
+                padding: acc.popular ? "24px 12px 14px" : "16px 12px 14px",
                 marginTop: acc.popular ? 0 : 16,
                 display: "flex",
                 flexDirection: "column",
@@ -130,7 +131,7 @@ export default function Pricing() {
                   <div style={{ color: "#8a96aa", fontSize: 9, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
                     {acc.size}
                   </div>
                 </div>
@@ -147,7 +148,7 @@ export default function Pricing() {
                         padding: "5px 0",
                         borderBottom: i < rows.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
                       }}>
-                        <span style={{ color: "#8a96aa", fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                        <span style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
                           {row.label}
                         </span>
                         <div style={{ textAlign: "right" }}>
@@ -160,7 +161,7 @@ export default function Pricing() {
                               border: "1px solid rgba(34,197,94,0.25)",
                             }}>{row.value}</span>
                           ) : (
-                            <span style={{ color: "#0D1B3E", fontSize: 13, fontWeight: 700 }}>{row.value}</span>
+                            <span style={{ color: "#0D1B3E", fontSize: 12, fontWeight: 700 }}>{row.value}</span>
                           )}
                           {usdStr && <div style={{ color: "#b0b8c8", fontSize: 10, marginTop: 1 }}>{usdStr}</div>}
                         </div>
@@ -173,7 +174,7 @@ export default function Pricing() {
 
                 {/* Price */}
                 <div style={{ textAlign: "center", marginBottom: 12 }}>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
                 </div>
 
                 {/* CTA */}
