@@ -1424,7 +1424,6 @@ export default function DashboardClient({ user }: { user: User }) {
                       { label: "🍎 Mac", href: "https://download.terminal.free/cdn/web/metaquotes.software.corp/mt5/MetaTrader5.pkg.zip?utm_campaign=metatrader5.help" },
                       { label: "📱 iOS", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
                       { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
-                      { label: "🌐 Web", href: "https://metatraderweb.app" },
                     ].map((item, i) => (
                       <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
                         style={{ backgroundColor: "#1a1a1a", color: "#fff", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid #2a2a2a", display: "inline-block" }}>
