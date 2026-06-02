@@ -730,19 +730,18 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.tradingRulesSub}</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
-                { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#00C2FF" /> },
-                { title: "Minimum Trading Days", desc: "You must trade at least 4 different days before passing a phase.", icon: <Calendar size={20} color="#00C2FF" /> },
-                { title: "Daily Drawdown", desc: "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#00C2FF" /> },
-                { title: "Total Drawdown", desc: "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#00C2FF" /> },
-                { title: "No Time Limit", desc: "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#00C2FF" /> },
-                { title: "Any Trading Style", desc: "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#00C2FF" /> },
-                { title: "Fee Refunded", desc: "Your challenge fee is fully refunded with your first reward.", icon: <Wallet size={20} color="#00C2FF" /> },
-                { title: "Reward Split", desc: "Certified traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#00C2FF" /> },
+                { title: isFr ? "Objectif de profit" : "Profit Target", desc: isFr ? "Phase 1 : atteindre 10% de profit. Phase 2 : atteindre 5% de profit." : "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#1565C0" /> },
+                { title: isFr ? "Jours de trading minimum" : "Minimum Trading Days", desc: isFr ? "Vous devez trader au moins 4 jours différents avant de valider une phase." : "You must trade at least 4 different days before passing a phase.", icon: <Calendar size={20} color="#1565C0" /> },
+                { title: isFr ? "Drawdown journalier" : "Daily Drawdown", desc: isFr ? "Votre compte ne peut pas perdre plus de 5% de sa valeur en une journée (2 Étapes) ou 3% (1 Étape)." : "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#1565C0" /> },
+                { title: isFr ? "Drawdown total" : "Total Drawdown", desc: isFr ? "Votre compte ne peut pas descendre de plus de 10% sous le solde de départ." : "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#1565C0" /> },
+                { title: isFr ? "Sans limite de temps" : "No Time Limit", desc: isFr ? "Prenez le temps qu'il vous faut. Il n'y a pas de date d'expiration sur votre challenge." : "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#1565C0" /> },
+                { title: isFr ? "Tous styles de trading" : "Any Trading Style", desc: isFr ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées." : "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#1565C0" /> },
+                { title: isFr ? "Partage des profits" : "Reward Split", desc: isFr ? "Les traders certifiés gardent 80% des profits. Récompenses traitées sous 24-48h." : "Certified traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#1565C0" /> },
               ].map((rule, i) => (
                 <div key={i} className="card" style={{ padding: 24 }}>
-                  <div style={{ backgroundColor: "rgba(201,168,76,0.1)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
+                  <div style={{ backgroundColor: "rgba(21,101,192,0.08)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
-                  <div style={{ color: "#666", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
+                  <div style={{ color: "#7a90b0", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
                 </div>
               ))}
             </div>
