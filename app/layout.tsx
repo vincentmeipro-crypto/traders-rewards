@@ -41,10 +41,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${outfit.variable} ${bebas.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#FAFBFD" />
+        <meta name="theme-color" content="#EBF5FF" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={`${outfit.variable} ${bebas.variable}`} style={{ backgroundColor: "#FAFBFD" }}>
+      <body className={`${outfit.variable} ${bebas.variable}`}>
         <LanguageProvider>
           {children}
         </LanguageProvider>

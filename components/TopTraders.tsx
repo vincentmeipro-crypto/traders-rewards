@@ -146,7 +146,7 @@ export default function TopTraders() {
   const doubled = [...TRADERS, ...TRADERS];
 
   return (
-    <section style={{ padding: "100px 0 0", overflow: "hidden", background: "#F3F6FB" }}>
+    <section style={{ padding: "100px 0 0", overflow: "hidden", background: "transparent" }}>
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px" }}>
@@ -176,7 +176,7 @@ export default function TopTraders() {
                 : "Based on 6% average profit, after the 20% split with Elysium."}
             </p>
           </div>
-          <div style={{ background: "#fff", borderRadius: 16, border: "1px solid rgba(0,0,0,0.07)", overflow: "hidden", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+          <div style={{ background: "#fff", borderRadius: 16, border: "1px solid rgba(26,114,245,0.15)", overflow: "hidden", boxShadow: "0 4px 24px rgba(26,114,245,0.08)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(0,0,0,0.02)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
               {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
                 <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#8a96aa", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
@@ -194,7 +194,7 @@ export default function TopTraders() {
       </div>
 
       {/* Scrolling marquee */}
-      <div style={{ overflow: "hidden", borderTop: "1px solid rgba(0,0,0,0.06)", borderBottom: "1px solid rgba(0,0,0,0.06)", padding: "20px 0", background: "#fff" }}>
+      <div style={{ overflow: "hidden", borderTop: "1px solid rgba(26,114,245,0.1)", borderBottom: "1px solid rgba(26,114,245,0.1)", padding: "20px 0", background: "rgba(255,255,255,0.7)" }}>
         <div className="marquee-track">
           {doubled.map((t, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, marginRight: 32, flexShrink: 0, padding: "4px 20px 4px 4px", background: "rgba(0,0,0,0.02)", borderRadius: 100, border: "1px solid rgba(0,0,0,0.05)" }}>

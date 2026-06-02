@@ -51,7 +51,7 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
-    <section id="pricing" style={{ padding: "100px 24px", backgroundColor: "#fff", scrollMarginTop: "0px" }}>
+    <section id="pricing" style={{ padding: "100px 24px", backgroundColor: "transparent", scrollMarginTop: "0px" }}>
       <div style={{ maxWidth: 1350, margin: "0 auto" }}>
 
         {/* Header */}
@@ -100,13 +100,13 @@ export default function Pricing() {
                 width: isMobile ? "82vw" : "auto",
                 scrollSnapAlign: isMobile ? "center" : "none",
                 background: "#fff",
-                border: "1px solid #3a3f4d",
+                border: "1px solid rgba(26,114,245,0.25)",
                 borderRadius: 16,
                 padding: acc.popular ? "24px 12px 14px" : "16px 12px 14px",
                 marginTop: acc.popular ? 0 : 16,
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.06)",
+                boxShadow: "0 8px 40px rgba(26,114,245,0.12), 0 2px 8px rgba(26,114,245,0.06)",
                 transition: "transform 0.2s, box-shadow 0.2s",
               }}
                 onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 20px 60px rgba(27,79,216,0.15), 0 4px 16px rgba(0,0,0,0.08)"; }}

@@ -76,7 +76,7 @@ export default function Rules() {
   ];
 
   return (
-    <section id="rules" style={{ padding: "100px 24px", backgroundColor: "#F3F6FB" }}>
+    <section id="rules" style={{ padding: "100px 24px", backgroundColor: "transparent" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}

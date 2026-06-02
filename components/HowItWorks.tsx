@@ -6,7 +6,7 @@ const ICONS = ["◎", "◈", "◉"];
 export default function HowItWorks() {
   const { T } = useLanguage();
   return (
-    <section id="how-it-works" style={{ padding: "100px 24px", backgroundColor: "#F3F6FB" }}>
+    <section id="how-it-works" style={{ padding: "100px 24px", backgroundColor: "transparent" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         {/* Header */}
