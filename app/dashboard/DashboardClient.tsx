@@ -586,7 +586,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             { label: T.dash.daysTradedLabel, value: c.trading_days?.toString() || "0" },
                             { label: T.dash.amountPaidLabel, value: `€${c.amount_paid}` },
                           ].map((s, i) => (
-                            <div key={i} style={{ backgroundColor: "#1a1a1a", borderRadius: 10, padding: "10px 14px" }}>
+                            <div key={i} style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "10px 14px" }}>
                               <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
                               <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#fff" }}>{s.value}</div>
                             </div>
@@ -598,7 +598,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 14 }}>
                             <div style={{ color: "#7a90b0", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>{T.dash.rewardsSection}</div>
                             {relatedPayouts.map(p => (
-                              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "#1a1a1a", borderRadius: 8, marginBottom: 6 }}>
+                              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "#F4F9FF", borderRadius: 8, marginBottom: 6 }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                   <Trophy size={14} color="#1565C0" />
                                   <span style={{ fontSize: 13, fontWeight: 700, color: "#1565C0" }}>€{p.amount?.toLocaleString()}</span>
@@ -638,7 +638,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     return (
                       <div key={c.id} style={{ backgroundColor: "#ffffff", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 14, padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
-                          <div style={{ backgroundColor: "#1a1a1a", borderRadius: 10, padding: "8px 14px" }}>
+                          <div style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "8px 14px" }}>
                             <div style={{ color: "#7a90b0", fontSize: 10, marginBottom: 2 }}>N° FACTURE</div>
                             <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#1565C0" }}>{invoiceNum}</div>
                           </div>
@@ -710,7 +710,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </body></html>`);
                             w.document.close();
                           }}
-                            style={{ backgroundColor: "#1a1a1a", border: "1px solid #333", borderRadius: 10, padding: "10px 18px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                            style={{ backgroundColor: "#1565C0", border: "none", borderRadius: 10, padding: "10px 18px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
                             {T.dash.viewInvoice}
                           </button>
                         </div>
@@ -1002,7 +1002,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ display: "flex", gap: 10 }}>
                     {([["card", T.kyc.idCard], ["passport", T.kyc.passport]] as const).map(([val, label]) => (
                       <button key={val} onClick={() => { setKycIdType(val); if (val === "passport") setKycFiles(f => ({ ...f, id_back: null })); }}
-                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #00C2FF" : "1px solid #2a2a2a", backgroundColor: kycIdType === val ? "rgba(45,125,210,0.1)" : "#0a0a0a", color: kycIdType === val ? "#00C2FF" : "#555", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
+                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #1565C0" : "1px solid rgba(21,101,192,0.15)", backgroundColor: kycIdType === val ? "rgba(21,101,192,0.08)" : "#F4F9FF", color: kycIdType === val ? "#1565C0" : "#7a90b0", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
                         {label}
                       </button>
                     ))}
@@ -1116,7 +1116,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             {T.dash.openCert} {cert.label} →
                           </a>
                         ) : (
-                          <div style={{ textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, backgroundColor: "#1a1a1a", color: "#444" }}>
+                          <div style={{ textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, backgroundColor: "#F4F9FF", color: "#444" }}>
                             🔒 {cert.label}
                           </div>
                         )}
@@ -1234,7 +1234,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   : "Contact us to submit your application. We reply within 48h."}
               </div>
               <a href="mailto:support@elysium-rewards.com?subject=Demande%20collaboration%20affiliation"
-                style={{ display: "inline-block", backgroundColor: "#00C2FF", color: "#000", fontWeight: 800, fontSize: 14, padding: "14px 36px", borderRadius: 12, textDecoration: "none" }}>
+                style={{ display: "inline-block", backgroundColor: "#1565C0", color: "#fff", fontWeight: 800, fontSize: 14, padding: "14px 36px", borderRadius: 12, textDecoration: "none" }}>
                 support@elysium-rewards.com
               </a>
             </div>
@@ -1404,7 +1404,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       ].map((item, i) => (
                         <div key={i} style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "10px 14px" }}>
                           <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}</div>
-                          <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8", wordBreak: "break-all" }}>{item.value}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: "#1565C0", wordBreak: "break-all" }}>{item.value}</div>
                         </div>
                       ))}
                     </div>
