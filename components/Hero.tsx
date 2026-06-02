@@ -155,18 +155,18 @@ export default function Hero() {
 
         {/* Content — centré vertical */}
         <div style={{
-          position: "relative", zIndex: 1, width: "100%", maxWidth: 860,
+          position: "relative", zIndex: 1, width: "100%", maxWidth: 1100,
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
           padding: isMobile ? "40px 24px 60px" : "40px 24px 60px",
         }}>
 
           {/* H1 — 2 lignes, centré, très grand */}
           <h1 className="hero-animate-1" style={{
-            fontSize: isMobile ? "clamp(2rem, 7vw, 2.6rem)" : "clamp(2.8rem, 3.8vw, 3.8rem)",
+            fontSize: isMobile ? "clamp(2.2rem, 8vw, 2.8rem)" : "clamp(3.6rem, 5.2vw, 5.2rem)",
             fontWeight: 800,
             color: "#0D1B3E",
-            lineHeight: 1.12,
-            letterSpacing: "-1px",
+            lineHeight: 1.1,
+            letterSpacing: "-2px",
             marginBottom: 32,
             whiteSpace: isMobile ? "normal" : "nowrap",
           }}>
