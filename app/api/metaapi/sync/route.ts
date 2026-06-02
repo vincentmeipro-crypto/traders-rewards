@@ -42,8 +42,13 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 2. Count trading days + best day profit tracking
   const prevTradingDays = challenge.trading_days as number;
-  const tradedToday = Math.abs(newBalance - prevBalance) > 0.01;
-  const newTradingDays = tradedToday ? prevTradingDays + 1 : prevTradingDays;
+  const lastSyncedAt = challenge.last_synced_at as string | null;
+  const lastSyncedDay = lastSyncedAt ? new Date(lastSyncedAt).toDateString() : null;
+  const today = new Date().toDateString();
+  const alreadyCountedToday = lastSyncedDay === today;
+  const balanceChanged = Math.abs(newBalance - prevBalance) > 0.01;
+  // Only increment trading_days once per calendar day, regardless of sync frequency
+  const newTradingDays = (balanceChanged && !alreadyCountedToday) ? prevTradingDays + 1 : prevTradingDays;
   const dayProfit = newBalance - prevBalance;
   const prevBestDay = (challenge.best_day_profit as number | null) ?? 0;
   const newBestDay = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);

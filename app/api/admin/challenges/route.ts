@@ -104,9 +104,13 @@ export async function PATCH(req: NextRequest) {
   // Get current challenge to detect balance change
   const { data: current } = await admin.from("challenges").select("*").eq("id", id).single();
 
-  // Auto-increment trading_days if balance changed
+  // Auto-increment trading_days if balance changed — once per calendar day only
   if (current && updates.balance !== undefined && updates.balance !== current.balance) {
-    updates.trading_days = (current.trading_days || 0) + 1;
+    const lastSyncedDay = current.last_synced_at ? new Date(current.last_synced_at).toDateString() : null;
+    const alreadyCountedToday = lastSyncedDay === new Date().toDateString();
+    if (!alreadyCountedToday) {
+      updates.trading_days = (current.trading_days || 0) + 1;
+    }
     updates.last_synced_at = new Date().toISOString();
   }
 
