@@ -23,10 +23,15 @@ html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-inter), 'DM Sans', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-outfit), 'Outfit', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+:root {
+  --font-inter: var(--font-outfit);
+  --font-cormorant: var(--font-outfit);
 }
 
 .gold-gradient {
