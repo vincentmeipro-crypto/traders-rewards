@@ -84,15 +84,15 @@ export default function Navbar() {
         backdropFilter: "blur(16px)",
         transition: "all 0.3s ease",
       }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 0 12px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Logo + badge PropFirm */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
-              <img src="/logo-noir-transparent.png" alt="Elysium Rewards" style={{ height: 38, width: "auto" }} />
+              <img src="/logo-noir-transparent.png" alt="Elysium Rewards" style={{ height: 48, width: "auto" }} />
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "4px", color: "#0D1B3E", textTransform: "uppercase", lineHeight: 1 }}>ELYSIUM</span>
-                <span style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "#8a96aa", textTransform: "uppercase", lineHeight: 1.4 }}>— REWARDS —</span>
+                <span style={{ fontSize: 19, fontWeight: 700, letterSpacing: "5px", color: "#0D1B3E", textTransform: "uppercase", lineHeight: 1 }}>ELYSIUM</span>
+                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "3px", color: "#8a96aa", textTransform: "uppercase", lineHeight: 1.4 }}>— REWARDS —</span>
               </div>
             </a>
 
