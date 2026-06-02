@@ -47,7 +47,7 @@ function ProgressBar({ value, max, color = "#00C2FF", danger = false }: { value:
   const pct = Math.min((value / max) * 100, 100);
   const barColor = danger && pct > 70 ? "#ef4444" : danger && pct > 40 ? "#f59e0b" : color;
   return (
-    <div style={{ backgroundColor: "#1a1a1a", borderRadius: 100, height: 8, overflow: "hidden", marginTop: 8 }}>
+    <div style={{ backgroundColor: "#EBF4FF", borderRadius: 100, height: 8, overflow: "hidden", marginTop: 8 }}>
       <div style={{ width: `${pct}%`, height: "100%", backgroundColor: barColor, borderRadius: 100, transition: "width 0.5s ease" }} />
     </div>
   );
@@ -100,19 +100,19 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", display: "block" }}>
         <defs>
           <linearGradient id="cgGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#00C2FF" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#00C2FF" stopOpacity="0" />
+            <stop offset="0%" stopColor="#1565C0" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#1565C0" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="cgLine" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#00C2FF" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#00C2FF" />
+            <stop offset="0%" stopColor="#1565C0" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#1565C0" />
           </linearGradient>
         </defs>
 
         {/* Grid */}
         {[0, 0.25, 0.5, 0.75, 1].map(r => (
           <line key={r} x1={PAD.left} y1={PAD.top + r * chartH} x2={PAD.left + chartW} y2={PAD.top + r * chartH}
-            stroke="#1e1e1e" strokeWidth={1} />
+            stroke="rgba(21,101,192,0.08)" strokeWidth={1} />
         ))}
 
         {/* Zone between floor and target: green tint */}
@@ -137,8 +137,8 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
 
         {/* Start line (faint) */}
         <line x1={PAD.left} y1={sY} x2={PAD.left + chartW} y2={sY}
-          stroke="#333" strokeWidth={1} strokeDasharray="3,6" />
-        <text x={PAD.left - 6} y={sY + 4} fill="#444" fontSize={8} textAnchor="end">{fmt(startBal)}</text>
+          stroke="rgba(21,101,192,0.15)" strokeWidth={1} strokeDasharray="3,6" />
+        <text x={PAD.left - 6} y={sY + 4} fill="#7a90b0" fontSize={8} textAnchor="end">{fmt(startBal)}</text>
 
         {/* Area fill */}
         <path d={areaPath} fill="url(#cgGrad)" />
@@ -148,25 +148,25 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
           strokeLinecap="round" strokeLinejoin="round" />
 
         {/* Pulse ring on current point */}
-        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#00C2FF" strokeOpacity={0}>
+        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#1565C0" strokeOpacity={0}>
           <animate attributeName="r" values="8;18" dur="1.8s" repeatCount="indefinite" />
           <animate attributeName="stroke-opacity" values="0.5;0" dur="1.8s" repeatCount="indefinite" />
         </circle>
 
         {/* Current point dot */}
-        <circle cx={cX} cy={cY} r={5} fill="#00C2FF" stroke="#000" strokeWidth={2} />
+        <circle cx={cX} cy={cY} r={5} fill="#1565C0" stroke="#fff" strokeWidth={2} />
 
         {/* Current value label */}
-        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#00C2FF" />
+        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#1565C0" />
         <text x={cX} y={cY - 13} fill="#fff" fontSize={9} textAnchor="middle" fontWeight={800}>
           {fmt(currentBal)}
         </text>
 
         {/* X-axis labels */}
-        <text x={PAD.left} y={H - 6} fill="#333" fontSize={9} textAnchor="middle">
+        <text x={PAD.left} y={H - 6} fill="#7a90b0" fontSize={9} textAnchor="middle">
           {isFr ? "Jour 1" : "Day 1"}
         </text>
-        <text x={cX} y={H - 6} fill="#00C2FF" fontSize={9} textAnchor="middle" fontWeight={700}>
+        <text x={cX} y={H - 6} fill="#1565C0" fontSize={9} textAnchor="middle" fontWeight={700}>
           {isFr ? `J.${challenge.trading_days}` : `D.${challenge.trading_days}`}
         </text>
       </svg>
@@ -174,7 +174,7 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
       {/* Legend */}
       <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 8 }}>
         {[
-          { color: "#00C2FF", label: isFr ? "Solde" : "Balance" },
+          { color: "#1565C0", label: isFr ? "Solde" : "Balance" },
           { color: "#22c55e", label: isFr ? "Objectif" : "Target", dashed: true },
           { color: "#ef4444", label: isFr ? "Plancher" : "Floor", dashed: true },
         ].map((item, i) => (
@@ -183,7 +183,7 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
               <line x1={0} y1={5} x2={24} y2={5} stroke={item.color} strokeWidth={item.dashed ? 1.5 : 2.5}
                 strokeDasharray={item.dashed ? "4,3" : undefined} />
             </svg>
-            <span style={{ fontSize: 10, color: "#555", fontWeight: 600 }}>{item.label}</span>
+            <span style={{ fontSize: 10, color: "#7a90b0", fontWeight: 600 }}>{item.label}</span>
           </div>
         ))}
       </div>
@@ -391,13 +391,13 @@ export default function DashboardClient({ user }: { user: User }) {
   const totalDrawdownPct = Math.max(0, totalDrawdownRaw).toFixed(2);
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#070707", fontFamily: "Inter, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "linear-gradient(180deg, #ffffff 0%, #D6EDFF 60%, #B8DFFF 100%)", backgroundAttachment: "fixed", fontFamily: "var(--font-outfit), 'Outfit', sans-serif" }}>
 
       {/* Sidebar — desktop only */}
       {!isMobile && (
-        <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#0a0a0a", borderRight: "1px solid #1a1a1a", display: "flex", flexDirection: "column", zIndex: 50 }}>
-          <div style={{ padding: "20px 20px", borderBottom: "1px solid #1a1a1a" }}>
-            <img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 160, height: 160, objectFit: "contain", mixBlendMode: "screen" }} />
+        <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#ffffff", borderRight: "1px solid rgba(21,101,192,0.12)", display: "flex", flexDirection: "column", zIndex: 50, boxShadow: "2px 0 20px rgba(21,101,192,0.06)" }}>
+          <div style={{ padding: "20px 20px", borderBottom: "1px solid rgba(21,101,192,0.1)" }}>
+            <img src="/logo-noir-transparent.png" alt="Elysium" style={{ width: 120, height: "auto", objectFit: "contain" }} />
           </div>
 
           <nav style={{ padding: "16px 12px", flex: 1, overflowY: "auto" }}>
@@ -417,34 +417,34 @@ export default function DashboardClient({ user }: { user: User }) {
               <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
                 display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
                 borderRadius: 10, marginBottom: 4, cursor: "pointer",
-                backgroundColor: activeTab === item.tab ? "rgba(201,168,76,0.1)" : "transparent",
-                borderLeft: activeTab === item.tab ? "2px solid #00C2FF" : "2px solid transparent",
+                backgroundColor: activeTab === item.tab ? "rgba(21,101,192,0.08)" : "transparent",
+                borderLeft: activeTab === item.tab ? "2px solid #1565C0" : "2px solid transparent",
                 transition: "all 0.15s",
               }}
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
               onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <span style={{ color: activeTab === item.tab ? "#00C2FF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#00C2FF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "#ffffff") }}>{item.label}</span>
+                <span style={{ color: activeTab === item.tab ? "#1565C0" : (item.tab === "kyc" && kycStatus === "approved" ? "#1565C0" : "#0D1B3E") }}>{item.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#1565C0" : (item.tab === "kyc" && kycStatus === "approved" ? "#1565C0" : "#0D1B3E") }}>{item.label}</span>
               </div>
             ))}
           </nav>
 
-          <div style={{ padding: "12px 12px", borderTop: "1px solid #1a1a1a", flexShrink: 0 }}>
+          <div style={{ padding: "12px 12px", borderTop: "1px solid rgba(21,101,192,0.1)", flexShrink: 0 }}>
             {/* Language selector */}
             <div style={{ padding: "10px 16px", marginBottom: 4, display: "flex", flexWrap: "wrap", gap: 6 }}>
               {languages.map(l => (
                 <button key={l.code} onClick={() => setLang(l.code)}
-                  style={{ background: "none", border: lang === l.code ? "1px solid #00C2FF" : "1px solid #1a1a1a", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
+                  style={{ background: "none", border: lang === l.code ? "1px solid #1565C0" : "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
                   <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code === "ar" ? "sa" : l.code === "pt" ? "br" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
                 </button>
               ))}
             </div>
             <div style={{ padding: "8px 16px", marginBottom: 4 }}>
-              <div style={{ fontSize: 11, color: "#555", marginBottom: 3 }}>{T.dash.loggedInAs}</div>
-              <div style={{ fontSize: 12, color: "#888", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
+              <div style={{ fontSize: 11, color: "#7a90b0", marginBottom: 3 }}>{T.dash.loggedInAs}</div>
+              <div style={{ fontSize: 12, color: "#3a5070", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
             </div>
-            <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "#555" }}
+            <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "#7a90b0" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
               onMouseOut={e => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#555"; }}>
               <LogOut size={16} />
@@ -457,9 +457,9 @@ export default function DashboardClient({ user }: { user: User }) {
       {/* Top bar — mobile only */}
       {isMobile && (
         <>
-          <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
-            <a href="/"><img src="/logo-elysium-rewards.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain", mixBlendMode: "screen" }} /></a>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#00C2FF" }}>
+          <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#ffffff", borderBottom: "1px solid rgba(21,101,192,0.1)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", boxShadow: "0 2px 12px rgba(21,101,192,0.06)" }}>
+            <a href="/"><img src="/logo-noir-transparent.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain" }} /></a>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#1565C0" }}>
               {([
                 { tab: "dashboard", label: T.dash.dashboard },
                 { tab: "challenges", label: T.dash.challenges },
@@ -476,12 +476,12 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
             <button onClick={() => setMenuOpen(o => !o)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: 5, padding: 4 }}>
               {menuOpen ? (
-                <span style={{ color: "#00C2FF", fontSize: 22, lineHeight: 1 }}>✕</span>
+                <span style={{ color: "#1565C0", fontSize: 22, lineHeight: 1 }}>✕</span>
               ) : (
                 <>
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#00C2FF", borderRadius: 2 }} />
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#00C2FF", borderRadius: 2 }} />
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#00C2FF", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#1565C0", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#1565C0", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#1565C0", borderRadius: 2 }} />
                 </>
               )}
             </button>
@@ -489,7 +489,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
           {/* Dropdown menu */}
           {menuOpen && (
-            <div style={{ position: "fixed", top: 57, left: 0, right: 0, bottom: 0, backgroundColor: "#070707", zIndex: 99, overflowY: "auto", padding: "12px 0 40px" }}>
+            <div style={{ position: "fixed", top: 57, left: 0, right: 0, bottom: 0, backgroundColor: "#F2F8FF", zIndex: 99, overflowY: "auto", padding: "12px 0 40px" }}>
               {([
                 { icon: <LayoutDashboard size={20} />, label: T.dash.dashboard, tab: "dashboard" },
                 { icon: <TrendingUp size={20} />, label: T.dash.challenges, tab: "challenges" },
@@ -506,12 +506,12 @@ export default function DashboardClient({ user }: { user: User }) {
                 <button key={item.tab} onClick={() => { setActiveTab(item.tab); setMenuOpen(false); }} style={{
                   display: "flex", alignItems: "center", gap: 16, width: "100%",
                   padding: "16px 24px", background: "none", border: "none", cursor: "pointer",
-                  borderBottom: "1px solid #111",
-                  backgroundColor: activeTab === item.tab ? "rgba(0,194,255,0.08)" : "transparent",
-                  borderLeft: activeTab === item.tab ? "3px solid #00C2FF" : "3px solid transparent",
+                  borderBottom: "1px solid rgba(21,101,192,0.08)",
+                  backgroundColor: activeTab === item.tab ? "rgba(21,101,192,0.08)" : "transparent",
+                  borderLeft: activeTab === item.tab ? "3px solid #1565C0" : "3px solid transparent",
                 }}>
-                  <span style={{ color: activeTab === item.tab ? "#00C2FF" : "#555" }}>{item.icon}</span>
-                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#00C2FF" : "#fff" }}>{item.label}</span>
+                  <span style={{ color: activeTab === item.tab ? "#1565C0" : "#7a90b0" }}>{item.icon}</span>
+                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#1565C0" : "#0D1B3E" }}>{item.label}</span>
                   {activeTab === item.tab && <ChevronRight size={16} color="#00C2FF" style={{ marginLeft: "auto" }} />}
                 </button>
               ))}
@@ -533,10 +533,10 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "history" && (
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.history}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.historySub}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.historySub}</p>
 
             {allChallenges.length === 0 ? (
-              <div style={{ padding: 40, textAlign: "center", color: "#555" }}>{T.dash.noHistory}</div>
+              <div style={{ padding: 40, textAlign: "center", color: "#7a90b0" }}>{T.dash.noHistory}</div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {allChallenges.map((c, idx) => {
@@ -557,22 +557,22 @@ export default function DashboardClient({ user }: { user: User }) {
                       {/* Timeline dot + line */}
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 24, flexShrink: 0 }}>
                         <div style={{ width: 12, height: 12, borderRadius: "50%", backgroundColor: dotColor, marginTop: 16, flexShrink: 0, boxShadow: `0 0 8px ${dotColor}80` }} />
-                        {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#1a1a1a", minHeight: 32 }} />}
+                        {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "rgba(21,101,192,0.1)", minHeight: 32 }} />}
                       </div>
 
                       {/* Card */}
-                      <div style={{ flex: 1, backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
+                      <div style={{ flex: 1, backgroundColor: "#ffffff", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
                         {/* Header */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                           <div>
                             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                               <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{c.status}</span>
-                              <span style={{ backgroundColor: "#1a1a1a", color: "#888", fontSize: 12, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
+                              <span style={{ backgroundColor: "rgba(21,101,192,0.06)", color: "#7a90b0", fontSize: 12, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
                             </div>
                           </div>
                           <div style={{ textAlign: "right" }}>
-                            <div style={{ color: "#555", fontSize: 11, marginBottom: 2 }}>{T.dash.purchasedOn}</div>
+                            <div style={{ color: "#7a90b0", fontSize: 11, marginBottom: 2 }}>{T.dash.purchasedOn}</div>
                             <div style={{ fontWeight: 700, fontSize: 13 }}>{new Date(c.created_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
                           </div>
                         </div>
@@ -587,7 +587,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             { label: T.dash.amountPaidLabel, value: `€${c.amount_paid}` },
                           ].map((s, i) => (
                             <div key={i} style={{ backgroundColor: "#1a1a1a", borderRadius: 10, padding: "10px 14px" }}>
-                              <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
+                              <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
                               <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#fff" }}>{s.value}</div>
                             </div>
                           ))}
@@ -596,13 +596,13 @@ export default function DashboardClient({ user }: { user: User }) {
                         {/* Récompenses liées */}
                         {relatedPayouts.length > 0 && (
                           <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 14 }}>
-                            <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>{T.dash.rewardsSection}</div>
+                            <div style={{ color: "#7a90b0", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>{T.dash.rewardsSection}</div>
                             {relatedPayouts.map(p => (
                               <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "#1a1a1a", borderRadius: 8, marginBottom: 6 }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                   <Trophy size={14} color="#C9A84C" />
                                   <span style={{ fontSize: 13, fontWeight: 700, color: "#22c55e" }}>€{p.amount?.toLocaleString()}</span>
-                                  <span style={{ fontSize: 11, color: "#555" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
+                                  <span style={{ fontSize: 11, color: "#7a90b0" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
                                 </div>
                                 <span style={{ backgroundColor: p.status === "paid" ? "#22c55e20" : p.status === "pending" ? "#f59e0b20" : "#ef444420", color: p.status === "paid" ? "#22c55e" : p.status === "pending" ? "#f59e0b" : "#ef4444", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
                                   {p.status === "paid" ? T.dash.rewardPaid : p.status === "pending" ? T.dash.rewardPending : T.dash.rewardRejected}
@@ -624,10 +624,10 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "invoices" && (
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.invoices}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.invoicesSub}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.invoicesSub}</p>
 
             {allChallenges.length === 0 ? (
-              <div style={{ padding: 40, textAlign: "center", color: "#555" }}>{T.dash.noInvoices}</div>
+              <div style={{ padding: 40, textAlign: "center", color: "#7a90b0" }}>{T.dash.noInvoices}</div>
             ) : (
               <>
                 {/* Liste */}
@@ -636,15 +636,15 @@ export default function DashboardClient({ user }: { user: User }) {
                     const d = new Date(c.created_at);
                     const invoiceNum = `ELY-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}-${String(allChallenges.length - idx).padStart(3,"0")}`;
                     return (
-                      <div key={c.id} style={{ backgroundColor: "#0f0f0f", border: "1px solid #1a1a1a", borderRadius: 14, padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+                      <div key={c.id} style={{ backgroundColor: "#ffffff", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 14, padding: "18px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
                           <div style={{ backgroundColor: "#1a1a1a", borderRadius: 10, padding: "8px 14px" }}>
-                            <div style={{ color: "#555", fontSize: 10, marginBottom: 2 }}>N° FACTURE</div>
-                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#00C2FF" }}>{invoiceNum}</div>
+                            <div style={{ color: "#7a90b0", fontSize: 10, marginBottom: 2 }}>N° FACTURE</div>
+                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#1565C0" }}>{invoiceNum}</div>
                           </div>
                           <div>
                             <div style={{ fontWeight: 700, fontSize: 15 }}>Challenge {c.account_size}</div>
-                            <div style={{ color: "#555", fontSize: 13 }}>{c.model} — {d.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
+                            <div style={{ color: "#7a90b0", fontSize: 13 }}>{c.model} — {d.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
                           </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -727,7 +727,7 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "rules" && (
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rules}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.tradingRulesSub}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.tradingRulesSub}</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
                 { title: "Profit Target", desc: "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#00C2FF" /> },
@@ -753,12 +753,12 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "profile" && (
           <div style={{ maxWidth: 560 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.personalInfo}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.profileSub}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.profileSub}</p>
 
             {/* Personal info form */}
             <div className="card" style={{ padding: 28, marginBottom: 20 }}>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#C9A84C" }}>{T.dash.personalInfo}</div>
-              <div style={{ color: "#555", fontSize: 12, marginBottom: 20 }}>{T.dash.kycLocked}</div>
+              <div style={{ color: "#7a90b0", fontSize: 12, marginBottom: 20 }}>{T.dash.kycLocked}</div>
 
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 14, marginBottom: 14 }}>
                 {[
@@ -769,7 +769,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <label style={{ display: "block", color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>
                       {f.label} <span style={{ color: "#333", fontSize: 10 }}>🔒</span>
                     </label>
-                    <input value={f.value} readOnly style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 14px", color: "#555", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
+                    <input value={f.value} readOnly style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#7a90b0", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
                   </div>
                 ))}
               </div>
@@ -777,17 +777,17 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ marginBottom: 14 }}>
                 <label style={{ display: "block", color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>Email <span style={{ color: "#333", fontSize: 10 }}>🔒</span></label>
                 <input value={user.email || ""} readOnly
-                  style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 14px", color: "#555", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
+                  style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#7a90b0", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
               </div>
 
               <div style={{ marginBottom: 14 }}>
                 <label style={{ display: "block", color: "#666", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.birthDate} <span style={{ color: "#333", fontSize: 10 }}>🔒</span></label>
                 <input value={profileBirthDate} readOnly
-                  style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid #1a1a1a", borderRadius: 10, padding: "12px 14px", color: "#555", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
+                  style={{ width: "100%", backgroundColor: "#0a0a0a", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#7a90b0", fontSize: 14, outline: "none", boxSizing: "border-box", cursor: "not-allowed" }} />
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.phone}</label>
+                <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.phone}</label>
                 <input value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+33 6 12 34 56 78"
                   style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = "#C9A84C")}
@@ -795,7 +795,7 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
 
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.address}</label>
+                <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.address}</label>
                 <input value={profileAddress} onChange={e => setProfileAddress(e.target.value)} placeholder="123 Rue de la Paix"
                   style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = "#C9A84C")}
@@ -809,7 +809,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   { label: T.dash.country, value: profileCountry, setter: setProfileCountry, placeholder: "France" },
                 ].map(f => (
                   <div key={f.label}>
-                    <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
+                    <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
                     <input value={f.value} onChange={e => f.setter(e.target.value)} placeholder={f.placeholder}
                       style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                       onFocus={e => (e.target.style.borderColor = "#C9A84C")}
@@ -839,14 +839,14 @@ export default function DashboardClient({ user }: { user: User }) {
             <div className="card" style={{ padding: 28 }}>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#C9A84C" }}>{T.dash.changePassword}</div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.newPassword}</label>
+                <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.newPassword}</label>
                 <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 8"
                   style={{ width: "100%", backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = "#C9A84C")}
                   onBlur={e => (e.target.style.borderColor = "#222")} />
               </div>
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: "block", color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.confirmPassword}</label>
+                <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.confirmPassword}</label>
                 <input type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} placeholder="..."
                   style={{ width: "100%", backgroundColor: "#141414", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#22c55e" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = newPassword === confirmNewPassword && confirmNewPassword ? "#22c55e" : "#C9A84C")}
@@ -876,17 +876,17 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "settings" && (
           <div style={{ maxWidth: 480 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.settings}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.manageAccount}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.manageAccount}</p>
             <div className="card" style={{ padding: 28, marginBottom: 16 }}>
-              <div style={{ color: "#555", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{T.dash.emailAddress}</div>
+              <div style={{ color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{T.dash.emailAddress}</div>
               <div style={{ fontSize: 15, fontWeight: 600 }}>{user.email}</div>
             </div>
             <div className="card" style={{ padding: 28, marginBottom: 16 }}>
-              <div style={{ color: "#555", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{T.dash.accountId}</div>
+              <div style={{ color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{T.dash.accountId}</div>
               <div style={{ fontSize: 13, color: "#666", fontFamily: "monospace" }}>{user.id}</div>
             </div>
             <div className="card" style={{ padding: 28, marginBottom: 24 }}>
-              <div style={{ color: "#555", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{T.dash.memberSince}</div>
+              <div style={{ color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{T.dash.memberSince}</div>
               <div style={{ fontSize: 15 }}>{new Date(user.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}</div>
             </div>
             <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 24px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, cursor: "pointer", color: "#ef4444", fontWeight: 600, fontSize: 14 }}>
@@ -899,18 +899,18 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "payouts" && (
           <div style={{ maxWidth: 520 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rewards}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.rewardsSub}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.rewardsSub}</p>
             {challenge?.phase !== "funded" ? (
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.rewardsLocked}</div>
-                <div style={{ color: "#555", fontSize: 14 }}>{T.dash.rewardsLockedSub}</div>
+                <div style={{ color: "#7a90b0", fontSize: 14 }}>{T.dash.rewardsLockedSub}</div>
               </div>
             ) : kycStatus !== "approved" ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><ShieldCheck size={40} color="#f59e0b" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.kyc.gateTitle}</div>
-                <div style={{ color: "#555", fontSize: 14, marginBottom: 24 }}>
+                <div style={{ color: "#7a90b0", fontSize: 14, marginBottom: 24 }}>
                   {kycStatus === "pending" ? T.kyc.gatePendingMsg : kycStatus === "rejected" ? T.kyc.gateRejectedMsg : T.kyc.gateMsg}
                 </div>
                 <button onClick={() => setActiveTab("kyc")} className="btn-primary" style={{ padding: "12px 28px", fontSize: 14 }}>
@@ -920,13 +920,13 @@ export default function DashboardClient({ user }: { user: User }) {
             ) : (
               <div className="card" style={{ padding: 32 }}>
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>{T.dash.amount}</label>
+                  <label style={{ display: "block", color: "#7a90b0", fontSize: 13, marginBottom: 8 }}>{T.dash.amount}</label>
                   <input type="number" placeholder="e.g. 1500" value={payoutForm.amount}
                     onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
                     style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
                 </div>
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>{T.dash.paymentMethod}</label>
+                  <label style={{ display: "block", color: "#7a90b0", fontSize: 13, marginBottom: 8 }}>{T.dash.paymentMethod}</label>
                   <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value }))}
                     style={{ width: "100%", backgroundColor: "#070707", border: "1px solid #222", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none" }}>
                     <option value="crypto">Crypto (USDT/BTC)</option>
@@ -934,7 +934,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   </select>
                 </div>
                 <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#888", fontSize: 13, marginBottom: 8 }}>
+                  <label style={{ display: "block", color: "#7a90b0", fontSize: 13, marginBottom: 8 }}>
                     {payoutForm.payment_method === "crypto" ? T.dash.walletAddress : "IBAN"}
                   </label>
                   <input type="text" placeholder={payoutForm.payment_method === "crypto" ? "0x... or T..." : "FR76..."}
@@ -946,7 +946,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
                     <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#22c55e" /></div>
                     <div style={{ fontWeight: 700, fontSize: 18 }}>{T.dash.requestSubmitted}</div>
-                    <div style={{ color: "#555", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
+                    <div style={{ color: "#7a90b0", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
                   </div>
                 ) : (
                   <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount || !payoutForm.wallet_address}
@@ -963,14 +963,14 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "kyc" && (
           <div style={{ maxWidth: 600 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.kyc.title}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.kyc.sub}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.kyc.sub}</p>
 
             {kycStatus === "approved" && (
               <div style={{ backgroundColor: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
                 <CheckCircle size={20} color="#22c55e" />
                 <div>
                   <div style={{ color: "#22c55e", fontWeight: 700, marginBottom: 4 }}>{T.kyc.approved}</div>
-                  <div style={{ color: "#555", fontSize: 13 }}>{T.kyc.approvedSub}</div>
+                  <div style={{ color: "#7a90b0", fontSize: 13 }}>{T.kyc.approvedSub}</div>
                 </div>
               </div>
             )}
@@ -980,7 +980,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <Clock size={20} color="#f59e0b" />
                 <div>
                   <div style={{ color: "#f59e0b", fontWeight: 700, marginBottom: 4 }}>{T.kyc.pending}</div>
-                  <div style={{ color: "#555", fontSize: 13 }}>{T.kyc.pendingSub}</div>
+                  <div style={{ color: "#7a90b0", fontSize: 13 }}>{T.kyc.pendingSub}</div>
                 </div>
               </div>
             )}
@@ -988,8 +988,8 @@ export default function DashboardClient({ user }: { user: User }) {
             {kycStatus === "rejected" && (
               <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 12, padding: "20px 24px", marginBottom: 24 }}>
                 <div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 6 }}>{T.kyc.rejected}</div>
-                {kycRejectionReason && <div style={{ color: "#888", fontSize: 13, marginBottom: 6 }}>{T.kyc.rejectedReason} {kycRejectionReason}</div>}
-                <div style={{ color: "#555", fontSize: 13 }}>{T.kyc.rejectedSub}</div>
+                {kycRejectionReason && <div style={{ color: "#7a90b0", fontSize: 13, marginBottom: 6 }}>{T.kyc.rejectedReason} {kycRejectionReason}</div>}
+                <div style={{ color: "#7a90b0", fontSize: 13 }}>{T.kyc.rejectedSub}</div>
               </div>
             )}
 
@@ -1019,7 +1019,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <div style={{ color: "#fff", fontSize: 13, fontWeight: 600, marginBottom: 4 }}>
                       {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
                     </div>
-                    <div style={{ color: "#555", fontSize: 12, marginBottom: 10 }}>{field.hint}</div>
+                    <div style={{ color: "#7a90b0", fontSize: 12, marginBottom: 10 }}>{field.hint}</div>
                     <label style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", backgroundColor: "#0a0a0a", border: `1px dashed ${kycFiles[field.key] ? "#22c55e" : "#2a2a2a"}`, borderRadius: 10, cursor: "pointer" }}>
                       <input type="file" accept="image/*,.pdf" style={{ display: "none" }}
                         onChange={e => setKycFiles(f => ({ ...f, [field.key]: e.target.files?.[0] || null }))} />
@@ -1050,7 +1050,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={48} color="#22c55e" /></div>
                 <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{T.kyc.successTitle}</div>
-                <div style={{ color: "#555", fontSize: 14 }}>{T.kyc.successSub}</div>
+                <div style={{ color: "#7a90b0", fontSize: 14 }}>{T.kyc.successSub}</div>
               </div>
             )}
           </div>
@@ -1060,7 +1060,7 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "certificates" && (
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.certificates}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>{T.dash.certSub}</p>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.certSub}</p>
 
             {(() => {
               const firstName = challenge?.client_first_name || "";
@@ -1107,7 +1107,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           {!cert.unlocked && (
                             <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
                               <Lock size={28} color="#555" />
-                              <div style={{ color: "#555", fontSize: 12, fontWeight: 700 }}>{T.dash.notUnlocked}</div>
+                              <div style={{ color: "#7a90b0", fontSize: 12, fontWeight: 700 }}>{T.dash.notUnlocked}</div>
                             </div>
                           )}
                         </div>
@@ -1135,7 +1135,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.challenges}</h1>
-                <p style={{ color: "#555", fontSize: 14 }}>{T.dash.challengesSub}</p>
+                <p style={{ color: "#7a90b0", fontSize: 14 }}>{T.dash.challengesSub}</p>
               </div>
               <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", textDecoration: "none" }}>{T.dash.newChallenge}</a>
             </div>
@@ -1143,7 +1143,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <Trophy size={48} color="#00C2FF" style={{ marginBottom: 16, opacity: 0.5 }} />
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.noChallenge}</div>
-                <div style={{ color: "#555", fontSize: 14 }}>{T.dash.noChallengeSub}</div>
+                <div style={{ color: "#7a90b0", fontSize: 14 }}>{T.dash.noChallengeSub}</div>
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1158,7 +1158,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div>
                           <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "2step" ? "2-Step" : "1-Step"}</div>
                           <div style={{ display: "flex", gap: 8 }}>
-                            <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[c.phase] || c.phase}</span>
+                            <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#1565C0", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[c.phase] || c.phase}</span>
                             <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status}</span>
                           </div>
                         </div>
@@ -1169,10 +1169,10 @@ export default function DashboardClient({ user }: { user: User }) {
                           </div>
                         </div>
                       </div>
-                      <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #1a1a1a", display: "flex", gap: 24, color: "#555", fontSize: 13, flexWrap: "wrap" }}>
-                        <span>{T.dash.tradingDays}: <b style={{ color: "#888" }}>{c.trading_days}</b></span>
+                      <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #1a1a1a", display: "flex", gap: 24, color: "#7a90b0", fontSize: 13, flexWrap: "wrap" }}>
+                        <span>{T.dash.tradingDays}: <b style={{ color: "#7a90b0" }}>{c.trading_days}</b></span>
                         {c.mt5_login && <span>MT5: <b style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_login}</b></span>}
-                        <span>{T.dash.startedOn}: <b style={{ color: "#888" }}>{new Date(c.created_at).toLocaleDateString("en-GB")}</b></span>
+                        <span>{T.dash.startedOn}: <b style={{ color: "#7a90b0" }}>{new Date(c.created_at).toLocaleDateString("en-GB")}</b></span>
                       </div>
                     </div>
                   );
@@ -1186,14 +1186,14 @@ export default function DashboardClient({ user }: { user: User }) {
         {activeTab === "affiliate" && (
           <div style={{ maxWidth: 680 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{isFr ? "Programme Affiliation" : "Affiliate Program"}</h1>
-            <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>
+            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>
               {isFr ? "Devenez partenaire Elysium et gagnez des commissions sur chaque vente générée." : "Become an Elysium partner and earn commissions on every sale you generate."}
             </p>
 
             {/* Tiers */}
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 14, marginBottom: 32 }}>
               {[
-                { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 challenges" : "1 to 10 challenges", pct: "10%", color: "#00C2FF", glow: "rgba(0,194,255,0.15)" },
+                { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 challenges" : "1 to 10 challenges", pct: "10%", color: "#1565C0", glow: "rgba(0,194,255,0.15)" },
                 { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 20 challenges" : "11 to 20 challenges", pct: "15%", color: "#a855f7", glow: "rgba(168,85,247,0.15)" },
                 { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ challenges" : "30+ challenges", pct: "20%", color: "#C9A84C", glow: "rgba(201,168,76,0.15)" },
               ].map((t, i) => (
@@ -1218,7 +1218,7 @@ export default function DashboardClient({ user }: { user: User }) {
               ].map((item, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
                   <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
-                  <span style={{ color: "#888", fontSize: 14, lineHeight: 1.6 }}>{item.text}</span>
+                  <span style={{ color: "#7a90b0", fontSize: 14, lineHeight: 1.6 }}>{item.text}</span>
                 </div>
               ))}
             </div>
@@ -1228,7 +1228,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
                 {isFr ? "Prêt à collaborer ?" : "Ready to collaborate?"}
               </div>
-              <div style={{ color: "#555", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
+              <div style={{ color: "#7a90b0", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
                 {isFr
                   ? "Contactez-nous pour soumettre votre candidature. Nous vous répondons sous 48h."
                   : "Contact us to submit your application. We reply within 48h."}
@@ -1244,14 +1244,14 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Dashboard Tab */}
         {(activeTab === "dashboard") && loading ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-            <div style={{ color: "#00C2FF", fontSize: 16 }}>Loading...</div>
+            <div style={{ color: "#1565C0", fontSize: 16 }}>Loading...</div>
           </div>
         ) : (activeTab === "dashboard") && !challenge ? (
           /* No challenge yet */
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", textAlign: "center" }}>
             <Trophy size={64} color="#00C2FF" style={{ marginBottom: 24, opacity: 0.5 }} />
             <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{T.dash.noChallengeTitle}</h2>
-            <p style={{ color: "#555", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
+            <p style={{ color: "#7a90b0", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
             <a href="/#pricing" className="btn-primary" style={{ padding: "14px 32px", fontSize: 15 }}>{T.dash.startChallenge}</a>
           </div>
         ) : (activeTab === "dashboard") && challenge && (
@@ -1280,7 +1280,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ color: "#22c55e", fontWeight: 700, fontSize: 13 }}>
                     {isFr ? "Remise fidélité −20% à vie" : "Lifetime loyalty discount −20%"}
                   </div>
-                  <div style={{ color: "#555", fontSize: 12 }}>
+                  <div style={{ color: "#7a90b0", fontSize: 12 }}>
                     {isFr ? "Appliquée automatiquement sur tous vos prochains challenges (hors promo en cours)" : "Automatically applied on all future challenges (excluding active promos)"}
                   </div>
                 </div>
@@ -1295,7 +1295,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.myChallenge}</h1>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#00C2FF", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
+                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#1565C0", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
                     {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}
                   </span>
                   <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 6 }}>
@@ -1313,15 +1313,15 @@ export default function DashboardClient({ user }: { user: User }) {
             {challenge.phase === "phase2" && (
               <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
                 <Trophy size={18} color="#00C2FF" />
-                <span style={{ color: "#00C2FF", fontWeight: 700, fontSize: 14 }}>{T.dash.phase1PassedMsg} </span>
-                <span style={{ color: "#888", fontSize: 13 }}>{T.dash.phase2Msg}</span>
+                <span style={{ color: "#1565C0", fontWeight: 700, fontSize: 14 }}>{T.dash.phase1PassedMsg} </span>
+                <span style={{ color: "#7a90b0", fontSize: 13 }}>{T.dash.phase2Msg}</span>
               </div>
             )}
             {challenge.phase === "funded" && (
               <div style={{ backgroundColor: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
                 <Trophy size={18} color="#3b82f6" />
                 <span style={{ color: "#3b82f6", fontWeight: 700, fontSize: 14 }}>{T.dash.congratulations} </span>
-                <span style={{ color: "#888", fontSize: 13 }}>{T.dash.fundedMsg}</span>
+                <span style={{ color: "#7a90b0", fontSize: 13 }}>{T.dash.fundedMsg}</span>
               </div>
             )}
             {challenge.status === "failed" && (
@@ -1335,7 +1335,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 {challenge.breach_reason && (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                     <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
-                      <span style={{ color: "#888" }}>{isFr ? "Raison : " : "Reason: "}</span>
+                      <span style={{ color: "#7a90b0" }}>{isFr ? "Raison : " : "Reason: "}</span>
                       <span style={{ color: "#ef4444", fontWeight: 700 }}>
                         {challenge.breach_reason === "daily_drawdown"
                           ? (isFr ? "Drawdown journalier dépassé" : "Daily drawdown breached")
@@ -1344,16 +1344,16 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                     {challenge.breach_value != null && (
                       <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
-                        <span style={{ color: "#888" }}>{isFr ? "Valeur atteinte : " : "Value reached: "}</span>
+                        <span style={{ color: "#7a90b0" }}>{isFr ? "Valeur atteinte : " : "Value reached: "}</span>
                         <span style={{ color: "#ef4444", fontWeight: 700 }}>{challenge.breach_value.toFixed(2)}%</span>
-                        <span style={{ color: "#555", fontSize: 12, marginLeft: 6 }}>
+                        <span style={{ color: "#7a90b0", fontSize: 12, marginLeft: 6 }}>
                           (limite : {challenge.breach_reason === "daily_drawdown" ? challenge.daily_drawdown_limit : challenge.total_drawdown_limit}%)
                         </span>
                       </div>
                     )}
                     {challenge.breach_at && (
                       <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
-                        <span style={{ color: "#888" }}>{isFr ? "Déclenché le : " : "Triggered on: "}</span>
+                        <span style={{ color: "#7a90b0" }}>{isFr ? "Déclenché le : " : "Triggered on: "}</span>
                         <span style={{ color: "#fff", fontWeight: 600 }}>
                           {new Date(challenge.breach_at).toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                         </span>
@@ -1372,7 +1372,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Balance card */}
                 <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 6 }}>{T.dash.balance}</div>
+                  <div style={{ color: "#7a90b0", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 6 }}>{T.dash.balance}</div>
                   <div style={{ fontSize: 38, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
                     ${effectiveBalance.toLocaleString()}
                   </div>
@@ -1388,7 +1388,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       <Clock size={16} color="#00C2FF" />
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{T.dash.accountPending}</div>
                     </div>
-                    <div style={{ color: "#555", fontSize: 13 }}>{T.dash.accountPendingMsg}</div>
+                    <div style={{ color: "#7a90b0", fontSize: 13 }}>{T.dash.accountPendingMsg}</div>
                   </div>
                 ) : (
                   <div style={{ backgroundColor: "rgba(34,197,94,0.05)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 14, padding: "16px 20px" }}>
@@ -1403,7 +1403,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         { label: T.dash.server, value: challenge.mt5_server || "—" },
                       ].map((item, i) => (
                         <div key={i} style={{ backgroundColor: "#0a0a0a", borderRadius: 10, padding: "10px 14px" }}>
-                          <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}</div>
+                          <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}</div>
                           <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: "#38bdf8", wordBreak: "break-all" }}>{item.value}</div>
                         </div>
                       ))}
@@ -1412,12 +1412,12 @@ export default function DashboardClient({ user }: { user: User }) {
                 )}
 
                 {/* Download platforms */}
-                <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #222", borderRadius: 20, padding: "16px 20px" }}>
+                <div style={{ backgroundColor: "#ffffff", border: "1px solid #222", borderRadius: 20, padding: "16px 20px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 3 }}>
                     <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover" }} />
                     <div style={{ fontWeight: 700, fontSize: 14 }}>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</div>
                   </div>
-                  <div style={{ color: "#00C2FF", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
+                  <div style={{ color: "#1565C0", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
                       { label: "🖥 Windows", href: "https://download.terminal.free/cdn/web/starwave.fx.ltd/mt5/starwavefx5setup.exe" },
@@ -1527,9 +1527,9 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.ok ? "#22c55e" : "#f59e0b", flexShrink: 0 }} />
                           <div>
-                            <div style={{ color: "#888", fontSize: 13 }}>{rule.label}</div>
+                            <div style={{ color: "#7a90b0", fontSize: 13 }}>{rule.label}</div>
                             <div style={{ fontSize: 11, marginTop: 2, display: "flex", gap: 6 }}>
-                              <span style={{ color: "#555" }}>{rule.pct}</span>
+                              <span style={{ color: "#7a90b0" }}>{rule.pct}</span>
                               {rule.usd && <span style={{ color: rule.usdColor, fontWeight: 700 }}>{rule.usd}</span>}
                             </div>
                           </div>
@@ -1545,20 +1545,20 @@ export default function DashboardClient({ user }: { user: User }) {
                       const buffer = Math.round(challenge.balance - floor);
                       return (
                         <div style={{ marginTop: 14, padding: "12px 14px", backgroundColor: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 10 }}>
-                          <div style={{ fontSize: 11, color: "#555", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
+                          <div style={{ fontSize: 11, color: "#7a90b0", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
                             {isFr ? "Trailing EOD — 1-Step" : "Trailing EOD — 1-Step"}
                           </div>
                           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                             <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "#555", marginBottom: 2 }}>{isFr ? "Plus haut EOD" : "EOD High"}</div>
+                              <div style={{ fontSize: 10, color: "#7a90b0", marginBottom: 2 }}>{isFr ? "Plus haut EOD" : "EOD High"}</div>
                               <div style={{ fontSize: 14, fontWeight: 800, color: "#22c55e" }}>${Math.round(challenge.highest_balance!).toLocaleString()}</div>
                             </div>
                             <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "#555", marginBottom: 2 }}>{isFr ? "Plancher actuel" : "Current floor"}</div>
+                              <div style={{ fontSize: 10, color: "#7a90b0", marginBottom: 2 }}>{isFr ? "Plancher actuel" : "Current floor"}</div>
                               <div style={{ fontSize: 14, fontWeight: 800, color: "#f59e0b" }}>${floor.toLocaleString()}</div>
                             </div>
                             <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "#555", marginBottom: 2 }}>{isFr ? "Marge restante" : "Buffer left"}</div>
+                              <div style={{ fontSize: 10, color: "#7a90b0", marginBottom: 2 }}>{isFr ? "Marge restante" : "Buffer left"}</div>
                               <div style={{ fontSize: 14, fontWeight: 800, color: buffer > 0 ? "#22c55e" : "#ef4444" }}>${buffer.toLocaleString()}</div>
                             </div>
                           </div>
