@@ -174,7 +174,7 @@ export default function Hero() {
           </h1>
 
           {/* Carte animée — à cheval sur la frontière */}
-          <div className="hero-animate-2" style={{ width: "100%", display: "flex", justifyContent: "center", position: "relative", zIndex: 10, marginBottom: -44 }}>
+          <div className="hero-animate-2" style={{ width: "100%", display: "flex", justifyContent: "center", position: "relative", zIndex: 20, marginBottom: -44 }}>
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
