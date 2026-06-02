@@ -108,7 +108,7 @@ export default function Scaling() {
                       <td style={{ padding: "13px 16px", textAlign: "right", color: "#fff", fontWeight: 800 }}>{fmt(row.size)}</td>
                       <td style={{ padding: "13px 16px", textAlign: "right", color: "#ef4444", fontWeight: 600 }}>{fmt(row.daily)}</td>
                       <td style={{ padding: "13px 16px", textAlign: "right", color: "#ef4444", fontWeight: 600 }}>{fmt(row.total)}</td>
-                      <td style={{ padding: "13px 16px", textAlign: "right", color: "#22c55e", fontWeight: 700 }}>+{fmt(row.target).replace("$", "")} <span style={{ color: "#555", fontSize: 11 }}>(+10%)</span></td>
+                      <td style={{ padding: "13px 16px", textAlign: "right", color: "#1565C0", fontWeight: 700 }}>+{fmt(row.target).replace("$", "")} <span style={{ color: "#555", fontSize: 11 }}>(+10%)</span></td>
                       <td style={{ padding: "13px 16px", textAlign: "right" }}>
                         {isCap ? (
                           <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 6, border: "1px solid rgba(201,168,76,0.3)" }}>
@@ -127,10 +127,10 @@ export default function Scaling() {
         </div>
 
         {/* Profit note */}
-        <div style={{ marginBottom: 24, backgroundColor: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 16, padding: "20px 28px", display: "flex", gap: 16, alignItems: "flex-start" }}>
+        <div style={{ marginBottom: 24, backgroundColor: "rgba(21,101,192,0.06)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 16, padding: "20px 28px", display: "flex", gap: 16, alignItems: "flex-start" }}>
           <span style={{ fontSize: 20, flexShrink: 0 }}>💡</span>
           <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8, margin: 0 }}>
-            <span style={{ color: "#22c55e", fontWeight: 700 }}>{isFr ? "Profit cumulatif" : "Cumulative profit"} — </span>
+            <span style={{ color: "#1565C0", fontWeight: 700 }}>{isFr ? "Profit cumulatif" : "Cumulative profit"} — </span>
             {labels.profitNote}
           </p>
         </div>
@@ -145,7 +145,7 @@ export default function Scaling() {
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {labels.conds.map((c, i) => (
                 <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                  <span style={{ color: "#22c55e", fontSize: 16, flexShrink: 0, marginTop: 1 }}>✓</span>
+                  <span style={{ color: "#1565C0", fontSize: 16, flexShrink: 0, marginTop: 1 }}>✓</span>
                   <span style={{ color: "#888", fontSize: 14, lineHeight: 1.5 }}>{c}</span>
                 </div>
               ))}
@@ -164,7 +164,7 @@ export default function Scaling() {
                 <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Sessions" : "Sessions"}</div>
               </div>
               <div>
-                <div style={{ color: "#22c55e", fontSize: 22, fontWeight: 900 }}>3 {isFr ? "mois" : "months"}</div>
+                <div style={{ color: "#1565C0", fontSize: 22, fontWeight: 900 }}>3 {isFr ? "mois" : "months"}</div>
                 <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Par session" : "Per session"}</div>
               </div>
               <div>

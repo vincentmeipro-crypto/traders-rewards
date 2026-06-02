@@ -74,9 +74,9 @@ function SpotlightCard({ lang }: { lang: string }) {
       <div style={{ position: "absolute", top: 0, left: "15%", right: "15%", height: 2, background: "linear-gradient(to right, transparent, #1B4FD8, transparent)", borderRadius: "0 0 4px 4px" }} />
 
       {/* Badge */}
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 100, padding: "5px 14px", marginBottom: 22 }}>
-        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 6px #22c55e" }} />
-        <span style={{ color: "#16a34a", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(21,101,192,0.08)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 100, padding: "5px 14px", marginBottom: 22 }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#1565C0", display: "inline-block", boxShadow: "0 0 6px #1565C0" }} />
+        <span style={{ color: "#1565C0", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
           {lang === "fr" ? "Récompense versée" : "Reward Paid"}
         </span>
       </div>
@@ -96,7 +96,7 @@ function SpotlightCard({ lang }: { lang: string }) {
 
       {/* Amount */}
       <div style={{ marginBottom: 6 }}>
-        <div style={{ fontSize: "clamp(2.8rem, 10vw, 4rem)", fontWeight: 900, color: "#22c55e", lineHeight: 1, letterSpacing: "-2px", fontVariantNumeric: "tabular-nums" }}>
+        <div style={{ fontSize: "clamp(2.8rem, 10vw, 4rem)", fontWeight: 900, color: "#1565C0", lineHeight: 1, letterSpacing: "-2px", fontVariantNumeric: "tabular-nums" }}>
           {fmt(amt)}
         </div>
       </div>
@@ -186,7 +186,7 @@ export default function TopTraders() {
               <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "16px 20px", borderBottom: i < tableRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#0D1B3E" }}>{row.size}</div>
                 <div style={{ fontSize: 14, color: "#4a5568" }}>{row.profit}</div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#22c55e" }}>{row.reward}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#1565C0" }}>{row.reward}</div>
               </div>
             ))}
           </div>
@@ -201,7 +201,7 @@ export default function TopTraders() {
               <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(27,79,216,0.08)", border: "1.5px solid rgba(27,79,216,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#1B4FD8", flexShrink: 0 }}>{t.initials}</div>
               <div>
                 <div style={{ fontWeight: 700, fontSize: 13, color: "#0D1B3E" }}>{t.name}</div>
-                <div style={{ fontSize: 12, color: "#22c55e", fontWeight: 700 }}>{fmt(t.payout)} · {t.size}</div>
+                <div style={{ fontSize: 12, color: "#1565C0", fontWeight: 700 }}>{fmt(t.payout)} · {t.size}</div>
               </div>
             </div>
           ))}

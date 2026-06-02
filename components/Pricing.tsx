@@ -153,11 +153,11 @@ export default function Pricing() {
                         <div style={{ textAlign: "right" }}>
                           {row.highlight ? (
                             <span style={{
-                              backgroundColor: "rgba(34,197,94,0.12)",
-                              color: "#16a34a",
+                              backgroundColor: "rgba(21,101,192,0.1)",
+                              color: "#1565C0",
                               fontSize: 11, fontWeight: 800,
                               padding: "2px 8px", borderRadius: 6,
-                              border: "1px solid rgba(34,197,94,0.25)",
+                              border: "1px solid rgba(21,101,192,0.2)",
                             }}>{row.value}</span>
                           ) : (
                             <span style={{ color: "#0D1B3E", fontSize: 12, fontWeight: 700 }}>{row.value}</span>

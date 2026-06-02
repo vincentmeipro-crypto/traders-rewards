@@ -83,7 +83,7 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
         <div style={{ color: "#0D1B3E", fontWeight: 700, fontSize: 14, marginBottom: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</div>
         <div style={{ color: "#8a96aa", fontSize: 12 }}>{t.size} · Récompense reçue</div>
       </div>
-      <div style={{ color: "#22c55e", fontWeight: 900, fontSize: isMobile ? 16 : 18, flexShrink: 0 }}>{fmt(amount)}</div>
+      <div style={{ color: "#1565C0", fontWeight: 900, fontSize: isMobile ? 16 : 18, flexShrink: 0 }}>{fmt(amount)}</div>
     </div>
   );
 }
@@ -103,11 +103,8 @@ export default function Hero() {
   const stats = [
     { value: "200K€", label: isFr ? "Capital simulé" : "Simulated Capital" },
     { value: "90%", label: isFr ? "Partage profit" : "Profit Split" },
-    { value: "24h", label: isFr ? "Récompenses" : "Payouts" },
     { value: "150+", label: isFr ? "Actifs" : "Trading Assets" },
   ];
-
-  const media = ["Bloomberg", "Yahoo Finance", "Benzinga", "MarketWatch", "TradingView"];
 
   return (
     <>
@@ -128,14 +125,14 @@ export default function Hero() {
         .hero-animate-5 { animation: fadeUp 0.8s ease 0.6s forwards; opacity: 0; }
         .hero-cta {
           display: inline-flex; align-items: center; gap: 10px;
-          background: #0D1B3E; color: #fff;
+          background: #1565C0; color: #fff;
           padding: 16px 40px; border-radius: 8px;
           font-size: 13px; font-weight: 700; letter-spacing: 1px;
           text-transform: uppercase; text-decoration: none;
           transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
-          box-shadow: 0 4px 20px rgba(13,27,62,0.22);
+          box-shadow: 0 4px 20px rgba(21,101,192,0.3);
         }
-        .hero-cta:hover { background: #1565C0; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(21,101,192,0.32); }
+        .hero-cta:hover { background: #0D47A1; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(21,101,192,0.4); }
       `}</style>
 
       <section style={{
@@ -157,20 +154,19 @@ export default function Hero() {
         }} />
 
         {/* Content */}
-        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: isMobile ? "40px 24px" : "60px 24px", maxWidth: 860, width: "100%" }}>
+        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: isMobile ? "24px 24px 40px" : "32px 24px 60px", maxWidth: 860, width: "100%" }}>
 
-          {/* ER Monogram */}
+          {/* Logo transparent */}
           <div className="hero-animate-1">
-            <img src="/er-monogram.svg" alt="Elysium ER" style={{ height: isMobile ? 80 : 110, width: "auto", marginBottom: 28 }} />
+            <img src="/logo-noir-transparent.png" alt="Elysium Rewards" style={{ height: isMobile ? 64 : 88, width: "auto", marginBottom: 20 }} />
           </div>
 
           {/* ELYSIUM REWARDS Typography */}
-          <div className="hero-animate-2" style={{ marginBottom: 24 }}>
+          <div className="hero-animate-2" style={{ marginBottom: 28 }}>
             <div style={{
-              fontFamily: "var(--font-cormorant)",
-              fontSize: isMobile ? 52 : 82,
-              fontWeight: 600,
-              letterSpacing: isMobile ? "12px" : "20px",
+              fontSize: isMobile ? 48 : 76,
+              fontWeight: 700,
+              letterSpacing: isMobile ? "10px" : "18px",
               color: "#0D1B3E",
               lineHeight: 1,
               textTransform: "uppercase",
@@ -185,66 +181,52 @@ export default function Hero() {
             </div>
           </div>
 
+          {/* Live Reward Card — sous le titre */}
+          <div className="hero-animate-3" style={{ marginBottom: 32, width: "100%", display: "flex", justifyContent: "center" }}>
+            <LiveRewardCard isMobile={isMobile} />
+          </div>
+
           {/* Tagline */}
-          <div className="hero-animate-3" style={{ marginBottom: 36 }}>
+          <div className="hero-animate-3" style={{ marginBottom: 32 }}>
             <p style={{
-              fontFamily: "var(--font-cormorant)",
-              fontSize: isMobile ? 20 : 26,
+              fontSize: isMobile ? 18 : 22,
               fontWeight: 400,
-              fontStyle: "italic",
-              color: "#4a5568",
-              lineHeight: 1.5,
-              maxWidth: 520,
+              color: "#3a5070",
+              lineHeight: 1.6,
+              maxWidth: 480,
               margin: "0 auto",
             }}>
               {isFr
-                ? <>Performez votre trading démo.<br />Recevez de vraies <span style={{ color: "#1565C0", fontStyle: "normal", fontWeight: 600 }}>récompenses.</span></>
-                : <>Where Trading Performance Meets<br /><span style={{ color: "#1565C0", fontStyle: "normal", fontWeight: 600 }}>Real Rewards.</span></>}
+                ? <>Performez votre trading démo.<br />Recevez de vraies <strong style={{ color: "#1565C0", fontWeight: 700 }}>récompenses.</strong></>
+                : <>Where Trading Performance Meets<br /><strong style={{ color: "#1565C0", fontWeight: 700 }}>Real Rewards.</strong></>}
             </p>
           </div>
 
           {/* CTA */}
-          <div className="hero-animate-4" style={{ marginBottom: 52 }}>
+          <div className="hero-animate-4" style={{ marginBottom: 48 }}>
             <a href="/#pricing" className="hero-cta">
               {isFr ? "Commencer le challenge" : "Start Challenge"}
               <span style={{ fontSize: 16 }}>→</span>
             </a>
           </div>
 
-          {/* Live Reward Card */}
-          <div className="hero-animate-4" style={{ marginBottom: 52 }}>
-            <LiveRewardCard isMobile={isMobile} />
-          </div>
-
           {/* Stats bar */}
           <div className="hero-animate-5" style={{
             display: "flex", alignItems: "center", justifyContent: "center",
             gap: 0, flexWrap: "wrap",
-            borderTop: "1px solid rgba(0,0,0,0.07)",
-            borderBottom: "1px solid rgba(0,0,0,0.07)",
+            borderTop: "1px solid rgba(21,101,192,0.12)",
+            borderBottom: "1px solid rgba(21,101,192,0.12)",
             padding: "20px 0", width: "100%",
           }}>
             {stats.map((s, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center" }}>
-                <div style={{ textAlign: "center", padding: isMobile ? "8px 20px" : "8px 36px" }}>
+                <div style={{ textAlign: "center", padding: isMobile ? "8px 24px" : "8px 44px" }}>
                   <div style={{ fontSize: isMobile ? 20 : 24, fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px" }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: "#8a96aa", fontWeight: 500, marginTop: 2, letterSpacing: "0.5px" }}>{s.label}</div>
+                  <div style={{ fontSize: 11, color: "#7a90b0", fontWeight: 500, marginTop: 2, letterSpacing: "0.5px" }}>{s.label}</div>
                 </div>
-                {i < stats.length - 1 && <div style={{ width: 1, height: 36, background: "rgba(0,0,0,0.1)" }} />}
+                {i < stats.length - 1 && <div style={{ width: 1, height: 36, background: "rgba(21,101,192,0.15)" }} />}
               </div>
             ))}
-          </div>
-
-          {/* Media logos */}
-          <div className="hero-animate-5" style={{ marginTop: 32 }}>
-            <p style={{ fontSize: 10, fontWeight: 600, letterSpacing: "2.5px", color: "#b0b8c8", textTransform: "uppercase", marginBottom: 16 }}>
-              Trusted by traders worldwide
-            </p>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? 16 : 32, flexWrap: "wrap" }}>
-              {media.map((m, i) => (
-                <span key={i} style={{ fontSize: isMobile ? 12 : 14, fontWeight: 700, color: "#c0c8d8", letterSpacing: "0.5px", fontFamily: "Georgia, serif" }}>{m}</span>
-              ))}
-            </div>
           </div>
 
         </div>

@@ -71,7 +71,7 @@ export default function Rules() {
   ];
 
   const groups = [
-    { title: T.rules.allowed,    color: "#22c55e", items: T.rules.allowedList,    icon: "✓" },
+    { title: T.rules.allowed,    color: "#1565C0", items: T.rules.allowedList,    icon: "✓" },
     { title: T.rules.notAllowed, color: "#ef4444", items: T.rules.notAllowedList, icon: "✕" },
   ];
 
