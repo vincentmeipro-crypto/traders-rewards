@@ -245,8 +245,8 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f3f4f6" }}>
               <div style={{ width: 36, height: 36, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏆</div>
               <div>
+                <div style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Standard MT5 · 1:50 · USD</div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>Challenge {challenge.label} — {challenge.model}</div>
-                <div style={{ color: "#6b7280", fontSize: 12 }}>MetaTrader 5 · Standard</div>
                 <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 1 }}>Levier 1:50 (tous actifs) · Swaps activés · $0 commission</div>
               </div>
               <div style={{ marginLeft: "auto", textAlign: "right" }}>
@@ -268,6 +268,7 @@ function CheckoutContent() {
           <div style={card}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div>
+                <div style={{ color: "#8a96aa", fontSize: 11, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 4 }}>Standard MT5 · 1:50 · USD</div>
                 <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>Challenge {challenge.label}</div>
                 <div style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>{challenge.model} — Elysium · MetaTrader 5</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 12px", marginTop: 6 }}>
