@@ -348,8 +348,13 @@ export default function AdminPage() {
     const res = await fetch("/api/admin/challenges", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
     const data = await res.json();
     setCreateLoading(false);
-    if (res.ok) { setCreateMsg("✅ Challenge créé ! Email envoyé au trader."); setCreateForm(f => ({ ...f, userEmail: "", amountPaid: "" })); }
-    else setCreateError(data.error || "Erreur");
+    if (res.ok) {
+      setCreateMsg("✅ Challenge créé ! Email envoyé au trader.");
+      setCreateForm(f => ({ ...f, userEmail: "", amountPaid: "" }));
+      const r = await fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } });
+      const d = await r.json();
+      if (Array.isArray(d)) setChallenges(d);
+    } else setCreateError(data.error || "Erreur");
   };
 
   const createPromo = async () => {
