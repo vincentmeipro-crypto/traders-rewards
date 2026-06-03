@@ -207,6 +207,11 @@ export async function PATCH(req: NextRequest) {
     updates.last_synced_at = new Date().toISOString();
   }
 
+  // Protéger le statut "failed" contre un écrasement accidentel
+  if (current?.status === "failed" && updates.status === "active") {
+    delete updates.status;
+  }
+
   const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
@@ -246,8 +251,10 @@ export async function PATCH(req: NextRequest) {
     }
   }
 
-  // Auto-transition check after update
-  const transitioned = await autoTransitionPhase(data, userEmail, firstName, lastName);
+  // Auto-transition check after update — jamais sur un compte failed
+  const transitioned = data.status !== "failed"
+    ? await autoTransitionPhase(data, userEmail, firstName, lastName)
+    : null;
 
   // Return updated challenge
   const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();

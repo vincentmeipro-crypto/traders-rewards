@@ -88,7 +88,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }) }).eq("id", id);
-    if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login).catch(() => {});
+    if (!alreadyFailed) {
+      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login); }
+      catch (e) { console.error("sendFailedEmail daily_drawdown error:", e); }
+    }
     return { status: "failed", reason: "daily_drawdown", pct: dailyDD.toFixed(2) };
   }
 
@@ -106,7 +109,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }) }).eq("id", id);
-    if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "total_drawdown", login).catch(() => {});
+    if (!alreadyFailed) {
+      try { await sendFailedEmail(userEmail, accountSize, "total_drawdown", login); }
+      catch (e) { console.error("sendFailedEmail total_drawdown error:", e); }
+    }
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
   }
 
