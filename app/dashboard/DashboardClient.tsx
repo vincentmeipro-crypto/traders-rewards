@@ -519,7 +519,7 @@ export default function DashboardClient({ user }: { user: User }) {
     setTimeout(() => setPasswordSaved(false), 3000);
   };
 
-  const activeChallenges = allChallenges.filter(c => c.status !== "failed");
+  const activeChallenges = allChallenges.filter(c => c.status === "active" || c.status === "funded");
 
   const effectiveBalance = challenge ? (challenge.status === "failed" && challenge.breach_equity != null ? challenge.breach_equity : challenge.balance) : 0;
   const profitAmount = challenge ? effectiveBalance - challenge.start_balance : 0;
