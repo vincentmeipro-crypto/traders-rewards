@@ -69,7 +69,7 @@ export async function sendPhase2Email(to: string, accountSize: string, mt5?: { l
   }));
 }
 
-export async function sendFailedEmail(to: string, accountSize: string, reason: "daily_drawdown" | "total_drawdown") {
+export async function sendFailedEmail(to: string, accountSize: string, reason: "daily_drawdown" | "total_drawdown", mt5Login?: number) {
   const reasonLabel = reason === "daily_drawdown" ? "Drawdown journalier dépassé" : "Drawdown total dépassé";
   const reasonDetail = reason === "daily_drawdown"
     ? "Votre limite de perte journalière a été atteinte. C'est une règle automatique de protection du capital."
@@ -80,6 +80,7 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
     body: `Nous vous informons que votre challenge ${accountSize} a été automatiquement arrêté. ${reasonDetail}`,
     details: [
       { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
+      ...(mt5Login ? [{ label: "ID du compte MT5", value: String(mt5Login), color: "#1565C0" }] : []),
       { label: "Raison", value: reasonLabel, color: "#ef4444" },
       { label: "Statut", value: "Challenge clôturé" },
     ],
