@@ -248,7 +248,7 @@ function CheckoutContent() {
               <div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>Challenge {challenge.label} — {challenge.model}</div>
                 <div style={{ color: "#6b7280", fontSize: 12 }}>MetaTrader 5 · Standard</div>
-                <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 1 }}>Levier 1:50 · Swaps activés · $0 commission</div>
+                <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 1 }}>Levier 1:50 (tous actifs) · Swaps activés · $0 commission</div>
               </div>
               <div style={{ marginLeft: "auto", textAlign: "right" }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: isFree ? "#16a34a" : "#111" }}>
@@ -273,9 +273,7 @@ function CheckoutContent() {
                 <div style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>{challenge.model} — Elysium · MetaTrader 5</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 12px", marginTop: 6 }}>
                   {[
-                    "Levier FX 1:50",
-                    "Levier Métaux 1:50",
-                    "Levier Crypto 1:10",
+                    "Levier 1:50 (tous actifs)",
                     "Standard · Swaps activés",
                     "Commission $0",
                   ].map((item, i) => (
