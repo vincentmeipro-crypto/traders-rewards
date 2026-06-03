@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
   // Toujours sauvegarder prénom/nom dans profiles si fournis
   if (formFirstName || formLastName) {
     await admin.from("profiles").upsert(
-      { user_id: user.id, email: userEmail, first_name: formFirstName || "", last_name: formLastName || "" },
+      { user_id: user.id, first_name: formFirstName || "", last_name: formLastName || "" },
       { onConflict: "user_id" }
     );
   }
