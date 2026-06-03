@@ -213,9 +213,9 @@ export default function Pricing() {
             <p style={{ textAlign: "center", color: "#8a96aa", fontSize: 12, marginTop: 12 }}>
               {isFr ? "← Glissez pour voir tous les comptes →" : "← Swipe to see all accounts →"}
             </p>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 24, marginTop: 32 }}>
-              <img src="/MT5 ROND TRANSPARENT.png" alt="MetaTrader 5" style={{ height: 140, width: "auto", objectFit: "contain" }} />
-              <img src="/$400K.png" alt="400K" style={{ height: 140, width: "auto", objectFit: "contain" }} />
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 32, marginTop: 32 }}>
+              <img src="/MT5 ROND TRANSPARENT.png" alt="MetaTrader 5" style={{ height: 130, width: "auto", objectFit: "contain" }} />
+              <img src="/$400K.png" alt="400K" style={{ height: 130, width: "auto", objectFit: "contain" }} />
             </div>
           </>
         )}
