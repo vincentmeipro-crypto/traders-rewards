@@ -131,7 +131,7 @@ export default function AdminPage() {
   const [crmExpanded, setCrmExpanded] = useState<string | null>(null);
 
   // Create challenge state
-  const [createForm, setCreateForm] = useState({ userEmail: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true });
+  const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true });
   const [createLoading, setCreateLoading] = useState(false);
   const [createMsg, setCreateMsg] = useState("");
   const [createError, setCreateError] = useState("");
@@ -350,7 +350,7 @@ export default function AdminPage() {
     setCreateLoading(false);
     if (res.ok) {
       setCreateMsg("✅ Challenge créé ! Email envoyé au trader.");
-      setCreateForm(f => ({ ...f, userEmail: "", amountPaid: "" }));
+      setCreateForm(f => ({ ...f, userEmail: "", firstName: "", lastName: "", amountPaid: "" }));
       const r = await fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } });
       const d = await r.json();
       if (Array.isArray(d)) setChallenges(d);
@@ -1247,6 +1247,8 @@ export default function AdminPage() {
               <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 20, color: "#111" }}>Créer un challenge manuellement</div>
               {[
                 { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Prénom", el: <input type="text" value={createForm.firstName} onChange={e => setCreateForm(f => ({ ...f, firstName: e.target.value }))} placeholder="Jean" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Nom", el: <input type="text" value={createForm.lastName} onChange={e => setCreateForm(f => ({ ...f, lastName: e.target.value }))} placeholder="Dupont" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
                 { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option>$10,000</option><option>$25,000</option><option>$50,000</option><option>$100,000</option><option>$200,000</option></select> },
                 { label: "Modèle", el: <select value={createForm.model} onChange={e => setCreateForm(f => ({ ...f, model: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option value="1step">1-Step</option><option value="2step">2-Step</option></select> },
                 { label: "Montant payé (€)", el: <input type="number" value={createForm.amountPaid} onChange={e => setCreateForm(f => ({ ...f, amountPaid: e.target.value }))} placeholder="ex: 6.90" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
