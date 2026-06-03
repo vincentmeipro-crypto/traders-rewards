@@ -93,7 +93,8 @@ function CheckoutContent() {
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
   const isFree = discount === 100;
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
-  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && city.trim() && country.trim() && (user || (password.length >= 8 && password === confirmPassword));
+  const isAdult = birthDate ? (() => { const b = new Date(birthDate); const min = new Date(); min.setFullYear(min.getFullYear() - 18); return b <= min; })() : false;
+  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && city.trim() && country.trim() && isAdult && (user || (password.length >= 8 && password === confirmPassword));
   const anyLoading = loadingStripe || loadingCrypto || loadingFree;
   const canPay = profileComplete && agreedToTerms;
 
@@ -328,6 +329,7 @@ function CheckoutContent() {
                 <input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)}
                   max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
                   style={{ ...inp, colorScheme: "light" }} />
+                {birthDate && !isAdult && <div style={{ color: "#ef4444", fontSize: 12, marginTop: 4 }}>Vous devez avoir au moins 18 ans pour accéder à nos services.</div>}
               </div>
 
               <div>
