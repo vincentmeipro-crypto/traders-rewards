@@ -62,13 +62,15 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     await admin.from("challenges").update({ status: "passed" }).eq("id", id);
     if (oldLogin) await disableMT5Account(oldLogin).catch(() => {});
     const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp1");
-    await admin.from("challenges").insert({
+    const { error: insertErr } = await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model, status: "active", phase: "phase2",
       balance: startBalance, start_balance: startBalance, profit_target: 5,
       daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
+      payment_method: "card",
       mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
       mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
     });
+    if (insertErr) console.error("INSERT phase2 error:", insertErr);
     try { await sendPhase2Email(userEmail, accountSize, newMT5 ?? undefined); } catch {}
     try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "phase2";
@@ -79,13 +81,15 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     await admin.from("challenges").update({ status: "passed" }).eq("id", id);
     if (oldLogin) await disableMT5Account(oldLogin).catch(() => {});
     const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp3");
-    await admin.from("challenges").insert({
+    const { error: insertErr } = await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model, status: "funded", phase: "funded",
       balance: startBalance, start_balance: startBalance, profit_target: 0,
       daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
+      payment_method: "card",
       mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
       mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
     });
+    if (insertErr) console.error("INSERT funded error:", insertErr);
     try { await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined); } catch {}
     try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "funded";
