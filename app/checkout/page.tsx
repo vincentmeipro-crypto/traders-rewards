@@ -88,6 +88,7 @@ function CheckoutContent() {
   const [discount, setDiscount] = useState(0);
   const [loyaltyActive, setLoyaltyActive] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [refCode, setRefCode] = useState("");
 
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
   const isFree = discount === 100;
@@ -101,6 +102,7 @@ function CheckoutContent() {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener("resize", check);
+    setRefCode(localStorage.getItem("elysium_ref") || "");
     return () => window.removeEventListener("resize", check);
   }, []);
 
@@ -181,7 +183,7 @@ function CheckoutContent() {
     if (!profileComplete) return;
     setLoadingStripe(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, userEmail: u.email, promoCode: appliedCode, discount }) });
+    const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, userEmail: u.email, promoCode: appliedCode, discount, refCode }) });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
     else { setPayError(data.error || "Erreur paiement."); setLoadingStripe(false); }
@@ -194,7 +196,7 @@ function CheckoutContent() {
     if (!profileComplete) return;
     setLoadingCrypto(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, promoCode: appliedCode, discount }) });
+    const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, promoCode: appliedCode, discount, refCode }) });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
     else { setPayError(data.error || "Erreur paiement."); setLoadingCrypto(false); }
@@ -207,7 +209,7 @@ function CheckoutContent() {
     if (!profileComplete) return;
     setLoadingFree(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/promo/free", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, promoCode: appliedCode }) });
+    const res = await fetch("/api/promo/free", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, promoCode: appliedCode, refCode }) });
     const data = await res.json();
     if (data.ok) router.push("/dashboard");
     else { setPromoStatus("error"); setPromoError(data.error || "Erreur"); setLoadingFree(false); }

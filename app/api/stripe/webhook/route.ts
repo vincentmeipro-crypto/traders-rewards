@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { userId, accountSize, model, promoCode } = session.metadata!;
+    const { userId, accountSize, model, promoCode, refCode } = session.metadata!;
 
     const admin = createAdminClient();
 
@@ -78,6 +78,30 @@ export async function POST(req: NextRequest) {
       mt5_password_investor: mt5PasswordInvestor,
       mt5_server:           mt5Server,
     });
+
+    // Affiliate conversion tracking
+    if (refCode) {
+      try {
+        const { data: affiliateProfile } = await admin.from("profiles").select("user_id").eq("affiliate_code", refCode).single();
+        if (affiliateProfile && affiliateProfile.user_id !== userId) {
+          const { count } = await admin.from("affiliate_conversions").select("id", { count: "exact", head: true }).eq("affiliate_user_id", affiliateProfile.user_id);
+          const convCount = count || 0;
+          let rate = 0.10;
+          if (convCount >= 30) rate = 0.20;
+          else if (convCount >= 11) rate = 0.15;
+          const amountPaid = (session.amount_total || 0) / 100;
+          await admin.from("affiliate_conversions").insert({
+            affiliate_user_id: affiliateProfile.user_id,
+            buyer_user_id: userId,
+            stripe_session_id: session.id,
+            amount_paid: amountPaid,
+            commission_rate: rate,
+            commission_amount: Math.round(amountPaid * rate * 100) / 100,
+            status: "pending",
+          });
+        }
+      } catch (e) { console.error("Affiliate conversion error:", e); }
+    }
 
     // Increment promo code usage if applicable
     if (promoCode) {

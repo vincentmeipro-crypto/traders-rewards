@@ -14,7 +14,7 @@ const PRODUCTS: Record<string, { name: string; amount: number; accountSize: stri
 
 export async function POST(req: NextRequest) {
   try {
-    const { productId, userId, promoCode, discount } = await req.json();
+    const { productId, userId, promoCode, discount, refCode } = await req.json();
     const product = PRODUCTS[productId];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
 
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       : product.amount;
 
     // Encode promo code in order_id: "elysium~{userId}~{productId}~{timestamp}~{promoCode}"
-    const orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}`;
+    const orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}`;
     const amountEur = (finalAmount / 100).toFixed(2);
 
     const siteUrl = "https://www.elysium-rewards.com";

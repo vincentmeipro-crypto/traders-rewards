@@ -20,7 +20,7 @@ const SITE_URL = "https://www.elysium-rewards.com";
 
 export async function POST(req: NextRequest) {
   try {
-    const { productId, userId, userEmail, promoCode, discount } = await req.json();
+    const { productId, userId, userEmail, promoCode, discount, refCode } = await req.json();
     const product = PRODUCTS[productId as keyof typeof PRODUCTS];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
 
@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
         accountSize: product.accountSize,
         model: product.model,
         promoCode: promoCode || "",
+        refCode: refCode || "",
       },
       success_url: `${SITE_URL}/checkout/success`,
       cancel_url: `${SITE_URL}/checkout/cancel`,

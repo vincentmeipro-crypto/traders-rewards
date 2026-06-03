@@ -4,6 +4,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import CrispChat from "@/components/CrispChat";
 import PWARegister from "@/components/PWARegister";
+import RefTracker from "@/components/RefTracker";
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", weight: ["300", "400", "500", "600", "700", "800", "900"] });
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </LanguageProvider>
         {/* CrispChat removed — support via menu */}
         <PWARegister />
+        <RefTracker />
       </body>
     </html>
   );

@@ -206,11 +206,147 @@ const STATUS_COLORS: Record<string, string> = {
 
 type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings" | "profile" | "affiliate";
 
+type AffiliateData = {
+  code: string;
+  link: string;
+  total_conversions: number;
+  total_commission: number;
+  pending_commission: number;
+  paid_commission: number;
+  current_rate: number;
+  current_tier: string;
+};
+
+function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: boolean; token: string }) {
+  const [data, setData] = useState<AffiliateData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!token) return;
+    fetch("/api/affiliate/me", { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { setData(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, [token]);
+
+  const copyLink = () => {
+    if (!data?.link) return;
+    navigator.clipboard.writeText(data.link);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const tiers = [
+    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "#1565C0", bg: "rgba(21,101,192,0.08)" },
+    { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 29 ventes" : "11 to 29 sales", pct: "15%", color: "#a855f7", bg: "rgba(168,85,247,0.08)" },
+    { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ ventes" : "30+ sales", pct: "20%", color: "#d97706", bg: "rgba(217,119,6,0.08)" },
+  ];
+
+  return (
+    <div style={{ maxWidth: 680 }}>
+      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{isFr ? "Programme Affiliation" : "Affiliate Program"}</h1>
+      <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 28 }}>
+        {isFr ? "Partagez votre lien et gagnez des commissions sur chaque vente." : "Share your link and earn commissions on every sale."}
+      </p>
+
+      {/* Tiers */}
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 12, marginBottom: 28 }}>
+        {tiers.map((t, i) => {
+          const isActive = data?.current_tier === t.tier || (isFr ? false : data?.current_tier === ["Starter", "Partner", "Elite"][i]);
+          const actualActive = data && (
+            (i === 0 && data.current_tier === "Débutant") ||
+            (i === 1 && data.current_tier === "Partenaire") ||
+            (i === 2 && data.current_tier === "Elite")
+          );
+          return (
+            <div key={i} style={{ backgroundColor: t.bg, border: `1.5px solid ${actualActive ? t.color : t.color + "30"}`, borderRadius: 14, padding: "20px 16px", textAlign: "center", position: "relative" }}>
+              {actualActive && <div style={{ position: "absolute", top: 8, right: 10, fontSize: 10, color: t.color, fontWeight: 800, background: t.bg, border: `1px solid ${t.color}50`, borderRadius: 6, padding: "2px 6px" }}>ACTIF</div>}
+              <div style={{ fontSize: 11, color: t.color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 6 }}>{t.tier}</div>
+              <div style={{ fontSize: 38, fontWeight: 900, color: t.color, letterSpacing: "-2px", marginBottom: 4 }}>{t.pct}</div>
+              <div style={{ fontSize: 12, color: "#888" }}>{t.range}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Mon lien */}
+      <div className="card" style={{ padding: 24, marginBottom: 20 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#1565C0", marginBottom: 14 }}>
+          {isFr ? "Mon lien affilié" : "My affiliate link"}
+        </div>
+        {loading ? (
+          <div style={{ color: "#7a90b0", fontSize: 13 }}>Chargement...</div>
+        ) : (
+          <>
+            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+              <div style={{ flex: 1, background: "#f3f4f6", borderRadius: 8, padding: "10px 14px", fontFamily: "monospace", fontSize: 13, color: "#374151", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
+                {data?.link || "—"}
+              </div>
+              <button onClick={copyLink} style={{ padding: "10px 18px", background: copied ? "#16a34a" : "#1565C0", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}>
+                {copied ? (isFr ? "Copié !" : "Copied!") : (isFr ? "Copier" : "Copy")}
+              </button>
+            </div>
+            <div style={{ marginTop: 10, color: "#7a90b0", fontSize: 12 }}>
+              {isFr ? "Code : " : "Code: "}<span style={{ fontFamily: "monospace", fontWeight: 700, color: "#1565C0" }}>{data?.code}</span>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
+        {[
+          { label: isFr ? "Ventes totales" : "Total sales", value: loading ? "—" : String(data?.total_conversions || 0), icon: "🏆" },
+          { label: isFr ? "Commission totale" : "Total commission", value: loading ? "—" : `€${(data?.total_commission || 0).toFixed(2)}`, icon: "💰" },
+          { label: isFr ? "En attente" : "Pending", value: loading ? "—" : `€${(data?.pending_commission || 0).toFixed(2)}`, icon: "⏳" },
+          { label: isFr ? "Versé" : "Paid out", value: loading ? "—" : `€${(data?.paid_commission || 0).toFixed(2)}`, icon: "✅" },
+        ].map((s, i) => (
+          <div key={i} className="card" style={{ padding: "16px 14px", textAlign: "center" }}>
+            <div style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</div>
+            <div style={{ fontWeight: 900, fontSize: 18, color: "#1565C0", marginBottom: 4 }}>{s.value}</div>
+            <div style={{ color: "#7a90b0", fontSize: 11 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Comment ça marche */}
+      <div className="card" style={{ padding: 22, marginBottom: 20 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#1565C0", marginBottom: 14 }}>{isFr ? "Comment ça fonctionne" : "How it works"}</div>
+        {[
+          { icon: "🔗", text: isFr ? "Partagez votre lien unique — il est valide à vie." : "Share your unique link — it never expires." },
+          { icon: "💰", text: isFr ? "Gagnez une commission sur chaque challenge acheté via votre lien." : "Earn a commission on every challenge purchased via your link." },
+          { icon: "📈", text: isFr ? "Votre taux monte automatiquement avec vos ventes (10% → 15% → 20%)." : "Your rate increases automatically with your sales (10% → 15% → 20%)." },
+          { icon: "💳", text: isFr ? "Retrait dès 100€ de commissions validées, en crypto ou virement." : "Withdraw from €100 in validated commissions, via crypto or bank transfer." },
+        ].map((item, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "10px 0", borderBottom: i < 3 ? "1px solid #f0f4ff" : "none" }}>
+            <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
+            <span style={{ color: "#7a90b0", fontSize: 14, lineHeight: 1.6 }}>{item.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Retrait */}
+      <div className="card" style={{ padding: 22, textAlign: "center" }}>
+        <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>{isFr ? "Demander un retrait" : "Request a payout"}</div>
+        <div style={{ color: "#7a90b0", fontSize: 13, marginBottom: 16 }}>
+          {isFr ? "Minimum 100€ de commissions validées." : "Minimum €100 in validated commissions."}
+        </div>
+        <a href="mailto:support@elysium-rewards.com?subject=Retrait%20commission%20affiliation"
+          style={{ display: "inline-block", backgroundColor: "#1565C0", color: "#fff", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none" }}>
+          support@elysium-rewards.com
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
   const supabase = createClient();
   const { T, lang, setLang } = useLanguage();
   const isFr = lang === "fr";
+  const [token, setToken] = useState("");
   const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string }[]>([]);
@@ -286,6 +422,7 @@ export default function DashboardClient({ user }: { user: User }) {
     });
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
+      setToken(session.access_token);
       fetch("/api/profile", { headers: { Authorization: `Bearer ${session.access_token}` } })
         .then(r => r.json()).then(p => {
           if (!p) return;
@@ -1183,61 +1320,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
         {/* ══ AFFILIATION ══ */}
         {activeTab === "affiliate" && (
-          <div style={{ maxWidth: 680 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{isFr ? "Programme Affiliation" : "Affiliate Program"}</h1>
-            <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>
-              {isFr ? "Devenez partenaire Elysium et gagnez des commissions sur chaque vente générée." : "Become an Elysium partner and earn commissions on every sale you generate."}
-            </p>
-
-            {/* Tiers */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 14, marginBottom: 32 }}>
-              {[
-                { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 challenges" : "1 to 10 challenges", pct: "10%", color: "#1565C0", glow: "rgba(0,194,255,0.15)" },
-                { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 20 challenges" : "11 to 20 challenges", pct: "15%", color: "#a855f7", glow: "rgba(168,85,247,0.15)" },
-                { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ challenges" : "30+ challenges", pct: "20%", color: "#1565C0", glow: "rgba(201,168,76,0.15)" },
-              ].map((t, i) => (
-                <div key={i} style={{ backgroundColor: t.glow, border: `1px solid ${t.color}40`, borderRadius: 16, padding: "24px 20px", textAlign: "center" }}>
-                  <div style={{ fontSize: 11, color: t.color, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 8 }}>{t.tier}</div>
-                  <div style={{ fontSize: 42, fontWeight: 900, color: t.color, letterSpacing: "-2px", marginBottom: 6 }}>{t.pct}</div>
-                  <div style={{ fontSize: 12, color: "#666" }}>{t.range}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Règles */}
-            <div className="card" style={{ padding: 24, marginBottom: 24 }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16, color: "#1565C0" }}>
-                {isFr ? "Comment ça fonctionne" : "How it works"}
-              </div>
-              {[
-                { icon: "🔗", text: isFr ? "Vous recevez un lien de parrainage unique après validation de votre demande." : "You receive a unique referral link after your application is approved." },
-                { icon: "💰", text: isFr ? "Vous touchez une commission sur chaque challenge acheté via votre lien." : "You earn a commission on every challenge purchased through your link." },
-                { icon: "📈", text: isFr ? "Votre taux augmente automatiquement avec le nombre de ventes générées." : "Your rate increases automatically with the number of sales generated." },
-                { icon: "💳", text: isFr ? "Retrait possible dès 100€ de commissions validées, en crypto ou virement." : "Withdrawal available from €100 in validated commissions, via crypto or bank transfer." },
-              ].map((item, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "10px 0", borderBottom: i < 3 ? "1px solid #1a1a1a" : "none" }}>
-                  <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
-                  <span style={{ color: "#7a90b0", fontSize: 14, lineHeight: 1.6 }}>{item.text}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* CTA */}
-            <div className="card" style={{ padding: 28, textAlign: "center" }}>
-              <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
-                {isFr ? "Prêt à collaborer ?" : "Ready to collaborate?"}
-              </div>
-              <div style={{ color: "#7a90b0", fontSize: 14, lineHeight: 1.6, marginBottom: 20 }}>
-                {isFr
-                  ? "Contactez-nous pour soumettre votre candidature. Nous vous répondons sous 48h."
-                  : "Contact us to submit your application. We reply within 48h."}
-              </div>
-              <a href="mailto:support@elysium-rewards.com?subject=Demande%20collaboration%20affiliation"
-                style={{ display: "inline-block", backgroundColor: "#1565C0", color: "#fff", fontWeight: 800, fontSize: 14, padding: "14px 36px", borderRadius: 12, textDecoration: "none" }}>
-                support@elysium-rewards.com
-              </a>
-            </div>
-          </div>
+          <AffiliateTab isFr={isFr} isMobile={isMobile} token={token} />
         )}
 
         {/* Dashboard Tab */}
