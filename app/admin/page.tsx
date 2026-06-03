@@ -674,17 +674,17 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 120 }} />
-                              : <span style={{ color: c.mt5_login ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_login || "—"}</span>}
+                              : <span onClick={() => c.mt5_login && copyToClipboard(String(c.mt5_login))} style={{ color: c.mt5_login ? "#1565C0" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_login ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_login || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
-                              : <span style={{ color: c.mt5_password ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_password || "—"}</span>}
+                              : <span onClick={() => c.mt5_password && copyToClipboard(c.mt5_password)} style={{ color: c.mt5_password ? "#1565C0" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_password ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_password || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 140 }} />
-                              : <span style={{ color: c.mt5_server ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_server || "—"}</span>}
+                              : <span onClick={() => c.mt5_server && copyToClipboard(c.mt5_server)} style={{ color: c.mt5_server ? "#1565C0" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_server ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_server || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#6b7280", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
                           <td style={{ padding: "13px 14px" }}>

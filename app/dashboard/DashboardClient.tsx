@@ -1398,14 +1398,14 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                       {[
-                        { label: T.dash.platform, value: "MetaTrader 5" },
-                        { label: "Login", value: String(challenge.mt5_login) },
-                        { label: T.dash.password, value: challenge.mt5_password || "—" },
-                        { label: T.dash.server, value: challenge.mt5_server || "—" },
+                        { label: T.dash.platform, value: "MetaTrader 5", copy: false },
+                        { label: "Login", value: String(challenge.mt5_login), copy: true },
+                        { label: T.dash.password, value: challenge.mt5_password || "—", copy: true },
+                        { label: T.dash.server, value: challenge.mt5_server || "—", copy: true },
                       ].map((item, i) => (
-                        <div key={i} style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "10px 14px" }}>
-                          <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}</div>
-                          <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: "#1565C0", wordBreak: "break-all" }}>{item.value}</div>
+                        <div key={i} onClick={() => item.copy && navigator.clipboard.writeText(item.value)} style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "10px 14px", cursor: item.copy ? "pointer" : "default" }} title={item.copy ? "Cliquer pour copier" : ""}>
+                          <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}{item.copy && <span style={{ marginLeft: 4, opacity: 0.5 }}>⎘</span>}</div>
+                          <div style={{ fontSize: 13, fontWeight: 400, fontFamily: "monospace", color: "#1565C0", wordBreak: "break-all" }}>{item.value}</div>
                         </div>
                       ))}
                     </div>
