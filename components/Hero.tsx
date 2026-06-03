@@ -156,7 +156,7 @@ export default function Hero() {
         <div style={{
           position: "relative", zIndex: 1, width: "100%", maxWidth: 1200,
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "28px 24px 60px" : "32px 24px 80px",
+          padding: isMobile ? "20px 24px 32px" : "32px 24px 80px",
         }}>
 
           {/* H1 — centré pleine largeur */}
