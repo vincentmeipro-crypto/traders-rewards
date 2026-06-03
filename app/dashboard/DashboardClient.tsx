@@ -1076,19 +1076,19 @@ export default function DashboardClient({ user }: { user: User }) {
 
               const certs = [
                 {
-                  type: "phase1", image: "/cert-phase1.png", label: "Phase 1", btnColor: "#00C2FF",
+                  type: "phase1", image: "/PHASE1.png", label: "Phase 1", btnColor: "#00C2FF",
                   unlocked: unlockedPhase1,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
                 },
                 {
-                  type: "challenge", image: "/cert-challenge.png", label: "Challenge", btnColor: "#a855f7",
+                  type: "challenge", image: "/CHALLENGE.png", label: "Challenge", btnColor: "#a855f7",
                   unlocked: unlockedChallenge,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
                 },
                 {
-                  type: "reward", image: "/cert-reward.png", label: "Reward", btnColor: "#1565C0",
+                  type: "reward", image: "/REWARDS.png", label: "Reward", btnColor: "#1565C0",
                   unlocked: unlockedReward,
                   amount: payoutAmount,
                   date: payoutDate,
