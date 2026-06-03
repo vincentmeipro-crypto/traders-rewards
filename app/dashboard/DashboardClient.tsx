@@ -406,10 +406,7 @@ export default function DashboardClient({ user }: { user: User }) {
       .then(({ data }) => {
         if (data && data.length > 0) {
           setAllChallenges(data);
-          const firstActive =
-            data.find((c: Challenge) => c.status === "active" || c.status === "funded") ||
-            data.find((c: Challenge) => c.status !== "failed") ||
-            data[0];
+          const firstActive = data.find((c: Challenge) => c.status === "active" || c.status === "funded") || null;
           setChallenge(firstActive);
         }
         setLoading(false);
