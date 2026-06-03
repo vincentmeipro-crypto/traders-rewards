@@ -1660,11 +1660,20 @@ export default function DashboardClient({ user }: { user: User }) {
                       );
                     })()
                   )}
-                  {challenge.phase === "funded" && (
-                    <button onClick={() => setActiveTab("payouts")} className="btn-primary" style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 14 }}>
-                      {T.dash.requestReward}
-                    </button>
-                  )}
+                  {challenge.phase === "funded" && (() => {
+                    const dailyOk = dailyDrawdownPct < (challenge.daily_drawdown_limit ?? 5);
+                    const totalOk = parseFloat(totalDrawdownPct) < (challenge.total_drawdown_limit ?? 10);
+                    const canRequest = dailyOk && totalOk && challenge.status !== "failed";
+                    return (
+                      <button
+                        onClick={() => canRequest && setActiveTab("payouts")}
+                        className="btn-primary"
+                        style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 14, opacity: canRequest ? 1 : 0.4, cursor: canRequest ? "pointer" : "not-allowed" }}
+                      >
+                        {T.dash.requestReward}
+                      </button>
+                    );
+                  })()}
                 </div>
 
               </div>
