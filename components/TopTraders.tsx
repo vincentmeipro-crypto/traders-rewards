@@ -148,7 +148,7 @@ export default function TopTraders() {
   const doubled = [...TRADERS, ...TRADERS];
 
   return (
-    <section style={{ padding: "100px 0 0", overflow: "hidden", background: "transparent" }}>
+    <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: "transparent" }}>
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px" }}>
