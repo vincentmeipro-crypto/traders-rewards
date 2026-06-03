@@ -72,6 +72,7 @@ export async function POST(req: NextRequest) {
       trading_days: 0,
       stripe_session_id: session.id,
       amount_paid: (session.amount_total || 0) / 100,
+      payment_method: "card",
       mt5_login:            mt5Login,
       mt5_password:         mt5Password,
       mt5_password_investor: mt5PasswordInvestor,

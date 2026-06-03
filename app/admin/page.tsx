@@ -10,6 +10,7 @@ type Challenge = {
   model: string;
   phase: string;
   status: string;
+  payment_method?: string;
   balance: number;
   start_balance: number;
   amount_paid: number;
@@ -48,6 +49,8 @@ type Payout = {
   amount: number;
   status: string;
   created_at: string;
+  payment_method?: string;
+  wallet_address?: string;
 };
 
 type KycSubmission = {
@@ -867,6 +870,7 @@ export default function AdminPage() {
                                         <span style={{ color: "#8a96aa", fontSize: 12 }}>{c.model}</span>
                                         {badge(c.status, STATUS_COLORS[c.status] || "#888")}
                                         <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700 }}>€{c.amount_paid} payé</span>
+                                        {c.payment_method && <span style={{ backgroundColor: c.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(21,101,192,0.1)", color: c.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{c.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Carte"}</span>}
                                       </div>
                                       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "#6b7280" }}>
                                         <span>Phase : <span style={{ color: "#8a96aa" }}>{c.phase}</span></span>
@@ -1039,7 +1043,7 @@ export default function AdminPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    {["Trader", "Montant", "Statut", "Date", "Actions"].map(h => (
+                    {["Trader", "Montant", "Réception", "Adresse / IBAN", "Statut", "Date", "Actions"].map(h => (
                       <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
                   </tr>
@@ -1049,6 +1053,20 @@ export default function AdminPage() {
                     <tr key={p.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                       <td style={{ padding: "13px 16px", color: "#6b7280" }}>{p.user_email || p.user_id}</td>
                       <td style={{ padding: "13px 16px", fontWeight: 800, color: "#22c55e", fontSize: 15 }}>€{p.amount?.toLocaleString()}</td>
+                      <td style={{ padding: "13px 16px" }}>
+                        {p.payment_method ? (
+                          <span style={{ backgroundColor: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(21,101,192,0.1)", color: p.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>
+                            {p.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Virement"}
+                          </span>
+                        ) : <span style={{ color: "#8a96aa", fontSize: 12 }}>—</span>}
+                      </td>
+                      <td style={{ padding: "13px 16px" }}>
+                        {p.wallet_address ? (
+                          <span onClick={() => navigator.clipboard.writeText(p.wallet_address!)} style={{ color: "#1565C0", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }} title="Cliquer pour copier">
+                            {p.wallet_address.length > 20 ? p.wallet_address.slice(0, 10) + "…" + p.wallet_address.slice(-6) : p.wallet_address} ⎘
+                          </span>
+                        ) : <span style={{ color: "#8a96aa", fontSize: 12 }}>—</span>}
+                      </td>
                       <td style={{ padding: "13px 16px" }}>{badge(p.status, STATUS_COLORS[p.status] || "#888")}</td>
                       <td style={{ padding: "13px 16px", color: "#6b7280", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
                       <td style={{ padding: "13px 16px" }}>
@@ -1067,7 +1085,7 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   ))}
-                  {payouts.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune récompense</td></tr>}
+                  {payouts.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune récompense</td></tr>}
                 </tbody>
               </table>
             </div>

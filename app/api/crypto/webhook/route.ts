@@ -73,6 +73,7 @@ export async function POST(req: NextRequest) {
       total_drawdown_limit: 10,
       trading_days: 0,
       amount_paid: parseFloat(body.price_amount || "0"),
+      payment_method: "crypto",
     });
 
     // Increment promo code usage if applicable
