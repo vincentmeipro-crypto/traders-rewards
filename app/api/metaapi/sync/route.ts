@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, disableMT5Account, changeMT5Group, createMT5Account, addMT5Balance, withdrawMT5Balance } from "@/lib/mt5";
+import { getMT5Account, disableMT5Account, changeMT5Group, createMT5Account } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -110,16 +110,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   const certDate = new Date().toLocaleDateString("fr-FR");
 
-  // Reset balance MT5 au montant de départ (même compte)
-  const resetMT5Balance = async () => {
-    try {
-      const diff = Math.round((newBalance - startBalance) * 100) / 100;
-      if (diff > 0) await withdrawMT5Balance(login, diff, "Phase reset");
-      else if (diff < 0) await addMT5Balance(login, Math.abs(diff), "Phase reset");
-    } catch {}
-  };
-
-  // Nouveau compte MT5 (pour Certified uniquement)
+  // Nouveau compte MT5 à chaque transition
   const createNewMT5 = async (group: string) => {
     try {
       const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group, account_size: accountSize });
