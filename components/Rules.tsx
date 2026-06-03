@@ -206,14 +206,14 @@ export default function Rules() {
         </div>
 
         {/* CTA */}
-        <div style={{ marginTop: 60, border: "1px solid rgba(13,27,62,0.12)", borderRadius: 20, padding: "56px 40px", textAlign: "center", background: "#0D1B3E" }}>
-          <h3 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: 600, color: "#fff", marginBottom: 16, letterSpacing: "1px" }}>
+        <div style={{ marginTop: 60, borderRadius: 20, padding: "56px 40px", textAlign: "center", background: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(21,101,192,0.1)" }}>
+          <h3 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: 600, color: "#0D1B3E", marginBottom: 16, letterSpacing: "1px" }}>
             {T.rules.ctaTitle} <em style={{ color: "#C9A84C", fontStyle: "italic" }}>{T.rules.ctaGold}</em>
           </h3>
-          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 16, marginBottom: 32 }}>{T.rules.ctaSub}</p>
-          <a href="/#pricing" style={{ display: "inline-block", background: "#fff", color: "#0D1B3E", padding: "15px 48px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
-            onMouseOver={e => { e.currentTarget.style.background = "#C9A84C"; }}
-            onMouseOut={e => { e.currentTarget.style.background = "#fff"; }}
+          <p style={{ color: "#8a96aa", fontSize: 16, marginBottom: 32 }}>{T.rules.ctaSub}</p>
+          <a href="/#pricing" style={{ display: "inline-block", background: "#0D1B3E", color: "#fff", padding: "15px 48px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
+            onMouseOver={e => { e.currentTarget.style.background = "#1B4FD8"; }}
+            onMouseOut={e => { e.currentTarget.style.background = "#0D1B3E"; }}
           >{T.rules.ctaBtn}</a>
         </div>
 
