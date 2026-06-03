@@ -1273,24 +1273,26 @@ export default function DashboardClient({ user }: { user: User }) {
             )}
             {/* Loyalty banner */}
             {allChallenges.length >= 1 && (
-              <div style={{ backgroundColor: "rgba(21,101,192,0.06)", border: "1px solid rgba(21,101,192,0.25)", borderRadius: 12, padding: "12px 18px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12 }}>
-                <span style={{ fontSize: 20 }}>🎖️</span>
-                <div>
-                  <div style={{ color: "#1565C0", fontWeight: 700, fontSize: 13 }}>
-                    {isFr ? "Remise fidélité −20% à vie" : "Lifetime loyalty discount −20%"}
+              <div style={{ backgroundColor: "rgba(21,101,192,0.06)", border: "1px solid rgba(21,101,192,0.25)", borderRadius: 12, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 18, flexShrink: 0 }}>🎖️</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ color: "#1565C0", fontWeight: 700, fontSize: 12 }}>
+                    {isFr ? "Remise fidélité −20% à vie" : "Loyalty discount −20%"}
                   </div>
-                  <div style={{ color: "#7a90b0", fontSize: 12 }}>
-                    {isFr ? "Appliquée automatiquement sur tous vos prochains challenges (hors promo en cours)" : "Automatically applied on all future challenges (excluding active promos)"}
-                  </div>
+                  {!isMobile && (
+                    <div style={{ color: "#7a90b0", fontSize: 11 }}>
+                      {isFr ? "Appliquée automatiquement (hors promo en cours)" : "Auto-applied on future challenges"}
+                    </div>
+                  )}
                 </div>
-                <a href="/#pricing" style={{ marginLeft: "auto", backgroundColor: "rgba(21,101,192,0.15)", color: "#1565C0", fontSize: 12, fontWeight: 700, padding: "6px 14px", borderRadius: 8, textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
-                  {isFr ? "Nouveau challenge →" : "New challenge →"}
+                <a href="/#pricing" style={{ backgroundColor: "rgba(21,101,192,0.15)", color: "#1565C0", fontSize: 11, fontWeight: 700, padding: "5px 12px", borderRadius: 8, textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
+                  {isFr ? "Nouveau →" : "New →"}
                 </a>
               </div>
             )}
 
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
+            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "stretch" : "flex-start", gap: isMobile ? 12 : 0, marginBottom: 24 }}>
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.myChallenge}</h1>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -1303,7 +1305,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   </span>
                 </div>
               </div>
-              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flexShrink: 0 }}>
                 {T.dash.newChallenge} <ChevronRight size={14} />
               </a>
             </div>
