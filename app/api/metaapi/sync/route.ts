@@ -1,6 +1,6 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, disableMT5Account, changeMT5Group, createMT5Account } from "@/lib/mt5";
+import { getMT5Account, disableMT5Account, createMT5Account } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -21,177 +21,164 @@ type Challenge = Record<string, unknown>;
 async function processChallenge(challenge: Challenge, userEmail: string, firstName: string, lastName: string) {
   const admin = createAdminClient();
 
-  const id             = challenge.id as string;
-  const login          = challenge.mt5_login as number;
-  const model          = (challenge.model as string) ?? "2step";
-  const phase          = challenge.phase as string;
-  const startBalance   = challenge.start_balance as number;
-  const dailyLimit     = challenge.daily_drawdown_limit as number;
-  const totalLimit     = challenge.total_drawdown_limit as number;
-  const profitTarget   = challenge.profit_target as number;
-  const accountSize    = challenge.account_size as string;
-  const prevBalance    = challenge.balance as number;
-  const prevHighest    = (challenge.highest_balance as number | null) ?? startBalance;
+  const id           = challenge.id as string;
+  const login        = challenge.mt5_login as number | null;
+  const userId       = challenge.user_id as string;
+  const model        = (challenge.model as string) ?? "2step";
+  const phase        = challenge.phase as string;
+  const startBalance = challenge.start_balance as number;
+  const dailyLimit   = challenge.daily_drawdown_limit as number;
+  const totalLimit   = challenge.total_drawdown_limit as number;
+  const profitTarget = challenge.profit_target as number;
+  const accountSize  = challenge.account_size as string;
+  const prevBalance  = challenge.balance as number;
+  const prevHighest  = (challenge.highest_balance as number | null) ?? startBalance;
+  const is1Step      = model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
 
-  // 0. Si pas de login MT5 — créer automatiquement le compte manquant
-  if (!login) {
-    const is1Step = model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
-    let group = "Starwave\\demo\\FX1\\grp1";
-    if (phase === "funded") group = is1Step ? "Starwave\\demo\\FX1\\grp4" : "Starwave\\demo\\FX1\\grp3";
-    else if (is1Step) group = "Starwave\\demo\\FX1\\grp2";
+  // Helper: crée un compte MT5 et retourne les credentials
+  const makeMT5 = async (group: string) => {
     try {
-      const newAcc = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 50, group, account_size: accountSize });
-      await admin.from("challenges").update({ mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor, mt5_server: newAcc.server }).eq("id", id);
-      await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
-      return { status: "mt5_created", login: newAcc.login };
-    } catch { return { status: "mt5_creation_failed" }; }
+      const acc = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 50, group, account_size: accountSize });
+      return acc;
+    } catch { return null; }
+  };
+
+  // 0. Pas de login MT5 — créer automatiquement le compte manquant
+  if (!login) {
+    let group = is1Step ? "Starwave\\demo\\FX1\\grp2" : "Starwave\\demo\\FX1\\grp1";
+    if (phase === "funded") group = is1Step ? FUNDED_GROUP["1step"] : FUNDED_GROUP["2step"];
+    const newAcc = await makeMT5(group);
+    if (!newAcc) return { status: "mt5_creation_failed" };
+    await admin.from("challenges").update({ mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor, mt5_server: newAcc.server }).eq("id", id);
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    return { status: "mt5_created", login: newAcc.login };
   }
 
-  // 1. Fetch live balance + equity from our MT5 microservice
+  // 1. Balance live depuis MT5
   const info = await getMT5Account(login).catch(() => null);
   if (!info) return { status: "balance_unavailable" };
 
-  const newBalance  = info.balance as number;
-  const newEquity   = info.equity  as number;
-  const newHighest  = Math.max(prevHighest, newEquity);
+  const newBalance = info.balance as number;
+  const newEquity  = info.equity  as number;
+  const newHighest = Math.max(prevHighest, newEquity);
 
-  // 2. Count trading days + best day profit tracking
-  const prevTradingDays = challenge.trading_days as number;
-  const lastSyncedAt = challenge.last_synced_at as string | null;
-  const lastSyncedDay = lastSyncedAt ? new Date(lastSyncedAt).toDateString() : null;
-  const today = new Date().toDateString();
-  const alreadyCountedToday = lastSyncedDay === today;
-  const balanceChanged = Math.abs(newBalance - prevBalance) > 0.01;
-  // Only increment trading_days once per calendar day, regardless of sync frequency
-  const newTradingDays = (balanceChanged && !alreadyCountedToday) ? prevTradingDays + 1 : prevTradingDays;
-  const dayProfit = newBalance - prevBalance;
-  const prevBestDay = (challenge.best_day_profit as number | null) ?? 0;
-  const newBestDay = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
+  // 2. Jours de trading
+  const prevTradingDays  = challenge.trading_days as number;
+  const lastSyncedAt     = challenge.last_synced_at as string | null;
+  const lastSyncedDay    = lastSyncedAt ? new Date(lastSyncedAt).toDateString() : null;
+  const today            = new Date().toDateString();
+  const alreadyCounted   = lastSyncedDay === today;
+  const balanceChanged   = Math.abs(newBalance - prevBalance) > 0.01;
+  const newTradingDays   = (balanceChanged && !alreadyCounted) ? prevTradingDays + 1 : prevTradingDays;
+  const dayProfit        = newBalance - prevBalance;
+  const prevBestDay      = (challenge.best_day_profit as number | null) ?? 0;
+  const newBestDay       = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
 
-  // â”€â”€ Daily drawdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const dailyDD = prevBalance > 0 ? ((prevBalance - newEquity) / prevBalance) * 100 : 0;
+  // 3. Drawdown journalier
+  const dailyDD        = prevBalance > 0 ? ((prevBalance - newEquity) / prevBalance) * 100 : 0;
   const dailyDDRounded = parseFloat(dailyDD.toFixed(2));
 
-  // â”€â”€ Base update (always runs, never blocked by optional columns) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // 4. Mise à jour balance dans Supabase
   const baseNow = new Date().toISOString();
-  await admin.from("challenges").update({
-    balance: newBalance,
-    highest_balance: newHighest,
-    trading_days: newTradingDays,
-    last_synced_at: baseNow,
-  }).eq("id", id);
+  await admin.from("challenges").update({ balance: newBalance, highest_balance: newHighest, trading_days: newTradingDays, last_synced_at: baseNow }).eq("id", id);
+  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch {}
 
-  // â”€â”€ daily_dd + best_day_profit in separate updates (won't block base) â”€â”€â”€â”€
-  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch { /* columns may not exist yet */ }
-
-  // â”€â”€ Daily drawdown breach â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // 5. Breach drawdown journalier
   if (dailyDD >= dailyLimit) {
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
-    await admin.from("challenges").update({
-      status: "failed",
-      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }),
-    }).eq("id", id);
+    await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }) }).eq("id", id);
     if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "daily_drawdown").catch(() => {});
     return { status: "failed", reason: "daily_drawdown", pct: dailyDD.toFixed(2) };
   }
 
-  // â”€â”€ Total / Trailing drawdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  let totalViolated = false;
+  // 6. Breach drawdown total
   let totalDD = 0;
-  if (model === "1step") {
+  let totalViolated = false;
+  if (is1Step) {
     totalDD = newHighest > 0 ? ((newHighest - newEquity) / newHighest) * 100 : 0;
     if (totalDD >= totalLimit) totalViolated = true;
   } else {
     totalDD = startBalance > 0 ? ((startBalance - newBalance) / startBalance) * 100 : 0;
     if (totalDD >= totalLimit) totalViolated = true;
   }
-
   if (totalViolated) {
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
-    await admin.from("challenges").update({
-      status: "failed",
-      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }),
-    }).eq("id", id);
+    await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }) }).eq("id", id);
     if (!alreadyFailed) await sendFailedEmail(userEmail, accountSize, "total_drawdown").catch(() => {});
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
   }
 
-  // â”€â”€ Phase transitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const profitPct   = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
-  const targetMet   = profitPct >= profitTarget;
-  const daysMet     = newTradingDays >= 4;
+  // 7. Transitions de phase — NOUVELLE LIGNE à chaque fois
+  const profitPct = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
+  const targetMet = profitPct >= profitTarget;
+  const daysMet   = newTradingDays >= 4;
+  const certDate  = new Date().toLocaleDateString("fr-FR");
 
-  const certDate = new Date().toLocaleDateString("fr-FR");
-
-  // Nouveau compte MT5 Ã  chaque transition
-  const createNewMT5 = async (group: string) => {
-    try {
-      const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 50, group, account_size: accountSize });
-      await disableMT5Account(login).catch(() => {});
-      await admin.from("challenges").update({
-        mt5_login: newAccount.login,
-        mt5_password: newAccount.password,
-        mt5_password_investor: newAccount.password_investor,
-        mt5_server: newAccount.server,
-      }).eq("id", id);
-      return newAccount;
-    } catch { return null; }
-  };
-
-  // 1-Step: phase1 â†’ funded (nouveau compte certifiÃ©)
-  if (model === "1step" && phase === "phase1" && targetMet && daysMet) {
-    const newMT5 = await createNewMT5(FUNDED_GROUP["1step"]);
-    await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
+  // 1-Step: phase1 → certified
+  if (is1Step && phase === "phase1" && targetMet && daysMet) {
+    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
+    await disableMT5Account(login).catch(() => {});
+    const newMT5 = await makeMT5(FUNDED_GROUP["1step"]);
+    await admin.from("challenges").insert({
+      user_id: userId, account_size: accountSize, model, status: "funded", phase: "funded",
+      balance: startBalance, start_balance: startBalance, profit_target: 0,
+      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
+      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
+      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
+    });
     await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1â†’funded (1-step)", balance: newBalance };
+    return { status: "synced", transition: "phase1→certified (1-step)" };
   }
 
-  // 2-Step: phase1 â†’ phase2 (nouveau compte)
-  if (model === "2step" && phase === "phase1" && targetMet && daysMet) {
-    const newMT5 = await createNewMT5("Starwave\\demo\\FX1\\grp1");
-    await admin.from("challenges").update({
-      phase: "phase2",
-      balance: startBalance,
-      highest_balance: startBalance,
-      profit_target: 5,
-      trading_days: 0,
-      status: "active",
-    }).eq("id", id);
+  // 2-Step: phase1 → phase2
+  if (!is1Step && phase === "phase1" && targetMet && daysMet) {
+    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
+    await disableMT5Account(login).catch(() => {});
+    const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp1");
+    await admin.from("challenges").insert({
+      user_id: userId, account_size: accountSize, model, status: "active", phase: "phase2",
+      balance: startBalance, start_balance: startBalance, profit_target: 5,
+      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
+      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
+      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
+    });
     await sendPhase2Email(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1â†’phase2", balance: newBalance };
+    return { status: "synced", transition: "phase1→phase2" };
   }
 
-  // 2-Step: phase2 â†’ funded
-  if (model === "2step" && phase === "phase2" && targetMet && daysMet) {
-    const newMT5 = await createNewMT5(FUNDED_GROUP["2step"]);
-    await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
+  // 2-Step: phase2 → certified
+  if (!is1Step && phase === "phase2" && targetMet && daysMet) {
+    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
+    await disableMT5Account(login).catch(() => {});
+    const newMT5 = await makeMT5(FUNDED_GROUP["2step"]);
+    await admin.from("challenges").insert({
+      user_id: userId, account_size: accountSize, model, status: "funded", phase: "funded",
+      balance: startBalance, start_balance: startBalance, profit_target: 0,
+      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
+      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
+      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
+    });
     await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase2â†’funded", balance: newBalance };
+    return { status: "synced", transition: "phase2→certified" };
   }
 
-  // â”€â”€ Daily recap email â€” once per day, not on day of purchase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-  const lastSynced = challenge.last_synced_at as string | null;
+  // 8. Email récap journalier
   const createdAt = challenge.created_at as string | null;
-  const alreadySentToday = lastSynced ? new Date(lastSynced).toDateString() === today : false;
-  const purchasedToday = createdAt ? new Date(createdAt).toDateString() === today : false;
+  const alreadySentToday = lastSyncedAt ? new Date(lastSyncedAt).toDateString() === today : false;
+  const purchasedToday   = createdAt ? new Date(createdAt).toDateString() === today : false;
   if (!alreadySentToday && !purchasedToday) {
-    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, {
-      model,
-      highestBalance: newHighest,
-      totalLimit,
-      startBalance,
-    }).catch(() => {});
+    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, { model, highestBalance: newHighest, totalLimit, startBalance }).catch(() => {});
   }
 
   return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2) };
 }
 
-// â”€â”€ Route â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Route ─────────────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("Authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}` && auth !== `Bearer admin-vincentmeipro@gmail.com`) {
@@ -200,14 +187,14 @@ export async function GET(req: NextRequest) {
 
   const admin = createAdminClient();
 
+  // Inclut les challenges sans login MT5 (pour auto-création)
   const { data: challenges } = await admin
     .from("challenges")
     .select("*")
-    .in("status", ["active", "funded"])
-    .not("mt5_login", "is", null);
+    .in("status", ["active", "funded"]);
 
   if (!challenges?.length) {
-    return NextResponse.json({ synced: 0, message: "No active challenges with MT5 credentials" });
+    return NextResponse.json({ synced: 0, message: "No active challenges" });
   }
 
   const { data: { users } } = await admin.auth.admin.listUsers();
@@ -222,10 +209,10 @@ export async function GET(req: NextRequest) {
   for (const challenge of challenges) {
     try {
       const userEmail = userMap[challenge.user_id as string] ?? "";
-      const profile = profileMap[challenge.user_id as string] || {};
+      const profile   = profileMap[challenge.user_id as string] || {};
       const firstName = (profile as Record<string, string>).first_name || "";
-      const lastName = (profile as Record<string, string>).last_name || "";
-      const result = await processChallenge(challenge as Challenge, userEmail, firstName, lastName);
+      const lastName  = (profile as Record<string, string>).last_name || "";
+      const result    = await processChallenge(challenge as Challenge, userEmail, firstName, lastName);
       results.push({ id: challenge.id, login: challenge.mt5_login, ...result });
       if ((result as { status: string }).status !== "balance_unavailable") synced++;
     } catch (e) {
@@ -236,4 +223,3 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({ synced, total: challenges.length, results });
 }
-
