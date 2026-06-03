@@ -105,6 +105,9 @@ export async function POST(req: NextRequest) {
     });
     if (createErr || !created.user) return NextResponse.json({ error: `Impossible de créer l'utilisateur : ${createErr?.message}` }, { status: 500 });
     user = created.user;
+    await admin.from("profiles").upsert({ user_id: user.id, first_name: formFirstName || "", last_name: formLastName || "" });
+  } else if (formFirstName || formLastName) {
+    await admin.from("profiles").upsert({ user_id: user.id, first_name: formFirstName || "", last_name: formLastName || "" });
   }
 
   const sizeMap: Record<string, number> = {
