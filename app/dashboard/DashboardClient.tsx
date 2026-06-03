@@ -534,7 +534,13 @@ export default function DashboardClient({ user }: { user: User }) {
   const targetAmount = challenge ? challenge.start_balance * (1 + challenge.profit_target / 100) : 0;
   const targetPct = challenge ? Math.min(((profitAmount / (targetAmount - challenge.start_balance)) * 100), 100).toFixed(0) : "0";
   const dailyDrawdownPct = challenge?.daily_dd ?? 0;
-  const totalDrawdownRaw = challenge ? ((challenge.start_balance - effectiveBalance) / challenge.start_balance) * 100 : 0;
+  const is1StepChallenge = challenge?.model?.toLowerCase().replace(/[\s-]/g,"").includes("1step") ?? false;
+  const highestBalance = challenge?.highest_balance ?? challenge?.start_balance ?? 0;
+  const totalDrawdownRaw = challenge
+    ? is1StepChallenge
+      ? (highestBalance > 0 ? ((highestBalance - effectiveBalance) / highestBalance) * 100 : 0)
+      : ((challenge.start_balance - effectiveBalance) / challenge.start_balance) * 100
+    : 0;
   const totalDrawdownPct = Math.max(0, totalDrawdownRaw).toFixed(2);
 
   return (
@@ -1572,7 +1578,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           : `-${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`,
                       },
                       {
-                        label: T.dash.totalDrawdown,
+                        label: is1StepChallenge ? `${T.dash.totalDrawdown} (trailing)` : T.dash.totalDrawdown,
                         pct: `${challenge.total_drawdown_limit}%`,
                         usd: `-$${totalUSD.toLocaleString()}`,
                         usdColor: "#ef4444",
