@@ -399,7 +399,8 @@ export default function DashboardClient({ user }: { user: User }) {
       .then(({ data }) => {
         if (data && data.length > 0) {
           setAllChallenges(data);
-          setChallenge(data[0]);
+          const firstActive = data.find((c: Challenge) => c.status !== "failed") || data[0];
+          setChallenge(firstActive);
         }
         setLoading(false);
       });
@@ -517,6 +518,8 @@ export default function DashboardClient({ user }: { user: User }) {
     setConfirmNewPassword("");
     setTimeout(() => setPasswordSaved(false), 3000);
   };
+
+  const activeChallenges = allChallenges.filter(c => c.status !== "failed");
 
   const effectiveBalance = challenge ? (challenge.status === "failed" && challenge.breach_equity != null ? challenge.breach_equity : challenge.balance) : 0;
   const profitAmount = challenge ? effectiveBalance - challenge.start_balance : 0;
@@ -1275,7 +1278,7 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
               <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", textDecoration: "none" }}>{T.dash.newChallenge}</a>
             </div>
-            {allChallenges.length === 0 ? (
+            {activeChallenges.length === 0 ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <Trophy size={48} color="#00C2FF" style={{ marginBottom: 16, opacity: 0.5 }} />
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.noChallenge}</div>
@@ -1283,7 +1286,7 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                {allChallenges.map(c => {
+                {activeChallenges.map(c => {
                   const profitAmt = c.balance && c.start_balance ? c.balance - c.start_balance : 0;
                   const profitPct = c.start_balance ? ((profitAmt / c.start_balance) * 100).toFixed(2) : "0.00";
                   const isSelected = challenge?.id === c.id;
@@ -1338,10 +1341,10 @@ export default function DashboardClient({ user }: { user: User }) {
           </div>
         ) : (activeTab === "dashboard") && challenge && (
           <>
-            {/* Challenge selector if multiple */}
-            {allChallenges.length > 1 && (
+            {/* Challenge selector if multiple — failed exclus */}
+            {activeChallenges.length > 1 && (
               <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
-                {allChallenges.map(c => (
+                {activeChallenges.map(c => (
                   <button key={c.id} onClick={() => setChallenge(c)} style={{
                     padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer",
                     border: challenge.id === c.id ? "1.5px solid #00C2FF" : "1.5px solid #333",
