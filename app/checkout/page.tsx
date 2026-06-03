@@ -23,7 +23,6 @@ const RULES_2STEP = [
   { label: "Perte totale max", value: "10%" },
   { label: "Jours de trading min", value: "4 jours" },
   { label: "Limite de temps", value: "Illimitée" },
-  { label: "Remboursement frais", value: "✓ 1ère récompense" },
   { label: "Partage des profits", value: "Jusqu'à 80%" },
 ];
 

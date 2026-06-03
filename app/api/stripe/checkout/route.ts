@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
           currency: "eur",
           product_data: {
             name: productName,
-            description: `Elysium — ${product.model === "2step" ? "2-Step Challenge" : "1-Step Challenge"} — Fee refunded at first reward`,
+            description: `Elysium — ${product.model === "2step" ? "2-Step Challenge" : "1-Step Challenge"}`,
             images: [],
           },
           unit_amount: finalAmount,
