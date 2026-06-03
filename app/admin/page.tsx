@@ -65,6 +65,16 @@ type KycSubmission = {
 
 type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create";
 
+const STATUS_LABELS: Record<string, string> = {
+  funded: "Certified",
+  active: "Active",
+  failed: "Failed",
+  passed: "Passed",
+  pending: "Pending",
+  paid: "Paid",
+  rejected: "Rejected",
+};
+
 const STATUS_COLORS: Record<string, string> = {
   active:  "#22c55e",
   failed:  "#ef4444",
@@ -661,7 +671,7 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
-                              : badge(c.status, STATUS_COLORS[c.status] || "#888")}
+                              : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
                             {editing === c.id
@@ -868,7 +878,7 @@ export default function AdminPage() {
                                         <span style={{ fontSize: 11, color: "#6b7280" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
                                         <span style={{ fontWeight: 700, fontSize: 13 }}>Challenge {c.account_size}</span>
                                         <span style={{ color: "#8a96aa", fontSize: 12 }}>{c.model}</span>
-                                        {badge(c.status, STATUS_COLORS[c.status] || "#888")}
+                                        {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                                         <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700 }}>€{c.amount_paid} payé</span>
                                         {c.payment_method && <span style={{ backgroundColor: c.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(21,101,192,0.1)", color: c.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{c.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Carte"}</span>}
                                       </div>
@@ -897,7 +907,7 @@ export default function AdminPage() {
                                         <span style={{ fontSize: 11, color: "#6b7280" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
                                         <span style={{ fontWeight: 700, fontSize: 13, color: "#3b82f6" }}>Demande de récompense</span>
                                         <span style={{ fontWeight: 900, fontSize: 14, color: "#22c55e" }}>€{p.amount?.toLocaleString()}</span>
-                                        {badge(p.status, STATUS_COLORS[p.status] || "#888")}
+                                        {badge(STATUS_LABELS[p.status] || p.status, STATUS_COLORS[p.status] || "#888")}
                                       </div>
                                     </div>
                                   </div>
@@ -1067,7 +1077,7 @@ export default function AdminPage() {
                           </span>
                         ) : <span style={{ color: "#8a96aa", fontSize: 12 }}>—</span>}
                       </td>
-                      <td style={{ padding: "13px 16px" }}>{badge(p.status, STATUS_COLORS[p.status] || "#888")}</td>
+                      <td style={{ padding: "13px 16px" }}>{badge(STATUS_LABELS[p.status] || p.status, STATUS_COLORS[p.status] || "#888")}</td>
                       <td style={{ padding: "13px 16px", color: "#6b7280", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
                       <td style={{ padding: "13px 16px" }}>
                         {p.status === "pending" && (

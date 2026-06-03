@@ -1301,7 +1301,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   </span>
                   <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 6 }}>
                     <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: STATUS_COLORS[challenge.status] || "#888", display: "inline-block" }} />
-                    {challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
+                    {challenge.status === "funded" ? "Certified" : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
                   </span>
                 </div>
               </div>
