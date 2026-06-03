@@ -186,10 +186,10 @@ export default function Hero() {
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
-          {/* Image 400K — static à droite */}
+          {/* Image 400K — static en bas à droite */}
           {!isMobile && (
             <img src="/4OOK.png" alt="" style={{
-              position: "absolute", right: 40, top: "50%", transform: "translateY(-50%)",
+              position: "absolute", right: 60, bottom: -30,
               height: 220, width: "auto", objectFit: "contain", zIndex: 5,
             }} />
           )}
