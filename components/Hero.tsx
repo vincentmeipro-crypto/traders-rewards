@@ -178,19 +178,21 @@ export default function Hero() {
                 : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
           </h1>
 
-          {/* Carte + image 400K — même ligne, alignées */}
+          {/* Carte animée — centrée */}
           <div className="hero-animate-2" style={{
             position: "absolute", bottom: -44, left: 0, right: 0,
             zIndex: 20, display: "flex", justifyContent: "center", alignItems: "center",
-            gap: 24,
           }}>
             <LiveRewardCard isMobile={isMobile} />
-            {!isMobile && (
-              <img src="/4OOK.png" alt="" style={{
-                height: 88, width: "auto", objectFit: "contain",
-              }} />
-            )}
           </div>
+
+          {/* Image 400K — statique, droite écran */}
+          {!isMobile && (
+            <img src="/$400K.png" alt="" style={{
+              position: "absolute", right: 40, bottom: -44,
+              height: 88, width: "auto", objectFit: "contain", zIndex: 5,
+            }} />
+          )}
 
         </div>
       </section>
