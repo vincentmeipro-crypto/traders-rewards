@@ -156,7 +156,7 @@ export default function Hero() {
         <div style={{
           position: "relative", zIndex: 1, width: "100%", maxWidth: 1200,
           display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "28px 24px 60px" : "32px 24px 60px",
+          padding: isMobile ? "28px 24px 60px" : "32px 24px 140px",
         }}>
 
           {/* H1 — centré pleine largeur */}
@@ -186,11 +186,12 @@ export default function Hero() {
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
-          {/* Image 400K — indépendante, droite écran, statique */}
+          {/* Image 400K — indépendante, droite écran, statique, centrée sur la carte */}
           {!isMobile && (
             <img src="/$400K.png" alt="" style={{
               position: "absolute", right: 60, bottom: -44,
               height: 180, width: "auto", objectFit: "contain", zIndex: 5,
+              transform: "translateY(50px)",
             }} />
           )}
 
