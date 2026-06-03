@@ -77,27 +77,24 @@ export async function POST(req: NextRequest) {
       payment_method: "crypto",
     });
 
-    // Affiliate conversion tracking
+    // Affiliate referral tracking
     if (refCode) {
       try {
-        const { data: affiliateProfile } = await admin.from("profiles").select("user_id").eq("affiliate_code", refCode).single();
-        if (affiliateProfile && affiliateProfile.user_id !== userId) {
-          const { count } = await admin.from("affiliate_conversions").select("id", { count: "exact", head: true }).eq("affiliate_user_id", affiliateProfile.user_id);
-          const convCount = count || 0;
-          let rate = 0.10;
-          if (convCount >= 30) rate = 0.20;
-          else if (convCount >= 11) rate = 0.15;
+        const { data: affiliate } = await admin.from("affiliates").select("user_id, commission_rate, total_earned").eq("code", refCode).single();
+        if (affiliate && affiliate.user_id !== userId) {
+          const rate = (affiliate.commission_rate || 10) / 100;
           const amountPaid = parseFloat(body.price_amount || "0");
-          await admin.from("affiliate_conversions").insert({
-            affiliate_user_id: affiliateProfile.user_id,
-            buyer_user_id: userId,
-            amount_paid: amountPaid,
-            commission_rate: rate,
-            commission_amount: Math.round(amountPaid * rate * 100) / 100,
+          const commission = Math.round(amountPaid * rate * 100) / 100;
+          await admin.from("affiliate_referrals").insert({
+            affiliate_user_id: affiliate.user_id,
+            referred_user_id: userId,
+            purchase_amount: amountPaid,
+            commission_amount: commission,
             status: "pending",
           });
+          await admin.from("affiliates").update({ total_earned: (affiliate.total_earned || 0) + commission }).eq("user_id", affiliate.user_id);
         }
-      } catch (e) { console.error("Affiliate conversion error:", e); }
+      } catch (e) { console.error("Affiliate referral error:", e); }
     }
 
     // Increment promo code usage if applicable
