@@ -247,7 +247,6 @@ function CheckoutContent() {
               <div>
                 <div style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Standard MT5 · 1:50 · USD</div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>Challenge {challenge.label} — {challenge.model}</div>
-                <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 1 }}>Levier 1:50 (tous actifs) · Swaps activés</div>
               </div>
               <div style={{ marginLeft: "auto", textAlign: "right" }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: isFree ? "#16a34a" : "#111" }}>
