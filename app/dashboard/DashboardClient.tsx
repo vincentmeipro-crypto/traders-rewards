@@ -1541,14 +1541,14 @@ export default function DashboardClient({ user }: { user: User }) {
                     const dailyUSD   = Math.round(b * challenge.daily_drawdown_limit / 100);
                     const totalUSD   = Math.round(b * challenge.total_drawdown_limit / 100);
                     const rules = [
-                      {
+                      ...(challenge.phase !== "funded" ? [{
                         label: T.dash.profitTarget,
                         pct: `${challenge.profit_target}%`,
                         usd: `+$${profitUSD.toLocaleString()}`,
                         usdColor: "#1565C0",
                         ok: parseFloat(profitPct) >= challenge.profit_target,
                         status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%`,
-                      },
+                      }] : []),
                       {
                         label: `Min. ${T.dash.tradingDays}`,
                         pct: challenge.phase === "funded" ? "14 jours" : "4 jours",
