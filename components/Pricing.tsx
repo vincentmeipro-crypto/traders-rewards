@@ -209,9 +209,14 @@ export default function Pricing() {
         </div>
 
         {isMobile && (
-          <p style={{ textAlign: "center", color: "#8a96aa", fontSize: 12, marginTop: 12 }}>
-            {isFr ? "← Glissez pour voir tous les comptes →" : "← Swipe to see all accounts →"}
-          </p>
+          <>
+            <p style={{ textAlign: "center", color: "#8a96aa", fontSize: 12, marginTop: 12 }}>
+              {isFr ? "← Glissez pour voir tous les comptes →" : "← Swipe to see all accounts →"}
+            </p>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 32 }}>
+              <img src="/MT5 ROND TRANSPARENT.png" alt="MetaTrader 5" style={{ height: 140, width: "auto", objectFit: "contain" }} />
+            </div>
+          </>
         )}
       </div>
     </section>
