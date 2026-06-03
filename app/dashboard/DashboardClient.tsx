@@ -457,7 +457,12 @@ export default function DashboardClient({ user }: { user: User }) {
     await fetch("/api/payouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payoutForm, amount: Number(payoutForm.amount), challenge_id: challenge?.id }),
+      body: JSON.stringify({
+        amount: Math.max(0, profitAmount),
+        payment_method: payoutForm.payment_method,
+        wallet_address: payoutForm.wallet_address,
+        challenge_id: challenge?.id,
+      }),
     });
     setPayoutLoading(false);
     setPayoutSuccess(true);
@@ -1071,12 +1076,36 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>
-                <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{T.dash.amount} (USD)</label>
-                  <input type="number" placeholder="ex. 1500" value={payoutForm.amount}
-                    onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 16, fontWeight: 700, outline: "none", boxSizing: "border-box" }} />
+                {/* Montant auto = profit du compte */}
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
+                  <div style={{ width: "100%", backgroundColor: "#f0f4ff", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 18, fontWeight: 900 }}>
+                    ${Math.max(0, profitAmount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </div>
                 </div>
+
+                {/* Méthode de paiement */}
+                <div style={{ marginBottom: 20 }}>
+                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
+                  <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value, wallet_address: "" }))}
+                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 14, fontWeight: 700, outline: "none" }}>
+                    <option value="bank">{isFr ? "Virement bancaire (RIB/IBAN)" : "Bank transfer (IBAN)"}</option>
+                    <option value="crypto">Crypto — USDC réseau Solana</option>
+                  </select>
+                </div>
+
+                {/* Adresse selon méthode */}
+                <div style={{ marginBottom: 28 }}>
+                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
+                    {payoutForm.payment_method === "crypto" ? (isFr ? "Adresse portefeuille USDC (Solana)" : "USDC wallet address (Solana)") : "IBAN"}
+                  </label>
+                  <input type="text"
+                    placeholder={payoutForm.payment_method === "crypto" ? "Adresse Solana..." : "FR76..."}
+                    value={payoutForm.wallet_address}
+                    onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                </div>
+
                 {payoutSuccess ? (
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
                     <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#1565C0" /></div>
@@ -1084,7 +1113,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <div style={{ color: "#7a90b0", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
                   </div>
                 ) : (
-                  <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount}
+                  <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.wallet_address}
                     className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, opacity: payoutLoading ? 0.7 : 1 }}>
                     {payoutLoading ? T.dash.submitting : T.dash.submitReward}
                   </button>
