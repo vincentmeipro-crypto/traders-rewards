@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, disableMT5Account, changeMT5Group, createMT5Account } from "@/lib/mt5";
+import { getMT5Account, disableMT5Account, changeMT5Group, createMT5Account, addMT5Balance, withdrawMT5Balance } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -110,6 +110,16 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   const certDate = new Date().toLocaleDateString("fr-FR");
 
+  // Reset balance MT5 au montant de départ (même compte)
+  const resetMT5Balance = async () => {
+    try {
+      const diff = Math.round((newBalance - startBalance) * 100) / 100;
+      if (diff > 0) await withdrawMT5Balance(login, diff, "Phase reset");
+      else if (diff < 0) await addMT5Balance(login, Math.abs(diff), "Phase reset");
+    } catch {}
+  };
+
+  // Nouveau compte MT5 (pour Certified uniquement)
   const createNewMT5 = async (group: string) => {
     try {
       const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group, account_size: accountSize });
@@ -124,7 +134,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     } catch { return null; }
   };
 
-  // 1-Step: phase1 → funded
+  // 1-Step: phase1 → funded (nouveau compte certifié)
   if (model === "1step" && phase === "phase1" && targetMet && daysMet) {
     const newMT5 = await createNewMT5(FUNDED_GROUP["1step"]);
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
@@ -133,9 +143,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "synced", transition: "phase1→funded (1-step)", balance: newBalance };
   }
 
-  // 2-Step: phase1 → phase2
+  // 2-Step: phase1 → phase2 (même compte, balance remise à zéro)
   if (model === "2step" && phase === "phase1" && targetMet && daysMet) {
-    const newMT5 = await createNewMT5("Starwave\\demo\\FX1\\grp1");
+    await resetMT5Balance();
     await admin.from("challenges").update({
       phase: "phase2",
       balance: startBalance,
