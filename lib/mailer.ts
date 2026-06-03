@@ -50,16 +50,20 @@ export async function sendWelcomeEmail(
   }));
 }
 
-export async function sendPhase2Email(to: string, accountSize: string) {
+export async function sendPhase2Email(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }) {
   await sendEmail(to, "🏆 Phase 1 réussie — Bienvenue en Phase 2 !", buildEmail({
     title: "🏆 Phase 1 réussie !",
     titleColor: "#C9A84C",
-    body: `Félicitations ! Vous avez complété avec succès la Phase 1 de votre challenge ${accountSize}. Votre compte a été réinitialisé et la Phase 2 est maintenant active.`,
+    body: `Félicitations ! Vous avez complété avec succès la Phase 1 de votre challenge ${accountSize}. Un nouveau compte de trading a été créé pour votre Phase 2.`,
     details: [
       { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
       { label: "Nouvelle phase", value: "Phase 2" },
       { label: "Nouvel objectif", value: "5%" },
-      { label: "Balance réinitialisée", value: "✓ Fait" },
+      ...(mt5 ? [
+        { label: "Nouveau Login MT5", value: String(mt5.login), color: "#3b82f6" },
+        { label: "Mot de passe", value: mt5.password, color: "#3b82f6" },
+        { label: "Serveur", value: mt5.server },
+      ] : []),
     ],
     cta: { text: "Voir mon Dashboard →", href: `${SITE}/dashboard` },
   }));
@@ -83,16 +87,20 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
   }));
 }
 
-export async function sendFundedEmail(to: string, accountSize: string) {
+export async function sendFundedEmail(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }) {
   await sendEmail(to, "🎉 Vous êtes Certifié ! Bienvenue chez Elysium", buildEmail({
     title: "🎉 Félicitations — Vous êtes Certifié !",
     titleColor: "#3b82f6",
-    body: `Performance exceptionnelle ! Vous avez réussi toutes les phases de votre challenge ${accountSize}. Vous êtes maintenant un trader certifié Elysium avec un partage des profits jusqu'à 90%.`,
+    body: `Performance exceptionnelle ! Vous avez réussi toutes les phases de votre challenge ${accountSize}. Vous êtes maintenant un trader certifié Elysium. Voici vos nouveaux identifiants de compte certifié.`,
     details: [
       { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
       { label: "Statut", value: "Trader Certifié ✓", color: "#3b82f6" },
       { label: "Partage des profits", value: "90% pour vous" },
-      { label: "Récompenses", value: "Disponibles maintenant" },
+      ...(mt5 ? [
+        { label: "Nouveau Login MT5", value: String(mt5.login), color: "#3b82f6" },
+        { label: "Mot de passe", value: mt5.password, color: "#3b82f6" },
+        { label: "Serveur", value: mt5.server },
+      ] : []),
     ],
     cta: { text: "Demander ma première récompense →", href: `${SITE}/dashboard` },
   }));

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, disableMT5Account, changeMT5Group } from "@/lib/mt5";
+import { getMT5Account, disableMT5Account, changeMT5Group, createMT5Account } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -110,17 +110,32 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   const certDate = new Date().toLocaleDateString("fr-FR");
 
+  const createNewMT5 = async (group: string) => {
+    try {
+      const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group, account_size: accountSize });
+      await disableMT5Account(login).catch(() => {});
+      await admin.from("challenges").update({
+        mt5_login: newAccount.login,
+        mt5_password: newAccount.password,
+        mt5_password_investor: newAccount.password_investor,
+        mt5_server: newAccount.server,
+      }).eq("id", id);
+      return newAccount;
+    } catch { return null; }
+  };
+
   // 1-Step: phase1 → funded
   if (model === "1step" && phase === "phase1" && targetMet && daysMet) {
-    await changeMT5Group(login, FUNDED_GROUP["1step"]).catch(() => {});
+    const newMT5 = await createNewMT5(FUNDED_GROUP["1step"]);
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
-    await sendFundedEmail(userEmail, accountSize).catch(() => {});
+    await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
     return { status: "synced", transition: "phase1→funded (1-step)", balance: newBalance };
   }
 
   // 2-Step: phase1 → phase2
   if (model === "2step" && phase === "phase1" && targetMet && daysMet) {
+    const newMT5 = await createNewMT5("Starwave\\demo\\FX1\\grp1");
     await admin.from("challenges").update({
       phase: "phase2",
       balance: startBalance,
@@ -129,16 +144,16 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       trading_days: 0,
       status: "active",
     }).eq("id", id);
-    await sendPhase2Email(userEmail, accountSize).catch(() => {});
+    await sendPhase2Email(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
     return { status: "synced", transition: "phase1→phase2", balance: newBalance };
   }
 
   // 2-Step: phase2 → funded
   if (model === "2step" && phase === "phase2" && targetMet && daysMet) {
-    await changeMT5Group(login, FUNDED_GROUP["2step"]).catch(() => {});
+    const newMT5 = await createNewMT5(FUNDED_GROUP["2step"]);
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
-    await sendFundedEmail(userEmail, accountSize).catch(() => {});
+    await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
     return { status: "synced", transition: "phase2→funded", balance: newBalance };
   }
