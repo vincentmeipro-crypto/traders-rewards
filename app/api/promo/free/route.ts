@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
 import { createMT5Account, getMT5Group } from "@/lib/mt5";
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
         firstName,
         lastName,
         email,
-        leverage: 100,
+        leverage: 50,
         group: getMT5Group(product.model),
         account_size: product.accountSize,
       });

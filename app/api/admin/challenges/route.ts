@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
 import { createMT5Account, getMT5Group, disableMT5Account } from "@/lib/mt5";
@@ -30,7 +30,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const profitPct = ((balance - startBalance) / startBalance) * 100;
   const certDate = new Date().toLocaleDateString("fr-FR");
 
-  // 1-Step : Phase 1 → Funded directement
+  // 1-Step : Phase 1 â†’ Funded directement
   if (is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
     try { await sendFundedEmail(userEmail, accountSize); } catch {}
@@ -38,7 +38,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     return "funded";
   }
 
-  // 2-Step : Phase 1 → Phase 2
+  // 2-Step : Phase 1 â†’ Phase 2
   if (!is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
     await admin.from("challenges").update({
       phase: "phase2",
@@ -52,7 +52,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     return "phase2";
   }
 
-  // 2-Step : Phase 2 → Funded
+  // 2-Step : Phase 2 â†’ Funded
   if (!is1Step && phase === "phase2" && profitPct >= profitTarget && tradingDays >= 4) {
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
     try { await sendFundedEmail(userEmail, accountSize); } catch {}
@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
 
   const result = (challenges || []).map(c => ({
     ...c,
-    user_email: userMap[c.user_id] || "—",
+    user_email: userMap[c.user_id] || "â€”",
     client_first_name: profileMap[c.user_id]?.first_name || "",
     client_last_name: profileMap[c.user_id]?.last_name || "",
     client_phone: profileMap[c.user_id]?.phone || "",
@@ -108,11 +108,11 @@ export async function POST(req: NextRequest) {
       email_confirm: true,
       user_metadata: { first_name: formFirstName || "", last_name: formLastName || "" },
     });
-    if (createErr || !created.user) return NextResponse.json({ error: `Impossible de créer l'utilisateur : ${createErr?.message}` }, { status: 500 });
+    if (createErr || !created.user) return NextResponse.json({ error: `Impossible de crÃ©er l'utilisateur : ${createErr?.message}` }, { status: 500 });
     user = created.user;
   }
 
-  // Toujours sauvegarder prénom/nom dans profiles si fournis
+  // Toujours sauvegarder prÃ©nom/nom dans profiles si fournis
   if (formFirstName || formLastName) {
     await admin.from("profiles").upsert(
       { user_id: user.id, first_name: formFirstName || "", last_name: formLastName || "" },
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
     try {
       const mt5Account = await createMT5Account({
         firstName, lastName, email: userEmail,
-        leverage: 100,
+        leverage: 50,
         group: getMT5Group(model),
         account_size: accountSize,
       });
@@ -197,7 +197,7 @@ export async function PATCH(req: NextRequest) {
   // Get current challenge to detect balance change
   const { data: current } = await admin.from("challenges").select("*").eq("id", id).single();
 
-  // Auto-increment trading_days if balance changed — once per calendar day only
+  // Auto-increment trading_days if balance changed â€” once per calendar day only
   if (current && updates.balance !== undefined && updates.balance !== current.balance) {
     const lastSyncedDay = current.last_synced_at ? new Date(current.last_synced_at).toDateString() : null;
     const alreadyCountedToday = lastSyncedDay === new Date().toDateString();

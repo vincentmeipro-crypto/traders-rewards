@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getMT5Account, disableMT5Account, changeMT5Group, createMT5Account } from "@/lib/mt5";
 import {
@@ -53,11 +53,11 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const prevBestDay = (challenge.best_day_profit as number | null) ?? 0;
   const newBestDay = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
 
-  // ── Daily drawdown ────────────────────────────────────────────────────────
+  // â”€â”€ Daily drawdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const dailyDD = prevBalance > 0 ? ((prevBalance - newEquity) / prevBalance) * 100 : 0;
   const dailyDDRounded = parseFloat(dailyDD.toFixed(2));
 
-  // ── Base update (always runs, never blocked by optional columns) ──────────
+  // â”€â”€ Base update (always runs, never blocked by optional columns) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const baseNow = new Date().toISOString();
   await admin.from("challenges").update({
     balance: newBalance,
@@ -66,10 +66,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     last_synced_at: baseNow,
   }).eq("id", id);
 
-  // ── daily_dd + best_day_profit in separate updates (won't block base) ────
+  // â”€â”€ daily_dd + best_day_profit in separate updates (won't block base) â”€â”€â”€â”€
   try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch { /* columns may not exist yet */ }
 
-  // ── Daily drawdown breach ─────────────────────────────────────────────────
+  // â”€â”€ Daily drawdown breach â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   if (dailyDD >= dailyLimit) {
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
@@ -81,7 +81,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "failed", reason: "daily_drawdown", pct: dailyDD.toFixed(2) };
   }
 
-  // ── Total / Trailing drawdown ─────────────────────────────────────────────
+  // â”€â”€ Total / Trailing drawdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   let totalViolated = false;
   let totalDD = 0;
   if (model === "1step") {
@@ -103,17 +103,17 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
   }
 
-  // ── Phase transitions ─────────────────────────────────────────────────────
+  // â”€â”€ Phase transitions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const profitPct   = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
   const targetMet   = profitPct >= profitTarget;
   const daysMet     = newTradingDays >= 4;
 
   const certDate = new Date().toLocaleDateString("fr-FR");
 
-  // Nouveau compte MT5 à chaque transition
+  // Nouveau compte MT5 Ã  chaque transition
   const createNewMT5 = async (group: string) => {
     try {
-      const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group, account_size: accountSize });
+      const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 50, group, account_size: accountSize });
       await disableMT5Account(login).catch(() => {});
       await admin.from("challenges").update({
         mt5_login: newAccount.login,
@@ -125,16 +125,16 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     } catch { return null; }
   };
 
-  // 1-Step: phase1 → funded (nouveau compte certifié)
+  // 1-Step: phase1 â†’ funded (nouveau compte certifiÃ©)
   if (model === "1step" && phase === "phase1" && targetMet && daysMet) {
     const newMT5 = await createNewMT5(FUNDED_GROUP["1step"]);
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
     await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1→funded (1-step)", balance: newBalance };
+    return { status: "synced", transition: "phase1â†’funded (1-step)", balance: newBalance };
   }
 
-  // 2-Step: phase1 → phase2 (nouveau compte)
+  // 2-Step: phase1 â†’ phase2 (nouveau compte)
   if (model === "2step" && phase === "phase1" && targetMet && daysMet) {
     const newMT5 = await createNewMT5("Starwave\\demo\\FX1\\grp1");
     await admin.from("challenges").update({
@@ -147,19 +147,19 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     }).eq("id", id);
     await sendPhase2Email(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1→phase2", balance: newBalance };
+    return { status: "synced", transition: "phase1â†’phase2", balance: newBalance };
   }
 
-  // 2-Step: phase2 → funded
+  // 2-Step: phase2 â†’ funded
   if (model === "2step" && phase === "phase2" && targetMet && daysMet) {
     const newMT5 = await createNewMT5(FUNDED_GROUP["2step"]);
     await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
     await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase2→funded", balance: newBalance };
+    return { status: "synced", transition: "phase2â†’funded", balance: newBalance };
   }
 
-  // ── Daily recap email — once per day, not on day of purchase ─────────────
+  // â”€â”€ Daily recap email â€” once per day, not on day of purchase â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const lastSynced = challenge.last_synced_at as string | null;
   const createdAt = challenge.created_at as string | null;
   const alreadySentToday = lastSynced ? new Date(lastSynced).toDateString() === today : false;
@@ -176,7 +176,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2) };
 }
 
-// ── Route ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Route â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("Authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}` && auth !== `Bearer admin-vincentmeipro@gmail.com`) {

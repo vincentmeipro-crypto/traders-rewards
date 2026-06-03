@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
@@ -29,13 +29,13 @@ export async function POST(req: NextRequest) {
     };
     const size = sizeMap[accountSize] || 10000;
 
-    // Récupérer les infos du user pour MT5
+    // RÃ©cupÃ©rer les infos du user pour MT5
     const { data: userData } = await admin.auth.admin.getUserById(userId);
     const firstName = userData?.user?.user_metadata?.first_name || "Trader";
     const lastName  = userData?.user?.user_metadata?.last_name  || "";
     const email     = userData?.user?.email || session.customer_details?.email || "";
 
-    // Créer le compte MT5
+    // CrÃ©er le compte MT5
     let mt5Login: number | null = null;
     let mt5Password: string | null = null;
     let mt5PasswordInvestor: string | null = null;
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         firstName,
         lastName,
         email,
-        leverage: 100,
+        leverage: 50,
         group: getMT5Group(model),
         account_size: accountSize,
       });

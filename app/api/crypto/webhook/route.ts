@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
     try {
       const mt5Account = await createMT5Account({
         firstName, lastName, email: userEmail,
-        leverage: 100,
+        leverage: 50,
         group: getMT5Group(model),
         account_size: accountSize,
       });
