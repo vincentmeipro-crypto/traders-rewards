@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
   const check = await checkAdmin(req);
   if (!check.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { userEmail, accountSize, model, amountPaid, createMT5 } = await req.json();
+  const { userEmail, firstName: formFirstName, lastName: formLastName, accountSize, model, amountPaid, createMT5 } = await req.json();
   const admin = createAdminClient();
 
   const { data: { users } } = await admin.auth.admin.listUsers();
@@ -97,11 +97,11 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: `Utilisateur introuvable : ${userEmail}` }, { status: 404 });
 
   const sizeMap: Record<string, number> = {
-    "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000,
+    "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000,
   };
   const size = sizeMap[accountSize] || 10000;
-  const firstName = user.user_metadata?.first_name || "Trader";
-  const lastName = user.user_metadata?.last_name || "";
+  const firstName = formFirstName || user.user_metadata?.first_name || "Trader";
+  const lastName = formLastName || user.user_metadata?.last_name || "";
 
   let mt5Login: number | null = null;
   let mt5Password: string | null = null;
