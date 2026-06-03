@@ -1551,11 +1551,13 @@ export default function DashboardClient({ user }: { user: User }) {
                       },
                       {
                         label: `Min. ${T.dash.tradingDays}`,
-                        pct: "4 jours",
+                        pct: challenge.phase === "funded" ? "14 jours" : "4 jours",
                         usd: null,
                         usdColor: "#fff",
-                        ok: challenge.trading_days >= 4,
-                        status: challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4`,
+                        ok: challenge.phase === "funded" ? challenge.trading_days >= 14 : challenge.trading_days >= 4,
+                        status: challenge.phase === "funded"
+                          ? (challenge.trading_days >= 14 ? T.dash.passed : `${challenge.trading_days} / 14`)
+                          : (challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4`),
                       },
                       {
                         label: T.dash.dailyDrawdown,
