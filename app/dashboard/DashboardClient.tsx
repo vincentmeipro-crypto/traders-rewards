@@ -197,6 +197,13 @@ const PHASE_LABELS: Record<string, string> = {
   funded: "Certified",
 };
 
+const STATUS_LABELS: Record<string, string> = {
+  active: "Active",
+  passed: "Passed",
+  funded: "Certified",
+  failed: "Failed",
+};
+
 const STATUS_COLORS: Record<string, string> = {
   active: "#1565C0",
   passed: "#00C2FF",
@@ -707,7 +714,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           <div>
                             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                              <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{c.status}</span>
+                              <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{STATUS_LABELS[c.status] || c.status}</span>
                               <span style={{ backgroundColor: "rgba(21,101,192,0.06)", color: "#7a90b0", fontSize: 12, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
                             </div>
                           </div>
@@ -1298,7 +1305,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "2step" ? "2-Step" : "1-Step"}</div>
                           <div style={{ display: "flex", gap: 8 }}>
                             <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#1565C0", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[c.phase] || c.phase}</span>
-                            <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status}</span>
+                            <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{STATUS_LABELS[c.status] || c.status}</span>
                           </div>
                         </div>
                         <div style={{ textAlign: "right" }}>
