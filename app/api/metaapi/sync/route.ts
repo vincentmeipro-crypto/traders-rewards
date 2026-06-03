@@ -8,6 +8,7 @@ import {
   sendDailyUpdateEmail,
   sendPhase1CertificateEmail,
   sendChallengeCertificateEmail,
+  sendWelcomeEmail,
 } from "@/lib/mailer";
 
 const FUNDED_GROUP: Record<string, string> = {
@@ -31,6 +32,20 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const accountSize    = challenge.account_size as string;
   const prevBalance    = challenge.balance as number;
   const prevHighest    = (challenge.highest_balance as number | null) ?? startBalance;
+
+  // 0. Si pas de login MT5 — créer automatiquement le compte manquant
+  if (!login) {
+    const is1Step = model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+    let group = "Starwave\\demo\\FX1\\grp1";
+    if (phase === "funded") group = is1Step ? "Starwave\\demo\\FX1\\grp4" : "Starwave\\demo\\FX1\\grp3";
+    else if (is1Step) group = "Starwave\\demo\\FX1\\grp2";
+    try {
+      const newAcc = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 50, group, account_size: accountSize });
+      await admin.from("challenges").update({ mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor, mt5_server: newAcc.server }).eq("id", id);
+      await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+      return { status: "mt5_created", login: newAcc.login };
+    } catch { return { status: "mt5_creation_failed" }; }
+  }
 
   // 1. Fetch live balance + equity from our MT5 microservice
   const info = await getMT5Account(login).catch(() => null);
