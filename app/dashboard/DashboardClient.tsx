@@ -1071,37 +1071,20 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#7a90b0", fontSize: 13, marginBottom: 8 }}>{T.dash.amount}</label>
-                  <input type="number" placeholder="e.g. 1500" value={payoutForm.amount}
-                    onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 16px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-                </div>
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#7a90b0", fontSize: 13, marginBottom: 8 }}>{T.dash.paymentMethod}</label>
-                  <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none" }}>
-                    <option value="crypto">Crypto (USDT/BTC)</option>
-                    <option value="bank">Bank Transfer</option>
-                  </select>
-                </div>
                 <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#7a90b0", fontSize: 13, marginBottom: 8 }}>
-                    {payoutForm.payment_method === "crypto" ? T.dash.walletAddress : "IBAN"}
-                  </label>
-                  <input type="text" placeholder={payoutForm.payment_method === "crypto" ? "0x... or T..." : "FR76..."}
-                    value={payoutForm.wallet_address}
-                    onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 16px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{T.dash.amount} (USD)</label>
+                  <input type="number" placeholder="ex. 1500" value={payoutForm.amount}
+                    onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))}
+                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 16, fontWeight: 700, outline: "none", boxSizing: "border-box" }} />
                 </div>
                 {payoutSuccess ? (
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
                     <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#1565C0" /></div>
-                    <div style={{ fontWeight: 700, fontSize: 18 }}>{T.dash.requestSubmitted}</div>
+                    <div style={{ fontWeight: 700, fontSize: 18, color: "#0D1B3E" }}>{T.dash.requestSubmitted}</div>
                     <div style={{ color: "#7a90b0", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
                   </div>
                 ) : (
-                  <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount || !payoutForm.wallet_address}
+                  <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.amount}
                     className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, opacity: payoutLoading ? 0.7 : 1 }}>
                     {payoutLoading ? T.dash.submitting : T.dash.submitReward}
                   </button>
@@ -1227,54 +1210,92 @@ export default function DashboardClient({ user }: { user: User }) {
               const unlockedChallenge = phase === "funded";
               const unlockedReward = !!latestPayout;
 
-              const certs = [
+              const paidPayouts = allPayouts.filter(p => p.status === "paid");
+
+              const baseCerts = [
                 {
                   type: "phase1", image: "/PHASE1.png", label: "Phase 1", btnColor: "#00C2FF",
                   unlocked: unlockedPhase1,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
+                  key: "phase1",
                 },
                 {
                   type: "challenge", image: "/CHALLENGE.png", label: "Challenge", btnColor: "#a855f7",
                   unlocked: unlockedChallenge,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
+                  key: "challenge",
                 },
-                {
-                  type: "reward", image: "/REWARDS.png", label: "Reward", btnColor: "#1565C0",
-                  unlocked: unlockedReward,
-                  amount: payoutAmount,
-                  date: payoutDate,
-                },
+                ...(!unlockedReward ? [{
+                  type: "reward", image: "/REWARDS.png", label: "Récompense", btnColor: "#1565C0",
+                  unlocked: false,
+                  amount: "$0",
+                  date: "",
+                  key: "reward-locked",
+                }] : []),
               ];
 
               return (
-                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
-                  {certs.map((cert) => {
-                    const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(cert.amount)}&date=${encodeURIComponent(cert.date)}`;
-                    return (
-                      <div key={cert.type} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                        <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-                          <img src={cert.image} alt={cert.label} style={{ width: "100%", display: "block", filter: cert.unlocked ? "none" : "brightness(0.25)" }} />
-                          {!cert.unlocked && (
-                            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                              <Lock size={28} color="#555" />
-                              <div style={{ color: "#7a90b0", fontSize: 12, fontWeight: 700 }}>{T.dash.notUnlocked}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
+                  {/* Phase 1 + Challenge */}
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
+                    {baseCerts.map((cert) => {
+                      const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(cert.amount)}&date=${encodeURIComponent(cert.date)}`;
+                      return (
+                        <div key={cert.key} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
+                            <img src={cert.image} alt={cert.label} style={{ width: "100%", display: "block", filter: cert.unlocked ? "none" : "brightness(0.25)" }} />
+                            {!cert.unlocked && (
+                              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                                <Lock size={28} color="#555" />
+                                <div style={{ color: "#7a90b0", fontSize: 12, fontWeight: 700 }}>{T.dash.notUnlocked}</div>
+                              </div>
+                            )}
+                          </div>
+                          {cert.unlocked ? (
+                            <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: cert.btnColor, color: "#fff" }}>
+                              {T.dash.openCert} {cert.label} →
+                            </a>
+                          ) : (
+                            <div style={{ textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, backgroundColor: "#F4F9FF", color: "#444" }}>
+                              🔒 {cert.label}
                             </div>
                           )}
                         </div>
-                        {cert.unlocked ? (
-                          <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: cert.btnColor, color: "#fff" }}>
-                            {T.dash.openCert} {cert.label} →
-                          </a>
-                        ) : (
-                          <div style={{ textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, backgroundColor: "#F4F9FF", color: "#444" }}>
-                            🔒 {cert.label}
-                          </div>
-                        )}
+                      );
+                    })}
+                  </div>
+
+                  {/* Certificats Récompense — un par payout approuvé */}
+                  {paidPayouts.length > 0 && (
+                    <div>
+                      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#0D1B3E" }}>
+                        {isFr ? "Mes Récompenses" : "My Rewards"}
                       </div>
-                    );
-                  })}
+                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
+                        {paidPayouts.map((p) => {
+                          const amt = `$${Number(p.amount).toLocaleString()}`;
+                          const dt = new Date(p.created_at).toLocaleDateString("fr-FR");
+                          const href = `/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amt)}&date=${encodeURIComponent(dt)}`;
+                          return (
+                            <div key={p.id} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                              <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
+                                <img src="/REWARDS.png" alt="Reward" style={{ width: "100%", display: "block" }} />
+                                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                  <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.5)", letterSpacing: "-1px" }}>{amt}</div>
+                                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>{dt}</div>
+                                </div>
+                              </div>
+                              <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: "#1565C0", color: "#fff" }}>
+                                {T.dash.openCert} Récompense →
+                              </a>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })()}
