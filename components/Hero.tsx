@@ -189,7 +189,7 @@ export default function Hero() {
           {/* Image 400K — static en bas à droite */}
           {!isMobile && (
             <img src="/4OOK.png" alt="" style={{
-              position: "absolute", right: 60, bottom: -30,
+              position: "absolute", right: 60, bottom: -44,
               height: 220, width: "auto", objectFit: "contain", zIndex: 5,
             }} />
           )}
