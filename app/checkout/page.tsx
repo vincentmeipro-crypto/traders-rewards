@@ -93,7 +93,7 @@ function CheckoutContent() {
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
   const isFree = discount === 100;
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
-  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && address.trim() && city.trim() && country.trim() && (user || (password.length >= 8 && password === confirmPassword));
+  const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && city.trim() && country.trim() && (user || (password.length >= 8 && password === confirmPassword));
   const anyLoading = loadingStripe || loadingCrypto || loadingFree;
   const canPay = profileComplete && agreedToTerms;
 
@@ -317,10 +317,7 @@ function CheckoutContent() {
                   max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
                   style={{ ...inp, colorScheme: "light" }} />
               </div>
-              <div style={{ gridColumn: "1 / -1" }}>
-                <label style={lbl}>Adresse *</label>
-                <input value={address} onChange={e => setAddress(e.target.value)} placeholder="12 Rue de la Paix" style={inp} />
-              </div>
+
               <div>
                 <label style={lbl}>Ville *</label>
                 <input value={city} onChange={e => setCity(e.target.value)} placeholder="Paris" style={inp} />
