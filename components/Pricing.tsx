@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
-  { size: "$200,000", id: "200k", price2: "€799", price1: "€779", popular: false, reward: "~€9,600" },
-  { size: "$100,000", id: "100k", price2: "€439", price1: "€429", popular: true,  reward: "~€4,800" },
-  { size: "$50,000",  id: "50k",  price2: "€299", price1: "€249", popular: false, reward: "~€2,400" },
-  { size: "$25,000",  id: "25k",  price2: "€199", price1: "€169", popular: false, reward: "~€1,200" },
-  { size: "$10,000",  id: "10k",  price2: "€99",  price1: "€79",  popular: false, reward: "~€480"   },
+  { size: "$100,000", id: "100k", price2: "€439", price1: "€429", popular: true,  premium: false, reward: "~€4,800" },
+  { size: "$200,000", id: "200k", price2: "€799", price1: "€779", popular: false, premium: true,  reward: "~€9,600" },
+  { size: "$50,000",  id: "50k",  price2: "€299", price1: "€249", popular: false, premium: false, reward: "~€2,400" },
+  { size: "$25,000",  id: "25k",  price2: "€199", price1: "€169", popular: false, premium: false, reward: "~€1,200" },
+  { size: "$10,000",  id: "10k",  price2: "€99",  price1: "€79",  popular: false, premium: false, reward: "~€480"   },
 ];
 
 export default function Pricing() {
@@ -112,16 +112,30 @@ export default function Pricing() {
                 onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.06)"; }}
               >
 
-                {/* Popular badge */}
+                {/* Badge MEILLEURE VALEUR — vert pour 100K */}
                 {acc.popular && (
                   <div style={{
                     position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
-                    background: "linear-gradient(135deg, #C9A84C, #E8C97A)",
-                    color: "#000", fontSize: 10, fontWeight: 800,
+                    background: "linear-gradient(135deg, #16a34a, #22c55e)",
+                    color: "#fff", fontSize: 10, fontWeight: 800,
                     padding: "5px 16px", borderRadius: 100,
                     letterSpacing: "1px", whiteSpace: "nowrap",
                   }}>
                     {isFr ? "MEILLEURE VALEUR" : "BEST VALUE"}
+                  </div>
+                )}
+
+                {/* Badge PREMIUM — doré pour 200K */}
+                {acc.premium && (
+                  <div style={{
+                    position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
+                    background: "linear-gradient(135deg, #92400e, #C9A84C, #F6D976)",
+                    color: "#000", fontSize: 10, fontWeight: 800,
+                    padding: "5px 16px", borderRadius: 100,
+                    letterSpacing: "1px", whiteSpace: "nowrap",
+                    boxShadow: "0 2px 8px rgba(201,168,76,0.4)",
+                  }}>
+                    {isFr ? "✦ PREMIUM" : "✦ PREMIUM"}
                   </div>
                 )}
 
