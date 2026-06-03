@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LanguageProvider>
           {children}
         </LanguageProvider>
-        <CrispChat />
+        {/* CrispChat removed — support via menu */}
         <PWARegister />
       </body>
     </html>
