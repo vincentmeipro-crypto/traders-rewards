@@ -84,7 +84,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
-  <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
+  <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
 );
 
 const badge = (label: string, color: string) => (
@@ -425,14 +425,14 @@ export default function AdminPage() {
           <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>Connexion Admin</h2>
           <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <div>
-              <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Email</div>
+              <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Email</div>
               <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} placeholder="vincentmeipro@gmail.com" required
-                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
             <div>
-              <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
+              <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
               <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
-                style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
             {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
             <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#C9A84C", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
@@ -448,48 +448,48 @@ export default function AdminPage() {
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#fff", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#6b7280", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#111827" }}>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#0D1B3E", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 40%, #a8d4ff 100%)" }}>
 
       {/* ── SIDEBAR ── */}
-      <div style={{ width: 220, backgroundColor: "#111827", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
-        <div style={{ padding: "20px 16px", borderBottom: "1px solid #1f2937", display: "flex", alignItems: "center", gap: 10 }}>
-          <img src="/logo-icon.png" style={{ width: 34, height: 34, objectFit: "contain", mixBlendMode: "screen" }} />
+      <div style={{ width: 220, backgroundColor: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRight: "1px solid rgba(255,255,255,0.6)", boxShadow: "4px 0 24px rgba(21,101,192,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
+        <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(21,101,192,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
+          <img src="/logo-icon.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
           <div>
-            <div style={{ color: "#fff", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Elysium</div>
-            <div style={{ color: "#C9A84C", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
+            <div style={{ color: "#0D1B3E", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Elysium</div>
+            <div style={{ color: "#1565C0", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
           </div>
         </div>
         <nav style={{ padding: "12px 8px", flex: 1 }}>
           {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(45,125,210,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#00C2FF" : "transparent"}`, color: tab === t.id ? "#00C2FF" : "#9ca3af", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
+            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(21,101,192,0.1)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#1565C0" : "transparent"}`, color: tab === t.id ? "#1565C0" : "#6b7280", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
               {t.label}
               {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
               {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
             </button>
           ))}
         </nav>
-        <div style={{ padding: "16px 12px", borderTop: "1px solid #1f2937" }}>
-          <a href="/dashboard" style={{ color: "#6b7280", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
+        <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(21,101,192,0.1)" }}>
+          <a href="/dashboard" style={{ color: "#8a96aa", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
         </div>
       </div>
 
       {/* ── MAIN ── */}
-      <div style={{ flex: 1, backgroundColor: "#f1f5f9", overflowY: "auto", color: "#111827" }}>
-        <div style={{ backgroundColor: "#fff", borderBottom: "1px solid #e5e7eb", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#0D1B3E" }}>
+        <div style={{ backgroundColor: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 2px 16px rgba(21,101,192,0.06)", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
-            <div style={{ fontSize: 11, color: "#9ca3af", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Admin</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#111827" }}>{TABS.find(t => t.id === tab)?.label}</div>
+            <div style={{ fontSize: 11, color: "#8a96aa", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Admin</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#0D1B3E" }}>{TABS.find(t => t.id === tab)?.label}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
             {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
-            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "#e5e7eb" : "#111827", color: syncing ? "#9ca3af" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
+            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(0,0,0,0.06)" : "#0D1B3E", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
               {syncing ? "Syncing..." : "Sync MT5"}
             </button>
           </div>
         </div>
         {syncDetail && (
-          <div style={{ margin: "16px 32px 0", backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: 10, padding: 16 }}>
+          <div style={{ margin: "16px 32px 0", background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 10, padding: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
               <span style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
               <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>✕</button>
@@ -505,7 +505,7 @@ export default function AdminPage() {
 
             {/* Alertes drawdown */}
             {kpis.alerts.length > 0 && (
-              <div style={{ backgroundColor: "#1a0a0a", border: "1px solid #ef444440", borderRadius: 12, padding: "14px 20px" }}>
+              <div style={{ background: "rgba(239,68,68,0.08)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "14px 20px" }}>
                 <div style={{ color: "#ef4444", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>⚠ {kpis.alerts.length} alerte(s) drawdown proche</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {kpis.alerts.map(c => (
@@ -520,13 +520,13 @@ export default function AdminPage() {
             {/* CA & Marge */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               {[
-                { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#fff"    },
-                { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#fff"    },
-                { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#4ade80" },
-                { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#4ade80" },
+                { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#0D1B3E" },
+                { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#0D1B3E" },
+                { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#22c55e" },
+                { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#22c55e" },
               ].map((s, i) => (
-                <div key={i} style={{ background: "linear-gradient(135deg, #1f2937 0%, #374151 100%)", borderRadius: 12, padding: "18px 22px" }}>
-                  <div style={{ color: "#9ca3af", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
+                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 8px 32px rgba(21,101,192,0.1)" }}>
+                  <div style={{ color: "#8a96aa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 28, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
               ))}
@@ -544,9 +544,9 @@ export default function AdminPage() {
                 { label: "Failed",             value: kpis.failed        },
                 { label: "Total Challenges",   value: kpis.total         },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 20px" }}>
-                  <div style={{ color: "#111827", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: "#111827" }}>{s.value}</div>
+                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "16px 20px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
+                  <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: "#0D1B3E" }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -559,10 +559,10 @@ export default function AdminPage() {
                 { label: "LTV moyen / trader",        value: `€${Math.round(kpis.ltv)}`,          sub: "dépense totale moyenne"    },
                 { label: "Récompenses en attente",    value: kpis.pendingPayouts,                  sub: `€${kpis.pendingAmt.toLocaleString()} à valider` },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
-                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 26, fontWeight: 900, color: "#111827", marginBottom: 4 }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: "#6b7280" }}>{s.sub}</div>
+                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
+                  <div style={{ color: "#8a96aa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: "#0D1B3E", marginBottom: 4 }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: "#8a96aa" }}>{s.sub}</div>
                 </div>
               ))}
             </div>
@@ -575,7 +575,7 @@ export default function AdminPage() {
             {/* Entonnoir */}
             <div style={{ display: "flex", gap: 8, marginBottom: 24, alignItems: "stretch" }}>
               {[
-                { label: "Phase 1 (2-Step)", value: kpis.phase1,    color: "#888",    fs: "active"  },
+                { label: "Phase 1 (2-Step)", value: kpis.phase1,    color: "#8a96aa",    fs: "active"  },
                 { label: "1-Step actifs",    value: kpis.oneStep,   color: "#a78bfa", fs: "active"  },
                 { label: "Phase 2 (2-Step)", value: kpis.phase2,    color: "#fff",    fs: "active"  },
                 { label: "Passés",           value: kpis.passed,    color: "#f59e0b", fs: "passed"  },
@@ -585,7 +585,7 @@ export default function AdminPage() {
                 <div key={i} onClick={() => setFilterStatus(s.fs)}
                   style={{ flex: 1, backgroundColor: "#ffffff", border: `1px solid ${s.color}30`, borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}>
                   <div style={{ color: s.color, fontSize: 22, fontWeight: 900 }}>{s.value}</div>
-                  <div style={{ color: "#555", fontSize: 11, marginTop: 4 }}>{s.label}</div>
+                  <div style={{ color: "#6b7280", fontSize: 11, marginTop: 4 }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -602,17 +602,17 @@ export default function AdminPage() {
                 <option value="funded">Certified</option>
                 <option value="failed">Failed</option>
               </select>
-              <span style={{ color: "#555", fontSize: 13, alignSelf: "center" }}>{filteredChallenges.length} résultat(s)</span>
+              <span style={{ color: "#6b7280", fontSize: 13, alignSelf: "center" }}>{filteredChallenges.length} résultat(s)</span>
             </div>
 
             {/* Table */}
-            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
+                    <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                       {["Trader", "Compte", "Modèle", "Phase", "Statut", "Balance", "Payé", "Jours", "Account ID", "Password", "Serveur", "Date", "Actions"].map(h => (
-                        <th key={h} style={{ padding: "13px 14px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
+                        <th key={h} style={{ padding: "13px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -631,8 +631,8 @@ export default function AdminPage() {
                                   { label: "Balance", value: c.account_size.replace("$","").replace(",","") },
                                 ].map((f, i) => (
                                   <button key={i} onClick={() => copyToClipboard(f.value)}
-                                    style={{ backgroundColor: "#f3f4f6", border: "1px solid #ddd", borderRadius: 6, padding: "3px 8px", color: "#555", fontSize: 11, cursor: "pointer" }}>
-                                    <span style={{ color: "#888", fontSize: 10 }}>{f.label}: </span>
+                                    style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid #ddd", borderRadius: 6, padding: "3px 8px", color: "#6b7280", fontSize: 11, cursor: "pointer" }}>
+                                    <span style={{ color: "#8a96aa", fontSize: 10 }}>{f.label}: </span>
                                     <span style={{ color: "#111", fontWeight: 600 }}>{f.value}</span>
                                     <span style={{ color: "#999", fontSize: 10 }}> ⎘</span>
                                   </button>
@@ -641,62 +641,62 @@ export default function AdminPage() {
                             </td>
                           </tr>
                         )}
-                        <tr key={c.id} style={{ borderBottom: "1px solid #111" }}>
-                          <td style={{ padding: "13px 14px", color: "#aaa", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</td>
+                        <tr key={c.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                          <td style={{ padding: "13px 14px", color: "#6b7280", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>{c.account_size}</td>
-                          <td style={{ padding: "13px 14px", color: "#888" }}>{c.model}</td>
+                          <td style={{ padding: "13px 14px", color: "#8a96aa" }}>{c.model}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
+                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
                               : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#fff" : "#888", fontWeight: 600, fontSize: 12 }}>{c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
+                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
                               : badge(c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 90 }} />
+                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 90 }} />
                               : `$${c.balance?.toLocaleString()}`}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#22c55e" }}>€{c.amount_paid}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 55 }} />
+                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 55 }} />
                               : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 120 }} />
+                              ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 120 }} />
                               : <span style={{ color: c.mt5_login ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_login || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
+                              ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
                               : <span style={{ color: c.mt5_password ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_password || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 140 }} />
+                              ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 140 }} />
                               : <span style={{ color: c.mt5_server ? "#38bdf8" : "#333", fontSize: 12, fontWeight: 700 }}>{c.mt5_server || "—"}</span>}
                           </td>
-                          <td style={{ padding: "13px 14px", color: "#555", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
+                          <td style={{ padding: "13px 14px", color: "#6b7280", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <div style={{ display: "flex", gap: 6 }}>
                                   <button onClick={() => saveChallenge(c.id)} style={{ backgroundColor: "#fff", color: "#000", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
-                                  <button onClick={() => { setEditing(null); setEditData({}); }} style={{ backgroundColor: "transparent", color: "#555", border: "1px solid #333", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                  <button onClick={() => { setEditing(null); setEditData({}); }} style={{ backgroundColor: "transparent", color: "#6b7280", border: "1px solid #333", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>
                               : <div style={{ display: "flex", gap: 6 }}>
-                                  <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "#f3f4f6", color: "#111", border: "1px solid #ccc", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
-                                  <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "#f3f4f6", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                  <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#111", border: "1px solid #ccc", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
+                                  <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
                           </td>
                         </tr>
                       </>
                     ))}
-                    {filteredChallenges.length === 0 && <tr><td colSpan={13} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucun challenge</td></tr>}
+                    {filteredChallenges.length === 0 && <tr><td colSpan={13} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucun challenge</td></tr>}
                   </tbody>
                 </table>
               </div>
@@ -707,27 +707,27 @@ export default function AdminPage() {
         {/* ══ CRM TRADERS ══ */}
         {tab === "crm" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ color: "#555", fontSize: 12, marginBottom: 8 }}>{traderCRM.length} traders — triés par dépense totale</div>
+            <div style={{ color: "#6b7280", fontSize: 12, marginBottom: 8 }}>{traderCRM.length} traders — triés par dépense totale</div>
             {traderCRM.map(trader => {
               const activeC   = trader.challenges.filter(c => c.status === "active").length;
               const certC     = trader.challenges.filter(c => c.status === "funded").length;
               const failedC   = trader.challenges.filter(c => c.status === "failed").length;
               const isOpen    = crmExpanded === trader.email;
               return (
-                <div key={trader.email} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
+                <div key={trader.email} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
                   <div onClick={() => setCrmExpanded(isOpen ? null : trader.email)}
                     style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
                     <div style={{ flex: 1, minWidth: 200 }}>
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{trader.name || trader.email}</div>
-                      {trader.name && <div style={{ color: "#555", fontSize: 12 }}>{trader.email}</div>}
+                      {trader.name && <div style={{ color: "#6b7280", fontSize: 12 }}>{trader.email}</div>}
                     </div>
                     <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 13 }}>
-                      <div><span style={{ color: "#555", fontSize: 11 }}>LTV </span><span style={{ color: "#22c55e", fontWeight: 800 }}>€{trader.totalSpent}</span></div>
-                      <div><span style={{ color: "#555", fontSize: 11 }}>Challenges </span><span style={{ fontWeight: 700 }}>{trader.challenges.length}</span></div>
-                      <div><span style={{ color: "#555", fontSize: 11 }}>Actifs </span><span style={{ color: "#22c55e", fontWeight: 700 }}>{activeC}</span></div>
-                      {certC > 0   && <div><span style={{ color: "#555", fontSize: 11 }}>Certified </span><span style={{ color: "#3b82f6", fontWeight: 700 }}>{certC}</span></div>}
-                      {failedC > 0 && <div><span style={{ color: "#555", fontSize: 11 }}>Failed </span><span style={{ color: "#ef4444", fontWeight: 700 }}>{failedC}</span></div>}
-                      <div style={{ color: "#555", fontSize: 11 }}>depuis {new Date(trader.firstDate).toLocaleDateString()}</div>
+                      <div><span style={{ color: "#6b7280", fontSize: 11 }}>LTV </span><span style={{ color: "#22c55e", fontWeight: 800 }}>€{trader.totalSpent}</span></div>
+                      <div><span style={{ color: "#6b7280", fontSize: 11 }}>Challenges </span><span style={{ fontWeight: 700 }}>{trader.challenges.length}</span></div>
+                      <div><span style={{ color: "#6b7280", fontSize: 11 }}>Actifs </span><span style={{ color: "#22c55e", fontWeight: 700 }}>{activeC}</span></div>
+                      {certC > 0   && <div><span style={{ color: "#6b7280", fontSize: 11 }}>Certified </span><span style={{ color: "#3b82f6", fontWeight: 700 }}>{certC}</span></div>}
+                      {failedC > 0 && <div><span style={{ color: "#6b7280", fontSize: 11 }}>Failed </span><span style={{ color: "#ef4444", fontWeight: 700 }}>{failedC}</span></div>}
+                      <div style={{ color: "#6b7280", fontSize: 11 }}>depuis {new Date(trader.firstDate).toLocaleDateString()}</div>
                     </div>
                     <span style={{ color: "#444", fontSize: 16 }}>{isOpen ? "▲" : "▼"}</span>
                   </div>
@@ -752,31 +752,31 @@ export default function AdminPage() {
                         {(() => {
                           const profile = profiles.find(p => p.email === trader.email);
                           return (
-                        <div style={{ padding: "16px 20px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, borderBottom: "1px solid #111" }}>
+                        <div style={{ padding: "16px 20px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                           <div>
-                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Contact</div>
+                            <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Contact</div>
                             <div style={{ fontWeight: 700 }}>{trader.name || "—"}</div>
-                            <div style={{ color: "#888", fontSize: 12 }}>{trader.email}</div>
-                            {(profile?.phone || firstChallenge?.client_phone) && <div style={{ color: "#888", fontSize: 12 }}>{profile?.phone || firstChallenge?.client_phone}</div>}
+                            <div style={{ color: "#8a96aa", fontSize: 12 }}>{trader.email}</div>
+                            {(profile?.phone || firstChallenge?.client_phone) && <div style={{ color: "#8a96aa", fontSize: 12 }}>{profile?.phone || firstChallenge?.client_phone}</div>}
                             {profile?.address && <div style={{ color: "#666", fontSize: 11, marginTop: 4 }}>{profile.address}{profile.postal_code ? `, ${profile.postal_code}` : ""} {profile.city || ""}{profile.country ? ` — ${profile.country}` : ""}</div>}
-                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "#f3f4f6", border: "1px solid #333", borderRadius: 6, color: "#C9A84C", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
+                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid #333", borderRadius: 6, color: "#C9A84C", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
                               {accessEmailMsg[trader.email] || "✉ Envoyer email d'accès"}
                             </button>
                           </div>
                           <div>
-                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Client depuis</div>
+                            <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Client depuis</div>
                             <div style={{ fontWeight: 700 }}>{new Date(trader.firstDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
                           </div>
                           <div>
-                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Total dépensé (LTV)</div>
+                            <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Total dépensé (LTV)</div>
                             <div style={{ fontWeight: 900, fontSize: 18, color: "#22c55e" }}>€{trader.totalSpent}</div>
                           </div>
                           <div>
-                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Récompenses reçues</div>
+                            <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Récompenses reçues</div>
                             <div style={{ fontWeight: 900, fontSize: 18, color: totalPaid > 0 ? "#3b82f6" : "#333" }}>€{totalPaid.toLocaleString()}</div>
                           </div>
                           <div>
-                            <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Challenges</div>
+                            <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Challenges</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
                               {[
                                 { label: "Total",    value: trader.challenges.length,                                color: "#fff"    },
@@ -785,7 +785,7 @@ export default function AdminPage() {
                                 { label: "Failed",   value: failedC,                                                 color: "#ef4444" },
                               ].map(s => s.value > 0 && (
                                 <span key={s.label} style={{ fontSize: 11 }}>
-                                  <span style={{ color: "#555" }}>{s.label} </span>
+                                  <span style={{ color: "#6b7280" }}>{s.label} </span>
                                   <span style={{ color: s.color, fontWeight: 800 }}>{s.value}</span>
                                 </span>
                               ))}
@@ -802,15 +802,15 @@ export default function AdminPage() {
                           const kycLabel = !kyc ? "Non soumis" : kyc.kyc_status;
                           const docFields: Array<[keyof KycSubmission["doc_urls"], string]> = [["id_front","ID recto"],["id_back","ID verso"],["residence","Domicile"],["selfie","Selfie"]];
                           return (
-                            <div style={{ padding: "14px 20px", borderBottom: "1px solid #111", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
-                              <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginRight: 4 }}>KYC</div>
+                            <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(0,0,0,0.06)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
+                              <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginRight: 4 }}>KYC</div>
                               <span style={{ backgroundColor: `${kycColor}20`, color: kycColor, padding: "2px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{kycLabel}</span>
-                              {kyc?.kyc_submitted_at && <span style={{ color: "#555", fontSize: 11 }}>soumis le {new Date(kyc.kyc_submitted_at).toLocaleDateString("fr-FR")}</span>}
+                              {kyc?.kyc_submitted_at && <span style={{ color: "#6b7280", fontSize: 11 }}>soumis le {new Date(kyc.kyc_submitted_at).toLocaleDateString("fr-FR")}</span>}
 
                               {kyc && docFields.map(([field, label]) => (
                                 kyc.doc_urls[field] ? (
                                   <a key={field} href={kyc.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
-                                    style={{ backgroundColor: "#f3f4f6", border: "1px solid #2a2a2a", borderRadius: 7, padding: "4px 10px", color: "#38bdf8", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
+                                    style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid #2a2a2a", borderRadius: 7, padding: "4px 10px", color: "#38bdf8", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
                                     📄 {label}
                                   </a>
                                 ) : null
@@ -827,7 +827,7 @@ export default function AdminPage() {
                                     ✓ Approuver
                                   </button>
                                   <input value={kycRejectReason[kyc.id] || ""} onChange={e => setKycRejectReason(r => ({ ...r, [kyc.id]: e.target.value }))}
-                                    placeholder="Motif de refus..." style={{ backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 7, padding: "4px 10px", color: "#111", fontSize: 11, outline: "none", width: 150 }} />
+                                    placeholder="Motif de refus..." style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 7, padding: "4px 10px", color: "#111", fontSize: 11, outline: "none", width: 150 }} />
                                   <button onClick={() => updateKyc(kyc.id, "rejected", kycRejectReason[kyc.id])}
                                     style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 7, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                                     ✕ Refuser
@@ -840,7 +840,7 @@ export default function AdminPage() {
 
                         {/* Timeline */}
                         <div style={{ padding: "16px 20px" }}>
-                          <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Historique complet</div>
+                          <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Historique complet</div>
                           <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                             {timeline.map((item, idx) => {
                               const isLast = idx === timeline.length - 1;
@@ -852,19 +852,19 @@ export default function AdminPage() {
                                     {/* Ligne verticale */}
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
                                       <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[c.status] || "#444", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#f3f4f6", minHeight: 24 }} />}
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "rgba(255,255,255,0.6)", minHeight: 24 }} />}
                                     </div>
                                     {/* Contenu */}
                                     <div style={{ flex: 1, paddingBottom: 16 }}>
                                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
-                                        <span style={{ fontSize: 11, color: "#555" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
+                                        <span style={{ fontSize: 11, color: "#6b7280" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
                                         <span style={{ fontWeight: 700, fontSize: 13 }}>Challenge {c.account_size}</span>
-                                        <span style={{ color: "#888", fontSize: 12 }}>{c.model}</span>
+                                        <span style={{ color: "#8a96aa", fontSize: 12 }}>{c.model}</span>
                                         {badge(c.status, STATUS_COLORS[c.status] || "#888")}
                                         <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700 }}>€{c.amount_paid} payé</span>
                                       </div>
-                                      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "#555" }}>
-                                        <span>Phase : <span style={{ color: "#888" }}>{c.phase}</span></span>
+                                      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "#6b7280" }}>
+                                        <span>Phase : <span style={{ color: "#8a96aa" }}>{c.phase}</span></span>
                                         <span>Jours tradés : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span></span>
                                         {c.balance && <span>Balance : <span style={{ color: "#fff" }}>${c.balance?.toLocaleString()}</span></span>}
                                         {profit && <span>P&L : <span style={{ color: Number(profit) >= 0 ? "#22c55e" : "#ef4444" }}>{profit}%</span></span>}
@@ -881,11 +881,11 @@ export default function AdminPage() {
                                   <div key={p.id} style={{ display: "flex", gap: 12 }}>
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
                                       <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[p.status] || "#3b82f6", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#f3f4f6", minHeight: 24 }} />}
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "rgba(255,255,255,0.6)", minHeight: 24 }} />}
                                     </div>
                                     <div style={{ flex: 1, paddingBottom: 16 }}>
                                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                        <span style={{ fontSize: 11, color: "#555" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
+                                        <span style={{ fontSize: 11, color: "#6b7280" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
                                         <span style={{ fontWeight: 700, fontSize: 13, color: "#3b82f6" }}>Demande de récompense</span>
                                         <span style={{ fontWeight: 900, fontSize: 14, color: "#22c55e" }}>€{p.amount?.toLocaleString()}</span>
                                         {badge(p.status, STATUS_COLORS[p.status] || "#888")}
@@ -903,7 +903,7 @@ export default function AdminPage() {
                 </div>
               );
             })}
-            {traderCRM.length === 0 && <div style={{ color: "#555", textAlign: "center", padding: 40 }}>Aucun trader</div>}
+            {traderCRM.length === 0 && <div style={{ color: "#6b7280", textAlign: "center", padding: 40 }}>Aucun trader</div>}
           </div>
         )}
 
@@ -917,25 +917,25 @@ export default function AdminPage() {
                 { label: "Marge brute totale",value: `${kpis.margeYear}%` },
                 { label: "Nb challenges total",value: challenges.length },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
-                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
+                <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "18px 22px" }}>
+                  <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 26, fontWeight: 900 }}>{s.value}</div>
                 </div>
               ))}
             </div>
 
             {/* Graphique CA mensuel */}
-            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "20px 24px" }}>
-              <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 20 }}>CA mensuel</div>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "20px 24px" }}>
+              <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 20 }}>CA mensuel</div>
               {monthlyRevenue.length === 0
-                ? <div style={{ color: "#555", textAlign: "center", padding: 20 }}>Aucune donnée</div>
+                ? <div style={{ color: "#6b7280", textAlign: "center", padding: 20 }}>Aucune donnée</div>
                 : <div style={{ display: "flex", gap: 8, alignItems: "flex-end", overflowX: "auto", paddingBottom: 8 }}>
                     {monthlyRevenue.map(m => (
                       <div key={m.month} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 60 }}>
                         <div style={{ fontSize: 10, color: "#22c55e", fontWeight: 700 }}>€{Math.round(m.ca/1000)}k</div>
                         <div style={{ width: 44, backgroundColor: "#00C2FF", borderRadius: "4px 4px 0 0", height: Math.max(4, m.ca / maxCA * 140) }} title={`€${m.ca}`} />
                         {m.payoutsAmt > 0 && <div style={{ width: 44, backgroundColor: "#ef4444", borderRadius: "0 0 4px 4px", height: Math.max(2, m.payoutsAmt / maxCA * 140), marginTop: -4 }} title={`Récompenses: €${m.payoutsAmt}`} />}
-                        <div style={{ fontSize: 9, color: "#555", textAlign: "center" }}>{m.month.slice(5)}/{m.month.slice(2,4)}</div>
+                        <div style={{ fontSize: 9, color: "#6b7280", textAlign: "center" }}>{m.month.slice(5)}/{m.month.slice(2,4)}</div>
                         <div style={{ fontSize: 9, color: m.marge > 50 ? "#22c55e" : "#888" }}>{m.marge}%</div>
                       </div>
                     ))}
@@ -943,18 +943,18 @@ export default function AdminPage() {
               <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
                 <span style={{ fontSize: 10, color: "#00C2FF" }}>■ CA</span>
                 <span style={{ fontSize: 10, color: "#ef4444" }}>■ Récompenses</span>
-                <span style={{ fontSize: 10, color: "#555" }}>% = marge brute</span>
+                <span style={{ fontSize: 10, color: "#6b7280" }}>% = marge brute</span>
               </div>
             </div>
 
             {/* CA par taille de compte */}
-            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
-              <div style={{ padding: "16px 20px", color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid #e5e7eb" }}>Répartition par taille de compte</div>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ padding: "16px 20px", color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>Répartition par taille de compte</div>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
+                  <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                     {["Compte", "Challenges vendus", "CA total", "% du CA", "Actifs", "Certified", "Failed"].map(h => (
-                      <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
+                      <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -963,16 +963,16 @@ export default function AdminPage() {
                     const totalCA = challenges.reduce((s, c) => s + (c.amount_paid || 0), 0);
                     const pct = totalCA > 0 ? Math.round(row.revenue / totalCA * 100) : 0;
                     return (
-                      <tr key={row.size} style={{ borderBottom: "1px solid #111" }}>
+                      <tr key={row.size} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                         <td style={{ padding: "12px 16px", fontWeight: 800, color: "#fff" }}>{row.size}</td>
                         <td style={{ padding: "12px 16px", fontWeight: 700, color: "#fff" }}>{row.count}</td>
                         <td style={{ padding: "12px 16px", color: "#22c55e", fontWeight: 700 }}>€{row.revenue.toLocaleString()}</td>
                         <td style={{ padding: "12px 16px" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <div style={{ flex: 1, backgroundColor: "#f3f4f6", borderRadius: 4, height: 6, maxWidth: 80 }}>
+                            <div style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.6)", borderRadius: 4, height: 6, maxWidth: 80 }}>
                               <div style={{ width: `${pct}%`, backgroundColor: "#00C2FF", height: 6, borderRadius: 4 }} />
                             </div>
-                            <span style={{ color: "#888", fontSize: 12 }}>{pct}%</span>
+                            <span style={{ color: "#8a96aa", fontSize: 12 }}>{pct}%</span>
                           </div>
                         </td>
                         <td style={{ padding: "12px 16px", color: "#22c55e" }}>{row.active}</td>
@@ -981,32 +981,32 @@ export default function AdminPage() {
                       </tr>
                     );
                   })}
-                  {byAccountSize.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucune donnée</td></tr>}
+                  {byAccountSize.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune donnée</td></tr>}
                 </tbody>
               </table>
             </div>
 
             {/* Tableau mensuel */}
-            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
+                  <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                     {["Mois", "Challenges", "CA", "Récompenses versées", "Marge brute"].map(h => (
-                      <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
+                      <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {[...monthlyRevenue].reverse().map(m => (
-                    <tr key={m.month} style={{ borderBottom: "1px solid #111" }}>
+                    <tr key={m.month} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                       <td style={{ padding: "12px 16px", fontWeight: 700 }}>{m.month}</td>
-                      <td style={{ padding: "12px 16px", color: "#888" }}>{m.count}</td>
+                      <td style={{ padding: "12px 16px", color: "#8a96aa" }}>{m.count}</td>
                       <td style={{ padding: "12px 16px", color: "#fff", fontWeight: 700 }}>€{m.ca.toLocaleString()}</td>
                       <td style={{ padding: "12px 16px", color: "#ef4444" }}>€{m.payoutsAmt.toLocaleString()}</td>
                       <td style={{ padding: "12px 16px", color: m.marge > 50 ? "#22c55e" : "#888", fontWeight: 700 }}>{m.marge}%</td>
                     </tr>
                   ))}
-                  {monthlyRevenue.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucune donnée</td></tr>}
+                  {monthlyRevenue.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune donnée</td></tr>}
                 </tbody>
               </table>
             </div>
@@ -1023,29 +1023,29 @@ export default function AdminPage() {
                 { label: "Refusés",     value: payouts.filter(p=>p.status==="rejected").length, color: "#ef4444" },
                 { label: "Montant total versé", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: "#fff" },
               ].map((s, i) => (
-                <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
-                  <div style={{ color: "#555", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+                <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
+                  <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                   <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
               ))}
             </div>
 
-            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
-                  <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
+                  <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                     {["Trader", "Montant", "Statut", "Date", "Actions"].map(h => (
-                      <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12 }}>{h}</th>
+                      <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {payouts.map(p => (
-                    <tr key={p.id} style={{ borderBottom: "1px solid #111" }}>
-                      <td style={{ padding: "13px 16px", color: "#aaa" }}>{p.user_email || p.user_id}</td>
+                    <tr key={p.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                      <td style={{ padding: "13px 16px", color: "#6b7280" }}>{p.user_email || p.user_id}</td>
                       <td style={{ padding: "13px 16px", fontWeight: 800, color: "#22c55e", fontSize: 15 }}>€{p.amount?.toLocaleString()}</td>
                       <td style={{ padding: "13px 16px" }}>{badge(p.status, STATUS_COLORS[p.status] || "#888")}</td>
-                      <td style={{ padding: "13px 16px", color: "#555", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
+                      <td style={{ padding: "13px 16px", color: "#6b7280", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
                       <td style={{ padding: "13px 16px" }}>
                         {p.status === "pending" && (
                           <div style={{ display: "flex", gap: 8 }}>
@@ -1062,7 +1062,7 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   ))}
-                  {payouts.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucune récompense</td></tr>}
+                  {payouts.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune récompense</td></tr>}
                 </tbody>
               </table>
             </div>
@@ -1072,8 +1072,8 @@ export default function AdminPage() {
         {/* ══ PROMO CODES ══ */}
         {tab === "promos" && (
           <>
-            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-              <div style={{ color: "#555", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 18 }}>Créer un code promo</div>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 16, padding: 24, marginBottom: 24 }}>
+              <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 18 }}>Créer un code promo</div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 16 }}>
                 {[
                   { label: "CODE *", key: "code", placeholder: "SUMMER25", transform: (v: string) => v.toUpperCase() },
@@ -1082,10 +1082,10 @@ export default function AdminPage() {
                   { label: "EXPIRE LE", key: "expires_at", type: "datetime-local" },
                 ].map(f => (
                   <div key={f.key}>
-                    <div style={{ color: "#555", fontSize: 10, marginBottom: 6 }}>{f.label}</div>
+                    <div style={{ color: "#6b7280", fontSize: 10, marginBottom: 6 }}>{f.label}</div>
                     <input type={f.type || "text"} value={(newCode as Record<string,string>)[f.key]} placeholder={f.placeholder}
                       onChange={e => setNewCode(n => ({ ...n, [f.key]: f.transform ? f.transform(e.target.value) : e.target.value }))}
-                      style={{ width: "100%", backgroundColor: "#f3f4f6", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 12px", color: "#111", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
+                      style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 12px", color: "#111", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
                   </div>
                 ))}
               </div>
@@ -1099,14 +1099,14 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
-              {promosLoading ? <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Chargement...</div> : (
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 16, overflow: "hidden" }}>
+              {promosLoading ? <div style={{ padding: 40, textAlign: "center", color: "#6b7280" }}>Chargement...</div> : (
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
-                      <tr style={{ borderBottom: "1px solid #e5e7eb" }}>
+                      <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                         {["Code", "Remise", "Utilisé", "Max", "Expire", "Statut", "Créé", "Actions"].map(h => (
-                          <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#555", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
+                          <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -1115,28 +1115,28 @@ export default function AdminPage() {
                         const isExpired = p.expires_at && new Date(p.expires_at) < new Date();
                         const isExhausted = p.max_uses !== null && p.used_count >= p.max_uses;
                         return (
-                          <tr key={p.id} style={{ borderBottom: "1px solid #111", opacity: (!p.active || isExpired || isExhausted) ? 0.5 : 1 }}>
+                          <tr key={p.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)", opacity: (!p.active || isExpired || isExhausted) ? 0.5 : 1 }}>
                             <td style={{ padding: "13px 16px" }}><button onClick={() => { navigator.clipboard.writeText(p.code); }} title="Copier" style={{ fontWeight: 800, fontFamily: "monospace", letterSpacing: 1, background: "none", border: "none", cursor: "pointer", color: "#111", fontSize: 13, padding: 0 }}>{p.code} ⎘</button></td>
                             <td style={{ padding: "13px 16px", fontWeight: 700, color: p.discount_percent === 100 ? "#22c55e" : "#fff" }}>{p.discount_percent === 100 ? "100% (GRATUIT)" : `${p.discount_percent}%`}</td>
-                            <td style={{ padding: "13px 16px", color: "#888" }}>{p.used_count}</td>
-                            <td style={{ padding: "13px 16px", color: "#555" }}>{p.max_uses ?? "∞"}</td>
+                            <td style={{ padding: "13px 16px", color: "#8a96aa" }}>{p.used_count}</td>
+                            <td style={{ padding: "13px 16px", color: "#6b7280" }}>{p.max_uses ?? "∞"}</td>
                             <td style={{ padding: "13px 16px", color: isExpired ? "#ef4444" : "#555", fontSize: 12 }}>{p.expires_at ? new Date(p.expires_at).toLocaleDateString() : "Jamais"}</td>
                             <td style={{ padding: "13px 16px" }}>
                               {isExpired ? badge("expiré", "#ef4444") : isExhausted ? badge("épuisé", "#f59e0b") : p.active ? badge("actif", "#22c55e") : badge("révoqué", "#555")}
                             </td>
-                            <td style={{ padding: "13px 16px", color: "#555", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
+                            <td style={{ padding: "13px 16px", color: "#6b7280", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
                             <td style={{ padding: "13px 16px" }}>
                               <div style={{ display: "flex", gap: 8 }}>
-                                <button onClick={() => togglePromo(p)} style={{ backgroundColor: "#f3f4f6", color: p.active ? "#ef4444" : "#22c55e", border: `1px solid ${p.active ? "#ef444433" : "#22c55e33"}`, borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
+                                <button onClick={() => togglePromo(p)} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: p.active ? "#ef4444" : "#22c55e", border: `1px solid ${p.active ? "#ef444433" : "#22c55e33"}`, borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
                                   {p.active ? "Révoquer" : "Restaurer"}
                                 </button>
-                                <button onClick={() => deletePromo(p.id)} style={{ backgroundColor: "#f3f4f6", color: "#555", border: "1px solid #e5e7eb", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Suppr.</button>
+                                <button onClick={() => deletePromo(p.id)} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#6b7280", border: "1px solid #e5e7eb", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Suppr.</button>
                               </div>
                             </td>
                           </tr>
                         );
                       })}
-                      {promos.length === 0 && <tr><td colSpan={8} style={{ padding: 40, textAlign: "center", color: "#333" }}>Aucun code promo</td></tr>}
+                      {promos.length === 0 && <tr><td colSpan={8} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucun code promo</td></tr>}
                     </tbody>
                   </table>
                 </div>
@@ -1154,8 +1154,8 @@ export default function AdminPage() {
                   { label: "Approuvés",  value: kycSubmissions.filter(k => k.kyc_status === "approved").length, color: "#22c55e" },
                   { label: "Refusés",   value: kycSubmissions.filter(k => k.kyc_status === "rejected").length, color: "#ef4444" },
                 ].map((s, i) => (
-                  <div key={i} style={{ backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "12px 20px" }}>
-                    <div style={{ color: "#555", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
+                  <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 10, padding: "12px 20px" }}>
+                    <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
                     <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
                 ))}
@@ -1163,10 +1163,10 @@ export default function AdminPage() {
               {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700 }}>{kycMsg}</span>}
             </div>
 
-            {kycLoading && <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Chargement...</div>}
+            {kycLoading && <div style={{ padding: 40, textAlign: "center", color: "#6b7280" }}>Chargement...</div>}
 
             {!kycLoading && kycSubmissions.length === 0 && (
-              <div style={{ padding: 40, textAlign: "center", color: "#555" }}>Aucune soumission KYC</div>
+              <div style={{ padding: 40, textAlign: "center", color: "#6b7280" }}>Aucune soumission KYC</div>
             )}
 
             {!kycLoading && kycSubmissions.map(k => {
@@ -1183,7 +1183,7 @@ export default function AdminPage() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>{k.user_email}</div>
-                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", fontSize: 12, color: "#555" }}>
+                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", fontSize: 12, color: "#6b7280" }}>
                         <span>Soumis le {new Date(k.kyc_submitted_at).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</span>
                         {k.kyc_reviewed_at && <span>• Révisé le {new Date(k.kyc_reviewed_at).toLocaleDateString("fr-FR")}</span>}
                       </div>
@@ -1196,11 +1196,11 @@ export default function AdminPage() {
                     {docLabels.map(([field, label]) => (
                       k.doc_urls[field] ? (
                         <a key={field} href={k.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
-                          style={{ backgroundColor: "#f3f4f6", border: "1px solid #2a2a2a", borderRadius: 8, padding: "8px 14px", color: "#38bdf8", fontSize: 12, fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
+                          style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid #2a2a2a", borderRadius: 8, padding: "8px 14px", color: "#38bdf8", fontSize: 12, fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 6 }}>
                           📄 {label}
                         </a>
                       ) : (
-                        <span key={field} style={{ backgroundColor: "#111", border: "1px solid #e5e7eb", borderRadius: 8, padding: "8px 14px", color: "#333", fontSize: 12 }}>{label} —</span>
+                        <span key={field} style={{ backgroundColor: "#111", border: "1px solid #e5e7eb", borderRadius: 8, padding: "8px 14px", color: "#4a5568", fontSize: 12 }}>{label} —</span>
                       )
                     ))}
                   </div>
@@ -1220,7 +1220,7 @@ export default function AdminPage() {
                           value={kycRejectReason[k.id] || ""}
                           onChange={e => setKycRejectReason(r => ({ ...r, [k.id]: e.target.value }))}
                           placeholder="Motif de refus (optionnel)..."
-                          style={{ flex: 1, backgroundColor: "#f3f4f6", border: "1px solid #ccc", borderRadius: 8, padding: "8px 12px", color: "#111", fontSize: 12, outline: "none" }}
+                          style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 8, padding: "8px 12px", color: "#111", fontSize: 12, outline: "none" }}
                         />
                         <button onClick={() => updateKyc(k.id, "rejected", kycRejectReason[k.id])}
                           style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
@@ -1241,19 +1241,19 @@ export default function AdminPage() {
             {card(<>
               <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 20, color: "#111" }}>Créer un challenge manuellement</div>
               {[
-                { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
-                { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option>$10,000</option><option>$25,000</option><option>$50,000</option><option>$100,000</option></select> },
-                { label: "Modèle", el: <select value={createForm.model} onChange={e => setCreateForm(f => ({ ...f, model: e.target.value }))} style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option value="1step">1-Step</option><option value="2step">2-Step</option></select> },
-                { label: "Montant payé (€)", el: <input type="number" value={createForm.amountPaid} onChange={e => setCreateForm(f => ({ ...f, amountPaid: e.target.value }))} placeholder="ex: 6.90" style={{ width: "100%", backgroundColor: "#f9fafb", border: "1px solid #e5e7eb", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option>$10,000</option><option>$25,000</option><option>$50,000</option><option>$100,000</option></select> },
+                { label: "Modèle", el: <select value={createForm.model} onChange={e => setCreateForm(f => ({ ...f, model: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none" }}><option value="1step">1-Step</option><option value="2step">2-Step</option></select> },
+                { label: "Montant payé (€)", el: <input type="number" value={createForm.amountPaid} onChange={e => setCreateForm(f => ({ ...f, amountPaid: e.target.value }))} placeholder="ex: 6.90" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
               ].map((f, i) => (
                 <div key={i} style={{ marginBottom: 16 }}>
-                  <div style={{ color: "#555", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{f.label}</div>
+                  <div style={{ color: "#6b7280", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{f.label}</div>
                   {f.el}
                 </div>
               ))}
               <label style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24, cursor: "pointer" }}>
                 <input type="checkbox" checked={createForm.createMT5} onChange={e => setCreateForm(f => ({ ...f, createMT5: e.target.checked }))} style={{ width: 16, height: 16 }} />
-                <span style={{ color: "#333", fontSize: 14 }}>Créer le compte MT5 automatiquement</span>
+                <span style={{ color: "#4a5568", fontSize: 14 }}>Créer le compte MT5 automatiquement</span>
               </label>
               {createError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#ef444410", borderRadius: 8 }}>{createError}</div>}
               {createMsg && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#22c55e10", borderRadius: 8 }}>{createMsg}</div>}
