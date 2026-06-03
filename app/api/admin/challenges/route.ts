@@ -93,8 +93,19 @@ export async function POST(req: NextRequest) {
   const admin = createAdminClient();
 
   const { data: { users } } = await admin.auth.admin.listUsers();
-  const user = users.find(u => u.email === userEmail);
-  if (!user) return NextResponse.json({ error: `Utilisateur introuvable : ${userEmail}` }, { status: 404 });
+  let user = users.find(u => u.email === userEmail);
+
+  if (!user) {
+    const tempPassword = Math.random().toString(36).slice(-10) + "A1!";
+    const { data: created, error: createErr } = await admin.auth.admin.createUser({
+      email: userEmail,
+      password: tempPassword,
+      email_confirm: true,
+      user_metadata: { first_name: formFirstName || "", last_name: formLastName || "" },
+    });
+    if (createErr || !created.user) return NextResponse.json({ error: `Impossible de créer l'utilisateur : ${createErr?.message}` }, { status: 500 });
+    user = created.user;
+  }
 
   const sizeMap: Record<string, number> = {
     "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000,
