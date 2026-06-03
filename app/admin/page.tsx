@@ -63,7 +63,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create";
+type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats";
 
 const STATUS_LABELS: Record<string, string> = {
   funded: "Certified",
@@ -93,6 +93,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "payouts",   label: "Récompenses" },
   { id: "promos",    label: "Promo Codes" },
   { id: "kyc",       label: "KYC" },
+  { id: "stats",     label: "📊 Statistiques" },
   { id: "create",    label: "➕ Créer Challenge" },
 ];
 
@@ -1299,6 +1300,138 @@ export default function AdminPage() {
             </>)}
           </div>
         )}
+
+        {/* ══ STATISTIQUES ══ */}
+        {tab === "stats" && (() => {
+          const is1 = (m: string) => m?.toLowerCase().replace(/[\s-]/g,"").includes("1step");
+          const total = challenges.length;
+          const pct = (n: number, d = total) => d > 0 ? Math.round(n / d * 100) : 0;
+
+          const sizes = ["$10,000","$25,000","$50,000","$100,000","$200,000"];
+
+          const t2 = challenges.filter(c => !is1(c.model));
+          const t2tot = t2.length;
+          const t2p1Active  = t2.filter(c => c.phase==="phase1" && c.status==="active").length;
+          const t2p1Failed  = t2.filter(c => c.phase==="phase1" && c.status==="failed").length;
+          const t2p1Passed  = t2.filter(c => c.phase==="phase1" && c.status==="passed").length;
+          const t2p2Active  = t2.filter(c => c.phase==="phase2" && c.status==="active").length;
+          const t2p2Failed  = t2.filter(c => c.phase==="phase2" && c.status==="failed").length;
+          const t2p2Passed  = t2.filter(c => c.phase==="phase2" && c.status==="passed").length;
+          const t2cert      = t2.filter(c => c.phase==="funded" && c.status==="funded").length;
+          const t2certFail  = t2.filter(c => c.phase==="funded" && c.status==="failed").length;
+
+          const t1 = challenges.filter(c => is1(c.model));
+          const t1tot = t1.length;
+          const t1p1Active  = t1.filter(c => c.phase==="phase1" && c.status==="active").length;
+          const t1p1Failed  = t1.filter(c => c.phase==="phase1" && c.status==="failed").length;
+          const t1cert      = t1.filter(c => c.phase==="funded" && c.status==="funded").length;
+          const t1certFail  = t1.filter(c => c.phase==="funded" && c.status==="failed").length;
+
+          const totalActive  = challenges.filter(c => c.status==="active").length;
+          const totalFailed  = challenges.filter(c => c.status==="failed").length;
+          const totalCert    = challenges.filter(c => c.status==="funded").length;
+          const totalPassed  = challenges.filter(c => c.status==="passed").length;
+          const totalCA      = challenges.reduce((s,c) => s+(c.amount_paid||0), 0);
+          const byCard       = challenges.filter(c => !c.payment_method||c.payment_method==="card").length;
+          const byCrypto     = challenges.filter(c => c.payment_method==="crypto").length;
+          const caCard       = challenges.filter(c => !c.payment_method||c.payment_method==="card").reduce((s,c)=>s+(c.amount_paid||0),0);
+          const caCrypto     = challenges.filter(c => c.payment_method==="crypto").reduce((s,c)=>s+(c.amount_paid||0),0);
+
+          const StatRow = ({ label, n, d = total, color = "#0D1B3E" }: { label: string; n: number; d?: number; color?: string }) => (
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(0,0,0,0.05)" }}>
+              <span style={{ fontSize:13, color:"#4a5568" }}>{label}</span>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <span style={{ fontSize:20, fontWeight:900, color, minWidth:36, textAlign:"right" }}>{n}</span>
+                <span style={{ fontSize:11, color:"#8a96aa", minWidth:40, textAlign:"right", background:"rgba(0,0,0,0.04)", borderRadius:6, padding:"2px 6px" }}>{pct(n,d)}%</span>
+              </div>
+            </div>
+          );
+
+          const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+            <div style={{ background:"rgba(255,255,255,0.75)", backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)", border:"1px solid rgba(255,255,255,0.8)", borderRadius:12, padding:"20px 24px" }}>
+              <div style={{ fontWeight:800, fontSize:14, color:"#0D1B3E", marginBottom:12, paddingBottom:8, borderBottom:"2px solid rgba(21,101,192,0.12)" }}>{title}</div>
+              {children}
+            </div>
+          );
+
+          return (
+            <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
+
+              {/* Résumé global */}
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12 }}>
+                {[
+                  { label:"Total achetés",  value:String(total),              color:"#0D1B3E" },
+                  { label:"CA total",       value:`€${Math.round(totalCA)}`,  color:"#0D1B3E" },
+                  { label:"Actifs",         value:String(totalActive),         color:"#22c55e" },
+                  { label:"Certified",      value:String(totalCert),           color:"#3b82f6" },
+                  { label:"Failed",         value:String(totalFailed),         color:"#ef4444" },
+                  { label:"Passed",         value:String(totalPassed),         color:"#f59e0b" },
+                ].map((s,i) => (
+                  <div key={i} style={{ background:"rgba(255,255,255,0.75)", backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)", border:"1px solid rgba(255,255,255,0.8)", borderRadius:12, padding:"16px 18px" }}>
+                    <div style={{ color:"#8a96aa", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
+                    <div style={{ fontSize:26, fontWeight:900, color:s.color }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18 }}>
+                <Section title="💳 Par moyen de paiement">
+                  <StatRow label="Carte bancaire" n={byCard} />
+                  <StatRow label="Crypto" n={byCrypto} />
+                  <div style={{ display:"flex", justifyContent:"space-between", paddingTop:10, fontSize:12, color:"#8a96aa" }}>
+                    <span>CA carte : <strong style={{color:"#0D1B3E"}}>€{Math.round(caCard)}</strong></span>
+                    <span>CA crypto : <strong style={{color:"#0D1B3E"}}>€{Math.round(caCrypto)}</strong></span>
+                  </div>
+                </Section>
+
+                <Section title="📦 Par taille de compte">
+                  {sizes.map(s => <StatRow key={s} label={s} n={challenges.filter(c=>c.account_size===s).length} />)}
+                </Section>
+              </div>
+
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18 }}>
+                <Section title={`🔵 2-Step — ${t2tot} comptes au total`}>
+                  <StatRow label="Phase 1 — Actifs"            n={t2p1Active}  d={t2tot} />
+                  <StatRow label="Phase 1 — Passed (→Phase 2)" n={t2p1Passed}  d={t2tot} color="#f59e0b" />
+                  <StatRow label="Phase 1 — Failed"            n={t2p1Failed}  d={t2tot} color="#ef4444" />
+                  <StatRow label="Phase 2 — Actifs"            n={t2p2Active}  d={t2tot} />
+                  <StatRow label="Phase 2 — Passed (→Certif.)" n={t2p2Passed} d={t2tot} color="#f59e0b" />
+                  <StatRow label="Phase 2 — Failed"            n={t2p2Failed}  d={t2tot} color="#ef4444" />
+                  <StatRow label="Certified — Actifs"          n={t2cert}      d={t2tot} color="#3b82f6" />
+                  <StatRow label="Certified — Failed"          n={t2certFail}  d={t2tot} color="#ef4444" />
+                </Section>
+
+                <Section title={`🟣 1-Step — ${t1tot} comptes au total`}>
+                  <StatRow label="Phase 1 — Actifs"   n={t1p1Active}  d={t1tot} />
+                  <StatRow label="Phase 1 — Failed"   n={t1p1Failed}  d={t1tot} color="#ef4444" />
+                  <StatRow label="Certified — Actifs" n={t1cert}      d={t1tot} color="#3b82f6" />
+                  <StatRow label="Certified — Failed" n={t1certFail}  d={t1tot} color="#ef4444" />
+                </Section>
+              </div>
+
+              <Section title="📈 Taux de conversion & d'échec">
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:14, paddingTop:8 }}>
+                  {[
+                    { label:"Taux failed global",        value:`${pct(totalFailed)}%`,                                                                                           color:"#ef4444" },
+                    { label:"Taux failed Phase 1",       value:`${pct(t2p1Failed+t1p1Failed, t2tot+t1tot)}%`,                                                                    color:"#ef4444" },
+                    { label:"Taux failed Phase 2 (2S)",  value:`${pct(t2p2Failed, t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail)}%`,                                       color:"#ef4444" },
+                    { label:"Taux failed Certified",     value:`${pct(t2certFail+t1certFail, t2cert+t1cert+t2certFail+t1certFail||1)}%`,                                        color:"#ef4444" },
+                    { label:"Conv. P1→P2 (2-Step)",      value:`${pct(t2p1Passed+t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail, t2tot)}%`,                                color:"#22c55e" },
+                    { label:"Conv. P2→Certif. (2S)",     value:`${pct(t2cert+t2certFail, t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail||1)}%`,                            color:"#22c55e" },
+                    { label:"Conv. Certified (1-Step)",  value:`${pct(t1cert+t1certFail, t1tot)}%`,                                                                             color:"#22c55e" },
+                    { label:"Taux certified global",     value:`${pct(totalCert)}%`,                                                                                            color:"#3b82f6" },
+                  ].map((s,i) => (
+                    <div key={i} style={{ background:"rgba(255,255,255,0.5)", border:"1px solid rgba(0,0,0,0.06)", borderRadius:10, padding:"14px 16px" }}>
+                      <div style={{ color:"#8a96aa", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
+                      <div style={{ fontSize:26, fontWeight:900, color:s.color }}>{s.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+
+            </div>
+          );
+        })()}
 
         </div>
       </div>
