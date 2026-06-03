@@ -1441,7 +1441,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Rules checklist */}
                 <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#fff" }}>{T.dash.rulesStatus}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#0D1B3E" }}>{T.dash.rulesStatus}</div>
                   {(() => {
                     const b = challenge.start_balance;
                     const profitUSD  = Math.round(b * challenge.profit_target / 100);
@@ -1524,7 +1524,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       ] : []),
                     ];
                     return rules.map((rule, i) => (
-                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < rules.length - 1 ? "1px solid #1a1a1a" : "none" }}>
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < rules.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                           <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.ok ? "#1565C0" : "#1565C0", flexShrink: 0 }} />
                           <div>
