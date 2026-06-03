@@ -143,9 +143,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "synced", transition: "phase1→funded (1-step)", balance: newBalance };
   }
 
-  // 2-Step: phase1 → phase2 (même compte, balance remise à zéro)
+  // 2-Step: phase1 → phase2 (nouveau compte)
   if (model === "2step" && phase === "phase1" && targetMet && daysMet) {
-    await resetMT5Balance();
+    await createNewMT5("Starwave\\demo\\FX1\\grp1");
     await admin.from("challenges").update({
       phase: "phase2",
       balance: startBalance,
