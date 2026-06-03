@@ -21,15 +21,25 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const startBalance = challenge.start_balance as number;
   const tradingDays = challenge.trading_days as number;
   const phase = challenge.phase as string;
+  const model = ((challenge.model as string) ?? "2step").toLowerCase().replace(/[\s-]/g, "");
   const profitTarget = challenge.profit_target as number;
   const accountSize = challenge.account_size as string;
   const id = challenge.id as string;
+  const is1Step = model.includes("1step");
 
   const profitPct = ((balance - startBalance) / startBalance) * 100;
   const certDate = new Date().toLocaleDateString("fr-FR");
 
-  // Phase 1 → Phase 2
-  if (phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
+  // 1-Step : Phase 1 → Funded directement
+  if (is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
+    await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
+    try { await sendFundedEmail(userEmail, accountSize); } catch {}
+    try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
+    return "funded";
+  }
+
+  // 2-Step : Phase 1 → Phase 2
+  if (!is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
     await admin.from("challenges").update({
       phase: "phase2",
       balance: startBalance,
@@ -37,21 +47,16 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
       trading_days: 0,
       status: "active",
     }).eq("id", id);
-
-    try { await sendPhase2Email(userEmail, accountSize); } catch (e) { console.error("Email error:", e); }
-    try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch (e) { console.error("Cert email error:", e); }
+    try { await sendPhase2Email(userEmail, accountSize); } catch {}
+    try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "phase2";
   }
 
-  // Phase 2 → Funded
-  if (phase === "phase2" && profitPct >= profitTarget && tradingDays >= 4) {
-    await admin.from("challenges").update({
-      phase: "funded",
-      status: "funded",
-    }).eq("id", id);
-
-    try { await sendFundedEmail(userEmail, accountSize); } catch (e) { console.error("Email error:", e); }
-    try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch (e) { console.error("Cert email error:", e); }
+  // 2-Step : Phase 2 → Funded
+  if (!is1Step && phase === "phase2" && profitPct >= profitTarget && tradingDays >= 4) {
+    await admin.from("challenges").update({ phase: "funded", status: "funded" }).eq("id", id);
+    try { await sendFundedEmail(userEmail, accountSize); } catch {}
+    try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "funded";
   }
 
