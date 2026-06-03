@@ -161,7 +161,7 @@ export const t = {
     },
     pricing: {
       label: 'Choisissez Votre Voie', title: 'Commencez Votre', titleGold: 'Challenge',
-      sub: 'Frais de challenge remboursés à votre première récompense.',
+      sub: '',
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
       features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Évolution jusqu\'à 400 000$'],
