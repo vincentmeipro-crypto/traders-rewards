@@ -79,9 +79,11 @@ export default function Navbar() {
 
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        backgroundColor: scrolled ? "rgba(250,251,253,0.96)" : "rgba(250,251,253,0.92)",
-        borderBottom: scrolled ? "1px solid rgba(0,0,0,0.08)" : "1px solid transparent",
-        backdropFilter: "blur(16px)",
+        backgroundColor: scrolled ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.45)",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.6)" : "1px solid rgba(255,255,255,0.3)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        boxShadow: scrolled ? "0 4px 24px rgba(21,101,192,0.1)" : "none",
         transition: "all 0.3s ease",
       }}>
         <div style={{ width: "100%", padding: "0 32px 0 0", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>

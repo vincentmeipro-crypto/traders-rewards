@@ -59,14 +59,16 @@ function SpotlightCard({ lang }: { lang: string }) {
   const t = TRADERS[idx];
   return (
     <div key={idx} style={{
-      background: "#fff",
-      border: "1px solid #3a3f4d",
-      borderRadius: 16,
+      background: "rgba(255,255,255,0.6)",
+      backdropFilter: "blur(24px)",
+      WebkitBackdropFilter: "blur(24px)",
+      border: "1px solid rgba(255,255,255,0.8)",
+      borderRadius: 24,
       padding: "28px 28px 24px",
       textAlign: "center",
       position: "relative",
       overflow: "hidden",
-      boxShadow: "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.06)",
+      boxShadow: "0 16px 48px rgba(21,101,192,0.18), 0 1px 0 rgba(255,255,255,0.9) inset",
       animation: `spotCycle ${TOTAL_MS}ms linear forwards`,
     }}>
 
@@ -176,7 +178,7 @@ export default function TopTraders() {
                 : "Based on 6% average profit, after the 20% split with Elysium."}
             </p>
           </div>
-          <div style={{ background: "#fff", borderRadius: 16, border: "1px solid rgba(26,114,245,0.15)", overflow: "hidden", boxShadow: "0 4px 24px rgba(26,114,245,0.08)" }}>
+          <div style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.75)", overflow: "hidden", boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(0,0,0,0.02)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
               {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
                 <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#8a96aa", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>

@@ -26,10 +26,12 @@ export default function Stats() {
           display: "grid",
           gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
           gap: isMobile ? 1 : 0,
-          background: isMobile ? "rgba(21,101,192,0.08)" : "#fff",
+          background: "rgba(255,255,255,0.55)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
           borderRadius: 20,
-          border: "1px solid rgba(21,101,192,0.1)",
-          boxShadow: "0 4px 30px rgba(21,101,192,0.06)",
+          border: "1px solid rgba(255,255,255,0.75)",
+          boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset",
           overflow: "hidden",
         }}>
           {stats.map((stat, i) => (

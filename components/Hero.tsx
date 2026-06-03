@@ -65,11 +65,13 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
       opacity: visible ? 1 : 0,
       transform: visible ? "translateY(0) scale(1)" : "translateY(-8px) scale(0.98)",
       transition: "opacity 0.4s ease, transform 0.4s ease",
-      background: "#fff",
-      border: "1.5px solid #1565C0",
-      borderRadius: 16,
+      background: "rgba(255,255,255,0.6)",
+      backdropFilter: "blur(20px)",
+      WebkitBackdropFilter: "blur(20px)",
+      border: "1px solid rgba(255,255,255,0.8)",
+      borderRadius: 18,
       padding: isMobile ? "14px 16px" : "18px 22px",
-      boxShadow: "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.04)",
+      boxShadow: "0 8px 40px rgba(21,101,192,0.15), 0 1px 0 rgba(255,255,255,0.9) inset",
       display: "flex", alignItems: "center", gap: 14,
       minWidth: isMobile ? 240 : 280,
     }}>
@@ -140,7 +142,7 @@ export default function Hero() {
 
       <section style={{
         minHeight: "auto",
-        background: "linear-gradient(180deg, #ffffff 0%, #D6EDFF 60%, #B8DFFF 100%)",
+        background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

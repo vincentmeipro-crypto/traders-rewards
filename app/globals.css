@@ -21,7 +21,7 @@
 html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
-  background: linear-gradient(180deg, #ffffff 0%, #D6EDFF 55%, #B8DFFF 100%);
+  background: linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-outfit), 'Outfit', system-ui, -apple-system, sans-serif;
@@ -94,17 +94,20 @@ body {
 }
 
 .card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(21, 101, 192, 0.1), 0 1px 0 rgba(255,255,255,0.8) inset;
+  transition: all 0.3s ease;
 }
 
 .card:hover {
-  border-color: var(--border-accent);
-  box-shadow: 0 8px 32px rgba(27,79,216,0.1);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 16px 48px rgba(21, 101, 192, 0.18), 0 1px 0 rgba(255,255,255,0.9) inset;
+  transform: translateY(-3px);
 }
 
 .card-featured {
