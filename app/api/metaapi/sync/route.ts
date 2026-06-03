@@ -193,11 +193,17 @@ export async function GET(req: NextRequest) {
 
   const admin = createAdminClient();
 
-  // Inclut les challenges sans login MT5 (pour auto-crÃ©ation)
   const { data: challenges } = await admin
     .from("challenges")
     .select("*")
     .in("status", ["active", "funded"]);
+
+  // Récupérer les payouts en attente pour bloquer la sync des comptes certified concernés
+  const { data: pendingPayouts } = await admin
+    .from("payouts")
+    .select("challenge_id")
+    .eq("status", "pending");
+  const pendingChallengeIds = new Set((pendingPayouts || []).map((p: { challenge_id: string }) => p.challenge_id));
 
   if (!challenges?.length) {
     return NextResponse.json({ synced: 0, message: "No active challenges" });
@@ -214,6 +220,12 @@ export async function GET(req: NextRequest) {
 
   for (const challenge of challenges) {
     try {
+      // Ne pas syncer un compte certified qui a une récompense en attente d'approbation
+      if (challenge.phase === "funded" && pendingChallengeIds.has(challenge.id)) {
+        results.push({ id: challenge.id, status: "skipped_pending_reward" });
+        continue;
+      }
+
       const userEmail = userMap[challenge.user_id as string] ?? "";
       const profile   = profileMap[challenge.user_id as string] || {};
       const firstName = (profile as Record<string, string>).first_name || "";
