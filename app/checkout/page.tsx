@@ -245,8 +245,9 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f3f4f6" }}>
               <div style={{ width: 36, height: 36, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏆</div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>Elysium Challenge</div>
-                <div style={{ color: "#6b7280", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>Challenge {challenge.label} — {challenge.model}</div>
+                <div style={{ color: "#6b7280", fontSize: 12 }}>MetaTrader 5 · Standard</div>
+                <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 1 }}>Levier 1:50 · Swaps activés · $0 commission</div>
               </div>
               <div style={{ marginLeft: "auto", textAlign: "right" }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: isFree ? "#16a34a" : "#111" }}>
