@@ -666,7 +666,7 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
-                              : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#fff" : "#888", fontWeight: 600, fontSize: 12 }}>{c.phase}</span>}
+                              : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "certified" : c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
