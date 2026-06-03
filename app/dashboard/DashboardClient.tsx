@@ -1663,7 +1663,8 @@ export default function DashboardClient({ user }: { user: User }) {
                   {challenge.phase === "funded" && (() => {
                     const dailyOk = dailyDrawdownPct < (challenge.daily_drawdown_limit ?? 5);
                     const totalOk = parseFloat(totalDrawdownPct) < (challenge.total_drawdown_limit ?? 10);
-                    const canRequest = dailyOk && totalOk && challenge.status !== "failed";
+                    const daysOk = (challenge.trading_days ?? 0) >= 14;
+                    const canRequest = dailyOk && totalOk && daysOk && challenge.status !== "failed";
                     return (
                       <button
                         onClick={() => canRequest && setActiveTab("payouts")}
