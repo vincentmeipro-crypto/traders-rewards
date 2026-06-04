@@ -161,7 +161,7 @@ export default function TopTraders() {
           width: "100%", height: "100%",
           objectFit: "cover",
           objectPosition: "center top",
-          opacity: 0.18,
+          opacity: 0.4,
           pointerEvents: "none",
           zIndex: 0,
           maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
