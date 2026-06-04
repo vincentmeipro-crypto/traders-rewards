@@ -69,26 +69,26 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
       backdropFilter: "blur(20px)",
       WebkitBackdropFilter: "blur(20px)",
       border: "1px solid rgba(255,255,255,0.8)",
-      borderRadius: 24,
-      padding: isMobile ? "14px 16px" : "28px 36px",
+      borderRadius: isMobile ? 17 : 24,
+      padding: isMobile ? "10px 11px" : "28px 36px",
       boxShadow: "0 8px 40px rgba(21,101,192,0.15), 0 1px 0 rgba(255,255,255,0.9) inset",
-      display: "flex", alignItems: "center", gap: 22,
-      minWidth: isMobile ? 240 : 480,
+      display: "flex", alignItems: "center", gap: isMobile ? 15 : 22,
+      minWidth: isMobile ? 168 : 480,
     }}>
       <div style={{
-        width: 72, height: 72, borderRadius: "50%", flexShrink: 0,
+        width: isMobile ? 50 : 72, height: isMobile ? 50 : 72, borderRadius: "50%", flexShrink: 0,
         background: "linear-gradient(135deg, #1565C0, #42A5F5)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        color: "#fff", fontWeight: 800, fontSize: 22,
+        color: "#fff", fontWeight: 800, fontSize: isMobile ? 15 : 22,
       }}>{t.initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-          <span style={{ color: "#0D1B3E", fontWeight: 700, fontSize: 22, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</span>
-          <img src={`https://flagcdn.com/40x30/${t.flag}.png`} alt="" style={{ width: 28, height: 21, borderRadius: 2, objectFit: "cover", flexShrink: 0 }} />
+        <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 6 : 8, marginBottom: 4 }}>
+          <span style={{ color: "#0D1B3E", fontWeight: 700, fontSize: isMobile ? 15 : 22, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</span>
+          <img src={`https://flagcdn.com/40x30/${t.flag}.png`} alt="" style={{ width: isMobile ? 20 : 28, height: isMobile ? 15 : 21, borderRadius: 2, objectFit: "cover", flexShrink: 0 }} />
         </div>
-        <div style={{ color: "#8a96aa", fontSize: 16 }}>{t.size} · Récompense reçue</div>
+        <div style={{ color: "#8a96aa", fontSize: isMobile ? 11 : 16 }}>{t.size} · Récompense reçue</div>
       </div>
-      <div style={{ color: "#1565C0", fontWeight: 900, fontSize: isMobile ? 16 : 30, flexShrink: 0 }}>{fmt(amount)}</div>
+      <div style={{ color: "#1565C0", fontWeight: 900, fontSize: isMobile ? 11 : 30, flexShrink: 0 }}>{fmt(amount)}</div>
     </div>
   );
 }
