@@ -60,19 +60,27 @@ export async function createMT5Account(params: {
 
   const account = await res.json();
 
-  // Top-up automatique — le microservice crée toujours à 10 000, on ajoute la différence
+  // Top-up si la balance réelle est inférieure à la cible
   if (balance > 10000 && account.login) {
-    const diff = balance - 10000;
-    let attempts = 3;
-    while (attempts > 0) {
-      try {
-        await new Promise(r => setTimeout(r, 1500)); // laisser le temps au serveur MT5
-        await addMT5Balance(account.login, diff, "Initial balance top-up");
-        break;
-      } catch (e) {
-        attempts--;
-        if (attempts === 0) console.error("MT5 top-up failed after 3 attempts:", e);
+    await new Promise(r => setTimeout(r, 1500));
+    try {
+      const info = await getMT5Account(account.login);
+      const actualBalance = info.balance ?? 0;
+      const diff = balance - actualBalance;
+      if (diff > 0) {
+        let attempts = 3;
+        while (attempts > 0) {
+          try {
+            await addMT5Balance(account.login, diff, "Initial balance top-up");
+            break;
+          } catch (e) {
+            attempts--;
+            if (attempts === 0) console.error("MT5 top-up failed after 3 attempts:", e);
+          }
+        }
       }
+    } catch (e) {
+      console.error("MT5 balance check failed:", e);
     }
   }
 
