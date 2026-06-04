@@ -180,7 +180,7 @@ export default function TopTraders() {
         </h2>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 48, alignItems: "center", marginBottom: 72, position: "relative", zIndex: 1 }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto 0 5%", padding: "0 24px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 48, alignItems: "center", marginBottom: 72, position: "relative", zIndex: 1, opacity: 0.88 }}>
 
         {/* Spotlight */}
         <SpotlightCard lang={lang} />
