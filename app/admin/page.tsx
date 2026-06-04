@@ -349,6 +349,20 @@ export default function AdminPage() {
     setChallenges(cs => cs.filter(x => x.id !== id));
   };
 
+  const fixMT5Balance = async (c: Challenge) => {
+    if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
+    const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
+    const expected = sizeMap[c.account_size] ?? 0;
+    const current = c.balance ?? 0;
+    const diff = expected - current;
+    if (diff <= 0) { alert(`Balance déjà correcte (${current})`); return; }
+    if (!confirm(`Ajouter $${diff.toLocaleString()} sur le compte MT5 ${c.mt5_login} pour atteindre $${expected.toLocaleString()} ?`)) return;
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount: diff }) });
+    const data = await res.json();
+    if (res.ok) alert(`✅ Balance corrigée : +$${diff.toLocaleString()} sur ${c.mt5_login}`);
+    else alert(`Erreur : ${data.error}`);
+  };
+
   const updatePayout = async (id: string, status: string) => {
     if (!token) return;
     const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id, status }) });
@@ -709,6 +723,7 @@ export default function AdminPage() {
                                 </div>
                               : <div style={{ display: "flex", gap: 6 }}>
                                   <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#111", border: "1px solid #ccc", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
+                                  <button onClick={() => fixMT5Balance(c)} style={{ backgroundColor: "rgba(255,193,7,0.15)", color: "#b45309", border: "1px solid #b4530933", borderRadius: 6, padding: "5px 8px", fontSize: 11, cursor: "pointer" }} title="Corriger balance MT5">⚡</button>
                                   <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
                           </td>
