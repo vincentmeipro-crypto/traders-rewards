@@ -173,10 +173,10 @@ export default function TopTraders() {
         {/* Reward table */}
         <div>
           <div style={{ marginBottom: 24 }}>
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#0D1B3E", marginBottom: 8 }}>
+            <h3 style={{ fontSize: 20, fontWeight: 700, color: "#fff", marginBottom: 8 }}>
               {lang === "fr" ? "Votre récompense estimée" : "Your estimated reward"}
             </h3>
-            <p style={{ color: "#4a5568", fontSize: 14, lineHeight: 1.7 }}>
+            <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 14, lineHeight: 1.7 }}>
               {lang === "fr"
                 ? "Basé sur 6% de profit moyen, après les 20% de partage avec Elysium."
                 : "Based on 6% average profit, after the 20% split with Elysium."}
