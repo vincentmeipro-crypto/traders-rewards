@@ -51,7 +51,6 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
 
   // 1-Step : Phase 1 -> Certified (meme compte, retrait profit + changement groupe)
   if (is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
-    await resetMT5Balance();
     if (oldLogin) await changeMT5Group(oldLogin, "Starwave\\demo\\FX1\\grp4").catch(() => {});
     await admin.from("challenges").update({
       phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
@@ -64,7 +63,6 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
 
   // 2-Step : Phase 1 -> Phase 2 (meme compte, retrait profit)
   if (!is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
-    await resetMT5Balance();
     await admin.from("challenges").update({
       phase: "phase2", status: "active", trading_days: 0, profit_target: 5,
       balance: startBalance, highest_balance: startBalance,
@@ -76,7 +74,6 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
 
   // 2-Step : Phase 2 -> Certified (meme compte, retrait profit + changement groupe)
   if (!is1Step && phase === "phase2" && profitPct >= profitTarget && tradingDays >= 4) {
-    await resetMT5Balance();
     if (oldLogin) await changeMT5Group(oldLogin, "Starwave\\demo\\FX1\\grp3").catch(() => {});
     await admin.from("challenges").update({
       phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
