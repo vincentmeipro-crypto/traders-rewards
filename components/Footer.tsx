@@ -38,7 +38,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer style={{ backgroundColor: "#0D1B3E", padding: "72px 24px 40px" }}>
+    <footer style={{ backgroundColor: "#f0f7ff", padding: "72px 24px 40px", borderTop: "1px solid rgba(21,101,192,0.12)" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 32 : 48, marginBottom: 64, alignItems: "start" }}>
 
@@ -46,22 +46,22 @@ export default function Footer() {
           <div style={{ gridColumn: isMobile ? "1 / -1" : "auto" }}>
             <div style={{ marginBottom: 20 }}>
               <div style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "4px", color: "#fff", textTransform: "uppercase" }}>ELYSIUM</div>
-                <div style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>— REWARDS —</div>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "4px", color: "#1565C0", textTransform: "uppercase" }}>ELYSIUM</div>
+                <div style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "rgba(21,101,192,0.45)", textTransform: "uppercase" }}>— REWARDS —</div>
               </div>
             </div>
-            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>{T.footer.tagline}</p>
+            <p style={{ color: "rgba(21,101,192,0.55)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>{T.footer.tagline}</p>
           </div>
 
           {/* Colonnes */}
           {sections.map((sec, i) => (
             <div key={i}>
-              <h4 style={{ color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 20, marginTop: 0 }}>{sec.title}</h4>
+              <h4 style={{ color: "rgba(21,101,192,0.45)", fontSize: 10, fontWeight: 700, letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 20, marginTop: 0 }}>{sec.title}</h4>
               {sec.links.map(item => (
                 <a key={item.label} href={item.href}
-                  style={{ display: "block", color: "rgba(255,255,255,0.6)", fontSize: 14, marginBottom: 12, textDecoration: "none", transition: "color 0.2s" }}
-                  onMouseOver={e => (e.currentTarget.style.color = "#fff")}
-                  onMouseOut={e => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}>
+                  style={{ display: "block", color: "rgba(21,101,192,0.7)", fontSize: 14, marginBottom: 12, textDecoration: "none", transition: "color 0.2s" }}
+                  onMouseOver={e => (e.currentTarget.style.color = "#1565C0")}
+                  onMouseOut={e => (e.currentTarget.style.color = "rgba(21,101,192,0.7)")}>
                   {item.label}
                 </a>
               ))}
@@ -69,10 +69,10 @@ export default function Footer() {
           ))}
         </div>
 
-        <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 32 }} />
+        <div style={{ height: 1, background: "rgba(21,101,192,0.12)", marginBottom: 32 }} />
 
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "center", gap: 16, marginBottom: 20 }}>
-          <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 13 }}>{T.footer.copyright}</p>
+          <p style={{ color: "rgba(21,101,192,0.4)", fontSize: 13 }}>{T.footer.copyright}</p>
           <div style={{ display: "flex", gap: isMobile ? 16 : 24, flexWrap: "wrap" }}>
             {[
               { label: T.footer.privacy, href: "/legal/privacy" },
@@ -80,15 +80,15 @@ export default function Footer() {
               { label: T.footer.risk,    href: "/legal/risk" },
             ].map(item => (
               <a key={item.label} href={item.href}
-                style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "none", transition: "color 0.2s" }}
-                onMouseOver={e => (e.currentTarget.style.color = "rgba(255,255,255,0.7)")}
-                onMouseOut={e => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}>
+                style={{ color: "rgba(21,101,192,0.4)", fontSize: 13, textDecoration: "none", transition: "color 0.2s" }}
+                onMouseOver={e => (e.currentTarget.style.color = "#1565C0")}
+                onMouseOut={e => (e.currentTarget.style.color = "rgba(21,101,192,0.4)")}>
                 {item.label}
               </a>
             ))}
           </div>
         </div>
-        <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 12, lineHeight: 1.6 }}>{T.footer.disclaimer}</p>
+        <p style={{ color: "rgba(21,101,192,0.3)", fontSize: 12, lineHeight: 1.6 }}>{T.footer.disclaimer}</p>
       </div>
     </footer>
   );
