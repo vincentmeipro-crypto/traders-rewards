@@ -152,7 +152,7 @@ export default function TopTraders() {
 
       {/* Fond femme trader */}
       <img
-        src="/FEMME%20TRADER.png"
+        src="/FEMME-TRADER.png"
         alt=""
         aria-hidden="true"
         style={{
