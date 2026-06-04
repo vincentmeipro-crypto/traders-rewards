@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+const SIZE_VALUES: Record<string, number> = {
+  "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
+  "$100,000": 100000, "$200,000": 200000,
+};
+const MAX_CUMUL = 400000;
 
 const PRODUCTS = {
   "10k-2step":  { name: "Challenge $10,000 — 2-Step", amount: 9900,   accountSize: "$10,000",  model: "2step" },
@@ -23,6 +30,15 @@ export async function POST(req: NextRequest) {
     const { productId, userId, userEmail, promoCode, discount, refCode } = await req.json();
     const product = PRODUCTS[productId as keyof typeof PRODUCTS];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
+
+    // Vérification plafond $400K
+    const admin = createAdminClient();
+    const { data: activeChallenges } = await admin.from("challenges").select("account_size").eq("user_id", userId).in("status", ["active", "funded"]);
+    const currentTotal = (activeChallenges || []).reduce((sum, c) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
+    const newSize = SIZE_VALUES[product.accountSize] || 0;
+    if (currentTotal + newSize > MAX_CUMUL) {
+      return NextResponse.json({ error: `Plafond $400,000 atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
+    }
 
     const discountPct = Number(discount) || 0;
     const finalAmount = discountPct > 0

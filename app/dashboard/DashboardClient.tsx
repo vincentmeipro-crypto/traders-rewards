@@ -1342,6 +1342,27 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
               <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", textDecoration: "none" }}>{T.dash.newChallenge}</a>
             </div>
+            {/* Total cumulé */}
+            {activeChallenges.length > 0 && (() => {
+              const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
+              const total = activeChallenges.reduce((s, c) => s + (sizeMap[c.account_size] || 0), 0);
+              const pct = Math.min(100, (total / 400000) * 100);
+              const color = pct >= 100 ? "#ef4444" : pct >= 75 ? "#f59e0b" : "#1565C0";
+              return (
+                <div className="card" style={{ padding: "14px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                      <span style={{ color: "#7a90b0", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital cumulé actif" : "Total active capital"}</span>
+                      <span style={{ fontWeight: 900, fontSize: 14, color }}>${total.toLocaleString()} <span style={{ color: "#7a90b0", fontWeight: 400, fontSize: 12 }}>/ $400,000</span></span>
+                    </div>
+                    <div style={{ background: "#EBF4FF", borderRadius: 100, height: 6, overflow: "hidden" }}>
+                      <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 100, transition: "width 0.5s" }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
             {activeChallenges.length === 0 ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <Trophy size={48} color="#00C2FF" style={{ marginBottom: 16, opacity: 0.5 }} />
