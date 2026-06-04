@@ -152,18 +152,17 @@ export default function Hero() {
         paddingTop: 72,
       }}>
 
-        {/* Mobile : texte — carte — texte */}
+        {/* Mobile : H1 complet — carte centrée */}
         {isMobile ? (
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 32px" }}>
-            <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 20, marginTop: 0 }}>
-              {isFr ? <>Transformez votre<br />trading démo en</> : <>Turn your trading<br />skills into</>}
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 40px" }}>
+            <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, marginTop: 0 }}>
+              {isFr
+                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#ffffff" }}>vraies récompenses</span></>
+                : <>Turn your trading<br />skills into<br /><span style={{ color: "#ffffff" }}>real rewards</span></>}
             </h1>
-            <div className="hero-animate-2" style={{ marginBottom: 20, display: "flex", justifyContent: "center" }}>
+            <div className="hero-animate-2" style={{ display: "flex", justifyContent: "center" }}>
               <LiveRewardCard isMobile={true} />
             </div>
-            <h1 className="hero-animate-3" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#ffffff", lineHeight: 1.1, letterSpacing: "-2px", margin: 0 }}>
-              {isFr ? "vraies récompenses" : "real rewards"}
-            </h1>
           </div>
         ) : (
           /* Desktop : H1 + carte absolue en bas */
