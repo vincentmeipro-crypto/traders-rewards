@@ -32,7 +32,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const is1Step = model.includes("1step");
 
   const status = challenge.status as string;
-  if (status === "passed" || status === "funded" || status === "failed") return null;
+  if (status === "passed" || status === "funded") return null;
 
   const profitPct = ((balance - startBalance) / startBalance) * 100;
   const certDate = new Date().toLocaleDateString("fr-FR");
