@@ -151,7 +151,6 @@ export default function Hero() {
         overflow: "hidden",
         paddingTop: 72,
       }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/FEMME-TRADER2.png')", backgroundSize: "cover", backgroundPosition: "right center", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />
 
         {/* Content — centré */}
         <div style={{

@@ -13,8 +13,11 @@ export default function Home() {
   return (
     <main style={{ minHeight: "100vh" }}>
 <Navbar />
-      <Hero />
-      <Pricing />
+      <div style={{ position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/FEMME-TRADER2.png')", backgroundSize: "cover", backgroundPosition: "right center", opacity: 0.55, pointerEvents: "none", zIndex: 0 }} />
+        <Hero />
+        <Pricing />
+      </div>
       <TopTraders />
       <Stats />
       <Pricing />
