@@ -1228,8 +1228,8 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.certSub}</p>
 
             {(() => {
-              const firstName = challenge?.client_first_name || "";
-              const lastName = challenge?.client_last_name || "";
+              const firstName = profileFirstName || challenge?.client_first_name || "";
+              const lastName = profileLastName || challenge?.client_last_name || "";
               const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
               const challengeDate = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
               const payoutDate = latestPayout ? new Date(latestPayout.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
