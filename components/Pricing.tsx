@@ -50,7 +50,8 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
-    <section id="pricing" style={{ padding: isMobile ? "48px 16px 16px" : "60px 16px 60px", backgroundColor: "transparent", scrollMarginTop: "0px", position: "relative", zIndex: 1 }}>
+    <section id="pricing" style={{ padding: isMobile ? "48px 16px 16px" : "60px 16px 60px", backgroundColor: "transparent", scrollMarginTop: "0px", position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <img src="/FEMME-TRADER2.png" alt="" aria-hidden="true" style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", opacity: 0.6, pointerEvents: "none", zIndex: 0, maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)" }} />
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
         {/* Header */}
