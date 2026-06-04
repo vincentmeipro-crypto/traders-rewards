@@ -353,13 +353,16 @@ export default function AdminPage() {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
     const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
     const expected = sizeMap[c.account_size] ?? 0;
-    const current = c.balance ?? 0;
-    const diff = expected - current;
-    if (diff <= 0) { alert(`Balance déjà correcte (${current})`); return; }
-    if (!confirm(`Ajouter $${diff.toLocaleString()} sur le compte MT5 ${c.mt5_login} pour atteindre $${expected.toLocaleString()} ?`)) return;
+    // Lire la vraie balance MT5
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const syncData = await syncRes.json();
+    const mt5Balance = syncData.balance ?? 0;
+    const diff = expected - mt5Balance;
+    if (diff <= 0) { alert(`Balance MT5 déjà correcte : $${mt5Balance.toLocaleString()}`); return; }
+    if (!confirm(`MT5 balance actuelle : $${mt5Balance.toLocaleString()}\nAjouter $${diff.toLocaleString()} pour atteindre $${expected.toLocaleString()} ?`)) return;
     const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount: diff }) });
     const data = await res.json();
-    if (res.ok) alert(`✅ Balance corrigée : +$${diff.toLocaleString()} sur ${c.mt5_login}`);
+    if (res.ok) alert(`✅ +$${diff.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
     else alert(`Erreur : ${data.error}`);
   };
 
