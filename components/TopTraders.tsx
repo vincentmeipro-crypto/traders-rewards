@@ -151,23 +151,7 @@ export default function TopTraders() {
     <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: "transparent", position: "relative" }}>
 
       {/* Fond femme trader */}
-      <img
-        src="/FEMME-TRADER.png"
-        alt=""
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: 0, left: 0,
-          width: "100%", height: "100%",
-          objectFit: "cover",
-          objectPosition: "center top",
-          opacity: 0.6,
-          pointerEvents: "none",
-          zIndex: 0,
-          maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
-        }}
-      />
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/FEMME-TRADER.png')", backgroundSize: "cover", backgroundPosition: "center top", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px", position: "relative", zIndex: 1 }}>
