@@ -148,10 +148,29 @@ export default function TopTraders() {
   const doubled = [...TRADERS, ...TRADERS];
 
   return (
-    <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: "transparent" }}>
+    <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: "transparent", position: "relative" }}>
+
+      {/* Fond femme trader */}
+      <img
+        src="/FEMME TRADER.png"
+        alt=""
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          top: "50%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "70%", maxWidth: 900,
+          objectFit: "contain",
+          opacity: 0.07,
+          pointerEvents: "none",
+          zIndex: 0,
+          maskImage: "radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%)",
+        }}
+      />
 
       {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px" }}>
+      <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px", position: "relative", zIndex: 1 }}>
         <span className="section-label" style={{ display: "block", marginBottom: 16 }}>
           {lang === "fr" ? "Dernières Récompenses" : "Latest Rewards"}
         </span>
@@ -161,7 +180,7 @@ export default function TopTraders() {
         </h2>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 48, alignItems: "center", marginBottom: 72 }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 48, alignItems: "center", marginBottom: 72, position: "relative", zIndex: 1 }}>
 
         {/* Spotlight */}
         <SpotlightCard lang={lang} />
