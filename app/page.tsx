@@ -15,7 +15,7 @@ export default function Home() {
 <Navbar />
       <div style={{ position: "relative", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)" }}>
         <div className="hero-bg-image" style={{ position: "absolute", inset: 0, backgroundImage: "url('/FEMME-TRADER2.png')", backgroundSize: "cover", backgroundPosition: "right center", opacity: 0.55, pointerEvents: "none", zIndex: 0 }} />
-        <style>{`@media (max-width: 768px) { .hero-bg-image { display: none !important; } }`}</style>
+        <style>{`@media (max-width: 768px) { .hero-bg-image { transform: scaleX(-1) !important; background-position: left center !important; opacity: 0.3 !important; } }`}</style>
         <Hero />
         <Pricing />
       </div>
