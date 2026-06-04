@@ -1059,7 +1059,7 @@ export default function AdminPage() {
                 { label: "En attente",  value: payouts.filter(p=>p.status==="pending").length,  color: "#f59e0b" },
                 { label: "Validés",     value: payouts.filter(p=>p.status==="paid").length,     color: "#22c55e" },
                 { label: "Refusés",     value: payouts.filter(p=>p.status==="rejected").length, color: "#ef4444" },
-                { label: "Montant total versé", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: "#fff" },
+                { label: "Montant total versé", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: "#22c55e" },
               ].map((s, i) => (
                 <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
                   <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
@@ -1072,16 +1072,25 @@ export default function AdminPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    {["Trader", "Montant", "Réception", "Adresse / IBAN", "Statut", "Date", "Actions"].map(h => (
+                    {["Trader", "Montant", "KYC", "Capital / MT5", "Réception", "Adresse / IBAN", "Statut", "Date", "Actions"].map(h => (
                       <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {payouts.map(p => (
+                  {payouts.map(p => {
+                    const userKyc = kyc.find(k => k.user_email === p.user_email);
+                    const userChallenge = challenges.filter(c => c.user_id === p.user_id && c.phase === "funded" && c.status === "funded").sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+                    const kycColor = userKyc?.kyc_status === "approved" ? "#22c55e" : userKyc?.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
+                    const kycLabel = userKyc?.kyc_status === "approved" ? "✓ Validé" : userKyc?.kyc_status === "rejected" ? "✕ Refusé" : "En attente";
+                    return (
                     <tr key={p.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                       <td style={{ padding: "13px 16px", color: "#6b7280" }}>{p.user_email || p.user_id}</td>
                       <td style={{ padding: "13px 16px", fontWeight: 800, color: "#22c55e", fontSize: 15 }}>€{p.amount?.toLocaleString()}</td>
+                      <td style={{ padding: "13px 16px" }}><span style={{ color: kycColor, fontWeight: 700, fontSize: 12 }}>{kycLabel}</span></td>
+                      <td style={{ padding: "13px 16px", fontSize: 12 }}>
+                        {userChallenge ? <><div style={{ fontWeight: 700 }}>{userChallenge.account_size}</div><div style={{ color: "#1565C0", fontFamily: "monospace" }}>{userChallenge.mt5_login}</div></> : <span style={{ color: "#8a96aa" }}>—</span>}
+                      </td>
                       <td style={{ padding: "13px 16px" }}>
                         {p.payment_method ? (
                           <span style={{ backgroundColor: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(21,101,192,0.1)", color: p.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>
@@ -1113,8 +1122,9 @@ export default function AdminPage() {
                         )}
                       </td>
                     </tr>
-                  ))}
-                  {payouts.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune récompense</td></tr>}
+                    );
+                  })}
+                  {payouts.length === 0 && <tr><td colSpan={9} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune récompense</td></tr>}
                 </tbody>
               </table>
             </div>
