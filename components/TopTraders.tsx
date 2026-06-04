@@ -157,15 +157,15 @@ export default function TopTraders() {
         aria-hidden="true"
         style={{
           position: "absolute",
-          top: "50%", left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "70%", maxWidth: 900,
-          objectFit: "contain",
-          opacity: 1,
+          top: 0, left: 0,
+          width: "100%", height: "100%",
+          objectFit: "cover",
+          objectPosition: "center top",
+          opacity: 0.18,
           pointerEvents: "none",
           zIndex: 0,
-          maskImage: "radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%)",
-          WebkitMaskImage: "radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%)",
+          maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, transparent 100%)",
         }}
       />
 
