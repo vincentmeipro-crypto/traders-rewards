@@ -366,6 +366,20 @@ export default function AdminPage() {
     else alert(`Erreur : ${data.error}`);
   };
 
+  const withdrawMT5Profit = async (c: Challenge) => {
+    if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const syncData = await syncRes.json();
+    const mt5Balance = syncData.balance ?? 0;
+    const profit = Math.round((mt5Balance - c.start_balance) * 100) / 100;
+    if (profit <= 0) { alert(`Aucun profit à retirer. Balance MT5 : $${mt5Balance.toLocaleString()}`); return; }
+    if (!confirm(`Retirer le profit de $${profit.toLocaleString()} sur MT5 ${c.mt5_login} ?\n(Balance actuelle : $${mt5Balance.toLocaleString()} → $${c.start_balance.toLocaleString()})`)) return;
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount: profit, withdraw: true, comment: "Profit withdrawal" }) });
+    const data = await res.json();
+    if (res.ok) alert(`✅ Retrait de $${profit.toLocaleString()} effectué sur MT5 ${c.mt5_login}`);
+    else alert(`Erreur : ${data.error}`);
+  };
+
   const updatePayout = async (id: string, status: string) => {
     if (!token) return;
     const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id, status }) });
@@ -727,6 +741,7 @@ export default function AdminPage() {
                               : <div style={{ display: "flex", gap: 6 }}>
                                   <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#111", border: "1px solid #ccc", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
                                   <button onClick={() => fixMT5Balance(c)} style={{ backgroundColor: "rgba(255,193,7,0.15)", color: "#b45309", border: "1px solid #b4530933", borderRadius: 6, padding: "5px 8px", fontSize: 11, cursor: "pointer" }} title="Corriger balance MT5">⚡</button>
+                                  {c.phase === "funded" && <button onClick={() => withdrawMT5Profit(c)} style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid #C9A84C33", borderRadius: 6, padding: "5px 8px", fontSize: 11, cursor: "pointer" }} title="Retirer profit MT5">💰</button>}
                                   <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
                           </td>
