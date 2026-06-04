@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, disableMT5Account, createMT5Account } from "@/lib/mt5";
+import { getMT5Account, disableMT5Account, createMT5Account, withdrawMT5Balance, changeMT5Group } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -116,68 +116,55 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
   }
 
-  // 7. Transitions de phase â€” NOUVELLE LIGNE Ã  chaque fois
+  // 7. Transitions de phase -- meme compte MT5, on retire le profit et on update la ligne
   const profitPct = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
   const targetMet = profitPct >= profitTarget;
   const daysMet   = newTradingDays >= 4;
   const certDate  = new Date().toLocaleDateString("fr-FR");
 
-  // 1-Step: phase1 â†’ certified
+  const resetMT5Balance = async () => {
+    const profit = newBalance - startBalance;
+    if (profit > 0) await withdrawMT5Balance(login, profit, "Phase transition reset").catch(() => {});
+  };
+
+  // 1-Step: phase1 -> certified
   if (is1Step && phase === "phase1" && targetMet && daysMet) {
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
-    await disableMT5Account(login).catch(() => {});
-    const newMT5 = await makeMT5(FUNDED_GROUP["1step"]);
-    await admin.from("challenges").insert({
-      user_id: userId, account_size: accountSize, model, status: "funded", phase: "funded",
-      balance: startBalance, start_balance: startBalance, profit_target: 0,
-      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
-      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
-      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
-    });
-    await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
+    await resetMT5Balance();
+    await changeMT5Group(login, FUNDED_GROUP["1step"]).catch(() => {});
+    await admin.from("challenges").update({
+      phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
+      balance: startBalance, highest_balance: startBalance,
+    }).eq("id", id);
+    await sendFundedEmail(userEmail, accountSize).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1â†’certified (1-step)" };
+    return { status: "synced", transition: "phase1->certified (1-step)" };
   }
 
-  // 2-Step: phase1 → phase2
+  // 2-Step: phase1 -> phase2
   if (!is1Step && phase === "phase1" && targetMet && daysMet) {
-    // Idempotence : vérifier qu’un phase2 n’existe pas déjà
-    const { data: existingP2 } = await admin.from("challenges").select("id").eq("user_id", userId).eq("model", model).eq("phase", "phase2").eq("account_size", accountSize).single();
-    if (existingP2) return { status: "skipped", reason: "phase2_already_exists" };
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
-    await disableMT5Account(login).catch(() => {});
-    const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp1");
-    await admin.from("challenges").insert({
-      user_id: userId, account_size: accountSize, model, status: "active", phase: "phase2",
-      balance: startBalance, start_balance: startBalance, profit_target: 5,
-      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
-      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
-      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
-    });
-    await sendPhase2Email(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
+    await resetMT5Balance();
+    await admin.from("challenges").update({
+      phase: "phase2", status: "active", trading_days: 0, profit_target: 5,
+      balance: startBalance, highest_balance: startBalance,
+    }).eq("id", id);
+    await sendPhase2Email(userEmail, accountSize).catch(() => {});
     await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1→phase2" };
+    return { status: "synced", transition: "phase1->phase2" };
   }
 
-  // 2-Step: phase2 → certified
+  // 2-Step: phase2 -> certified
   if (!is1Step && phase === "phase2" && targetMet && daysMet) {
-    // Idempotence : vérifier qu’un certified n’existe pas déjà
-    const { data: existingFunded } = await admin.from("challenges").select("id").eq("user_id", userId).eq("model", model).eq("phase", "funded").eq("account_size", accountSize).eq("status", "funded").single();
-    if (existingFunded) return { status: "skipped", reason: "certified_already_exists" };
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
-    await disableMT5Account(login).catch(() => {});
-    const newMT5 = await makeMT5(FUNDED_GROUP["2step"]);
-    await admin.from("challenges").insert({
-      user_id: userId, account_size: accountSize, model, status: "funded", phase: "funded",
-      balance: startBalance, start_balance: startBalance, profit_target: 0,
-      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
-      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
-      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
-    });
-    await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
+    await resetMT5Balance();
+    await changeMT5Group(login, FUNDED_GROUP["2step"]).catch(() => {});
+    await admin.from("challenges").update({
+      phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
+      balance: startBalance, highest_balance: startBalance,
+    }).eq("id", id);
+    await sendFundedEmail(userEmail, accountSize).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase2→certified" };
+    return { status: "synced", transition: "phase2->certified" };
   }
+
 
   // 8. Email rÃ©cap journalier
   const createdAt = challenge.created_at as string | null;

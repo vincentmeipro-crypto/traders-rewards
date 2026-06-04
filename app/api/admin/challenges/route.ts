@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, disableMT5Account } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, disableMT5Account, withdrawMT5Balance, changeMT5Group } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -34,63 +34,46 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const profitPct = ((balance - startBalance) / startBalance) * 100;
   const certDate = new Date().toLocaleDateString("fr-FR");
 
-  const makeMT5 = async (group: string) => {
-    try {
-      return await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group, account_size: accountSize });
-    } catch { return null; }
+  const resetMT5Balance = async () => {
+    if (!oldLogin) return;
+    const profit = balance - startBalance;
+    if (profit > 0) await withdrawMT5Balance(oldLogin, profit, "Phase transition reset").catch(() => {});
   };
 
-  // 1-Step : Phase 1 -> Certified
+  // 1-Step : Phase 1 -> Certified (meme compte, retrait profit + changement groupe)
   if (is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
-    if (oldLogin) await disableMT5Account(oldLogin).catch(() => {});
-    const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp4");
-    await admin.from("challenges").insert({
-      user_id: userId, account_size: accountSize, model, status: "funded", phase: "funded",
-      balance: startBalance, start_balance: startBalance, profit_target: 0,
-      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
-      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
-      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
-    });
-    try { await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined); } catch {}
+    await resetMT5Balance();
+    if (oldLogin) await changeMT5Group(oldLogin, "Starwave\\demo\\FX1\\grp4").catch(() => {});
+    await admin.from("challenges").update({
+      phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
+      balance: startBalance, highest_balance: startBalance,
+    }).eq("id", id);
+    try { await sendFundedEmail(userEmail, accountSize); } catch {}
     try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "funded";
   }
 
-  // 2-Step : Phase 1 -> Phase 2
+  // 2-Step : Phase 1 -> Phase 2 (meme compte, retrait profit)
   if (!is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
-    if (oldLogin) await disableMT5Account(oldLogin).catch(() => {});
-    const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp1");
-    const { error: insertErr } = await admin.from("challenges").insert({
-      user_id: userId, account_size: accountSize, model, status: "active", phase: "phase2",
-      balance: startBalance, start_balance: startBalance, profit_target: 5,
-      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
-      payment_method: "card",
-      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
-      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
-    });
-    if (insertErr) console.error("INSERT phase2 error:", insertErr);
-    try { await sendPhase2Email(userEmail, accountSize, newMT5 ?? undefined); } catch {}
+    await resetMT5Balance();
+    await admin.from("challenges").update({
+      phase: "phase2", status: "active", trading_days: 0, profit_target: 5,
+      balance: startBalance, highest_balance: startBalance,
+    }).eq("id", id);
+    try { await sendPhase2Email(userEmail, accountSize); } catch {}
     try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "phase2";
   }
 
-  // 2-Step : Phase 2 -> Certified
+  // 2-Step : Phase 2 -> Certified (meme compte, retrait profit + changement groupe)
   if (!is1Step && phase === "phase2" && profitPct >= profitTarget && tradingDays >= 4) {
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
-    if (oldLogin) await disableMT5Account(oldLogin).catch(() => {});
-    const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp3");
-    const { error: insertErr } = await admin.from("challenges").insert({
-      user_id: userId, account_size: accountSize, model, status: "funded", phase: "funded",
-      balance: startBalance, start_balance: startBalance, profit_target: 0,
-      daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit, trading_days: 0, amount_paid: 0,
-      payment_method: "card",
-      mt5_login: newMT5?.login ?? null, mt5_password: newMT5?.password ?? null,
-      mt5_password_investor: newMT5?.password_investor ?? null, mt5_server: newMT5?.server ?? null,
-    });
-    if (insertErr) console.error("INSERT funded error:", insertErr);
-    try { await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined); } catch {}
+    await resetMT5Balance();
+    if (oldLogin) await changeMT5Group(oldLogin, "Starwave\\demo\\FX1\\grp3").catch(() => {});
+    await admin.from("challenges").update({
+      phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
+      balance: startBalance, highest_balance: startBalance,
+    }).eq("id", id);
+    try { await sendFundedEmail(userEmail, accountSize); } catch {}
     try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "funded";
   }
