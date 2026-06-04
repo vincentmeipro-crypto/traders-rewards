@@ -139,8 +139,11 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "synced", transition: "phase1â†’certified (1-step)" };
   }
 
-  // 2-Step: phase1 â†’ phase2
+  // 2-Step: phase1 → phase2
   if (!is1Step && phase === "phase1" && targetMet && daysMet) {
+    // Idempotence : vérifier qu’un phase2 n’existe pas déjà
+    const { data: existingP2 } = await admin.from("challenges").select("id").eq("user_id", userId).eq("model", model).eq("phase", "phase2").eq("account_size", accountSize).single();
+    if (existingP2) return { status: "skipped", reason: "phase2_already_exists" };
     await admin.from("challenges").update({ status: "passed" }).eq("id", id);
     await disableMT5Account(login).catch(() => {});
     const newMT5 = await makeMT5("Starwave\\demo\\FX1\\grp1");
@@ -153,11 +156,14 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     });
     await sendPhase2Email(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1â†’phase2" };
+    return { status: "synced", transition: "phase1→phase2" };
   }
 
-  // 2-Step: phase2 â†’ certified
+  // 2-Step: phase2 → certified
   if (!is1Step && phase === "phase2" && targetMet && daysMet) {
+    // Idempotence : vérifier qu’un certified n’existe pas déjà
+    const { data: existingFunded } = await admin.from("challenges").select("id").eq("user_id", userId).eq("model", model).eq("phase", "funded").eq("account_size", accountSize).eq("status", "funded").single();
+    if (existingFunded) return { status: "skipped", reason: "certified_already_exists" };
     await admin.from("challenges").update({ status: "passed" }).eq("id", id);
     await disableMT5Account(login).catch(() => {});
     const newMT5 = await makeMT5(FUNDED_GROUP["2step"]);
@@ -170,7 +176,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     });
     await sendFundedEmail(userEmail, accountSize, newMT5 ?? undefined).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase2â†’certified" };
+    return { status: "synced", transition: "phase2→certified" };
   }
 
   // 8. Email rÃ©cap journalier
