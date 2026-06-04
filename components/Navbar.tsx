@@ -61,9 +61,12 @@ export default function Navbar() {
           text-transform: uppercase;
           padding: 7px 16px;
           border-radius: 100px;
-          background: linear-gradient(160deg, rgba(100,160,255,0.85) 0%, rgba(21,101,192,0.9) 50%, rgba(10,60,140,0.95) 100%);
-          box-shadow: 0 2px 12px rgba(21,101,192,0.35), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,50,0.2);
-          border: 1px solid rgba(255,255,255,0.25);
+          background: linear-gradient(160deg, rgba(100,160,255,0.25) 0%, rgba(21,101,192,0.35) 50%, rgba(10,60,140,0.4) 100%);
+          box-shadow: 0 2px 12px rgba(21,101,192,0.15), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,50,0.1);
+          border: 1px solid rgba(255,255,255,0.45);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          color: #0D1B3E;
           position: relative;
           overflow: hidden;
           transition: transform 0.18s, box-shadow 0.18s;
@@ -80,7 +83,9 @@ export default function Navbar() {
         }
         .nav-link:hover {
           transform: translateY(-2px) scale(1.04);
-          box-shadow: 0 6px 20px rgba(21,101,192,0.5), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,50,0.2);
+          background: linear-gradient(160deg, rgba(100,160,255,0.4) 0%, rgba(21,101,192,0.5) 50%, rgba(10,60,140,0.55) 100%);
+          box-shadow: 0 6px 20px rgba(21,101,192,0.25), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,50,0.1);
+          color: #0D1B3E;
         }
         .nav-cta {
           background: #0D1B3E;
