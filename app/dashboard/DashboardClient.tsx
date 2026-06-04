@@ -701,7 +701,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   const profit = c.balance && c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
                   const phaseReached = c.phase === "funded" ? "Active" : c.phase === "phase2" ? "Phase 2" : "Phase 1";
                   const isLast = idx === allChallenges.length - 1;
-                  const dotColor = c.status === "funded" ? "#3b82f6" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#1565C0" : "#1565C0";
+                  const dotColor = c.status === "funded" ? "#C9A84C" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#1565C0" : "#1565C0";
                   const relatedPayouts = allPayouts.filter(p => {
                     const pd = new Date(p.created_at).getTime();
                     const cd = new Date(c.created_at).getTime();
