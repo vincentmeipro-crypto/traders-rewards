@@ -77,8 +77,8 @@ function SpotlightCard({ lang }: { lang: string }) {
 
       {/* Badge */}
       <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(21,101,192,0.08)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 100, padding: "5px 14px", marginBottom: 22 }}>
-        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#1565C0", display: "inline-block", boxShadow: "0 0 6px #1565C0" }} />
-        <span style={{ color: "#1565C0", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", display: "inline-block", boxShadow: "0 0 6px rgba(255,255,255,0.8)" }} />
+        <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
           {lang === "fr" ? "Récompense versée" : "Reward Paid"}
         </span>
       </div>
@@ -86,7 +86,7 @@ function SpotlightCard({ lang }: { lang: string }) {
       {/* Trader */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 24, padding: "14px 20px", background: "rgba(0,0,0,0.02)", borderRadius: 10, border: "1px solid rgba(0,0,0,0.05)" }}>
         <div style={{ position: "relative", flexShrink: 0 }}>
-          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(27,79,216,0.08)", border: "1.5px solid rgba(27,79,216,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "#1B4FD8" }}>{t.initials}</div>
+          <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(27,79,216,0.08)", border: "1.5px solid rgba(27,79,216,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "#fff" }}>{t.initials}</div>
           <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -3, right: -7, width: 18, height: 14, borderRadius: 3, border: "1px solid rgba(0,0,0,0.1)", objectFit: "cover" }} />
         </div>
         <div style={{ textAlign: "left" }}>
@@ -98,7 +98,7 @@ function SpotlightCard({ lang }: { lang: string }) {
 
       {/* Amount */}
       <div style={{ marginBottom: 6 }}>
-        <div style={{ fontSize: "clamp(2.8rem, 10vw, 4rem)", fontWeight: 900, color: "#1565C0", lineHeight: 1, letterSpacing: "-2px", fontVariantNumeric: "tabular-nums" }}>
+        <div style={{ fontSize: "clamp(2.8rem, 10vw, 4rem)", fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: "-2px", fontVariantNumeric: "tabular-nums" }}>
           {fmt(amt)}
         </div>
       </div>
@@ -111,7 +111,7 @@ function SpotlightCard({ lang }: { lang: string }) {
 
       {/* Certified badge */}
       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(27,79,216,0.06)", border: "1px solid rgba(27,79,216,0.15)", borderRadius: 8, padding: "6px 14px" }}>
-        <span style={{ fontSize: 11, color: "#1B4FD8", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader certifié" : "Certified Trader"}</span>
+        <span style={{ fontSize: 11, color: "#fff", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader certifié" : "Certified Trader"}</span>
       </div>
 
       <style>{`
@@ -192,7 +192,7 @@ export default function TopTraders() {
               <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "16px 20px", borderBottom: i < tableRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#0D1B3E" }}>{row.size}</div>
                 <div style={{ fontSize: 14, color: "#4a5568" }}>{row.profit}</div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#1565C0" }}>{row.reward}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{row.reward}</div>
               </div>
             ))}
           </div>
