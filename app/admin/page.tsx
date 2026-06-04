@@ -1079,7 +1079,7 @@ export default function AdminPage() {
                 </thead>
                 <tbody>
                   {payouts.map(p => {
-                    const userKyc = kyc.find(k => k.user_email === p.user_email);
+                    const userKyc = kycSubmissions.find(k => k.user_email === p.user_email);
                     const userChallenge = challenges.filter(c => c.user_id === p.user_id && c.phase === "funded" && c.status === "funded").sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
                     const kycColor = userKyc?.kyc_status === "approved" ? "#22c55e" : userKyc?.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
                     const kycLabel = userKyc?.kyc_status === "approved" ? "✓ Validé" : userKyc?.kyc_status === "rejected" ? "✕ Refusé" : "En attente";
