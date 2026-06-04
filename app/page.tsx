@@ -18,6 +18,7 @@ export default function Home() {
         <style>{`@media (max-width: 768px) { .hero-bg-image { transform: scaleX(-1) !important; background-position: left center !important; opacity: 0.3 !important; } }`}</style>
         <Hero />
         <Pricing />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 160, background: "linear-gradient(to bottom, transparent, #c8e8ff)", pointerEvents: "none", zIndex: 2 }} />
       </div>
       <TopTraders />
       <Stats />
