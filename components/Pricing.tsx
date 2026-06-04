@@ -51,8 +51,8 @@ export default function Pricing() {
 
   return (
     <section id="pricing" style={{ padding: isMobile ? "48px 16px 16px" : "60px 16px 60px", backgroundColor: "transparent", scrollMarginTop: "0px", position: "relative", zIndex: 1, overflow: "hidden" }}>
-      <img src="/FEMME-TRADER2.png" alt="" aria-hidden="true" style={{ position: "absolute", top: 0, right: 0, width: "45%", height: "auto", opacity: 0.6, pointerEvents: "none", zIndex: 0, maskImage: "linear-gradient(to left, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)", WebkitMaskImage: "linear-gradient(to left, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 60%, transparent 100%)" }} />
-      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+      <img src="/FEMME-TRADER2.png" alt="" aria-hidden="true" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", opacity: 0.6, pointerEvents: "none", zIndex: 0, maskImage: "radial-gradient(ellipse 80% 80% at 60% 40%, black 30%, transparent 100%)", WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 60% 40%, black 30%, transparent 100%)" }} />
+      <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 28 }}>
