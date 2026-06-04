@@ -59,10 +59,10 @@ function SpotlightCard({ lang }: { lang: string }) {
   const t = TRADERS[idx];
   return (
     <div key={idx} style={{
-      background: "rgba(255,255,255,0.6)",
+      background: "rgba(255,255,255,0.25)",
       backdropFilter: "blur(24px)",
       WebkitBackdropFilter: "blur(24px)",
-      border: "1px solid rgba(255,255,255,0.8)",
+      border: "1px solid rgba(255,255,255,0.5)",
       borderRadius: 24,
       padding: "28px 28px 24px",
       textAlign: "center",
@@ -180,7 +180,7 @@ export default function TopTraders() {
         </h2>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: "0 auto 0 5%", padding: "0 24px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 48, alignItems: "center", marginBottom: 72, position: "relative", zIndex: 1, opacity: 0.88 }}>
+      <div style={{ maxWidth: 1100, margin: "0 5% 72px auto", padding: "0 24px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 48, alignItems: "center", position: "relative", zIndex: 1 }}>
 
         {/* Spotlight */}
         <SpotlightCard lang={lang} />
@@ -197,7 +197,7 @@ export default function TopTraders() {
                 : "Based on 6% average profit, after the 20% split with Elysium."}
             </p>
           </div>
-          <div style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.75)", overflow: "hidden", boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset" }}>
+          <div style={{ background: "rgba(255,255,255,0.25)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.5)", overflow: "hidden", boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(0,0,0,0.02)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
               {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
                 <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#8a96aa", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
