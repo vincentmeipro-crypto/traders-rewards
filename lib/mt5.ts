@@ -25,6 +25,11 @@ export function getMT5Group(model: string, phase = "challenge"): string {
   return GROUP_MAP[model] ?? GROUP_MAP["2step"];
 }
 
+const SIZE_MAP: Record<string, number> = {
+  "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
+  "$100,000": 100000, "$200,000": 200000,
+};
+
 export async function createMT5Account(params: {
   firstName: string;
   lastName: string;
@@ -33,6 +38,7 @@ export async function createMT5Account(params: {
   group: string;
   account_size?: string;
 }): Promise<{ login: number; password: string; password_investor: string; server: string }> {
+  const balance = params.account_size ? (SIZE_MAP[params.account_size] ?? 10000) : 10000;
   const res = await fetch(`${MT5_URL}/accounts/create`, {
     method: "POST",
     headers: MT5_HEADERS,
@@ -43,6 +49,7 @@ export async function createMT5Account(params: {
       leverage:     params.leverage,
       group:        params.group,
       account_size: params.account_size,
+      balance,
     }),
   });
 
