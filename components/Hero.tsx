@@ -148,7 +148,7 @@ export default function Hero() {
         alignItems: "center",
         justifyContent: "flex-start",
         position: "relative",
-        overflow: "hidden",
+        overflow: "visible",
         paddingTop: 72,
       }}>
 

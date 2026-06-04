@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main style={{ minHeight: "100vh" }}>
 <Navbar />
-      <div style={{ position: "relative", overflow: "hidden", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)" }}>
+      <div style={{ position: "relative", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)" }}>
         <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/FEMME-TRADER2.png')", backgroundSize: "cover", backgroundPosition: "right center", opacity: 0.55, pointerEvents: "none", zIndex: 0 }} />
         <Hero />
         <Pricing />
