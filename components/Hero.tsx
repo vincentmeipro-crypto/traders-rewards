@@ -186,19 +186,19 @@ export default function Hero() {
             <LiveRewardCard isMobile={isMobile} />
           </div>
 
-          {/* Logo MT5 — indépendant, gauche écran, statique, centré sur la carte */}
+          {/* $400K — gauche, en premier */}
           {!isMobile && (
-            <img src="/MT5 ROND TRANSPARENT.png" alt="" style={{
-              position: "absolute", left: 60, bottom: -44,
+            <img src="/$400K.png" alt="" style={{
+              position: "absolute", left: 40, bottom: -44,
               height: 180, width: "auto", objectFit: "contain", zIndex: 5,
               transform: "translateY(50px)",
             }} />
           )}
 
-          {/* Image 400K — indépendante, droite écran, statique, centrée sur la carte */}
+          {/* Logo MT5 — à droite du $400K */}
           {!isMobile && (
-            <img src="/$400K.png" alt="" style={{
-              position: "absolute", right: 60, bottom: -44,
+            <img src="/MT5 ROND TRANSPARENT.png" alt="" style={{
+              position: "absolute", left: 220, bottom: -44,
               height: 180, width: "auto", objectFit: "contain", zIndex: 5,
               transform: "translateY(50px)",
             }} />
