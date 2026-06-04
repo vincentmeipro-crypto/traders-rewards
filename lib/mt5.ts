@@ -118,7 +118,7 @@ export async function withdrawMT5Balance(login: number, amount: number, comment 
   const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
     method: "POST",
     headers: MT5_HEADERS,
-    body: JSON.stringify({ login, amount, command: "withdrawal", comment }),
+    body: JSON.stringify({ login, amount, type: "withdrawal", comment }),
   });
   if (!res.ok) throw new Error(`MT5 withdraw-balance failed: ${await res.text()}`);
 }
