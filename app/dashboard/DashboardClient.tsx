@@ -725,7 +725,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           <div>
                             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                              <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{STATUS_LABELS[c.status] || c.status}</span>
+                              <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{STATUS_LABELS[c.status] || c.status}</span>
                               <span style={{ backgroundColor: "rgba(21,101,192,0.06)", color: "#7a90b0", fontSize: 12, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
                             </div>
                           </div>
