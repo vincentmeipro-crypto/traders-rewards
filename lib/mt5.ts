@@ -115,11 +115,10 @@ export async function addMT5Balance(login: number, amount: number, comment = "De
 }
 
 export async function withdrawMT5Balance(login: number, amount: number, comment = "Withdrawal"): Promise<void> {
-  // Utilise add-balance avec montant négatif (withdraw-balance n'existe pas sur le microservice)
   const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
     method: "POST",
     headers: MT5_HEADERS,
-    body: JSON.stringify({ login, amount: -amount, comment }),
+    body: JSON.stringify({ login, amount, command: "withdrawal", comment }),
   });
   if (!res.ok) throw new Error(`MT5 withdraw-balance failed: ${await res.text()}`);
 }
