@@ -16,17 +16,36 @@ async function checkAdmin(req: NextRequest) {
 export async function GET(req: NextRequest) {
   if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const results: Record<string, unknown> = {};
+  const login = Number(req.nextUrl.searchParams.get("login") || "0");
+  if (!login) return NextResponse.json({ error: "Passe ?login=XXXXXX dans l'URL" }, { status: 400 });
 
-  // Tente de récupérer la doc OpenAPI (FastAPI/Flask)
-  for (const path of ["/", "/accounts", "/help", "/api", "/accounts/withdraw-balance", "/accounts/balance"]) {
+  // Balance avant
+  const before = await fetch(`${MT5_URL}/accounts/${login}`, { headers: MT5_HEADERS }).then(r => r.json()).catch(() => null);
+  const balanceBefore = before?.balance ?? 0;
+
+  const tests = [
+    { label: "deal_type=out", body: { login, amount: 1, deal_type: "out" } },
+    { label: "deal_type=BALANCE_OUT", body: { login, amount: 1, deal_type: "BALANCE_OUT" } },
+    { label: "operation=withdraw", body: { login, amount: 1, operation: "withdraw" } },
+    { label: "action=withdraw", body: { login, amount: 1, action: "withdraw" } },
+    { label: "type=out", body: { login, amount: 1, type: "out" } },
+  ];
+
+  const results: Record<string, unknown> = { balance_before: balanceBefore };
+
+  for (const test of tests) {
     try {
-      const res = await fetch(`${MT5_URL}${path}`, { headers: MT5_HEADERS });
-      results[path] = { status: res.status, body: await res.text().then(t => t.slice(0, 500)) };
+      const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
+        method: "POST", headers: { ...MT5_HEADERS, "Content-Type": "application/json" },
+        body: JSON.stringify(test.body),
+      });
+      const text = await res.text();
+      const balanceAfter = await fetch(`${MT5_URL}/accounts/${login}`, { headers: MT5_HEADERS }).then(r => r.json()).then(d => d.balance).catch(() => null);
+      results[test.label] = { status: res.status, response: text, balance_after: balanceAfter, diff: balanceAfter ? balanceAfter - balanceBefore : null };
     } catch (e) {
-      results[path] = { error: String(e) };
+      results[test.label] = { error: String(e) };
     }
   }
 
-  return NextResponse.json({ mt5_url: MT5_URL.slice(0, 30) + "...", results });
+  return NextResponse.json(results);
 }
