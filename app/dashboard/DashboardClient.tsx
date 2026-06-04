@@ -742,6 +742,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             { label: T.dash.finalBalance, value: `$${c.balance?.toLocaleString()}` },
                             { label: "P&L", value: profit ? `${Number(profit) >= 0 ? "+" : ""}${profit}%` : "—", color: profit ? (Number(profit) >= 0 ? "#1565C0" : "#ef4444") : "#555" },
                             { label: T.dash.daysTradedLabel, value: c.trading_days?.toString() || "0" },
+                            { label: isFr ? "Compte MT5" : "MT5 Account", value: c.mt5_login ? String(c.mt5_login) : "—", color: "#1565C0" },
                             { label: T.dash.amountPaidLabel, value: `€${c.amount_paid}` },
                           ].map((s, i) => (
                             <div key={i} style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "10px 14px" }}>
