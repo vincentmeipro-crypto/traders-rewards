@@ -37,7 +37,16 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const resetMT5Balance = async () => {
     if (!oldLogin) return;
     const profit = balance - startBalance;
-    if (profit > 0) await withdrawMT5Balance(oldLogin, profit, "Phase transition reset").catch(() => {});
+    if (profit > 0) {
+      try {
+        await withdrawMT5Balance(oldLogin, profit, "Phase transition reset");
+        console.log(`MT5 withdraw OK: login=${oldLogin} amount=${profit}`);
+      } catch (e) {
+        console.error(`MT5 withdraw FAILED: login=${oldLogin} amount=${profit}`, e);
+      }
+    } else {
+      console.log(`MT5 withdraw skipped: profit=${profit} (no profit to withdraw)`);
+    }
   };
 
   // 1-Step : Phase 1 -> Certified (meme compte, retrait profit + changement groupe)
