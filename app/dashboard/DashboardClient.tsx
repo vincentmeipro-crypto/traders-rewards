@@ -746,7 +746,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           ].map((s, i) => (
                             <div key={i} style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "10px 14px" }}>
                               <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
-                              <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#fff" }}>{s.value}</div>
+                              <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#0D1B3E" }}>{s.value}</div>
                             </div>
                           ))}
                         </div>
