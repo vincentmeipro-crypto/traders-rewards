@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   const results: Record<string, unknown> = {};
 
   // Tente de récupérer la doc OpenAPI (FastAPI/Flask)
-  for (const path of ["/openapi.json", "/docs", "/routes", "/"]) {
+  for (const path of ["/", "/accounts", "/help", "/api", "/accounts/withdraw-balance", "/accounts/balance"]) {
     try {
       const res = await fetch(`${MT5_URL}${path}`, { headers: MT5_HEADERS });
       results[path] = { status: res.status, body: await res.text().then(t => t.slice(0, 500)) };
