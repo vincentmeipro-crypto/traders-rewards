@@ -142,7 +142,7 @@ export default function Hero() {
 
       <section style={{
         minHeight: "auto",
-        background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)",
+        background: "transparent",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
