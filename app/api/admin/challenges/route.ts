@@ -31,6 +31,9 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const oldLogin = challenge.mt5_login as number | null;
   const is1Step = model.includes("1step");
 
+  const status = challenge.status as string;
+  if (status === "passed" || status === "funded" || status === "failed") return null;
+
   const profitPct = ((balance - startBalance) / startBalance) * 100;
   const certDate = new Date().toLocaleDateString("fr-FR");
 
