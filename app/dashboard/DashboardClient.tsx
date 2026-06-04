@@ -1382,8 +1382,8 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div>
                           <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "2step" ? "2-Step" : "1-Step"}</div>
                           <div style={{ display: "flex", gap: 8 }}>
-                            <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#1565C0", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>{PHASE_LABELS[c.phase] || c.phase}</span>
-                            <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{STATUS_LABELS[c.status] || c.status}</span>
+                            <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(21,101,192,0.08)", color: c.phase === "funded" ? "#C9A84C" : "#1565C0", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.phase === "funded" && <Trophy size={11} />}{PHASE_LABELS[c.phase] || c.phase}</span>
+                            <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status === "funded" ? "Active" : STATUS_LABELS[c.status] || c.status}</span>
                           </div>
                         </div>
                         <div style={{ textAlign: "right" }}>
