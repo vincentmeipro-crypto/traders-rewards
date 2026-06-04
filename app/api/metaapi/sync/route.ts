@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, disableMT5Account, createMT5Account, withdrawMT5Balance, changeMT5Group } from "@/lib/mt5";
+import { getMT5Account, createMT5Account, changeMT5Group } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -85,7 +85,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 5. Breach drawdown journalier
   if (dailyDD >= dailyLimit) {
-    await disableMT5Account(login).catch(() => {});
+    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }) }).eq("id", id);
     if (!alreadyFailed) {
@@ -106,7 +106,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     if (totalDD >= totalLimit) totalViolated = true;
   }
   if (totalViolated) {
-    await disableMT5Account(login).catch(() => {});
+    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }) }).eq("id", id);
     if (!alreadyFailed) {
@@ -122,14 +122,8 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const daysMet   = newTradingDays >= 4;
   const certDate  = new Date().toLocaleDateString("fr-FR");
 
-  const resetMT5Balance = async () => {
-    const profit = newBalance - startBalance;
-    if (profit > 0) await withdrawMT5Balance(login, profit, "Phase transition reset").catch(() => {});
-  };
-
   // 1-Step: phase1 -> certified
   if (is1Step && phase === "phase1" && targetMet && daysMet) {
-    await resetMT5Balance();
     await changeMT5Group(login, FUNDED_GROUP["1step"]).catch(() => {});
     await admin.from("challenges").update({
       phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
@@ -142,7 +136,6 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 2-Step: phase1 -> phase2
   if (!is1Step && phase === "phase1" && targetMet && daysMet) {
-    await resetMT5Balance();
     await admin.from("challenges").update({
       phase: "phase2", status: "active", trading_days: 0, profit_target: 5,
       balance: startBalance, highest_balance: startBalance,
@@ -154,7 +147,6 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 2-Step: phase2 -> certified
   if (!is1Step && phase === "phase2" && targetMet && daysMet) {
-    await resetMT5Balance();
     await changeMT5Group(login, FUNDED_GROUP["2step"]).catch(() => {});
     await admin.from("challenges").update({
       phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
