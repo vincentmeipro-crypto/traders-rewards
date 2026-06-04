@@ -39,8 +39,9 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
 
   // 1-Step : Phase 1 -> Certified (nouveau compte MT5 + nouvelle ligne DB)
   if (is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
+    const { data: claimed } = await admin.from("challenges").update({ status: "passed" }).eq("id", id).eq("status", "active").select().single();
+    if (!claimed) return null;
     const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group: getMT5Group("1step", "funded"), account_size: accountSize });
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
     await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model: "1step", phase: "funded", status: "funded",
       balance: startBalance, start_balance: startBalance, highest_balance: startBalance,
@@ -56,8 +57,9 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
 
   // 2-Step : Phase 1 -> Phase 2 (nouveau compte MT5 + nouvelle ligne DB)
   if (!is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
+    const { data: claimed } = await admin.from("challenges").update({ status: "passed" }).eq("id", id).eq("status", "active").select().single();
+    if (!claimed) return null;
     const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group: getMT5Group("2step", "challenge"), account_size: accountSize });
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
     await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model: "2step", phase: "phase2", status: "active",
       balance: startBalance, start_balance: startBalance, highest_balance: startBalance,
@@ -73,8 +75,9 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
 
   // 2-Step : Phase 2 -> Certified (nouveau compte MT5 + nouvelle ligne DB)
   if (!is1Step && phase === "phase2" && profitPct >= profitTarget && tradingDays >= 4) {
+    const { data: claimed } = await admin.from("challenges").update({ status: "passed" }).eq("id", id).eq("status", "active").select().single();
+    if (!claimed) return null;
     const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group: getMT5Group("2step", "funded"), account_size: accountSize });
-    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
     await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model: "2step", phase: "funded", status: "funded",
       balance: startBalance, start_balance: startBalance, highest_balance: startBalance,
