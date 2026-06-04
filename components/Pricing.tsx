@@ -50,18 +50,18 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
-    <section id="pricing" style={{ padding: isMobile ? "64px 24px 24px" : "80px 24px 100px", backgroundColor: "transparent", scrollMarginTop: "0px", position: "relative", zIndex: 1 }}>
-      <div style={{ maxWidth: 1350, margin: "0 auto" }}>
+    <section id="pricing" style={{ padding: isMobile ? "48px 16px 16px" : "60px 16px 60px", backgroundColor: "transparent", scrollMarginTop: "0px", position: "relative", zIndex: 1 }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 20 : 48 }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 28 }}>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 10 }}>
             {T.pricing.title} <span style={{ color: "#1565C0" }}>{T.pricing.titleGold}</span>
           </h2>
         </div>
 
         {/* Toggle */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: isMobile ? 20 : 48 }}>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: isMobile ? 16 : 28 }}>
           <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
             {(["2step", "1step"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
@@ -100,9 +100,9 @@ export default function Pricing() {
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 border: "1px solid rgba(255,255,255,0.75)",
-                borderRadius: 16,
-                padding: "24px 12px 14px",
-                marginTop: 16,
+                borderRadius: 12,
+                padding: "18px 10px 10px",
+                marginTop: 14,
                 display: "flex",
                 flexDirection: "column",
                 boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -140,17 +140,17 @@ export default function Pricing() {
                 )}
 
                 {/* Account size */}
-                <div style={{ marginBottom: 14 }}>
-                  <div style={{ color: "#8a96aa", fontSize: 9, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>
+                <div style={{ marginBottom: 10 }}>
+                  <div style={{ color: "#8a96aa", fontSize: 8, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 2 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 16, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
                     {acc.size}
                   </div>
                 </div>
 
                 {/* Rules rows */}
-                <div style={{ flex: 1, marginBottom: 14 }}>
+                <div style={{ flex: 1, marginBottom: 10 }}>
                   {rows.map((row, i) => {
                     const accountNum = sizeMap[acc.size] ?? 0;
                     const usdAmt = row.pct != null ? Math.round(accountNum * Math.abs(row.pct)) : null;
@@ -158,10 +158,10 @@ export default function Pricing() {
                     return (
                       <div key={i} style={{
                         display: "flex", justifyContent: "space-between", alignItems: "center",
-                        padding: "5px 0",
+                        padding: "3px 0",
                         borderBottom: i < rows.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
                       }}>
-                        <span style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                        <span style={{ color: "#8a96aa", fontSize: 9, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
                           {row.label}
                         </span>
                         <div style={{ textAlign: "right" }}>
@@ -169,45 +169,45 @@ export default function Pricing() {
                             <span style={{
                               backgroundColor: "rgba(21,101,192,0.1)",
                               color: "#1565C0",
-                              fontSize: 11, fontWeight: 800,
-                              padding: "2px 8px", borderRadius: 6,
+                              fontSize: 10, fontWeight: 800,
+                              padding: "1px 6px", borderRadius: 4,
                               border: "1px solid rgba(21,101,192,0.2)",
                             }}>{row.value}</span>
                           ) : (
-                            <span style={{ color: "#0D1B3E", fontSize: 12, fontWeight: 700 }}>{row.value}</span>
+                            <span style={{ color: "#0D1B3E", fontSize: 10, fontWeight: 700 }}>{row.value}</span>
                           )}
-                          {usdStr && <div style={{ color: "#b0b8c8", fontSize: 10, marginTop: 1 }}>{usdStr}</div>}
+                          {usdStr && <div style={{ color: "#b0b8c8", fontSize: 9, marginTop: 0 }}>{usdStr}</div>}
                         </div>
                       </div>
                     );
                   })}
                 </div>
 
-                <div style={{ height: 1, backgroundColor: acc.popular ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.06)", marginBottom: 20 }} />
+                <div style={{ height: 1, backgroundColor: "rgba(0,0,0,0.06)", marginBottom: 10 }} />
 
                 {/* Price */}
-                <div style={{ textAlign: "center", marginBottom: 10 }}>
-                  <div style={{ fontSize: 20, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
+                <div style={{ textAlign: "center", marginBottom: 6 }}>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
                 </div>
 
                 {/* Récompense moyenne */}
                 <div style={{
                   background: "rgba(21,101,192,0.08)",
                   border: "1px solid rgba(21,101,192,0.2)",
-                  borderRadius: 8, padding: "8px 12px",
-                  textAlign: "center", marginBottom: 10,
+                  borderRadius: 6, padding: "5px 8px",
+                  textAlign: "center", marginBottom: 8,
                 }}>
-                  <div style={{ fontSize: 9, fontWeight: 700, color: "#7a90b0", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 2 }}>
+                  <div style={{ fontSize: 8, fontWeight: 700, color: "#7a90b0", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 1 }}>
                     {isFr ? "Récompense moy." : "Avg. reward"}
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "#1565C0", letterSpacing: "-0.5px" }}>{acc.reward}</div>
+                  <div style={{ fontSize: 15, fontWeight: 900, color: "#1565C0", letterSpacing: "-0.5px" }}>{acc.reward}</div>
                 </div>
 
                 {/* CTA */}
                 <a href={`/checkout?product=${acc.id}-${model}`} style={{
                   display: "block", textAlign: "center",
-                  padding: "13px 16px", borderRadius: 8,
-                  fontSize: 12, fontWeight: 800,
+                  padding: "10px 12px", borderRadius: 7,
+                  fontSize: 11, fontWeight: 800,
                   textDecoration: "none", letterSpacing: "1.5px", textTransform: "uppercase",
                   background: "#0D1B3E", color: "#fff",
                   transition: "all 0.2s",
