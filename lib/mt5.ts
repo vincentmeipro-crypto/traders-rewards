@@ -58,7 +58,23 @@ export async function createMT5Account(params: {
     throw new Error(`MT5 create failed: ${err}`);
   }
 
-  return res.json();
+  const account = await res.json();
+
+  // Top-up automatique si le microservice crée toujours avec une balance par défaut
+  if (balance > 10000 && account.login) {
+    try {
+      const info = await getMT5Account(account.login);
+      const currentBalance = info.balance ?? 10000;
+      const diff = balance - currentBalance;
+      if (diff > 0) {
+        await addMT5Balance(account.login, diff, "Initial balance top-up");
+      }
+    } catch (e) {
+      console.error("MT5 top-up error:", e);
+    }
+  }
+
+  return account;
 }
 
 export async function changeMT5Group(login: number, newGroup: string): Promise<void> {
