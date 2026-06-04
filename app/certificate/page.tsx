@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 
 const CERT_CONFIG = {
   phase1: {
@@ -42,6 +42,17 @@ function CertificateContent() {
   const date = params.get("date") || new Date().toLocaleDateString("fr-FR");
 
   const cfg = CERT_CONFIG[type] || CERT_CONFIG.phase1;
+  const certRef = useRef<HTMLDivElement>(null);
+
+  const downloadJpeg = async () => {
+    if (!certRef.current) return;
+    const html2canvas = (await import("html2canvas")).default;
+    const canvas = await html2canvas(certRef.current, { scale: 3, useCORS: true, backgroundColor: null });
+    const link = document.createElement("a");
+    link.download = `elysium-${type}-${name.replace(/\s+/g, "-")}.jpg`;
+    link.href = canvas.toDataURL("image/jpeg", 0.95);
+    link.click();
+  };
 
   return (
     <div style={{
@@ -55,22 +66,16 @@ function CertificateContent() {
       fontFamily: "Inter, system-ui, sans-serif",
     }}>
 
-      <button
-        onClick={() => window.print()}
-        className="no-print"
-        style={{
-          position: "fixed", top: 24, right: 24, zIndex: 100,
-          backgroundColor: "#00C2FF", color: "#fff",
-          border: "none", borderRadius: 10, padding: "12px 28px",
-          fontSize: 14, fontWeight: 800, cursor: "pointer",
-          boxShadow: "0 4px 20px rgba(45,125,210,0.4)",
-          letterSpacing: "0.5px",
-        }}
-      >
-        ↓ Télécharger / Imprimer
-      </button>
+      <div className="no-print" style={{ position: "fixed", top: 24, right: 24, zIndex: 100, display: "flex", gap: 10 }}>
+        <button onClick={downloadJpeg} style={{ backgroundColor: "#00C2FF", color: "#fff", border: "none", borderRadius: 10, padding: "12px 28px", fontSize: 14, fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 20px rgba(45,125,210,0.4)" }}>
+          ↓ Télécharger JPEG
+        </button>
+        <button onClick={() => window.print()} style={{ backgroundColor: "#333", color: "#fff", border: "none", borderRadius: 10, padding: "12px 28px", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>
+          🖨 Imprimer
+        </button>
+      </div>
 
-      <div style={{ position: "relative", width: "min(700px, 96vw)" }}>
+      <div ref={certRef} style={{ position: "relative", width: "min(700px, 96vw)" }}>
         <img
           src={cfg.image}
           alt="certificate"
