@@ -36,7 +36,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
 
   const makeMT5 = async (group: string) => {
     try {
-      return await createMT5Account({ firstName, lastName, email: userEmail, leverage: 50, group, account_size: accountSize });
+      return await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group, account_size: accountSize });
     } catch { return null; }
   };
 
@@ -170,7 +170,7 @@ export async function POST(req: NextRequest) {
     try {
       const mt5Account = await createMT5Account({
         firstName, lastName, email: userEmail,
-        leverage: 50,
+        leverage: 100,
         group: getMT5Group(model),
         account_size: accountSize,
       });

@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
     try {
       const mt5Account = await createMT5Account({
         firstName, lastName, email: userEmail,
-        leverage: 50,
+        leverage: 100,
         group: getMT5Group(model),
         account_size: accountSize,
       });

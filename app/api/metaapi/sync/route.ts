@@ -38,7 +38,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // Helper: crÃ©e un compte MT5 et retourne les credentials
   const makeMT5 = async (group: string) => {
     try {
-      const acc = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 50, group, account_size: accountSize });
+      const acc = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group, account_size: accountSize });
       return acc;
     } catch { return null; }
   };

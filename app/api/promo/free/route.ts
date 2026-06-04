@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         firstName,
         lastName,
         email,
-        leverage: 50,
+        leverage: 100,
         group: getMT5Group(product.model),
         account_size: product.accountSize,
       });
