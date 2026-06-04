@@ -152,6 +152,7 @@ export default function TopTraders() {
 
       {/* Fond femme trader */}
       {!isMobile && <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/HOMME-TRADER-GAUCHE.png')", backgroundSize: "cover", backgroundPosition: "left center", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 140, background: "linear-gradient(to bottom, #c8e8ff, transparent)", pointerEvents: "none", zIndex: 1 }} />
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px", position: "relative", zIndex: 1 }}>
