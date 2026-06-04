@@ -51,12 +51,18 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     return "funded";
   }
 
-  // 2-Step : Phase 1 -> Phase 2 (meme compte)
+  // 2-Step : Phase 1 -> Phase 2 (nouveau compte MT5 + nouvelle ligne DB)
   if (!is1Step && phase === "phase1" && profitPct >= profitTarget && tradingDays >= 4) {
-    await admin.from("challenges").update({
-      phase: "phase2", status: "active", trading_days: 0, profit_target: 5,
-      balance: startBalance, highest_balance: startBalance,
-    }).eq("id", id);
+    const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group: getMT5Group("2step", "challenge"), account_size: accountSize });
+    await admin.from("challenges").update({ status: "passed" }).eq("id", id);
+    await admin.from("challenges").insert({
+      user_id: userId, account_size: accountSize, model: "2step", phase: "phase2", status: "active",
+      balance: startBalance, start_balance: startBalance, highest_balance: startBalance,
+      trading_days: 0, profit_target: 5, daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit,
+      mt5_login: newAccount.login, mt5_password: newAccount.password,
+      mt5_password_investor: newAccount.password_investor, mt5_server: newAccount.server,
+      amount_paid: (challenge.amount_paid as number) || 0,
+    });
     try { await sendPhase2Email(userEmail, accountSize); } catch {}
     try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "phase2";
