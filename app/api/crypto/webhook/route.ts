@@ -9,15 +9,17 @@ const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "25k-2step":  { accountSize: "$25,000",  model: "2step" },
   "50k-2step":  { accountSize: "$50,000",  model: "2step" },
   "100k-2step": { accountSize: "$100,000", model: "2step" },
+  "200k-2step": { accountSize: "$200,000", model: "2step" },
   "10k-1step":  { accountSize: "$10,000",  model: "1step" },
   "25k-1step":  { accountSize: "$25,000",  model: "1step" },
   "50k-1step":  { accountSize: "$50,000",  model: "1step" },
   "100k-1step": { accountSize: "$100,000", model: "1step" },
+  "200k-1step": { accountSize: "$200,000", model: "1step" },
 };
 
 const SIZE_MAP: Record<string, number> = {
   "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
-  "$100,000": 100000,
+  "$100,000": 100000, "$200,000": 200000,
 };
 
 function verifySignature(body: string, sig: string, ipnSecret: string): boolean {
