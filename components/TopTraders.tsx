@@ -161,7 +161,7 @@ export default function TopTraders() {
           transform: "translate(-50%, -50%)",
           width: "70%", maxWidth: 900,
           objectFit: "contain",
-          opacity: 0.15,
+          opacity: 1,
           pointerEvents: "none",
           zIndex: 0,
           maskImage: "radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%)",
