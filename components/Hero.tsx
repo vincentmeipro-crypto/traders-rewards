@@ -154,7 +154,7 @@ export default function Hero() {
 
         {/* Mobile : H1 complet — carte centrée */}
         {isMobile ? (
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 40px" }}>
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 0px" }}>
             <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, marginTop: 0 }}>
               {isFr
                 ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#ffffff" }}>vraies récompenses</span></>
