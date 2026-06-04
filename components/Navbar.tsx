@@ -53,15 +53,35 @@ export default function Navbar() {
         .flag-float-1 { animation: flagFloat 2.4s ease-in-out infinite; }
         .flag-float-2 { animation: flagFloat 2.4s ease-in-out 0.4s infinite; }
         .nav-link {
-          color: #1a2744;
-          font-size: 13px;
-          font-weight: 500;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 700;
           text-decoration: none;
-          letter-spacing: 0.3px;
-          transition: color 0.2s;
-          padding: 6px 0;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          padding: 7px 16px;
+          border-radius: 100px;
+          background: linear-gradient(160deg, rgba(100,160,255,0.85) 0%, rgba(21,101,192,0.9) 50%, rgba(10,60,140,0.95) 100%);
+          box-shadow: 0 2px 12px rgba(21,101,192,0.35), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,50,0.2);
+          border: 1px solid rgba(255,255,255,0.25);
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.18s, box-shadow 0.18s;
+          display: inline-block;
         }
-        .nav-link:hover { color: #1B4FD8; }
+        .nav-link::before {
+          content: "";
+          position: absolute;
+          top: 0; left: 10%; right: 10%;
+          height: 45%;
+          background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+          border-radius: 0 0 100px 100px;
+          pointer-events: none;
+        }
+        .nav-link:hover {
+          transform: translateY(-2px) scale(1.04);
+          box-shadow: 0 6px 20px rgba(21,101,192,0.5), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,50,0.2);
+        }
         .nav-cta {
           background: #0D1B3E;
           color: #fff !important;
@@ -128,7 +148,7 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           {!isMobile && (
-            <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
               {navLinks.map(([label, href]) => (
                 <a key={href} href={href} className="nav-link">{label}</a>
               ))}
