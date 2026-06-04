@@ -683,12 +683,12 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px", color: "#8a96aa" }}>{c.model}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">phase1</option><option value="phase2">phase2</option><option value="funded">funded</option></select>
+                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">Phase 1</option><option value="phase2">Phase 2</option><option value="funded">Certified</option></select>
                               : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "certified" : c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">active</option><option value="passed">passed</option><option value="funded">funded</option><option value="failed">failed</option></select>
+                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">Active</option><option value="passed">Passed</option><option value="funded">Certified</option><option value="failed">Failed</option></select>
                               : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
