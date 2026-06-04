@@ -536,6 +536,13 @@ export default function AdminPage() {
             <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(0,0,0,0.06)" : "#0D1B3E", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
               {syncing ? "Syncing..." : "Sync MT5"}
             </button>
+            <button onClick={async () => {
+              const res = await fetch('/api/admin/mt5-docs', { headers: { Authorization: `Bearer ${token}` } });
+              const data = await res.json();
+              alert(JSON.stringify(data, null, 2));
+            }} style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid #C9A84C33", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+              🔍 Routes MT5
+            </button>
           </div>
         </div>
         {syncDetail && (
