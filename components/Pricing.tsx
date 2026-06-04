@@ -105,11 +105,11 @@ export default function Pricing() {
                 marginTop: 14,
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset",
-                transition: "transform 0.2s, box-shadow 0.2s",
+                boxShadow: "none",
+                transition: "transform 0.2s",
               }}
-                onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 20px 60px rgba(27,79,216,0.15), 0 4px 16px rgba(0,0,0,0.08)"; }}
-                onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(27,79,216,0.1), 0 2px 8px rgba(0,0,0,0.06)"; }}
+                onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; }}
+                onMouseOut={e => { e.currentTarget.style.transform = "none"; }}
               >
 
                 {/* Badge MEILLEURE VALEUR — vert pour 100K */}
