@@ -152,42 +152,32 @@ export default function Hero() {
         paddingTop: 72,
       }}>
 
-        {/* Content — centré */}
-        <div style={{
-          position: "relative", zIndex: 1, width: "100%", maxWidth: 1200,
-          display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-          padding: isMobile ? "20px 24px 32px" : "32px 24px 80px",
-        }}>
-
-          {/* H1 — centré pleine largeur */}
-          <h1 className="hero-animate-1" style={{
-            fontSize: isMobile ? "clamp(2.2rem, 8vw, 2.8rem)" : "clamp(3.6rem, 5.2vw, 5.2rem)",
-            fontWeight: 800,
-            color: "#0D1B3E",
-            lineHeight: 1.1,
-            letterSpacing: "-2px",
-            marginBottom: 28,
-            whiteSpace: isMobile ? "normal" : "nowrap",
-          }}>
-            {isFr
-              ? isMobile
-                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#ffffff" }}>vraies récompenses</span></>
-                : <>Transformez votre trading démo<br />en <span style={{ color: "#ffffff" }}>vraies récompenses</span></>
-              : isMobile
-                ? <>Turn your trading<br />skills into<br /><span style={{ color: "#ffffff" }}>real rewards</span></>
-                : <>Turn your trading skills<br />into <span style={{ color: "#ffffff" }}>real rewards</span></>}
-          </h1>
-
-          {/* Carte animée — centrée, indépendante */}
-          <div className="hero-animate-2" style={{
-            position: "absolute", bottom: -44, left: 0, right: 0,
-            zIndex: 20, display: "flex", justifyContent: "center", alignItems: "center",
-          }}>
-            <LiveRewardCard isMobile={isMobile} />
+        {/* Mobile : texte — carte — texte */}
+        {isMobile ? (
+          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 32px" }}>
+            <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 20, marginTop: 0 }}>
+              {isFr ? <>Transformez votre<br />trading démo en</> : <>Turn your trading<br />skills into</>}
+            </h1>
+            <div className="hero-animate-2" style={{ marginBottom: 20, display: "flex", justifyContent: "center" }}>
+              <LiveRewardCard isMobile={true} />
+            </div>
+            <h1 className="hero-animate-3" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#ffffff", lineHeight: 1.1, letterSpacing: "-2px", margin: 0 }}>
+              {isFr ? "vraies récompenses" : "real rewards"}
+            </h1>
           </div>
-
-
-        </div>
+        ) : (
+          /* Desktop : H1 + carte absolue en bas */
+          <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 1200, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "32px 24px 80px" }}>
+            <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, whiteSpace: "nowrap" }}>
+              {isFr
+                ? <>Transformez votre trading démo<br />en <span style={{ color: "#ffffff" }}>vraies récompenses</span></>
+                : <>Turn your trading skills<br />into <span style={{ color: "#ffffff" }}>real rewards</span></>}
+            </h1>
+            <div className="hero-animate-2" style={{ position: "absolute", bottom: -44, left: 0, right: 0, zIndex: 20, display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <LiveRewardCard isMobile={false} />
+            </div>
+          </div>
+        )}
       </section>
     </>
   );
