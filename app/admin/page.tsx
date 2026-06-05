@@ -64,7 +64,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats";
+type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta";
 
 const STATUS_LABELS: Record<string, string> = {
   funded: "Certified",
@@ -95,6 +95,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "promos",    label: "Promo Codes" },
   { id: "kyc",       label: "KYC" },
   { id: "stats",     label: "📊 Statistiques" },
+  { id: "compta",    label: "🧾 Comptabilité" },
   { id: "create",    label: "➕ Créer Challenge" },
 ];
 
@@ -1385,6 +1386,133 @@ export default function AdminPage() {
             </>)}
           </div>
         )}
+
+        {/* ══ COMPTABILITÉ ══ */}
+        {tab === "compta" && (() => {
+          const paidPayouts = payouts.filter(p => p.status === "paid").sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          const totalVersé = paidPayouts.reduce((s, p) => s + p.amount, 0);
+
+          // Récap mensuel
+          const monthly = new Map<string, { ca: number; versements: number; count: number }>();
+          challenges.forEach(c => {
+            const m = new Date(c.created_at).toLocaleDateString("fr-FR", { year: "numeric", month: "short" });
+            const ex = monthly.get(m) || { ca: 0, versements: 0, count: 0 };
+            ex.ca += c.amount_paid || 0; ex.count += 1;
+            monthly.set(m, ex);
+          });
+          paidPayouts.forEach(p => {
+            const m = new Date(p.created_at).toLocaleDateString("fr-FR", { year: "numeric", month: "short" });
+            const ex = monthly.get(m) || { ca: 0, versements: 0, count: 0 };
+            ex.versements += p.amount;
+            monthly.set(m, ex);
+          });
+
+          const exportCSV = () => {
+            const headers = ["Référence","Date","Email","Montant USD","Méthode","IBAN/Wallet","Statut"];
+            const rows = paidPayouts.map(p => {
+              const ref = `ELY-${new Date(p.created_at).getFullYear()}-${p.id.slice(0,6).toUpperCase()}`;
+              return [ref, new Date(p.created_at).toLocaleDateString("fr-FR"), p.user_email, p.amount, p.payment_method === "crypto" ? "Crypto USDC" : "Virement", p.wallet_address || "", "Versé"].join(";");
+            });
+            const csv = [headers.join(";"), ...rows].join("\n");
+            const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a"); a.href = url; a.download = `elysium-compta-${new Date().toISOString().slice(0,10)}.csv`; a.click();
+          };
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {/* KPIs */}
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                {[
+                  { label: "Récompenses versées", value: paidPayouts.length, color: "#22c55e" },
+                  { label: "Total versé (USD)", value: `$${totalVersé.toLocaleString()}`, color: "#1565C0" },
+                  { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#0D1B3E" },
+                  { label: "Crypto USDC", value: paidPayouts.filter(p => p.payment_method === "crypto").length, color: "#C9A84C" },
+                ].map((s, i) => (
+                  <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
+                    <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+                    <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Registre des versements */}
+              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
+                  <div style={{ fontWeight: 800, fontSize: 16 }}>🧾 Registre des versements</div>
+                  <button onClick={exportCSV} style={{ background: "#1565C0", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                    ⬇ Export CSV
+                  </button>
+                </div>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)", background: "#f8faff" }}>
+                      {["Référence","Date","Client","Montant","Méthode","IBAN / Wallet","Justificatif"].map(h => (
+                        <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paidPayouts.map((p, i) => {
+                      const ref = `ELY-${new Date(p.created_at).getFullYear()}-${p.id.slice(0,6).toUpperCase()}`;
+                      const ch = challenges.find(c => c.id === p.challenge_id);
+                      const receiptUrl = `/payout-receipt?ref=${ref}&date=${new Date(p.created_at).toLocaleDateString("fr-FR")}&amount=${p.amount}&method=${p.payment_method||""}&email=${encodeURIComponent(p.user_email||"")}&size=${encodeURIComponent(ch?.account_size||"")}&login=${ch?.mt5_login||""}`;
+                      return (
+                        <tr key={p.id} style={{ borderBottom: i < paidPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
+                          <td style={{ padding: "11px 14px", fontWeight: 700, color: "#1565C0", fontSize: 12, fontFamily: "monospace" }}>{ref}</td>
+                          <td style={{ padding: "11px 14px", color: "#6b7280" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
+                          <td style={{ padding: "11px 14px", color: "#0D1B3E" }}>{p.user_email}</td>
+                          <td style={{ padding: "11px 14px", fontWeight: 800, color: "#22c55e" }}>${p.amount?.toLocaleString()}</td>
+                          <td style={{ padding: "11px 14px" }}>
+                            <span style={{ background: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(21,101,192,0.1)", color: p.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
+                              {p.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Virement"}
+                            </span>
+                          </td>
+                          <td style={{ padding: "11px 14px", color: "#6b7280", fontSize: 11, fontFamily: "monospace", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                            {p.wallet_address ? (p.wallet_address.length > 20 ? p.wallet_address.slice(0,12)+"…"+p.wallet_address.slice(-6) : p.wallet_address) : "—"}
+                          </td>
+                          <td style={{ padding: "11px 14px" }}>
+                            <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "rgba(21,101,192,0.08)", color: "#1565C0", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(21,101,192,0.2)", textDecoration: "none" }}>
+                              📄 PDF
+                            </a>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {paidPayouts.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#6b7280" }}>Aucun versement enregistré</td></tr>}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Récap mensuel */}
+              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+                <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(0,0,0,0.06)", fontWeight: 800, fontSize: 16 }}>📅 Récapitulatif mensuel</div>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)", background: "#f8faff" }}>
+                      {["Mois","CA (€)","Récompenses versées ($)","Ventes","Marge brute"].map(h => (
+                        <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.from(monthly.entries()).reverse().map(([m, v], i) => (
+                      <tr key={m} style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
+                        <td style={{ padding: "11px 14px", fontWeight: 700, color: "#0D1B3E" }}>{m}</td>
+                        <td style={{ padding: "11px 14px", color: "#1565C0", fontWeight: 700 }}>€{v.ca.toLocaleString()}</td>
+                        <td style={{ padding: "11px 14px", color: "#ef4444", fontWeight: 700 }}>-${v.versements.toLocaleString()}</td>
+                        <td style={{ padding: "11px 14px", color: "#6b7280" }}>{v.count}</td>
+                        <td style={{ padding: "11px 14px", fontWeight: 800, color: v.ca - v.versements > 0 ? "#22c55e" : "#ef4444" }}>
+                          €{(v.ca - v.versements).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* ══ STATISTIQUES ══ */}
         {tab === "stats" && (() => {

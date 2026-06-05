@@ -1143,7 +1143,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.07)", background: "#f8faff" }}>
-                        {[isFr ? "Date" : "Date", isFr ? "Montant" : "Amount", isFr ? "Méthode" : "Method", isFr ? "Statut" : "Status", isFr ? "Motif" : "Reason"].map(h => (
+                        {[isFr ? "Date" : "Date", isFr ? "Montant" : "Amount", isFr ? "Méthode" : "Method", isFr ? "Statut" : "Status", isFr ? "Motif" : "Reason", ""].map(h => (
                           <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#7a90b0", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
                         ))}
                       </tr>
@@ -1152,6 +1152,9 @@ export default function DashboardClient({ user }: { user: User }) {
                       {allPayouts.map((p, i) => {
                         const statusColor = p.status === "paid" ? "#22c55e" : p.status === "pending" ? "#f59e0b" : "#ef4444";
                         const statusLabel = p.status === "paid" ? (isFr ? "Validée" : "Approved") : p.status === "pending" ? (isFr ? "En attente" : "Pending") : (isFr ? "Refusée" : "Rejected");
+                        const relatedChallenge = allChallenges.find(c => c.id === p.challenge_id);
+                        const ref = `ELY-${new Date(p.created_at).getFullYear()}-${p.id.slice(0,6).toUpperCase()}`;
+                        const receiptUrl = `/payout-receipt?ref=${ref}&date=${new Date(p.created_at).toLocaleDateString("fr-FR")}&amount=${p.amount}&method=${p.payment_method||""}&first=${encodeURIComponent(profileFirstName)}&last=${encodeURIComponent(profileLastName)}&email=${encodeURIComponent(user.email||"")}&size=${encodeURIComponent(relatedChallenge?.account_size||"")}&login=${relatedChallenge?.mt5_login||""}`;
                         return (
                           <tr key={p.id} style={{ borderBottom: i < allPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>
                             <td style={{ padding: "13px 16px", color: "#7a90b0" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
@@ -1166,6 +1169,13 @@ export default function DashboardClient({ user }: { user: User }) {
                             </td>
                             <td style={{ padding: "13px 16px", color: "#ef4444", fontSize: 12 }}>
                               {p.rejection_reason || (p.status === "rejected" ? (isFr ? "Voir support" : "Contact support") : "—")}
+                            </td>
+                            <td style={{ padding: "13px 16px" }}>
+                              {p.status === "paid" && (
+                                <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 5, backgroundColor: "rgba(21,101,192,0.08)", color: "#1565C0", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(21,101,192,0.2)", textDecoration: "none" }}>
+                                  📄 PDF
+                                </a>
+                              )}
                             </td>
                           </tr>
                         );
