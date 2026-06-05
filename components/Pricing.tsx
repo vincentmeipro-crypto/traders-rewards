@@ -76,7 +76,7 @@ export default function Pricing() {
             ))}
           </div>
           {!isMobile && (
-            <img src="/mt5-logo.png" alt="MT5" style={{ height: 46, width: "auto", objectFit: "contain" }} />
+            <img src="/mt5-logo.png" alt="MT5" style={{ height: 92, width: "auto", objectFit: "contain" }} />
           )}
         </div>
 
