@@ -1055,9 +1055,10 @@ export default function DashboardClient({ user }: { user: User }) {
 
         {/* Payouts Tab */}
         {activeTab === "payouts" && (
-          <div style={{ maxWidth: 640 }}>
+          <div style={{ maxWidth: 1100 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rewards}</h1>
             <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.rewardsSub}</p>
+            <div style={{ display: "grid", gridTemplateColumns: allPayouts.length > 0 ? "1fr 1fr" : "1fr", gap: 32, alignItems: "start" }}>
             {challenge?.phase !== "funded" ? (
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
@@ -1134,7 +1135,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {/* Historique des récompenses */}
             {allPayouts.length > 0 && (
-              <div style={{ marginTop: 40 }}>
+              <div>
                 <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#0D1B3E" }}>
                   {isFr ? "Historique des récompenses" : "Rewards history"}
                 </h2>
@@ -1174,6 +1175,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
               </div>
             )}
+            </div>{/* fin grille */}
           </div>
         )}
 
