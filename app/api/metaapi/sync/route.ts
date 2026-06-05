@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, createMT5Account, changeMT5Group } from "@/lib/mt5";
+import { getMT5Account, createMT5Account, changeMT5Group, disableMT5Account } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -59,7 +59,8 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   if (!info) return { status: "balance_unavailable" };
 
   const newBalance = info.balance as number;
-  const newEquity  = info.equity  as number;
+  // Fallback sur balance si equity absent (microservice peut ne pas retourner equity)
+  const newEquity  = (info.equity != null ? info.equity : info.balance) as number;
   // Après un payout reset, highest_balance = start_balance — ne pas restaurer l'ancien high
   const newHighest = prevHighest <= startBalance
     ? Math.max(startBalance, newEquity)
@@ -89,6 +90,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // 5. Breach drawdown journalier
   if (dailyDD >= dailyLimit) {
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
+    await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }) }).eq("id", id);
     if (!alreadyFailed) {
@@ -110,6 +112,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   }
   if (totalViolated) {
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
+    await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }) }).eq("id", id);
     if (!alreadyFailed) {
