@@ -162,13 +162,17 @@ export async function POST(req: NextRequest) {
   const isNewUser = !users.find(u => u.email === userEmail);
   if (isNewUser) {
     try {
-      const { data: linkData } = await admin.auth.admin.generateLink({
+      const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
         type: "recovery",
         email: userEmail,
-        options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.elysium-rewards.com"}/dashboard` },
+        options: { redirectTo: "https://www.elysium-rewards.com/reset-password" },
       });
-      setupLink = linkData?.properties?.action_link || undefined;
-    } catch {}
+      if (linkErr) console.error("generateLink error:", linkErr);
+      setupLink = (linkData as { properties?: { action_link?: string } })?.properties?.action_link || undefined;
+      console.log("setupLink generated:", !!setupLink);
+    } catch (e) {
+      console.error("generateLink exception:", e);
+    }
   }
 
   let mt5Login: number | null = null;
@@ -213,12 +217,16 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   try {
+    // Si nouveau user sans lien généré, fallback vers reset-password
+    const finalSetupLink = isNewUser
+      ? (setupLink || `https://www.elysium-rewards.com/reset-password`)
+      : undefined;
     await sendWelcomeEmail(
       userEmail, accountSize, model,
       mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined,
-      setupLink
+      finalSetupLink
     );
-  } catch {}
+  } catch (e) { console.error("sendWelcomeEmail error:", e); }
 
   return NextResponse.json({ ok: true, challenge: data });
 }
