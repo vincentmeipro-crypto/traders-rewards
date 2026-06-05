@@ -58,6 +58,13 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const info = await getMT5Account(login).catch(() => null);
   if (!info) return { status: "balance_unavailable" };
 
+  // Compte failed : sync balance uniquement pour afficher la vraie perte dans les dashboards
+  if (challenge.status === "failed") {
+    const liveBalance = (info.equity != null ? info.equity : info.balance) as number;
+    await admin.from("challenges").update({ balance: liveBalance, last_synced_at: new Date().toISOString() }).eq("id", id);
+    return { status: "synced_failed", balance: liveBalance };
+  }
+
   const newBalance = info.balance as number;
   // Fallback sur balance si equity absent (microservice peut ne pas retourner equity)
   const newEquity  = (info.equity != null ? info.equity : info.balance) as number;
@@ -197,7 +204,7 @@ export async function GET(req: NextRequest) {
   const { data: challenges } = await admin
     .from("challenges")
     .select("*")
-    .in("status", ["active", "funded"]);
+    .in("status", ["active", "funded", "failed"]);
 
   // Récupérer les payouts en attente pour bloquer la sync des comptes certified concernés
   const { data: pendingPayouts } = await admin
