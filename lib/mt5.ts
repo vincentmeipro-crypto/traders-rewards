@@ -114,11 +114,16 @@ export async function addMT5Balance(login: number, amount: number, comment = "De
   if (!res.ok) throw new Error(`MT5 add-balance failed: ${await res.text()}`);
 }
 
-export async function withdrawMT5Balance(login: number, amount: number, comment = "Withdrawal"): Promise<void> {
+export async function withdrawMT5Balance(login: number, amount: number, comment = "Profit Withdrawal"): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
     method: "POST",
     headers: MT5_HEADERS,
-    body: JSON.stringify({ login, amount, type: "withdrawal", comment }),
+    body: JSON.stringify({
+      login,
+      amount: Math.abs(amount), // always positive — type 2 indicates withdrawal direction
+      type: 2,                  // MT5 balance operation type 2 = withdrawal
+      comment,
+    }),
   });
   if (!res.ok) throw new Error(`MT5 withdraw-balance failed: ${await res.text()}`);
 }
