@@ -92,7 +92,12 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
-    await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }) }).eq("id", id);
+    await admin.from("challenges").update({
+      status: "failed",
+      balance: newEquity,
+      last_synced_at: baseNow,
+      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }),
+    }).eq("id", id);
     if (!alreadyFailed) {
       try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login); }
       catch (e) { console.error("sendFailedEmail daily_drawdown error:", e); }
@@ -114,7 +119,12 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
-    await admin.from("challenges").update({ status: "failed", ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }) }).eq("id", id);
+    await admin.from("challenges").update({
+      status: "failed",
+      balance: newEquity,
+      last_synced_at: baseNow,
+      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }),
+    }).eq("id", id);
     if (!alreadyFailed) {
       try { await sendFailedEmail(userEmail, accountSize, "total_drawdown", login); }
       catch (e) { console.error("sendFailedEmail total_drawdown error:", e); }
