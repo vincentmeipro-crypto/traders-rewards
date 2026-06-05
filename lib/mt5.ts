@@ -120,8 +120,7 @@ export async function withdrawMT5Balance(login: number, amount: number, comment 
     headers: MT5_HEADERS,
     body: JSON.stringify({
       login,
-      amount: -Math.abs(amount), // négatif = retrait (type 2 + montant négatif)
-      type: 2,                   // MT5 balance operation type 2
+      amount: -Math.abs(amount), // montant négatif = retrait
       comment,
     }),
   });
