@@ -356,7 +356,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const [token, setToken] = useState("");
   const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
-  const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string }[]>([]);
+  const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string; challenge_id?: string }[]>([]);
   const [latestPayout, setLatestPayout] = useState<{ amount: number; created_at: string; status: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -413,7 +413,7 @@ export default function DashboardClient({ user }: { user: User }) {
       });
     supabase
       .from("payouts")
-      .select("id, amount, created_at, status")
+      .select("id, amount, created_at, status, challenge_id")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
@@ -1074,6 +1074,16 @@ export default function DashboardClient({ user }: { user: User }) {
                 <button onClick={() => setActiveTab("kyc")} className="btn-primary" style={{ padding: "12px 28px", fontSize: 14 }}>
                   {kycStatus === "pending" ? T.kyc.gateBtnPending : T.kyc.gateBtn}
                 </button>
+              </div>
+            ) : allPayouts.some(p => p.challenge_id === challenge?.id && p.status === "pending") ? (
+              <div className="card" style={{ padding: 40, textAlign: "center" }}>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Clock size={40} color="#f59e0b" /></div>
+                <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>
+                  {isFr ? "Demande en cours de traitement" : "Request being processed"}
+                </div>
+                <div style={{ color: "#7a90b0", fontSize: 14 }}>
+                  {isFr ? "Votre demande de récompense est en attente de validation par notre équipe." : "Your reward request is pending validation by our team."}
+                </div>
               </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>
