@@ -127,7 +127,7 @@ export default function Navbar() {
                 <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                 <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
               </div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
+              {!isMobile && <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>}
             </div>
           </div>
 
