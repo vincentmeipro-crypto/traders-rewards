@@ -8,6 +8,15 @@ export async function POST(req: NextRequest) {
 
   const { challenge_id, amount, wallet_address, payment_method } = await req.json();
 
+  // Verrou : empêcher double demande sur le même challenge
+  const { data: existing } = await supabase
+    .from("payouts")
+    .select("id")
+    .eq("challenge_id", challenge_id)
+    .eq("status", "pending")
+    .single();
+  if (existing) return NextResponse.json({ error: "Une demande est déjà en cours pour ce compte." }, { status: 409 });
+
   const { data, error } = await supabase.from("payouts").insert({
     user_id: user.id,
     challenge_id,

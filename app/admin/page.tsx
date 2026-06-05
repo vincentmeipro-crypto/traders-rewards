@@ -46,6 +46,7 @@ type Payout = {
   id: string;
   user_id: string;
   user_email: string;
+  challenge_id?: string;
   amount: number;
   status: string;
   created_at: string;
@@ -1125,7 +1126,7 @@ export default function AdminPage() {
                 <tbody>
                   {payouts.map(p => {
                     const userKyc = kycSubmissions.find(k => k.user_email === p.user_email);
-                    const userChallenge = challenges.filter(c => c.user_email === p.user_email && c.phase === "funded" && c.status === "funded").sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+                    const userChallenge = challenges.find(c => c.id === p.challenge_id) || challenges.filter(c => c.user_email === p.user_email && c.phase === "funded").sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
                     const kycColor = userKyc?.kyc_status === "approved" ? "#22c55e" : userKyc?.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
                     const kycLabel = userKyc?.kyc_status === "approved" ? "✓ Validé" : userKyc?.kyc_status === "rejected" ? "✕ Refusé" : "En attente";
                     return (
