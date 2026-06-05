@@ -14,105 +14,120 @@ function PayoutReceiptContent() {
   const email       = p.get("email")  || "";
   const accountSize = p.get("size")   || "";
   const mt5Login    = p.get("login")  || "";
-
-  const isCrypto = method === "crypto";
+  const isCrypto    = method === "crypto";
 
   return (
-    <div style={{ fontFamily: "'Inter', system-ui, sans-serif", backgroundColor: "#f8faff", minHeight: "100vh", padding: "40px 24px" }}>
+    <div style={{ fontFamily: "Arial, Helvetica, sans-serif", backgroundColor: "#fff", minHeight: "100vh", padding: "40px 24px", color: "#000" }}>
       <style>{`
         @media print {
           .no-print { display: none !important; }
-          body { background: white !important; }
+          body { margin: 0; padding: 0; }
+          @page { margin: 20mm; }
         }
+        table { border-collapse: collapse; width: 100%; }
+        td, th { padding: 8px 12px; font-size: 12px; }
       `}</style>
 
-      <div className="no-print" style={{ textAlign: "right", marginBottom: 24, maxWidth: 700, margin: "0 auto 24px" }}>
-        <button onClick={() => window.print()} style={{ background: "#1565C0", color: "#fff", border: "none", borderRadius: 10, padding: "12px 28px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-          🖨 Imprimer / PDF
+      <div className="no-print" style={{ textAlign: "right", marginBottom: 24, maxWidth: 750, margin: "0 auto 24px" }}>
+        <button onClick={() => window.print()} style={{ background: "#000", color: "#fff", border: "none", padding: "10px 24px", fontSize: 13, cursor: "pointer" }}>
+          Imprimer / Enregistrer en PDF
         </button>
       </div>
 
-      <div style={{ maxWidth: 700, margin: "0 auto", background: "#fff", borderRadius: 20, boxShadow: "0 4px 40px rgba(21,101,192,0.1)", overflow: "hidden" }}>
+      <div style={{ maxWidth: 750, margin: "0 auto" }}>
 
-        {/* Header */}
-        <div style={{ background: "linear-gradient(135deg, #0D1B3E, #1a2f5e)", padding: "36px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <img src="/nouveau-logo.png" alt="Elysium" style={{ height: 52, filter: "brightness(10)" }} />
-            <div>
-              <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: "5px", color: "#fff" }}>ELYSIUM</div>
-              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "3px", color: "rgba(255,255,255,0.4)" }}>— REWARDS —</div>
-            </div>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>Justificatif de versement</div>
-            <div style={{ fontSize: 20, fontWeight: 900, color: "#C9A84C" }}>{ref}</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 4 }}>{date}</div>
-          </div>
-        </div>
+        {/* En-tête */}
+        <table style={{ marginBottom: 32 }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: 0, verticalAlign: "top" }}>
+                <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase" }}>ELYSIUM REWARDS</div>
+                <div style={{ fontSize: 11, color: "#555", marginTop: 4 }}>PropFirm Française</div>
+                <div style={{ fontSize: 11, color: "#555" }}>support@elysium-rewards.com</div>
+                <div style={{ fontSize: 11, color: "#555" }}>www.elysium-rewards.com</div>
+              </td>
+              <td style={{ padding: 0, textAlign: "right", verticalAlign: "top" }}>
+                <div style={{ fontSize: 18, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px" }}>Justificatif de versement</div>
+                <div style={{ fontSize: 13, marginTop: 6 }}>Référence : <strong>{ref}</strong></div>
+                <div style={{ fontSize: 13 }}>Date : {date}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-        <div style={{ padding: "40px 48px" }}>
+        <hr style={{ borderTop: "2px solid #000", marginBottom: 24 }} />
 
-          {/* Montant */}
-          <div style={{ textAlign: "center", marginBottom: 40, padding: "28px", background: "linear-gradient(135deg, #f0f7ff, #e8f2ff)", borderRadius: 16, border: "1px solid #c5d5f5" }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#7a90b0", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 }}>Montant versé</div>
-            <div style={{ fontSize: 48, fontWeight: 900, color: "#1B4FD8", lineHeight: 1 }}>${parseFloat(amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</div>
-            <div style={{ fontSize: 13, color: "#7a90b0", marginTop: 8 }}>USD · Récompense Elysium Rewards</div>
-          </div>
+        {/* Bénéficiaire */}
+        <table style={{ marginBottom: 24 }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: 0, verticalAlign: "top", width: "50%" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, color: "#555" }}>Bénéficiaire</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>{`${firstName} ${lastName}`.trim() || "—"}</div>
+                <div style={{ fontSize: 12, color: "#333" }}>{email}</div>
+              </td>
+              <td style={{ padding: 0, verticalAlign: "top", width: "50%", textAlign: "right" }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, color: "#555" }}>Compte certifié</div>
+                <div style={{ fontSize: 13, fontWeight: 700 }}>Taille : {accountSize || "—"}</div>
+                <div style={{ fontSize: 12, color: "#333" }}>N° MT5 : {mt5Login || "—"}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-          {/* Infos client + compte */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
-            <div style={{ background: "#f8faff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e0eaff" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#7a90b0", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14 }}>Bénéficiaire</div>
-              {[
-                { label: "Nom", value: `${firstName} ${lastName}`.trim() || "—" },
-                { label: "Email", value: email || "—" },
-              ].map((r, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: i === 0 ? "1px solid #e8f0ff" : "none" }}>
-                  <span style={{ fontSize: 12, color: "#7a90b0" }}>{r.label}</span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: "#0D1B3E" }}>{r.value}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: "#f8faff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e0eaff" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#7a90b0", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14 }}>Compte certifié</div>
-              {[
-                { label: "Taille", value: accountSize || "—" },
-                { label: "N° MT5", value: mt5Login || "—" },
-              ].map((r, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: i === 0 ? "1px solid #e8f0ff" : "none" }}>
-                  <span style={{ fontSize: 12, color: "#7a90b0" }}>{r.label}</span>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: "#0D1B3E", fontFamily: "monospace" }}>{r.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        <hr style={{ borderTop: "1px solid #ccc", marginBottom: 24 }} />
 
-          {/* Méthode de versement */}
-          <div style={{ background: "#f8faff", borderRadius: 12, padding: "20px 24px", border: "1px solid #e0eaff", marginBottom: 32 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#7a90b0", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 14 }}>Méthode de versement</div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 20 }}>{isCrypto ? "🔶" : "🏦"}</span>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "#0D1B3E" }}>{isCrypto ? "Crypto — USDC réseau Solana" : "Virement bancaire"}</div>
-                  <div style={{ fontSize: 12, color: "#7a90b0", fontFamily: "monospace", marginTop: 2 }}>
-                    {address ? (address.length > 30 ? address.slice(0, 18) + "..." + address.slice(-8) : address) : "—"}
-                  </div>
-                </div>
-              </div>
-              <span style={{ backgroundColor: "#22c55e18", color: "#22c55e", fontWeight: 700, fontSize: 11, padding: "4px 12px", borderRadius: 100, border: "1px solid #22c55e33" }}>
-                ✓ Versé
-              </span>
-            </div>
-          </div>
+        {/* Détail du versement */}
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 12, color: "#555" }}>Détail du versement</div>
+        <table style={{ border: "1px solid #ccc", marginBottom: 24 }}>
+          <thead>
+            <tr style={{ background: "#f5f5f5", borderBottom: "1px solid #ccc" }}>
+              <th style={{ textAlign: "left", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Description</th>
+              <th style={{ textAlign: "left", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Référence compte</th>
+              <th style={{ textAlign: "right", fontWeight: 700, fontSize: 11, textTransform: "uppercase" }}>Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ fontSize: 13 }}>Récompense trader — {accountSize}</td>
+              <td style={{ fontSize: 12, color: "#555" }}>{mt5Login || "—"}</td>
+              <td style={{ textAlign: "right", fontWeight: 700, fontSize: 14 }}>${parseFloat(amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD</td>
+            </tr>
+            <tr>
+              <td colSpan={2} style={{ textAlign: "right", fontWeight: 700, fontSize: 12, textTransform: "uppercase", paddingTop: 12 }}>Total versé</td>
+              <td style={{ textAlign: "right", fontWeight: 700, fontSize: 16, borderTop: "2px solid #000", paddingTop: 8 }}>
+                ${parseFloat(amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} USD
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-          {/* Footer légal */}
-          <div style={{ borderTop: "1px solid #e8f0ff", paddingTop: 24, textAlign: "center" }}>
-            <p style={{ fontSize: 11, color: "#9aa5be", lineHeight: 1.6, margin: 0 }}>
-              Ce document certifie le versement de la récompense ci-dessus par Elysium Rewards.<br />
-              Référence : <strong>{ref}</strong> · Date : {date} · support@elysium-rewards.com
-            </p>
-          </div>
+        {/* Méthode de paiement */}
+        <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 12, color: "#555" }}>Méthode de versement</div>
+        <table style={{ border: "1px solid #ccc", marginBottom: 32 }}>
+          <tbody>
+            <tr style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ fontSize: 12, color: "#555", width: "30%" }}>Mode</td>
+              <td style={{ fontSize: 13, fontWeight: 700 }}>{isCrypto ? "Virement crypto — USDC réseau Solana" : "Virement bancaire (SEPA)"}</td>
+            </tr>
+            <tr style={{ borderBottom: "1px solid #eee" }}>
+              <td style={{ fontSize: 12, color: "#555" }}>{isCrypto ? "Adresse wallet" : "IBAN"}</td>
+              <td style={{ fontSize: 12, fontFamily: "monospace" }}>{address || "—"}</td>
+            </tr>
+            <tr>
+              <td style={{ fontSize: 12, color: "#555" }}>Statut</td>
+              <td style={{ fontSize: 13, fontWeight: 700 }}>✓ Versement effectué</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr style={{ borderTop: "1px solid #ccc", marginBottom: 16 }} />
+
+        {/* Pied de page */}
+        <div style={{ fontSize: 10, color: "#777", lineHeight: 1.7 }}>
+          Ce document certifie le versement de la récompense ci-dessus par Elysium Rewards à la date indiquée.<br />
+          Référence unique : <strong>{ref}</strong> — Ce justificatif peut être utilisé à des fins comptables et fiscales.<br />
+          Pour toute question : support@elysium-rewards.com
         </div>
       </div>
     </div>
