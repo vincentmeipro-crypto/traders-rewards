@@ -115,12 +115,12 @@ export async function addMT5Balance(login: number, amount: number, comment = "De
 }
 
 export async function withdrawMT5Balance(login: number, amount: number, comment = "Profit Withdrawal"): Promise<void> {
-  const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
+  const res = await fetch(`${MT5_URL}/accounts/withdraw`, {
     method: "POST",
     headers: MT5_HEADERS,
     body: JSON.stringify({
       login,
-      amount: -Math.abs(amount), // montant négatif = retrait
+      amount: Math.abs(amount),
       comment,
     }),
   });
