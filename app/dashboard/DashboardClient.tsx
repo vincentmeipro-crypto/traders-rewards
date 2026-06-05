@@ -41,6 +41,7 @@ type Challenge = {
   highest_balance?: number;
   breach_equity?: number;
   best_day_profit?: number;
+  daily_low_equity?: number;
 };
 
 function ProgressBar({ value, max, color = "#00C2FF", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {

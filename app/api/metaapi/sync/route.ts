@@ -79,13 +79,18 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const prevBestDay      = (challenge.best_day_profit as number | null) ?? 0;
   const newBestDay       = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
 
-  // 3. Drawdown journalier
-  const dailyDD        = prevBalance > 0 ? ((prevBalance - newEquity) / prevBalance) * 100 : 0;
+  // 3. Drawdown journalier — tracking du pire equity de la journee
+  const isNewDay       = lastSyncedDay !== today;
+  const storedDailyLow = (challenge.daily_low_equity as number | null) ?? null;
+  const dailyLowEquity = (isNewDay || storedDailyLow === null)
+    ? newEquity
+    : Math.min(storedDailyLow, newEquity);
+  const dailyDD        = prevBalance > 0 ? ((prevBalance - dailyLowEquity) / prevBalance) * 100 : 0;
   const dailyDDRounded = parseFloat(dailyDD.toFixed(2));
 
   // 4. Mise Ã  jour balance dans Supabase
   const baseNow = new Date().toISOString();
-  await admin.from("challenges").update({ balance: newBalance, highest_balance: newHighest, trading_days: newTradingDays, last_synced_at: baseNow }).eq("id", id);
+  await admin.from("challenges").update({ balance: newBalance, highest_balance: newHighest, trading_days: newTradingDays, last_synced_at: baseNow, daily_low_equity: dailyLowEquity }).eq("id", id);
   try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch {}
 
   // 5. Breach drawdown journalier
@@ -96,9 +101,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({
       status: "failed",
-      balance: newEquity,
+      balance: dailyLowEquity,
       last_synced_at: baseNow,
-      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: newEquity }),
+      daily_low_equity: dailyLowEquity,
+      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: dailyLowEquity }),
     }).eq("id", id);
     if (!alreadyFailed) {
       try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login); }
