@@ -56,7 +56,7 @@ function ResetPasswordContent() {
 
       <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <a href="/"><Image src="/logo-elysium-rewards.png" alt="Elysium" width={100} height={100} style={{ objectFit: "contain", mixBlendMode: "screen" }} /></a>
+          <a href="/"><Image src="/nouveau-logo.png" alt="Elysium" width={100} height={100} style={{ objectFit: "contain", mixBlendMode: "screen" }} /></a>
         </div>
 
         <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "40px 36px" }}>
