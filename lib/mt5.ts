@@ -134,3 +134,11 @@ export async function getMT5Account(login: number) {
   if (!res.ok) throw new Error(`MT5 get failed: ${await res.text()}`);
   return res.json();
 }
+
+export async function getMT5History(login: number): Promise<unknown[]> {
+  const res = await fetch(`${MT5_URL}/accounts/${login}/history`, {
+    headers: MT5_HEADERS,
+  });
+  if (!res.ok) throw new Error(`MT5 history failed: ${await res.text()}`);
+  return res.json();
+}
