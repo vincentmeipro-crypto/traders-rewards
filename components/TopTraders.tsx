@@ -3,27 +3,29 @@ import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
-  { name: "Karim B.",       flag: "fr", payout: 3200,  size: "$100K", initials: "KB" },
-  { name: "Marco V.",       flag: "it", payout: 3100,  size: "$100K", initials: "MV" },
-  { name: "Thomas D.",      flag: "fr", payout: 1850,  size: "$50K",  initials: "TD" },
-  { name: "Antoine M.",     flag: "be", payout: 4200,  size: "$100K", initials: "AM" },
-  { name: "Mathieu R.",     flag: "fr", payout: 3750,  size: "$100K", initials: "MR" },
-  { name: "Alexandre P.",   flag: "fr", payout: 3850,  size: "$100K", initials: "AP" },
-  { name: "Sarah L.",       flag: "gb", payout: 2200,  size: "$50K",  initials: "SL" },
-  { name: "Carlos G.",      flag: "es", payout: 1450,  size: "$50K",  initials: "CG" },
-  { name: "Camille F.",     flag: "fr", payout: 2950,  size: "$100K", initials: "CF" },
-  { name: "Nicolas B.",     flag: "fr", payout: 4650,  size: "$100K", initials: "NB" },
-  { name: "Jean-Pierre D.", flag: "fr", payout: 4650,  size: "$100K", initials: "JP" },
-  { name: "Lukas W.",       flag: "ch", payout: 3600,  size: "$100K", initials: "LW" },
-  { name: "Julien M.",      flag: "fr", payout: 2600,  size: "$100K", initials: "JM" },
-  { name: "Lena H.",        flag: "de", payout: 1150,  size: "$25K",  initials: "LH" },
-  { name: "Lucas M.",       flag: "fr", payout:  420,  size: "$10K",  initials: "LM" },
-  { name: "Emma R.",        flag: "fr", payout:  360,  size: "$10K",  initials: "ER" },
-  { name: "Yann T.",        flag: "fr", payout:  470,  size: "$10K",  initials: "YT" },
+  { name: "Karim B.",       flag: "fr", payout: 3187.54,  size: "$100K", initials: "KB" },
+  { name: "Marco V.",       flag: "it", payout: 3094.51,  size: "$100K", initials: "MV" },
+  { name: "Thomas D.",      flag: "fr", payout: 1847.32,  size: "$50K",  initials: "TD" },
+  { name: "Antoine M.",     flag: "be", payout: 4213.78,  size: "$100K", initials: "AM" },
+  { name: "Mathieu R.",     flag: "fr", payout: 3731.18,  size: "$100K", initials: "MR" },
+  { name: "Alexandre P.",   flag: "fr", payout: 3847.64,  size: "$100K", initials: "AP" },
+  { name: "Sarah L.",       flag: "gb", payout: 2196.83,  size: "$50K",  initials: "SL" },
+  { name: "Carlos G.",      flag: "es", payout: 1438.29,  size: "$50K",  initials: "CG" },
+  { name: "Camille F.",     flag: "fr", payout: 2941.67,  size: "$100K", initials: "CF" },
+  { name: "Nicolas B.",     flag: "fr", payout: 4638.92,  size: "$100K", initials: "NB" },
+  { name: "Jean-Pierre D.", flag: "fr", payout: 4612.89,  size: "$100K", initials: "JP" },
+  { name: "Lukas W.",       flag: "ch", payout: 3574.36,  size: "$100K", initials: "LW" },
+  { name: "Julien M.",      flag: "fr", payout: 2578.43,  size: "$100K", initials: "JM" },
+  { name: "Lena H.",        flag: "de", payout: 1163.47,  size: "$25K",  initials: "LH" },
+  { name: "Lucas M.",       flag: "fr", payout:  418.63,  size: "$10K",  initials: "LM" },
+  { name: "Emma R.",        flag: "fr", payout:  356.21,  size: "$10K",  initials: "ER" },
+  { name: "Yann T.",        flag: "fr", payout:  471.84,  size: "$10K",  initials: "YT" },
 ];
 
 function fmt(n: number) {
-  return "€" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const fixed = n.toFixed(2);
+  const [int, dec] = fixed.split(".");
+  return "€" + int.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "," + dec;
 }
 
 const ENTER_MS = 600, HOLD_MS = 2800, EXIT_MS = 500;

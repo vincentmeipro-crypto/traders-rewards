@@ -3,20 +3,22 @@ import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
-  { name: "TheBullTrader",  flag: "de", payout: 4200, size: "$100K", initials: "TB" },
-  { name: "Alexandre P.",   flag: "fr", payout: 3850, size: "$100K", initials: "AP" },
-  { name: "Thomas N.",      flag: "nl", payout: 2600, size: "$100K", initials: "TN" },
-  { name: "Jean-Pierre D.", flag: "fr", payout: 4650, size: "$100K", initials: "JP" },
-  { name: "Marco V.",       flag: "it", payout: 3100, size: "$100K", initials: "MV" },
-  { name: "Mathieu R.",     flag: "fr", payout: 3750, size: "$100K", initials: "MR" },
-  { name: "Nicolas B.",     flag: "fr", payout: 2950, size: "$100K", initials: "NB" },
-  { name: "Camille F.",     flag: "fr", payout: 1850, size: "$50K",  initials: "CF" },
-  { name: "Karim B.",       flag: "fr", payout: 2200, size: "$50K",  initials: "KB" },
-  { name: "Stefan B.",      flag: "at", payout: 4100, size: "$100K", initials: "SB" },
+  { name: "TheBullTrader",  flag: "de", payout: 4183.27, size: "$100K", initials: "TB" },
+  { name: "Alexandre P.",   flag: "fr", payout: 3847.64, size: "$100K", initials: "AP" },
+  { name: "Thomas N.",      flag: "nl", payout: 2578.43, size: "$100K", initials: "TN" },
+  { name: "Jean-Pierre D.", flag: "fr", payout: 4612.89, size: "$100K", initials: "JP" },
+  { name: "Marco V.",       flag: "it", payout: 3094.51, size: "$100K", initials: "MV" },
+  { name: "Mathieu R.",     flag: "fr", payout: 3731.18, size: "$100K", initials: "MR" },
+  { name: "Nicolas B.",     flag: "fr", payout: 2963.74, size: "$100K", initials: "NB" },
+  { name: "Camille F.",     flag: "fr", payout: 1847.32, size: "$50K",  initials: "CF" },
+  { name: "Karim B.",       flag: "fr", payout: 2214.67, size: "$50K",  initials: "KB" },
+  { name: "Stefan B.",      flag: "at", payout: 4076.93, size: "$100K", initials: "SB" },
 ];
 
 function fmt(n: number) {
-  return "€" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const fixed = n.toFixed(2);
+  const [int, dec] = fixed.split(".");
+  return "€" + int.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "," + dec;
 }
 
 const ENTER_MS = 500;
