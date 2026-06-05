@@ -61,7 +61,7 @@ export default function Pricing() {
         </div>
 
         {/* Toggle */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: isMobile ? 16 : 28 }}>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginBottom: isMobile ? 16 : 28 }}>
           <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
             {(["2step", "1step"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
@@ -70,15 +70,14 @@ export default function Pricing() {
                 backgroundColor: model === m ? "#0D1B3E" : "transparent",
                 color: model === m ? "#fff" : "#8a96aa",
                 boxShadow: model === m ? "0 2px 10px rgba(13,27,62,0.2)" : "none",
-                display: "flex", alignItems: "center", gap: 8,
               }}>
                 {m === "2step" ? T.pricing.twoStep : T.pricing.oneStep}
-                {m === "1step" && !isMobile && (
-                  <img src="/mt5-logo.png" alt="MT5" style={{ width: 22, height: 22, objectFit: "contain" }} />
-                )}
               </button>
             ))}
           </div>
+          {!isMobile && (
+            <img src="/mt5-logo.png" alt="MT5" style={{ height: 46, width: "auto", objectFit: "contain" }} />
+          )}
         </div>
 
         {/* Cards */}
