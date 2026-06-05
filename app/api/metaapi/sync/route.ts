@@ -60,7 +60,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   const newBalance = info.balance as number;
   const newEquity  = info.equity  as number;
-  const newHighest = Math.max(prevHighest, newEquity);
+  // Après un payout reset, highest_balance = start_balance — ne pas restaurer l'ancien high
+  const newHighest = prevHighest <= startBalance
+    ? Math.max(startBalance, newEquity)
+    : Math.max(prevHighest, newEquity);
 
   // 2. Jours de trading
   const prevTradingDays  = challenge.trading_days as number;

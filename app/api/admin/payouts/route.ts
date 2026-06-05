@@ -46,7 +46,19 @@ export async function PATCH(req: NextRequest) {
         .eq("id", data.challenge_id).single();
 
       if (challenge) {
-        // MT5 : retrait automatique du profit (type 2, montant positif)
+        // 1. Reset DB en premier (avant withdrawal) pour éviter que le sync restore l'ancien high
+        const resetNow = new Date().toISOString();
+        await admin.from("challenges").update({
+          balance: challenge.start_balance,
+          trading_days: 0,
+          highest_balance: challenge.start_balance,
+          daily_dd: 0,
+          best_day_profit: 0,
+          status: "funded",
+          last_synced_at: resetNow, // bloque le sync immédiat
+        }).eq("id", challenge.id);
+
+        // 2. MT5 : retrait du profit après le reset DB
         if (challenge.mt5_login) {
           try {
             const mt5Info = await getMT5Account(challenge.mt5_login);
@@ -58,16 +70,6 @@ export async function PATCH(req: NextRequest) {
             console.error("MT5 auto-withdraw error:", e);
           }
         }
-
-        // Remettre la balance, reset les stats et statut funded
-        await admin.from("challenges").update({
-          balance: challenge.start_balance,
-          trading_days: 0,
-          highest_balance: challenge.start_balance,
-          daily_dd: 0,
-          best_day_profit: 0,
-          status: "funded",
-        }).eq("id", challenge.id);
 
         // Email certificat récompense
         const certDate = new Date().toLocaleDateString("fr-FR");
