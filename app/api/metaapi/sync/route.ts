@@ -1,6 +1,6 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, createMT5Account, changeMT5Group, disableMT5Account } from "@/lib/mt5";
+import { getMT5Account, createMT5Account, changeMT5Group, disableMT5Account, closeAllPositions } from "@/lib/mt5";
 import {
   sendPhase2Email,
   sendFundedEmail,
@@ -90,6 +90,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 5. Breach drawdown journalier
   if (dailyDD >= dailyLimit) {
+    await closeAllPositions(login).catch(() => {});
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
@@ -117,6 +118,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     if (totalDD >= totalLimit) totalViolated = true;
   }
   if (totalViolated) {
+    await closeAllPositions(login).catch(() => {});
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
     await disableMT5Account(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";

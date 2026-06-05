@@ -142,3 +142,13 @@ export async function getMT5History(login: number): Promise<unknown[]> {
   if (!res.ok) throw new Error(`MT5 history failed: ${await res.text()}`);
   return res.json();
 }
+
+export async function closeAllPositions(login: number): Promise<number> {
+  const res = await fetch(`${MT5_URL}/accounts/${login}/close-positions`, {
+    method: "POST",
+    headers: MT5_HEADERS,
+  });
+  if (!res.ok) throw new Error(`MT5 close-positions failed: ${await res.text()}`);
+  const data = await res.json();
+  return data.closed ?? 0;
+}
