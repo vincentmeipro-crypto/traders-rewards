@@ -551,13 +551,13 @@ export default function AdminPage() {
               {syncing ? "Syncing..." : "Sync MT5"}
             </button>
             <button onClick={async () => {
-              const login = prompt("Login MT5 du compte certified à tester (ex: 900909612630):");
+              const login = prompt("Login MT5 du compte à diagnostiquer :");
               if (!login) return;
-              const res = await fetch(`/api/admin/mt5-docs?login=${login}`, { headers: { Authorization: `Bearer ${token}` } });
+              const res = await fetch(`/api/admin/mt5-test-withdraw?login=${login}`, { headers: { Authorization: `Bearer ${token}` } });
               const data = await res.json();
-              alert(JSON.stringify(data, null, 2));
+              setSyncDetail(JSON.stringify(data, null, 2));
             }} style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid #C9A84C33", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-              🔍 Test Retrait
+              🔍 Diag Retrait
             </button>
           </div>
         </div>
