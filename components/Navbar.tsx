@@ -111,7 +111,7 @@ export default function Navbar() {
         boxShadow: scrolled ? "0 4px 24px rgba(21,101,192,0.1)" : "none",
         transition: "all 0.3s ease",
       }}>
-        <div style={{ width: "100%", padding: "0 32px 0 0", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
+        <div style={{ width: "100%", padding: "0 32px 0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72 }}>
 
           {/* Logo + badge PropFirm */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
