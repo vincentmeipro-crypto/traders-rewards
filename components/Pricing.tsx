@@ -70,8 +70,12 @@ export default function Pricing() {
                 backgroundColor: model === m ? "#0D1B3E" : "transparent",
                 color: model === m ? "#fff" : "#8a96aa",
                 boxShadow: model === m ? "0 2px 10px rgba(13,27,62,0.2)" : "none",
+                display: "flex", alignItems: "center", gap: 8,
               }}>
                 {m === "2step" ? T.pricing.twoStep : T.pricing.oneStep}
+                {m === "1step" && !isMobile && (
+                  <img src="/mt5-logo.png" alt="MT5" style={{ width: 22, height: 22, objectFit: "contain" }} />
+                )}
               </button>
             ))}
           </div>
