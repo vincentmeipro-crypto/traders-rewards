@@ -713,7 +713,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ padding: 40, textAlign: "center", color: "#7a90b0" }}>{T.dash.noHistory}</div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                {allChallenges.filter(c => c.status !== "active").map((c, idx) => {
+                {allChallenges.filter(c => c.status === "failed" || c.status === "passed").map((c, idx) => {
                   // Pour les comptes failed : balance figée au moment du breach, jamais mise à jour après
                   const finalBalance = c.status === "failed"
                     ? (c.breach_equity ?? c.balance)
