@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -242,17 +242,6 @@ export async function PATCH(req: NextRequest) {
 
   const { data: current } = await admin.from("challenges").select("*").eq("id", id).single();
 
-  // Compte déjà failed : on bloque toute logique de sync (évite les flashs répétés sur MT5)
-  if (current?.status === "failed") {
-    // Bloquer uniquement les updates de statut vers active
-    if (updates.status === "active") delete updates.status;
-    const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    const { data: { users } } = await admin.auth.admin.listUsers();
-    const userMap = Object.fromEntries(users.map(u => [u.id, u.email]));
-    return NextResponse.json({ ...data, user_email: userMap[data.user_id] || "" });
-  }
-
   // Auto-increment trading_days if balance changed — once per calendar day only
   if (current && updates.balance !== undefined && updates.balance !== current.balance) {
     const lastSyncedDay = current.last_synced_at ? new Date(current.last_synced_at).toDateString() : null;
@@ -263,18 +252,17 @@ export async function PATCH(req: NextRequest) {
     updates.last_synced_at = new Date().toISOString();
   }
 
+  // Proteger le statut "failed" contre un ecrasement accidentel
+  if (current?.status === "failed" && updates.status === "active") {
+    delete updates.status;
+  }
+
   const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Helper : désactiver le compte MT5 (groupe disabled + disable account)
-  const failMT5 = async (login: number) => {
-    try { await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5"); } catch {}
-    try { await disableMT5Account(login); } catch {}
-  };
-
   // Disable MT5 if manually set to failed
   if (updates.status === "failed" && data.mt5_login) {
-    await failMT5(data.mt5_login);
+    try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
   }
 
   const { data: { users } } = await admin.auth.admin.listUsers();
@@ -285,7 +273,7 @@ export async function PATCH(req: NextRequest) {
   const firstName = profile?.first_name || "";
   const lastName = profile?.last_name || "";
 
-  // Check drawdown violations (uniquement si le compte est encore actif)
+  // Check drawdown violations
   if (updates.balance !== undefined && current) {
     const totalDrawdownPct = ((data.start_balance - data.balance) / data.start_balance) * 100;
     const dailyDrawdownPct = current.balance > 0 ? ((current.balance - data.balance) / current.balance) * 100 : 0;
@@ -293,7 +281,7 @@ export async function PATCH(req: NextRequest) {
     if (totalDrawdownPct >= data.total_drawdown_limit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
       try { await sendFailedEmail(userEmail, data.account_size, "total_drawdown"); } catch {}
-      if (data.mt5_login) await failMT5(data.mt5_login);
+      if (data.mt5_login) try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
       return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_total_drawdown" });
     }
@@ -301,7 +289,7 @@ export async function PATCH(req: NextRequest) {
     if (dailyDrawdownPct >= data.daily_drawdown_limit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
       try { await sendFailedEmail(userEmail, data.account_size, "daily_drawdown"); } catch {}
-      if (data.mt5_login) await failMT5(data.mt5_login);
+      if (data.mt5_login) try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
       return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_daily_drawdown" });
     }
