@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group, withdrawMT5Balance } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -41,12 +41,8 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
   const transitionAccount = async (newGroup: string, newPhase: string, newStatus: string, newProfitTarget: number) => {
     const { data: claimed } = await admin.from("challenges").update({ status: "passed" }).eq("id", id).eq("status", "active").select().single();
     if (!claimed) return false;
-    // Retirer le profit du compte MT5 existant
+    // Changer le groupe MT5 (pas de retrait sur les comptes challenge)
     if (oldLogin) {
-      const profit = parseFloat((balance - startBalance).toFixed(2));
-      if (profit > 0) {
-        try { await withdrawMT5Balance(oldLogin, profit, `Transition ${phase} → ${newPhase}`); } catch (e) { console.error("withdraw transition error:", e); }
-      }
       try { await changeMT5Group(oldLogin, newGroup); } catch (e) { console.error("changeMT5Group error:", e); }
     }
     // Reset DB sur la même ligne — pas de nouveau compte
