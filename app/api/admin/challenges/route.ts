@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -263,6 +263,7 @@ export async function PATCH(req: NextRequest) {
   // Disable MT5 if manually set to failed
   if (updates.status === "failed" && data.mt5_login) {
     try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+    try { await disableMT5Account(data.mt5_login); } catch {}
   }
 
   const { data: { users } } = await admin.auth.admin.listUsers();
@@ -281,7 +282,10 @@ export async function PATCH(req: NextRequest) {
     if (totalDrawdownPct >= data.total_drawdown_limit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
       try { await sendFailedEmail(userEmail, data.account_size, "total_drawdown"); } catch {}
-      if (data.mt5_login) try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+      if (data.mt5_login) {
+        try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+        try { await disableMT5Account(data.mt5_login); } catch {}
+      }
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
       return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_total_drawdown" });
     }
@@ -289,7 +293,10 @@ export async function PATCH(req: NextRequest) {
     if (dailyDrawdownPct >= data.daily_drawdown_limit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
       try { await sendFailedEmail(userEmail, data.account_size, "daily_drawdown"); } catch {}
-      if (data.mt5_login) try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+      if (data.mt5_login) {
+        try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+        try { await disableMT5Account(data.mt5_login); } catch {}
+      }
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
       return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_daily_drawdown" });
     }
