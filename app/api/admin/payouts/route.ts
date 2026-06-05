@@ -25,11 +25,13 @@ export async function GET(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { id, status } = await req.json();
+  const { id, status, rejection_reason } = await req.json();
   const admin = createAdminClient();
 
   const { data: previous } = await admin.from("payouts").select("*").eq("id", id).single();
-  const { data } = await admin.from("payouts").update({ status }).eq("id", id).select().single();
+  const updateFields: Record<string, unknown> = { status };
+  if (rejection_reason !== undefined) updateFields.rejection_reason = rejection_reason;
+  const { data } = await admin.from("payouts").update(updateFields).eq("id", id).select().single();
 
   if (status === "paid" && previous?.status !== "paid") {
     try {

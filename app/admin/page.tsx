@@ -1160,8 +1160,12 @@ export default function AdminPage() {
                               style={{ backgroundColor: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                               ✓ Valider
                             </button>
-                            <button onClick={() => updatePayout(p.id, "rejected")}
-                              style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                            <button onClick={async () => {
+                              const reason = prompt("Motif du refus (visible par le client) :") || "";
+                              const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id: p.id, status: "rejected", rejection_reason: reason }) });
+                              const data = await res.json();
+                              if (res.ok) setPayouts(ps => ps.map(x => x.id === p.id ? { ...x, ...data } : x));
+                            }} style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                               ✕ Refuser
                             </button>
                           </>)}

@@ -356,7 +356,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const [token, setToken] = useState("");
   const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
-  const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string; challenge_id?: string }[]>([]);
+  const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string; challenge_id?: string; payment_method?: string; rejection_reason?: string }[]>([]);
   const [latestPayout, setLatestPayout] = useState<{ amount: number; created_at: string; status: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
@@ -413,7 +413,7 @@ export default function DashboardClient({ user }: { user: User }) {
       });
     supabase
       .from("payouts")
-      .select("id, amount, created_at, status, challenge_id")
+      .select("id, amount, created_at, status, challenge_id, payment_method, rejection_reason")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
@@ -1055,7 +1055,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
         {/* Payouts Tab */}
         {activeTab === "payouts" && (
-          <div style={{ maxWidth: 520 }}>
+          <div style={{ maxWidth: 640 }}>
             <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rewards}</h1>
             <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>{T.dash.rewardsSub}</p>
             {challenge?.phase !== "funded" ? (
@@ -1129,6 +1129,49 @@ export default function DashboardClient({ user }: { user: User }) {
                     {payoutLoading ? T.dash.submitting : T.dash.submitReward}
                   </button>
                 )}
+              </div>
+            )}
+
+            {/* Historique des récompenses */}
+            {allPayouts.length > 0 && (
+              <div style={{ marginTop: 40 }}>
+                <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#0D1B3E" }}>
+                  {isFr ? "Historique des récompenses" : "Rewards history"}
+                </h2>
+                <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.07)", background: "#f8faff" }}>
+                        {[isFr ? "Date" : "Date", isFr ? "Montant" : "Amount", isFr ? "Méthode" : "Method", isFr ? "Statut" : "Status", isFr ? "Motif" : "Reason"].map(h => (
+                          <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#7a90b0", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {allPayouts.map((p, i) => {
+                        const statusColor = p.status === "paid" ? "#22c55e" : p.status === "pending" ? "#f59e0b" : "#ef4444";
+                        const statusLabel = p.status === "paid" ? (isFr ? "Validée" : "Approved") : p.status === "pending" ? (isFr ? "En attente" : "Pending") : (isFr ? "Refusée" : "Rejected");
+                        return (
+                          <tr key={p.id} style={{ borderBottom: i < allPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>
+                            <td style={{ padding: "13px 16px", color: "#7a90b0" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
+                            <td style={{ padding: "13px 16px", fontWeight: 800, color: "#0D1B3E" }}>${p.amount?.toLocaleString()}</td>
+                            <td style={{ padding: "13px 16px", color: "#7a90b0" }}>
+                              {p.payment_method === "crypto" ? "🔶 Crypto" : p.payment_method === "bank" ? "🏦 Virement" : "—"}
+                            </td>
+                            <td style={{ padding: "13px 16px" }}>
+                              <span style={{ backgroundColor: `${statusColor}18`, color: statusColor, fontWeight: 700, fontSize: 11, padding: "3px 10px", borderRadius: 100, border: `1px solid ${statusColor}33` }}>
+                                {statusLabel}
+                              </span>
+                            </td>
+                            <td style={{ padding: "13px 16px", color: "#ef4444", fontSize: 12 }}>
+                              {p.rejection_reason || (p.status === "rejected" ? (isFr ? "Voir support" : "Contact support") : "—")}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
           </div>
