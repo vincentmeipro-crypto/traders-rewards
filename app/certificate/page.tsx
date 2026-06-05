@@ -25,10 +25,10 @@ const CERT_CONFIG = {
     image: "/REWARDS.png",
     nameColor: "#ffffff",
     amountColor: "#7dd3fc",
-    dateColor: "#aaaaaa",
-    nameTop: "54%",
-    amountTop: "65%",
-    dateTop: "88%",
+    dateColor: "#111111",
+    nameTop: "50%",
+    amountTop: "61%",
+    dateTop: "85%",
   },
 };
 
@@ -120,17 +120,14 @@ function CertificateContent() {
         <div style={{
           position: "absolute",
           top: cfg.dateTop,
-          ...(type === "reward"
-            ? { right: "8%", textAlign: "right" }
-            : { left: "10%", width: "80%", textAlign: "center" }),
+          left: "10%", width: "80%", textAlign: "center",
           transform: "translateY(-50%)",
         }}>
           <div style={{
-            fontSize: type === "reward" ? "clamp(10px, 1.8vw, 13px)" : "clamp(15px, 3vw, 20px)",
-            fontWeight: 500,
+            fontSize: type === "reward" ? "clamp(11px, 2vw, 14px)" : "clamp(15px, 3vw, 20px)",
+            fontWeight: 600,
             color: cfg.dateColor,
             letterSpacing: "0.5px",
-            textShadow: "0 1px 6px rgba(0,0,0,0.8)",
           }}>
             {date}
           </div>
