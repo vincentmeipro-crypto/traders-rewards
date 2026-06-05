@@ -59,13 +59,14 @@ export async function PATCH(req: NextRequest) {
           }
         }
 
-        // Remettre la balance à zéro (start_balance) et reset les jours
+        // Remettre la balance, reset les stats et statut funded
         await admin.from("challenges").update({
           balance: challenge.start_balance,
           trading_days: 0,
           highest_balance: challenge.start_balance,
           daily_dd: 0,
           best_day_profit: 0,
+          status: "funded",
         }).eq("id", challenge.id);
 
         // Email certificat récompense
