@@ -122,15 +122,13 @@ export default function Navbar() {
                 <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "3px", color: "#8a96aa", textTransform: "uppercase", lineHeight: 1.4 }}>— REWARDS —</span>
               </div>
             </a>
-            {!isMobile && (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>
-                <div style={{ display: "flex", gap: 4 }}>
-                  <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                  <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                </div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>
+              <div style={{ display: "flex", gap: 4 }}>
+                <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
               </div>
-            )}
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
+            </div>
           </div>
 
           {/* Desktop Nav */}
