@@ -714,7 +714,11 @@ export default function DashboardClient({ user }: { user: User }) {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {allChallenges.map((c, idx) => {
-                  const profit = c.balance && c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
+                  // Pour les comptes failed : balance figée au moment du breach, jamais mise à jour après
+                  const finalBalance = c.status === "failed"
+                    ? (c.breach_equity ?? c.balance)
+                    : c.balance;
+                  const profit = finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
                   const phaseReached = c.phase === "funded" ? "Active" : c.phase === "phase2" ? "Phase 2" : "Phase 1";
                   const isLast = idx === allChallenges.length - 1;
                   const dotColor = c.status === "funded" ? "#C9A84C" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#1565C0" : "#1565C0";
@@ -755,7 +759,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 12, marginBottom: relatedPayouts.length > 0 ? 16 : 0 }}>
                           {[
                             { label: T.dash.startBalance, value: `$${c.start_balance?.toLocaleString()}` },
-                            { label: T.dash.finalBalance, value: `$${c.balance?.toLocaleString()}` },
+                            { label: T.dash.finalBalance, value: `$${finalBalance?.toLocaleString()}` },
                             { label: "P&L", value: profit ? `${Number(profit) >= 0 ? "+" : ""}${profit}%` : "—", color: profit ? (Number(profit) >= 0 ? "#1565C0" : "#ef4444") : "#555" },
                             { label: T.dash.daysTradedLabel, value: c.trading_days?.toString() || "0" },
                             { label: isFr ? "Compte MT5" : "MT5 Account", value: c.mt5_login ? String(c.mt5_login) : "—", color: "#1565C0" },
