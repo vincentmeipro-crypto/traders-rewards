@@ -16,9 +16,7 @@ const TRADERS = [
 ];
 
 function fmt(n: number) {
-  const fixed = n.toFixed(2);
-  const [int, dec] = fixed.split(".");
-  return "€" + int.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "," + dec;
+  return "€" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 const ENTER_MS = 500;
