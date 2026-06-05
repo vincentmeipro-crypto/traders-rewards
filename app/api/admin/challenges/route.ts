@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -268,10 +268,18 @@ export async function PATCH(req: NextRequest) {
   const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Disable MT5 if manually set to failed
+  // Disable MT5 + sync balance réelle si passage en failed
   if (updates.status === "failed" && data.mt5_login) {
     try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
     try { await disableMT5Account(data.mt5_login); } catch {}
+    // Sync balance réelle depuis MT5 (affiche la vraie perte dans les dashboards)
+    try {
+      const mt5Info = await getMT5Account(data.mt5_login);
+      const realBalance = mt5Info.equity ?? mt5Info.balance;
+      if (realBalance != null) {
+        await admin.from("challenges").update({ balance: realBalance, last_synced_at: new Date().toISOString() }).eq("id", id);
+      }
+    } catch {}
   }
 
   const { data: { users } } = await admin.auth.admin.listUsers();
