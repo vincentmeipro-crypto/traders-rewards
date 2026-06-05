@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendRewardCertificateEmail } from "@/lib/mailer";
+import { getMT5Account, withdrawMT5Balance } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -45,7 +46,20 @@ export async function PATCH(req: NextRequest) {
         .eq("id", data.challenge_id).single();
 
       if (challenge) {
-        // Remettre la balance à zéro (start_balance) et reset les jours — même compte MT5
+        // MT5 : retrait automatique du profit (type 2, montant positif)
+        if (challenge.mt5_login) {
+          try {
+            const mt5Info = await getMT5Account(challenge.mt5_login);
+            const profit = parseFloat((mt5Info.balance - challenge.start_balance).toFixed(2));
+            if (profit > 0) {
+              await withdrawMT5Balance(challenge.mt5_login, profit, "Profit Withdrawal — Elysium");
+            }
+          } catch (e) {
+            console.error("MT5 auto-withdraw error:", e);
+          }
+        }
+
+        // Remettre la balance à zéro (start_balance) et reset les jours
         await admin.from("challenges").update({
           balance: challenge.start_balance,
           trading_days: 0,

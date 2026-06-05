@@ -387,6 +387,20 @@ export default function AdminPage() {
     if (res.ok) setPayouts(ps => ps.map(p => p.id === id ? { ...p, ...data } : p));
   };
 
+  const triggerMT5WithdrawFromPayout = async (mt5Login: number, startBalance: number) => {
+    if (!mt5Login) { alert("Pas de login MT5 sur ce compte"); return; }
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${mt5Login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const syncData = await syncRes.json();
+    const mt5Balance = syncData.balance ?? 0;
+    const profit = Math.round((mt5Balance - startBalance) * 100) / 100;
+    if (profit <= 0) { alert(`Aucun profit MT5 à retirer.\nBalance actuelle : $${mt5Balance.toLocaleString()}`); return; }
+    if (!confirm(`Retrait MT5 de $${profit.toLocaleString()} sur login ${mt5Login} ?\n(Balance : $${mt5Balance.toLocaleString()} → $${startBalance.toLocaleString()})`)) return;
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: mt5Login, amount: profit, withdraw: true, comment: "Profit Withdrawal — Elysium" }) });
+    const data = await res.json();
+    if (res.ok) alert(`✅ Retrait MT5 de $${profit.toLocaleString()} effectué`);
+    else alert(`Erreur MT5 : ${data.error}`);
+  };
+
   const createChallenge = async () => {
     if (!token || !createForm.userEmail || !createForm.accountSize) return;
     setCreateLoading(true); setCreateError(""); setCreateMsg("");
@@ -1139,8 +1153,8 @@ export default function AdminPage() {
                       <td style={{ padding: "13px 16px" }}>{badge(STATUS_LABELS[p.status] || p.status, STATUS_COLORS[p.status] || "#888")}</td>
                       <td style={{ padding: "13px 16px", color: "#6b7280", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
                       <td style={{ padding: "13px 16px" }}>
-                        {p.status === "pending" && (
-                          <div style={{ display: "flex", gap: 8 }}>
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                          {p.status === "pending" && (<>
                             <button onClick={() => updatePayout(p.id, "paid")}
                               style={{ backgroundColor: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                               ✓ Valider
@@ -1149,8 +1163,15 @@ export default function AdminPage() {
                               style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                               ✕ Refuser
                             </button>
-                          </div>
-                        )}
+                          </>)}
+                          {userChallenge?.mt5_login && (
+                            <button onClick={() => triggerMT5WithdrawFromPayout(userChallenge.mt5_login!, userChallenge.start_balance)}
+                              style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 8, padding: "6px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                              title="Retrait profit MT5">
+                              💰 MT5
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                     );
