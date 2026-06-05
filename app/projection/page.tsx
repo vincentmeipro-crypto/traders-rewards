@@ -207,7 +207,7 @@ export default function ProjectionPage() {
             ],
             bilan: [
               { label: "Capital investi",         value: "5 000 €",  color: "#6b7a99" },
-              { label: "1er versement (S2)",       value: "10 176 €", color: "#C9A84C" },
+              { label: "1er versement (S1)",       value: "4 686 €",  color: "#C9A84C" },
               { label: "Dividendes cumulés 3 ans", value: "45 390 €", color: "#1B4FD8" },
               { label: "ROI total 3 ans",          value: "908 %",    color: "#C9A84C" },
             ],
@@ -222,7 +222,7 @@ export default function ProjectionPage() {
             ],
             bilan: [
               { label: "Capital investi",         value: "10 000 €",  color: "#6b7a99" },
-              { label: "1er versement (S2)",       value: "20 352 €",  color: "#1B4FD8" },
+              { label: "1er versement (S1)",       value: "9 372 €",   color: "#1B4FD8" },
               { label: "Dividendes cumulés 3 ans", value: "90 780 €",  color: "#1B4FD8" },
               { label: "ROI total 3 ans",          value: "908 %",     color: "#C9A84C" },
             ],
