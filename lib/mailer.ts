@@ -25,7 +25,8 @@ export async function sendWelcomeEmail(
   to: string,
   accountSize: string,
   model: string,
-  mt5?: { login: number; password: string; server: string }
+  mt5?: { login: number; password: string; server: string },
+  setupLink?: string
 ) {
   const modelLabel = model === "1step" ? "1 Étape" : "2 Étapes";
   const details: { label: string; value: string; color?: string }[] = [
@@ -38,15 +39,20 @@ export async function sendWelcomeEmail(
     details.push(
       { label: "Serveur MT5",   value: mt5.server,        color: "#1a73e8" },
       { label: "Login MT5",     value: String(mt5.login), color: "#1a73e8" },
-      { label: "Mot de passe",  value: mt5.password,      color: "#1a73e8" },
+      { label: "Mot de passe MT5", value: mt5.password,   color: "#1a73e8" },
     );
   }
+  const ctaHref = setupLink || `${SITE}/dashboard`;
+  const ctaText = setupLink ? "Créer mon mot de passe & accéder au Dashboard →" : "Accéder à mon Dashboard →";
+  const bodyText = setupLink
+    ? `Bienvenue dans l'élite. Votre compte challenge a été créé. Cliquez sur le bouton ci-dessous pour définir votre mot de passe et accéder à votre dashboard.`
+    : `Bienvenue dans l'élite. Votre compte challenge a été créé. Connectez-vous à MT5 avec les identifiants ci-dessous et commencez à trader.`;
   await sendEmail(to, "🎯 Votre Challenge Elysium est prêt !", buildEmail({
-    title: "✅ Paiement confirmé — Votre compte MT5 est actif",
+    title: "✅ Votre compte Elysium est actif",
     titleColor: "#22c55e",
-    body: `Bienvenue dans l'élite. Votre compte challenge a été créé. Connectez-vous à MT5 avec les identifiants ci-dessous et commencez à trader.`,
+    body: bodyText,
     details,
-    cta: { text: "Accéder à mon Dashboard →", href: `${SITE}/dashboard` },
+    cta: { text: ctaText, href: ctaHref },
   }));
 }
 

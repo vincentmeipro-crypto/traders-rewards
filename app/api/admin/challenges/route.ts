@@ -157,6 +157,20 @@ export async function POST(req: NextRequest) {
   const firstName = formFirstName || user.user_metadata?.first_name || "Trader";
   const lastName = formLastName || user.user_metadata?.last_name || "";
 
+  // Générer lien setup mot de passe si user nouvellement créé
+  let setupLink: string | undefined;
+  const isNewUser = !users.find(u => u.email === userEmail);
+  if (isNewUser) {
+    try {
+      const { data: linkData } = await admin.auth.admin.generateLink({
+        type: "recovery",
+        email: userEmail,
+        options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.elysium-rewards.com"}/dashboard` },
+      });
+      setupLink = linkData?.properties?.action_link || undefined;
+    } catch {}
+  }
+
   let mt5Login: number | null = null;
   let mt5Password: string | null = null;
   let mt5PasswordInvestor: string | null = null;
@@ -199,8 +213,10 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   try {
-    await sendWelcomeEmail(userEmail, accountSize, model,
-      mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined
+    await sendWelcomeEmail(
+      userEmail, accountSize, model,
+      mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined,
+      setupLink
     );
   } catch {}
 
