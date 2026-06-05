@@ -59,8 +59,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   if (!info) return { status: "balance_unavailable" };
 
   const newBalance = info.balance as number;
-  // Fallback sur balance si equity absent (microservice peut ne pas retourner equity)
-  const newEquity  = (info.equity != null ? info.equity : info.balance) as number;
+  // Equity réelle = balance + profit flottant (a.Equity du Manager API n'est pas toujours temps réel)
+  const floatingProfit = typeof info.profit === "number" ? info.profit : 0;
+  const newEquity = newBalance + floatingProfit;
   // Après un payout reset, highest_balance = start_balance — ne pas restaurer l'ancien high
   const newHighest = prevHighest <= startBalance
     ? Math.max(startBalance, newEquity)
@@ -182,7 +183,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, { model, highestBalance: newHighest, totalLimit, startBalance }).catch(() => {});
   }
 
-  return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2), rawBalance: info.balance, rawEquity: info.equity, prevBalance };
+  return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2), rawBalance: info.balance, rawEquity: newEquity, rawProfit: info.profit, prevBalance };
 }
 
 // â”€â”€ Route â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
