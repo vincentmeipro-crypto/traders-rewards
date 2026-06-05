@@ -82,6 +82,13 @@ function CertificateContent() {
           style={{ width: "100%", display: "block", borderRadius: 12 }}
         />
 
+        {/* Logo haut gauche */}
+        <img
+          src="/nouveau-logo.png"
+          alt="Elysium"
+          style={{ position: "absolute", top: "4%", left: "4%", width: "clamp(32px, 7%, 52px)", height: "auto", opacity: 0.9 }}
+        />
+
         {/* Nom */}
         <div style={{
           position: "absolute",
