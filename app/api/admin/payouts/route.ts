@@ -42,7 +42,7 @@ export async function PATCH(req: NextRequest) {
       const lastName = profile?.last_name || "";
 
       const { data: challenge } = await admin.from("challenges")
-        .select("id, account_size, model, start_balance")
+        .select("id, account_size, model, start_balance, mt5_login")
         .eq("id", data.challenge_id).single();
 
       if (challenge) {
