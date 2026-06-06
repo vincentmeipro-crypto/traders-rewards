@@ -148,11 +148,10 @@ export default function TopTraders() {
   const doubled = [...TRADERS, ...TRADERS];
 
   return (
-    <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: "transparent", position: "relative" }}>
+    <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: "linear-gradient(180deg, #ffffff 0%, #ddeeff 25%, #99ccff 55%, #1565C0 100%)", position: "relative" }}>
 
-      {/* Fond femme trader */}
-      {!isMobile && <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/HOMME-TRADER-GAUCHE.png')", backgroundSize: "cover", backgroundPosition: "left center", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 140, background: "linear-gradient(to bottom, #c8e8ff, transparent)", pointerEvents: "none", zIndex: 1 }} />
+      {/* Fond homme trader */}
+      {!isMobile && <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/HOMME-TRADER-GAUCHE.png')", backgroundSize: "cover", backgroundPosition: "left center", opacity: 0.18, pointerEvents: "none", zIndex: 0 }} />}
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px", position: "relative", zIndex: 1 }}>
