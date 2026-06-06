@@ -62,6 +62,9 @@ export default function Pricing() {
 
         {/* Toggle */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginBottom: isMobile ? 16 : 28 }}>
+          {!isMobile && (
+            <img src="/$400K.png" alt="400K" style={{ height: 92, width: "auto", objectFit: "contain" }} />
+          )}
           <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
             {(["2step", "1step"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
