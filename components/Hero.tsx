@@ -157,8 +157,8 @@ export default function Hero() {
           <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 0px" }}>
             <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#1565C0", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, marginTop: 0 }}>
               {isFr
-                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#1B4FD8" }}>vraies récompenses</span></>
-                : <>Turn your trading<br />skills into<br /><span style={{ color: "#1B4FD8" }}>real rewards</span></>}
+                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#fff" }}>vraies récompenses</span></>
+                : <>Turn your trading<br />skills into<br /><span style={{ color: "#fff" }}>real rewards</span></>}
             </h1>
             <div className="hero-animate-2" style={{ display: "flex", justifyContent: "center" }}>
               <LiveRewardCard isMobile={true} />
