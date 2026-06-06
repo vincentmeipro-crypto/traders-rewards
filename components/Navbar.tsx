@@ -53,62 +53,53 @@ export default function Navbar() {
         .flag-float-1 { animation: flagFloat 2.4s ease-in-out infinite; }
         .flag-float-2 { animation: flagFloat 2.4s ease-in-out 0.4s infinite; }
         .nav-link {
-          color: #fff;
           font-size: 11px;
           font-weight: 700;
           text-decoration: none;
           letter-spacing: 0.8px;
           text-transform: uppercase;
-          padding: 7px 16px;
+          padding: 8px 18px;
           border-radius: 100px;
-          background: linear-gradient(160deg, rgba(100,160,255,0.25) 0%, rgba(21,101,192,0.35) 50%, rgba(10,60,140,0.4) 100%);
-          box-shadow: 0 2px 12px rgba(21,101,192,0.15), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,50,0.1);
-          border: 1px solid rgba(255,255,255,0.45);
+          color: #1a3a6b;
+          background: rgba(255,255,255,0.7);
+          border: 1px solid rgba(100,160,255,0.25);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          color: #0D1B3E;
-          position: relative;
-          overflow: hidden;
-          transition: transform 0.18s, box-shadow 0.18s;
+          transition: all 0.18s;
           display: inline-block;
-        }
-        .nav-link::before {
-          content: "";
-          position: absolute;
-          top: 0; left: 10%; right: 10%;
-          height: 45%;
-          background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
-          border-radius: 0 0 100px 100px;
-          pointer-events: none;
+          box-shadow: 0 1px 4px rgba(21,101,192,0.08);
         }
         .nav-link:hover {
-          transform: translateY(-2px) scale(1.04);
-          background: linear-gradient(160deg, rgba(100,160,255,0.4) 0%, rgba(21,101,192,0.5) 50%, rgba(10,60,140,0.55) 100%);
-          box-shadow: 0 6px 20px rgba(21,101,192,0.25), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,50,0.1);
-          color: #0D1B3E;
+          background: rgba(255,255,255,0.95);
+          color: #1565C0;
+          border-color: rgba(21,101,192,0.35);
+          box-shadow: 0 4px 16px rgba(21,101,192,0.15);
+          transform: translateY(-1px);
         }
         .nav-cta {
-          background: #0D1B3E;
+          background: linear-gradient(135deg, #1B6FFF 0%, #0d4fcc 100%);
           color: #fff !important;
           padding: 10px 24px;
-          border-radius: 6px;
+          border-radius: 8px;
           font-size: 12px;
-          font-weight: 700;
+          font-weight: 800;
           letter-spacing: 1.5px;
           text-transform: uppercase;
           text-decoration: none;
-          transition: background 0.2s, transform 0.15s;
+          box-shadow: 0 4px 18px rgba(27,111,255,0.35);
+          transition: all 0.2s;
+          display: inline-block;
         }
-        .nav-cta:hover { background: #1B4FD8; transform: translateY(-1px); }
+        .nav-cta:hover { background: linear-gradient(135deg, #2d7fff 0%, #1a5fdf 100%); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(27,111,255,0.45); }
       `}</style>
 
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        backgroundColor: scrolled ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.45)",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.6)" : "1px solid rgba(255,255,255,0.3)",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-        boxShadow: scrolled ? "0 4px 24px rgba(21,101,192,0.1)" : "none",
+        backgroundColor: scrolled ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.6)",
+        borderBottom: "1px solid rgba(100,160,255,0.18)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        boxShadow: scrolled ? "0 2px 20px rgba(21,101,192,0.12)" : "none",
         transition: "all 0.3s ease",
       }}>
         <div style={{ width: "100%", padding: "0 32px 0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72, position: "relative" }}>
@@ -116,7 +107,7 @@ export default function Navbar() {
           {/* Logo + PropFirm badge */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
-              <img src="/LOGO%20ET%20TEXTE%20BLEU%20BLANC.TRANSPARENT.png" alt="Elysium Rewards" style={{ height: 52, width: "auto" }} />
+              <img src="/logo-elysium.png" alt="Elysium Rewards" style={{ height: 52, width: "auto" }} />
             </a>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>
               <div style={{ display: "flex", gap: 4 }}>
@@ -175,7 +166,7 @@ export default function Navbar() {
                 )}
               </div>
 
-              <a href="/login" style={{ color: "#1a2744", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.3px" }}>
+              <a href="/login" style={{ color: "#1565C0", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.3px" }}>
                 {T.nav.logIn}
               </a>
               <a href="/#pricing" className="nav-cta">{T.nav.startChallenge}</a>
