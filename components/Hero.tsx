@@ -83,7 +83,7 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
       }}>{t.initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 6 : 8, marginBottom: 4 }}>
-          <span style={{ color: "#0D1B3E", fontWeight: 700, fontSize: isMobile ? 15 : 22, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</span>
+          <span style={{ color: "#1565C0", fontWeight: 700, fontSize: isMobile ? 15 : 22, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</span>
           <img src={`https://flagcdn.com/40x30/${t.flag}.png`} alt="" style={{ width: isMobile ? 20 : 28, height: isMobile ? 15 : 21, borderRadius: 2, objectFit: "cover", flexShrink: 0 }} />
         </div>
         <div style={{ color: "#8a96aa", fontSize: isMobile ? 11 : 16 }}>{t.size} · Récompense reçue</div>
@@ -155,7 +155,7 @@ export default function Hero() {
         {/* Mobile : H1 complet — carte centrée */}
         {isMobile ? (
           <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 0px" }}>
-            <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, marginTop: 0 }}>
+            <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#1565C0", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, marginTop: 0 }}>
               {isFr
                 ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#1B4FD8" }}>vraies récompenses</span></>
                 : <>Turn your trading<br />skills into<br /><span style={{ color: "#1B4FD8" }}>real rewards</span></>}
@@ -167,7 +167,7 @@ export default function Hero() {
         ) : (
           /* Desktop : H1 + carte absolue en bas */
           <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 1200, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "32px 24px 80px" }}>
-            <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, whiteSpace: "nowrap" }}>
+            <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#1565C0", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, whiteSpace: "nowrap" }}>
               {isFr
                 ? <>Transformez votre trading démo<br />en <span style={{ color: "#ffffff" }}>vraies récompenses</span></>
                 : <>Turn your trading skills<br />into <span style={{ color: "#ffffff" }}>real rewards</span></>}

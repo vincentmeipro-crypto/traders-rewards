@@ -42,7 +42,7 @@ export default function FAQ() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 64 }}>
           <span className="section-label" style={{ display: "block", marginBottom: 16 }}>FAQ</span>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px" }}>
+          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#1565C0", letterSpacing: "1px" }}>
             {lang === "fr" ? "Questions fréquentes" : "Frequently Asked Questions"}
           </h2>
         </div>
@@ -64,10 +64,10 @@ export default function FAQ() {
                   gap: 16,
                 }}
               >
-                <span style={{ fontSize: 16, fontWeight: 600, color: "#0D1B3E", lineHeight: 1.4 }}>{item.q}</span>
+                <span style={{ fontSize: 16, fontWeight: 600, color: "#1565C0", lineHeight: 1.4 }}>{item.q}</span>
                 <div style={{
                   width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                  background: open === i ? "#0D1B3E" : "rgba(0,0,0,0.06)",
+                  background: open === i ? "#1565C0" : "rgba(0,0,0,0.06)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s",
                 }}>

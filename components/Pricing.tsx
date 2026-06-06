@@ -55,7 +55,7 @@ export default function Pricing() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 28 }}>
-          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 10 }}>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#1565C0", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 10 }}>
             {T.pricing.title} <span style={{ color: "#1B4FD8" }}>{T.pricing.titleGold}</span>
           </h2>
         </div>
@@ -70,7 +70,7 @@ export default function Pricing() {
               <button key={m} onClick={() => setModel(m)} style={{
                 padding: "10px 32px", borderRadius: 7, border: "none", cursor: "pointer",
                 fontSize: 13, fontWeight: 700, letterSpacing: "0.5px", transition: "all 0.2s",
-                backgroundColor: model === m ? "#0D1B3E" : "transparent",
+                backgroundColor: model === m ? "#1565C0" : "transparent",
                 color: model === m ? "#fff" : "#8a96aa",
                 boxShadow: model === m ? "0 2px 10px rgba(13,27,62,0.2)" : "none",
               }}>
@@ -150,7 +150,7 @@ export default function Pricing() {
                   <div style={{ color: "#8a96aa", fontSize: 8, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 2 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: 14, fontWeight: 900, color: "#1565C0", letterSpacing: "-0.5px" }}>
                     {acc.size}
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export default function Pricing() {
                               border: "1px solid rgba(21,101,192,0.2)",
                             }}>{row.value}</span>
                           ) : (
-                            <span style={{ color: "#0D1B3E", fontSize: 10, fontWeight: 700 }}>{row.value}</span>
+                            <span style={{ color: "#1565C0", fontSize: 10, fontWeight: 700 }}>{row.value}</span>
                           )}
                           {usdStr && <div style={{ color: "#b0b8c8", fontSize: 9, marginTop: 0 }}>{usdStr}</div>}
                         </div>
@@ -193,7 +193,7 @@ export default function Pricing() {
 
                 {/* Price */}
                 <div style={{ textAlign: "center", marginBottom: 6 }}>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: "#1565C0", letterSpacing: "-1px" }}>{price}</div>
                 </div>
 
                 {/* Récompense moyenne */}
@@ -215,11 +215,11 @@ export default function Pricing() {
                   padding: "10px 12px", borderRadius: 7,
                   fontSize: 11, fontWeight: 800,
                   textDecoration: "none", letterSpacing: "1.5px", textTransform: "uppercase",
-                  background: "#0D1B3E", color: "#fff",
+                  background: "#1565C0", color: "#fff",
                   transition: "all 0.2s",
                 }}
                   onMouseOver={e => { e.currentTarget.style.background = "#1B4FD8"; }}
-                  onMouseOut={e => { e.currentTarget.style.background = "#0D1B3E"; }}
+                  onMouseOut={e => { e.currentTarget.style.background = "#1565C0"; }}
                 >
                   {isFr ? "Commencer" : "Get Started"}
                 </a>

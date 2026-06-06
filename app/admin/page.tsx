@@ -514,14 +514,14 @@ export default function AdminPage() {
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#fff", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#6b7280", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#0D1B3E", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 40%, #a8d4ff 100%)" }}>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#1565C0", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 40%, #a8d4ff 100%)" }}>
 
       {/* ── SIDEBAR ── */}
       <div style={{ width: 220, backgroundColor: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRight: "1px solid rgba(255,255,255,0.6)", boxShadow: "4px 0 24px rgba(21,101,192,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
         <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(21,101,192,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
           <img src="/nouveau-logo.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
           <div>
-            <div style={{ color: "#0D1B3E", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Elysium</div>
+            <div style={{ color: "#1565C0", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Elysium</div>
             <div style={{ color: "#1565C0", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
           </div>
         </div>
@@ -540,16 +540,16 @@ export default function AdminPage() {
       </div>
 
       {/* ── MAIN ── */}
-      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#0D1B3E" }}>
+      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#1565C0" }}>
         <div style={{ backgroundColor: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 2px 16px rgba(21,101,192,0.06)", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontSize: 11, color: "#8a96aa", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Admin</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#0D1B3E" }}>{TABS.find(t => t.id === tab)?.label}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#1565C0" }}>{TABS.find(t => t.id === tab)?.label}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
             {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
-            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(0,0,0,0.06)" : "#0D1B3E", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
+            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(0,0,0,0.06)" : "#1565C0", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
               {syncing ? "Syncing..." : "Sync MT5"}
             </button>
             <button onClick={async () => {
@@ -595,8 +595,8 @@ export default function AdminPage() {
             {/* CA & Marge */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               {[
-                { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#0D1B3E" },
-                { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#0D1B3E" },
+                { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#1565C0" },
+                { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#1565C0" },
                 { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#22c55e" },
                 { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#22c55e" },
               ].map((s, i) => (
@@ -621,7 +621,7 @@ export default function AdminPage() {
               ].map((s, i) => (
                 <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "16px 20px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
                   <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: "#0D1B3E" }}>{s.value}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: "#1565C0" }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -636,7 +636,7 @@ export default function AdminPage() {
               ].map((s, i) => (
                 <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
                   <div style={{ color: "#8a96aa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 26, fontWeight: 900, color: "#0D1B3E", marginBottom: 4 }}>{s.value}</div>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: "#1565C0", marginBottom: 4 }}>{s.value}</div>
                   <div style={{ fontSize: 11, color: "#8a96aa" }}>{s.sub}</div>
                 </div>
               ))}
@@ -1426,7 +1426,7 @@ export default function AdminPage() {
                 {[
                   { label: "Récompenses versées", value: paidPayouts.length, color: "#22c55e" },
                   { label: "Total versé (USD)", value: `$${totalVersé.toLocaleString()}`, color: "#1565C0" },
-                  { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#0D1B3E" },
+                  { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#1565C0" },
                   { label: "Crypto USDC", value: paidPayouts.filter(p => p.payment_method === "crypto").length, color: "#C9A84C" },
                 ].map((s, i) => (
                   <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
@@ -1461,7 +1461,7 @@ export default function AdminPage() {
                         <tr key={p.id} style={{ borderBottom: i < paidPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
                           <td style={{ padding: "11px 14px", fontWeight: 700, color: "#1565C0", fontSize: 12, fontFamily: "monospace" }}>{ref}</td>
                           <td style={{ padding: "11px 14px", color: "#6b7280" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
-                          <td style={{ padding: "11px 14px", color: "#0D1B3E" }}>{p.user_email}</td>
+                          <td style={{ padding: "11px 14px", color: "#1565C0" }}>{p.user_email}</td>
                           <td style={{ padding: "11px 14px", fontWeight: 800, color: "#22c55e" }}>${p.amount?.toLocaleString()}</td>
                           <td style={{ padding: "11px 14px" }}>
                             <span style={{ background: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(21,101,192,0.1)", color: p.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
@@ -1498,7 +1498,7 @@ export default function AdminPage() {
                   <tbody>
                     {Array.from(monthly.entries()).reverse().map(([m, v], i) => (
                       <tr key={m} style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
-                        <td style={{ padding: "11px 14px", fontWeight: 700, color: "#0D1B3E" }}>{m}</td>
+                        <td style={{ padding: "11px 14px", fontWeight: 700, color: "#1565C0" }}>{m}</td>
                         <td style={{ padding: "11px 14px", color: "#1565C0", fontWeight: 700 }}>€{v.ca.toLocaleString()}</td>
                         <td style={{ padding: "11px 14px", color: "#ef4444", fontWeight: 700 }}>-${v.versements.toLocaleString()}</td>
                         <td style={{ padding: "11px 14px", color: "#6b7280" }}>{v.count}</td>
@@ -1550,7 +1550,7 @@ export default function AdminPage() {
           const caCard       = challenges.filter(c => !c.payment_method||c.payment_method==="card").reduce((s,c)=>s+(c.amount_paid||0),0);
           const caCrypto     = challenges.filter(c => c.payment_method==="crypto").reduce((s,c)=>s+(c.amount_paid||0),0);
 
-          const StatRow = ({ label, n, d = total, color = "#0D1B3E" }: { label: string; n: number; d?: number; color?: string }) => (
+          const StatRow = ({ label, n, d = total, color = "#1565C0" }: { label: string; n: number; d?: number; color?: string }) => (
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(0,0,0,0.05)" }}>
               <span style={{ fontSize:13, color:"#4a5568" }}>{label}</span>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -1562,7 +1562,7 @@ export default function AdminPage() {
 
           const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
             <div style={{ background:"rgba(255,255,255,0.75)", backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)", border:"1px solid rgba(255,255,255,0.8)", borderRadius:12, padding:"20px 24px" }}>
-              <div style={{ fontWeight:800, fontSize:14, color:"#0D1B3E", marginBottom:12, paddingBottom:8, borderBottom:"2px solid rgba(21,101,192,0.12)" }}>{title}</div>
+              <div style={{ fontWeight:800, fontSize:14, color:"#1565C0", marginBottom:12, paddingBottom:8, borderBottom:"2px solid rgba(21,101,192,0.12)" }}>{title}</div>
               {children}
             </div>
           );
@@ -1573,8 +1573,8 @@ export default function AdminPage() {
               {/* Résumé global */}
               <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12 }}>
                 {[
-                  { label:"Total achetés",  value:String(total),              color:"#0D1B3E" },
-                  { label:"CA total",       value:`€${Math.round(totalCA)}`,  color:"#0D1B3E" },
+                  { label:"Total achetés",  value:String(total),              color:"#1565C0" },
+                  { label:"CA total",       value:`€${Math.round(totalCA)}`,  color:"#1565C0" },
                   { label:"Actifs",         value:String(totalActive),         color:"#22c55e" },
                   { label:"Certified",      value:String(totalCert),           color:"#3b82f6" },
                   { label:"Failed",         value:String(totalFailed),         color:"#ef4444" },
@@ -1592,8 +1592,8 @@ export default function AdminPage() {
                   <StatRow label="Carte bancaire" n={byCard} />
                   <StatRow label="Crypto" n={byCrypto} />
                   <div style={{ display:"flex", justifyContent:"space-between", paddingTop:10, fontSize:12, color:"#8a96aa" }}>
-                    <span>CA carte : <strong style={{color:"#0D1B3E"}}>€{Math.round(caCard)}</strong></span>
-                    <span>CA crypto : <strong style={{color:"#0D1B3E"}}>€{Math.round(caCrypto)}</strong></span>
+                    <span>CA carte : <strong style={{color:"#1565C0"}}>€{Math.round(caCard)}</strong></span>
+                    <span>CA crypto : <strong style={{color:"#1565C0"}}>€{Math.round(caCrypto)}</strong></span>
                   </div>
                 </Section>
 

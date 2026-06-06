@@ -91,7 +91,7 @@ function SpotlightCard({ lang }: { lang: string }) {
         </div>
         <div style={{ textAlign: "left" }}>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "2px", color: "#C9A84C", marginBottom: 3, textTransform: "uppercase" }}>Trader</div>
-          <div style={{ fontWeight: 800, fontSize: 16, color: "#0D1B3E" }}>{t.name}</div>
+          <div style={{ fontWeight: 800, fontSize: 16, color: "#1565C0" }}>{t.name}</div>
           <div style={{ fontSize: 11, color: "#8a96aa", marginTop: 1 }}>{lang === "fr" ? "Compte" : "Account"} {t.size}</div>
         </div>
       </div>
@@ -159,7 +159,7 @@ export default function TopTraders() {
         <span className="section-label" style={{ display: "block", marginBottom: 16 }}>
           {lang === "fr" ? "Dernières Récompenses" : "Latest Rewards"}
         </span>
-        <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px", marginBottom: 12 }}>
+        <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#1565C0", letterSpacing: "1px", marginBottom: 12 }}>
           {lang === "fr" ? "Nos traders certifiés touchent" : "Our certified traders receive"}
           <br /><em style={{ color: "#ffffff", fontStyle: "italic" }}>{lang === "fr" ? "leurs récompenses chaque semaine." : "their rewards every week."}</em>
         </h2>
@@ -185,12 +185,12 @@ export default function TopTraders() {
           <div style={{ background: "rgba(255,255,255,0.25)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.5)", overflow: "hidden", boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(0,0,0,0.02)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
               {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
-                <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
+                <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#1565C0", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
               ))}
             </div>
             {tableRows.map((row, i) => (
               <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "16px 20px", borderBottom: i < tableRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "#0D1B3E" }}>{row.size}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: "#1565C0" }}>{row.size}</div>
                 <div style={{ fontSize: 14, color: "#4a5568" }}>{row.profit}</div>
                 <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{row.reward}</div>
               </div>
@@ -209,7 +209,7 @@ export default function TopTraders() {
                 <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -2, right: -6, width: 16, height: 12, borderRadius: 2, objectFit: "cover", border: "1px solid rgba(255,255,255,0.8)" }} />
               </div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 13, color: "#0D1B3E" }}>{t.name}</div>
+                <div style={{ fontWeight: 700, fontSize: 13, color: "#1565C0" }}>{t.name}</div>
                 <div style={{ fontSize: 11, color: "#1565C0", fontWeight: 600 }}>{fmt(t.payout)} · {t.size}</div>
               </div>
             </div>

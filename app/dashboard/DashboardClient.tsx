@@ -599,8 +599,8 @@ export default function DashboardClient({ user }: { user: User }) {
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
               onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <span style={{ color: activeTab === item.tab ? "#1565C0" : (item.tab === "kyc" && kycStatus === "approved" ? "#1565C0" : "#0D1B3E") }}>{item.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#1565C0" : (item.tab === "kyc" && kycStatus === "approved" ? "#1565C0" : "#0D1B3E") }}>{item.label}</span>
+                <span style={{ color: activeTab === item.tab ? "#1565C0" : (item.tab === "kyc" && kycStatus === "approved" ? "#1565C0" : "#1565C0") }}>{item.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#1565C0" : (item.tab === "kyc" && kycStatus === "approved" ? "#1565C0" : "#1565C0") }}>{item.label}</span>
               </div>
             ))}
           </nav>
@@ -686,7 +686,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   borderLeft: activeTab === item.tab ? "3px solid #1565C0" : "3px solid transparent",
                 }}>
                   <span style={{ color: activeTab === item.tab ? "#1565C0" : "#7a90b0" }}>{item.icon}</span>
-                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#1565C0" : "#0D1B3E" }}>{item.label}</span>
+                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#1565C0" : "#1565C0" }}>{item.label}</span>
                   {activeTab === item.tab && <ChevronRight size={16} color="#00C2FF" style={{ marginLeft: "auto" }} />}
                 </button>
               ))}
@@ -768,7 +768,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           ].map((s, i) => (
                             <div key={i} style={{ backgroundColor: "#F4F9FF", borderRadius: 10, padding: "10px 14px" }}>
                               <div style={{ color: "#7a90b0", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
-                              <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#0D1B3E" }}>{s.value}</div>
+                              <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#1565C0" }}>{s.value}</div>
                             </div>
                           ))}
                         </div>
@@ -968,7 +968,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ marginBottom: 14 }}>
                 <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.phone}</label>
                 <input value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+33 6 12 34 56 78"
-                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#1565C0", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = "#1565C0")}
                   onBlur={e => (e.target.style.borderColor = "#222")} />
               </div>
@@ -976,7 +976,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ marginBottom: 14 }}>
                 <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.address}</label>
                 <input value={profileAddress} onChange={e => setProfileAddress(e.target.value)} placeholder="123 Rue de la Paix"
-                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#1565C0", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = "#1565C0")}
                   onBlur={e => (e.target.style.borderColor = "#222")} />
               </div>
@@ -990,7 +990,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div key={f.label}>
                     <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
                     <input value={f.value} onChange={e => f.setter(e.target.value)} placeholder={f.placeholder}
-                      style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                      style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#1565C0", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                       onFocus={e => (e.target.style.borderColor = "#1565C0")}
                       onBlur={e => (e.target.style.borderColor = "#222")} />
                   </div>
@@ -1020,14 +1020,14 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ marginBottom: 14 }}>
                 <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.newPassword}</label>
                 <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 8"
-                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 10, padding: "12px 14px", color: "#1565C0", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = "#1565C0")}
                   onBlur={e => (e.target.style.borderColor = "#222")} />
               </div>
               <div style={{ marginBottom: 20 }}>
                 <label style={{ display: "block", color: "#7a90b0", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.confirmPassword}</label>
                 <input type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} placeholder="..."
-                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#1565C0" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  style={{ width: "100%", backgroundColor: "#F4F9FF", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#1565C0" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#1565C0", fontSize: 14, outline: "none", boxSizing: "border-box" }}
                   onFocus={e => (e.target.style.borderColor = newPassword === confirmNewPassword && confirmNewPassword ? "#1565C0" : "#1565C0")}
                   onBlur={e => (e.target.style.borderColor = confirmNewPassword && newPassword === confirmNewPassword ? "#1565C0" : confirmNewPassword ? "#ef4444" : "#222")} />
               </div>
@@ -1111,17 +1111,17 @@ export default function DashboardClient({ user }: { user: User }) {
               <div className="card" style={{ padding: 32 }}>
                 {/* Montant auto = profit du compte */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
-                  <div style={{ width: "100%", backgroundColor: "#f0f4ff", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 18, fontWeight: 900 }}>
+                  <label style={{ display: "block", color: "#1565C0", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
+                  <div style={{ width: "100%", backgroundColor: "#f0f4ff", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#1565C0", fontSize: 18, fontWeight: 900 }}>
                     ${Math.max(0, profitAmount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
 
                 {/* Méthode de paiement */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
+                  <label style={{ display: "block", color: "#1565C0", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
                   <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value, wallet_address: "" }))}
-                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 14, fontWeight: 700, outline: "none" }}>
+                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#1565C0", fontSize: 14, fontWeight: 700, outline: "none" }}>
                     <option value="bank">{isFr ? "Virement bancaire (RIB/IBAN)" : "Bank transfer (IBAN)"}</option>
                     <option value="crypto">Crypto — USDC réseau Solana</option>
                   </select>
@@ -1129,20 +1129,20 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Adresse selon méthode */}
                 <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#0D1B3E", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
+                  <label style={{ display: "block", color: "#1565C0", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
                     {payoutForm.payment_method === "crypto" ? (isFr ? "Adresse portefeuille USDC (Solana)" : "USDC wallet address (Solana)") : "IBAN"}
                   </label>
                   <input type="text"
                     placeholder={payoutForm.payment_method === "crypto" ? "Adresse Solana..." : "FR76..."}
                     value={payoutForm.wallet_address}
                     onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#0D1B3E", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                    style={{ width: "100%", backgroundColor: "#F4F9FF", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10, padding: "14px 16px", color: "#1565C0", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
                 </div>
 
                 {payoutSuccess ? (
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
                     <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#1565C0" /></div>
-                    <div style={{ fontWeight: 700, fontSize: 18, color: "#0D1B3E" }}>{T.dash.requestSubmitted}</div>
+                    <div style={{ fontWeight: 700, fontSize: 18, color: "#1565C0" }}>{T.dash.requestSubmitted}</div>
                     <div style={{ color: "#7a90b0", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
                   </div>
                 ) : (
@@ -1157,7 +1157,7 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Historique des récompenses */}
             {allPayouts.length > 0 && (
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#0D1B3E" }}>
+                <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#1565C0" }}>
                   {isFr ? "Historique des récompenses" : "Rewards history"}
                 </h2>
                 <div className="card" style={{ padding: 0, overflow: "hidden" }}>
@@ -1179,7 +1179,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         return (
                           <tr key={p.id} style={{ borderBottom: i < allPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>
                             <td style={{ padding: "13px 16px", color: "#7a90b0" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
-                            <td style={{ padding: "13px 16px", fontWeight: 800, color: "#0D1B3E" }}>${p.amount?.toLocaleString()}</td>
+                            <td style={{ padding: "13px 16px", fontWeight: 800, color: "#1565C0" }}>${p.amount?.toLocaleString()}</td>
                             <td style={{ padding: "13px 16px", color: "#7a90b0" }}>
                               {p.payment_method === "crypto" ? "🔶 Crypto" : p.payment_method === "bank" ? "🏦 Virement" : "—"}
                             </td>
@@ -1386,7 +1386,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {/* Certificats Récompense — un par payout approuvé */}
                   {paidPayouts.length > 0 && (
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#0D1B3E" }}>
+                      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#1565C0" }}>
                         {isFr ? "Mes Récompenses" : "My Rewards"}
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
@@ -1684,7 +1684,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
                     ].map((item, i) => (
                       <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
-                        style={{ backgroundColor: "#F4F9FF", color: "#0D1B3E", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid rgba(21,101,192,0.18)", display: "inline-block" }}>
+                        style={{ backgroundColor: "#F4F9FF", color: "#1565C0", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid rgba(21,101,192,0.18)", display: "inline-block" }}>
                         {item.label}
                       </a>
                     ))}
@@ -1698,7 +1698,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Rules checklist */}
                 <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#0D1B3E" }}>{T.dash.rulesStatus}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#1565C0" }}>{T.dash.rulesStatus}</div>
                   {(() => {
                     const b = challenge.start_balance;
                     const profitUSD  = Math.round(b * challenge.profit_target / 100);

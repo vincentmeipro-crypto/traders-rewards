@@ -16,7 +16,7 @@ export default function HowItWorks() {
             fontFamily: "var(--font-cormorant)",
             fontSize: "clamp(2.2rem, 5vw, 3.4rem)",
             fontWeight: 600,
-            color: "#0D1B3E",
+            color: "#1565C0",
             letterSpacing: "1px",
             marginBottom: 16,
           }}>
@@ -54,7 +54,7 @@ export default function HowItWorks() {
               {/* Icon badge */}
               <div style={{
                 width: 48, height: 48, borderRadius: 12,
-                background: i === 1 ? "#0D1B3E" : "rgba(27,79,216,0.08)",
+                background: i === 1 ? "#1565C0" : "rgba(27,79,216,0.08)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 marginBottom: 20,
                 border: i === 1 ? "none" : "1px solid rgba(27,79,216,0.15)",
@@ -62,7 +62,7 @@ export default function HowItWorks() {
                 <span style={{ color: i === 1 ? "#fff" : "#1B4FD8", fontSize: 20 }}>{ICONS[i]}</span>
               </div>
 
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#0D1B3E", marginBottom: 12, letterSpacing: "-0.3px" }}>{step.title}</h3>
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1565C0", marginBottom: 12, letterSpacing: "-0.3px" }}>{step.title}</h3>
               <p style={{ color: "#4a5568", fontSize: 15, lineHeight: 1.75 }}>{step.desc}</p>
 
               {/* Connector line (not last) */}

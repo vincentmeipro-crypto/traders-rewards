@@ -81,7 +81,7 @@ export default function Rules() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <span className="section-label" style={{ display: "block", marginBottom: 16 }}>{T.rules.label}</span>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px" }}>
+          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 600, color: "#1565C0", letterSpacing: "1px" }}>
             {T.rules.title} <em style={{ color: "#1B4FD8", fontStyle: "italic" }}>{T.rules.titleGold}</em>
           </h2>
         </div>
@@ -91,8 +91,8 @@ export default function Rules() {
           {(["challenge", "funded"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: "10px 28px", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer",
-              border: tab === t ? "1px solid #0D1B3E" : "1px solid rgba(0,0,0,0.1)",
-              backgroundColor: tab === t ? "#0D1B3E" : "#fff",
+              border: tab === t ? "1px solid #1565C0" : "1px solid rgba(0,0,0,0.1)",
+              backgroundColor: tab === t ? "#1565C0" : "#fff",
               color: tab === t ? "#fff" : "#4a5568",
               transition: "all 0.2s",
               boxShadow: tab === t ? "0 4px 16px rgba(13,27,62,0.2)" : "none",
@@ -118,8 +118,8 @@ export default function Rules() {
                 {challengeRows2Step.map((row, i) => (
                   <>
                     <div key={`l${i}`} style={{ padding: "12px 0", color: "#4a5568", fontSize: 13, borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.label}</div>
-                    <div key={`p1${i}`} style={{ padding: "12px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.p1}</div>
-                    <div key={`p2${i}`} style={{ padding: "12px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.p2}</div>
+                    <div key={`p1${i}`} style={{ padding: "12px 0", color: "#1565C0", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.p1}</div>
+                    <div key={`p2${i}`} style={{ padding: "12px 0", color: "#1565C0", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.p2}</div>
                   </>
                 ))}
               </div>
@@ -136,7 +136,7 @@ export default function Rules() {
                 {challengeRows1Step.map((row, i) => (
                   <>
                     <div key={`l${i}`} style={{ padding: "12px 0", color: "#4a5568", fontSize: 13, borderBottom: i < challengeRows1Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.label}</div>
-                    <div key={`v${i}`} style={{ padding: "12px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows1Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.val}</div>
+                    <div key={`v${i}`} style={{ padding: "12px 0", color: "#1565C0", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < challengeRows1Step.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.val}</div>
                   </>
                 ))}
               </div>
@@ -156,8 +156,8 @@ export default function Rules() {
                 {fundedRows.map((row, i) => (
                   <>
                     <div key={`l${i}`} style={{ padding: "14px 0", color: "#4a5568", fontSize: 13, borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.label}</div>
-                    <div key={`v2${i}`} style={{ padding: "14px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.v2}</div>
-                    <div key={`v1${i}`} style={{ padding: "14px 0", color: "#0D1B3E", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.v1}</div>
+                    <div key={`v2${i}`} style={{ padding: "14px 0", color: "#1565C0", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.v2}</div>
+                    <div key={`v1${i}`} style={{ padding: "14px 0", color: "#1565C0", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none" }}>{row.v1}</div>
                   </>
                 ))}
               </div>
@@ -206,13 +206,13 @@ export default function Rules() {
 
         {/* CTA */}
         <div style={{ marginTop: 60, borderRadius: 20, padding: "56px 40px", textAlign: "center", background: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(21,101,192,0.1)" }}>
-          <h3 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: 600, color: "#0D1B3E", marginBottom: 16, letterSpacing: "1px" }}>
+          <h3 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: 600, color: "#1565C0", marginBottom: 16, letterSpacing: "1px" }}>
             {T.rules.ctaTitle} <em style={{ color: "#1B4FD8", fontStyle: "italic" }}>{T.rules.ctaGold}</em>
           </h3>
           <p style={{ color: "#8a96aa", fontSize: 16, marginBottom: 32 }}>{T.rules.ctaSub}</p>
-          <a href="/#pricing" style={{ display: "inline-block", background: "#0D1B3E", color: "#fff", padding: "15px 48px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
+          <a href="/#pricing" style={{ display: "inline-block", background: "#1565C0", color: "#fff", padding: "15px 48px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
             onMouseOver={e => { e.currentTarget.style.background = "#1B4FD8"; }}
-            onMouseOut={e => { e.currentTarget.style.background = "#0D1B3E"; }}
+            onMouseOut={e => { e.currentTarget.style.background = "#1565C0"; }}
           >{T.rules.ctaBtn}</a>
         </div>
 
