@@ -52,8 +52,9 @@ export default function Navbar() {
         }
         .flag-float-1 { animation: flagFloat 2.4s ease-in-out infinite; }
         .flag-float-2 { animation: flagFloat 2.4s ease-in-out 0.4s infinite; }
+
         .nav-link {
-          color: #fff;
+          color: rgba(255,255,255,0.9);
           font-size: 11px;
           font-weight: 700;
           text-decoration: none;
@@ -61,65 +62,106 @@ export default function Navbar() {
           text-transform: uppercase;
           padding: 7px 16px;
           border-radius: 100px;
-          background: linear-gradient(160deg, rgba(100,160,255,0.25) 0%, rgba(21,101,192,0.35) 50%, rgba(10,60,140,0.4) 100%);
-          box-shadow: 0 2px 12px rgba(21,101,192,0.15), inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,50,0.1);
-          border: 1px solid rgba(255,255,255,0.45);
+          background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(100,160,255,0.1) 50%, rgba(21,101,192,0.12) 100%);
+          border: 1px solid rgba(255,255,255,0.15);
           backdrop-filter: blur(8px);
           -webkit-backdrop-filter: blur(8px);
-          color: #0D1B3E;
           position: relative;
           overflow: hidden;
-          transition: transform 0.18s, box-shadow 0.18s;
+          transition: transform 0.18s, box-shadow 0.18s, background 0.18s;
           display: inline-block;
         }
         .nav-link::before {
           content: "";
           position: absolute;
           top: 0; left: 10%; right: 10%;
-          height: 45%;
-          background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+          height: 40%;
+          background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 100%);
           border-radius: 0 0 100px 100px;
           pointer-events: none;
         }
         .nav-link:hover {
           transform: translateY(-2px) scale(1.04);
-          background: linear-gradient(160deg, rgba(100,160,255,0.4) 0%, rgba(21,101,192,0.5) 50%, rgba(10,60,140,0.55) 100%);
-          box-shadow: 0 6px 20px rgba(21,101,192,0.25), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,50,0.1);
-          color: #0D1B3E;
+          background: linear-gradient(160deg, rgba(100,180,255,0.2) 0%, rgba(21,101,192,0.28) 50%, rgba(10,60,180,0.32) 100%);
+          border-color: rgba(100,180,255,0.35);
+          box-shadow: 0 4px 20px rgba(21,101,192,0.3), 0 0 0 1px rgba(100,180,255,0.15);
+          color: #fff;
         }
+
         .nav-cta {
-          background: #0D1B3E;
+          background: linear-gradient(135deg, #1B6FFF 0%, #0D4FCC 60%, #0a3aaa 100%);
           color: #fff !important;
-          padding: 10px 24px;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 700;
+          padding: 10px 22px;
+          border-radius: 8px;
+          font-size: 11px;
+          font-weight: 800;
           letter-spacing: 1.5px;
           text-transform: uppercase;
           text-decoration: none;
-          transition: background 0.2s, transform 0.15s;
+          border: 1px solid rgba(100,180,255,0.35);
+          box-shadow: 0 4px 18px rgba(27,111,255,0.4), inset 0 1px 0 rgba(255,255,255,0.2);
+          position: relative;
+          overflow: hidden;
+          transition: transform 0.15s, box-shadow 0.15s;
+          display: inline-block;
         }
-        .nav-cta:hover { background: #1B4FD8; transform: translateY(-1px); }
+        .nav-cta::before {
+          content: "";
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 45%;
+          background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+          pointer-events: none;
+        }
+        .nav-cta:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 28px rgba(27,111,255,0.55), inset 0 1px 0 rgba(255,255,255,0.25);
+        }
+
+        .lang-btn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(255,255,255,0.07);
+          border: 1px solid rgba(255,255,255,0.15);
+          border-radius: 6px;
+          padding: 6px 10px;
+          cursor: pointer;
+          color: rgba(255,255,255,0.85);
+          font-size: 12px;
+          font-weight: 600;
+          transition: background 0.15s;
+        }
+        .lang-btn:hover { background: rgba(255,255,255,0.13); }
       `}</style>
 
       <nav style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        backgroundColor: scrolled ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.45)",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.6)" : "1px solid rgba(255,255,255,0.3)",
+        background: scrolled
+          ? "linear-gradient(180deg, rgba(5,15,45,0.97) 0%, rgba(8,22,65,0.95) 100%)"
+          : "linear-gradient(180deg, rgba(5,15,45,0.85) 0%, rgba(8,22,65,0.75) 100%)",
+        borderBottom: "1px solid rgba(100,160,255,0.12)",
         backdropFilter: "blur(24px)",
         WebkitBackdropFilter: "blur(24px)",
-        boxShadow: scrolled ? "0 4px 24px rgba(21,101,192,0.1)" : "none",
+        boxShadow: scrolled
+          ? "0 4px 32px rgba(0,10,40,0.5), inset 0 -1px 0 rgba(100,180,255,0.08)"
+          : "0 2px 20px rgba(0,10,40,0.3)",
         transition: "all 0.3s ease",
       }}>
-        <div style={{ width: "100%", padding: "0 32px 0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72, position: "relative" }}>
+        <div style={{ width: "100%", padding: "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72, position: "relative" }}>
 
-          {/* Logo + PropFirm badge */}
+          {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
-              <img src="/nouveau-logo.png" alt="Elysium Rewards" style={{ height: 48, width: "auto" }} />
+            <a href="/" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+              <img src="/nouveau-logo.png" alt="Elysium Rewards" style={{ height: 46, width: "auto", filter: "drop-shadow(0 0 12px rgba(100,180,255,0.5))" }} />
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <span style={{ fontSize: 19, fontWeight: 700, letterSpacing: "5px", color: "#0D1B3E", textTransform: "uppercase", lineHeight: 1 }}>ELYSIUM</span>
-                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: "3px", color: "#8a96aa", textTransform: "uppercase", lineHeight: 1.4 }}>— REWARDS —</span>
+                <span style={{
+                  fontSize: 18, fontWeight: 800, letterSpacing: "5px",
+                  textTransform: "uppercase", lineHeight: 1,
+                  background: "linear-gradient(135deg, #ffffff 0%, #a8d4ff 50%, #6eb4ff 100%)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+                }}>ELYSIUM</span>
+                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "3.5px", color: "rgba(150,200,255,0.7)", textTransform: "uppercase", lineHeight: 1.5 }}>— REWARDS —</span>
               </div>
             </a>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>
@@ -127,13 +169,13 @@ export default function Navbar() {
                 <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                 <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
               </div>
-              {!isMobile && <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>}
+              {!isMobile && <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(150,200,255,0.65)", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>}
             </div>
           </div>
 
           {/* Desktop Nav */}
           {!isMobile && (
-            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {navLinks.map(([label, href]) => (
                 <a key={href} href={href} className="nav-link">{label}</a>
               ))}
@@ -142,15 +184,10 @@ export default function Navbar() {
 
           {/* Droite */}
           {!isMobile && (
-            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+            <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
               {/* Langue */}
               <div style={{ position: "relative" }}>
-                <button onClick={() => setLangOpen(!langOpen)} style={{
-                  display: "flex", alignItems: "center", gap: 6,
-                  background: "none", border: "1px solid rgba(0,0,0,0.12)",
-                  borderRadius: 6, padding: "6px 10px", cursor: "pointer",
-                  color: "#4a5568", fontSize: 12, fontWeight: 600,
-                }}>
+                <button onClick={() => setLangOpen(!langOpen)} className="lang-btn">
                   <FlagImg code={current.code} />
                   <span>{current.code.toUpperCase()}</span>
                   <ChevronDown size={11} />
@@ -158,9 +195,10 @@ export default function Navbar() {
                 {langOpen && (
                   <div style={{
                     position: "absolute", top: "calc(100% + 8px)", right: 0,
-                    backgroundColor: "#fff", border: "1px solid rgba(0,0,0,0.1)",
+                    background: "linear-gradient(180deg, #0a1a4a 0%, #061230 100%)",
+                    border: "1px solid rgba(100,160,255,0.2)",
                     borderRadius: 10, overflow: "hidden", minWidth: 160, zIndex: 200,
-                    boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
+                    boxShadow: "0 16px 48px rgba(0,5,30,0.7)",
                   }}>
                     {languages.map(l => (
                       <button key={l.code} onClick={() => { setLang(l.code as Lang); setLangOpen(false); }}
@@ -168,18 +206,20 @@ export default function Navbar() {
                           display: "flex", alignItems: "center", gap: 10,
                           width: "100%", padding: "11px 16px", background: "none",
                           border: "none", cursor: "pointer", textAlign: "left",
-                          backgroundColor: lang === l.code ? "#f0f4ff" : "transparent",
-                          borderLeft: lang === l.code ? "2px solid #1B4FD8" : "2px solid transparent",
+                          backgroundColor: lang === l.code ? "rgba(27,111,255,0.2)" : "transparent",
+                          borderLeft: lang === l.code ? "2px solid #3b82f6" : "2px solid transparent",
                         }}>
                         <FlagImg code={l.code} />
-                        <span style={{ color: lang === l.code ? "#1B4FD8" : "#4a5568", fontSize: 13, fontWeight: 500 }}>{l.label}</span>
+                        <span style={{ color: lang === l.code ? "#7dd3fc" : "rgba(255,255,255,0.65)", fontSize: 13, fontWeight: 500 }}>{l.label}</span>
                       </button>
                     ))}
                   </div>
                 )}
               </div>
 
-              <a href="/login" style={{ color: "#1a2744", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.3px" }}>
+              <a href="/login" style={{ color: "rgba(255,255,255,0.75)", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.3px", transition: "color 0.15s" }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#fff")}
+                onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.75)")}>
                 {T.nav.logIn}
               </a>
               <a href="/#pricing" className="nav-cta">{T.nav.startChallenge}</a>
@@ -189,8 +229,8 @@ export default function Navbar() {
           {/* Mobile */}
           {isMobile && (
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <a href="/login" style={{ color: "#1B4FD8", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>
-              <button onClick={() => setOpen(!open)} style={{ background: "none", border: "none", color: "#0D1B3E", cursor: "pointer" }}>
+              <a href="/login" style={{ color: "#7dd3fc", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>
+              <button onClick={() => setOpen(!open)} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.9)", cursor: "pointer" }}>
                 {open ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>
@@ -199,18 +239,28 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {open && (
-          <div style={{ backgroundColor: "#fff", borderTop: "1px solid rgba(0,0,0,0.08)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{
+            background: "linear-gradient(180deg, #0a1a4a 0%, #061230 100%)",
+            borderTop: "1px solid rgba(100,160,255,0.12)",
+            padding: "24px 32px",
+            display: "flex", flexDirection: "column", gap: 20,
+          }}>
             {navLinks.map(([label, href]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
-                style={{ color: "#1a2744", fontSize: 15, fontWeight: 500, textDecoration: "none" }}>{label}</a>
+                style={{ color: "rgba(255,255,255,0.8)", fontSize: 15, fontWeight: 600, textDecoration: "none", letterSpacing: "0.3px" }}>{label}</a>
             ))}
-            <hr style={{ borderColor: "rgba(0,0,0,0.08)", margin: "4px 0" }} />
+            <hr style={{ borderColor: "rgba(100,160,255,0.1)", margin: "4px 0" }} />
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {languages.map(l => (
                 <button key={l.code} onClick={() => { setLang(l.code as Lang); setOpen(false); }}
-                  style={{ display: "flex", alignItems: "center", gap: 6, background: lang === l.code ? "#f0f4ff" : "#f8f9fa", border: `1px solid ${lang === l.code ? "#1B4FD8" : "transparent"}`, borderRadius: 6, padding: "6px 10px", cursor: "pointer" }}>
+                  style={{
+                    display: "flex", alignItems: "center", gap: 6,
+                    background: lang === l.code ? "rgba(27,111,255,0.25)" : "rgba(255,255,255,0.06)",
+                    border: `1px solid ${lang === l.code ? "#3b82f6" : "rgba(255,255,255,0.1)"}`,
+                    borderRadius: 6, padding: "6px 10px", cursor: "pointer",
+                  }}>
                   <FlagImg code={l.code} />
-                  <span style={{ color: lang === l.code ? "#1B4FD8" : "#666", fontSize: 13 }}>{l.label}</span>
+                  <span style={{ color: lang === l.code ? "#7dd3fc" : "rgba(255,255,255,0.6)", fontSize: 13 }}>{l.label}</span>
                 </button>
               ))}
             </div>
