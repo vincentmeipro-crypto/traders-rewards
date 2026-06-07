@@ -21,8 +21,13 @@ export default function Home() {
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 160, background: "linear-gradient(to bottom, transparent, #c8e8ff)", pointerEvents: "none", zIndex: 2 }} />
       </div>
       <TopTraders />
-      <Stats />
-      <Pricing />
+      <div style={{ position: "relative" }}>
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <Stats />
+          <Pricing />
+        </div>
+      </div>
       <HowItWorks />
       <Rules />
       <FAQ />
