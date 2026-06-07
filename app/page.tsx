@@ -18,8 +18,8 @@ export default function Home() {
         <style>{`@media (max-width: 768px) { .hero-bg-image { display: none !important; } }`}</style>
         <Hero />
         <Pricing />
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 160, background: "linear-gradient(to bottom, transparent, #c8e8ff)", pointerEvents: "none", zIndex: 2 }} />
       </div>
+      <div style={{ height: 80, background: "linear-gradient(to bottom, #c8e8ff, transparent)", pointerEvents: "none" }} />
       <TopTraders />
       <div style={{ position: "relative" }}>
         <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
