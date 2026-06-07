@@ -215,11 +215,13 @@ export default function Pricing() {
                   padding: "10px 12px", borderRadius: 7,
                   fontSize: 11, fontWeight: 800,
                   textDecoration: "none", letterSpacing: "1.5px", textTransform: "uppercase",
-                  background: "#1B6FFF", color: "#fff",
+                  background: "linear-gradient(135deg, #0040CC 0%, #0030AA 100%)",
+                  color: "#fff",
+                  boxShadow: "0 4px 18px rgba(0,48,170,0.55)",
                   transition: "all 0.2s",
                 }}
-                  onMouseOver={e => { e.currentTarget.style.background = "#1B6FFF"; }}
-                  onMouseOut={e => { e.currentTarget.style.background = "#1B6FFF"; }}
+                  onMouseOver={e => { (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, #1B6FFF 0%, #0040CC 100%)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 24px rgba(27,111,255,0.6)"; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, #0040CC 0%, #0030AA 100%)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 18px rgba(0,48,170,0.55)"; }}
                 >
                   {isFr ? "Commencer" : "Get Started"}
                 </a>
