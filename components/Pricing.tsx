@@ -215,13 +215,21 @@ export default function Pricing() {
                   padding: "10px 12px", borderRadius: 7,
                   fontSize: 11, fontWeight: 800,
                   textDecoration: "none", letterSpacing: "1.5px", textTransform: "uppercase",
-                  background: "#0D1B3E",
-                  color: "#fff",
-                  boxShadow: "0 4px 18px rgba(13,27,62,0.4)",
+                  background: acc.popular
+                    ? "linear-gradient(135deg, #16a34a, #22c55e)"
+                    : acc.premium
+                    ? "linear-gradient(135deg, #92400e, #C9A84C, #F6D976)"
+                    : "#0D1B3E",
+                  color: acc.premium ? "#000" : "#fff",
+                  boxShadow: acc.popular
+                    ? "0 4px 18px rgba(22,163,74,0.4)"
+                    : acc.premium
+                    ? "0 4px 18px rgba(201,168,76,0.4)"
+                    : "0 4px 18px rgba(13,27,62,0.4)",
                   transition: "all 0.2s",
                 }}
-                  onMouseOver={e => { (e.currentTarget as HTMLElement).style.background = "#1a3a6b"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 24px rgba(13,27,62,0.5)"; }}
-                  onMouseOut={e => { (e.currentTarget as HTMLElement).style.background = "#0D1B3E"; (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 18px rgba(13,27,62,0.4)"; }}
+                  onMouseOver={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
+                  onMouseOut={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
                 >
                   {isFr ? "Commencer" : "Get Started"}
                 </a>
