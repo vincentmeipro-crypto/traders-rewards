@@ -56,7 +56,7 @@ export default function Pricing() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 28 }}>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: isMobile ? "#fff" : "#1565C0", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 10 }}>
-            {T.pricing.title} <span style={{ color: isMobile ? "#fff" : "#1B4FD8" }}>{T.pricing.titleGold}</span>
+            {T.pricing.title} <span style={{ color: isMobile ? "#fff" : "#1B6FFF" }}>{T.pricing.titleGold}</span>
           </h2>
         </div>
 
