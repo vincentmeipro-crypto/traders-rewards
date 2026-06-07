@@ -81,8 +81,8 @@ export default function Rules() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <span className="section-label" style={{ display: "block", marginBottom: 16 }}>{T.rules.label}</span>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 600, color: "#1565C0", letterSpacing: "1px" }}>
-            {T.rules.title} <em style={{ color: "#1B4FD8", fontStyle: "italic" }}>{T.rules.titleGold}</em>
+          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2.2rem, 5vw, 3.4rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px" }}>
+            {T.rules.title} <em style={{ color: "#0D1B3E", fontStyle: "italic" }}>{T.rules.titleGold}</em>
           </h2>
         </div>
 
