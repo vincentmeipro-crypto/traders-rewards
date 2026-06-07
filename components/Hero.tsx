@@ -68,7 +68,7 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
       background: "rgba(255,255,255,0.6)",
       backdropFilter: "blur(20px)",
       WebkitBackdropFilter: "blur(20px)",
-      border: "1.5px solid rgba(27,111,255,0.7)",
+      border: "1.5px solid rgba(13,27,62,0.7)",
       borderRadius: isMobile ? 17 : 24,
       padding: isMobile ? "10px 11px" : "28px 36px",
       boxShadow: "0 8px 40px rgba(21,101,192,0.15), 0 1px 0 rgba(255,255,255,0.9) inset",
@@ -129,12 +129,12 @@ export default function Hero() {
         .hero-animate-4 { animation: fadeUp 0.8s ease 0.45s forwards; opacity: 0; }
         .hero-animate-5 { animation: fadeUp 0.8s ease 0.6s forwards; opacity: 0; }
         @keyframes borderGlow {
-          0%, 100% { box-shadow: 0 8px 40px rgba(21,101,192,0.15), 0 1px 0 rgba(255,255,255,0.9) inset, 0 0 0 1.5px rgba(27,111,255,0.5); }
-          50% { box-shadow: 0 8px 40px rgba(27,111,255,0.35), 0 1px 0 rgba(255,255,255,0.9) inset, 0 0 0 2px rgba(27,111,255,1), 0 0 24px rgba(27,111,255,0.4); }
+          0%, 100% { box-shadow: 0 8px 40px rgba(13,27,62,0.15), 0 1px 0 rgba(255,255,255,0.9) inset, 0 0 0 1.5px rgba(13,27,62,0.5); }
+          50% { box-shadow: 0 8px 40px rgba(13,27,62,0.35), 0 1px 0 rgba(255,255,255,0.9) inset, 0 0 0 2px rgba(13,27,62,1), 0 0 24px rgba(13,27,62,0.3); }
         }
         .reward-card-glow {
           animation: borderGlow 2s ease-in-out infinite !important;
-          border: 1.5px solid rgba(27,111,255,0.7) !important;
+          border: 1.5px solid rgba(13,27,62,0.7) !important;
         }
         .hero-cta {
           display: inline-flex; align-items: center; gap: 10px;
