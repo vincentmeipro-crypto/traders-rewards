@@ -159,9 +159,9 @@ export default function TopTraders() {
         <span className="section-label" style={{ display: "block", marginBottom: 16 }}>
           {lang === "fr" ? "Dernières Récompenses" : "Latest Rewards"}
         </span>
-        <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#1565C0", letterSpacing: "1px", marginBottom: 12 }}>
+        <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px", marginBottom: 12 }}>
           {lang === "fr" ? "Nos traders certifiés touchent" : "Our certified traders receive"}
-          <br /><em style={{ color: "#ffffff", fontStyle: "italic" }}>{lang === "fr" ? "leurs récompenses chaque semaine." : "their rewards every week."}</em>
+          <br /><em style={{ color: "#1565C0", fontStyle: "italic" }}>{lang === "fr" ? "leurs récompenses chaque semaine." : "their rewards every week."}</em>
         </h2>
       </div>
 
