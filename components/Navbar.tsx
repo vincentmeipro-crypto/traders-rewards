@@ -77,7 +77,7 @@ export default function Navbar() {
           transform: translateY(-1px);
         }
         .nav-cta {
-          background: linear-gradient(135deg, #1B6FFF 0%, #0d4fcc 100%);
+          background: #0D1B3E;
           color: #fff !important;
           padding: 10px 24px;
           border-radius: 8px;
@@ -90,7 +90,7 @@ export default function Navbar() {
           transition: all 0.2s;
           display: inline-block;
         }
-        .nav-cta:hover { background: linear-gradient(135deg, #2d7fff 0%, #1a5fdf 100%); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(27,111,255,0.45); }
+        .nav-cta:hover { background: #1a3a6b; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(13,27,62,0.4); }
       `}</style>
 
       <nav style={{
