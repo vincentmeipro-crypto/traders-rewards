@@ -4,11 +4,11 @@
   "description": "Your certified trading dashboard",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#070707",
-  "theme_color": "#070707",
+  "background_color": "#e8f4ff",
+  "theme_color": "#0D1B3E",
   "orientation": "portrait-primary",
   "scope": "/",
-  "lang": "en",
+  "lang": "fr",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -35,5 +35,8 @@
       "description": "Economic calendar & MT5"
     }
   ],
-  "categories": ["finance", "business"]
+  "categories": [
+    "finance",
+    "business"
+  ]
 }
