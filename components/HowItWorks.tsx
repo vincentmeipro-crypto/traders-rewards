@@ -17,11 +17,11 @@ export default function HowItWorks() {
             fontFamily: "var(--font-cormorant)",
             fontSize: "clamp(2.2rem, 5vw, 3.4rem)",
             fontWeight: 600,
-            color: "#1565C0",
+            color: "#0D1B3E",
             letterSpacing: "1px",
             marginBottom: 16,
           }}>
-            {T.how.title} <em style={{ color: "#1B4FD8", fontStyle: "italic" }}>{T.how.titleGold}</em>
+            {T.how.title} <em style={{ color: "#0D1B3E", fontStyle: "italic" }}>{T.how.titleGold}</em>
           </h2>
           <p style={{ color: "#4a5568", fontSize: 17, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>{T.how.sub}</p>
         </div>
