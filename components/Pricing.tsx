@@ -70,7 +70,7 @@ export default function Pricing() {
               <button key={m} onClick={() => setModel(m)} style={{
                 padding: "10px 32px", borderRadius: 7, border: "none", cursor: "pointer",
                 fontSize: 13, fontWeight: 700, letterSpacing: "0.5px", transition: "all 0.2s",
-                backgroundColor: model === m ? "#1B6FFF" : "transparent",
+                backgroundColor: model === m ? "#0D1B3E" : "transparent",
                 color: model === m ? "#fff" : "#8a96aa",
                 boxShadow: model === m ? "0 2px 10px rgba(27,111,255,0.2)" : "none",
               }}>
