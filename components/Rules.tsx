@@ -211,9 +211,9 @@ export default function Rules() {
             {T.rules.ctaTitle} <em style={{ color: "#0D1B3E", fontStyle: "italic" }}>{T.rules.ctaGold}</em>
           </h3>
           <p style={{ color: "#8a96aa", fontSize: 16, marginBottom: 32 }}>{T.rules.ctaSub}</p>
-          <a href="/#pricing" style={{ display: "inline-block", background: "#1565C0", color: "#fff", padding: "15px 48px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
-            onMouseOver={e => { e.currentTarget.style.background = "#1B4FD8"; }}
-            onMouseOut={e => { e.currentTarget.style.background = "#1565C0"; }}
+          <a href="/#pricing" style={{ display: "inline-block", background: "#0D1B3E", color: "#fff", padding: "15px 48px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
+            onMouseOver={e => { e.currentTarget.style.background = "#1a3a6b"; }}
+            onMouseOut={e => { e.currentTarget.style.background = "#0D1B3E"; }}
           >{T.rules.ctaBtn}</a>
         </div>
 
