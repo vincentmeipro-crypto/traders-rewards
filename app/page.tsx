@@ -5,6 +5,7 @@ import Stats from "@/components/Stats";
 import HowItWorks from "@/components/HowItWorks";
 import Pricing from "@/components/Pricing";
 import TopTraders from "@/components/TopTraders";
+import TraderMarquee from "@/components/TraderMarquee";
 import Rules from "@/components/Rules";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
@@ -24,6 +25,7 @@ export default function Home() {
         <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
         <div style={{ position: "relative", zIndex: 1 }}>
           <Stats />
+          <TraderMarquee />
           <Pricing />
         </div>
       </div>
