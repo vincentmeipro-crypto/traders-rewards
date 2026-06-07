@@ -19,7 +19,6 @@ export default function Home() {
         <Hero />
         <Pricing />
       </div>
-      <div style={{ height: 80, background: "linear-gradient(to bottom, #c8e8ff, transparent)", pointerEvents: "none" }} />
       <TopTraders />
       <div style={{ position: "relative" }}>
         <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
