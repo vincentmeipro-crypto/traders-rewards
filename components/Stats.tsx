@@ -45,7 +45,7 @@ export default function Stats() {
               <div style={{
                 fontSize: isMobile ? "1.6rem" : "clamp(1.8rem, 3.5vw, 2.6rem)",
                 fontWeight: 900,
-                color: "#1565C0",
+                color: "#0D1B3E",
                 letterSpacing: "-1px",
                 marginBottom: 6,
               }}>
