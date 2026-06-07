@@ -36,7 +36,7 @@ export default function FAQ() {
   const items = faqData[lang as "en" | "fr"] || faqData.en;
 
   return (
-    <section id="faq" style={{ padding: "100px 24px", backgroundColor: "transparent" }}>
+    <section id="faq" style={{ padding: "100px 24px", backgroundColor: "#fff" }}>
       <div style={{ maxWidth: 780, margin: "0 auto" }}>
 
         {/* Header */}
