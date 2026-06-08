@@ -1,6 +1,6 @@
 {
-  "name": "Elysium Rewards",
-  "short_name": "Elysium Rewards",
+  "name": "Traders Rewards",
+  "short_name": "Traders Rewards",
   "description": "Your certified trading dashboard",
   "start_url": "/",
   "display": "standalone",
