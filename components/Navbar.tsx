@@ -104,30 +104,38 @@ export default function Navbar() {
       }}>
         <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72, position: "relative" }}>
 
-          {/* Logo + PropFirm badge */}
+          {/* Mobile gauche : drapeaux + PropFirm / Desktop gauche : logo + drapeaux */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
-              <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 99, width: "auto", objectFit: "contain", marginLeft: -20 }} />
-            </a>
-            {!isMobile && (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>
+            {isMobile ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
                 <div style={{ display: "flex", gap: 4 }}>
                   <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                   <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                 </div>
                 <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
               </div>
+            ) : (
+              <>
+                <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                  <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 99, width: "auto", objectFit: "contain", marginLeft: -20 }} />
+                </a>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                    <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                  </div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
+                </div>
+              </>
             )}
           </div>
 
-          {/* Mobile : drapeaux + PropFirm centrés */}
+          {/* Mobile centre : logo agrandi */}
           {isMobile && (
-            <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-              <div style={{ display: "flex", gap: 4 }}>
-                <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-              </div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
+            <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
+              <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 124, width: "auto", objectFit: "contain" }} />
+              </a>
             </div>
           )}
 
