@@ -1760,8 +1760,8 @@ export default function DashboardClient({ user }: { user: User }) {
                     {[
                       { label: "🖥 Windows", href: "https://download.terminal.free/cdn/web/starwave.fx.ltd/mt5/starwavefx5setup.exe" },
                       { label: "🍎 Mac", href: "https://download.terminal.free/cdn/web/metaquotes.software.corp/mt5/MetaTrader5.pkg.zip?utm_campaign=metatrader5.help" },
-                      { label: "📱 iOS", href: "https://apps.apple.com/app/metatrader-5/id413251709" },
-                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5" },
+                      { label: "📱 iPhone / iPad", href: "https://apps.apple.com/app/id413251709" },
+                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
                     ].map((item, i) => (
                       <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
                         style={{ backgroundColor: "#F4F9FF", color: "#1565C0", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid rgba(21,101,192,0.18)", display: "inline-block" }}>
