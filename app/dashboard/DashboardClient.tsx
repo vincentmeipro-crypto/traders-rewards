@@ -857,7 +857,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                               {isBuy ? "BUY" : "SELL"}
                                             </span>
                                           </td>
-                                          <td style={{ padding: "8px 12px" }}>{String(t.volume ?? "—")}</td>
+                                          <td style={{ padding: "8px 12px" }}>{typeof t.volume === "number" ? (t.volume / 10000).toFixed(2) : "—"}</td>
                                           <td style={{ padding: "8px 12px", fontFamily: "monospace" }}>{String(t.open_price ?? t.price ?? "—")}</td>
                                           <td style={{ padding: "8px 12px", fontWeight: 700, color: profit >= 0 ? "#16a34a" : "#ef4444" }}>
                                             {profit >= 0 ? "+" : ""}{profit.toFixed(2)} $
@@ -1968,7 +1968,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                 {isBuy ? "BUY" : "SELL"}
                               </span>
                             </td>
-                            <td style={{ padding: "10px 14px" }}>{String(t.volume ?? t.lots ?? "—")}</td>
+                            <td style={{ padding: "10px 14px" }}>{typeof t.volume === "number" ? (t.volume / 10000).toFixed(2) : String(t.lots ?? "—")}</td>
                             <td style={{ padding: "10px 14px", fontFamily: "monospace" }}>{String(t.open_price ?? t.price_open ?? t.price ?? "—")}</td>
                             <td style={{ padding: "10px 14px", color: "#7a90b0", fontSize: 12 }}>{closeDate}</td>
                             <td style={{ padding: "10px 14px", fontWeight: 700, color: profit >= 0 ? "#16a34a" : "#ef4444" }}>
