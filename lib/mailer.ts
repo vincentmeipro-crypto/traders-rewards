@@ -1,5 +1,5 @@
 const SITE = "https://www.elysium-rewards.com";
-const LOGO = "https://www.elysium-rewards.com/LOGO%20TEXTE%20NOIR%20PNG%20TRANSPARENT.png";
+const LOGO = "https://www.elysium-rewards.com/logo-email.png";
 
 async function sendEmail(to: string, subject: string, html: string) {
   const res = await fetch("https://api.resend.com/emails", {
@@ -157,10 +157,11 @@ export async function sendPhase1CertificateEmail(to: string, firstName: string, 
   const name = `${firstName} ${lastName}`.trim();
   const certUrl = `${SITE}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
   await sendEmail(to, `🏆 Félicitations ${firstName} — Certificat Phase 1 obtenu !`, `
-    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+    <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
-        <div style="text-align:center;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
+        <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/PHASE1.png" alt="Certificat Phase 1" style="width:100%;display:block;" />
@@ -190,10 +191,11 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
   const name = `${firstName} ${lastName}`.trim();
   const certUrl = `${SITE}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
   await sendEmail(to, `🎉 ${firstName} — Vous êtes Certifié Elysium !`, `
-    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+    <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
-        <div style="text-align:center;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
+        <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/CHALLENGE.png" alt="Certificat Challenge" style="width:100%;display:block;" />
@@ -225,10 +227,11 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
   const netAmount = Math.round(grossAmount * splitPct / 100);
   const certUrl = `${SITE}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}`;
   await sendEmail(to, `💰 ${firstName} — Votre récompense de $${netAmount.toLocaleString()} est en cours !`, `
-    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+    <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
-        <div style="text-align:center;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
+        <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/REWARDS.png" alt="Certificat Récompense" style="width:100%;display:block;" />
@@ -261,11 +264,12 @@ function buildEmail({ title, titleColor, body, details, cta }: {
   cta: { text: string; href: string };
 }) {
   return `
-    <div style="background:#f2f2f2;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+    <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
 
-        <div style="text-align:center;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:192px;width:auto;display:inline-block;" />
+        <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
+          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
         </div>
 
         <div style="background:#ffffff;border-radius:12px;padding:40px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
