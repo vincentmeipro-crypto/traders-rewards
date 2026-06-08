@@ -175,8 +175,8 @@ export default function Hero() {
         ) : (
           /* Desktop : H1 + carte absolue en bas */
           <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 1200, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "32px 24px 80px" }}>
-            {/* App install image — desktop only, left side */}
-            <img src="/INSTALLEZ%20APPLICATION%20WEB.png" alt="Installez l'application web" style={{ position: "absolute", left: 0, top: "50%", transform: "translateY(-60%)", height: 180, width: "auto", zIndex: 10, pointerEvents: "none", userSelect: "none" }} />
+            {/* App install image — desktop only, bottom-left */}
+            <img src="/pwa-install.png" alt="" style={{ position: "absolute", bottom: -50, left: 20, height: 170, width: "auto", zIndex: 10, pointerEvents: "none", userSelect: "none" }} />
             <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, whiteSpace: "nowrap" }}>
               {isFr
                 ? <>Transformez votre trading démo<br />en <span style={{ color: "#1565C0" }}>vraies récompenses</span></>
