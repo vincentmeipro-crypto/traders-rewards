@@ -74,8 +74,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const lastSyncedDay    = lastSyncedAt ? new Date(lastSyncedAt).toDateString() : null;
   const today            = new Date().toDateString();
   const alreadyCounted   = lastSyncedDay === today;
-  const balanceChanged   = Math.abs(newBalance - prevBalance) > 0.01;
-  const newTradingDays   = (balanceChanged && !alreadyCounted) ? prevTradingDays + 1 : prevTradingDays;
+  // Count trading day if balance changed (closed trade) OR there is floating P&L (open trade)
+  const hadActivity      = Math.abs(newBalance - prevBalance) > 0.01 || Math.abs(floatingProfit) > 0.01;
+  const newTradingDays   = (hadActivity && !alreadyCounted) ? prevTradingDays + 1 : prevTradingDays;
   const dayProfit        = newBalance - prevBalance;
   const prevBestDay      = (challenge.best_day_profit as number | null) ?? 0;
   const newBestDay       = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);

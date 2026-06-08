@@ -386,7 +386,14 @@ export default function AdminPage() {
     if (!token) return;
     const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id, status }) });
     const data = await res.json();
-    if (res.ok) setPayouts(ps => ps.map(p => p.id === id ? { ...p, ...data } : p));
+    if (res.ok) {
+      setPayouts(ps => ps.map(p => p.id === id ? { ...p, ...data } : p));
+      // Refresh challenges so trading_days + balance display the reset values
+      if (status === "paid") {
+        fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } })
+          .then(r => r.json()).then(d => { if (Array.isArray(d)) setChallenges(d); }).catch(() => {});
+      }
+    }
   };
 
   const triggerMT5WithdrawFromPayout = async (mt5Login: number, startBalance: number) => {
