@@ -361,6 +361,9 @@ export default function DashboardClient({ user }: { user: User }) {
   const [latestPayout, setLatestPayout] = useState<{ amount: number; created_at: string; status: string } | null>(null);
   const [tradeHistory, setTradeHistory] = useState<Record<string, unknown>[]>([]);
   const [tradeHistoryLoading, setTradeHistoryLoading] = useState(false);
+  const [selectedHistChallenge, setSelectedHistChallenge] = useState<Challenge | null>(null);
+  const [histTrades, setHistTrades] = useState<Record<string, unknown>[]>([]);
+  const [histTradesLoading, setHistTradesLoading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [payoutForm, setPayoutForm] = useState({ amount: "", wallet_address: "", payment_method: "crypto" });
@@ -462,6 +465,22 @@ export default function DashboardClient({ user }: { user: User }) {
         .finally(() => setTradeHistoryLoading(false));
     });
   }, [challenge?.mt5_login]);
+
+  const loadHistTrades = async (c: Challenge) => {
+    if (selectedHistChallenge?.id === c.id) { setSelectedHistChallenge(null); setHistTrades([]); return; }
+    if (!c.mt5_login) return;
+    setSelectedHistChallenge(c);
+    setHistTrades([]);
+    setHistTradesLoading(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setHistTradesLoading(false); return; }
+    try {
+      const res = await fetch(`/api/mt5/history?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+      const data = res.ok ? await res.json() : [];
+      setHistTrades(Array.isArray(data) ? data : []);
+    } catch { setHistTrades([]); }
+    setHistTradesLoading(false);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -731,6 +750,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     return pd >= cd && pd < nd;
                   });
 
+                  const isSelectedHist = selectedHistChallenge?.id === c.id;
                   return (
                     <div key={c.id} style={{ display: "flex", gap: 16 }}>
                       {/* Timeline dot + line */}
@@ -740,7 +760,8 @@ export default function DashboardClient({ user }: { user: User }) {
                       </div>
 
                       {/* Card */}
-                      <div style={{ flex: 1, backgroundColor: "#ffffff", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 14, padding: "20px 24px", marginBottom: 16 }}>
+                      <div style={{ flex: 1, marginBottom: 16 }}>
+                      <div onClick={() => loadHistTrades(c)} style={{ backgroundColor: "#ffffff", border: `1px solid ${isSelectedHist ? "#1565C0" : "rgba(21,101,192,0.12)"}`, borderRadius: 14, padding: "20px 24px", cursor: c.mt5_login ? "pointer" : "default", transition: "border 0.15s" }}>
                         {/* Header */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                           <div>
@@ -775,7 +796,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                         {/* Récompenses liées */}
                         {relatedPayouts.length > 0 && (
-                          <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 14 }}>
+                          <div style={{ borderTop: "1px solid rgba(21,101,192,0.1)", paddingTop: 14 }}>
                             <div style={{ color: "#7a90b0", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>{T.dash.rewardsSection}</div>
                             {relatedPayouts.map(p => (
                               <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "#F4F9FF", borderRadius: 8, marginBottom: 6 }}>
@@ -789,6 +810,65 @@ export default function DashboardClient({ user }: { user: User }) {
                                 </span>
                               </div>
                             ))}
+                          </div>
+                        )}
+                        {/* Click hint */}
+                        {c.mt5_login && (
+                          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6, color: "#1565C0", fontSize: 12, fontWeight: 600 }}>
+                            <BarChart2 size={13} />
+                            {isSelectedHist
+                              ? (isFr ? "Masquer l'historique ▲" : "Hide trade history ▲")
+                              : (isFr ? "Voir l'historique des trades ▼" : "View trade history ▼")}
+                          </div>
+                        )}
+                      </div>
+
+                        {/* Trade history expand */}
+                        {isSelectedHist && (
+                          <div style={{ marginTop: 8, backgroundColor: "#ffffff", border: "1px solid rgba(21,101,192,0.12)", borderRadius: 14, padding: "16px 20px" }}>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: "#1565C0", marginBottom: 12 }}>
+                              {isFr ? "Historique des positions" : "Trade history"} — {c.account_size}
+                            </div>
+                            {histTradesLoading ? (
+                              <div style={{ textAlign: "center", color: "#7a90b0", padding: 16, fontSize: 13 }}>{isFr ? "Chargement…" : "Loading…"}</div>
+                            ) : histTrades.length === 0 ? (
+                              <div style={{ textAlign: "center", color: "#7a90b0", padding: 16, fontSize: 13 }}>{isFr ? "Aucune position trouvée" : "No trades found"}</div>
+                            ) : (
+                              <div style={{ overflowX: "auto" }}>
+                                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                                  <thead>
+                                    <tr style={{ borderBottom: "1px solid rgba(21,101,192,0.1)", backgroundColor: "rgba(21,101,192,0.03)" }}>
+                                      {["Ticket", isFr ? "Symbole" : "Symbol", "Type", "Volume", isFr ? "Prix" : "Price", "Profit"].map(h => (
+                                        <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "#7a90b0", fontSize: 11, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {histTrades.map((trade, ti) => {
+                                      const t = trade as Record<string, unknown>;
+                                      const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
+                                      const isBuy = t.type === 0 || String(t.type ?? "").toLowerCase().includes("buy");
+                                      return (
+                                        <tr key={ti} style={{ borderBottom: ti < histTrades.length - 1 ? "1px solid rgba(21,101,192,0.07)" : "none" }}>
+                                          <td style={{ padding: "8px 12px", color: "#7a90b0", fontFamily: "monospace" }}>{String(t.ticket ?? ti + 1)}</td>
+                                          <td style={{ padding: "8px 12px", fontWeight: 700 }}>{String(t.symbol ?? "—")}</td>
+                                          <td style={{ padding: "8px 12px" }}>
+                                            <span style={{ backgroundColor: isBuy ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", color: isBuy ? "#16a34a" : "#ef4444", fontWeight: 700, padding: "2px 7px", borderRadius: 6, fontSize: 11 }}>
+                                              {isBuy ? "BUY" : "SELL"}
+                                            </span>
+                                          </td>
+                                          <td style={{ padding: "8px 12px" }}>{String(t.volume ?? "—")}</td>
+                                          <td style={{ padding: "8px 12px", fontFamily: "monospace" }}>{String(t.open_price ?? t.price ?? "—")}</td>
+                                          <td style={{ padding: "8px 12px", fontWeight: 700, color: profit >= 0 ? "#16a34a" : "#ef4444" }}>
+                                            {profit >= 0 ? "+" : ""}{profit.toFixed(2)} $
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
