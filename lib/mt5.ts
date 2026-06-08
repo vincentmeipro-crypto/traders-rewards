@@ -143,6 +143,14 @@ export async function getMT5History(login: number): Promise<unknown[]> {
   return res.json();
 }
 
+export async function changeMT5Password(login: number): Promise<void> {
+  const res = await fetch(`${MT5_URL}/accounts/${login}/change-password`, {
+    method: "POST",
+    headers: MT5_HEADERS,
+  });
+  if (!res.ok) throw new Error(`MT5 change-password failed: ${await res.text()}`);
+}
+
 export async function closeAllPositions(login: number): Promise<number> {
   const res = await fetch(`${MT5_URL}/accounts/${login}/close-positions`, {
     method: "POST",
