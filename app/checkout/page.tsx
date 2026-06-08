@@ -229,8 +229,8 @@ function CheckoutContent() {
 
       {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: isMobile ? "10px 16px" : "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-        <div style={{ width: 28, height: 28, background: "#0d0d0d", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Image src="/nouveau-logo.png" alt="Elysium" width={22} height={22} style={{ objectFit: "contain" }} />
+        <div style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Image src="/logo-bleu.png" alt="Elysium" width={32} height={32} style={{ objectFit: "contain" }} />
           </div>
         <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Elysium</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>
@@ -249,7 +249,7 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f3f4f6" }}>
               <div style={{ width: 36, height: 36, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏆</div>
               <div>
-                <div style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Standard MT5 · 1:50 · USD</div>
+                <div style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Standard MT5 · 1:100 · USD</div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>Challenge {challenge.label} — {challenge.model}</div>
               </div>
               <div style={{ marginLeft: "auto", textAlign: "right" }}>
@@ -387,7 +387,7 @@ function CheckoutContent() {
               <div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>Elysium Challenge</div>
                 <div style={{ color: "#6b7280", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
-                <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 2 }}>Standard MT5 · 1:50 · USD</div>
+                <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 2 }}>Standard MT5 · 1:100 · USD</div>
               </div>
             </div>
 
