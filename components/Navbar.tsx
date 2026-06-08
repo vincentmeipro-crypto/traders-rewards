@@ -107,24 +107,18 @@ export default function Navbar() {
           {/* Mobile gauche : drapeaux + PropFirm / Desktop gauche : logo + drapeaux */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {isMobile ? (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-                <div style={{ display: "flex", gap: 4 }}>
-                  <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                  <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                </div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
+              <div style={{ display: "flex", gap: 4 }}>
+                <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
               </div>
             ) : (
               <>
                 <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
                   <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 99, width: "auto", objectFit: "contain", marginLeft: -20 }} />
                 </a>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>
-                  <div style={{ display: "flex", gap: 4 }}>
-                    <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                    <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                  </div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
+                <div style={{ display: "flex", gap: 4, paddingTop: 2 }}>
+                  <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                  <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                 </div>
               </>
             )}
