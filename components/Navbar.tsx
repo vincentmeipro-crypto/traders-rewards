@@ -129,7 +129,7 @@ export default function Navbar() {
           {/* CENTRE mobile : logo */}
           {isMobile && (
             <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flex: "1", justifyContent: "center" }}>
-              <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 64, width: "auto", objectFit: "contain" }} />
+              <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 128, width: "auto", objectFit: "contain" }} />
             </a>
           )}
 
