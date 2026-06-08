@@ -572,7 +572,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {!isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#ffffff", borderRight: "1px solid rgba(21,101,192,0.12)", display: "flex", flexDirection: "column", zIndex: 50, boxShadow: "2px 0 20px rgba(21,101,192,0.06)" }}>
           <div style={{ padding: "20px 20px", borderBottom: "1px solid rgba(21,101,192,0.1)" }}>
-            <img src="/nouveau-logo.png" alt="Elysium" style={{ width: 120, height: "auto", objectFit: "contain" }} />
+            <img src="/logo-bleu.png" alt="Elysium" style={{ width: 120, height: "auto", objectFit: "contain" }} />
           </div>
 
           <nav style={{ padding: "16px 12px", flex: 1, overflowY: "auto" }}>
@@ -633,7 +633,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {isMobile && (
         <>
           <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#ffffff", borderBottom: "1px solid rgba(21,101,192,0.1)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", boxShadow: "0 2px 12px rgba(21,101,192,0.06)" }}>
-            <a href="/"><img src="/nouveau-logo.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain" }} /></a>
+            <a href="/"><img src="/logo-bleu.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain" }} /></a>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#1565C0" }}>
               {([
                 { tab: "dashboard", label: T.dash.dashboard },
