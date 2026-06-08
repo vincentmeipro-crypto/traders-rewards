@@ -1,6 +1,7 @@
 "use client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function Footer() {
   const { T } = useLanguage();
@@ -50,7 +51,13 @@ export default function Footer() {
                 <div style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "rgba(21,101,192,0.45)", textTransform: "uppercase" }}>— REWARDS —</div>
               </div>
             </div>
-            <p style={{ color: "rgba(21,101,192,0.55)", fontSize: 14, lineHeight: 1.7, margin: 0 }}>{T.footer.tagline}</p>
+            <p style={{ color: "rgba(21,101,192,0.55)", fontSize: 14, lineHeight: 1.7, margin: "0 0 20px 0" }}>{T.footer.tagline}</p>
+            <Image
+              src="/pwa-install.png"
+              alt="Installez l'application web Elysium"
+              width={177} height={266} priority
+              style={{ width: "auto", height: isMobile ? 150 : 170, display: "block" }}
+            />
           </div>
 
           {/* Colonnes */}
