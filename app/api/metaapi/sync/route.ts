@@ -62,10 +62,11 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // Equity réelle = balance + profit flottant (a.Equity du Manager API n'est pas toujours temps réel)
   const floatingProfit = typeof info.profit === "number" ? info.profit : 0;
   const newEquity = newBalance + floatingProfit;
-  // Après un payout reset, highest_balance = start_balance — ne pas restaurer l'ancien high
+  // highest_balance tracks realized balance only (not floating equity) — using equity inflates
+  // the high with unrealized profits, then a tiny dip fires a false 10% total DD breach
   const newHighest = prevHighest <= startBalance
-    ? Math.max(startBalance, newEquity)
-    : Math.max(prevHighest, newEquity);
+    ? Math.max(startBalance, newBalance)
+    : Math.max(prevHighest, newBalance);
 
   // 2. Jours de trading
   const prevTradingDays  = challenge.trading_days as number;
