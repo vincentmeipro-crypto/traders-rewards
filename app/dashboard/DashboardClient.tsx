@@ -340,9 +340,9 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
         <div style={{ color: "#7a90b0", fontSize: 13, marginBottom: 16 }}>
           {isFr ? "Minimum 100€ de commissions validées." : "Minimum €100 in validated commissions."}
         </div>
-        <a href="mailto:support@elysium-rewards.com?subject=Retrait%20commission%20affiliation"
+        <a href="mailto:support@traders-rewards.eu?subject=Retrait%20commission%20affiliation"
           style={{ display: "inline-block", backgroundColor: "#1565C0", color: "#fff", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none" }}>
-          support@elysium-rewards.com
+          support@traders-rewards.eu
         </a>
       </div>
     </div>
@@ -933,7 +933,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               <div class="header">
                                 <div>
                                   <div class="logo">TRADERS REWARDS</div>
-                                  <div style="color:#888;font-size:13px;margin-top:4px">elysium-rewards.com</div>
+                                  <div style="color:#888;font-size:13px;margin-top:4px">traders-rewards.eu</div>
                                 </div>
                                 <div style="text-align:right">
                                   <div class="badge">FACTURE ACQUITTÉE</div>
@@ -944,7 +944,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                 <div>
                                   <h2>Émetteur</h2>
                                   <div style="font-weight:700">TRADERS REWARDS</div>
-                                  <div style="color:#555;font-size:13px">elysium-rewards.com<br>support@elysium-rewards.com</div>
+                                  <div style="color:#555;font-size:13px">traders-rewards.eu<br>support@traders-rewards.eu</div>
                                 </div>
                                 <div>
                                   <h2>Client</h2>
@@ -963,7 +963,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               </table>
                               <div class="total">Total TTC : €${c.amount_paid}</div>
                               <div class="footer">
-                                TRADERS REWARDS — elysium-rewards.com — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
+                                TRADERS REWARDS — traders-rewards.eu — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
                                 Ce document tient lieu de facture acquittée.
                               </div>
                               <div style="text-align:center;margin-top:32px"><button onclick="window.print()" style="background:#111;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Imprimer / Télécharger PDF</button></div>

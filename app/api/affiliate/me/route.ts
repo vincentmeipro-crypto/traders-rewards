@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     code: affiliate?.code,
-    link: `https://www.elysium-rewards.com/?ref=${affiliate?.code}`,
+    link: `https://www.traders-rewards.eu/?ref=${affiliate?.code}`,
     total_conversions,
     total_commission,
     pending_commission,

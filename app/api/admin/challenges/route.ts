@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
       const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
         type: "recovery",
         email: userEmail,
-        options: { redirectTo: "https://www.elysium-rewards.com/reset-password" },
+        options: { redirectTo: "https://www.traders-rewards.eu/reset-password" },
       });
       if (linkErr) console.error("generateLink error:", linkErr);
       setupLink = (linkData as { properties?: { action_link?: string } })?.properties?.action_link || undefined;
@@ -219,7 +219,7 @@ export async function POST(req: NextRequest) {
   try {
     // Si nouveau user sans lien généré, fallback vers reset-password
     const finalSetupLink = isNewUser
-      ? (setupLink || `https://www.elysium-rewards.com/reset-password`)
+      ? (setupLink || `https://www.traders-rewards.eu/reset-password`)
       : undefined;
     await sendWelcomeEmail(
       userEmail, accountSize, model,

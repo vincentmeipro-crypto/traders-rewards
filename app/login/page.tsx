@@ -19,7 +19,7 @@ export default function LoginPage() {
     if (!email) { setError("Entre ton email d'abord"); return; }
     setError("");
     await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "https://www.elysium-rewards.com/reset-password",
+      redirectTo: "https://www.traders-rewards.eu/reset-password",
     });
     setResetSent(true);
   };

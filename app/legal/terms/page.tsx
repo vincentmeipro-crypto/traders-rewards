@@ -106,7 +106,7 @@ export default function TermsPage() {
     {
       title: "13. Réclamations et problèmes techniques",
       content: [
-        "Pour tout problème technique, contactez-nous à support@elysium-rewards.com en indiquant votre identifiant de compte, une description du problème et la date/heure d'occurrence.",
+        "Pour tout problème technique, contactez-nous à support@traders-rewards.eu en indiquant votre identifiant de compte, une description du problème et la date/heure d'occurrence.",
         "Nous traiterons votre réclamation dans les trente (30) jours calendaires suivant sa réception.",
         "Nous nous réservons le droit de refuser la fourniture de tout Service futur si vous contestez les Frais de Challenge auprès de votre banque (chargeback) de manière injustifiée.",
       ]
@@ -144,7 +144,7 @@ export default function TermsPage() {
       title: "18. Communications",
       content: [
         "Nous communiquerons avec vous par voie électronique, via l'Espace Client ou par e-mail à l'adresse enregistrée lors de votre inscription. Cette adresse ne peut pas être modifiée après l'inscription.",
-        "Pour toute question relative à l'Accord ou aux Services : support@elysium-rewards.com",
+        "Pour toute question relative à l'Accord ou aux Services : support@traders-rewards.eu",
       ]
     },
     {
@@ -171,7 +171,7 @@ export default function TermsPage() {
         "« Pratiques de Trading Interdites » : pratiques, stratégies ou comportements strictement interdits, listés sur le Site.",
         "« Programme Traders Rewards » : programme donnant accès à un Compte Trader et aux Récompenses.",
         "« Récompense » : montant versé en proportion des profits simulés sur le Compte Trader (80% ou 90% selon le Challenge).",
-        "« Services » : l'ensemble des services fournis par Traders Rewards via le Site elysium-rewards.com.",
+        "« Services » : l'ensemble des services fournis par Traders Rewards via le Site traders-rewards.eu.",
         "« Trading Simulé » : activité simulant des opérations sur marchés financiers, sans exécution réelle d'ordres.",
       ]
     },
@@ -200,7 +200,7 @@ export default function TermsPage() {
         {/* Intro */}
         <div style={{ background: "#0d0d14", border: "1px solid #1e1e2e", borderRadius: 12, padding: "24px 28px", marginBottom: 48 }}>
           <p style={{ color: "#888", lineHeight: 1.8, fontSize: 14, margin: 0 }}>
-            Nous sommes <strong style={{ color: "#fff" }}>Traders Rewards OÜ</strong>, société de droit estonien (ci-après « nous » ou « Traders Rewards »). Notre mission est de fournir aux traders un environnement de trading simulé conçu pour évaluer leurs compétences et récompenser leurs résultats via le site <strong style={{ color: "#fff" }}>elysium-rewards.com</strong>.
+            Nous sommes <strong style={{ color: "#fff" }}>Traders Rewards OÜ</strong>, société de droit estonien (ci-après « nous » ou « Traders Rewards »). Notre mission est de fournir aux traders un environnement de trading simulé conçu pour évaluer leurs compétences et récompenser leurs résultats via le site <strong style={{ color: "#fff" }}>traders-rewards.eu</strong>.
             <br /><br />
             Les présentes CGV régissent l&apos;accès au Challenge Traders Rewards et à tous nos services. Les comptes de Challenge sont des comptes de <strong style={{ color: "#fff" }}>trading entièrement simulé</strong>. Aucun capital réel n&apos;est investi, aucun ordre n&apos;est exécuté sur les marchés financiers.
           </p>
@@ -226,7 +226,7 @@ export default function TermsPage() {
 
         {/* Footer note */}
         <div style={{ marginTop: 64, paddingTop: 32, borderTop: "1px solid #1a1a28", color: "#444", fontSize: 13, lineHeight: 1.7 }}>
-          <p>Pour toute question relative aux présentes CGV : <a href="mailto:support@elysium-rewards.com" style={{ color: "#00C2FF" }}>support@elysium-rewards.com</a></p>
+          <p>Pour toute question relative aux présentes CGV : <a href="mailto:support@traders-rewards.eu" style={{ color: "#00C2FF" }}>support@traders-rewards.eu</a></p>
           <p style={{ marginTop: 8 }}>Traders Rewards OÜ · République d&apos;Estonie · Version 1.0 — 24 mai 2026</p>
         </div>
       </div>
