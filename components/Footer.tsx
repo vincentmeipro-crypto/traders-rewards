@@ -48,7 +48,6 @@ export default function Footer() {
             <div style={{ marginBottom: 20 }}>
               <div style={{ marginBottom: 8 }}>
                 <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "4px", color: "#1565C0", textTransform: "uppercase" }}>TRADERS REWARDS</div>
-                <div style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "rgba(21,101,192,0.45)", textTransform: "uppercase" }}>— REWARDS —</div>
               </div>
             </div>
             <p style={{ color: "rgba(21,101,192,0.55)", fontSize: 14, lineHeight: 1.7, margin: "0 0 20px 0" }}>{T.footer.tagline}</p>
