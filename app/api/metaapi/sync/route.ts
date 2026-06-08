@@ -96,10 +96,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 5. Breach drawdown journalier
   if (dailyDD >= dailyLimit) {
-    await closeAllPositions(login).catch(() => {});
-    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
-    await disableMT5Account(login).catch(() => {});
-    await changeMT5Password(login).catch(() => {});
+    await closeAllPositions(login).catch((e) => console.error(`[${login}] closeAllPositions failed:`, e));
+    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
+    await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
+    await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({
       status: "failed",
@@ -126,10 +126,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     if (totalDD >= totalLimit) totalViolated = true;
   }
   if (totalViolated) {
-    await closeAllPositions(login).catch(() => {});
-    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch(() => {});
-    await disableMT5Account(login).catch(() => {});
-    await changeMT5Password(login).catch(() => {});
+    await closeAllPositions(login).catch((e) => console.error(`[${login}] closeAllPositions failed:`, e));
+    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
+    await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
+    await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
     const alreadyFailed = challenge.status === "failed";
     await admin.from("challenges").update({
       status: "failed",
