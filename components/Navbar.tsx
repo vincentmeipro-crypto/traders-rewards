@@ -102,21 +102,23 @@ export default function Navbar() {
         boxShadow: scrolled ? "0 2px 20px rgba(21,101,192,0.12)" : "none",
         transition: "all 0.3s ease",
       }}>
-        <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: 72, position: "relative" }}>
+        <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 80 : 72, position: "relative" }}>
 
-          {/* Mobile gauche : drapeaux + PropFirm / Desktop gauche : logo + drapeaux */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* GAUCHE */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, flex: isMobile ? "0 0 auto" : undefined }}>
             {isMobile ? (
-              <div style={{ display: "flex", gap: 4 }}>
+              /* Mobile gauche : drapeaux */
+              <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
                 <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                 <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
               </div>
             ) : (
+              /* Desktop gauche : logo + drapeaux */
               <>
                 <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
                   <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 99, width: "auto", objectFit: "contain", marginLeft: -20 }} />
                 </a>
-                <div style={{ display: "flex", gap: 4, paddingTop: 2 }}>
+                <div style={{ display: "flex", gap: 4 }}>
                   <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                   <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
                 </div>
@@ -124,13 +126,11 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile centre : logo agrandi */}
+          {/* CENTRE mobile : logo */}
           {isMobile && (
-            <div style={{ position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
-              <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-                <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 124, width: "auto", objectFit: "contain" }} />
-              </a>
-            </div>
+            <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flex: "1", justifyContent: "center" }}>
+              <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 64, width: "auto", objectFit: "contain" }} />
+            </a>
           )}
 
           {/* Desktop Nav */}
@@ -142,10 +142,9 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Droite */}
+          {/* DROITE desktop */}
           {!isMobile && (
             <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-              {/* Langue */}
               <div style={{ position: "relative" }}>
                 <button onClick={() => setLangOpen(!langOpen)} style={{
                   display: "flex", alignItems: "center", gap: 6,
@@ -180,7 +179,6 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-
               <a href="/login" style={{ color: "#1565C0", fontSize: 13, fontWeight: 600, textDecoration: "none", letterSpacing: "0.3px" }}>
                 {T.nav.logIn}
               </a>
@@ -188,9 +186,9 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* Mobile */}
+          {/* DROITE mobile : login + menu */}
           {isMobile && (
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "0 0 auto" }}>
               <a href="/login" style={{ color: "#0D1B3E", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>
               <button onClick={() => setOpen(!open)} style={{ background: "none", border: "none", color: "#1565C0", cursor: "pointer" }}>
                 {open ? <X size={22} /> : <Menu size={22} />}
