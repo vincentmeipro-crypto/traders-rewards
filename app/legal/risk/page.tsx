@@ -10,18 +10,18 @@ export default function RiskPage() {
         <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "20px 24px", marginBottom: 48 }}>
           <p style={{ color: "#ef4444", fontWeight: 700, fontSize: 15, marginBottom: 8 }}>⚠️ Important Notice</p>
           <p style={{ color: "#888", fontSize: 14, lineHeight: 1.7 }}>
-            Trading foreign exchange, commodities, indices, and other financial instruments carries a high level of risk. Please read this disclaimer carefully before participating in any Elysium challenge.
+            Trading foreign exchange, commodities, indices, and other financial instruments carries a high level of risk. Please read this disclaimer carefully before participating in any Traders Rewards challenge.
           </p>
         </div>
 
         {[
           {
             title: "1. Simulated Trading Environment",
-            content: `All trading on the Elysium platform takes place in a 100% simulated environment. No real funds are deposited or traded. The simulated accounts are designed to replicate real market conditions, but results in simulation do not guarantee performance in live trading with real capital.`
+            content: `All trading on the Traders Rewards platform takes place in a 100% simulated environment. No real funds are deposited or traded. The simulated accounts are designed to replicate real market conditions, but results in simulation do not guarantee performance in live trading with real capital.`
           },
           {
             title: "2. Not Financial Advice",
-            content: `Nothing on the Elysium platform constitutes financial advice, investment advice, trading advice, or any other advice. All content is for informational and evaluation purposes only. You should not make any financial decision based solely on information from this platform.`
+            content: `Nothing on the Traders Rewards platform constitutes financial advice, investment advice, trading advice, or any other advice. All content is for informational and evaluation purposes only. You should not make any financial decision based solely on information from this platform.`
           },
           {
             title: "3. Past Performance",
@@ -41,11 +41,11 @@ export default function RiskPage() {
           },
           {
             title: "7. Technology Risk",
-            content: `Trading platforms and internet connections can experience technical issues. Elysium is not responsible for losses or missed opportunities arising from technical failures, connectivity issues, or platform downtime.`
+            content: `Trading platforms and internet connections can experience technical issues. Traders Rewards is not responsible for losses or missed opportunities arising from technical failures, connectivity issues, or platform downtime.`
           },
           {
             title: "8. Regulatory Notice",
-            content: `Elysium operates as a talent evaluation and profit-sharing program using simulated accounts. We are not a regulated financial institution, broker, or investment firm. We do not offer financial products or services regulated by financial authorities. Participation in our challenges does not constitute investment in financial markets.`
+            content: `Traders Rewards operates as a talent evaluation and profit-sharing program using simulated accounts. We are not a regulated financial institution, broker, or investment firm. We do not offer financial products or services regulated by financial authorities. Participation in our challenges does not constitute investment in financial markets.`
           },
         ].map((section, i) => (
           <div key={i} style={{ marginBottom: 40 }}>
@@ -56,7 +56,7 @@ export default function RiskPage() {
 
         <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.15)", borderRadius: 12, padding: "20px 24px", marginTop: 20 }}>
           <p style={{ color: "#888", fontSize: 14, lineHeight: 1.7 }}>
-            By participating in any Elysium challenge, you acknowledge that you have read, understood, and accepted this Risk Disclaimer in its entirety.
+            By participating in any Traders Rewards challenge, you acknowledge that you have read, understood, and accepted this Risk Disclaimer in its entirety.
           </p>
         </div>
       </div>

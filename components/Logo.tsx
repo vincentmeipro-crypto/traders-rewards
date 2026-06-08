@@ -28,7 +28,7 @@ export default function Logo({ size = 40, full = false }: { size?: number; full?
       </defs>
 
       {full ? (
-        /* ── FULL LOGO (emblem + ELYSIUM REWARDS text) ── */
+        /* ── FULL LOGO (emblem + TRADERS REWARDS text) ── */
         <g>
           {/* Circle — open at top-right for sparkle */}
           <path
@@ -72,10 +72,10 @@ export default function Logo({ size = 40, full = false }: { size?: number; full?
             <line x1="209" y1="24" x2="189" y2="44" stroke="#FFE88A" strokeWidth="0.8" strokeLinecap="round" />
           </g>
 
-          {/* ── TEXT: ELYSIUM ── */}
+          {/* ── TEXT: TRADERS REWARDS ── */}
           <text x="140" y="198" textAnchor="middle" fontFamily="Georgia, 'Times New Roman', serif"
             fontSize="36" fontWeight="700" letterSpacing="8" fill="url(#g1)">
-            ELYSIUM
+            TRADERS REWARDS
           </text>
 
           {/* ── decorative lines ── */}

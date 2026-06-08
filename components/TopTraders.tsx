@@ -178,8 +178,8 @@ export default function TopTraders() {
             </h3>
             <p style={{ color: "#0D1B3E", fontSize: 14, lineHeight: 1.7 }}>
               {lang === "fr"
-                ? "Basé sur 6% de profit moyen, après les 20% de partage avec Elysium."
-                : "Based on 6% average profit, after the 20% split with Elysium."}
+                ? "Basé sur 6% de profit moyen, après les 20% de partage avec Traders Rewards."
+                : "Based on 6% average profit, after the 20% split with Traders Rewards."}
             </p>
           </div>
           <div style={{ background: "linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(200,232,255,0.6) 50%, rgba(100,180,255,0.45) 100%)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.7)", overflow: "hidden", boxShadow: "0 8px 32px rgba(21,101,192,0.2), 0 1px 0 rgba(255,255,255,0.95) inset" }}>

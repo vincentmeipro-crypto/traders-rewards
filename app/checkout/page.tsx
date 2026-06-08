@@ -230,9 +230,9 @@ function CheckoutContent() {
       {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: isMobile ? "10px 16px" : "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
         <div style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Image src="/logo-bleu.png" alt="Elysium" width={32} height={32} style={{ objectFit: "contain" }} />
+            <Image src="/logo-bleu.png" alt="Traders Rewards" width={32} height={32} style={{ objectFit: "contain" }} />
           </div>
-        <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Elysium</span>
+        <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Traders Rewards</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>
         <span style={{ color: "#6b7280", fontSize: isMobile ? 11 : 13 }}>Commencer le challenge</span>
         <a href="/#pricing" style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12, textDecoration: "none", whiteSpace: "nowrap" }}>← Changer</a>
@@ -272,7 +272,7 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>Challenge {challenge.label}</div>
-                <div style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>{challenge.model} — Elysium · MetaTrader 5</div>
+                <div style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>{challenge.model} — Traders Rewards · MetaTrader 5</div>
               </div>
               <span style={{ background: "#eff6ff", color: "#2563eb", fontSize: 11, fontWeight: 800, padding: "4px 10px", borderRadius: 6, border: "1px solid #bfdbfe" }}>
                 {challenge.model}
@@ -385,7 +385,7 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #f3f4f6" }}>
               <div style={{ width: 40, height: 40, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🏆</div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>Elysium Challenge</div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>Traders Rewards Challenge</div>
                 <div style={{ color: "#6b7280", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
                 <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 2 }}>Standard MT5 · 1:100 · USD</div>
               </div>

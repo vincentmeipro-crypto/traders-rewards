@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         price_amount: parseFloat(amountEur),
         price_currency: "eur",
         order_id: orderId,
-        order_description: `Elysium — ${product.name}`,
+        order_description: `Traders Rewards — ${product.name}`,
         success_url: `${siteUrl}/checkout/success`,
         cancel_url: `${siteUrl}/checkout/cancel`,
       }),

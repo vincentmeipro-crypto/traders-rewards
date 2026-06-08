@@ -9,7 +9,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Elysium Rewards <support@elysium-rewards.com>",
+      from: "Traders Rewards <support@elysium-rewards.com>",
       to: [to],
       subject,
       html,
@@ -47,8 +47,8 @@ export async function sendWelcomeEmail(
   const bodyText = setupLink
     ? `Bienvenue dans l'élite. Votre compte challenge a été créé. Cliquez sur le bouton ci-dessous pour définir votre mot de passe et accéder à votre dashboard.`
     : `Bienvenue dans l'élite. Votre compte challenge a été créé. Connectez-vous à MT5 avec les identifiants ci-dessous et commencez à trader.`;
-  await sendEmail(to, "🎯 Votre Challenge Elysium est prêt !", buildEmail({
-    title: "✅ Votre compte Elysium est actif",
+  await sendEmail(to, "🎯 Votre Challenge Traders Rewards est prêt !", buildEmail({
+    title: "✅ Votre compte Traders Rewards est actif",
     titleColor: "#22c55e",
     body: bodyText,
     details,
@@ -80,7 +80,7 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
   const reasonDetail = reason === "daily_drawdown"
     ? "Votre limite de perte journalière a été atteinte. C'est une règle automatique de protection du capital."
     : "Votre limite de perte totale maximale a été atteinte.";
-  await sendEmail(to, "❌ Votre Challenge Elysium a été arrêté", buildEmail({
+  await sendEmail(to, "❌ Votre Challenge Traders Rewards a été arrêté", buildEmail({
     title: "❌ Challenge échoué",
     titleColor: "#ef4444",
     body: `Nous vous informons que votre challenge ${accountSize} a été automatiquement arrêté. ${reasonDetail}`,
@@ -95,10 +95,10 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
 }
 
 export async function sendFundedEmail(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }) {
-  await sendEmail(to, "🎉 Vous êtes Certifié ! Bienvenue chez Elysium", buildEmail({
+  await sendEmail(to, "🎉 Vous êtes Certifié ! Bienvenue chez Traders Rewards", buildEmail({
     title: "🎉 Félicitations — Vous êtes Certifié !",
     titleColor: "#3b82f6",
-    body: `Performance exceptionnelle ! Vous avez réussi toutes les phases de votre challenge ${accountSize}. Vous êtes maintenant un trader certifié Elysium. Voici vos nouveaux identifiants de compte certifié.`,
+    body: `Performance exceptionnelle ! Vous avez réussi toutes les phases de votre challenge ${accountSize}. Vous êtes maintenant un trader certifié Traders Rewards. Voici vos nouveaux identifiants de compte certifié.`,
     details: [
       { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
       { label: "Statut", value: "Trader Certifié ✓", color: "#3b82f6" },
@@ -160,8 +160,8 @@ export async function sendPhase1CertificateEmail(to: string, firstName: string, 
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/PHASE1.png" alt="Certificat Phase 1" style="width:100%;display:block;" />
@@ -180,7 +180,7 @@ export async function sendPhase1CertificateEmail(to: string, firstName: string, 
           </div>
         </div>
         <div style="margin-top:24px;padding:0 8px;">
-          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
         </div>
       </div>
     </div>
@@ -190,12 +190,12 @@ export async function sendPhase1CertificateEmail(to: string, firstName: string, 
 export async function sendChallengeCertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, date: string) {
   const name = `${firstName} ${lastName}`.trim();
   const certUrl = `${SITE}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
-  await sendEmail(to, `🎉 ${firstName} — Vous êtes Certifié Elysium !`, `
+  await sendEmail(to, `🎉 ${firstName} — Vous êtes Certifié Traders Rewards !`, `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/CHALLENGE.png" alt="Certificat Challenge" style="width:100%;display:block;" />
@@ -203,7 +203,7 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
             <h2 style="color:#a855f7;font-size:22px;font-weight:700;margin:0 0 12px 0;">Challenge validé — ${firstName}, vous êtes Certifié !</h2>
             <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
               Félicitations ! Vous avez brillamment réussi toutes les étapes du challenge <strong>${accountSize}</strong>.<br/>
-              Vous êtes maintenant un trader certifié Elysium Rewards.
+              Vous êtes maintenant un trader certifié Traders Rewards.
             </p>
             <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
               <tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;width:55%;">Trader :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${name}</td></tr>
@@ -214,7 +214,7 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
           </div>
         </div>
         <div style="margin-top:24px;padding:0 8px;">
-          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
         </div>
       </div>
     </div>
@@ -230,8 +230,8 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/REWARDS.png" alt="Certificat Récompense" style="width:100%;display:block;" />
@@ -251,7 +251,7 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
           </div>
         </div>
         <div style="margin-top:24px;padding:0 8px;">
-          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
         </div>
       </div>
     </div>
@@ -268,8 +268,8 @@ function buildEmail({ title, titleColor, body, details, cta }: {
       <div style="max-width:580px;margin:0 auto;">
 
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Elysium Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">ELYSIUM REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
+          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
         </div>
 
         <div style="background:#ffffff;border-radius:12px;padding:40px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
@@ -293,7 +293,7 @@ function buildEmail({ title, titleColor, body, details, cta }: {
           <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 20px 0;">
             Contactez-nous à <a href="mailto:support@elysium-rewards.com" style="color:#C9A84C;text-decoration:none;">support@elysium-rewards.com</a>
           </p>
-          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Elysium Rewards</strong></p>
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
         </div>
 
       </div>

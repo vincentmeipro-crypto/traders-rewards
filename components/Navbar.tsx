@@ -107,7 +107,7 @@ export default function Navbar() {
           {/* Logo + PropFirm badge */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <a href="/" style={{ display: "flex", alignItems: "center", gap: 6, textDecoration: "none" }}>
-              <img src="/logo-elysium.png" alt="Elysium Rewards" style={{ height: isMobile ? 66 : 156, width: "auto", objectFit: "contain" }} />
+              <img src="/logo-elysium.png" alt="Traders Rewards" style={{ height: isMobile ? 66 : 156, width: "auto", objectFit: "contain" }} />
             </a>
             {!isMobile && (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, paddingTop: 2 }}>

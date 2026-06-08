@@ -41,7 +41,7 @@ function PayoutReceiptContent() {
           <tbody>
             <tr>
               <td style={{ padding: 0, verticalAlign: "top" }}>
-                <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase" }}>ELYSIUM REWARDS</div>
+                <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase" }}>TRADERS REWARDS</div>
                 <div style={{ fontSize: 11, color: "#555" }}>support@elysium-rewards.com</div>
                 <div style={{ fontSize: 11, color: "#555" }}>www.elysium-rewards.com</div>
               </td>
@@ -124,7 +124,7 @@ function PayoutReceiptContent() {
 
         {/* Pied de page */}
         <div style={{ fontSize: 10, color: "#777", lineHeight: 1.7 }}>
-          Ce document certifie le versement de la récompense ci-dessus par Elysium Rewards à la date indiquée.<br />
+          Ce document certifie le versement de la récompense ci-dessus par Traders Rewards à la date indiquée.<br />
           Référence unique : <strong>{ref}</strong> — Ce justificatif peut être utilisé à des fins comptables et fiscales.<br />
           Pour toute question : support@elysium-rewards.com
         </div>

@@ -591,7 +591,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {!isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#ffffff", borderRight: "1px solid rgba(21,101,192,0.12)", display: "flex", flexDirection: "column", zIndex: 50, boxShadow: "2px 0 20px rgba(21,101,192,0.06)" }}>
           <div style={{ padding: "20px 20px", borderBottom: "1px solid rgba(21,101,192,0.1)" }}>
-            <img src="/logo-bleu.png" alt="Elysium" style={{ width: 120, height: "auto", objectFit: "contain" }} />
+            <img src="/logo-bleu.png" alt="Traders Rewards" style={{ width: 120, height: "auto", objectFit: "contain" }} />
           </div>
 
           <nav style={{ padding: "16px 12px", flex: 1, overflowY: "auto" }}>
@@ -652,7 +652,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {isMobile && (
         <>
           <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#ffffff", borderBottom: "1px solid rgba(21,101,192,0.1)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", boxShadow: "0 2px 12px rgba(21,101,192,0.06)" }}>
-            <a href="/"><img src="/logo-bleu.png" alt="Elysium" style={{ width: 36, height: 36, objectFit: "contain" }} /></a>
+            <a href="/"><img src="/logo-bleu.png" alt="Traders Rewards" style={{ width: 36, height: 36, objectFit: "contain" }} /></a>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#1565C0" }}>
               {([
                 { tab: "dashboard", label: T.dash.dashboard },
@@ -932,7 +932,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </style></head><body>
                               <div class="header">
                                 <div>
-                                  <div class="logo">ELYSIUM</div>
+                                  <div class="logo">TRADERS REWARDS</div>
                                   <div style="color:#888;font-size:13px;margin-top:4px">elysium-rewards.com</div>
                                 </div>
                                 <div style="text-align:right">
@@ -943,7 +943,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               <div class="info">
                                 <div>
                                   <h2>Émetteur</h2>
-                                  <div style="font-weight:700">ELYSIUM</div>
+                                  <div style="font-weight:700">TRADERS REWARDS</div>
                                   <div style="color:#555;font-size:13px">elysium-rewards.com<br>support@elysium-rewards.com</div>
                                 </div>
                                 <div>
@@ -963,7 +963,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               </table>
                               <div class="total">Total TTC : €${c.amount_paid}</div>
                               <div class="footer">
-                                ELYSIUM — elysium-rewards.com — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
+                                TRADERS REWARDS — elysium-rewards.com — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
                                 Ce document tient lieu de facture acquittée.
                               </div>
                               <div style="text-align:center;margin-top:32px"><button onclick="window.print()" style="background:#111;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Imprimer / Télécharger PDF</button></div>

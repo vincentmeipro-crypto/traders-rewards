@@ -66,7 +66,7 @@ export async function PATCH(req: NextRequest) {
             const mt5Info = await getMT5Account(challenge.mt5_login);
             const profit = parseFloat((mt5Info.balance - challenge.start_balance).toFixed(2));
             if (profit > 0) {
-              await withdrawMT5Balance(challenge.mt5_login, profit, "Profit Withdrawal — Elysium");
+              await withdrawMT5Balance(challenge.mt5_login, profit, "Profit Withdrawal — Traders Rewards");
             }
           } catch (e) {
             console.error("MT5 auto-withdraw error:", e);

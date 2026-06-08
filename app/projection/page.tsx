@@ -22,9 +22,9 @@ export default function ProjectionPage() {
         {/* HEADER */}
         <div style={{ background: "linear-gradient(135deg, #1565C0 0%, #1a2f5e 100%)", borderRadius: 20, padding: "40px 48px", marginBottom: 24, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <img src="/nouveau-logo.png" alt="Elysium" style={{ height: 64, width: "auto", filter: "brightness(10)" }} />
+            <img src="/nouveau-logo.png" alt="Traders Rewards" style={{ height: 64, width: "auto", filter: "brightness(10)" }} />
             <div>
-              <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: "6px", color: "#fff", textTransform: "uppercase" }}>ELYSIUM</div>
+              <div style={{ fontSize: 28, fontWeight: 900, letterSpacing: "6px", color: "#fff", textTransform: "uppercase" }}>TRADERS REWARDS</div>
               <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "4px", color: "rgba(255,255,255,0.45)", textTransform: "uppercase" }}>— REWARDS —</div>
             </div>
           </div>
@@ -68,7 +68,7 @@ export default function ProjectionPage() {
             <span style={{ color: "#1565C0", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Cible prioritaire</span>
           </div>
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#1565C0", margin: "0 0 4px 0" }}>Marché France & Europe — Traders particuliers</h2>
-          <p style={{ color: "#6b7a99", fontSize: 13, margin: "0 0 20px 0" }}>Elysium cible en priorité la France et l'Europe avant toute expansion internationale</p>
+          <p style={{ color: "#6b7a99", fontSize: 13, margin: "0 0 20px 0" }}>Traders Rewards cible en priorité la France et l'Europe avant toute expansion internationale</p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
             {[
               { flag: "fr", title: "France", rows: [

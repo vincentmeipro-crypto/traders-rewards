@@ -4,31 +4,31 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const text: Record<string, { msg: string; ok: string }> = {
   en: {
-    msg: "Elysium operates in a fully simulated environment. No real capital is at risk. Rewards are calculated based on your simulated trading performance.",
+    msg: "Traders Rewards operates in a fully simulated environment. No real capital is at risk. Rewards are calculated based on your simulated trading performance.",
     ok: "Got it",
   },
   fr: {
-    msg: "Elysium opère dans un environnement 100% simulé. Aucun capital réel n'est engagé. Vos récompenses sont calculées sur la base de vos performances simulées.",
+    msg: "Traders Rewards opère dans un environnement 100% simulé. Aucun capital réel n'est engagé. Vos récompenses sont calculées sur la base de vos performances simulées.",
     ok: "J'ai compris",
   },
   ar: {
-    msg: "تعمل Elysium في بيئة محاكاة كاملة. لا يوجد رأس مال حقيقي في خطر. المكافآت تُحسب بناءً على أدائك في التداول المحاكى.",
+    msg: "تعمل Traders Rewards في بيئة محاكاة كاملة. لا يوجد رأس مال حقيقي في خطر. المكافآت تُحسب بناءً على أدائك في التداول المحاكى.",
     ok: "فهمت",
   },
   es: {
-    msg: "Elysium opera en un entorno 100% simulado. No se arriesga capital real. Las recompensas se calculan en base a tu rendimiento de trading simulado.",
+    msg: "Traders Rewards opera en un entorno 100% simulado. No se arriesga capital real. Las recompensas se calculan en base a tu rendimiento de trading simulado.",
     ok: "Entendido",
   },
   pt: {
-    msg: "Elysium opera num ambiente 100% simulado. Nenhum capital real está em risco. As recompensas são calculadas com base no seu desempenho de trading simulado.",
+    msg: "Traders Rewards opera num ambiente 100% simulado. Nenhum capital real está em risco. As recompensas são calculadas com base no seu desempenho de trading simulado.",
     ok: "Entendi",
   },
   de: {
-    msg: "Elysium operiert in einer vollständig simulierten Umgebung. Kein echtes Kapital ist gefährdet. Prämien werden auf Basis Ihrer simulierten Trading-Leistung berechnet.",
+    msg: "Traders Rewards operiert in einer vollständig simulierten Umgebung. Kein echtes Kapital ist gefährdet. Prämien werden auf Basis Ihrer simulierten Trading-Leistung berechnet.",
     ok: "Verstanden",
   },
   tr: {
-    msg: "Elysium tamamen simüle edilmiş bir ortamda faaliyet gösterir. Gerçek sermaye risk altında değildir. Ödüller, simüle edilmiş işlem performansınıza göre hesaplanır.",
+    msg: "Traders Rewards tamamen simüle edilmiş bir ortamda faaliyet gösterir. Gerçek sermaye risk altında değildir. Ödüller, simüle edilmiş işlem performansınıza göre hesaplanır.",
     ok: "Anladım",
   },
 };

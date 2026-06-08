@@ -10,7 +10,7 @@ export default function PrivacyPage() {
         {[
           {
             title: "1. Data Controller",
-            content: `Elysium (OÜ, Estonia) is the data controller responsible for your personal data. Contact: support@elysium-rewards.com`
+            content: `Traders Rewards (OÜ, Estonia) is the data controller responsible for your personal data. Contact: support@elysium-rewards.com`
           },
           {
             title: "2. Data We Collect",

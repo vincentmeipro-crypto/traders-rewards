@@ -17,17 +17,17 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Elysium",
+    title: "Traders Rewards",
   },
   other: {
     "mobile-web-app-capable": "yes",
   },
   openGraph: {
     type: "website",
-    siteName: "Elysium",
+    siteName: "Traders Rewards",
     title: "Performez votre Trading Démo. Recevez de vraies récompenses.",
     description: "Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu'à 90% de vos gains simulés.",
-    images: [{ url: "/logo-elysium-rewards.png", width: 1080, height: 1080, alt: "Elysium" }],
+    images: [{ url: "/logo-elysium-rewards.png", width: 1080, height: 1080, alt: "Traders Rewards" }],
   },
   twitter: {
     card: "summary",

@@ -51,12 +51,12 @@ export default function LoginPage() {
 
       <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
         <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <a href="/"><Image src="/nouveau-logo.png" alt="Elysium" width={100} height={100} style={{ objectFit: "contain", mixBlendMode: "screen" }} /></a>
+          <a href="/"><Image src="/nouveau-logo.png" alt="Traders Rewards" width={100} height={100} style={{ objectFit: "contain", mixBlendMode: "screen" }} /></a>
         </div>
 
         <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "40px 36px" }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px" }}>Welcome Back</h1>
-          <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Log in to your Elysium account.</p>
+          <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Log in to your Traders Rewards account.</p>
 
           <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {/* Email */}

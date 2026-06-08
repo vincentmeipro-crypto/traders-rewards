@@ -404,7 +404,7 @@ export default function AdminPage() {
     const profit = Math.round((mt5Balance - startBalance) * 100) / 100;
     if (profit <= 0) { alert(`Aucun profit MT5 à retirer.\nBalance actuelle : $${mt5Balance.toLocaleString()}`); return; }
     if (!confirm(`Retrait MT5 de $${profit.toLocaleString()} sur login ${mt5Login} ?\n(Balance : $${mt5Balance.toLocaleString()} → $${startBalance.toLocaleString()})`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: mt5Login, amount: profit, withdraw: true, comment: "Profit Withdrawal — Elysium" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: mt5Login, amount: profit, withdraw: true, comment: "Profit Withdrawal — Traders Rewards" }) });
     const data = await res.json();
     if (res.ok) alert(`✅ Retrait MT5 de $${profit.toLocaleString()} effectué`);
     else alert(`Erreur MT5 : ${data.error}`);
@@ -528,7 +528,7 @@ export default function AdminPage() {
         <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(21,101,192,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
           <img src="/nouveau-logo.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
           <div>
-            <div style={{ color: "#1565C0", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Elysium</div>
+            <div style={{ color: "#1565C0", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Traders Rewards</div>
             <div style={{ color: "#1565C0", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
           </div>
         </div>

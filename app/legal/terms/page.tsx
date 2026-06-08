@@ -20,7 +20,7 @@ export default function TermsPage() {
       title: "3. Commande de Services",
       content: [
         "Vous pouvez passer une Commande après votre inscription, qui crée votre Espace Client sur le Site. Vous êtes responsable de la confidentialité de vos Identifiants de Profil.",
-        "Lors de la finalisation d'une Commande, vous sélectionnez la version du Challenge Elysium et le montant du Capital Simulé Initial. Ces options ne peuvent pas être modifiées une fois la Commande soumise.",
+        "Lors de la finalisation d'une Commande, vous sélectionnez la version du Challenge Traders Rewards et le montant du Capital Simulé Initial. Ces options ne peuvent pas être modifiées une fois la Commande soumise.",
         "Les Frais de Challenge sont non remboursables une fois payés, sauf exercice du droit de rétractation dans les conditions définies à l'Article 11.",
         "Les remises et avantages promotionnels ne peuvent pas être cumulés, sauf mention expresse contraire de notre part.",
         "Le Capital Simulé total ne peut pas excéder 200 000 USD par client, tous comptes confondus.",
@@ -32,11 +32,11 @@ export default function TermsPage() {
         "L'accès à tous les Services se fait via l'Espace Client. Vous ne pouvez posséder qu'un seul Espace Client. L'adresse e-mail liée à votre profil ne peut pas être modifiée après l'inscription.",
         "Vous êtes responsable de toutes les activités effectuées via votre Espace Client ou votre Plateforme de Trading avec vos identifiants. Vous ne devez en aucun cas partager vos identifiants avec un tiers.",
         "Les Services peuvent être temporairement indisponibles en raison de maintenances ou mises à jour. Nous ne garantissons pas la compatibilité des Services avec un équipement ou logiciel spécifique.",
-        "Les opérateurs de logiciels tiers (notamment la Plateforme de Trading MetaTrader 5) sont des entités distinctes d'Elysium. Nous déclinons toute responsabilité en lien avec ces logiciels tiers.",
+        "Les opérateurs de logiciels tiers (notamment la Plateforme de Trading MetaTrader 5) sont des entités distinctes de Traders Rewards. Nous déclinons toute responsabilité en lien avec ces logiciels tiers.",
       ]
     },
     {
-      title: "5. Nos Services — Challenge Elysium",
+      title: "5. Nos Services — Challenge Traders Rewards",
       content: [
         "Le Trading Simulé reproduit les conditions des marchés financiers réels. Les données de marché sont utilisées uniquement pour reproduire ces conditions. Aucun ordre réel n'est exécuté sur les marchés financiers.",
         "Vous reconnaissez que le Trading Simulé est entièrement fictif, que le capital affiché n'a aucune valeur monétaire réelle, et que vous ne percevrez aucune rémunération lors de la phase d'Évaluation.",
@@ -46,9 +46,9 @@ export default function TermsPage() {
       ]
     },
     {
-      title: "6. Programme Trader Elysium",
+      title: "6. Programme Traders Rewards",
       content: [
-        "Si vous réussissez le Processus d'Évaluation, vous pourrez accéder au Programme Trader Elysium, qui vous donne accès à un Compte Trader et vous permet de percevoir une Récompense basée sur les performances générées.",
+        "Si vous réussissez le Processus d'Évaluation, vous pourrez accéder au Programme Traders Rewards, qui vous donne accès à un Compte Trader et vous permet de percevoir une Récompense basée sur les performances générées.",
         "La Récompense applicable est de 80% des profits simulés pour les traders issus du Challenge 2 Étapes, et de 90% des profits simulés pour les traders issus du Challenge 1 Étape.",
         "Le Compte Trader ne comporte aucun objectif de profit, aucun nombre de jours minimum et aucune date d'expiration. Seules les règles de Drawdown restent applicables.",
         "La réussite du Challenge ne garantit pas automatiquement l'accès au Programme Trader. Nous nous réservons le droit d'effectuer des vérifications complémentaires.",
@@ -98,7 +98,7 @@ export default function TermsPage() {
     {
       title: "12. Durée et résiliation de l'Accord",
       content: [
-        "L'Accord est conclu pour une durée déterminée, jusqu'à la réussite ou l'échec du Challenge Elysium.",
+        "L'Accord est conclu pour une durée déterminée, jusqu'à la réussite ou l'échec du Challenge Traders Rewards.",
         "Nous pouvons résilier l'Accord avec effet immédiat en cas de non-paiement, d'inactivité prolongée (aucun trade pendant 30 jours consécutifs), de violation des règles d'usage personnel, de Pratiques de Trading Interdites, ou si nos obligations légales l'exigent.",
         "Chaque partie peut résilier l'Accord sans motif en adressant un préavis écrit de quatorze (14) jours calendaires à l'autre partie. Aucune indemnisation n'est due en cas de résiliation.",
       ]
@@ -161,17 +161,17 @@ export default function TermsPage() {
       content: [
         "« Accord » : le contrat conclu entre vous et nous lors de la confirmation de votre Commande.",
         "« Capital Simulé Initial » : le montant simulé choisi lors de la Commande, sans valeur monétaire réelle.",
-        "« Challenge Elysium » : le service d'évaluation proposé en deux versions (1 Étape et 2 Étapes).",
+        "« Challenge Traders Rewards » : le service d'évaluation proposé en deux versions (1 Étape et 2 Étapes).",
         "« Compte Trader » : le compte simulé accessible après réussite du Challenge, dans le cadre du Programme Trader.",
         "« Drawdown journalier » : perte maximale autorisée sur une journée de trading, calculée par rapport au solde de début de journée.",
         "« Drawdown global » : perte maximale autorisée sur l'ensemble du Challenge, calculée par rapport au Capital Simulé Initial.",
-        "« Frais de Challenge » : les frais associés au Challenge Elysium, non remboursables sauf rétractation valide.",
+        "« Frais de Challenge » : les frais associés au Challenge Traders Rewards, non remboursables sauf rétractation valide.",
         "« Juridictions Restreintes » : pays depuis lesquels nous n'acceptons pas de clients (liste disponible sur le Site).",
         "« Plateforme de Trading » : MetaTrader 5 (MT5), interface fournie par un tiers.",
         "« Pratiques de Trading Interdites » : pratiques, stratégies ou comportements strictement interdits, listés sur le Site.",
-        "« Programme Trader Elysium » : programme donnant accès à un Compte Trader et aux Récompenses.",
+        "« Programme Traders Rewards » : programme donnant accès à un Compte Trader et aux Récompenses.",
         "« Récompense » : montant versé en proportion des profits simulés sur le Compte Trader (80% ou 90% selon le Challenge).",
-        "« Services » : l'ensemble des services fournis par Elysium via le Site elysium-rewards.com.",
+        "« Services » : l'ensemble des services fournis par Traders Rewards via le Site elysium-rewards.com.",
         "« Trading Simulé » : activité simulant des opérations sur marchés financiers, sans exécution réelle d'ordres.",
       ]
     },
@@ -193,16 +193,16 @@ export default function TermsPage() {
             Conditions Générales<br />de Vente et d&apos;Utilisation
           </h1>
           <p style={{ color: "#555", fontSize: 14 }}>
-            Dernière mise à jour : 24 mai 2026 — Elysium OÜ, République d&apos;Estonie
+            Dernière mise à jour : 24 mai 2026 — Traders Rewards OÜ, République d&apos;Estonie
           </p>
         </div>
 
         {/* Intro */}
         <div style={{ background: "#0d0d14", border: "1px solid #1e1e2e", borderRadius: 12, padding: "24px 28px", marginBottom: 48 }}>
           <p style={{ color: "#888", lineHeight: 1.8, fontSize: 14, margin: 0 }}>
-            Nous sommes <strong style={{ color: "#fff" }}>Elysium OÜ</strong>, société de droit estonien (ci-après « nous » ou « Elysium »). Notre mission est de fournir aux traders un environnement de trading simulé conçu pour évaluer leurs compétences et récompenser leurs résultats via le site <strong style={{ color: "#fff" }}>elysium-rewards.com</strong>.
+            Nous sommes <strong style={{ color: "#fff" }}>Traders Rewards OÜ</strong>, société de droit estonien (ci-après « nous » ou « Traders Rewards »). Notre mission est de fournir aux traders un environnement de trading simulé conçu pour évaluer leurs compétences et récompenser leurs résultats via le site <strong style={{ color: "#fff" }}>elysium-rewards.com</strong>.
             <br /><br />
-            Les présentes CGV régissent l&apos;accès au Challenge Elysium et à tous nos services. Les comptes de Challenge sont des comptes de <strong style={{ color: "#fff" }}>trading entièrement simulé</strong>. Aucun capital réel n&apos;est investi, aucun ordre n&apos;est exécuté sur les marchés financiers.
+            Les présentes CGV régissent l&apos;accès au Challenge Traders Rewards et à tous nos services. Les comptes de Challenge sont des comptes de <strong style={{ color: "#fff" }}>trading entièrement simulé</strong>. Aucun capital réel n&apos;est investi, aucun ordre n&apos;est exécuté sur les marchés financiers.
           </p>
         </div>
 
@@ -227,7 +227,7 @@ export default function TermsPage() {
         {/* Footer note */}
         <div style={{ marginTop: 64, paddingTop: 32, borderTop: "1px solid #1a1a28", color: "#444", fontSize: 13, lineHeight: 1.7 }}>
           <p>Pour toute question relative aux présentes CGV : <a href="mailto:support@elysium-rewards.com" style={{ color: "#00C2FF" }}>support@elysium-rewards.com</a></p>
-          <p style={{ marginTop: 8 }}>Elysium OÜ · République d&apos;Estonie · Version 1.0 — 24 mai 2026</p>
+          <p style={{ marginTop: 8 }}>Traders Rewards OÜ · République d&apos;Estonie · Version 1.0 — 24 mai 2026</p>
         </div>
       </div>
     </div>

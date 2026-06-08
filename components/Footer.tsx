@@ -47,14 +47,14 @@ export default function Footer() {
           <div style={{ gridColumn: isMobile ? "1 / -1" : "auto" }}>
             <div style={{ marginBottom: 20 }}>
               <div style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "4px", color: "#1565C0", textTransform: "uppercase" }}>ELYSIUM</div>
+                <div style={{ fontSize: 14, fontWeight: 700, letterSpacing: "4px", color: "#1565C0", textTransform: "uppercase" }}>TRADERS REWARDS</div>
                 <div style={{ fontSize: 8, fontWeight: 600, letterSpacing: "3px", color: "rgba(21,101,192,0.45)", textTransform: "uppercase" }}>— REWARDS —</div>
               </div>
             </div>
             <p style={{ color: "rgba(21,101,192,0.55)", fontSize: 14, lineHeight: 1.7, margin: "0 0 20px 0" }}>{T.footer.tagline}</p>
             <Image
               src="/pwa-install.png"
-              alt="Installez l'application web Elysium"
+              alt="Installez l'application web Traders Rewards"
               width={177} height={266} priority
               style={{ width: "auto", height: isMobile ? 150 : 170, display: "block" }}
             />

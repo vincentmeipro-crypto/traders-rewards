@@ -24,7 +24,7 @@ function SuccessContent() {
       <div style={{ position: "fixed", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(34,197,94,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
 
       <div style={{ textAlign: "center", maxWidth: 480, position: "relative", zIndex: 1 }}>
-        <Image src="/nouveau-logo.png" alt="Elysium" width={80} height={80} style={{ objectFit: "contain", mixBlendMode: "screen", marginBottom: 32 }} />
+        <Image src="/nouveau-logo.png" alt="Traders Rewards" width={80} height={80} style={{ objectFit: "contain", mixBlendMode: "screen", marginBottom: 32 }} />
 
         <div style={{ backgroundColor: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 20, padding: "48px 40px" }}>
           <CheckCircle size={56} color="#22c55e" style={{ marginBottom: 24 }} />
