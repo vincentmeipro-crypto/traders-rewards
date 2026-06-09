@@ -51,12 +51,6 @@ export default function Footer() {
               </div>
             </div>
             <p style={{ color: "rgba(21,101,192,0.55)", fontSize: 14, lineHeight: 1.7, margin: "0 0 20px 0" }}>{T.footer.tagline}</p>
-            <Image
-              src="/traders-rewards-logo.png"
-              alt="Traders Rewards"
-              width={300} height={200} priority
-              style={{ width: "auto", height: isMobile ? 60 : 70, display: "block" }}
-            />
           </div>
 
           {/* Colonnes */}
