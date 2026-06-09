@@ -46,20 +46,14 @@ export async function POST(req: NextRequest) {
 
     const body = JSON.parse(rawBody);
     const status = body.payment_status as string;
-    console.log("[crypto/webhook] received status:", status, "payment_id:", body.payment_id, "sig_present:", !!sig);
 
-    // Signature check: try both raw body and sorted keys (NowPayments doc is ambiguous)
-    const sigRaw = verifySignature(rawBody, sig, process.env.NOWPAYMENTS_IPN_SECRET!);
-    const sigSorted = verifySignatureSorted(rawBody, sig, process.env.NOWPAYMENTS_IPN_SECRET!);
-    console.log("[crypto/webhook] sig raw:", sigRaw, "sig sorted:", sigSorted);
-    if (!sigRaw && !sigSorted) {
-      console.error("[crypto/webhook] signature mismatch");
-      // Temporarily accept anyway to diagnose — re-enable strict check after confirmed working
-      // return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    const sigValid = verifySignature(rawBody, sig, process.env.NOWPAYMENTS_IPN_SECRET!)
+      || verifySignatureSorted(rawBody, sig, process.env.NOWPAYMENTS_IPN_SECRET!);
+    if (!sigValid) {
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     if (status !== "finished" && status !== "confirmed" && status !== "partially_paid") {
-      console.log("[crypto/webhook] ignored status:", status);
       return NextResponse.json({ received: true });
     }
 
