@@ -63,7 +63,13 @@ export async function POST(req: NextRequest) {
     const size = SIZE_MAP[accountSize] || 10000;
     const admin = createAdminClient();
 
+    // Prevent duplicate challenge creation for the same order
+    const { data: existing } = await admin.from("challenges")
+      .select("id").eq("order_id", orderId).maybeSingle();
+    if (existing) return NextResponse.json({ received: true, duplicate: true });
+
     await admin.from("challenges").insert({
+      order_id: orderId,
       user_id: userId,
       account_size: accountSize,
       model,
@@ -75,7 +81,7 @@ export async function POST(req: NextRequest) {
       daily_drawdown_limit: model === "1step" ? 3 : 5,
       total_drawdown_limit: 10,
       trading_days: 0,
-      amount_paid: parseFloat(body.price_amount || "0"),
+      amount_paid: Math.round(parseFloat(body.price_amount || "0") * 1e6) / 1e6,
       payment_method: "crypto",
     });
 
