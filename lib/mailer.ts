@@ -48,8 +48,8 @@ export async function sendWelcomeEmail(
     ? `Bienvenue dans l'élite. Votre compte challenge a été créé. Cliquez sur le bouton ci-dessous pour définir votre mot de passe et accéder à votre dashboard.`
     : `Bienvenue dans l'élite. Votre compte challenge a été créé. Connectez-vous à MT5 avec les identifiants ci-dessous et commencez à trader.`;
   await sendEmail(to, "🎯 Votre Challenge Traders Rewards est prêt !", buildEmail({
-    title: "✅ Votre compte Traders Rewards est actif",
-    titleColor: "#22c55e",
+    title: "✔ Votre compte Traders Rewards est actif",
+    titleColor: "#1565C0",
     body: bodyText,
     details,
     cta: { text: ctaText, href: ctaHref },
