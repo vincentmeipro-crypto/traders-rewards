@@ -23,8 +23,14 @@ const SIZE_MAP: Record<string, number> = {
 };
 
 function verifySignature(body: string, sig: string, ipnSecret: string): boolean {
+  // NowPayments signs the body with keys sorted alphabetically
+  const parsed = JSON.parse(body);
+  const sorted = Object.keys(parsed).sort().reduce((acc: Record<string, unknown>, key) => {
+    acc[key] = parsed[key];
+    return acc;
+  }, {});
   const hmac = crypto.createHmac("sha512", ipnSecret);
-  hmac.update(body);
+  hmac.update(JSON.stringify(sorted));
   return hmac.digest("hex") === sig;
 }
 
