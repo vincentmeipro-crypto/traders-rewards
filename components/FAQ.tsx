@@ -25,7 +25,7 @@ const faqData = {
     { q: "Quels instruments puis-je trader ?", a: "Tous les instruments : Forex, Or, Argent, Pétrole, Indices boursiers, Cryptomonnaies et Matières premières." },
     { q: "Peut-on trader sur les news ?", a: "Oui pendant l'évaluation. Sur les comptes certifiés, le trading est suspendu 5 minutes avant et après les publications majeures." },
     { q: "Puis-je garder des positions overnight ?", a: "Oui. Le swing trading est entièrement autorisé sans restriction." },
-    { q: "Comment et quand suis-je payé ?", a: "Première récompense disponible dès le jour 14. Ensuite tous les 30 jours. Traitement sous 24-48h via crypto ou virement." },
+    { q: "Comment et quand suis-je payé ?", a: "Première récompense disponible dès le jour 7. Ensuite tous les 30 jours. Traitement sous 24-48h via crypto ou virement." },
     { q: "Quel est le partage des profits ?", a: "2-Step : 80% pour le trader. 1-Step : 90% pour le trader. Aucun plafond de gains." },
   ],
 };
