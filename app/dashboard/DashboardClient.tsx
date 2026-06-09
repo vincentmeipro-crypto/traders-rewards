@@ -1650,16 +1650,20 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Phase Banner */}
             {challenge.phase === "phase2" && (
               <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={18} color="#00C2FF" />
-                <span style={{ color: "#1565C0", fontWeight: 700, fontSize: 14 }}>{T.dash.phase1PassedMsg} </span>
-                <span style={{ color: "#7a90b0", fontSize: 13 }}>{T.dash.phase2Msg}</span>
+                <Trophy size={18} color="#00C2FF" style={{ flexShrink: 0 }} />
+                <span style={{ fontSize: 14 }}>
+                  <span style={{ color: "#1565C0", fontWeight: 700 }}>{T.dash.phase1PassedMsg} </span>
+                  <span style={{ color: "#7a90b0" }}>{T.dash.phase2Msg}</span>
+                </span>
               </div>
             )}
             {challenge.phase === "funded" && (
               <div style={{ backgroundColor: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={18} color="#3b82f6" />
-                <span style={{ color: "#3b82f6", fontWeight: 700, fontSize: 14 }}>{T.dash.congratulations} </span>
-                <span style={{ color: "#7a90b0", fontSize: 13 }}>{T.dash.fundedMsg}</span>
+                <Trophy size={18} color="#3b82f6" style={{ flexShrink: 0 }} />
+                <span style={{ fontSize: 14 }}>
+                  <span style={{ color: "#3b82f6", fontWeight: 700 }}>{T.dash.congratulations} </span>
+                  <span style={{ color: "#7a90b0" }}>{T.dash.fundedMsg}</span>
+                </span>
               </div>
             )}
             {challenge.status === "failed" && (
