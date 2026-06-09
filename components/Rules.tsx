@@ -63,7 +63,7 @@ export default function Rules() {
     { label: labels.profitTarget, v2: labels.noTarget,            v1: labels.noTarget            },
     { label: labels.dailyLoss,    v2: labels.keepRules + " (5%)", v1: labels.keepRules + " (3%)" },
     { label: labels.totalLoss,    v2: labels.keepRules + " (10%)",v1: labels.keepRules + " (10%)" },
-    { label: labels.tradingDays,  v2: isFr ? "Aucun minimum" : "No minimum", v1: isFr ? "Aucun minimum" : "No minimum" },
+    { label: labels.tradingDays,  v2: isFr ? "7 jours" : "7 days", v1: isFr ? "7 jours" : "7 days" },
     { label: isFr ? "Trading news" : "News trading",  v2: isFr ? "±5 min interdit" : "±5 min banned", v1: isFr ? "±5 min interdit" : "±5 min banned" },
     { label: labels.profitSplit,  v2: "80%",                      v1: "90%"                      },
     { label: labels.payout,       v2: labels.payoutVal,           v1: labels.payoutVal           },
