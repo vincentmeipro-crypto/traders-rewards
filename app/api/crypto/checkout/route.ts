@@ -5,7 +5,7 @@ const SIZE_VALUES: Record<string, number> = {
   "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
   "$100,000": 100000, "$200,000": 200000,
 };
-const MAX_CUMUL = 400000;
+const MAX_CUMUL = 600000;
 
 const PRODUCTS: Record<string, { name: string; amount: number; accountSize: string; model: string }> = {
   "10k-2step":  { name: "Challenge $10,000 — 2-Step", amount: 12900,  accountSize: "$10,000",  model: "2step" },
