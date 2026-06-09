@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       if (existing) return NextResponse.json({ received: true, duplicate: true });
     }
 
-    await admin.from("challenges").insert({
+    const { data: inserted, error: insertError } = await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
       model,
@@ -86,7 +86,13 @@ export async function POST(req: NextRequest) {
       stripe_session_id: nowpaymentsId || null,
       amount_paid: Math.round(parseFloat(body.price_amount || "0") * 1e6) / 1e6,
       payment_method: "crypto",
-    });
+    }).select("id").single();
+
+    if (insertError) {
+      console.error("Challenge insert error:", insertError);
+      return NextResponse.json({ error: "DB insert failed" }, { status: 500 });
+    }
+    const challengeId = inserted?.id as string;
 
     // Affiliate referral tracking
     if (refCode) {
@@ -149,7 +155,7 @@ export async function POST(req: NextRequest) {
       mt5_password: mt5Password,
       mt5_password_investor: mt5PasswordInvestor,
       mt5_server: mt5Server,
-    }).eq("user_id", userId).eq("account_size", accountSize).order("created_at", { ascending: false }).limit(1);
+    }).eq("id", challengeId);
 
     if (userEmail) {
       try {
