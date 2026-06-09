@@ -1244,7 +1244,7 @@ export default function AdminPage() {
                         return (
                           <tr key={p.id} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)", opacity: (!p.active || isExpired || isExhausted) ? 0.5 : 1 }}>
                             <td style={{ padding: "13px 16px" }}><button onClick={() => { navigator.clipboard.writeText(p.code); }} title="Copier" style={{ fontWeight: 800, fontFamily: "monospace", letterSpacing: 1, background: "none", border: "none", cursor: "pointer", color: "#111", fontSize: 13, padding: 0 }}>{p.code} ⎘</button></td>
-                            <td style={{ padding: "13px 16px", fontWeight: 700, color: p.discount_percent === 100 ? "#22c55e" : "#fff" }}>{p.discount_percent === 100 ? "100% (GRATUIT)" : `${p.discount_percent}%`}</td>
+                            <td style={{ padding: "13px 16px", fontWeight: 700, color: "#22c55e" }}>{p.discount_percent === 100 ? "100% (GRATUIT)" : `${p.discount_percent}%`}</td>
                             <td style={{ padding: "13px 16px", color: "#8a96aa" }}>{p.used_count}</td>
                             <td style={{ padding: "13px 16px", color: "#6b7280" }}>{p.max_uses ?? "∞"}</td>
                             <td style={{ padding: "13px 16px", color: isExpired ? "#ef4444" : "#555", fontSize: 12 }}>{p.expires_at ? new Date(p.expires_at).toLocaleDateString() : "Jamais"}</td>
