@@ -118,9 +118,12 @@ export default function Navbar() {
                 <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
                   <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 198, width: "auto", objectFit: "contain", marginLeft: -20 }} />
                 </a>
-                <div style={{ display: "flex", gap: 4 }}>
-                  <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                  <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                  <div style={{ display: "flex", gap: 4 }}>
+                    <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                    <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
+                  </div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
                 </div>
               </>
             )}
