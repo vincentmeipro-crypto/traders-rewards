@@ -1955,7 +1955,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         const t = trade as Record<string, unknown>;
                         const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
                         const isBuy = String(t.type ?? t.action ?? "").toLowerCase().includes("buy") || t.type === 0 || t.action === 0;
-                        const closeTime = t.close_time ?? t.time_close ?? t.closed_at ?? t.time ?? "";
+                        const closeTime = t.close_time ?? t.time_close ?? t.closed_at ?? "";
                         const closeDate = closeTime ? new Date(typeof closeTime === "number" ? closeTime * 1000 : String(closeTime)).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
                         return (
                           <tr key={i} style={{ borderBottom: i < tradeHistory.length - 1 ? "1px solid rgba(21,101,192,0.07)" : "none", transition: "background 0.1s" }}
