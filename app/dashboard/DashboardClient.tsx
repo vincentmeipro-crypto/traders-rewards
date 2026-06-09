@@ -1945,20 +1945,26 @@ export default function DashboardClient({ user }: { user: User }) {
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(21,101,192,0.1)", backgroundColor: "rgba(21,101,192,0.03)" }}>
-                        {["Ticket", isFr ? "Symbole" : "Symbol", "Type", isFr ? "Volume" : "Volume", isFr ? "Entrée" : "Open", isFr ? "Sortie" : "Close"].map(h => (
+                        {["Ticket", isFr ? "Symbole" : "Symbol", "Type", isFr ? "Volume" : "Volume", isFr ? "Entrée" : "Open", isFr ? "Sortie" : "Close", "Profit"].map(h => (
                           <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontWeight: 700, color: "#7a90b0", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {tradeHistory.map((trade, i) => {
+                      {tradeHistory
+                        .filter((trade) => {
+                          const t = trade as Record<string, unknown>;
+                          const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
+                          return profit !== 0;
+                        })
+                        .map((trade, i, arr) => {
                         const t = trade as Record<string, unknown>;
                         const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
                         const isBuy = String(t.type ?? t.action ?? "").toLowerCase().includes("buy") || t.type === 0 || t.action === 0;
                         const closeTime = t.close_time ?? t.time_close ?? t.closed_at ?? "";
                         const closeDate = closeTime ? new Date(typeof closeTime === "number" ? closeTime * 1000 : String(closeTime)).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
                         return (
-                          <tr key={i} style={{ borderBottom: i < tradeHistory.length - 1 ? "1px solid rgba(21,101,192,0.07)" : "none", transition: "background 0.1s" }}
+                          <tr key={i} style={{ borderBottom: i < arr.length - 1 ? "1px solid rgba(21,101,192,0.07)" : "none", transition: "background 0.1s" }}
                             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(21,101,192,0.03)")}
                             onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}>
                             <td style={{ padding: "10px 14px", color: "#7a90b0", fontFamily: "monospace" }}>{String(t.ticket ?? t.deal ?? t.id ?? i + 1)}</td>
@@ -1971,6 +1977,9 @@ export default function DashboardClient({ user }: { user: User }) {
                             <td style={{ padding: "10px 14px" }}>{typeof t.volume === "number" ? (t.volume / 10000).toFixed(2) : String(t.lots ?? "—")}</td>
                             <td style={{ padding: "10px 14px", fontFamily: "monospace" }}>{String(t.open_price ?? t.price_open ?? t.price ?? "—")}</td>
                             <td style={{ padding: "10px 14px", color: "#7a90b0", fontSize: 12 }}>{closeDate}</td>
+                            <td style={{ padding: "10px 14px", fontWeight: 700, color: profit >= 0 ? "#16a34a" : "#ef4444" }}>
+                              {profit >= 0 ? "+" : ""}{profit.toFixed(2)} $
+                            </td>
                           </tr>
                         );
                       })}
