@@ -73,10 +73,14 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const lastSyncedAt     = challenge.last_synced_at as string | null;
   const lastSyncedDay    = lastSyncedAt ? new Date(lastSyncedAt).toDateString() : null;
   const today            = new Date().toDateString();
-  const alreadyCounted   = lastSyncedDay === today;
+  // Use dedicated last_trading_day field so that a sync with no activity doesn't
+  // block counting a day later when the trader opens a position the same day.
+  const lastTradingDay   = (challenge.last_trading_day as string | null) ?? null;
+  const alreadyCounted   = lastTradingDay === today;
   // Count trading day if balance changed (closed trade) OR there is floating P&L (open trade)
   const hadActivity      = Math.abs(newBalance - prevBalance) > 0.01 || Math.abs(floatingProfit) > 0.01;
-  const newTradingDays   = (hadActivity && !alreadyCounted) ? prevTradingDays + 1 : prevTradingDays;
+  const dayWasCounted    = hadActivity && !alreadyCounted;
+  const newTradingDays   = dayWasCounted ? prevTradingDays + 1 : prevTradingDays;
   const dayProfit        = newBalance - prevBalance;
   const prevBestDay      = (challenge.best_day_profit as number | null) ?? 0;
   const newBestDay       = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
@@ -92,7 +96,14 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 4. Mise Ã  jour balance dans Supabase
   const baseNow = new Date().toISOString();
-  await admin.from("challenges").update({ balance: newBalance, highest_balance: newHighest, trading_days: newTradingDays, last_synced_at: baseNow, daily_low_equity: dailyLowEquity }).eq("id", id);
+  await admin.from("challenges").update({
+    balance: newBalance,
+    highest_balance: newHighest,
+    trading_days: newTradingDays,
+    last_synced_at: baseNow,
+    daily_low_equity: dailyLowEquity,
+    ...(dayWasCounted && { last_trading_day: today }),
+  }).eq("id", id);
   try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch {}
 
   // 5. Breach drawdown journalier

@@ -33,7 +33,7 @@ export default function Rules() {
     days: isFr ? "jours" : "days",
     profitSplit: isFr ? "Partage des Profits" : "Profit Split",
     payout: isFr ? "Fréquence des Récompenses" : "Reward Frequency",
-    payoutVal: isFr ? "À partir du J+14" : "From Day 14+",
+    payoutVal: isFr ? "À partir du J+7" : "From Day 7+",
     feeRefund: isFr ? "Remboursement des Frais" : "Fee Refund",
     feeRefundVal: isFr ? "À la 1ère récompense" : "At 1st reward",
     scaling: isFr ? "Scaling Possible" : "Scaling",

@@ -13,7 +13,7 @@ const faqData = {
     { q: "What instruments can I trade?", a: "All available instruments: Forex pairs, Gold, Silver, Oil, Stock Indices, Cryptocurrencies, and Commodities." },
     { q: "Can I trade during news events?", a: "Yes during evaluation. On certified accounts, trading is suspended 5 minutes before and after major news releases." },
     { q: "Can I hold positions overnight or over the weekend?", a: "Yes. Swing trading is fully permitted with no restrictions." },
-    { q: "How and when do I get paid?", a: "First reward available from day 14. After that, every 30 days. Processed within 24-48h via crypto or bank transfer." },
+    { q: "How and when do I get paid?", a: "First reward available from day 7. After that, every 30 days. Processed within 24-48h via crypto or bank transfer." },
     { q: "What is the profit split?", a: "2-Step certified traders keep 80% of profits. 1-Step certified traders keep 90% of profits." },
   ],
   fr: [

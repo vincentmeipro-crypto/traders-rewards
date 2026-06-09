@@ -1798,9 +1798,9 @@ export default function DashboardClient({ user }: { user: User }) {
                         pct: challenge.phase === "funded" ? "14 jours" : "4 jours",
                         usd: null,
                         usdColor: "#fff",
-                        ok: challenge.phase === "funded" ? challenge.trading_days >= 14 : challenge.trading_days >= 4,
+                        ok: challenge.phase === "funded" ? challenge.trading_days >= 7 : challenge.trading_days >= 4,
                         status: challenge.phase === "funded"
-                          ? (challenge.trading_days >= 14 ? T.dash.passed : `${challenge.trading_days} / 14`)
+                          ? (challenge.trading_days >= 7 ? T.dash.passed : `${challenge.trading_days} / 7`)
                           : (challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4`),
                       },
                       {
@@ -1909,7 +1909,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {challenge.phase === "funded" && (() => {
                     const dailyOk = dailyDrawdownPct < (challenge.daily_drawdown_limit ?? 5);
                     const totalOk = parseFloat(totalDrawdownPct) < (challenge.total_drawdown_limit ?? 10);
-                    const daysOk = (challenge.trading_days ?? 0) >= 14;
+                    const daysOk = (challenge.trading_days ?? 0) >= 7;
                     const canRequest = dailyOk && totalOk && daysOk && challenge.status !== "failed";
                     return (
                       <button
