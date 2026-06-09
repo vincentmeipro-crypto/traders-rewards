@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     // Encode promo code in order_id: "elysium~{userId}~{productId}~{timestamp}~{promoCode}"
     const orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}`;
-    const amountEur = (finalAmount / 100).toFixed(2);
+    const amountEur = parseFloat((finalAmount / 100).toFixed(6));
 
     const siteUrl = "https://www.traders-rewards.eu";
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        price_amount: parseFloat(amountEur),
+        price_amount: amountEur,
         price_currency: "eur",
         order_id: orderId,
         order_description: `Traders Rewards — ${product.name}`,
