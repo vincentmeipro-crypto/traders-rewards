@@ -185,12 +185,7 @@ export default function Hero() {
                   display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4,
                   fontSize: 9.5, fontWeight: 600, letterSpacing: "0.3px",
                   color: "rgba(13,27,62,0.55)",
-                  padding: "5px 8px",
-                  border: "1px solid rgba(13,27,62,0.12)",
-                  borderRadius: 100,
-                  background: "rgba(255,255,255,0.45)",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
+                  padding: "3px 4px",
                   textAlign: "center",
                   lineHeight: 1.3,
                 }}>
