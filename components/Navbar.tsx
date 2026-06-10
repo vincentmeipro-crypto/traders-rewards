@@ -106,13 +106,7 @@ export default function Navbar() {
 
           {/* GAUCHE */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: isMobile ? "0 0 auto" : undefined }}>
-            {isMobile ? (
-              /* Mobile gauche : drapeaux */
-              <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
-                <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-              </div>
-            ) : (
+            {isMobile ? null : (
               /* Desktop gauche : logo + drapeaux */
               <>
                 <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
