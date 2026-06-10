@@ -158,7 +158,7 @@ export default function Hero() {
         justifyContent: "flex-start",
         position: "relative",
         overflow: "visible",
-        paddingTop: 72,
+        paddingTop: "calc(72px + var(--promo-banner-height, 0px))",
       }}>
 
         {/* Mobile : H1 complet — carte centrée */}
