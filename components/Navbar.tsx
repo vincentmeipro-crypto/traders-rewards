@@ -181,10 +181,9 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* DROITE mobile : login + burger */}
+          {/* DROITE mobile : burger seulement */}
           {isMobile && (
-            <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "0 0 auto" }}>
-              <a href="/login" style={{ color: "#0D1B3E", fontSize: 13, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>
+            <div style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
               <button onClick={() => setOpen(!open)} style={{ background: "none", border: "none", color: "#1565C0", cursor: "pointer" }}>
                 {open ? <X size={22} /> : <Menu size={22} />}
               </button>
