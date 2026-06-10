@@ -22,10 +22,6 @@ html { scroll-behavior: smooth; overflow-x: hidden; }
 
 body {
   background: linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%);
-  background-image: url('/hero-section-bg.png'), linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%);
-  background-size: cover, auto;
-  background-repeat: no-repeat, no-repeat;
-  background-position: center, center;
   color: var(--text-primary);
   font-family: var(--font-outfit), 'Outfit', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
