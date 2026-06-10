@@ -176,10 +176,10 @@ export default function Hero() {
             </h1>
             <div className="hero-animate-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, width: "100%", marginBottom: 20 }}>
               {[
-                isFr ? "Programme d'Évaluation des Traders" : "Trader Evaluation Program",
-                isFr ? "Environnement de Trading Simulé" : "Simulated Trading Environment",
-                isFr ? "Évaluation des Compétences de Trading" : "Trading Skills Assessment",
-                isFr ? "Programme de Récompense de Performance" : "Performance Reward Program",
+                isFr ? "Programme d'Évaluation" : "Trader Evaluation",
+                isFr ? "Trading Simulé" : "Simulated Trading",
+                isFr ? "Évaluation des Compétences" : "Skills Assessment",
+                isFr ? "Programme de Récompense" : "Performance Reward",
               ].map((label) => (
                 <span key={label} style={{
                   display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4,
@@ -207,10 +207,10 @@ export default function Hero() {
             </h1>
             <div className="hero-animate-2" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 16px", marginBottom: 28 }}>
               {[
-                isFr ? "Programme d'Évaluation des Traders" : "Trader Evaluation Program",
-                isFr ? "Environnement de Trading Simulé" : "Simulated Trading Environment",
-                isFr ? "Évaluation des Compétences de Trading" : "Trading Skills Assessment",
-                isFr ? "Programme de Récompense de Performance" : "Performance Reward Program",
+                isFr ? "Programme d'Évaluation" : "Trader Evaluation",
+                isFr ? "Trading Simulé" : "Simulated Trading",
+                isFr ? "Évaluation des Compétences" : "Skills Assessment",
+                isFr ? "Programme de Récompense" : "Performance Reward",
               ].map((label) => (
                 <span key={label} style={{
                   display: "inline-flex", alignItems: "center", gap: 5,
