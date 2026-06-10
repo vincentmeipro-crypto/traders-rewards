@@ -105,7 +105,7 @@ export default function Pricing() {
                 background: "rgba(255,255,255,0.55)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                border: "1px solid rgba(255,255,255,0.75)",
+                border: "1.5px solid #0D1B3E",
                 borderRadius: 12,
                 padding: "18px 10px 10px",
                 marginTop: 14,
