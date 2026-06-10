@@ -148,7 +148,7 @@ export default function TopTraders() {
   const doubled = [...TRADERS, ...TRADERS];
 
   return (
-    <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: "transparent", position: "relative" }}>
+    <section style={{ padding: "clamp(20px, 5vw, 100px) 0 0", overflow: "hidden", background: isMobile ? "#fff" : "transparent", position: "relative" }}>
 
       {/* Fond homme trader */}
       {!isMobile && <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/FEMME%20TRADER.png')", backgroundSize: "cover", backgroundPosition: "left center", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />}
