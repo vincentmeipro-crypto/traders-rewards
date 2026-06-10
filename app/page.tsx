@@ -17,6 +17,7 @@ export default function Home() {
         @media (max-width: 768px) {
           .page-main { background: linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%); }
           .stats-bg-image { display: none !important; }
+          .stats-section { background: #fff !important; }
         }
       `}</style>
       <Navbar />
@@ -26,7 +27,7 @@ export default function Home() {
         <Pricing />
       </div>
       <TopTraders />
-      <div style={{ position: "relative" }}>
+      <div className="stats-section" style={{ position: "relative" }}>
         <div className="stats-bg-image" style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
         <div style={{ position: "relative", zIndex: 1 }}>
           <Stats />
