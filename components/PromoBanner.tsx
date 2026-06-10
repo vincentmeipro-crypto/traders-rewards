@@ -8,8 +8,7 @@ const END = new Date("2026-07-15T23:59:59");
 const items = [
   { en: "🔥 LIMITED OFFER — 50% OFF all challenges · Code TRD50", fr: "🔥 OFFRE LIMITÉE — 50% DE RÉDUCTION sur tous les challenges · Code TRD50" },
   { en: "⏳ Valid until July 15, 2026 only", fr: "⏳ Valable jusqu'au 15 juillet 2026 uniquement" },
-  { en: "💰 Up to $200,000 simulated capital · Scale to $400,000 certified", fr: "💰 Jusqu'à 200 000$ de capital simulé · Évoluez jusqu'à 400 000$ en certifié" },
-  { en: "✅ Use code TRD50 at checkout — 50% OFF", fr: "✅ Utilisez le code TRD50 au paiement — 50% DE RÉDUCTION" },
+{ en: "✅ Use code TRD50 at checkout — 50% OFF", fr: "✅ Utilisez le code TRD50 au paiement — 50% DE RÉDUCTION" },
 ];
 
 export default function PromoBanner() {
