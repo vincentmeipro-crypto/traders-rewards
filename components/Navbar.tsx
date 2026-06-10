@@ -109,7 +109,7 @@ export default function Navbar() {
             {isMobile ? (
               /* Mobile gauche : logo */
               <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-                <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 160, width: "auto", objectFit: "contain", marginLeft: -8 }} />
+                <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 160, width: "auto", objectFit: "contain", marginLeft: -20 }} />
               </a>
             ) : (
               /* Desktop gauche : logo + drapeaux */
