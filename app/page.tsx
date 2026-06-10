@@ -12,21 +12,30 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main style={{ minHeight: "100vh" }}>
+    <main className="page-main" style={{ minHeight: "100vh" }}>
+      <style>{`
+        @media (max-width: 768px) {
+          .page-main { background: linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%); }
+          .stats-bg-image { display: none !important; }
+        }
+      `}</style>
       <Navbar />
       <div style={{ position: "relative", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)" }}>
-        <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "100% auto", backgroundRepeat: "repeat-y", backgroundPosition: "top center", pointerEvents: "none", zIndex: 0 }} />
+        <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
+        <Hero />
+        <Pricing />
+      </div>
+      <TopTraders />
+      <div style={{ position: "relative" }}>
+        <div className="stats-bg-image" style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <Hero />
-          <Pricing />
-          <TopTraders />
           <Stats />
           <TraderMarquee />
           <Pricing />
-          <HowItWorks />
-          <Rules />
         </div>
       </div>
+      <HowItWorks />
+      <Rules />
       <FAQ />
       <Footer />
       <DisclaimerBanner />
