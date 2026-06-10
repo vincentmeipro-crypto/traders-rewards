@@ -62,7 +62,7 @@ function SpotlightCard({ lang }: { lang: string }) {
       background: "linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(200,232,255,0.6) 50%, rgba(100,180,255,0.45) 100%)",
       backdropFilter: "blur(24px)",
       WebkitBackdropFilter: "blur(24px)",
-      border: "1px solid rgba(255,255,255,0.7)",
+      border: "1.5px solid #0D1B3E",
       borderRadius: 24,
       padding: "28px 28px 24px",
       textAlign: "center",
@@ -182,7 +182,7 @@ export default function TopTraders() {
                 : "Based on 6% average profit, after the 20% split with Traders Rewards."}
             </p>
           </div>
-          <div style={{ background: "linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(200,232,255,0.6) 50%, rgba(100,180,255,0.45) 100%)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 20, border: "1px solid rgba(255,255,255,0.7)", overflow: "hidden", boxShadow: "0 8px 32px rgba(21,101,192,0.2), 0 1px 0 rgba(255,255,255,0.95) inset" }}>
+          <div style={{ background: "linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(200,232,255,0.6) 50%, rgba(100,180,255,0.45) 100%)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: 20, border: "1.5px solid #0D1B3E", overflow: "hidden", boxShadow: "0 8px 32px rgba(21,101,192,0.2)" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(0,0,0,0.02)", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
               {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
                 <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#1565C0", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
