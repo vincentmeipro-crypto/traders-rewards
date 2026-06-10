@@ -10,6 +10,7 @@ import Rules from "@/components/Rules";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import PromoPopup from "@/components/PromoPopup";
+import PromoBanner from "@/components/PromoBanner";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
           .stats-section { background: #fff !important; }
         }
       `}</style>
+      <PromoBanner />
       <Navbar />
       <div style={{ position: "relative", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)" }}>
         <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />

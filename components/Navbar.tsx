@@ -94,7 +94,7 @@ export default function Navbar() {
       `}</style>
 
       <nav style={{
-        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        position: "fixed", top: "var(--promo-banner-height, 0px)", left: 0, right: 0, zIndex: 100,
         backgroundColor: scrolled ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.6)",
         borderBottom: "1px solid rgba(100,160,255,0.18)",
         backdropFilter: "blur(20px)",
