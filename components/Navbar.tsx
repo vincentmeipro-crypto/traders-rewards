@@ -106,7 +106,12 @@ export default function Navbar() {
 
           {/* GAUCHE */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: isMobile ? "0 0 auto" : undefined }}>
-            {isMobile ? null : (
+            {isMobile ? (
+              /* Mobile gauche : logo */
+              <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 160, width: "auto", objectFit: "contain", marginLeft: -8 }} />
+              </a>
+            ) : (
               /* Desktop gauche : logo + drapeaux */
               <>
                 <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
@@ -122,13 +127,6 @@ export default function Navbar() {
               </>
             )}
           </div>
-
-          {/* CENTRE mobile : logo agrandi +25% */}
-          {isMobile && (
-            <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flex: "1", justifyContent: "center" }}>
-              <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 160, width: "auto", objectFit: "contain" }} />
-            </a>
-          )}
 
           {/* Desktop Nav */}
           {!isMobile && (
