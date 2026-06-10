@@ -535,22 +535,6 @@ function CheckoutContent() {
             <span style={{ color: "#9ca3af", fontSize: 11 }}>Sécurisé par Stripe · SSL · Aucun abonnement</span>
           </div>
 
-          {/* Support + Chat */}
-          <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
-            <div style={{ fontWeight: 700, fontSize: 12, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.5px" }}>Besoin d&apos;aide ?</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <button
-                onClick={() => { if (typeof window !== "undefined" && (window as any).Tawk_API) (window as any).Tawk_API.toggle(); }}
-                style={{ width: "100%", padding: "11px 16px", background: "#eff6ff", border: "1.5px solid #bfdbfe", borderRadius: 10, cursor: "pointer", display: "flex", alignItems: "center", gap: 10, color: "#1e3a8a", fontWeight: 700, fontSize: 13 }}>
-                <MessageCircle size={16} color="#2563eb" />
-                <div style={{ textAlign: "left" }}>
-                  <div style={{ fontWeight: 700, fontSize: 13, color: "#1e3a8a" }}>Chat en direct</div>
-                  <div style={{ fontWeight: 400, fontSize: 11, color: "#3b82f6" }}>Réponse immédiate — disponible maintenant</div>
-                </div>
-                <div style={{ marginLeft: "auto", width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
