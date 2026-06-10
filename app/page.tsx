@@ -9,6 +9,7 @@ import TraderMarquee from "@/components/TraderMarquee";
 import Rules from "@/components/Rules";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
+import PromoPopup from "@/components/PromoPopup";
 
 export default function Home() {
   return (
@@ -40,6 +41,7 @@ export default function Home() {
       <FAQ />
       <Footer />
       <DisclaimerBanner />
+      <PromoPopup />
     </main>
   );
 }
