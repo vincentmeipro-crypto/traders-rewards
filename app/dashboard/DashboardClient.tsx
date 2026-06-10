@@ -1949,7 +1949,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(21,101,192,0.1)", backgroundColor: "rgba(21,101,192,0.03)" }}>
-                        {["Ticket", isFr ? "Symbole" : "Symbol", "Type", isFr ? "Volume" : "Volume", "Date", isFr ? "Sortie" : "Close", "Profit"].map(h => (
+                        {["Ticket", isFr ? "Symbole" : "Symbol", "Type", isFr ? "Volume" : "Volume", "Date", "Profit"].map(h => (
                           <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontWeight: 700, color: "#7a90b0", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{h}</th>
                         ))}
                       </tr>
@@ -1982,7 +1982,6 @@ export default function DashboardClient({ user }: { user: User }) {
                             </td>
                             <td style={{ padding: "10px 14px" }}>{typeof t.volume === "number" ? (t.volume / 10000).toFixed(2) : String(t.lots ?? "—")}</td>
                             <td style={{ padding: "10px 14px", color: "#7a90b0", fontSize: 12 }}>{dealDate}</td>
-                            <td style={{ padding: "10px 14px", color: "#7a90b0", fontSize: 12 }}>{closeDate}</td>
                             <td style={{ padding: "10px 14px", fontWeight: 700, color: profit >= 0 ? "#16a34a" : "#ef4444" }}>
                               {profit >= 0 ? "+" : ""}{profit.toFixed(2)} $
                             </td>
