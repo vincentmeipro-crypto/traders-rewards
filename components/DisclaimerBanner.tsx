@@ -38,7 +38,7 @@ export default function DisclaimerBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const dismissed = localStorage.getItem("disclaimer_dismissed");
+    const dismissed = sessionStorage.getItem("disclaimer_dismissed");
     if (!dismissed) setVisible(true);
   }, []);
 
@@ -72,7 +72,7 @@ export default function DisclaimerBanner() {
       </p>
       <button
         onClick={() => {
-          localStorage.setItem("disclaimer_dismissed", "1");
+          sessionStorage.setItem("disclaimer_dismissed", "1");
           setVisible(false);
         }}
         style={{
