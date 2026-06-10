@@ -15,8 +15,6 @@ export default function Home() {
     <main style={{ minHeight: "100vh" }}>
 <Navbar />
       <div style={{ position: "relative", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 30%, #a8d4ff 60%, #c8e8ff 100%)" }}>
-        <div className="hero-bg-image" style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 1, pointerEvents: "none", zIndex: 0 }} />
-        <style>{`@media (max-width: 768px) { .hero-bg-image { display: none !important; } }`}</style>
         <Hero />
         <Pricing />
       </div>
