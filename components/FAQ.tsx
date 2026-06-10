@@ -5,7 +5,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const faqData = {
   en: [
-    { q: "How do I get started?", a: "Choose your challenge (2-Step or 1-Step), select your account size ($10K to $200K), complete payment, and receive your trading account credentials instantly by email." },
+    { q: "How do I get started?", a: "Choose your challenge (2-Step or 1-Step), select your account size ($10K to $200K, up to $400K cumulative on certified accounts), complete payment, and receive your trading account credentials instantly by email." },
     { q: "Is there a time limit to pass the challenge?", a: "No. There is absolutely no time limit on any of our challenges. Trade at your own pace — take days, weeks, or months." },
     { q: "What are the profit targets?", a: "2-Step: Phase 1 requires +10% profit, Phase 2 requires +5% profit. 1-Step: a single phase with a +10% profit target, then you're certified." },
     { q: "What are the drawdown rules?", a: "2-Step: maximum 5% daily loss and 10% total loss. 1-Step: maximum 3% daily loss and 10% trailing total loss." },
@@ -17,7 +17,7 @@ const faqData = {
     { q: "What is the profit split?", a: "2-Step certified traders keep 80% of profits. 1-Step certified traders keep 90% of profits." },
   ],
   fr: [
-    { q: "Comment démarrer ?", a: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($10K à $200K), effectuez le paiement et recevez vos identifiants instantanément par email." },
+    { q: "Comment démarrer ?", a: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($10K à $200K, jusqu'à $400K cumulé en certifié), effectuez le paiement et recevez vos identifiants instantanément par email." },
     { q: "Y a-t-il une limite de temps ?", a: "Non. Il n'y a absolument aucune limite de temps sur nos challenges. Tradez à votre rythme." },
     { q: "Quels sont les objectifs de profit ?", a: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase à +10%, puis vous êtes certifié." },
     { q: "Quelles sont les règles de drawdown ?", a: "2-Step : 5% perte journalière max et 10% total. 1-Step : 3% journalier et 10% trailing total." },
