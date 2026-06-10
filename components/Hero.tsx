@@ -179,14 +179,39 @@ export default function Hero() {
             </div>
           </div>
         ) : (
-          /* Desktop : H1 + carte absolue en bas */
+          /* Desktop : H1 + badges + carte absolue en bas */
           <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 1200, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "32px 24px 80px" }}>
-<h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 28, whiteSpace: "nowrap" }}>
+            <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 20, whiteSpace: "nowrap" }}>
               {isFr
                 ? <>Transformez votre trading démo<br />en <span style={{ color: "#1565C0" }}>vraies récompenses</span></>
                 : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
             </h1>
-            <div className="hero-animate-2" style={{ position: "absolute", bottom: -44, left: 0, right: 0, zIndex: 20, display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div className="hero-animate-2" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 16px", marginBottom: 28 }}>
+              {[
+                isFr ? "Programme d'Évaluation des Traders" : "Trader Evaluation Program",
+                isFr ? "Environnement de Trading Simulé" : "Simulated Trading Environment",
+                isFr ? "Évaluation des Compétences de Trading" : "Trading Skills Assessment",
+                isFr ? "Programme de Récompense de Performance" : "Performance Reward Program",
+              ].map((label) => (
+                <span key={label} style={{
+                  display: "inline-flex", alignItems: "center", gap: 5,
+                  fontSize: 11, fontWeight: 600, letterSpacing: "0.4px",
+                  color: "rgba(13,27,62,0.55)",
+                  padding: "4px 10px",
+                  border: "1px solid rgba(13,27,62,0.12)",
+                  borderRadius: 100,
+                  background: "rgba(255,255,255,0.45)",
+                  backdropFilter: "blur(8px)",
+                  WebkitBackdropFilter: "blur(8px)",
+                }}>
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M5 0.5L9 2.5V5C9 7.2 7.3 9.2 5 9.8C2.7 9.2 1 7.2 1 5V2.5L5 0.5Z" stroke="rgba(13,27,62,0.4)" strokeWidth="0.8" fill="rgba(13,27,62,0.06)" />
+                  </svg>
+                  {label}
+                </span>
+              ))}
+            </div>
+            <div className="hero-animate-3" style={{ position: "absolute", bottom: -44, left: 0, right: 0, zIndex: 20, display: "flex", justifyContent: "center", alignItems: "center" }}>
               <LiveRewardCard isMobile={false} />
             </div>
           </div>
