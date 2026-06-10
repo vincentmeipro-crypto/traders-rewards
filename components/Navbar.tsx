@@ -115,7 +115,7 @@ export default function Navbar() {
               /* Desktop gauche : logo + drapeaux */
               <>
                 <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-                  <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 198, width: "auto", objectFit: "contain", marginLeft: -20 }} />
+                  <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 198, width: "auto", objectFit: "contain", marginLeft: -20, transform: "translateY(6px)" }} />
                 </a>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
                   <div style={{ display: "flex", gap: 4 }}>
