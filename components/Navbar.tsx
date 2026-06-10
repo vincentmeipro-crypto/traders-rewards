@@ -108,7 +108,7 @@ export default function Navbar() {
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: isMobile ? "0 0 auto" : undefined }}>
             {isMobile ? (
               /* Mobile gauche : logo */
-              <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+              <a href="/" style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", height: 80 }}>
                 <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 160, width: "auto", objectFit: "contain", marginLeft: -20 }} />
               </a>
             ) : (
