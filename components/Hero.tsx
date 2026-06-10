@@ -189,9 +189,6 @@ export default function Hero() {
                   textAlign: "center",
                   lineHeight: 1.3,
                 }}>
-                  <svg width="9" height="9" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}>
-                    <path d="M5 0.5L9 2.5V5C9 7.2 7.3 9.2 5 9.8C2.7 9.2 1 7.2 1 5V2.5L5 0.5Z" stroke="rgba(13,27,62,0.4)" strokeWidth="0.8" fill="rgba(13,27,62,0.06)" />
-                  </svg>
                   {label}
                 </span>
               ))}
