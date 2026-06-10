@@ -107,10 +107,17 @@ export default function Navbar() {
           {/* GAUCHE */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, flex: isMobile ? "0 0 auto" : undefined }}>
             {isMobile ? (
-              /* Mobile gauche : logo seulement */
-              <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-                <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 110, width: "auto", objectFit: "contain", marginLeft: -8 }} />
-              </a>
+              /* Mobile gauche : logo + drapeaux + PropFirm en dessous */
+              <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                  <img src="/traders-rewards-logo.png" alt="Traders Rewards" style={{ height: 110, width: "auto", objectFit: "contain", marginLeft: -8 }} />
+                </a>
+                <div style={{ display: "flex", alignItems: "center", gap: 5, paddingLeft: 2 }}>
+                  <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover" }} />
+                  <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover" }} />
+                  <span style={{ fontSize: 9, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.6px", whiteSpace: "nowrap" }}>PropFirm Française</span>
+                </div>
+              </div>
             ) : (
               /* Desktop gauche : logo + drapeaux */
               <>
