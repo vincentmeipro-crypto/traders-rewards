@@ -41,7 +41,7 @@ export default function TermsPage() {
         "Le Trading Simulé reproduit les conditions des marchés financiers réels. Les données de marché sont utilisées uniquement pour reproduire ces conditions. Aucun ordre réel n'est exécuté sur les marchés financiers.",
         "Vous reconnaissez que le Trading Simulé est entièrement fictif, que le capital affiché n'a aucune valeur monétaire réelle, et que vous ne percevrez aucune rémunération lors de la phase d'Évaluation.",
         "Challenge 2 Étapes — Phase 1 : Objectif +10%, Drawdown journalier max 5%, Drawdown global max 10%, 4 jours de trading minimum. Phase 2 : Objectif +5%, Drawdown journalier max 5%, Drawdown global max 10%, 4 jours de trading minimum.",
-        "Challenge 1 Étape : Objectif +8%, Drawdown journalier max 8% (trailing), Drawdown global max 10% (trailing), meilleure journée ≤ 50% du profit total, 5 jours de trading minimum.",
+        "Challenge 1 Étape : Objectif +8%, Drawdown journalier max 3% (trailing), Drawdown global max 8% (trailing), meilleure journée ≤ 50% du profit total, 5 jours de trading minimum.",
         "Si vous n'activez pas une phase dans les trente (30) jours suivant sa mise à disposition, votre accès sera suspendu. Vous pouvez demander un renouvellement dans les six (6) mois, faute de quoi l'Accord sera résilié sans remboursement.",
       ]
     },

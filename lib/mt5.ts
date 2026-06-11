@@ -8,7 +8,7 @@ const MT5_HEADERS = {
 };
 
 // grp1 = Challenge 2-Step  (DD daily 5%, DD max 10%)
-// grp2 = Challenge 1-Step  (DD daily 8%, DD max 10%)
+// grp2 = Challenge 1-Step  (DD daily 3%, DD max 8%)
 // grp3 = Certified 2-Step  (règles funded)
 // grp4 = Certified 1-Step  (règles funded)
 // grp5 = Comptes désactivés / breach

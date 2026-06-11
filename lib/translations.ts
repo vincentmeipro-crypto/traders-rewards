@@ -46,7 +46,7 @@ export const t = {
       twoStep: '2-STEP', oneStep: '1-STEP ⚡', mostPopular: 'Most Popular',
       account: 'Account', getStarted: 'Get Started', allInclude: 'ALL CHALLENGES INCLUDE',
       features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 4 trading days','No time limit','80% profit split','Scale up to $400,000'],
-      features1: ['Single phase: +10% profit target','8% max daily loss','10% trailing drawdown','50% best day rule','Minimum 4 trading days','No time limit','90% profit split','Scale up to $400,000'],
+      features1: ['Single phase: +10% profit target','3% max daily loss','8% trailing drawdown','50% best day rule','Minimum 4 trading days','No time limit','90% profit split','Scale up to $400,000'],
     },
     rules: {
       label: 'Transparency First', title: 'Clear', titleGold: 'Rules',
@@ -165,7 +165,7 @@ export const t = {
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
       features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Évolution jusqu\'à 400 000$'],
-      features1: ['Phase unique : +10% objectif profit','8% perte journalière max','10% drawdown trailing','Règle des 50% meilleur jour','Minimum 4 jours de trading','Sans limite de temps','90% partage des profits','Évolution jusqu\'à 400 000$'],
+      features1: ['Phase unique : +10% objectif profit','3% perte journalière max','8% drawdown trailing','Règle des 50% meilleur jour','Minimum 4 jours de trading','Sans limite de temps','90% partage des profits','Évolution jusqu\'à 400 000$'],
     },
     rules: {
       label: 'Transparence Totale', title: 'Règles', titleGold: 'Claires',
@@ -284,7 +284,7 @@ export const t = {
       twoStep: 'خطوتان', oneStep: 'خطوة واحدة ⚡', mostPopular: 'الأكثر شعبية',
       account: 'الحساب', getStarted: 'ابدأ الآن', allInclude: 'جميع التحديات تشمل',
       features2: ['المرحلة 1: +10% هدف الربح','المرحلة 2: +5% هدف الربح','5% حد الخسارة اليومية','10% حد الخسارة الإجمالية','4 أيام تداول على الأقل','بلا حد زمني','80% توزيع الأرباح','تطوير حتى 400,000$'],
-      features1: ['مرحلة واحدة: +10% هدف الربح','8% حد الخسارة اليومية','10% حد الخسارة المتحرك','قاعدة 50% أفضل يوم','4 أيام تداول على الأقل','بلا حد زمني','90% توزيع الأرباح','تطوير حتى 400,000$'],
+      features1: ['مرحلة واحدة: +10% هدف الربح','3% حد الخسارة اليومية','10% حد الخسارة المتحرك','قاعدة 50% أفضل يوم','4 أيام تداول على الأقل','بلا حد زمني','90% توزيع الأرباح','تطوير حتى 400,000$'],
     },
     rules: {
       label: 'الشفافية أولاً', title: 'قواعد', titleGold: 'واضحة',
@@ -402,7 +402,7 @@ export const t = {
       twoStep: '2 PASOS', oneStep: '1 PASO ⚡', mostPopular: 'Más Popular',
       account: 'Cuenta', getStarted: 'Empezar', allInclude: 'TODOS LOS DESAFÍOS INCLUYEN',
       features2: ['Fase 1: +10% objetivo de ganancia','Fase 2: +5% objetivo de ganancia','5% pérdida diaria máx.','10% drawdown total máx.','Mínimo 4 días de trading','Sin límite de tiempo','80% división de ganancias','Escala hasta $400,000'],
-      features1: ['Fase única: +10% objetivo de ganancia','8% pérdida diaria máx.','10% drawdown trailing','Regla del 50% mejor día','Mínimo 4 días de trading','Sin límite de tiempo','90% división de ganancias','Escala hasta $400,000'],
+      features1: ['Fase única: +10% objetivo de ganancia','3% pérdida diaria máx.','8% drawdown trailing','Regla del 50% mejor día','Mínimo 4 días de trading','Sin límite de tiempo','90% división de ganancias','Escala hasta $400,000'],
     },
     rules: {
       label: 'Transparencia Total', title: 'Reglas', titleGold: 'Claras',
@@ -520,7 +520,7 @@ export const t = {
       twoStep: '2 ETAPAS', oneStep: '1 ETAPA ⚡', mostPopular: 'Mais Popular',
       account: 'Conta', getStarted: 'Começar', allInclude: 'TODOS OS DESAFIOS INCLUEM',
       features2: ['Fase 1: +10% meta de lucro','Fase 2: +5% meta de lucro','5% perda diária máx.','10% drawdown total máx.','Mínimo 4 dias de operação','Sem limite de tempo','80% divisão de lucros','Escale até $400.000'],
-      features1: ['Fase única: +10% meta de lucro','8% perda diária máx.','10% drawdown trailing','Regra de 50% melhor dia','Mínimo 4 dias de operação','Sem limite de tempo','90% divisão de lucros','Escale até $400.000'],
+      features1: ['Fase única: +10% meta de lucro','3% perda diária máx.','8% drawdown trailing','Regra de 50% melhor dia','Mínimo 4 dias de operação','Sem limite de tempo','90% divisão de lucros','Escale até $400.000'],
     },
     rules: {
       label: 'Transparência Total', title: 'Regras', titleGold: 'Claras',
@@ -638,7 +638,7 @@ export const t = {
       twoStep: '2 STUFEN', oneStep: '1 STUFE ⚡', mostPopular: 'Am Beliebtesten',
       account: 'Konto', getStarted: 'Jetzt Starten', allInclude: 'ALLE CHALLENGES BEINHALTEN',
       features2: ['Phase 1: +10% Gewinnziel','Phase 2: +5% Gewinnziel','5% max. Tagesverlust','10% max. Gesamtverlust','Mindestens 4 Handelstage','Kein Zeitlimit','80% Gewinnbeteiligung','Skalierung bis $400.000'],
-      features1: ['Einzelphase: +10% Gewinnziel','8% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 4 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Skalierung bis $400.000'],
+      features1: ['Einzelphase: +10% Gewinnziel','3% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 4 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Skalierung bis $400.000'],
     },
     rules: {
       label: 'Transparenz Zuerst', title: 'Klare', titleGold: 'Regeln',
