@@ -46,12 +46,12 @@ export default function Rules() {
     { label: labels.profitTarget,  p1: "+10%",       p2: "+5%"        },
     { label: labels.dailyLoss,     p1: "5%",         p2: "5%"         },
     { label: labels.totalLoss,     p1: "10%",        p2: "10%"        },
-    { label: labels.tradingDays,   p1: `4 ${labels.days}`, p2: `4 ${labels.days}` },
+    { label: labels.tradingDays,   p1: `5 ${labels.days}`, p2: `5 ${labels.days}` },
     { label: labels.timeLimit,     p1: labels.none,  p2: labels.none  },
   ];
 
   const challengeRows1Step = [
-    { label: labels.profitTarget,  val: "+10%"                              },
+    { label: labels.profitTarget,  val: "+8%"                               },
     { label: labels.dailyLoss,     val: "3%"                                },
     { label: labels.totalLoss,     val: isFr ? "10% (Trailing EOD)" : "10% (Trailing EOD)" },
     { label: labels.bestDay,       val: isFr ? "≤ 50% du profit total" : "≤ 50% of total profits" },

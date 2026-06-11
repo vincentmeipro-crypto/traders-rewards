@@ -30,17 +30,17 @@ export default function Pricing() {
     { label: isFr ? "Étape 2"              : "Phase 2",         value: "5%",                pct: 0.05  },
     { label: isFr ? "Perte journalière"    : "Max daily loss",  value: "5%",                pct: -0.05 },
     { label: isFr ? "Perte totale"         : "Max total loss",  value: "10%",               pct: -0.10 },
-    { label: isFr ? "Jours min"            : "Min days",        value: isFr ? "4 jours" : "4 days" },
+    { label: isFr ? "Jours min"            : "Min days",        value: isFr ? "5 jours" : "5 days" },
     { label: isFr ? "Limite de temps"      : "Time limit",      value: isFr ? "Illimité" : "Unlimited" },
     { label: isFr ? "Partage profits"      : "Profit split",    value: isFr ? "80%" : "80%" },
   ];
 
   const rows1step: Row[] = [
-    { label: isFr ? "Objectif profit"      : "Profit target",   value: "10%",               pct: 0.10  },
+    { label: isFr ? "Objectif profit"      : "Profit target",   value: "8%",                pct: 0.08  },
     { label: isFr ? "Perte journalière"    : "Max daily loss",  value: "3%",                pct: -0.03 },
     { label: isFr ? "Perte totale"         : "Total loss",      value: "10%",               pct: -0.10 },
     { label: isFr ? "Règle meilleur jour"  : "Best day rule",   value: "≤ 50%" },
-    { label: isFr ? "Jours min"            : "Min days",        value: isFr ? "4 jours" : "4 days" },
+    { label: isFr ? "Jours min"            : "Min days",        value: isFr ? "5 jours" : "5 days" },
     { label: isFr ? "Limite de temps"      : "Time limit",      value: isFr ? "Illimité" : "Unlimited" },
     { label: isFr ? "Partage profits"      : "Profit split",    value: "90%" },
     { label: isFr ? "Max cumulé"           : "Max cumulated",   value: "$200K" },
