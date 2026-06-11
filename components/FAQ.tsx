@@ -17,7 +17,7 @@ const faqData = {
     { q: "What is the profit split?", a: "2-Step Trader Rewards keep 80% of profits. 1-Step Trader Rewards keep 90% of profits." },
   ],
   fr: [
-    { q: "Comment démarrer ?", a: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($10K à $200K, jusqu'à $400K cumulé en certifié), effectuez le paiement et recevez vos identifiants instantanément par email." },
+    { q: "Comment démarrer ?", a: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($10K à $200K, jusqu'à $400K cumulé en Reward), effectuez le paiement et recevez vos identifiants instantanément par email." },
     { q: "Y a-t-il une limite de temps ?", a: "Non. Il n'y a absolument aucune limite de temps sur nos challenges. Tradez à votre rythme." },
     { q: "Quels sont les objectifs de profit ?", a: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase à +8%, puis vous devenez Trader Reward." },
     { q: "Quelles sont les règles de drawdown ?", a: "2-Step : 5% perte journalière max et 10% total. 1-Step : 3% journalier et 8% trailing total (EOD)." },
