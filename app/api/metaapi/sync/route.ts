@@ -62,18 +62,13 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // Equity réelle = balance + profit flottant (a.Equity du Manager API n'est pas toujours temps réel)
   const floatingProfit = typeof info.profit === "number" ? info.profit : 0;
   const newEquity = newBalance + floatingProfit;
-  // 1-Step EOD trailing: highest_balance advances only at day rollover (not intraday)
-  // 2-Step: standard static drawdown from startBalance (highest_balance unused for breach)
-  const safeHighest = prevHighest <= startBalance ? startBalance : prevHighest;
-  const newHighest = is1Step
-    ? (isNewDay ? Math.max(safeHighest, newBalance) : safeHighest)
-    : Math.max(safeHighest, newBalance);
 
   // 2. Jours de trading
   const prevTradingDays  = challenge.trading_days as number;
   const lastSyncedAt     = challenge.last_synced_at as string | null;
   const lastSyncedDay    = lastSyncedAt ? new Date(lastSyncedAt).toDateString() : null;
   const today            = new Date().toDateString();
+  const isNewDay         = lastSyncedDay !== today;
   // Use dedicated last_trading_day field so that a sync with no activity doesn't
   // block counting a day later when the trader opens a position the same day.
   const lastTradingDay   = (challenge.last_trading_day as string | null) ?? null;
@@ -87,7 +82,11 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const newBestDay       = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
 
   // 3. Drawdown journalier — tracking du pire equity de la journee
-  const isNewDay       = lastSyncedDay !== today;
+  // 1-Step EOD trailing: highest_balance advances only at day rollover (not intraday)
+  const safeHighest = prevHighest <= startBalance ? startBalance : prevHighest;
+  const newHighest = is1Step
+    ? (isNewDay ? Math.max(safeHighest, newBalance) : safeHighest)
+    : Math.max(safeHighest, newBalance);
   const storedDailyLow = (challenge.daily_low_equity as number | null) ?? null;
   const dailyLowEquity = (isNewDay || storedDailyLow === null)
     ? newEquity
