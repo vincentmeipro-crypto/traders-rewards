@@ -33,7 +33,7 @@ export async function sendWelcomeEmail(
     { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
     { label: "Modèle", value: modelLabel },
     { label: "Objectif de profit", value: "10%" },
-    { label: "Perte journalière max", value: model === "1step" ? "3%" : "5%" },
+    { label: "Perte journalière max", value: model === "1step" ? "8%" : "5%" },
   ];
   if (mt5) {
     details.push(

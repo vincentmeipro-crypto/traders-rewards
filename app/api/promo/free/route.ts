@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       balance: product.balance,
       start_balance: product.balance,
       profit_target: 10,
-      daily_drawdown_limit: product.model === "1step" ? 3 : 5,
+      daily_drawdown_limit: product.model === "1step" ? 8 : 5,
       total_drawdown_limit: 10,
       trading_days: 0,
       amount_paid: 0,

@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
       balance: size,
       start_balance: size,
       profit_target: 10,
-      daily_drawdown_limit: model === "1step" ? 3 : 5,
+      daily_drawdown_limit: model === "1step" ? 8 : 5,
       total_drawdown_limit: 10,
       trading_days: 0,
       stripe_session_id: session.id,
