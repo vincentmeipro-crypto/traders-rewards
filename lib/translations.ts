@@ -173,7 +173,7 @@ export const t = {
       allowedList: ['Tous les instruments : Forex, Or, Indices, Crypto, Pétrole','Trading sur les news — autorisé en évaluation (interdit ±5 min sur compte Reward)','Positions overnight et le weekend','Scalping, day trading et swing trading','Plusieurs stratégies simultanément'],
       notAllowedList: ['Arbitrage','Trading pour le compte d\'autrui / partage de compte','Comportement de gambling (positions all-in)','Bi-direction entre comptes','Expert Advisors (EA) / robots de trading'],
       ctaTitle: 'Prêt à Rejoindre l\'', ctaGold: 'Élite ?',
-      ctaSub: 'Rejoignez des milliers de Traders Reward.',
+      ctaSub: 'Rejoignez des milliers de Traders Rewards.',
       ctaBtn: 'Commencer le Challenge Aujourd\'hui',
     },
     footer: {
