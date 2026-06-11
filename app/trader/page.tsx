@@ -99,8 +99,8 @@ export default function TraderPage() {
     loading:  isFr ? "Chargement..." : "Loading...",
     noData:   isFr ? "Aucun événement pour cette semaine." : "No events for this week.",
     mt5Desc:  isFr
-      ? "Accédez à votre compte certifié depuis MetaTrader 5, la référence des traders professionnels."
-      : "Access your certified account from MetaTrader 5, the reference for professional traders.",
+      ? "Accédez à votre compte Reward depuis MetaTrader 5, la référence des traders professionnels."
+      : "Access your Reward account from MetaTrader 5, the reference for professional traders.",
     mt5Btn:   isFr ? "Télécharger MT5" : "Download MT5",
   };
 
