@@ -1,4 +1,4 @@
-const CACHE = "elysium-v1";
+const CACHE = "traders-rewards-v1";
 
 const STATIC = [
   "/",

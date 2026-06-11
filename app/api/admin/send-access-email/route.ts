@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   if (!email) return NextResponse.json({ error: "Missing email" }, { status: 400 });
 
   const { error: sendError } = await admin.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://elysium-funded.eu"}/reset-password`,
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://www.traders-rewards.eu"}/reset-password`,
   });
 
   if (sendError) return NextResponse.json({ error: sendError.message }, { status: 500 });

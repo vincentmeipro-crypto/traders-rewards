@@ -49,7 +49,7 @@ function CertificateContent() {
     const html2canvas = (await import("html2canvas")).default;
     const canvas = await html2canvas(certRef.current, { scale: 3, useCORS: true, backgroundColor: null });
     const link = document.createElement("a");
-    link.download = `elysium-${type}-${name.replace(/\s+/g, "-")}.jpg`;
+    link.download = `traders-rewards-${type}-${name.replace(/\s+/g, "-")}.jpg`;
     link.href = canvas.toDataURL("image/jpeg", 0.95);
     link.click();
   };
