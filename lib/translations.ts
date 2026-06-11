@@ -46,7 +46,7 @@ export const t = {
       twoStep: '2-STEP', oneStep: '1-STEP ⚡', mostPopular: 'Most Popular',
       account: 'Account', getStarted: 'Get Started', allInclude: 'ALL CHALLENGES INCLUDE',
       features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 4 trading days','No time limit','80% profit split','Scale up to $400,000'],
-      features1: ['Single phase: +10% profit target','3% max daily loss','8% trailing drawdown','50% best day rule','Minimum 4 trading days','No time limit','90% profit split','Scale up to $400,000'],
+      features1: ['Single phase: +8% profit target','3% max daily loss','8% trailing drawdown','50% best day rule','Minimum 5 trading days','No time limit','90% profit split','Scale up to $400,000'],
     },
     rules: {
       label: 'Transparency First', title: 'Clear', titleGold: 'Rules',
@@ -165,7 +165,7 @@ export const t = {
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
       features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Évolution jusqu\'à 400 000$'],
-      features1: ['Phase unique : +10% objectif profit','3% perte journalière max','8% drawdown trailing','Règle des 50% meilleur jour','Minimum 4 jours de trading','Sans limite de temps','90% partage des profits','Évolution jusqu\'à 400 000$'],
+      features1: ['Phase unique : +8% objectif profit','3% perte journalière max','8% drawdown trailing','Règle des 50% meilleur jour','Minimum 5 jours de trading','Sans limite de temps','90% partage des profits','Évolution jusqu\'à 400 000$'],
     },
     rules: {
       label: 'Transparence Totale', title: 'Règles', titleGold: 'Claires',
