@@ -62,11 +62,12 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // Equity réelle = balance + profit flottant (a.Equity du Manager API n'est pas toujours temps réel)
   const floatingProfit = typeof info.profit === "number" ? info.profit : 0;
   const newEquity = newBalance + floatingProfit;
-  // highest_balance tracks realized balance only (not floating equity) — using equity inflates
-  // the high with unrealized profits, then a tiny dip fires a false 10% total DD breach
-  const newHighest = prevHighest <= startBalance
-    ? Math.max(startBalance, newBalance)
-    : Math.max(prevHighest, newBalance);
+  // 1-Step EOD trailing: highest_balance advances only at day rollover (not intraday)
+  // 2-Step: standard static drawdown from startBalance (highest_balance unused for breach)
+  const safeHighest = prevHighest <= startBalance ? startBalance : prevHighest;
+  const newHighest = is1Step
+    ? (isNewDay ? Math.max(safeHighest, newBalance) : safeHighest)
+    : Math.max(safeHighest, newBalance);
 
   // 2. Jours de trading
   const prevTradingDays  = challenge.trading_days as number;
@@ -159,7 +160,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // 7. Transitions de phase -- meme compte MT5, on retire le profit et on update la ligne
   const profitPct = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
   const targetMet = profitPct >= profitTarget;
-  const daysMet   = newTradingDays >= 4;
+  const daysMet   = newTradingDays >= 5;
   const certDate  = new Date().toLocaleDateString("fr-FR");
 
   // 1-Step: phase1 -> certified
