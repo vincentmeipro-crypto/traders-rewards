@@ -13,7 +13,7 @@ const faqData = {
     { q: "What instruments can I trade?", a: "All available instruments: Forex pairs, Gold, Silver, Oil, Stock Indices, Cryptocurrencies, and Commodities." },
     { q: "Can I trade during news events?", a: "Yes during evaluation. On Reward accounts, trading is suspended 5 minutes before and after major news releases." },
     { q: "Can I hold positions overnight or over the weekend?", a: "Yes. Swing trading is fully permitted with no restrictions." },
-    { q: "How and when do I get paid?", a: "First reward available from day 7. After that, every 30 days. Processed within 24-48h via crypto or bank transfer." },
+    { q: "How and when do I get paid?", a: "First reward available from day 7. After that, every 15 days. Processed within 24-48h via crypto or bank transfer." },
     { q: "What is the profit split?", a: "2-Step Trader Rewards keep 80% of profits. 1-Step Trader Rewards keep 90% of profits." },
   ],
   fr: [
@@ -25,7 +25,7 @@ const faqData = {
     { q: "Quels instruments puis-je trader ?", a: "Tous les instruments : Forex, Or, Argent, Pétrole, Indices boursiers, Cryptomonnaies et Matières premières." },
     { q: "Peut-on trader sur les news ?", a: "Oui pendant l'évaluation. Sur les comptes Reward, le trading est suspendu 5 minutes avant et après les publications majeures." },
     { q: "Puis-je garder des positions overnight ?", a: "Oui. Le swing trading est entièrement autorisé sans restriction." },
-    { q: "Comment et quand suis-je payé ?", a: "Première récompense disponible dès le jour 7. Ensuite tous les 30 jours. Traitement sous 24-48h via crypto ou virement." },
+    { q: "Comment et quand suis-je payé ?", a: "Première récompense disponible dès le jour 7. Ensuite tous les 15 jours. Traitement sous 24-48h via crypto ou virement." },
     { q: "Quel est le partage des profits ?", a: "2-Step : 80% pour le trader. 1-Step : 90% pour le trader. Aucun plafond de gains." },
   ],
 };
