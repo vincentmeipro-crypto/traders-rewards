@@ -160,7 +160,7 @@ export default function TopTraders() {
           {lang === "fr" ? "Dernières Récompenses" : "Latest Rewards"}
         </span>
         <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px", marginBottom: 12 }}>
-          {lang === "fr" ? "Nos traders certifiés touchent" : "Our certified traders receive"}
+          {lang === "fr" ? "Nos Traders Rewards touchent" : "Our Trader Rewards receive"}
           <br /><em style={{ color: "#1565C0", fontStyle: "italic" }}>{lang === "fr" ? "leurs récompenses chaque semaine." : "their rewards every week."}</em>
         </h2>
       </div>
