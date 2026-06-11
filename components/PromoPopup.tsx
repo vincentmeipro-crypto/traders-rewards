@@ -18,7 +18,7 @@ export default function PromoPopup() {
     if (now < START || now > END) return;
     const dismissed = sessionStorage.getItem("promo_trd50_dismissed");
     if (dismissed) return;
-    const t = setTimeout(() => setVisible(true), 2000);
+    const t = setTimeout(() => setVisible(true), 15000);
     return () => clearTimeout(t);
   }, []);
 
