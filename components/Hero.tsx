@@ -164,10 +164,10 @@ export default function Hero() {
         {/* Mobile : H1 complet — carte centrée */}
         {isMobile ? (
           <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 0px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 16 }}>
               <img src="https://flagcdn.com/40x30/fr.png" alt="FR" style={{ width: 20, height: 15, borderRadius: 2, objectFit: "cover" }} />
-              <img src="https://flagcdn.com/40x30/eu.png" alt="EU" style={{ width: 20, height: 15, borderRadius: 2, objectFit: "cover" }} />
               <span style={{ fontSize: 11, fontWeight: 700, color: "#0D1B3E", letterSpacing: "0.8px" }}>PropFirm Française</span>
+              <img src="https://flagcdn.com/40x30/eu.png" alt="EU" style={{ width: 20, height: 15, borderRadius: 2, objectFit: "cover" }} />
             </div>
             <h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 16, marginTop: 0 }}>
               {isFr
