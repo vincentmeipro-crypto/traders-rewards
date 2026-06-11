@@ -55,7 +55,7 @@ export default function Rules() {
     { label: labels.dailyLoss,     val: "3%"                                },
     { label: labels.totalLoss,     val: isFr ? "10% (Trailing EOD)" : "10% (Trailing EOD)" },
     { label: labels.bestDay,       val: isFr ? "≤ 50% du profit total" : "≤ 50% of total profits" },
-    { label: labels.tradingDays,   val: `4 ${labels.days}`                  },
+    { label: labels.tradingDays,   val: `5 ${labels.days}`                  },
     { label: labels.timeLimit,     val: labels.none                         },
   ];
 
