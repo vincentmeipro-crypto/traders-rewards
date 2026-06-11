@@ -41,7 +41,7 @@ export const t = {
       ],
     },
     pricing: {
-      label: 'Choose Your Path', title: 'Start Your', titleGold: 'Challenge',
+      label: 'Choose Your Path', title: 'Become a', titleGold: 'Trader Reward',
       sub: '',
       twoStep: '2-STEP', oneStep: '1-STEP ⚡', mostPopular: 'Most Popular',
       account: 'Account', getStarted: 'Get Started', allInclude: 'ALL CHALLENGES INCLUDE',
@@ -160,7 +160,7 @@ export const t = {
       ],
     },
     pricing: {
-      label: 'Choisissez Votre Voie', title: 'Commencez Votre', titleGold: 'Challenge',
+      label: 'Choisissez Votre Voie', title: 'Devenez un', titleGold: 'Trader Reward',
       sub: '',
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
