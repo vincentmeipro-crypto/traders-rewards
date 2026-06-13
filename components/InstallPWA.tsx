@@ -192,7 +192,7 @@ export default function InstallPWA() {
       <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 600, color: "#0D1B3E", marginBottom: 12 }}>
         {title}
       </h2>
-      <p style={{ color: "#6b7280", fontSize: 15, maxWidth: 500, margin: "0 auto 48px" }}>{sub}</p>
+      <p style={{ color: "#6b7280", fontSize: 15, maxWidth: 700, margin: "0 auto 48px", whiteSpace: "nowrap" }}>{sub}</p>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 32, maxWidth: 420, margin: "0 auto" }}>
         {/* Phone mockup */}
