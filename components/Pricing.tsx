@@ -2,12 +2,15 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
+const PROMO_CODE = "TRD50";
+const PROMO_PCT  = 50;
+
 const accounts = [
-  { size: "$100,000", id: "100k", price2: "€439", price1: "€429", popular: true,  premium: false, reward: "~€4,800" },
-  { size: "$200,000", id: "200k", price2: "€799", price1: "€779", popular: false, premium: true,  reward: "~€9,600" },
-  { size: "$50,000",  id: "50k",  price2: "€299", price1: "€249", popular: false, premium: false, reward: "~€2,400" },
-  { size: "$25,000",  id: "25k",  price2: "€199", price1: "€169", popular: false, premium: false, reward: "~€1,200" },
-  { size: "$10,000",  id: "10k",  price2: "€99",  price1: "€79",  popular: false, premium: false, reward: "~€480"   },
+  { size: "$100,000", id: "100k", price2: "€439", price1: "€429", promo2: "€219", promo1: "€214", popular: true,  premium: false, reward: "~€4,800" },
+  { size: "$200,000", id: "200k", price2: "€799", price1: "€779", promo2: "€399", promo1: "€389", popular: false, premium: true,  reward: "~€9,600" },
+  { size: "$50,000",  id: "50k",  price2: "€299", price1: "€249", promo2: "€149", promo1: "€124", popular: false, premium: false, reward: "~€2,400" },
+  { size: "$25,000",  id: "25k",  price2: "€199", price1: "€169", promo2: "€99",  promo1: "€84",  popular: false, premium: false, reward: "~€1,200" },
+  { size: "$10,000",  id: "10k",  price2: "€99",  price1: "€79",  promo2: "€49",  promo1: "€39",  popular: false, premium: false, reward: "~€480"   },
 ];
 
 export default function Pricing() {
@@ -55,9 +58,41 @@ export default function Pricing() {
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 28 }}>
-          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 10 }}>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 16 }}>
             {T.pricing.title} <span style={{ color: "#1565C0" }}>{T.pricing.titleGold}</span>
           </h2>
+
+          {/* Promo banner */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 10,
+            background: "linear-gradient(135deg, #0D1B3E 0%, #1565C0 50%, #0D1B3E 100%)",
+            borderRadius: 100, padding: "10px 24px",
+            boxShadow: "0 4px 24px rgba(21,101,192,0.35), 0 0 0 1px rgba(201,168,76,0.4)",
+            position: "relative", overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.08) 50%, transparent 100%)", animation: "shimmer 2.5s infinite" }} />
+            <span style={{ fontSize: 18 }}>🎁</span>
+            <span style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.7)", letterSpacing: "2px", textTransform: "uppercase" }}>
+              {isFr ? "Code promo" : "Promo code"}
+            </span>
+            <span style={{
+              background: "linear-gradient(135deg, #C9A84C, #F6D976)",
+              color: "#000", fontWeight: 900, fontSize: 15,
+              padding: "4px 12px", borderRadius: 8, letterSpacing: "2px",
+            }}>{PROMO_CODE}</span>
+            <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.2)" }} />
+            <span style={{ fontSize: 22, fontWeight: 900, color: "#fff" }}>−{PROMO_PCT}%</span>
+            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>
+              {isFr ? "sur tous les comptes" : "on all accounts"}
+            </span>
+          </div>
+
+          <style>{`
+            @keyframes shimmer {
+              0% { transform: translateX(-100%); }
+              100% { transform: translateX(100%); }
+            }
+          `}</style>
         </div>
 
         {/* Toggle */}
@@ -95,7 +130,8 @@ export default function Pricing() {
           WebkitOverflowScrolling: "touch",
         }}>
           {accounts.map(acc => {
-            const price = model === "2step" ? acc.price2 : acc.price1;
+            const price      = model === "2step" ? acc.price2 : acc.price1;
+            const promoPrice = model === "2step" ? acc.promo2 : acc.promo1;
             return (
               <div key={acc.id} style={{
                 position: "relative",
@@ -193,7 +229,19 @@ export default function Pricing() {
 
                 {/* Price */}
                 <div style={{ textAlign: "center", marginBottom: 6 }}>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-1px" }}>{price}</div>
+                  {/* Badge -50% */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
+                    <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through", fontWeight: 600 }}>{price}</span>
+                    <span style={{
+                      background: "linear-gradient(135deg, #dc2626, #ef4444)",
+                      color: "#fff", fontSize: 9, fontWeight: 900,
+                      padding: "2px 6px", borderRadius: 4, letterSpacing: "0.5px",
+                    }}>−{PROMO_PCT}%</span>
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: "#1565C0", letterSpacing: "-1px", lineHeight: 1 }}>{promoPrice}</div>
+                  <div style={{ fontSize: 9, color: "#6b7280", marginTop: 2, fontWeight: 600 }}>
+                    {isFr ? `code : ${PROMO_CODE}` : `code: ${PROMO_CODE}`}
+                  </div>
                 </div>
 
                 {/* Récompense moyenne */}
