@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const STEP_DURATION = 2200;
 
