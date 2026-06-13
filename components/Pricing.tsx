@@ -62,37 +62,6 @@ export default function Pricing() {
             {T.pricing.title} <span style={{ color: "#1565C0" }}>{T.pricing.titleGold}</span>
           </h2>
 
-          {/* Promo banner */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 10,
-            background: "linear-gradient(135deg, #0D1B3E 0%, #1565C0 50%, #0D1B3E 100%)",
-            borderRadius: 100, padding: "10px 24px",
-            boxShadow: "0 4px 24px rgba(21,101,192,0.35), 0 0 0 1px rgba(201,168,76,0.4)",
-            position: "relative", overflow: "hidden",
-          }}>
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.08) 50%, transparent 100%)", animation: "shimmer 2.5s infinite" }} />
-            <span style={{ fontSize: 18 }}>🎁</span>
-            <span style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.7)", letterSpacing: "2px", textTransform: "uppercase" }}>
-              {isFr ? "Code promo" : "Promo code"}
-            </span>
-            <span style={{
-              background: "linear-gradient(135deg, #C9A84C, #F6D976)",
-              color: "#000", fontWeight: 900, fontSize: 15,
-              padding: "4px 12px", borderRadius: 8, letterSpacing: "2px",
-            }}>{PROMO_CODE}</span>
-            <div style={{ width: 1, height: 20, background: "rgba(255,255,255,0.2)" }} />
-            <span style={{ fontSize: 22, fontWeight: 900, color: "#fff" }}>−{PROMO_PCT}%</span>
-            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>
-              {isFr ? "sur tous les comptes" : "on all accounts"}
-            </span>
-          </div>
-
-          <style>{`
-            @keyframes shimmer {
-              0% { transform: translateX(-100%); }
-              100% { transform: translateX(100%); }
-            }
-          `}</style>
         </div>
 
         {/* Toggle */}
