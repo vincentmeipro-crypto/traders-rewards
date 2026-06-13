@@ -8,6 +8,7 @@ import TopTraders from "@/components/TopTraders";
 import TraderMarquee from "@/components/TraderMarquee";
 import Rules from "@/components/Rules";
 import FAQ from "@/components/FAQ";
+import InstallPWA from "@/components/InstallPWA";
 import Footer from "@/components/Footer";
 import PromoPopup from "@/components/PromoPopup";
 import PromoBanner from "@/components/PromoBanner";
@@ -41,6 +42,7 @@ export default function Home() {
       <HowItWorks />
       <Rules />
       <FAQ />
+      <InstallPWA />
       <Footer />
       <DisclaimerBanner />
       <PromoPopup />
