@@ -18,17 +18,23 @@ function ResetPasswordContent() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Supabase embeds the token in the URL hash — exchange it for a session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        setReady(true);
-      } else {
-        // Try to pick up the recovery token from the URL fragment
-        supabase.auth.onAuthStateChange((event) => {
-          if (event === "PASSWORD_RECOVERY") setReady(true);
-        });
-      }
+    const token_hash = params.get("token_hash");
+    const type = params.get("type");
+
+    if (token_hash && type === "recovery") {
+      // PKCE flow : Supabase redirige avec token_hash dans l'URL
+      supabase.auth.verifyOtp({ token_hash, type: "recovery" }).then(({ error }) => {
+        if (error) setError("Lien invalide ou expiré. Demandez un nouveau lien depuis votre email.");
+        else setReady(true);
+      });
+      return;
+    }
+
+    // Fallback : flow implicite (hash dans l'URL)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setReady(true);
     });
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
