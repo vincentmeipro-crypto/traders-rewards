@@ -147,7 +147,7 @@ export default function AdminPage() {
   const [crmExpanded, setCrmExpanded] = useState<string | null>(null);
 
   // Create challenge state
-  const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true });
+  const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true, type: "challenge" as "challenge" | "reward" });
   const [createLoading, setCreateLoading] = useState(false);
   const [createMsg, setCreateMsg] = useState("");
   const [createError, setCreateError] = useState("");
@@ -1362,11 +1362,33 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ══ CRÉER CHALLENGE ══ */}
+        {/* ══ CRÉER CHALLENGE / REWARD ══ */}
         {tab === "create" && (
           <div style={{ maxWidth: 520 }}>
             {card(<>
-              <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 20, color: "#111" }}>Créer un challenge manuellement</div>
+              {/* Toggle Challenge / Reward */}
+              <div style={{ display: "flex", background: "rgba(0,0,0,0.05)", borderRadius: 10, padding: 4, marginBottom: 24, gap: 4 }}>
+                {([["challenge", "🎯 Challenge"], ["reward", "⭐ Compte Reward"]] as const).map(([val, label]) => (
+                  <button key={val} onClick={() => setCreateForm(f => ({ ...f, type: val }))} style={{
+                    flex: 1, padding: "10px", borderRadius: 7, border: "none", cursor: "pointer",
+                    fontSize: 13, fontWeight: 700,
+                    backgroundColor: createForm.type === val ? (val === "reward" ? "#1565C0" : "#0D1B3E") : "transparent",
+                    color: createForm.type === val ? "#fff" : "#6b7280",
+                    transition: "all 0.2s",
+                  }}>{label}</button>
+                ))}
+              </div>
+
+              {createForm.type === "reward" && (
+                <div style={{ background: "rgba(21,101,192,0.08)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 8, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#1565C0" }}>
+                  Le client recevra directement un <strong>compte Trader Reward</strong> (phase funded) avec son email MT5 + certificat.
+                </div>
+              )}
+
+              <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 20, color: "#111" }}>
+                {createForm.type === "reward" ? "Créer un compte Reward" : "Créer un challenge"} manuellement
+              </div>
+
               {[
                 { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
                 { label: "Prénom", el: <input type="text" value={createForm.firstName} onChange={e => setCreateForm(f => ({ ...f, firstName: e.target.value }))} placeholder="Jean" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#111", outline: "none", boxSizing: "border-box" as const }} /> },
@@ -1387,8 +1409,8 @@ export default function AdminPage() {
               {createError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#ef444410", borderRadius: 8 }}>{createError}</div>}
               {createMsg && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#22c55e10", borderRadius: 8 }}>{createMsg}</div>}
               <button onClick={createChallenge} disabled={createLoading || !createForm.userEmail}
-                style={{ width: "100%", backgroundColor: "#C9A84C", color: "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
-                {createLoading ? "Création en cours..." : "Créer le challenge"}
+                style={{ width: "100%", backgroundColor: createForm.type === "reward" ? "#1565C0" : "#C9A84C", color: createForm.type === "reward" ? "#fff" : "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
+                {createLoading ? "Création en cours..." : createForm.type === "reward" ? "⭐ Créer le compte Reward" : "🎯 Créer le challenge"}
               </button>
             </>)}
           </div>

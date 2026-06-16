@@ -94,11 +94,13 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
   }));
 }
 
-export async function sendFundedEmail(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }) {
+export async function sendFundedEmail(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }, setupLink?: string) {
+  const ctaHref = setupLink || `${SITE}/dashboard`;
+  const ctaText = setupLink ? "Créer mon mot de passe & accéder au Dashboard →" : "Demander ma première récompense →";
   await sendEmail(to, "🎉 Vous êtes Trader Reward ! Bienvenue chez Traders Rewards", buildEmail({
     title: "🎉 Félicitations — Vous êtes Trader Reward !",
     titleColor: "#3b82f6",
-    body: `Performance exceptionnelle ! Vous avez réussi toutes les phases de votre challenge ${accountSize}. Vous êtes maintenant un Trader Reward. Voici vos nouveaux identifiants de compte Reward.`,
+    body: `Performance exceptionnelle ! Vous êtes maintenant un Trader Reward sur votre compte ${accountSize}. Voici vos identifiants de compte Reward.`,
     details: [
       { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
       { label: "Statut", value: "Trader Reward ✓", color: "#3b82f6" },
@@ -109,7 +111,7 @@ export async function sendFundedEmail(to: string, accountSize: string, mt5?: { l
         { label: "Serveur", value: mt5.server },
       ] : []),
     ],
-    cta: { text: "Demander ma première récompense →", href: `${SITE}/dashboard` },
+    cta: { text: ctaText, href: ctaHref },
   }));
 }
 

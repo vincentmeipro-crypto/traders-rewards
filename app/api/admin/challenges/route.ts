@@ -125,7 +125,8 @@ export async function POST(req: NextRequest) {
   const check = await checkAdmin(req);
   if (!check.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { userEmail, firstName: formFirstName, lastName: formLastName, accountSize, model, amountPaid, createMT5 } = await req.json();
+  const { userEmail, firstName: formFirstName, lastName: formLastName, accountSize, model, amountPaid, createMT5, type } = await req.json();
+  const isReward = type === "reward";
   const admin = createAdminClient();
 
   const { data: { users } } = await admin.auth.admin.listUsers();
@@ -181,7 +182,7 @@ export async function POST(req: NextRequest) {
       const mt5Account = await createMT5Account({
         firstName, lastName, email: userEmail,
         leverage: 100,
-        group: getMT5Group(model),
+        group: isReward ? getMT5Group(model, "funded") : getMT5Group(model),
         account_size: accountSize,
       });
       mt5Login = mt5Account.login;
@@ -195,11 +196,11 @@ export async function POST(req: NextRequest) {
     user_id: user.id,
     account_size: accountSize,
     model,
-    status: "active",
-    phase: "phase1",
+    status: isReward ? "funded" : "active",
+    phase: isReward ? "funded" : "phase1",
     balance: size,
     start_balance: size,
-    profit_target: 10,
+    profit_target: isReward ? 0 : 10,
     daily_drawdown_limit: model === "1step" ? 3 : 5,
     total_drawdown_limit: model === "1step" ? 8 : 10,
     trading_days: 0,
@@ -212,14 +213,20 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  const finalSetupLink = setupLink || `https://www.traders-rewards.eu/reset-password`;
+  const certDate = new Date().toLocaleDateString("fr-FR");
   try {
-    const finalSetupLink = setupLink || `https://www.traders-rewards.eu/reset-password`;
-    await sendWelcomeEmail(
-      userEmail, accountSize, model,
-      mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined,
-      finalSetupLink
-    );
-  } catch (e) { console.error("sendWelcomeEmail error:", e); }
+    if (isReward) {
+      await sendFundedEmail(userEmail, accountSize, mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined, finalSetupLink);
+      await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate);
+    } else {
+      await sendWelcomeEmail(
+        userEmail, accountSize, model,
+        mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined,
+        finalSetupLink
+      );
+    }
+  } catch (e) { console.error("sendEmail error:", e); }
 
   return NextResponse.json({ ok: true, challenge: data });
 }
