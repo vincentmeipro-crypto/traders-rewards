@@ -638,11 +638,14 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ fontSize: 11, color: "#7a90b0", marginBottom: 3 }}>{T.dash.loggedInAs}</div>
               <div style={{ fontSize: 12, color: "#3a5070", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
             </div>
-            <a href="mailto:contact@traders-rewards.eu?subject=Support%20Traders%20Rewards" style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", textDecoration: "none", borderRadius: 10, color: "#1565C0", marginBottom: 4, backgroundColor: "rgba(21,101,192,0.06)", border: "1px solid rgba(21,101,192,0.15)" }}
+            <a href="mailto:contact@traders-rewards.eu?subject=Support%20Traders%20Rewards" style={{ display: "flex", flexDirection: "column", gap: 3, width: "100%", padding: "10px 16px", textDecoration: "none", borderRadius: 10, color: "#1565C0", marginBottom: 4, backgroundColor: "rgba(21,101,192,0.06)", border: "1px solid rgba(21,101,192,0.15)" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(21,101,192,0.12)"; }}
               onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(21,101,192,0.06)"; }}>
-              <MessageCircle size={16} />
-              <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Contacter le support" : "Contact support"}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <MessageCircle size={16} />
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Contacter le support" : "Contact support"}</span>
+              </div>
+              <span style={{ fontSize: 11, color: "#7a90b0", paddingLeft: 26 }}>contact@traders-rewards.eu</span>
             </a>
             <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "#7a90b0" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
