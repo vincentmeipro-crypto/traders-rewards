@@ -80,9 +80,22 @@ export async function PATCH(req: NextRequest) {
           }
         }
 
+        // Conversion EUR si virement bancaire
+        let netAmountEur: number | undefined;
+        if (previous?.payment_method === "bank") {
+          try {
+            const rateRes = await fetch("https://api.frankfurter.app/latest?from=USD&to=EUR");
+            const rateData = await rateRes.json();
+            const rate: number = rateData.rates?.EUR ?? 0.92;
+            netAmountEur = parseFloat((netAmount * rate).toFixed(2));
+          } catch {
+            netAmountEur = parseFloat((netAmount * 0.92).toFixed(2));
+          }
+        }
+
         // Email certificat récompense (grossAmount = profit brut soumis par le trader)
         const certDate = new Date().toLocaleDateString("fr-FR");
-        await sendRewardCertificateEmail(userEmail, firstName, lastName, challenge.account_size, grossAmount, challenge.model, certDate)
+        await sendRewardCertificateEmail(userEmail, firstName, lastName, challenge.account_size, grossAmount, challenge.model, certDate, netAmountEur)
           .catch((e) => console.error("Reward cert email error:", e));
       }
     } catch (e) {
