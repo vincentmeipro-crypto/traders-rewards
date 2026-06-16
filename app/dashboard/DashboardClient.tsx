@@ -7,7 +7,7 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, AlertTriangle, Users } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, AlertTriangle, Users, MessageCircle } from "lucide-react";
 
 type Challenge = {
   id: string;
@@ -638,6 +638,12 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ fontSize: 11, color: "#7a90b0", marginBottom: 3 }}>{T.dash.loggedInAs}</div>
               <div style={{ fontSize: 12, color: "#3a5070", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
             </div>
+            <a href="mailto:contact@traders-rewards.eu?subject=Support%20Traders%20Rewards" style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", textDecoration: "none", borderRadius: 10, color: "#1565C0", marginBottom: 4, backgroundColor: "rgba(21,101,192,0.06)", border: "1px solid rgba(21,101,192,0.15)" }}
+              onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(21,101,192,0.12)"; }}
+              onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(21,101,192,0.06)"; }}>
+              <MessageCircle size={16} />
+              <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Contacter le support" : "Contact support"}</span>
+            </a>
             <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "#7a90b0" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
               onMouseOut={e => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "#555"; }}>
@@ -709,7 +715,11 @@ export default function DashboardClient({ user }: { user: User }) {
                   {activeTab === item.tab && <ChevronRight size={16} color="#00C2FF" style={{ marginLeft: "auto" }} />}
                 </button>
               ))}
-              <div style={{ padding: "16px 24px", borderTop: "1px solid #1a1a1a", marginTop: 8 }}>
+              <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(21,101,192,0.1)", marginTop: 8 }}>
+                <a href="mailto:contact@traders-rewards.eu?subject=Support%20Traders%20Rewards" style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", textDecoration: "none", color: "#1565C0", marginBottom: 12 }}>
+                  <MessageCircle size={20} />
+                  <span style={{ fontSize: 15, fontWeight: 600 }}>{isFr ? "Contacter le support" : "Contact support"}</span>
+                </a>
                 <div style={{ fontSize: 12, color: "#333", marginBottom: 12 }}>{user.email}</div>
                 <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 15, fontWeight: 600, padding: 0 }}>
                   <LogOut size={18} /> {T.dash.logOut}
