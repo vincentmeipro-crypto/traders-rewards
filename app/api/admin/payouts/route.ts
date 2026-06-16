@@ -48,6 +48,13 @@ export async function PATCH(req: NextRequest) {
         .eq("id", data.challenge_id).single();
 
       if (challenge) {
+        // Calcul automatique du profit sharing (90% 1-step, 80% 2-step)
+        const is1Step = challenge.model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+        const splitPct = is1Step ? 0.90 : 0.80;
+        const grossAmount = data.amount;
+        const netAmount = parseFloat((grossAmount * splitPct).toFixed(2));
+        await admin.from("payouts").update({ amount: netAmount }).eq("id", id);
+
         // 1. Reset DB en premier (avant withdrawal) pour éviter que le sync restore l'ancien high
         const resetNow = new Date().toISOString();
         await admin.from("challenges").update({
@@ -73,9 +80,9 @@ export async function PATCH(req: NextRequest) {
           }
         }
 
-        // Email certificat récompense
+        // Email certificat récompense (grossAmount = profit brut soumis par le trader)
         const certDate = new Date().toLocaleDateString("fr-FR");
-        await sendRewardCertificateEmail(userEmail, firstName, lastName, challenge.account_size, data.amount, challenge.model, certDate)
+        await sendRewardCertificateEmail(userEmail, firstName, lastName, challenge.account_size, grossAmount, challenge.model, certDate)
           .catch((e) => console.error("Reward cert email error:", e));
       }
     } catch (e) {

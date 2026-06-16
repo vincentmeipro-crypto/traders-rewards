@@ -227,7 +227,8 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
 
 export async function sendRewardCertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, grossAmount: number, model: string, date: string) {
   const name = `${firstName} ${lastName}`.trim();
-  const splitPct = model === "1step" ? 90 : 80;
+  const is1Step = model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+  const splitPct = is1Step ? 90 : 80;
   const netAmount = Math.round(grossAmount * splitPct / 100);
   const certUrl = `${SITE}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}`;
   await sendEmail(to, `💰 ${firstName} — Votre récompense de $${netAmount.toLocaleString()} est en cours !`, `
