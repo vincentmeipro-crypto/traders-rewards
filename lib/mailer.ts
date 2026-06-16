@@ -9,7 +9,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Traders Rewards <support@traders-rewards.eu>",
+      from: "Traders Rewards <contact@traders-rewards.eu>",
       to: [to],
       subject,
       html,
@@ -291,7 +291,7 @@ function buildEmail({ title, titleColor, body, details, cta }: {
         <div style="margin-top:32px;padding:0 8px;">
           <p style="color:#555;font-size:14px;margin:0 0 8px 0;">💬 Besoin d'aide ?</p>
           <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 20px 0;">
-            Contactez-nous à <a href="mailto:support@traders-rewards.eu" style="color:#C9A84C;text-decoration:none;">support@traders-rewards.eu</a>
+            Contactez-nous à <a href="mailto:contact@traders-rewards.eu" style="color:#C9A84C;text-decoration:none;">contact@traders-rewards.eu</a>
           </p>
           <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
         </div>

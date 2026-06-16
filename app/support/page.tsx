@@ -114,8 +114,8 @@ export default function SupportPage() {
 
             <p style={{ textAlign: "center", color: "#444", fontSize: 13, margin: 0 }}>
               Vous pouvez aussi nous écrire directement à{" "}
-              <a href="mailto:support@traders-rewards.eu" style={{ color: "#C9A84C", textDecoration: "none" }}>
-                support@traders-rewards.eu
+              <a href="mailto:contact@traders-rewards.eu" style={{ color: "#C9A84C", textDecoration: "none" }}>
+                contact@traders-rewards.eu
               </a>
             </p>
           </form>

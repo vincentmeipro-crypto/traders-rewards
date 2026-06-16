@@ -340,9 +340,9 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
         <div style={{ color: "#7a90b0", fontSize: 13, marginBottom: 16 }}>
           {isFr ? "Minimum 100€ de commissions validées." : "Minimum €100 in validated commissions."}
         </div>
-        <a href="mailto:support@traders-rewards.eu?subject=Retrait%20commission%20affiliation"
+        <a href="mailto:contact@traders-rewards.eu?subject=Retrait%20commission%20affiliation"
           style={{ display: "inline-block", backgroundColor: "#1565C0", color: "#fff", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none" }}>
-          support@traders-rewards.eu
+          contact@traders-rewards.eu
         </a>
       </div>
     </div>
@@ -944,7 +944,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                 <div>
                                   <h2>Émetteur</h2>
                                   <div style="font-weight:700">TRADERS REWARDS</div>
-                                  <div style="color:#555;font-size:13px">traders-rewards.eu<br>support@traders-rewards.eu</div>
+                                  <div style="color:#555;font-size:13px">traders-rewards.eu<br>contact@traders-rewards.eu</div>
                                 </div>
                                 <div>
                                   <h2>Client</h2>

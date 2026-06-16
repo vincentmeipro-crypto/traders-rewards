@@ -106,7 +106,7 @@ export default function TermsPage() {
     {
       title: "13. Réclamations et problèmes techniques",
       content: [
-        "Pour tout problème technique, contactez-nous à support@traders-rewards.eu en indiquant votre identifiant de compte, une description du problème et la date/heure d'occurrence.",
+        "Pour tout problème technique, contactez-nous à contact@traders-rewards.eu en indiquant votre identifiant de compte, une description du problème et la date/heure d'occurrence.",
         "Nous traiterons votre réclamation dans les trente (30) jours calendaires suivant sa réception.",
         "Nous nous réservons le droit de refuser la fourniture de tout Service futur si vous contestez les Frais de Challenge auprès de votre banque (chargeback) de manière injustifiée.",
       ]
@@ -144,7 +144,7 @@ export default function TermsPage() {
       title: "18. Communications",
       content: [
         "Nous communiquerons avec vous par voie électronique, via l'Espace Client ou par e-mail à l'adresse enregistrée lors de votre inscription. Cette adresse ne peut pas être modifiée après l'inscription.",
-        "Pour toute question relative à l'Accord ou aux Services : support@traders-rewards.eu",
+        "Pour toute question relative à l'Accord ou aux Services : contact@traders-rewards.eu",
       ]
     },
     {
@@ -226,7 +226,7 @@ export default function TermsPage() {
 
         {/* Footer note */}
         <div style={{ marginTop: 64, paddingTop: 32, borderTop: "1px solid #1a1a28", color: "#444", fontSize: 13, lineHeight: 1.7 }}>
-          <p>Pour toute question relative aux présentes CGV : <a href="mailto:support@traders-rewards.eu" style={{ color: "#00C2FF" }}>support@traders-rewards.eu</a></p>
+          <p>Pour toute question relative aux présentes CGV : <a href="mailto:contact@traders-rewards.eu" style={{ color: "#00C2FF" }}>contact@traders-rewards.eu</a></p>
           <p style={{ marginTop: 8 }}>Traders Rewards OÜ · République d&apos;Estonie · Version 1.0 — 24 mai 2026</p>
         </div>
       </div>

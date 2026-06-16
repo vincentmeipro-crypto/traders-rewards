@@ -10,7 +10,7 @@ export default function PrivacyPage() {
         {[
           {
             title: "1. Data Controller",
-            content: `Traders Rewards (OÜ, Estonia) is the data controller responsible for your personal data. Contact: support@traders-rewards.eu`
+            content: `Traders Rewards (OÜ, Estonia) is the data controller responsible for your personal data. Contact: contact@traders-rewards.eu`
           },
           {
             title: "2. Data We Collect",
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
           },
           {
             title: "7. Your Rights (GDPR)",
-            content: `Under GDPR, you have the right to: Access your personal data, Correct inaccurate data, Request deletion of your data ("right to be forgotten"), Restrict processing of your data, Data portability, Object to processing. To exercise these rights, contact us at support@traders-rewards.eu.`
+            content: `Under GDPR, you have the right to: Access your personal data, Correct inaccurate data, Request deletion of your data ("right to be forgotten"), Restrict processing of your data, Data portability, Object to processing. To exercise these rights, contact us at contact@traders-rewards.eu.`
           },
           {
             title: "8. Cookies",
