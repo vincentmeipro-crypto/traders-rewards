@@ -157,22 +157,18 @@ export async function POST(req: NextRequest) {
   const firstName = formFirstName || user.user_metadata?.first_name || "Trader";
   const lastName = formLastName || user.user_metadata?.last_name || "";
 
-  // Générer lien setup mot de passe si user nouvellement créé
+  // Toujours générer un lien de création/reset de mot de passe (nouveau ET existant)
   let setupLink: string | undefined;
-  const isNewUser = !users.find(u => u.email === userEmail);
-  if (isNewUser) {
-    try {
-      const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
-        type: "recovery",
-        email: userEmail,
-        options: { redirectTo: "https://www.traders-rewards.eu/reset-password" },
-      });
-      if (linkErr) console.error("generateLink error:", linkErr);
-      setupLink = (linkData as { properties?: { action_link?: string } })?.properties?.action_link || undefined;
-      console.log("setupLink generated:", !!setupLink);
-    } catch (e) {
-      console.error("generateLink exception:", e);
-    }
+  try {
+    const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+      type: "recovery",
+      email: userEmail,
+      options: { redirectTo: "https://www.traders-rewards.eu/reset-password" },
+    });
+    if (linkErr) console.error("generateLink error:", linkErr);
+    setupLink = (linkData as { properties?: { action_link?: string } })?.properties?.action_link || undefined;
+  } catch (e) {
+    console.error("generateLink exception:", e);
   }
 
   let mt5Login: number | null = null;
@@ -217,10 +213,7 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   try {
-    // Si nouveau user sans lien généré, fallback vers reset-password
-    const finalSetupLink = isNewUser
-      ? (setupLink || `https://www.traders-rewards.eu/reset-password`)
-      : undefined;
+    const finalSetupLink = setupLink || `https://www.traders-rewards.eu/reset-password`;
     await sendWelcomeEmail(
       userEmail, accountSize, model,
       mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined,
