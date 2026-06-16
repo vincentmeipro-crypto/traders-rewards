@@ -160,7 +160,7 @@ export const t = {
       ],
     },
     pricing: {
-      label: 'Choisissez Votre Voie', title: 'Devenez un', titleGold: 'Trader Reward',
+      label: 'Choisissez Votre Voie', title: 'Commencez votre', titleGold: 'Challenge',
       sub: '',
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
