@@ -94,9 +94,11 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
   }));
 }
 
-export async function sendFundedEmail(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }, setupLink?: string) {
+export async function sendFundedEmail(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }, setupLink?: string, model?: string) {
   const ctaHref = setupLink || `${SITE}/dashboard`;
   const ctaText = setupLink ? "Créer mon mot de passe & accéder au Dashboard →" : "Demander ma première récompense →";
+  const is1Step = model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+  const profitSplit = is1Step ? "90% pour vous" : "80% pour vous";
   await sendEmail(to, "🎉 Vous êtes Trader Reward ! Bienvenue chez Traders Rewards", buildEmail({
     title: "🎉 Félicitations — Vous êtes Trader Reward !",
     titleColor: "#3b82f6",
@@ -104,7 +106,7 @@ export async function sendFundedEmail(to: string, accountSize: string, mt5?: { l
     details: [
       { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
       { label: "Statut", value: "Trader Reward ✓", color: "#3b82f6" },
-      { label: "Partage des profits", value: "90% pour vous" },
+      { label: "Partage des profits", value: profitSplit },
       ...(mt5 ? [
         { label: "Nouveau Login MT5", value: String(mt5.login), color: "#3b82f6" },
         { label: "Mot de passe", value: mt5.password, color: "#3b82f6" },

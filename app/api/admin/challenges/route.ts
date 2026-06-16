@@ -50,7 +50,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
       mt5_password_investor: newAccount.password_investor, mt5_server: newAccount.server,
       amount_paid: (challenge.amount_paid as number) || 0,
     });
-    try { await sendFundedEmail(userEmail, accountSize); } catch {}
+    try { await sendFundedEmail(userEmail, accountSize, undefined, undefined, model); } catch {}
     try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "funded";
   }
@@ -86,7 +86,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
       mt5_password_investor: newAccount.password_investor, mt5_server: newAccount.server,
       amount_paid: (challenge.amount_paid as number) || 0,
     });
-    try { await sendFundedEmail(userEmail, accountSize); } catch {}
+    try { await sendFundedEmail(userEmail, accountSize, undefined, undefined, model); } catch {}
     try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
     return "funded";
   }
@@ -217,7 +217,7 @@ export async function POST(req: NextRequest) {
   const certDate = new Date().toLocaleDateString("fr-FR");
   try {
     if (isReward) {
-      await sendFundedEmail(userEmail, accountSize, mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined, finalSetupLink);
+      await sendFundedEmail(userEmail, accountSize, mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined, finalSetupLink, model);
       await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate);
     } else {
       await sendWelcomeEmail(
