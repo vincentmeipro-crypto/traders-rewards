@@ -181,6 +181,15 @@ export default function Navbar() {
             </div>
           )}
 
+          {/* CENTRE mobile : PropFirm Française */}
+          {isMobile && (
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
+              <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover" }} />
+              <span style={{ fontSize: 10, fontWeight: 800, color: "#0D1B3E", letterSpacing: "0.6px", whiteSpace: "nowrap" }}>PropFirm Française</span>
+              <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover" }} />
+            </div>
+          )}
+
           {/* DROITE mobile : burger seulement */}
           {isMobile && (
             <div style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
