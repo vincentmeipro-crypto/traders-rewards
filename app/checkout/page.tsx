@@ -105,6 +105,7 @@ function CheckoutContent() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [refCode, setRefCode] = useState("");
 
+  const isInstant = productId === "50k-instant";
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
   const isFree = discount === 100;
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
@@ -144,7 +145,7 @@ function CheckoutContent() {
         }
         // Vérifier si le client a déjà acheté un challenge → loyalty -20%
         const { count } = await supabase.from("challenges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id);
-        if (count && count >= 1) {
+        if (count && count >= 1 && productId !== "50k-instant") {
           setLoyaltyActive(true);
           setDiscount(20);
         }
@@ -451,8 +452,15 @@ function CheckoutContent() {
             </div>
           )}
 
-          {/* Promo */}
-          <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
+          {/* Promo — désactivé pour Instant Reward */}
+          {isInstant && (
+            <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
+              <div style={{ background: "#fefce8", border: "1px solid #fde68a", borderRadius: 8, padding: "10px 14px", color: "#92400e", fontSize: 12 }}>
+                Les codes promo ne sont pas applicables sur le compte Instant Reward.
+              </div>
+            </div>
+          )}
+          {!isInstant && <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.5px" }}>Code promo</div>
             {promoStatus !== "valid" ? (
               <div style={{ display: "flex", gap: 8 }}>
@@ -474,7 +482,7 @@ function CheckoutContent() {
               </div>
             )}
             {promoStatus === "error" && <div style={{ marginTop: 6, color: "#ef4444", fontSize: 12 }}>{promoError}</div>}
-          </div>
+          </div>}
 
           {/* CGV Box */}
           <div style={{ borderTop: "1px solid #f3f4f6", paddingTop: 12 }}>
