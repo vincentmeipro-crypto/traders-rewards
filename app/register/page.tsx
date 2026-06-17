@@ -105,7 +105,7 @@ export default function RegisterPage() {
           <a href="/"><Image src="/nouveau-logo.png" alt="Traders Rewards" width={100} height={100} style={{ objectFit: "contain" }} /></a>
         </div>
 
-        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px", color: "#0D1B3E" }}>Create Account</h1>
           <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>Join the elite. Start your journey today.</p>
 

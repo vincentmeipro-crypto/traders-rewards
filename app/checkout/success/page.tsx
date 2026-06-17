@@ -24,7 +24,7 @@ function SuccessContent() {
       <div style={{ textAlign: "center", maxWidth: 480, position: "relative", zIndex: 1 }}>
         <Image src="/nouveau-logo.png" alt="Traders Rewards" width={80} height={80} style={{ objectFit: "contain", marginBottom: 32 }} />
 
-        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
           <CheckCircle size={56} color="#22c55e" style={{ marginBottom: 24 }} />
 
           <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 12, letterSpacing: "-0.5px", color: "#0D1B3E" }}>

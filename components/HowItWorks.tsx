@@ -30,11 +30,11 @@ export default function HowItWorks() {
           {T.how.steps.map((step, i) => (
             <div key={i} style={{
               background: "#fff",
-              border: "1px solid rgba(0,0,0,0.07)",
+              border: "1.5px solid #111",
               borderRadius: 20,
               padding: "44px 36px",
               position: "relative",
-              boxShadow: "0 2px 20px rgba(0,0,0,0.04)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
               transition: "all 0.25s ease",
             }}
               onMouseOver={e => { e.currentTarget.style.boxShadow = "0 12px 40px rgba(27,79,216,0.1)"; e.currentTarget.style.transform = "translateY(-4px)"; }}

@@ -107,7 +107,7 @@ export default function Rules() {
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 24, marginBottom: 40 }}>
 
             {/* 2-Step table */}
-            <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+            <div style={{ background: "#fff", border: "1.5px solid #111", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
                 <span style={{ backgroundColor: "rgba(27,79,216,0.08)", color: "#1B4FD8", fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 100, border: "1px solid rgba(27,79,216,0.2)" }}>{labels.twoStep}</span>
               </div>
@@ -126,7 +126,7 @@ export default function Rules() {
             </div>
 
             {/* 1-Step table */}
-            <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+            <div style={{ background: "#fff", border: "1.5px solid #111", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
                 <span style={{ backgroundColor: "rgba(27,79,216,0.08)", color: "#1B4FD8", fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 100, border: "1px solid rgba(27,79,216,0.2)" }}>{labels.oneStep} ⚡</span>
               </div>
@@ -148,7 +148,7 @@ export default function Rules() {
         {/* Funded Tab */}
         {tab === "funded" && (
           <div style={{ marginBottom: 40 }}>
-            <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+            <div style={{ background: "#fff", border: "1.5px solid #111", borderRadius: 16, padding: 28, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
               <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 0 }}>
                 <div style={{ padding: "10px 0", color: "#8a96aa", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{isFr ? "Critère" : "Criteria"}</div>
                 <div style={{ padding: "10px 0", color: "#1B4FD8", fontSize: 11, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(0,0,0,0.07)" }}>{labels.twoStep}</div>
@@ -166,7 +166,7 @@ export default function Rules() {
         )}
 
         {/* Risk Philosophy Block */}
-        <div style={{ marginBottom: 32, backgroundColor: "rgba(27,79,216,0.04)", border: "1px solid rgba(27,79,216,0.12)", borderRadius: 16, padding: "28px 32px" }}>
+        <div style={{ marginBottom: 32, backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 16, padding: "28px 32px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: 16 }}>
             <span style={{ fontSize: 22, flexShrink: 0 }}>⚖️</span>
             <div>
@@ -190,7 +190,7 @@ export default function Rules() {
         {/* Allowed / Not Allowed */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
           {groups.map((group, i) => (
-            <div key={i} style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.07)", borderRadius: 16, padding: 32, boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+            <div key={i} style={{ background: "#fff", border: "1.5px solid #111", borderRadius: 16, padding: 32, boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
               <h3 style={{ fontSize: 11, fontWeight: 700, marginBottom: 24, color: group.color, textTransform: "uppercase", letterSpacing: "2px" }}>{group.title}</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {group.items.map((rule, j) => (
@@ -205,7 +205,7 @@ export default function Rules() {
         </div>
 
         {/* CTA */}
-        <div style={{ marginTop: 60, borderRadius: 20, padding: "56px 40px", textAlign: "center", background: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 8px 32px rgba(21,101,192,0.1)" }}>
+        <div style={{ marginTop: 60, borderRadius: 20, padding: "56px 40px", textAlign: "center", background: "#ffffff", border: "1.5px solid #111", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}>
           <h3 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.6rem)", fontWeight: 600, color: "#0D1B3E", marginBottom: 16, letterSpacing: "1px" }}>
             {T.rules.ctaTitle} <em style={{ color: "#0D1B3E", fontStyle: "italic" }}>{T.rules.ctaGold}</em>
           </h3>

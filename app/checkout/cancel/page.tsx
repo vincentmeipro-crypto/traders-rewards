@@ -7,7 +7,7 @@ export default function CancelPage() {
       <div style={{ textAlign: "center", maxWidth: 440 }}>
         <Image src="/nouveau-logo.png" alt="Traders Rewards" width={80} height={80} style={{ objectFit: "contain", marginBottom: 32 }} />
 
-        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
           <XCircle size={56} color="#ef4444" style={{ marginBottom: 24 }} />
           <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12, color: "#0D1B3E" }}>Payment Cancelled</h1>
           <p style={{ color: "#7a90b0", fontSize: 15, lineHeight: 1.6, marginBottom: 32 }}>

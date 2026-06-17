@@ -64,7 +64,7 @@ function ResetPasswordContent() {
           <a href="/"><Image src="/nouveau-logo.png" alt="Traders Rewards" width={100} height={100} style={{ objectFit: "contain" }} /></a>
         </div>
 
-        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
           {success ? (
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>

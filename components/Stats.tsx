@@ -26,12 +26,10 @@ export default function Stats() {
           display: "grid",
           gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
           gap: isMobile ? 1 : 0,
-          background: "rgba(255,255,255,0.55)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          background: "#ffffff",
           borderRadius: 20,
-          border: "1px solid rgba(255,255,255,0.75)",
-          boxShadow: "0 8px 32px rgba(21,101,192,0.12), 0 1px 0 rgba(255,255,255,0.9) inset",
+          border: "1.5px solid #111",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
           overflow: "hidden",
         }}>
           {stats.map((stat, i) => (
@@ -39,8 +37,8 @@ export default function Stats() {
               textAlign: "center",
               padding: isMobile ? "24px 16px" : "40px 24px",
               background: "#fff",
-              borderRight: !isMobile && i < stats.length - 1 ? "1px solid rgba(0,0,0,0.07)" : "none",
-              borderBottom: isMobile && i < 2 ? "1px solid rgba(21,101,192,0.08)" : "none",
+              borderRight: !isMobile && i < stats.length - 1 ? "1px solid rgba(0,0,0,0.1)" : "none",
+              borderBottom: isMobile && i < 2 ? "1px solid rgba(0,0,0,0.1)" : "none",
             }}>
               <div style={{
                 fontSize: isMobile ? "1.6rem" : "clamp(1.8rem, 3.5vw, 2.6rem)",

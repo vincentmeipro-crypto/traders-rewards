@@ -12,8 +12,8 @@
   --text-primary: #2c3e50;
   --text-secondary: #3a5070;
   --text-muted: #7a90b0;
-  --border: rgba(27, 111, 255, 0.13);
-  --border-accent: rgba(27, 111, 255, 0.28);
+  --border: #111111;
+  --border-accent: #111111;
   --gold: #C9A84C;
 }
 
@@ -93,19 +93,17 @@ body {
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: #ffffff;
+  border: 1.5px solid #111111;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(27, 111, 255, 0.1), 0 1px 0 rgba(255,255,255,0.8) inset;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
   transition: all 0.3s ease;
 }
 
 .card:hover {
-  background: rgba(255, 255, 255, 0.7);
-  border-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 16px 48px rgba(27, 111, 255, 0.18), 0 1px 0 rgba(255,255,255,0.9) inset;
+  background: #ffffff;
+  border-color: #000000;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
   transform: translateY(-3px);
 }
 

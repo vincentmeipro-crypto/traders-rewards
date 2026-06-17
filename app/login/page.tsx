@@ -60,7 +60,7 @@ export default function LoginPage() {
           <a href="/"><Image src="/nouveau-logo.png" alt="Traders Rewards" width={110} height={110} style={{ objectFit: "contain" }} /></a>
         </div>
 
-        <div style={{ backgroundColor: "#fff", border: "1.5px solid #0D1B3E", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.12)" }}>
+        <div style={{ backgroundColor: "#fff", border: "1.5px solid #111", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.12)" }}>
           <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6, color: "#0D1B3E", letterSpacing: "-0.5px" }}>Welcome Back</h1>
           <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 28 }}>Log in to your Traders Rewards account.</p>
 

@@ -57,7 +57,7 @@ export default function SupportPage() {
         </div>
 
         {success ? (
-          <div style={{ textAlign: "center", backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
+          <div style={{ textAlign: "center", backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
             <div style={{ fontSize: 48, marginBottom: 20 }}>✅</div>
             <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: "#0D1B3E" }}>Message envoyé !</h2>
             <p style={{ color: "#7a90b0", fontSize: 15, lineHeight: 1.7, marginBottom: 28 }}>
@@ -69,7 +69,7 @@ export default function SupportPage() {
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "40px 36px", display: "flex", flexDirection: "column", gap: 20, boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
+          <form onSubmit={handleSubmit} style={{ backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 20, padding: "40px 36px", display: "flex", flexDirection: "column", gap: 20, boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <div>
