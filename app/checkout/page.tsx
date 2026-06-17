@@ -248,7 +248,7 @@ function CheckoutContent() {
           </div>
         <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Traders Rewards</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>
-        <span style={{ color: "#6b7280", fontSize: isMobile ? 11 : 13 }}>Commencer le challenge</span>
+        <span style={{ color: "#6b7280", fontSize: isMobile ? 11 : 13 }}>{isInstant ? "Compte Instant Reward" : "Commencer le challenge"}</span>
         <a href="/#pricing" style={{ marginLeft: "auto", color: "#6b7280", fontSize: 12, textDecoration: "none", whiteSpace: "nowrap" }}>← Changer</a>
       </div>
 
@@ -264,7 +264,7 @@ function CheckoutContent() {
               <div style={{ width: 36, height: 36, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏆</div>
               <div>
                 <div style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Standard MT5 · 1:100 · USD</div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>Challenge {challenge.label} — {challenge.model}</div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>{isInstant ? "Reward" : "Challenge"} {challenge.label} — {challenge.model}</div>
               </div>
               <div style={{ marginLeft: "auto", textAlign: "right" }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: isFree ? "#16a34a" : "#111" }}>
@@ -285,7 +285,7 @@ function CheckoutContent() {
           <div style={card}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div>
-                <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>Challenge {challenge.label}</div>
+                <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>{isInstant ? "Reward" : "Challenge"} {challenge.label}</div>
                 <div style={{ color: "#6b7280", fontSize: 12, marginTop: 2 }}>{challenge.model} — Traders Rewards · MetaTrader 5</div>
               </div>
               <span style={{ background: "#eff6ff", color: "#2563eb", fontSize: 11, fontWeight: 800, padding: "4px 10px", borderRadius: 6, border: "1px solid #bfdbfe" }}>
@@ -399,7 +399,7 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #f3f4f6" }}>
               <div style={{ width: 40, height: 40, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🏆</div>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 14 }}>Traders Rewards Challenge</div>
+                <div style={{ fontWeight: 700, fontSize: 14 }}>Traders Rewards {isInstant ? "Reward" : "Challenge"}</div>
                 <div style={{ color: "#6b7280", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
                 <div style={{ color: "#8a96aa", fontSize: 11, marginTop: 2 }}>Standard MT5 · 1:100 · USD</div>
               </div>
