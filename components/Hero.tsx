@@ -89,7 +89,7 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
         </div>
         <div style={{ color: "#8a96aa", fontSize: isMobile ? 11 : 16 }}>{t.size} · Récompense reçue</div>
       </div>
-      <div style={{ color: "#1565C0", fontWeight: 900, fontSize: isMobile ? 11 : 30, flexShrink: 0 }}>{fmt(amount)}</div>
+      <div style={{ color: "#111", fontWeight: 900, fontSize: isMobile ? 11 : 30, flexShrink: 0 }}>{fmt(amount)}</div>
     </div>
   );
 }

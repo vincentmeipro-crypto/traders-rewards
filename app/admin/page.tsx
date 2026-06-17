@@ -488,7 +488,7 @@ export default function AdminPage() {
   const maxCA = monthlyRevenue.length > 0 ? Math.max(...monthlyRevenue.map(m => m.ca)) : 1;
 
   if (needsLogin) return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+    <div style={{ minHeight: "100vh", backgroundColor: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ width: "100%", maxWidth: 400 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <img src="/nouveau-logo.png" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
@@ -521,7 +521,7 @@ export default function AdminPage() {
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#fff", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#6b7280", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#1565C0", background: "linear-gradient(135deg, #e8f4ff 0%, #c5e0ff 40%, #a8d4ff 100%)" }}>
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#111", background: "#ffffff" }}>
 
       {/* ── SIDEBAR ── */}
       <div style={{ width: 220, backgroundColor: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRight: "1px solid rgba(255,255,255,0.6)", boxShadow: "4px 0 24px rgba(21,101,192,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
@@ -547,11 +547,11 @@ export default function AdminPage() {
       </div>
 
       {/* ── MAIN ── */}
-      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#1565C0" }}>
+      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#111" }}>
         <div style={{ backgroundColor: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 2px 16px rgba(21,101,192,0.06)", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontSize: 11, color: "#8a96aa", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Admin</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#1565C0" }}>{TABS.find(t => t.id === tab)?.label}</div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#111" }}>{TABS.find(t => t.id === tab)?.label}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
@@ -576,7 +576,7 @@ export default function AdminPage() {
               <span style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
               <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>✕</button>
             </div>
-            <pre style={{ color: "#00C2FF", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
+            <pre style={{ color: "#111", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
           </div>
         )}
         <div style={{ padding: "28px 32px" }}>
