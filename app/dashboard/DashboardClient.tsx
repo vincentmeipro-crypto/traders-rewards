@@ -195,13 +195,13 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
 const PHASE_LABELS: Record<string, string> = {
   phase1: "Phase 1",
   phase2: "Phase 2",
-  funded: "Certified",
+  funded: "Reward",
 };
 
 const STATUS_LABELS: Record<string, string> = {
   active: "Active",
   passed: "Passed",
-  funded: "Certified",
+  funded: "Reward",
   failed: "Failed",
 };
 
@@ -1009,7 +1009,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 { title: isFr ? "Drawdown total" : "Total Drawdown", desc: isFr ? "Votre compte ne peut pas descendre de plus de 10% sous le solde de départ." : "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#1565C0" /> },
                 { title: isFr ? "Sans limite de temps" : "No Time Limit", desc: isFr ? "Prenez le temps qu'il vous faut. Il n'y a pas de date d'expiration sur votre challenge." : "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#1565C0" /> },
                 { title: isFr ? "Tous styles de trading" : "Any Trading Style", desc: isFr ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées." : "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#1565C0" /> },
-                { title: isFr ? "Partage des profits" : "Reward Split", desc: isFr ? "Les traders certifiés gardent 80% des profits. Récompenses traitées sous 24-48h." : "Certified traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#1565C0" /> },
+                { title: isFr ? "Partage des profits" : "Reward Split", desc: isFr ? "Les traders Reward gardent 80% des profits. Récompenses traitées sous 24-48h." : "Reward traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#1565C0" /> },
               ].map((rule, i) => (
                 <div key={i} className="card" style={{ padding: 24 }}>
                   <div style={{ backgroundColor: "rgba(21,101,192,0.08)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
@@ -1651,7 +1651,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   </span>
                   <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 6 }}>
                     <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: STATUS_COLORS[challenge.status] || "#888", display: "inline-block" }} />
-                    {challenge.status === "funded" ? "Certified" : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
+                    {challenge.status === "funded" ? "Reward" : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
                   </span>
                 </div>
               </div>

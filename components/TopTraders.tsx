@@ -111,7 +111,7 @@ function SpotlightCard({ lang }: { lang: string }) {
 
       {/* Certified badge */}
       <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(27,79,216,0.06)", border: "1px solid rgba(27,79,216,0.15)", borderRadius: 8, padding: "6px 14px" }}>
-        <span style={{ fontSize: 11, color: "#1B4FD8", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader certifié" : "Certified Trader"}</span>
+        <span style={{ fontSize: 11, color: "#1B4FD8", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader Reward" : "Reward Trader"}</span>
       </div>
 
       <style>{`

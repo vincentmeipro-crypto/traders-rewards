@@ -67,7 +67,7 @@ type KycSubmission = {
 type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta";
 
 const STATUS_LABELS: Record<string, string> = {
-  funded: "Certified",
+  funded: "Reward",
   active: "Active",
   failed: "Failed",
   passed: "Passed",
@@ -559,15 +559,6 @@ export default function AdminPage() {
             <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(0,0,0,0.06)" : "#1565C0", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
               {syncing ? "Syncing..." : "Sync MT5"}
             </button>
-            <button onClick={async () => {
-              const login = prompt("Login MT5 du compte à diagnostiquer :");
-              if (!login) return;
-              const res = await fetch(`/api/admin/mt5-test-withdraw?login=${login}`, { headers: { Authorization: `Bearer ${token}` } });
-              const data = await res.json();
-              setSyncDetail(JSON.stringify(data, null, 2));
-            }} style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid #C9A84C33", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-              🔍 Diag Retrait
-            </button>
           </div>
         </div>
         {syncDetail && (
@@ -622,7 +613,7 @@ export default function AdminPage() {
                 { label: "Phase 1 (2-Step)",   value: kpis.phase1        },
                 { label: "1-Step actifs",      value: kpis.oneStep       },
                 { label: "Phase 2 (2-Step)",   value: kpis.phase2        },
-                { label: "Certified",          value: kpis.certified     },
+                { label: "Reward",             value: kpis.certified     },
                 { label: "Failed",             value: kpis.failed        },
                 { label: "Total Challenges",   value: kpis.total         },
               ].map((s, i) => (
@@ -661,7 +652,7 @@ export default function AdminPage() {
                 { label: "1-Step actifs",    value: kpis.oneStep,   color: "#a78bfa", fs: "active"  },
                 { label: "Phase 2 (2-Step)", value: kpis.phase2,    color: "#fff",    fs: "active"  },
                 { label: "Passés",           value: kpis.passed,    color: "#f59e0b", fs: "passed"  },
-                { label: "Certified",        value: kpis.certified, color: "#3b82f6", fs: "funded"  },
+                { label: "Reward",           value: kpis.certified, color: "#3b82f6", fs: "funded"  },
                 { label: "Failed",           value: kpis.failed,    color: "#ef4444", fs: "failed"  },
               ].map((s, i) => (
                 <div key={i} onClick={() => setFilterStatus(s.fs)}
@@ -681,7 +672,7 @@ export default function AdminPage() {
                 <option value="all">Tous les statuts</option>
                 <option value="active">Active</option>
                 <option value="passed">Passed</option>
-                <option value="funded">Certified</option>
+                <option value="funded">Reward</option>
                 <option value="failed">Failed</option>
               </select>
               <span style={{ color: "#6b7280", fontSize: 13, alignSelf: "center" }}>{filteredChallenges.length} résultat(s)</span>
@@ -729,12 +720,12 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px", color: "#8a96aa" }}>{c.model}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">Phase 1</option><option value="phase2">Phase 2</option><option value="funded">Certified</option></select>
-                              : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "certified" : c.phase}</span>}
+                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="phase1">Phase 1</option><option value="phase2">Phase 2</option><option value="funded">Reward</option></select>
+                              : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "reward" : c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">Active</option><option value="passed">Passed</option><option value="funded">Certified</option><option value="failed">Failed</option></select>
+                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12 }}><option value="active">Active</option><option value="passed">Passed</option><option value="funded">Reward</option><option value="failed">Failed</option></select>
                               : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
@@ -773,7 +764,6 @@ export default function AdminPage() {
                               : <div style={{ display: "flex", gap: 6 }}>
                                   <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#111", border: "1px solid #ccc", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
                                   <button onClick={() => fixMT5Balance(c)} style={{ backgroundColor: "rgba(255,193,7,0.15)", color: "#b45309", border: "1px solid #b4530933", borderRadius: 6, padding: "5px 8px", fontSize: 11, cursor: "pointer" }} title="Corriger balance MT5">⚡</button>
-                                  {c.phase === "funded" && <button onClick={() => withdrawMT5Profit(c)} style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid #C9A84C33", borderRadius: 6, padding: "5px 8px", fontSize: 11, cursor: "pointer" }} title="Retirer profit MT5">💰</button>}
                                   {c.status === "failed" && c.mt5_login && <button onClick={async () => {
                                     if (!confirm(`Bloquer MT5 ${c.mt5_login} (grp5) ?`)) return;
                                     const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, group: "Starwave\\demo\\FX1\\grp5" }) });
@@ -816,7 +806,7 @@ export default function AdminPage() {
                       <div><span style={{ color: "#6b7280", fontSize: 11 }}>LTV </span><span style={{ color: "#22c55e", fontWeight: 800 }}>€{trader.totalSpent}</span></div>
                       <div><span style={{ color: "#6b7280", fontSize: 11 }}>Challenges </span><span style={{ fontWeight: 700 }}>{trader.challenges.length}</span></div>
                       <div><span style={{ color: "#6b7280", fontSize: 11 }}>Actifs </span><span style={{ color: "#22c55e", fontWeight: 700 }}>{activeC}</span></div>
-                      {certC > 0   && <div><span style={{ color: "#6b7280", fontSize: 11 }}>Certified </span><span style={{ color: "#3b82f6", fontWeight: 700 }}>{certC}</span></div>}
+                      {certC > 0   && <div><span style={{ color: "#6b7280", fontSize: 11 }}>Reward </span><span style={{ color: "#3b82f6", fontWeight: 700 }}>{certC}</span></div>}
                       {failedC > 0 && <div><span style={{ color: "#6b7280", fontSize: 11 }}>Failed </span><span style={{ color: "#ef4444", fontWeight: 700 }}>{failedC}</span></div>}
                       <div style={{ color: "#6b7280", fontSize: 11 }}>depuis {new Date(trader.firstDate).toLocaleDateString()}</div>
                     </div>
@@ -872,7 +862,7 @@ export default function AdminPage() {
                               {[
                                 { label: "Total",    value: trader.challenges.length,                                color: "#fff"    },
                                 { label: "Actifs",   value: activeC,                                                 color: "#22c55e" },
-                                { label: "Certified",value: certC,                                                   color: "#3b82f6" },
+                                { label: "Reward",   value: certC,                                                   color: "#3b82f6" },
                                 { label: "Failed",   value: failedC,                                                 color: "#ef4444" },
                               ].map(s => s.value > 0 && (
                                 <span key={s.label} style={{ fontSize: 11 }}>
@@ -1045,7 +1035,7 @@ export default function AdminPage() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                    {["Compte", "Challenges vendus", "CA total", "% du CA", "Actifs", "Certified", "Failed"].map(h => (
+                    {["Compte", "Challenges vendus", "CA total", "% du CA", "Actifs", "Reward", "Failed"].map(h => (
                       <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12 }}>{h}</th>
                     ))}
                   </tr>
@@ -1605,7 +1595,7 @@ export default function AdminPage() {
                   { label:"Total achetés",  value:String(total),              color:"#1565C0" },
                   { label:"CA total",       value:`€${Math.round(totalCA)}`,  color:"#1565C0" },
                   { label:"Actifs",         value:String(totalActive),         color:"#22c55e" },
-                  { label:"Certified",      value:String(totalCert),           color:"#3b82f6" },
+                  { label:"Reward",          value:String(totalCert),           color:"#3b82f6" },
                   { label:"Failed",         value:String(totalFailed),         color:"#ef4444" },
                   { label:"Passed",         value:String(totalPassed),         color:"#f59e0b" },
                 ].map((s,i) => (
@@ -1637,17 +1627,17 @@ export default function AdminPage() {
                   <StatRow label="Phase 1 — Passed (→Phase 2)" n={t2p1Passed}  d={t2tot} color="#f59e0b" />
                   <StatRow label="Phase 1 — Failed"            n={t2p1Failed}  d={t2tot} color="#ef4444" />
                   <StatRow label="Phase 2 — Actifs"            n={t2p2Active}  d={t2tot} />
-                  <StatRow label="Phase 2 — Passed (→Certif.)" n={t2p2Passed} d={t2tot} color="#f59e0b" />
+                  <StatRow label="Phase 2 — Passed (→Reward)" n={t2p2Passed} d={t2tot} color="#f59e0b" />
                   <StatRow label="Phase 2 — Failed"            n={t2p2Failed}  d={t2tot} color="#ef4444" />
-                  <StatRow label="Certified — Actifs"          n={t2cert}      d={t2tot} color="#3b82f6" />
-                  <StatRow label="Certified — Failed"          n={t2certFail}  d={t2tot} color="#ef4444" />
+                  <StatRow label="Reward — Actifs"          n={t2cert}      d={t2tot} color="#3b82f6" />
+                  <StatRow label="Reward — Failed"          n={t2certFail}  d={t2tot} color="#ef4444" />
                 </Section>
 
                 <Section title={`🟣 1-Step — ${t1tot} comptes au total`}>
                   <StatRow label="Phase 1 — Actifs"   n={t1p1Active}  d={t1tot} />
                   <StatRow label="Phase 1 — Failed"   n={t1p1Failed}  d={t1tot} color="#ef4444" />
-                  <StatRow label="Certified — Actifs" n={t1cert}      d={t1tot} color="#3b82f6" />
-                  <StatRow label="Certified — Failed" n={t1certFail}  d={t1tot} color="#ef4444" />
+                  <StatRow label="Reward — Actifs" n={t1cert}      d={t1tot} color="#3b82f6" />
+                  <StatRow label="Reward — Failed" n={t1certFail}  d={t1tot} color="#ef4444" />
                 </Section>
               </div>
 
@@ -1657,11 +1647,11 @@ export default function AdminPage() {
                     { label:"Taux failed global",        value:`${pct(totalFailed)}%`,                                                                                           color:"#ef4444" },
                     { label:"Taux failed Phase 1",       value:`${pct(t2p1Failed+t1p1Failed, t2tot+t1tot)}%`,                                                                    color:"#ef4444" },
                     { label:"Taux failed Phase 2 (2S)",  value:`${pct(t2p2Failed, t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail)}%`,                                       color:"#ef4444" },
-                    { label:"Taux failed Certified",     value:`${pct(t2certFail+t1certFail, t2cert+t1cert+t2certFail+t1certFail||1)}%`,                                        color:"#ef4444" },
+                    { label:"Taux failed Reward",        value:`${pct(t2certFail+t1certFail, t2cert+t1cert+t2certFail+t1certFail||1)}%`,                                        color:"#ef4444" },
                     { label:"Conv. P1→P2 (2-Step)",      value:`${pct(t2p1Passed+t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail, t2tot)}%`,                                color:"#22c55e" },
-                    { label:"Conv. P2→Certif. (2S)",     value:`${pct(t2cert+t2certFail, t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail||1)}%`,                            color:"#22c55e" },
-                    { label:"Conv. Certified (1-Step)",  value:`${pct(t1cert+t1certFail, t1tot)}%`,                                                                             color:"#22c55e" },
-                    { label:"Taux certified global",     value:`${pct(totalCert)}%`,                                                                                            color:"#3b82f6" },
+                    { label:"Conv. P2→Reward (2S)",      value:`${pct(t2cert+t2certFail, t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail||1)}%`,                            color:"#22c55e" },
+                    { label:"Conv. Reward (1-Step)",     value:`${pct(t1cert+t1certFail, t1tot)}%`,                                                                             color:"#22c55e" },
+                    { label:"Taux reward global",        value:`${pct(totalCert)}%`,                                                                                            color:"#3b82f6" },
                   ].map((s,i) => (
                     <div key={i} style={{ background:"rgba(255,255,255,0.5)", border:"1px solid rgba(0,0,0,0.06)", borderRadius:10, padding:"14px 16px" }}>
                       <div style={{ color:"#8a96aa", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
