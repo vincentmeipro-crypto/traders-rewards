@@ -81,7 +81,7 @@ export default function Pricing() {
           {!isMobile && (
             <img src="/$400K.png" alt="400K" style={{ height: 92, width: "auto", objectFit: "contain" }} />
           )}
-          <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+          <div style={{ background: "#fff", border: "1.5px solid #111", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
             {(["2step", "1step", "instant"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
                 padding: isMobile ? "10px 14px" : "10px 28px", borderRadius: 7, cursor: "pointer",
