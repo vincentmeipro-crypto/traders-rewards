@@ -100,7 +100,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
-  <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
+  <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
 );
 
 const badge = (label: string, color: string) => (
@@ -524,7 +524,7 @@ export default function AdminPage() {
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#111", background: "#ffffff" }}>
 
       {/* ── SIDEBAR ── */}
-      <div style={{ width: 220, backgroundColor: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRight: "1px solid rgba(255,255,255,0.6)", boxShadow: "4px 0 24px rgba(21,101,192,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
+      <div style={{ width: 220, backgroundColor: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRight: "1px solid #e5e7eb", boxShadow: "4px 0 24px rgba(21,101,192,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
         <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(21,101,192,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
           <img src="/nouveau-logo.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
           <div>
@@ -548,7 +548,7 @@ export default function AdminPage() {
 
       {/* ── MAIN ── */}
       <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#111" }}>
-        <div style={{ backgroundColor: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid rgba(255,255,255,0.6)", boxShadow: "0 2px 16px rgba(21,101,192,0.06)", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ backgroundColor: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid #e5e7eb", boxShadow: "0 2px 16px rgba(21,101,192,0.06)", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontSize: 11, color: "#8a96aa", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Admin</div>
             <div style={{ fontSize: 20, fontWeight: 800, color: "#111" }}>{TABS.find(t => t.id === tab)?.label}</div>
@@ -562,7 +562,7 @@ export default function AdminPage() {
           </div>
         </div>
         {syncDetail && (
-          <div style={{ margin: "16px 32px 0", background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 10, padding: 16 }}>
+          <div style={{ margin: "16px 32px 0", background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 10, padding: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
               <span style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
               <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>✕</button>
@@ -598,7 +598,7 @@ export default function AdminPage() {
                 { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#22c55e" },
                 { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#22c55e" },
               ].map((s, i) => (
-                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 8px 32px rgba(21,101,192,0.1)" }}>
+                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "18px 22px", boxShadow: "0 8px 32px rgba(21,101,192,0.1)" }}>
                   <div style={{ color: "#8a96aa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 28, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
@@ -617,7 +617,7 @@ export default function AdminPage() {
                 { label: "Failed",             value: kpis.failed        },
                 { label: "Total Challenges",   value: kpis.total         },
               ].map((s, i) => (
-                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "16px 20px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
+                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "16px 20px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
                   <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                   <div style={{ fontSize: 24, fontWeight: 900, color: "#111" }}>{s.value}</div>
                 </div>
@@ -632,7 +632,7 @@ export default function AdminPage() {
                 { label: "LTV moyen / trader",        value: `€${Math.round(kpis.ltv)}`,          sub: "dépense totale moyenne"    },
                 { label: "Récompenses en attente",    value: kpis.pendingPayouts,                  sub: `€${kpis.pendingAmt.toLocaleString()} à valider` },
               ].map((s, i) => (
-                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
+                <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "18px 22px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
                   <div style={{ color: "#8a96aa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 26, fontWeight: 900, color: "#111", marginBottom: 4 }}>{s.value}</div>
                   <div style={{ fontSize: 11, color: "#8a96aa" }}>{s.sub}</div>
@@ -679,7 +679,7 @@ export default function AdminPage() {
             </div>
 
             {/* Table */}
-            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
@@ -795,7 +795,7 @@ export default function AdminPage() {
               const failedC   = trader.challenges.filter(c => c.status === "failed").length;
               const isOpen    = crmExpanded === trader.email;
               return (
-                <div key={trader.email} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+                <div key={trader.email} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
                   <div onClick={() => setCrmExpanded(isOpen ? null : trader.email)}
                     style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
                     <div style={{ flex: 1, minWidth: 200 }}>
@@ -933,7 +933,7 @@ export default function AdminPage() {
                                     {/* Ligne verticale */}
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
                                       <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[c.status] || "#444", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "rgba(255,255,255,0.6)", minHeight: 24 }} />}
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#e5e7eb", minHeight: 24 }} />}
                                     </div>
                                     {/* Contenu */}
                                     <div style={{ flex: 1, paddingBottom: 16 }}>
@@ -963,7 +963,7 @@ export default function AdminPage() {
                                   <div key={p.id} style={{ display: "flex", gap: 12 }}>
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
                                       <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[p.status] || "#3b82f6", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "rgba(255,255,255,0.6)", minHeight: 24 }} />}
+                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "#e5e7eb", minHeight: 24 }} />}
                                     </div>
                                     <div style={{ flex: 1, paddingBottom: 16 }}>
                                       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
@@ -999,7 +999,7 @@ export default function AdminPage() {
                 { label: "Marge brute totale",value: `${kpis.margeYear}%` },
                 { label: "Nb challenges total",value: challenges.length },
               ].map((s, i) => (
-                <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "18px 22px" }}>
+                <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "18px 22px" }}>
                   <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
                   <div style={{ fontSize: 26, fontWeight: 900 }}>{s.value}</div>
                 </div>
@@ -1007,7 +1007,7 @@ export default function AdminPage() {
             </div>
 
             {/* Graphique CA mensuel */}
-            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "20px 24px" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "20px 24px" }}>
               <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 20 }}>CA mensuel</div>
               {monthlyRevenue.length === 0
                 ? <div style={{ color: "#6b7280", textAlign: "center", padding: 20 }}>Aucune donnée</div>
@@ -1030,7 +1030,7 @@ export default function AdminPage() {
             </div>
 
             {/* CA par taille de compte */}
-            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
               <div style={{ padding: "16px 20px", color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>Répartition par taille de compte</div>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
@@ -1069,7 +1069,7 @@ export default function AdminPage() {
             </div>
 
             {/* Tableau mensuel */}
-            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
@@ -1105,14 +1105,14 @@ export default function AdminPage() {
                 { label: "Refusés",     value: payouts.filter(p=>p.status==="rejected").length, color: "#ef4444" },
                 { label: "Montant total versé", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: "#22c55e" },
               ].map((s, i) => (
-                <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
+                <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
                   <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                   <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
               ))}
             </div>
 
-            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
@@ -1189,7 +1189,7 @@ export default function AdminPage() {
         {/* ══ PROMO CODES ══ */}
         {tab === "promos" && (
           <>
-            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 16, padding: 24, marginBottom: 24 }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 16, padding: 24, marginBottom: 24 }}>
               <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 18 }}>Créer un code promo</div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 16 }}>
                 {[
@@ -1216,7 +1216,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
               {promosLoading ? <div style={{ padding: 40, textAlign: "center", color: "#6b7280" }}>Chargement...</div> : (
                 <div style={{ overflowX: "auto" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -1271,7 +1271,7 @@ export default function AdminPage() {
                   { label: "Approuvés",  value: kycSubmissions.filter(k => k.kyc_status === "approved").length, color: "#22c55e" },
                   { label: "Refusés",   value: kycSubmissions.filter(k => k.kyc_status === "rejected").length, color: "#ef4444" },
                 ].map((s, i) => (
-                  <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 10, padding: "12px 20px" }}>
+                  <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 10, padding: "12px 20px" }}>
                     <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
                     <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
@@ -1448,7 +1448,7 @@ export default function AdminPage() {
                   { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#111" },
                   { label: "Crypto USDC", value: paidPayouts.filter(p => p.payment_method === "crypto").length, color: "#C9A84C" },
                 ].map((s, i) => (
-                  <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
+                  <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
                     <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                     <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
@@ -1456,7 +1456,7 @@ export default function AdminPage() {
               </div>
 
               {/* Registre des versements */}
-              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                   <div style={{ fontWeight: 800, fontSize: 16 }}>🧾 Registre des versements</div>
                   <button onClick={exportCSV} style={{ background: "#1565C0", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
@@ -1504,7 +1504,7 @@ export default function AdminPage() {
               </div>
 
               {/* Récap mensuel */}
-              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
                 <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(0,0,0,0.06)", fontWeight: 800, fontSize: 16 }}>📅 Récapitulatif mensuel</div>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
@@ -1581,7 +1581,7 @@ export default function AdminPage() {
 
           const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
             <div style={{ background:"rgba(255,255,255,0.75)", backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)", border:"1px solid rgba(255,255,255,0.8)", borderRadius:12, padding:"20px 24px" }}>
-              <div style={{ fontWeight:800, fontSize:14, color:"#1565C0", marginBottom:12, paddingBottom:8, borderBottom:"2px solid rgba(21,101,192,0.12)" }}>{title}</div>
+              <div style={{ fontWeight:800, fontSize:14, color:"#111", marginBottom:12, paddingBottom:8, borderBottom:"2px solid #e5e7eb" }}>{title}</div>
               {children}
             </div>
           );
@@ -1592,8 +1592,8 @@ export default function AdminPage() {
               {/* Résumé global */}
               <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12 }}>
                 {[
-                  { label:"Total achetés",  value:String(total),              color:"#1565C0" },
-                  { label:"CA total",       value:`€${Math.round(totalCA)}`,  color:"#1565C0" },
+                  { label:"Total achetés",  value:String(total),              color:"#111" },
+                  { label:"CA total",       value:`€${Math.round(totalCA)}`,  color:"#111" },
                   { label:"Actifs",         value:String(totalActive),         color:"#22c55e" },
                   { label:"Reward",          value:String(totalCert),           color:"#3b82f6" },
                   { label:"Failed",         value:String(totalFailed),         color:"#ef4444" },
@@ -1611,8 +1611,8 @@ export default function AdminPage() {
                   <StatRow label="Carte bancaire" n={byCard} />
                   <StatRow label="Crypto" n={byCrypto} />
                   <div style={{ display:"flex", justifyContent:"space-between", paddingTop:10, fontSize:12, color:"#8a96aa" }}>
-                    <span>CA carte : <strong style={{color:"#1565C0"}}>€{Math.round(caCard)}</strong></span>
-                    <span>CA crypto : <strong style={{color:"#1565C0"}}>€{Math.round(caCrypto)}</strong></span>
+                    <span>CA carte : <strong style={{color:"#111"}}>€{Math.round(caCard)}</strong></span>
+                    <span>CA crypto : <strong style={{color:"#111"}}>€{Math.round(caCrypto)}</strong></span>
                   </div>
                 </Section>
 
