@@ -26,14 +26,14 @@ export async function POST(req: NextRequest) {
     const product = PRODUCTS[productId as keyof typeof PRODUCTS];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
 
-    // Plafond $400K : uniquement pour challenges actifs, pas pour les comptes reward/funded
+    // Plafond $400K : uniquement sur les comptes reward/funded (challenges illimités)
     const admin = createAdminClient();
-    if (product.model !== "instant") {
-      const { data: activeChallenges } = await admin.from("challenges").select("account_size").eq("user_id", userId).eq("status", "active");
-      const currentTotal = (activeChallenges || []).reduce((sum: number, c: { account_size: string }) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
+    if (product.model === "instant") {
+      const { data: fundedAccounts } = await admin.from("challenges").select("account_size").eq("user_id", userId).eq("status", "funded");
+      const currentTotal = (fundedAccounts || []).reduce((sum: number, c: { account_size: string }) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
       const newSize = SIZE_VALUES[product.accountSize] || 0;
       if (currentTotal + newSize > MAX_CUMUL) {
-        return NextResponse.json({ error: `Plafond $400,000 atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
+        return NextResponse.json({ error: `Plafond $400,000 de comptes Reward atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
       }
     }
     // product already defined above
