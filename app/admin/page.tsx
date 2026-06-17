@@ -158,6 +158,8 @@ export default function AdminPage() {
   const [adminLoginError, setAdminLoginError] = useState("");
   const [adminLoginLoading, setAdminLoginLoading] = useState(false);
   const [needsLogin, setNeedsLogin] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -221,6 +223,13 @@ export default function AdminPage() {
     if (Array.isArray(data)) setKycSubmissions(data);
     setKycLoading(false);
   };
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   useEffect(() => {
     if (tab === "promos" && token && promos.length === 0) loadPromos(token);
@@ -520,47 +529,64 @@ export default function AdminPage() {
   if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", color: "#111827" }}>Chargement...</div>;
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#f1f5f9", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#fff", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "#6b7280", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
-  return (
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#111", background: "#ffffff" }}>
+  const p = isMobile ? "16px" : "32px";
 
-      {/* ── SIDEBAR ── */}
-      <div style={{ width: 220, backgroundColor: "rgba(255,255,255,0.88)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderRight: "1px solid #e5e7eb", boxShadow: "4px 0 24px rgba(21,101,192,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
-        <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(21,101,192,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
-          <img src="/nouveau-logo.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
-          <div>
-            <div style={{ color: "#111", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Traders Rewards</div>
-            <div style={{ color: "#111", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
+  return (
+    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#111", background: "#ffffff", flexDirection: isMobile ? "column" : "row" }}>
+
+      {/* ── SIDEBAR desktop ── */}
+      {!isMobile && (
+        <div style={{ width: 220, backgroundColor: "#fff", borderRight: "1px solid #e5e7eb", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
+          <div style={{ padding: "20px 16px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", gap: 10 }}>
+            <img src="/nouveau-logo.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
+            <div>
+              <div style={{ color: "#111", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Traders Rewards</div>
+              <div style={{ color: "#111", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
+            </div>
+          </div>
+          <nav style={{ padding: "12px 8px", flex: 1 }}>
+            {TABS.map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(21,101,192,0.08)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#111" : "transparent"}`, color: tab === t.id ? "#111" : "#6b7280", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
+                {t.label}
+                {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
+                {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
+              </button>
+            ))}
+          </nav>
+          <div style={{ padding: "16px 12px", borderTop: "1px solid #e5e7eb" }}>
+            <a href="/dashboard" style={{ color: "#8a96aa", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
           </div>
         </div>
-        <nav style={{ padding: "12px 8px", flex: 1 }}>
-          {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(21,101,192,0.1)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#1565C0" : "transparent"}`, color: tab === t.id ? "#111" : "#6b7280", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
-              {t.label}
-              {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
-              {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
-            </button>
-          ))}
-        </nav>
-        <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(21,101,192,0.1)" }}>
-          <a href="/dashboard" style={{ color: "#8a96aa", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
-        </div>
-      </div>
+      )}
 
       {/* ── MAIN ── */}
-      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#111" }}>
-        <div style={{ backgroundColor: "rgba(255,255,255,0.75)", backdropFilter: "blur(24px)", WebkitBackdropFilter: "blur(24px)", borderBottom: "1px solid #e5e7eb", boxShadow: "0 2px 16px rgba(21,101,192,0.06)", padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#111", paddingBottom: isMobile ? 70 : 0 }}>
+        {/* Header */}
+        <div style={{ backgroundColor: "#fff", borderBottom: "1px solid #e5e7eb", padding: isMobile ? "12px 16px" : "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
           <div>
-            <div style={{ fontSize: 11, color: "#8a96aa", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Admin</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#111" }}>{TABS.find(t => t.id === tab)?.label}</div>
+            <div style={{ fontSize: 10, color: "#8a96aa", textTransform: "uppercase", letterSpacing: 1, marginBottom: 1 }}>Admin</div>
+            <div style={{ fontSize: isMobile ? 16 : 20, fontWeight: 800, color: "#111" }}>{TABS.find(t => t.id === tab)?.label}</div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {kycMsg && <span style={{ color: kycMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{kycMsg}</span>}
-            {syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
-            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(0,0,0,0.06)" : "#1565C0", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
-              {syncing ? "Syncing..." : "Sync MT5"}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {!isMobile && syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
+            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "#e5e7eb" : "#111", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: isMobile ? "7px 12px" : "8px 18px", fontSize: isMobile ? 12 : 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer", whiteSpace: "nowrap" }}>
+              {syncing ? "Sync..." : "Sync MT5"}
             </button>
           </div>
         </div>
+
+        {/* Mobile bottom nav */}
+        {isMobile && (
+          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, backgroundColor: "#fff", borderTop: "1px solid #e5e7eb", display: "flex", overflowX: "auto", padding: "4px 0" }}>
+            {TABS.map(t => (
+              <button key={t.id} onClick={() => { setTab(t.id); setMobileNavOpen(false); }} style={{ position: "relative", flexShrink: 0, padding: "8px 12px", background: "none", border: "none", borderTop: `2px solid ${tab === t.id ? "#111" : "transparent"}`, color: tab === t.id ? "#111" : "#9ca3af", fontWeight: tab === t.id ? 700 : 400, fontSize: 11, cursor: "pointer", whiteSpace: "nowrap" }}>
+                {t.label}
+                {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ position: "absolute", top: 4, right: 4, backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 4px", fontSize: 8, lineHeight: 1.5 }}>{kpis.pendingPayouts}</span>}
+                {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ position: "absolute", top: 4, right: 4, backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 4px", fontSize: 8, lineHeight: 1.5 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
+              </button>
+            ))}
+          </div>
+        )}
         {syncDetail && (
           <div style={{ margin: "16px 32px 0", background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 10, padding: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
@@ -570,7 +596,7 @@ export default function AdminPage() {
             <pre style={{ color: "#111", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
           </div>
         )}
-        <div style={{ padding: "28px 32px" }}>
+        <div style={{ padding: isMobile ? "16px 12px" : "28px 32px" }}>
 
         {/* ══ VUE D'ENSEMBLE ══ */}
         {tab === "overview" && (
@@ -650,7 +676,7 @@ export default function AdminPage() {
               {[
                 { label: "Phase 1 (2-Step)", value: kpis.phase1,    color: "#8a96aa",    fs: "active"  },
                 { label: "1-Step actifs",    value: kpis.oneStep,   color: "#a78bfa", fs: "active"  },
-                { label: "Phase 2 (2-Step)", value: kpis.phase2,    color: "#fff",    fs: "active"  },
+                { label: "Phase 2 (2-Step)", value: kpis.phase2,    color: "#111",    fs: "active"  },
                 { label: "Passés",           value: kpis.passed,    color: "#f59e0b", fs: "passed"  },
                 { label: "Reward",           value: kpis.certified, color: "#3b82f6", fs: "funded"  },
                 { label: "Failed",           value: kpis.failed,    color: "#ef4444", fs: "failed"  },
@@ -860,7 +886,7 @@ export default function AdminPage() {
                             <div style={{ color: "#6b7280", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Challenges</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
                               {[
-                                { label: "Total",    value: trader.challenges.length,                                color: "#fff"    },
+                                { label: "Total",    value: trader.challenges.length,                                color: "#111"    },
                                 { label: "Actifs",   value: activeC,                                                 color: "#22c55e" },
                                 { label: "Reward",   value: certC,                                                   color: "#3b82f6" },
                                 { label: "Failed",   value: failedC,                                                 color: "#ef4444" },
@@ -948,7 +974,7 @@ export default function AdminPage() {
                                       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "#6b7280" }}>
                                         <span>Phase : <span style={{ color: "#8a96aa" }}>{c.phase}</span></span>
                                         <span>Jours tradés : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span></span>
-                                        {c.balance && <span>Balance : <span style={{ color: "#fff" }}>${c.balance?.toLocaleString()}</span></span>}
+                                        {c.balance && <span>Balance : <span style={{ color: "#111" }}>${c.balance?.toLocaleString()}</span></span>}
                                         {profit && <span>P&L : <span style={{ color: Number(profit) >= 0 ? "#22c55e" : "#ef4444" }}>{profit}%</span></span>}
                                         {c.mt5_login    && <span>MT5 Login : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_login}</span></span>}
                                         {c.mt5_password && <span>Password : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_password}</span></span>}
@@ -1032,7 +1058,8 @@ export default function AdminPage() {
             {/* CA par taille de compte */}
             <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
               <div style={{ padding: "16px 20px", color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid rgba(0,0,0,0.06)" }}>Répartition par taille de compte</div>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 500 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                     {["Compte", "Challenges vendus", "CA total", "% du CA", "Actifs", "Reward", "Failed"].map(h => (
@@ -1046,8 +1073,8 @@ export default function AdminPage() {
                     const pct = totalCA > 0 ? Math.round(row.revenue / totalCA * 100) : 0;
                     return (
                       <tr key={row.size} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                        <td style={{ padding: "12px 16px", fontWeight: 800, color: "#fff" }}>{row.size}</td>
-                        <td style={{ padding: "12px 16px", fontWeight: 700, color: "#fff" }}>{row.count}</td>
+                        <td style={{ padding: "12px 16px", fontWeight: 800, color: "#111" }}>{row.size}</td>
+                        <td style={{ padding: "12px 16px", fontWeight: 700, color: "#111" }}>{row.count}</td>
                         <td style={{ padding: "12px 16px", color: "#22c55e", fontWeight: 700 }}>€{row.revenue.toLocaleString()}</td>
                         <td style={{ padding: "12px 16px" }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -1066,11 +1093,13 @@ export default function AdminPage() {
                   {byAccountSize.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune donnée</td></tr>}
                 </tbody>
               </table>
+              </div>
             </div>
 
             {/* Tableau mensuel */}
             <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 400 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                     {["Mois", "Challenges", "CA", "Récompenses versées", "Marge brute"].map(h => (
@@ -1083,7 +1112,7 @@ export default function AdminPage() {
                     <tr key={m.month} style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                       <td style={{ padding: "12px 16px", fontWeight: 700 }}>{m.month}</td>
                       <td style={{ padding: "12px 16px", color: "#8a96aa" }}>{m.count}</td>
-                      <td style={{ padding: "12px 16px", color: "#fff", fontWeight: 700 }}>€{m.ca.toLocaleString()}</td>
+                      <td style={{ padding: "12px 16px", color: "#111", fontWeight: 700 }}>€{m.ca.toLocaleString()}</td>
                       <td style={{ padding: "12px 16px", color: "#ef4444" }}>€{m.payoutsAmt.toLocaleString()}</td>
                       <td style={{ padding: "12px 16px", color: m.marge > 50 ? "#22c55e" : "#888", fontWeight: 700 }}>{m.marge}%</td>
                     </tr>
@@ -1091,6 +1120,7 @@ export default function AdminPage() {
                   {monthlyRevenue.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune donnée</td></tr>}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
@@ -1113,7 +1143,8 @@ export default function AdminPage() {
             </div>
 
             <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, overflow: "hidden" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 700 }}>
                 <thead>
                   <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
                     {["Trader", "Montant", "KYC", "Capital / MT5", "Réception", "Adresse / IBAN", "Statut", "Date", "Actions"].map(h => (
@@ -1182,6 +1213,7 @@ export default function AdminPage() {
                   {payouts.length === 0 && <tr><td colSpan={9} style={{ padding: 40, textAlign: "center", color: "#4a5568" }}>Aucune récompense</td></tr>}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}
@@ -1317,7 +1349,7 @@ export default function AdminPage() {
                           📄 {label}
                         </a>
                       ) : (
-                        <span key={field} style={{ backgroundColor: "#111", border: "1px solid #e5e7eb", borderRadius: 8, padding: "8px 14px", color: "#4a5568", fontSize: 12 }}>{label} —</span>
+                        <span key={field} style={{ backgroundColor: "#ffffff", border: "1px solid #d1d5db", borderRadius: 8, padding: "8px 14px", color: "#9ca3af", fontSize: 12 }}>{label} —</span>
                       )
                     ))}
                   </div>
@@ -1606,7 +1638,7 @@ export default function AdminPage() {
                 ))}
               </div>
 
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18 }}>
+              <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:18 }}>
                 <Section title="💳 Par moyen de paiement">
                   <StatRow label="Carte bancaire" n={byCard} />
                   <StatRow label="Crypto" n={byCrypto} />
@@ -1621,7 +1653,7 @@ export default function AdminPage() {
                 </Section>
               </div>
 
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:18 }}>
+              <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:18 }}>
                 <Section title={`🔵 2-Step — ${t2tot} comptes au total`}>
                   <StatRow label="Phase 1 — Actifs"            n={t2p1Active}  d={t2tot} />
                   <StatRow label="Phase 1 — Passed (→Phase 2)" n={t2p1Passed}  d={t2tot} color="#f59e0b" />
