@@ -75,8 +75,7 @@ export default function Rules() {
   ];
 
   return (
-    <section id="rules" style={{ padding: "100px 24px", backgroundColor: "transparent", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/hero-section-bg.png')", backgroundSize: "cover", backgroundPosition: "center", pointerEvents: "none", zIndex: 0 }} />
+    <section id="rules" style={{ padding: "100px 24px", backgroundColor: "#ffffff", position: "relative", overflow: "hidden" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         {/* Header */}

@@ -41,7 +41,7 @@ function PhoneScreen({ step }: { step: number }) {
             </div>
           </div>
           {/* Site preview */}
-          <div style={{ flex: 1, background: "linear-gradient(135deg, #e8f4ff, #c5e0ff)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 }}>
+          <div style={{ flex: 1, background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: "#0D1B3E", textAlign: "center", letterSpacing: 1 }}>TRADERS REWARDS</div>
             <div style={{ width: 60, height: 2, background: "#C9A84C", borderRadius: 2 }} />
             <div style={{ fontSize: 7, color: "#0D1B3E", textAlign: "center", opacity: 0.7 }}>Performez votre Trading Demo</div>
@@ -69,7 +69,7 @@ function PhoneScreen({ step }: { step: number }) {
               traders-rewards.eu
             </div>
           </div>
-          <div style={{ flex: 1, background: "linear-gradient(135deg, #e8f4ff, #c5e0ff)", opacity: 0.4 }} />
+          <div style={{ flex: 1, background: "#f8fafc", opacity: 0.4 }} />
           {/* Share sheet */}
           <div style={{ background: "#f2f2f7", borderRadius: "16px 16px 0 0", padding: "12px 8px 6px", boxShadow: "0 -4px 20px rgba(0,0,0,0.15)" }}>
             <div style={{ width: 36, height: 4, background: "#ccc", borderRadius: 2, margin: "0 auto 10px" }} />

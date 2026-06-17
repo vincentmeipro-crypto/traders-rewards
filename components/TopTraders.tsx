@@ -59,7 +59,7 @@ function SpotlightCard({ lang }: { lang: string }) {
   const t = TRADERS[idx];
   return (
     <div key={idx} style={{
-      background: "linear-gradient(160deg, rgba(255,255,255,0.72) 0%, rgba(200,232,255,0.6) 50%, rgba(100,180,255,0.45) 100%)",
+      background: "#ffffff",
       backdropFilter: "blur(24px)",
       WebkitBackdropFilter: "blur(24px)",
       border: "1.5px solid #0D1B3E",
@@ -152,7 +152,6 @@ export default function TopTraders() {
 
       {/* Fond homme trader */}
       {!isMobile && <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/FEMME%20TRADER.png')", backgroundSize: "cover", backgroundPosition: "left center", opacity: 0.6, pointerEvents: "none", zIndex: 0 }} />}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 140, background: "linear-gradient(to bottom, #c8e8ff, transparent)", pointerEvents: "none", zIndex: 1 }} />
 
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 64, padding: "0 24px", position: "relative", zIndex: 1 }}>
