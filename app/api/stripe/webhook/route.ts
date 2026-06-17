@@ -58,17 +58,18 @@ export async function POST(req: NextRequest) {
       console.error("MT5 account creation failed:", e);
     }
 
+    const isInstant = model === "instant";
     await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
       model,
-      status: "active",
-      phase: "phase1",
+      status: isInstant ? "funded" : "active",
+      phase: isInstant ? "funded" : "phase1",
       balance: size,
       start_balance: size,
-      profit_target: 10,
-      daily_drawdown_limit: model === "1step" ? 3 : 5,
-      total_drawdown_limit: model === "1step" ? 8 : 10,
+      profit_target: isInstant ? 0 : 10,
+      daily_drawdown_limit: (model === "1step" || isInstant) ? 3 : 5,
+      total_drawdown_limit: (model === "1step" || isInstant) ? 8 : 10,
       trading_days: 0,
       stripe_session_id: session.id,
       amount_paid: (session.amount_total || 0) / 100,

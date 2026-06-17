@@ -17,6 +17,7 @@ const GROUP_MAP: Record<string, string> = {
   "1step":         "Starwave\\demo\\FX1\\grp2",
   "funded_2step":  "Starwave\\demo\\FX1\\grp3",
   "funded_1step":  "Starwave\\demo\\FX1\\grp4",
+  "instant":       "Starwave\\demo\\FX1\\grp4",  // ETAPE1 REWARD — même groupe que funded_1step
   "disabled":      "Starwave\\demo\\FX1\\grp5",
 };
 

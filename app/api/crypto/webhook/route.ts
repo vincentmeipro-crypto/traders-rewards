@@ -15,6 +15,7 @@ const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "50k-1step":  { accountSize: "$50,000",  model: "1step" },
   "100k-1step": { accountSize: "$100,000", model: "1step" },
   "200k-1step": { accountSize: "$200,000", model: "1step" },
+  "50k-instant": { accountSize: "$50,000",  model: "instant" },
 };
 
 const SIZE_MAP: Record<string, number> = {
@@ -84,17 +85,18 @@ export async function POST(req: NextRequest) {
       if (existing) return NextResponse.json({ received: true, duplicate: true });
     }
 
+    const isInstant = model === "instant";
     const { data: inserted, error: insertError } = await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
       model,
-      status: "active",
-      phase: "phase1",
+      status: isInstant ? "funded" : "active",
+      phase: isInstant ? "funded" : "phase1",
       balance: size,
       start_balance: size,
-      profit_target: 10,
-      daily_drawdown_limit: model === "1step" ? 3 : 5,
-      total_drawdown_limit: model === "1step" ? 8 : 10,
+      profit_target: isInstant ? 0 : 10,
+      daily_drawdown_limit: (model === "1step" || isInstant) ? 3 : 5,
+      total_drawdown_limit: (model === "1step" || isInstant) ? 8 : 10,
       trading_days: 0,
       stripe_session_id: nowpaymentsId || null,
       amount_paid: Math.round(parseFloat(body.price_amount || "0") * 1e6) / 1e6,
