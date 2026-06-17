@@ -85,7 +85,7 @@ export default function Pricing() {
             {(["2step", "1step", "instant"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
                 padding: isMobile ? "10px 14px" : "10px 28px", borderRadius: 7, cursor: "pointer",
-                border: m === "instant" && model === m ? "1.5px solid #92400e" : m === "instant" ? "1.5px solid transparent" : "none",
+                border: m === "instant" ? "1.5px solid #C9A84C" : "none",
                 fontSize: isMobile ? 11 : 13, fontWeight: 700, letterSpacing: "0.5px", transition: "all 0.2s",
                 background: m === "instant" && model === m
                   ? "linear-gradient(135deg, #C9A84C, #F6D976)"
