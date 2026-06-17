@@ -20,31 +20,29 @@ function SuccessContent() {
   }, []);
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <div style={{ position: "fixed", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(34,197,94,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
-
+    <div style={{ minHeight: "100vh", backgroundColor: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ textAlign: "center", maxWidth: 480, position: "relative", zIndex: 1 }}>
-        <Image src="/nouveau-logo.png" alt="Traders Rewards" width={80} height={80} style={{ objectFit: "contain", mixBlendMode: "screen", marginBottom: 32 }} />
+        <Image src="/nouveau-logo.png" alt="Traders Rewards" width={80} height={80} style={{ objectFit: "contain", marginBottom: 32 }} />
 
-        <div style={{ backgroundColor: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 20, padding: "48px 40px" }}>
+        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
           <CheckCircle size={56} color="#22c55e" style={{ marginBottom: 24 }} />
 
-          <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 12, letterSpacing: "-0.5px" }}>
+          <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 12, letterSpacing: "-0.5px", color: "#0D1B3E" }}>
             Payment Successful!
           </h1>
-          <p style={{ color: "#888", fontSize: 16, lineHeight: 1.6, marginBottom: 32 }}>
+          <p style={{ color: "#7a90b0", fontSize: 16, lineHeight: 1.6, marginBottom: 32 }}>
             Welcome to the elite. Your challenge account is being set up and will be ready shortly.
           </p>
 
-          <div style={{ backgroundColor: "#0a0a0a", borderRadius: 12, padding: "16px 20px", marginBottom: 32, fontSize: 13, color: "#555" }}>
-            Session ID: <span style={{ color: "#444", fontFamily: "monospace" }}>{sessionId?.slice(0, 20)}...</span>
+          <div style={{ backgroundColor: "#f8fafc", borderRadius: 12, padding: "16px 20px", marginBottom: 32, fontSize: 13, color: "#7a90b0", border: "1px solid #e5e7eb" }}>
+            Session ID: <span style={{ color: "#555", fontFamily: "monospace" }}>{sessionId?.slice(0, 20)}...</span>
           </div>
 
           <a href="/dashboard" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "16px", fontSize: 15 }}>
             Go to Dashboard →
           </a>
 
-          <p style={{ color: "#333", fontSize: 13, marginTop: 20 }}>
+          <p style={{ color: "#7a90b0", fontSize: 13, marginTop: 20 }}>
             Redirecting automatically in {countdown}s...
           </p>
         </div>

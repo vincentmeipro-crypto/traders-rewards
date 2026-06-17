@@ -86,36 +86,34 @@ export default function RegisterPage() {
   };
 
   const inputStyle = {
-    width: "100%", backgroundColor: "#141414", border: "1px solid #222",
-    borderRadius: 10, padding: "13px 16px", color: "#fff", fontSize: 15,
+    width: "100%", backgroundColor: "#f8fafc", border: "1.5px solid rgba(21,101,192,0.2)",
+    borderRadius: 10, padding: "13px 16px", color: "#0D1B3E", fontSize: 15,
     outline: "none", transition: "border 0.2s", boxSizing: "border-box" as const,
   };
 
   const labelStyle = {
-    color: "#888", fontSize: 13, fontWeight: 600, display: "block",
+    color: "#555", fontSize: 13, fontWeight: 600, display: "block",
     marginBottom: 8, letterSpacing: "0.5px", textTransform: "uppercase" as const,
   };
 
   return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#070707", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-
-      <div style={{ position: "fixed", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
+    <div style={{ minHeight: "100vh", backgroundColor: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
 
       <div style={{ width: "100%", maxWidth: 440, position: "relative", zIndex: 1 }}>
 
         <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <a href="/"><Image src="/nouveau-logo.png" alt="Traders Rewards" width={100} height={100} style={{ objectFit: "contain", mixBlendMode: "screen" }} /></a>
+          <a href="/"><Image src="/nouveau-logo.png" alt="Traders Rewards" width={100} height={100} style={{ objectFit: "contain" }} /></a>
         </div>
 
-        <div style={{ backgroundColor: "#0f0f0f", border: "1px solid #1e1e1e", borderRadius: 20, padding: "40px 36px" }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px" }}>Create Account</h1>
-          <p style={{ color: "#555", fontSize: 14, marginBottom: 32 }}>Join the elite. Start your journey today.</p>
+        <div style={{ backgroundColor: "#ffffff", border: "1.5px solid rgba(21,101,192,0.15)", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
+          <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 8, letterSpacing: "-0.5px", color: "#0D1B3E" }}>Create Account</h1>
+          <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 32 }}>Join the elite. Start your journey today.</p>
 
           {success ? (
-            <div style={{ backgroundColor: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12, padding: 20, textAlign: "center" }}>
+            <div style={{ backgroundColor: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 12, padding: 20, textAlign: "center" }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>✉️</div>
-              <p style={{ color: "#22c55e", fontWeight: 600, marginBottom: 8 }}>Check your email!</p>
-              <p style={{ color: "#666", fontSize: 14 }}>We sent you a confirmation link. Click it to activate your account.</p>
+              <p style={{ color: "#16a34a", fontWeight: 600, marginBottom: 8 }}>Check your email!</p>
+              <p style={{ color: "#555", fontSize: 14 }}>We sent you a confirmation link. Click it to activate your account.</p>
             </div>
           ) : (
             <form onSubmit={handleRegister} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -125,8 +123,8 @@ export default function RegisterPage() {
                 <label style={labelStyle}>Email</label>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
                   placeholder="your@email.com" required style={inputStyle}
-                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
-                  onBlur={e => (e.target.style.borderColor = "#222")} />
+                  onFocus={e => (e.target.style.borderColor = "#1565C0")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(21,101,192,0.2)")} />
               </div>
 
               {/* Téléphone avec indicatif */}
@@ -135,8 +133,8 @@ export default function RegisterPage() {
                 <div style={{ display: "flex", gap: 8 }}>
                   <select value={dialCode} onChange={e => setDialCode(e.target.value)}
                     style={{
-                      backgroundColor: "#141414", border: "1px solid #222", borderRadius: 10,
-                      padding: "13px 10px", color: "#fff", fontSize: 14, outline: "none",
+                      backgroundColor: "#f8fafc", border: "1.5px solid rgba(21,101,192,0.2)", borderRadius: 10,
+                      padding: "13px 10px", color: "#0D1B3E", fontSize: 14, outline: "none",
                       cursor: "pointer", flexShrink: 0, width: 110,
                     }}>
                     {DIAL_CODES.map(c => (
@@ -157,9 +155,9 @@ export default function RegisterPage() {
                 <label style={labelStyle}>Date de naissance</label>
                 <input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)}
                   required max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
-                  style={{ ...inputStyle, colorScheme: "dark" }}
-                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
-                  onBlur={e => (e.target.style.borderColor = "#222")} />
+                  style={{ ...inputStyle, colorScheme: "light" }}
+                  onFocus={e => (e.target.style.borderColor = "#1565C0")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(21,101,192,0.2)")} />
                 <p style={{ color: "#555", fontSize: 12, marginTop: 4 }}>Vous devez avoir 18 ans ou plus.</p>
               </div>
 
@@ -168,8 +166,8 @@ export default function RegisterPage() {
                 <label style={labelStyle}>Password</label>
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)}
                   placeholder="Minimum 8 characters" required style={inputStyle}
-                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
-                  onBlur={e => (e.target.style.borderColor = "#222")} />
+                  onFocus={e => (e.target.style.borderColor = "#1565C0")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(21,101,192,0.2)")} />
               </div>
 
               {/* Confirm Password */}
@@ -177,8 +175,8 @@ export default function RegisterPage() {
                 <label style={labelStyle}>Confirm Password</label>
                 <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
                   placeholder="Repeat your password" required style={inputStyle}
-                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
-                  onBlur={e => (e.target.style.borderColor = "#222")} />
+                  onFocus={e => (e.target.style.borderColor = "#1565C0")}
+                  onBlur={e => (e.target.style.borderColor = "rgba(21,101,192,0.2)")} />
               </div>
 
               {error && (
@@ -194,9 +192,9 @@ export default function RegisterPage() {
             </form>
           )}
 
-          <p style={{ textAlign: "center", color: "#555", fontSize: 14, marginTop: 24 }}>
+          <p style={{ textAlign: "center", color: "#7a90b0", fontSize: 14, marginTop: 24 }}>
             Already have an account?{" "}
-            <a href="/login" style={{ color: "#C9A84C", fontWeight: 600, textDecoration: "none" }}>Log In</a>
+            <a href="/login" style={{ color: "#1565C0", fontWeight: 600, textDecoration: "none" }}>Log In</a>
           </p>
         </div>
 

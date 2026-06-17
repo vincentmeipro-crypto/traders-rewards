@@ -116,12 +116,12 @@ export default function TraderPage() {
           <p style={{ color: "#555", fontSize: 15, marginBottom: 40 }}>{labels.sub}</p>
 
           {/* Tabs */}
-          <div style={{ display: "flex", borderBottom: "1px solid #2A2A38", marginBottom: 32 }}>
+          <div style={{ display: "flex", borderBottom: "1px solid #e5e7eb", marginBottom: 32 }}>
             {(["calendar", "platform"] as const).map(t => (
               <button key={t} onClick={() => setTab(t)} style={{
                 padding: "12px 28px", background: "none", border: "none",
-                borderBottom: tab === t ? "2px solid #00C2FF" : "2px solid transparent",
-                color: tab === t ? "#00C2FF" : "#555",
+                borderBottom: tab === t ? "2px solid #1565C0" : "2px solid transparent",
+                color: tab === t ? "#1565C0" : "#7a90b0",
                 fontWeight: 700, fontSize: 14, cursor: "pointer",
                 marginBottom: -1, letterSpacing: "0.3px", transition: "color 0.2s",
               }}>
@@ -138,9 +138,9 @@ export default function TraderPage() {
                 {(["All", "High", "Medium", "Low"] as const).map(f => (
                   <button key={f} onClick={() => setFilter(f)} style={{
                     padding: "6px 18px", borderRadius: 100, fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.2s",
-                    border: filter === f ? `1px solid ${f === "All" ? "#00C2FF" : IMPACT_COLOR[f]}` : "1px solid #222",
-                    backgroundColor: filter === f ? (f === "All" ? "rgba(45,125,210,0.15)" : `${IMPACT_COLOR[f]}22`) : "transparent",
-                    color: filter === f ? (f === "All" ? "#00C2FF" : IMPACT_COLOR[f]) : "#555",
+                    border: filter === f ? `1px solid ${f === "All" ? "#1565C0" : IMPACT_COLOR[f]}` : "1px solid #e5e7eb",
+                    backgroundColor: filter === f ? (f === "All" ? "rgba(21,101,192,0.08)" : `${IMPACT_COLOR[f]}22`) : "transparent",
+                    color: filter === f ? (f === "All" ? "#1565C0" : IMPACT_COLOR[f]) : "#7a90b0",
                   }}>
                     {f === "All" ? labels.all : f === "High" ? labels.high : f === "Medium" ? labels.medium : labels.low}
                   </button>
@@ -154,37 +154,37 @@ export default function TraderPage() {
               ) : (
                 grouped.map(([date, evs]) => (
                   <div key={date} style={{ marginBottom: 32 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, borderLeft: "3px solid #00C2FF", paddingLeft: 12 }}>
-                      <span style={{ fontWeight: 800, fontSize: 15, color: "#fff" }}>{formatDate(date, isFr)}</span>
-                      <span style={{ color: "#444", fontSize: 12 }}>{evs.length} {isFr ? "annonce(s)" : "event(s)"}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, borderLeft: "3px solid #1565C0", paddingLeft: 12 }}>
+                      <span style={{ fontWeight: 800, fontSize: 15, color: "#0D1B3E" }}>{formatDate(date, isFr)}</span>
+                      <span style={{ color: "#7a90b0", fontSize: 12 }}>{evs.length} {isFr ? "annonce(s)" : "event(s)"}</span>
                     </div>
                     <div className="card" style={{ padding: 0, overflow: "hidden" }}>
                       <div style={{ overflowX: "auto" }}>
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                           <thead>
-                            <tr style={{ backgroundColor: "#1a1a24", borderBottom: "1px solid #2A2A38" }}>
+                            <tr style={{ backgroundColor: "#f0f7ff", borderBottom: "1px solid #e5e7eb" }}>
                               {[labels.time, labels.currency, labels.event, labels.impact, labels.forecast, labels.previous, labels.actual].map((h, i) => (
-                                <th key={i} style={{ padding: "11px 14px", color: "#00C2FF", fontWeight: 700, textAlign: i < 3 ? "left" : "center", fontSize: 10, letterSpacing: "0.8px", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                                <th key={i} style={{ padding: "11px 14px", color: "#1565C0", fontWeight: 700, textAlign: i < 3 ? "left" : "center", fontSize: 10, letterSpacing: "0.8px", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                               ))}
                             </tr>
                           </thead>
                           <tbody>
                             {evs.map((ev, i) => (
-                              <tr key={i} style={{ borderBottom: i < evs.length - 1 ? "1px solid #111" : "none", backgroundColor: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)" }}>
-                                <td style={{ padding: "11px 14px", color: "#888", fontWeight: 600, whiteSpace: "nowrap" }}>{ev.time}</td>
+                              <tr key={i} style={{ borderBottom: i < evs.length - 1 ? "1px solid #f3f4f6" : "none", backgroundColor: i % 2 === 0 ? "transparent" : "#fafbff" }}>
+                                <td style={{ padding: "11px 14px", color: "#7a90b0", fontWeight: 600, whiteSpace: "nowrap" }}>{ev.time}</td>
                                 <td style={{ padding: "11px 14px" }}>
                                   <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
                                     <span style={{ fontSize: 16 }}>{CURRENCY_FLAG[ev.country] || "🏳️"}</span>
-                                    <span style={{ backgroundColor: "rgba(45,125,210,0.15)", color: "#00C2FF", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 4 }}>{ev.country}</span>
+                                    <span style={{ backgroundColor: "rgba(21,101,192,0.08)", color: "#1565C0", fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 4 }}>{ev.country}</span>
                                   </span>
                                 </td>
-                                <td style={{ padding: "11px 14px", color: "#ccc", fontWeight: 500, minWidth: 200 }}>{ev.title}</td>
+                                <td style={{ padding: "11px 14px", color: "#333", fontWeight: 500, minWidth: 200 }}>{ev.title}</td>
                                 <td style={{ padding: "11px 14px", textAlign: "center" }}>
                                   <span style={{ display: "inline-block", width: 10, height: 10, borderRadius: "50%", backgroundColor: IMPACT_COLOR[ev.impact] || "#555" }} />
                                 </td>
-                                <td style={{ padding: "11px 14px", textAlign: "center", color: "#888" }}>{ev.forecast || "—"}</td>
-                                <td style={{ padding: "11px 14px", textAlign: "center", color: "#888" }}>{ev.previous || "—"}</td>
-                                <td style={{ padding: "11px 14px", textAlign: "center", fontWeight: 700, color: ev.actual ? "#22c55e" : "#333" }}>{ev.actual || "—"}</td>
+                                <td style={{ padding: "11px 14px", textAlign: "center", color: "#7a90b0" }}>{ev.forecast || "—"}</td>
+                                <td style={{ padding: "11px 14px", textAlign: "center", color: "#7a90b0" }}>{ev.previous || "—"}</td>
+                                <td style={{ padding: "11px 14px", textAlign: "center", fontWeight: 700, color: ev.actual ? "#22c55e" : "#7a90b0" }}>{ev.actual || "—"}</td>
                               </tr>
                             ))}
                           </tbody>
