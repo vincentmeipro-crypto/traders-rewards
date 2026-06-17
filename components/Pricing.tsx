@@ -14,7 +14,7 @@ const accounts = [
 ];
 
 export default function Pricing() {
-  const [model, setModel] = useState<"2step" | "1step">("2step");
+  const [model, setModel] = useState<"2step" | "1step" | "instant">("2step");
   const [isMobile, setIsMobile] = useState(false);
   const { T, lang } = useLanguage();
   const isFr = lang === "fr";
@@ -49,7 +49,17 @@ export default function Pricing() {
     { label: isFr ? "Max cumulé"           : "Max cumulated",   value: "$200K" },
   ];
 
-  const rows = model === "2step" ? rows2step : rows1step;
+  const rowsInstant: Row[] = [
+    { label: isFr ? "Objectif profit"   : "Profit target",  value: isFr ? "Aucun" : "None" },
+    { label: isFr ? "Perte journalière" : "Max daily loss", value: "3% EOD",  pct: -0.03 },
+    { label: isFr ? "Perte totale"      : "Max total loss", value: "8% EOD",  pct: -0.08 },
+    { label: isFr ? "Trading news"      : "News trading",   value: isFr ? "±5 min interdit" : "±5 min banned" },
+    { label: isFr ? "Jours min"         : "Min days",       value: isFr ? "7 jours" : "7 days" },
+    { label: isFr ? "Partage profits"   : "Profit split",   value: "90%" },
+    { label: isFr ? "Compte reward"     : "Reward account", value: isFr ? "Immédiat ✓" : "Instant ✓", highlight: true },
+  ];
+
+  const rows = model === "2step" ? rows2step : model === "1step" ? rows1step : rowsInstant;
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
@@ -70,15 +80,18 @@ export default function Pricing() {
             <img src="/$400K.png" alt="400K" style={{ height: 92, width: "auto", objectFit: "contain" }} />
           )}
           <div style={{ background: "#fff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-            {(["2step", "1step"] as const).map(m => (
+            {(["2step", "1step", "instant"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
-                padding: "10px 32px", borderRadius: 7, border: "none", cursor: "pointer",
-                fontSize: 13, fontWeight: 700, letterSpacing: "0.5px", transition: "all 0.2s",
-                backgroundColor: model === m ? "#0D1B3E" : "transparent",
-                color: model === m ? "#fff" : "#8a96aa",
+                padding: isMobile ? "10px 14px" : "10px 28px", borderRadius: 7, border: "none", cursor: "pointer",
+                fontSize: isMobile ? 11 : 13, fontWeight: 700, letterSpacing: "0.5px", transition: "all 0.2s",
+                background: m === "instant" && model === m
+                  ? "linear-gradient(135deg, #C9A84C, #F6D976)"
+                  : model === m ? "#0D1B3E" : "transparent",
+                color: m === "instant" && model === m ? "#000" : model === m ? "#fff" : "#8a96aa",
                 boxShadow: model === m ? "0 2px 10px rgba(13,27,62,0.2)" : "none",
+                whiteSpace: "nowrap",
               }}>
-                {m === "2step" ? T.pricing.twoStep : T.pricing.oneStep}
+                {m === "2step" ? T.pricing.twoStep : m === "1step" ? T.pricing.oneStep : (isFr ? "⚡ INSTANT REWARD" : "⚡ INSTANT REWARD")}
               </button>
             ))}
           </div>
@@ -89,23 +102,27 @@ export default function Pricing() {
 
         {/* Cards */}
         <div style={{
-          display: isMobile ? "flex" : "grid",
-          gridTemplateColumns: "repeat(5, 1fr)",
+          display: model === "instant" ? "flex" : isMobile ? "flex" : "grid",
+          gridTemplateColumns: model === "instant" ? undefined : "repeat(5, 1fr)",
+          justifyContent: model === "instant" ? "center" : undefined,
           gap: 12,
-          overflowX: isMobile ? "scroll" : "auto",
+          overflowX: isMobile && model !== "instant" ? "scroll" : "visible",
           paddingTop: 16,
           paddingBottom: isMobile ? 16 : 8,
-          scrollSnapType: isMobile ? "x mandatory" : "none",
+          scrollSnapType: isMobile && model !== "instant" ? "x mandatory" : "none",
           WebkitOverflowScrolling: "touch",
         }}>
-          {accounts.map(acc => {
+          {(model === "instant"
+            ? [{ size: "$50,000", id: "50k-instant", price2: "€1,300", price1: "€1,300", promo2: "€1,300", promo1: "€1,300", popular: false, premium: false, reward: "~€2,250" }]
+            : accounts
+          ).map(acc => {
             const price      = model === "2step" ? acc.price2 : acc.price1;
-            const promoPrice = model === "2step" ? acc.promo2 : acc.promo1;
+            const promoPrice = model === "2step" ? acc.promo2 : model === "1step" ? acc.promo1 : acc.price1;
             return (
               <div key={acc.id} style={{
                 position: "relative",
                 flexShrink: 0,
-                width: isMobile ? "82vw" : "auto",
+                width: model === "instant" ? (isMobile ? "90vw" : 320) : isMobile ? "82vw" : "auto",
                 scrollSnapAlign: isMobile ? "center" : "none",
                 background: "rgba(255,255,255,0.55)",
                 backdropFilter: "blur(20px)",
@@ -198,19 +215,29 @@ export default function Pricing() {
 
                 {/* Price */}
                 <div style={{ textAlign: "center", marginBottom: 6 }}>
-                  {/* Badge -50% */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
-                    <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through", fontWeight: 600 }}>{price}</span>
-                    <span style={{
-                      background: "linear-gradient(135deg, #dc2626, #ef4444)",
-                      color: "#fff", fontSize: 9, fontWeight: 900,
-                      padding: "2px 6px", borderRadius: 4, letterSpacing: "0.5px",
-                    }}>−{PROMO_PCT}%</span>
-                  </div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: "#1565C0", letterSpacing: "-1px", lineHeight: 1 }}>{promoPrice}</div>
-                  <div style={{ fontSize: 9, color: "#6b7280", marginTop: 2, fontWeight: 600 }}>
-                    {isFr ? `code : ${PROMO_CODE}` : `code: ${PROMO_CODE}`}
-                  </div>
+                  {model === "instant" ? (
+                    <>
+                      <div style={{ fontSize: 28, fontWeight: 900, color: "#C9A84C", letterSpacing: "-1px", lineHeight: 1 }}>€1,300</div>
+                      <div style={{ fontSize: 10, color: "#6b7280", marginTop: 4, fontWeight: 600 }}>
+                        {isFr ? "Compte reward direct" : "Direct reward account"}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
+                        <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through", fontWeight: 600 }}>{price}</span>
+                        <span style={{
+                          background: "linear-gradient(135deg, #dc2626, #ef4444)",
+                          color: "#fff", fontSize: 9, fontWeight: 900,
+                          padding: "2px 6px", borderRadius: 4, letterSpacing: "0.5px",
+                        }}>−{PROMO_PCT}%</span>
+                      </div>
+                      <div style={{ fontSize: 22, fontWeight: 900, color: "#1565C0", letterSpacing: "-1px", lineHeight: 1 }}>{promoPrice}</div>
+                      <div style={{ fontSize: 9, color: "#6b7280", marginTop: 2, fontWeight: 600 }}>
+                        {isFr ? `code : ${PROMO_CODE}` : `code: ${PROMO_CODE}`}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Récompense moyenne */}
@@ -227,7 +254,7 @@ export default function Pricing() {
                 </div>
 
                 {/* CTA */}
-                <a href={`/checkout?product=${acc.id}-${model}`} style={{
+                <a href={model === "instant" ? `/checkout?product=50k-instant` : `/checkout?product=${acc.id}-${model}`} style={{
                   display: "block", textAlign: "center",
                   padding: "10px 12px", borderRadius: 7,
                   fontSize: 11, fontWeight: 800,
