@@ -34,11 +34,14 @@ export async function POST(req: NextRequest) {
 
     // Vérification plafond $400K
     const admin = createAdminClient();
-    const { data: activeChallenges } = await admin.from("challenges").select("account_size").eq("user_id", userId).in("status", ["active", "funded"]);
-    const currentTotal = (activeChallenges || []).reduce((sum, c) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
-    const newSize = SIZE_VALUES[product.accountSize] || 0;
-    if (currentTotal + newSize > MAX_CUMUL) {
-      return NextResponse.json({ error: `Plafond $400,000 atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
+    // Plafond $400K : uniquement pour challenges actifs, pas pour les comptes reward/funded
+    if (product.model !== "instant") {
+      const { data: activeChallenges } = await admin.from("challenges").select("account_size").eq("user_id", userId).eq("status", "active");
+      const currentTotal = (activeChallenges || []).reduce((sum, c) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
+      const newSize = SIZE_VALUES[product.accountSize] || 0;
+      if (currentTotal + newSize > MAX_CUMUL) {
+        return NextResponse.json({ error: `Plafond $400,000 atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
+      }
     }
 
     const discountPct = Number(discount) || 0;
