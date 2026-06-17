@@ -528,13 +528,13 @@ export default function AdminPage() {
         <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(21,101,192,0.1)", display: "flex", alignItems: "center", gap: 10 }}>
           <img src="/nouveau-logo.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
           <div>
-            <div style={{ color: "#1565C0", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Traders Rewards</div>
-            <div style={{ color: "#1565C0", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
+            <div style={{ color: "#111", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Traders Rewards</div>
+            <div style={{ color: "#111", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
           </div>
         </div>
         <nav style={{ padding: "12px 8px", flex: 1 }}>
           {TABS.map(t => (
-            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(21,101,192,0.1)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#1565C0" : "transparent"}`, color: tab === t.id ? "#1565C0" : "#6b7280", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
+            <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(21,101,192,0.1)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#1565C0" : "transparent"}`, color: tab === t.id ? "#111" : "#6b7280", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
               {t.label}
               {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
               {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
@@ -602,8 +602,8 @@ export default function AdminPage() {
             {/* CA & Marge */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               {[
-                { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#1565C0" },
-                { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#1565C0" },
+                { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#111" },
+                { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#111" },
                 { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#22c55e" },
                 { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#22c55e" },
               ].map((s, i) => (
@@ -628,7 +628,7 @@ export default function AdminPage() {
               ].map((s, i) => (
                 <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "16px 20px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
                   <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: "#1565C0" }}>{s.value}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: "#111" }}>{s.value}</div>
                 </div>
               ))}
             </div>
@@ -643,7 +643,7 @@ export default function AdminPage() {
               ].map((s, i) => (
                 <div key={i} style={{ background: "rgba(255,255,255,0.55)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.75)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 4px 16px rgba(21,101,192,0.08)" }}>
                   <div style={{ color: "#8a96aa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 26, fontWeight: 900, color: "#1565C0", marginBottom: 4 }}>{s.value}</div>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: "#111", marginBottom: 4 }}>{s.value}</div>
                   <div style={{ fontSize: 11, color: "#8a96aa" }}>{s.sub}</div>
                 </div>
               ))}
@@ -751,17 +751,17 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 120 }} />
-                              : <span onClick={() => c.mt5_login && copyToClipboard(String(c.mt5_login))} style={{ color: c.mt5_login ? "#1565C0" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_login ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_login || "—"}</span>}
+                              : <span onClick={() => c.mt5_login && copyToClipboard(String(c.mt5_login))} style={{ color: c.mt5_login ? "#111" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_login ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_login || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 100 }} />
-                              : <span onClick={() => c.mt5_password && copyToClipboard(c.mt5_password)} style={{ color: c.mt5_password ? "#1565C0" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_password ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_password || "—"}</span>}
+                              : <span onClick={() => c.mt5_password && copyToClipboard(c.mt5_password)} style={{ color: c.mt5_password ? "#111" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_password ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_password || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 140 }} />
-                              : <span onClick={() => c.mt5_server && copyToClipboard(c.mt5_server)} style={{ color: c.mt5_server ? "#1565C0" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_server ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_server || "—"}</span>}
+                              : <span onClick={() => c.mt5_server && copyToClipboard(c.mt5_server)} style={{ color: c.mt5_server ? "#111" : "#8a96aa", fontSize: 12, fontWeight: 400, cursor: c.mt5_server ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_server || "—"}</span>}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#6b7280", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
                           <td style={{ padding: "13px 14px" }}>
@@ -1143,7 +1143,7 @@ export default function AdminPage() {
                       <td style={{ padding: "13px 16px", fontWeight: 800, color: "#22c55e", fontSize: 15 }}>€{p.amount?.toLocaleString()}</td>
                       <td style={{ padding: "13px 16px" }}><span style={{ color: kycColor, fontWeight: 700, fontSize: 12 }}>{kycLabel}</span></td>
                       <td style={{ padding: "13px 16px", fontSize: 12 }}>
-                        {userChallenge ? <><div style={{ fontWeight: 700 }}>{userChallenge.account_size}</div><div style={{ color: "#1565C0", fontFamily: "monospace" }}>{userChallenge.mt5_login}</div></> : <span style={{ color: "#8a96aa" }}>—</span>}
+                        {userChallenge ? <><div style={{ fontWeight: 700 }}>{userChallenge.account_size}</div><div style={{ color: "#111", fontFamily: "monospace" }}>{userChallenge.mt5_login}</div></> : <span style={{ color: "#8a96aa" }}>—</span>}
                       </td>
                       <td style={{ padding: "13px 16px" }}>
                         {p.payment_method ? (
@@ -1154,7 +1154,7 @@ export default function AdminPage() {
                       </td>
                       <td style={{ padding: "13px 16px" }}>
                         {p.wallet_address ? (
-                          <span onClick={() => navigator.clipboard.writeText(p.wallet_address!)} style={{ color: "#1565C0", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }} title="Cliquer pour copier">
+                          <span onClick={() => navigator.clipboard.writeText(p.wallet_address!)} style={{ color: "#111", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }} title="Cliquer pour copier">
                             {p.wallet_address.length > 20 ? p.wallet_address.slice(0, 10) + "…" + p.wallet_address.slice(-6) : p.wallet_address} ⎘
                           </span>
                         ) : <span style={{ color: "#8a96aa", fontSize: 12 }}>—</span>}
@@ -1380,7 +1380,7 @@ export default function AdminPage() {
               </div>
 
               {createForm.type === "reward" && (
-                <div style={{ background: "rgba(21,101,192,0.08)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 8, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#1565C0" }}>
+                <div style={{ background: "rgba(21,101,192,0.08)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 8, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#111" }}>
                   Le client recevra directement un <strong>compte Trader Reward</strong> (phase funded) avec son email MT5 + certificat.
                 </div>
               )}
@@ -1454,8 +1454,8 @@ export default function AdminPage() {
               <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
                 {[
                   { label: "Récompenses versées", value: paidPayouts.length, color: "#22c55e" },
-                  { label: "Total versé (USD)", value: `$${totalVersé.toLocaleString()}`, color: "#1565C0" },
-                  { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#1565C0" },
+                  { label: "Total versé (USD)", value: `$${totalVersé.toLocaleString()}`, color: "#111" },
+                  { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#111" },
                   { label: "Crypto USDC", value: paidPayouts.filter(p => p.payment_method === "crypto").length, color: "#C9A84C" },
                 ].map((s, i) => (
                   <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.8)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
@@ -1488,9 +1488,9 @@ export default function AdminPage() {
                       const receiptUrl = `/payout-receipt?ref=${ref}&date=${new Date(p.created_at).toLocaleDateString("fr-FR")}&amount=${p.amount}&method=${p.payment_method||""}&email=${encodeURIComponent(p.user_email||"")}&size=${encodeURIComponent(ch?.account_size||"")}&login=${ch?.mt5_login||""}`;
                       return (
                         <tr key={p.id} style={{ borderBottom: i < paidPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
-                          <td style={{ padding: "11px 14px", fontWeight: 700, color: "#1565C0", fontSize: 12, fontFamily: "monospace" }}>{ref}</td>
+                          <td style={{ padding: "11px 14px", fontWeight: 700, color: "#111", fontSize: 12, fontFamily: "monospace" }}>{ref}</td>
                           <td style={{ padding: "11px 14px", color: "#6b7280" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
-                          <td style={{ padding: "11px 14px", color: "#1565C0" }}>{p.user_email}</td>
+                          <td style={{ padding: "11px 14px", color: "#111" }}>{p.user_email}</td>
                           <td style={{ padding: "11px 14px", fontWeight: 800, color: "#22c55e" }}>${p.amount?.toLocaleString()}</td>
                           <td style={{ padding: "11px 14px" }}>
                             <span style={{ background: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(21,101,192,0.1)", color: p.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
@@ -1501,7 +1501,7 @@ export default function AdminPage() {
                             {p.wallet_address ? (p.wallet_address.length > 20 ? p.wallet_address.slice(0,12)+"…"+p.wallet_address.slice(-6) : p.wallet_address) : "—"}
                           </td>
                           <td style={{ padding: "11px 14px" }}>
-                            <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "rgba(21,101,192,0.08)", color: "#1565C0", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(21,101,192,0.2)", textDecoration: "none" }}>
+                            <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "rgba(21,101,192,0.08)", color: "#111", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(21,101,192,0.2)", textDecoration: "none" }}>
                               📄 PDF
                             </a>
                           </td>
@@ -1527,8 +1527,8 @@ export default function AdminPage() {
                   <tbody>
                     {Array.from(monthly.entries()).reverse().map(([m, v], i) => (
                       <tr key={m} style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
-                        <td style={{ padding: "11px 14px", fontWeight: 700, color: "#1565C0" }}>{m}</td>
-                        <td style={{ padding: "11px 14px", color: "#1565C0", fontWeight: 700 }}>€{v.ca.toLocaleString()}</td>
+                        <td style={{ padding: "11px 14px", fontWeight: 700, color: "#111" }}>{m}</td>
+                        <td style={{ padding: "11px 14px", color: "#111", fontWeight: 700 }}>€{v.ca.toLocaleString()}</td>
                         <td style={{ padding: "11px 14px", color: "#ef4444", fontWeight: 700 }}>-${v.versements.toLocaleString()}</td>
                         <td style={{ padding: "11px 14px", color: "#6b7280" }}>{v.count}</td>
                         <td style={{ padding: "11px 14px", fontWeight: 800, color: v.ca - v.versements > 0 ? "#22c55e" : "#ef4444" }}>
