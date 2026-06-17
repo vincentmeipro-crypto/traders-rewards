@@ -93,7 +93,18 @@ export default function Pricing() {
                 boxShadow: model === m ? "0 2px 10px rgba(13,27,62,0.2)" : "none",
                 whiteSpace: "nowrap",
               }}>
-                {m === "2step" ? T.pricing.twoStep : m === "1step" ? T.pricing.oneStep : (isFr ? "⚡ INSTANT REWARD" : "⚡ INSTANT REWARD")}
+                {m === "2step" ? T.pricing.twoStep : m === "1step" ? T.pricing.oneStep : (
+                  <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                    ⚡ INSTANT REWARD
+                    <span style={{
+                      position: "absolute", top: -14, right: -10,
+                      background: "linear-gradient(135deg, #ef4444, #f97316)",
+                      color: "#fff", fontSize: 8, fontWeight: 900,
+                      padding: "2px 5px", borderRadius: 4, letterSpacing: "0.5px",
+                      boxShadow: "0 2px 6px rgba(239,68,68,0.5)",
+                    }}>NEW</span>
+                  </span>
+                )}
               </button>
             ))}
           </div>
