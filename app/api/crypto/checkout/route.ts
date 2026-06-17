@@ -16,7 +16,8 @@ const PRODUCTS: Record<string, { name: string; amount: number; accountSize: stri
   "10k-1step":  { name: "Challenge $10,000 — 1-Step", amount: 6900,   accountSize: "$10,000",  model: "1step" },
   "25k-1step":  { name: "Challenge $25,000 — 1-Step", amount: 14900,  accountSize: "$25,000",  model: "1step" },
   "50k-1step":  { name: "Challenge $50,000 — 1-Step", amount: 24900,  accountSize: "$50,000",  model: "1step" },
-  "100k-1step": { name: "Challenge $100,000 — 1-Step",amount: 39900,  accountSize: "$100,000", model: "1step" },
+  "100k-1step":  { name: "Challenge $100,000 — 1-Step",  amount: 39900,  accountSize: "$100,000", model: "1step" },
+  "50k-instant": { name: "Compte Reward $50,000 — Instant", amount: 130000, accountSize: "$50,000",  model: "instant" },
 };
 
 export async function POST(req: NextRequest) {

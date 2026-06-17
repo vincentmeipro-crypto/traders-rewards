@@ -21,6 +21,7 @@ const PRODUCTS = {
   "50k-1step":  { name: "Challenge $50,000 — 1-Step", amount: 24900,  accountSize: "$50,000",  model: "1step" },
   "100k-1step": { name: "Challenge $100,000 — 1-Step",amount: 42900,  accountSize: "$100,000", model: "1step" },
   "200k-1step": { name: "Challenge $200,000 — 1-Step",amount: 74900,  accountSize: "$200,000", model: "1step" },
+  "50k-instant": { name: "Compte Reward $50,000 — Instant", amount: 130000, accountSize: "$50,000", model: "instant" },
 };
 
 const SITE_URL = "https://www.traders-rewards.eu";
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
           currency: "eur",
           product_data: {
             name: productName,
-            description: `Traders Rewards — ${product.model === "2step" ? "2-Step Challenge" : "1-Step Challenge"}`,
+            description: `Traders Rewards — ${product.model === "2step" ? "2-Step Challenge" : product.model === "1step" ? "1-Step Challenge" : "Instant Reward Account"}`,
             images: [],
           },
           unit_amount: finalAmount,
