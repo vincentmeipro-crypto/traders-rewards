@@ -372,11 +372,9 @@ export default function AdminPage() {
 
   /* ── Actions ── */
   const saveChallenge = async (id: string) => {
-    const supabase = createClient();
-    const { data: { session } } = await supabase.auth.getSession();
     const res = await fetch("/api/admin/challenges", {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token}` },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ id, ...editData }),
     });
     const updated = await res.json();
