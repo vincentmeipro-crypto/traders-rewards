@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   creator: "Traders Rewards",
   publisher: "Traders Rewards",
   verification: {
-    google: "googlec9933c3f6707c574",
+    google: "znNrwyTz0rCqi1p2pGyNn3izIrAlaC_IyvMZdRyxyWY",
   },
   robots: {
     index: true,
