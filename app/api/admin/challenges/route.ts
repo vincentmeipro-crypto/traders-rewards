@@ -323,13 +323,11 @@ export async function PATCH(req: NextRequest) {
     }
   }
 
-  // Mise à jour du nom MT5 si l'admin change la phase manuellement
-  if (updates.phase && data.mt5_login) {
+  // Synchroniser le nom MT5 à chaque sauvegarde admin (phase actuelle + nom du profil)
+  if (data.mt5_login && (firstName || lastName)) {
     const phaseLabel: Record<string, string> = { phase1: "Phase 1", phase2: "Phase 2", funded: "Reward" };
-    const label = phaseLabel[updates.phase];
-    if (label) {
-      try { await updateMT5AccountName(data.mt5_login, firstName, lastName, label); } catch {}
-    }
+    const label = phaseLabel[data.phase] || "Phase 1";
+    try { await updateMT5AccountName(data.mt5_login, firstName, lastName, label); } catch {}
   }
 
   // Auto-transition — jamais sur un compte failed
