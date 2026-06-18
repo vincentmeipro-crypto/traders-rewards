@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Pages privées - ne pas indexer
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /checkout
+Disallow: /api/
+Disallow: /payout-receipt
+Disallow: /reset-password
+
+# Sitemap
+Sitemap: https://www.traders-rewards.eu/sitemap.xml
