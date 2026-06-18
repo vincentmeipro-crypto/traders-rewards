@@ -859,9 +859,11 @@ export default function DashboardClient({ user }: { user: User }) {
                                   <tbody>
                                     {histTrades.filter(trade => {
                                       const t = trade as Record<string, unknown>;
-                                      // Only show closing deals (entry=1). If entry field absent, show all.
+                                      // Only show closing deals (entry=1 = DEAL_ENTRY_OUT)
                                       if (t.entry !== undefined) return Number(t.entry) !== 0;
-                                      return true;
+                                      // Fallback: hide $0 profit deals (opening deals)
+                                      const p = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
+                                      return p !== 0;
                                     }).map((trade, ti, arr) => {
                                       const t = trade as Record<string, unknown>;
                                       const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
