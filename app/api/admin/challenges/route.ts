@@ -270,6 +270,11 @@ export async function PATCH(req: NextRequest) {
     delete updates.status;
   }
 
+  // Garantir qu'il y a toujours au moins un champ à mettre à jour (évite l'erreur Supabase sur update vide)
+  if (Object.keys(updates).length === 0) {
+    updates.last_synced_at = current?.last_synced_at ?? new Date().toISOString();
+  }
+
   const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
