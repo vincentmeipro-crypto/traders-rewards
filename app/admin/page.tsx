@@ -64,7 +64,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta";
+type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies";
 
 const STATUS_LABELS: Record<string, string> = {
   funded: "Reward",
@@ -94,6 +94,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "payouts",   label: "Récompenses" },
   { id: "promos",    label: "Promo Codes" },
   { id: "kyc",       label: "KYC" },
+  { id: "affilies",  label: "🤝 Affiliés" },
   { id: "stats",     label: "📊 Statistiques" },
   { id: "compta",    label: "🧾 Comptabilité" },
   { id: "create",    label: "➕ Créer Challenge" },
@@ -160,6 +161,16 @@ export default function AdminPage() {
   const [needsLogin, setNeedsLogin] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  // Affiliés state
+  type AffiliateReferral = { id: string; referred_user_id: string; purchase_amount: number; commission_amount: number; status: string; created_at: string };
+  type Affiliate = { id: string; user_id: string; code: string; commission_rate: number; total_earned: number; total_paid: number; created_at: string; referrals: AffiliateReferral[] };
+  const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
+  const [affiliatesLoaded, setAffiliatesLoaded] = useState(false);
+  const [affiliateExpanded, setAffiliateExpanded] = useState<string | null>(null);
+  const [affiliatePromoForm, setAffiliatePromoForm] = useState<{ affiliateId: string; userId: string } | null>(null);
+  const [affiliatePromoData, setAffiliatePromoData] = useState({ code: "", discount: "10", maxUses: "" });
+  const [affiliateMsg, setAffiliateMsg] = useState("");
 
   const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -238,6 +249,26 @@ export default function AdminPage() {
   useEffect(() => {
     if ((tab === "kyc" || tab === "crm") && token) loadKyc(token);
   }, [tab, token]);
+
+  useEffect(() => {
+    if (tab === "affilies" && token && !affiliatesLoaded) {
+      fetch("/api/admin/affiliates", { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json()).then(data => { if (Array.isArray(data)) { setAffiliates(data); setAffiliatesLoaded(true); } });
+    }
+  }, [tab, token, affiliatesLoaded]);
+
+  const createAffiliatePromo = async () => {
+    if (!affiliatePromoForm || !affiliatePromoData.code) return;
+    const res = await fetch("/api/admin/affiliates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ action: "create_promo", code: affiliatePromoData.code, discount_percent: affiliatePromoData.discount, max_uses: affiliatePromoData.maxUses || null, affiliate_user_id: affiliatePromoForm.userId }),
+    });
+    const data = await res.json();
+    if (res.ok) { setAffiliateMsg(`✓ Code ${data.code} créé`); setAffiliatePromoForm(null); setAffiliatePromoData({ code: "", discount: "10", maxUses: "" }); }
+    else setAffiliateMsg(`Erreur : ${data.error}`);
+    setTimeout(() => setAffiliateMsg(""), 4000);
+  };
 
   /* ── KPIs ── */
   const kpis = useMemo(() => {
@@ -1696,6 +1727,145 @@ export default function AdminPage() {
             </div>
           );
         })()}
+
+        {/* ══ AFFILIÉS ══ */}
+        {tab === "affilies" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+            {/* KPIs */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
+              {[
+                { label: "Total affiliés", value: affiliates.length, color: "#111" },
+                { label: "Total conversions", value: affiliates.reduce((s, a) => s + a.referrals.length, 0), color: "#3b82f6" },
+                { label: "Commissions en attente", value: `€${affiliates.reduce((s, a) => s + a.referrals.filter(r => r.status === "pending").reduce((ss, r) => ss + (r.commission_amount || 0), 0), 0).toLocaleString()}`, color: "#f59e0b" },
+                { label: "Commissions payées", value: `€${affiliates.reduce((s, a) => s + (a.total_paid || 0), 0).toLocaleString()}`, color: "#22c55e" },
+              ].map((s, i) => (
+                <div key={i} style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "16px 20px" }}>
+                  <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {affiliateMsg && <div style={{ color: affiliateMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700, padding: "10px 16px", background: affiliateMsg.startsWith("✓") ? "#22c55e10" : "#ef444410", borderRadius: 8 }}>{affiliateMsg}</div>}
+
+            {/* Table affiliés */}
+            <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
+              <div style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontWeight: 700, fontSize: 14, color: "#111" }}>Tous les affiliés</span>
+                <a href="/partenariat" target="_blank" style={{ fontSize: 12, color: "#1565C0", textDecoration: "none" }}>Voir la page partenariat →</a>
+              </div>
+              {affiliates.length === 0 ? (
+                <div style={{ padding: 40, textAlign: "center", color: "#9ca3af" }}>Aucun affilié pour le moment</div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {affiliates.map(a => {
+                    const pending = a.referrals.filter(r => r.status === "pending").reduce((s, r) => s + (r.commission_amount || 0), 0);
+                    const paid = a.referrals.filter(r => r.status === "paid").reduce((s, r) => s + (r.commission_amount || 0), 0);
+                    const isOpen = affiliateExpanded === a.id;
+                    const tierLabel = a.commission_rate >= 20 ? "Elite" : a.commission_rate >= 15 ? "Partenaire" : "Débutant";
+                    const tierColor = a.commission_rate >= 20 ? "#1565C0" : a.commission_rate >= 15 ? "#C9A84C" : "#6b7280";
+                    return (
+                      <div key={a.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                        {/* Ligne principale */}
+                        <div onClick={() => setAffiliateExpanded(isOpen ? null : a.id)} style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
+                          <div style={{ flex: 1, minWidth: 200 }}>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: "#111", marginBottom: 3 }}>{a.user_id}</div>
+                            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                              <code style={{ fontSize: 12, background: "#f3f4f6", padding: "2px 8px", borderRadius: 6, color: "#111", fontWeight: 700 }}>?ref={a.code}</code>
+                              <span style={{ fontSize: 11, fontWeight: 700, color: tierColor, background: `${tierColor}15`, padding: "2px 8px", borderRadius: 100 }}>{tierLabel}</span>
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 13 }}>
+                            <div style={{ textAlign: "center" }}>
+                              <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Taux</div>
+                              <div style={{ fontWeight: 800, color: tierColor }}>{a.commission_rate}%</div>
+                            </div>
+                            <div style={{ textAlign: "center" }}>
+                              <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Conversions</div>
+                              <div style={{ fontWeight: 800, color: "#111" }}>{a.referrals.length}</div>
+                            </div>
+                            <div style={{ textAlign: "center" }}>
+                              <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>En attente</div>
+                              <div style={{ fontWeight: 800, color: "#f59e0b" }}>€{pending.toLocaleString()}</div>
+                            </div>
+                            <div style={{ textAlign: "center" }}>
+                              <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Payé</div>
+                              <div style={{ fontWeight: 800, color: "#22c55e" }}>€{paid.toLocaleString()}</div>
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                            <button onClick={e => { e.stopPropagation(); setAffiliatePromoForm({ affiliateId: a.id, userId: a.user_id }); setAffiliatePromoData({ code: `${a.code}10`, discount: "10", maxUses: "" }); }} style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", color: "#C9A84C", borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                              + Code promo
+                            </button>
+                            <span style={{ color: "#9ca3af", fontSize: 16 }}>{isOpen ? "▲" : "▼"}</span>
+                          </div>
+                        </div>
+
+                        {/* Formulaire code promo */}
+                        {affiliatePromoForm?.affiliateId === a.id && (
+                          <div style={{ margin: "0 20px 16px", background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 10, padding: "16px 20px" }}>
+                            <div style={{ fontWeight: 700, fontSize: 13, color: "#111", marginBottom: 12 }}>Créer un code promo pour cet affilié</div>
+                            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
+                              <div>
+                                <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 4 }}>Code</div>
+                                <input value={affiliatePromoData.code} onChange={e => setAffiliatePromoData(d => ({ ...d, code: e.target.value.toUpperCase() }))} placeholder="PARTENAIRE10" style={{ border: "1.5px solid #e5e7eb", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#111", outline: "none", width: 140 }} />
+                              </div>
+                              <div>
+                                <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 4 }}>Remise %</div>
+                                <input type="number" value={affiliatePromoData.discount} onChange={e => setAffiliatePromoData(d => ({ ...d, discount: e.target.value }))} min={1} max={100} style={{ border: "1.5px solid #e5e7eb", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#111", outline: "none", width: 80 }} />
+                              </div>
+                              <div>
+                                <div style={{ fontSize: 11, color: "#6b7280", marginBottom: 4 }}>Max utilisations</div>
+                                <input type="number" value={affiliatePromoData.maxUses} onChange={e => setAffiliatePromoData(d => ({ ...d, maxUses: e.target.value }))} placeholder="illimité" style={{ border: "1.5px solid #e5e7eb", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#111", outline: "none", width: 100 }} />
+                              </div>
+                              <button onClick={createAffiliatePromo} style={{ background: "#111", color: "#fff", border: "none", borderRadius: 6, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Créer</button>
+                              <button onClick={() => setAffiliatePromoForm(null)} style={{ background: "none", border: "1px solid #e5e7eb", color: "#6b7280", borderRadius: 6, padding: "8px 12px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Détail referrals */}
+                        {isOpen && (
+                          <div style={{ margin: "0 20px 16px", background: "#f9fafb", borderRadius: 10, overflow: "hidden", border: "1px solid #e5e7eb" }}>
+                            {a.referrals.length === 0 ? (
+                              <div style={{ padding: "20px", textAlign: "center", color: "#9ca3af", fontSize: 13 }}>Aucune conversion pour le moment</div>
+                            ) : (
+                              <div style={{ overflowX: "auto" }}>
+                                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                                  <thead>
+                                    <tr style={{ borderBottom: "1px solid #e5e7eb", background: "#f3f4f6" }}>
+                                      {["Referred User", "Achat", "Commission", "Statut", "Date"].map(h => (
+                                        <th key={h} style={{ padding: "8px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {a.referrals.map(r => (
+                                      <tr key={r.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                                        <td style={{ padding: "10px 14px", color: "#6b7280", fontFamily: "monospace", fontSize: 11 }}>{r.referred_user_id?.slice(0, 16)}…</td>
+                                        <td style={{ padding: "10px 14px", fontWeight: 700, color: "#111" }}>€{((r.purchase_amount || 0) / 100).toLocaleString()}</td>
+                                        <td style={{ padding: "10px 14px", fontWeight: 800, color: "#C9A84C" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
+                                        <td style={{ padding: "10px 14px" }}>
+                                          <span style={{ background: r.status === "paid" ? "#22c55e15" : "#f59e0b15", color: r.status === "paid" ? "#22c55e" : "#f59e0b", padding: "2px 8px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{r.status === "paid" ? "Payé" : "En attente"}</span>
+                                        </td>
+                                        <td style={{ padding: "10px 14px", color: "#9ca3af", fontSize: 11 }}>{new Date(r.created_at).toLocaleDateString("fr-FR")}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         </div>
       </div>
