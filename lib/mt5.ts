@@ -152,6 +152,15 @@ export async function changeMT5Password(login: number): Promise<void> {
   if (!res.ok) throw new Error(`MT5 change-password failed: ${await res.text()}`);
 }
 
+export async function updateMT5AccountName(login: number, firstName: string, lastName: string, label: string): Promise<void> {
+  const res = await fetch(`${MT5_URL}/accounts/${login}/update-name`, {
+    method: "POST",
+    headers: MT5_HEADERS,
+    body: JSON.stringify({ first_name: firstName, last_name: lastName, label }),
+  });
+  if (!res.ok) throw new Error(`MT5 update-name failed: ${await res.text()}`);
+}
+
 export async function closeAllPositions(login: number): Promise<number> {
   const res = await fetch(`${MT5_URL}/accounts/${login}/close-positions`, {
     method: "POST",

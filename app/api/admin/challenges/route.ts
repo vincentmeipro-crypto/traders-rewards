@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail, sendFailedEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -42,6 +42,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     const { data: claimed } = await admin.from("challenges").update({ status: "passed" }).eq("id", id).eq("status", "active").select().single();
     if (!claimed) return null;
     const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group: getMT5Group("1step", "funded"), account_size: accountSize });
+    try { await updateMT5AccountName(newAccount.login, firstName, lastName, "Reward"); } catch {}
     await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model: "1step", phase: "funded", status: "funded",
       balance: startBalance, start_balance: startBalance, highest_balance: startBalance,
@@ -60,6 +61,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     const { data: claimed } = await admin.from("challenges").update({ status: "passed" }).eq("id", id).eq("status", "active").select().single();
     if (!claimed) return null;
     const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group: getMT5Group("2step", "challenge"), account_size: accountSize });
+    try { await updateMT5AccountName(newAccount.login, firstName, lastName, "Phase 2"); } catch {}
     await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model: "2step", phase: "phase2", status: "active",
       balance: startBalance, start_balance: startBalance, highest_balance: startBalance,
@@ -78,6 +80,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
     const { data: claimed } = await admin.from("challenges").update({ status: "passed" }).eq("id", id).eq("status", "active").select().single();
     if (!claimed) return null;
     const newAccount = await createMT5Account({ firstName, lastName, email: userEmail, leverage: 100, group: getMT5Group("2step", "funded"), account_size: accountSize });
+    try { await updateMT5AccountName(newAccount.login, firstName, lastName, "Reward"); } catch {}
     await admin.from("challenges").insert({
       user_id: userId, account_size: accountSize, model: "2step", phase: "funded", status: "funded",
       balance: startBalance, start_balance: startBalance, highest_balance: startBalance,
@@ -189,6 +192,8 @@ export async function POST(req: NextRequest) {
       mt5Password = mt5Account.password;
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server = mt5Account.server;
+      const label = isReward ? "Reward" : "Phase 1";
+      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, label); } catch {}
     } catch (e) { console.error("MT5 error:", e); }
   }
 
@@ -315,6 +320,15 @@ export async function PATCH(req: NextRequest) {
       }
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
       return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_daily_drawdown" });
+    }
+  }
+
+  // Mise à jour du nom MT5 si l'admin change la phase manuellement
+  if (updates.phase && data.mt5_login) {
+    const phaseLabel: Record<string, string> = { phase1: "Phase 1", phase2: "Phase 2", funded: "Reward" };
+    const label = phaseLabel[updates.phase];
+    if (label) {
+      try { await updateMT5AccountName(data.mt5_login, firstName, lastName, label); } catch {}
     }
   }
 
