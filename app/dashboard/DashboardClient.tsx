@@ -851,19 +851,27 @@ export default function DashboardClient({ user }: { user: User }) {
                                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                                   <thead>
                                     <tr style={{ borderBottom: "1px solid rgba(21,101,192,0.1)", backgroundColor: "rgba(21,101,192,0.03)" }}>
-                                      {["Ticket", isFr ? "Symbole" : "Symbol", "Type", "Volume", isFr ? "Prix" : "Price", "Profit"].map(h => (
+                                      {["Ticket", "Date", isFr ? "Symbole" : "Symbol", "Type", "Volume", isFr ? "Prix" : "Price", "Profit"].map(h => (
                                         <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "#7a90b0", fontSize: 11, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                                       ))}
                                     </tr>
                                   </thead>
                                   <tbody>
-                                    {histTrades.map((trade, ti) => {
+                                    {histTrades.filter(trade => {
+                                      const t = trade as Record<string, unknown>;
+                                      // Only show closing deals (entry=1). If entry field absent, show all.
+                                      if (t.entry !== undefined) return Number(t.entry) !== 0;
+                                      return true;
+                                    }).map((trade, ti, arr) => {
                                       const t = trade as Record<string, unknown>;
                                       const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
                                       const isBuy = t.type === 0 || String(t.type ?? "").toLowerCase().includes("buy");
+                                      const timeMs = t.time ? Number(t.time) * 1000 : (t.time_msc ? Number(t.time_msc) : null);
+                                      const dateStr = timeMs ? new Date(timeMs).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";
                                       return (
-                                        <tr key={ti} style={{ borderBottom: ti < histTrades.length - 1 ? "1px solid rgba(21,101,192,0.07)" : "none" }}>
+                                        <tr key={ti} style={{ borderBottom: ti < arr.length - 1 ? "1px solid rgba(21,101,192,0.07)" : "none" }}>
                                           <td style={{ padding: "8px 12px", color: "#7a90b0", fontFamily: "monospace" }}>{String(t.ticket ?? ti + 1)}</td>
+                                          <td style={{ padding: "8px 12px", color: "#7a90b0", fontSize: 12, whiteSpace: "nowrap" }}>{dateStr}</td>
                                           <td style={{ padding: "8px 12px", fontWeight: 700 }}>{String(t.symbol ?? "—")}</td>
                                           <td style={{ padding: "8px 12px" }}>
                                             <span style={{ backgroundColor: isBuy ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", color: isBuy ? "#16a34a" : "#ef4444", fontWeight: 700, padding: "2px 7px", borderRadius: 6, fontSize: 11 }}>
