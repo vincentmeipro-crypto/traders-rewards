@@ -45,6 +45,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Traders Rewards", url: SITE_URL }],
   creator: "Traders Rewards",
   publisher: "Traders Rewards",
+  verification: {
+    google: "googlec9933c3f6707c574",
+  },
   robots: {
     index: true,
     follow: true,
