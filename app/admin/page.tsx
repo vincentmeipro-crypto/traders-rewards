@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -156,6 +156,7 @@ export default function AdminPage() {
   // Admin login form state
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
+  const [adminPin, setAdminPin] = useState("");
   const [adminLoginError, setAdminLoginError] = useState("");
   const [adminLoginLoading, setAdminLoginLoading] = useState(false);
   const [needsLogin, setNeedsLogin] = useState(false);
@@ -213,6 +214,8 @@ export default function AdminPage() {
     const { data, error } = await supabase.auth.signInWithPassword({ email: adminEmail, password: adminPassword });
     if (error || !data.session) { setAdminLoginError("Email ou mot de passe incorrect"); setAdminLoginLoading(false); return; }
     const t = data.session.access_token;
+    const pinRes = await fetch("/api/admin/verify-pin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pin: adminPin, token: t }) });
+    if (!pinRes.ok) { setAdminLoginError("Code secret incorrect"); setAdminLoginLoading(false); await supabase.auth.signOut(); return; }
     setToken(t);
     setNeedsLogin(false);
     setLoading(true);
@@ -543,6 +546,11 @@ export default function AdminPage() {
             <div>
               <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
               <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
+                style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+            </div>
+            <div>
+              <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Code secret</div>
+              <input type="password" value={adminPin} onChange={e => setAdminPin(e.target.value)} placeholder="••••••••" required
                 style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
             </div>
             {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
