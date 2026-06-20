@@ -6,11 +6,12 @@ export async function POST(req: NextRequest) {
 
   const supabase = createAdminClient();
   const { data: { user }, error } = await supabase.auth.getUser(token);
-  if (error || !user || user.email !== process.env.ADMIN_EMAIL) {
+  if (error || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!pin || pin !== process.env.ADMIN_PIN) {
+  const adminPin = process.env.ADMIN_PIN;
+  if (!adminPin || !pin || pin !== adminPin) {
     return NextResponse.json({ error: "Code secret incorrect" }, { status: 401 });
   }
 
