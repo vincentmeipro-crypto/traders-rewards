@@ -32,7 +32,7 @@ export default function LoginPage() {
     setLoading(false);
     if (error) { setError("Email ou mot de passe invalide"); return; }
     if (data.user?.email === "vincentmeipro@gmail.com") {
-      router.push("/admin");
+      router.push("/x8k3pz");
     } else {
       router.push("/dashboard");
     }
