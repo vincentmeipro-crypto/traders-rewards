@@ -602,8 +602,9 @@ export default function AdminPage() {
               </button>
             ))}
           </nav>
-          <div style={{ padding: "16px 12px", borderTop: "1px solid #e5e7eb" }}>
+          <div style={{ padding: "16px 12px", borderTop: "1px solid #e5e7eb", display: "flex", flexDirection: "column", gap: 8 }}>
             <a href="/dashboard" style={{ color: "#8a96aa", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
+            <button onClick={async () => { await createClient().auth.signOut(); setToken(null); setNeedsLogin(true); }} style={{ width: "100%", padding: "8px", backgroundColor: "#fee2e2", border: "none", borderRadius: 8, color: "#dc2626", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Déconnexion</button>
           </div>
         </div>
       )}
