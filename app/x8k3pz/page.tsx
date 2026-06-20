@@ -157,6 +157,8 @@ export default function AdminPage() {
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [adminPin, setAdminPin] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPin, setShowPin] = useState(false);
   const [adminLoginError, setAdminLoginError] = useState("");
   const [adminLoginLoading, setAdminLoginLoading] = useState(false);
   const [needsLogin, setNeedsLogin] = useState(false);
@@ -545,13 +547,23 @@ export default function AdminPage() {
             </div>
             <div>
               <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
-              <input type="password" value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
-                style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+              <div style={{ position: "relative" }}>
+                <input type={showPassword ? "text" : "password"} value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
+                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 44px 12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#6b7280", padding: 0, fontSize: 18, lineHeight: 1 }}>
+                  {showPassword ? "🙈" : "👁️"}
+                </button>
+              </div>
             </div>
             <div>
               <div style={{ color: "#6b7280", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Code secret</div>
-              <input type="password" value={adminPin} onChange={e => setAdminPin(e.target.value)} placeholder="••••••••" required
-                style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+              <div style={{ position: "relative" }}>
+                <input type={showPin ? "text" : "password"} value={adminPin} onChange={e => setAdminPin(e.target.value)} placeholder="••••••••" required
+                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.1)", borderRadius: 10, padding: "12px 44px 12px 16px", color: "#111", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                <button type="button" onClick={() => setShowPin(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#6b7280", padding: 0, fontSize: 18, lineHeight: 1 }}>
+                  {showPin ? "🙈" : "👁️"}
+                </button>
+              </div>
             </div>
             {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
             <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#C9A84C", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
