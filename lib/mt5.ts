@@ -161,12 +161,12 @@ export async function updateMT5AccountName(login: number, firstName: string, las
   if (!res.ok) throw new Error(`MT5 update-name failed: ${await res.text()}`);
 }
 
-export async function closeAllPositions(login: number): Promise<number> {
+export async function closeAllPositions(login: number): Promise<{ closed: number; positions: { symbol: string; type: number; volume: number; open_price: number; profit: number; ticket: number }[] }> {
   const res = await fetch(`${MT5_URL}/accounts/${login}/close-positions`, {
     method: "POST",
     headers: MT5_HEADERS,
   });
   if (!res.ok) throw new Error(`MT5 close-positions failed: ${await res.text()}`);
   const data = await res.json();
-  return data.closed ?? 0;
+  return { closed: data.closed ?? 0, positions: data.positions ?? [] };
 }

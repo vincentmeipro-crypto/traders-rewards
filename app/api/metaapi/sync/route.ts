@@ -112,7 +112,16 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 5. Breach drawdown journalier
   if (dailyDD >= dailyLimit) {
-    await closeAllPositions(login).catch((e) => console.error(`[${login}] closeAllPositions failed:`, e));
+    const closeResult = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
+    if (closeResult.positions.length > 0) {
+      try {
+        await admin.from("trade_history").insert(closeResult.positions.map(p => ({
+          challenge_id: id, login, symbol: p.symbol, type: p.type,
+          volume: p.volume, open_price: p.open_price, profit: p.profit,
+          ticket: p.ticket, comment: "DD breach", closed_at: baseNow,
+        })));
+      } catch {}
+    }
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
@@ -142,7 +151,16 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     if (totalDD >= totalLimit) totalViolated = true;
   }
   if (totalViolated) {
-    await closeAllPositions(login).catch((e) => console.error(`[${login}] closeAllPositions failed:`, e));
+    const closeResult2 = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
+    if (closeResult2.positions.length > 0) {
+      try {
+        await admin.from("trade_history").insert(closeResult2.positions.map(p => ({
+          challenge_id: id, login, symbol: p.symbol, type: p.type,
+          volume: p.volume, open_price: p.open_price, profit: p.profit,
+          ticket: p.ticket, comment: "Total DD breach", closed_at: baseNow,
+        })));
+      } catch {}
+    }
     await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));

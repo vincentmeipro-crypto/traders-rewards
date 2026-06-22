@@ -24,8 +24,34 @@ export async function GET(req: NextRequest) {
   if (!challenge) return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
 
   try {
-    const history = await getMT5History(login);
-    return NextResponse.json(history);
+    const [mt5History, supabaseResult] = await Promise.allSettled([
+      getMT5History(login),
+      admin.from("trade_history").select("*").eq("login", login).order("closed_at", { ascending: false }),
+    ]);
+
+    const mt5Trades = mt5History.status === "fulfilled" ? (mt5History.value as unknown[]) : [];
+
+    const supabaseTrades = supabaseResult.status === "fulfilled" && supabaseResult.value.data
+      ? supabaseResult.value.data.map((t: Record<string, unknown>) => ({
+          ticket: t.ticket,
+          login: t.login,
+          symbol: t.symbol,
+          type: t.type,
+          volume: t.volume,
+          price: t.open_price,
+          profit: t.profit,
+          time: t.closed_at ? Math.floor(new Date(t.closed_at as string).getTime() / 1000) : 0,
+          entry: 1,
+          comment: t.comment ?? "breach",
+          _source: "supabase",
+        }))
+      : [];
+
+    // Déduplique par ticket — MT5 a priorité sur Supabase
+    const mt5Tickets = new Set((mt5Trades as Record<string, unknown>[]).map(t => t.ticket));
+    const uniqueSupabase = supabaseTrades.filter(t => !mt5Tickets.has(t.ticket));
+
+    return NextResponse.json([...mt5Trades, ...uniqueSupabase]);
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }
