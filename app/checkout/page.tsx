@@ -261,7 +261,7 @@ function CheckoutContent() {
             {/* Résumé compact mobile */}
             <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>Résumé de la commande</div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: "1px solid #f3f4f6" }}>
-              <div style={{ width: 36, height: 36, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>🏆</div>
+              <img src="/MT5.png" alt="MT5" style={{ width: 36, height: 36, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
               <div>
                 <div style={{ color: "#8a96aa", fontSize: 10, fontWeight: 600, letterSpacing: "1px", textTransform: "uppercase" }}>Standard MT5 · 1:100 · USD</div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>{isInstant ? "Reward" : "Challenge"} {challenge.label} — {challenge.model}</div>
@@ -397,7 +397,7 @@ function CheckoutContent() {
           <div style={{ display: isMobile ? "none" : "block" }}>
             <div style={{ fontWeight: 800, fontSize: 16, color: "#111", marginBottom: 14 }}>Résumé de la commande</div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #f3f4f6" }}>
-              <div style={{ width: 40, height: 40, background: "#f3f4f6", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🏆</div>
+              <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 6, objectFit: "cover", flexShrink: 0 }} />
               <div>
                 <div style={{ fontWeight: 700, fontSize: 14 }}>Traders Rewards {isInstant ? "Reward" : "Challenge"}</div>
                 <div style={{ color: "#6b7280", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
