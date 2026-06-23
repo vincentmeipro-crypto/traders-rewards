@@ -6,7 +6,7 @@ const CERT_CONFIG = {
   phase1: {
     image: "/PHASE1.png",
     nameColor: "#ffffff",
-    amountColor: "#7dd3fc",
+    amountColor: "#C9A84C",
     dateColor: "#ffffff",
     nameTop: "56%",
     amountTop: "68%",
@@ -15,7 +15,7 @@ const CERT_CONFIG = {
   challenge: {
     image: "/PHASE2.png",
     nameColor: "#ffffff",
-    amountColor: "#7dd3fc",
+    amountColor: "#C9A84C",
     dateColor: "#ffffff",
     nameTop: "56%",
     amountTop: "68%",
@@ -24,7 +24,7 @@ const CERT_CONFIG = {
   reward: {
     image: "/RECOMPENSE.png",
     nameColor: "#ffffff",
-    amountColor: "#7dd3fc",
+    amountColor: "#C9A84C",
     dateColor: "#ffffff",
     nameTop: "57%",
     amountTop: "69%",
