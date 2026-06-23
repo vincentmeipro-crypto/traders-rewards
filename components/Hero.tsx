@@ -34,7 +34,6 @@ function LiveRewardCard() {
     let cancelled = false;
     setVisible(true);
     const trader = TRADERS[idx];
-
     const t1 = setTimeout(() => {
       if (cancelled) return;
       const start = performance.now();
@@ -48,14 +47,12 @@ function LiveRewardCard() {
       };
       rafRef.current = requestAnimationFrame(tick);
     }, ENTER_MS);
-
     const t2 = setTimeout(() => {
       if (!cancelled) {
         setVisible(false);
         setTimeout(() => { if (!cancelled) { setAmount(0); setIdx(i => (i + 1) % TRADERS.length); } }, EXIT_MS);
       }
     }, TOTAL_MS);
-
     return () => { cancelled = true; clearTimeout(t1); clearTimeout(t2); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [idx]);
 
@@ -66,10 +63,10 @@ function LiveRewardCard() {
       transform: visible ? "translateY(0) scale(1)" : "translateY(-8px) scale(0.98)",
       transition: "opacity 0.4s ease, transform 0.4s ease",
       background: "#111111",
-      border: "1px solid rgba(212,175,55,0.35)",
+      border: "1px solid rgba(212,175,55,0.4)",
       borderRadius: 16,
       padding: "20px 24px",
-      display: "flex", alignItems: "center", gap: 18,
+      display: "flex", alignItems: "center", gap: 16,
     }}>
       <div style={{
         width: 52, height: 52, borderRadius: "50%", flexShrink: 0,
@@ -108,13 +105,13 @@ export default function Hero() {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        .h-anim-1 { animation: fadeUp 0.7s ease forwards; }
-        .h-anim-2 { animation: fadeUp 0.7s ease 0.15s forwards; opacity: 0; }
-        .h-anim-3 { animation: fadeUp 0.7s ease 0.3s forwards; opacity: 0; }
-        .h-anim-4 { animation: fadeUp 0.7s ease 0.45s forwards; opacity: 0; }
+        .h1 { animation: fadeUp 0.7s ease forwards; }
+        .h2 { animation: fadeUp 0.7s ease 0.15s forwards; opacity: 0; }
+        .h3 { animation: fadeUp 0.7s ease 0.3s forwards; opacity: 0; }
+        .h4 { animation: fadeUp 0.7s ease 0.45s forwards; opacity: 0; }
         .hero-btn-primary {
-          display: block; text-align: center;
-          padding: 16px 32px; border-radius: 8px;
+          display: inline-block; text-align: center;
+          padding: 16px 40px; border-radius: 8px;
           font-size: 13px; font-weight: 800; letter-spacing: 1.5px;
           text-transform: uppercase; text-decoration: none;
           background: #FFFFFF; color: #000000;
@@ -122,7 +119,7 @@ export default function Hero() {
         }
         .hero-btn-primary:hover { opacity: 0.85; }
         .hero-btn-secondary {
-          display: block; text-align: center;
+          display: inline-block; text-align: center;
           padding: 14px 32px; border-radius: 8px;
           font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
           text-transform: uppercase; text-decoration: none;
@@ -130,6 +127,7 @@ export default function Hero() {
           border: 1px solid rgba(255,255,255,0.3);
           color: rgba(255,255,255,0.8);
           transition: border-color 0.2s, color 0.2s;
+          white-space: nowrap;
         }
         .hero-btn-secondary:hover { border-color: rgba(255,255,255,0.7); color: #FFFFFF; }
       `}</style>
@@ -140,60 +138,34 @@ export default function Hero() {
           ? "calc(60px + var(--promo-banner-height, 0px) + 40px)"
           : "calc(72px + var(--promo-banner-height, 0px) + 56px)",
         paddingBottom: isMobile ? 48 : 64,
-        paddingLeft: isMobile ? 24 : 64,
-        paddingRight: isMobile ? 24 : 64,
+        paddingLeft: isMobile ? 24 : 80,
+        paddingRight: isMobile ? 24 : 80,
       }}>
         <div style={{
-          maxWidth: 1160,
+          maxWidth: 1200,
           margin: "0 auto",
           display: "flex",
           flexDirection: isMobile ? "column" : "row",
-          alignItems: isMobile ? "flex-start" : "center",
-          gap: isMobile ? 40 : 64,
+          alignItems: "center",
+          gap: isMobile ? 40 : 80,
         }}>
 
-          {/* COLONNE GAUCHE — tagline + carte */}
-          <div className="h-anim-1" style={{
-            flex: "0 0 auto",
-            width: isMobile ? "100%" : 380,
-            display: "flex",
-            flexDirection: "column",
-            gap: 24,
-          }}>
-            <p style={{
-              fontSize: isMobile ? 15 : 17,
-              fontWeight: 600,
-              color: "rgba(255,255,255,0.65)",
-              lineHeight: 1.55,
-              margin: 0,
-            }}>
-              {isFr
-                ? "La prop firm française qui récompense les traders disciplinés."
-                : "The French prop firm that rewards disciplined traders."}
-            </p>
-            <LiveRewardCard />
-          </div>
-
-          {/* COLONNE DROITE — titre + CTAs */}
+          {/* GAUCHE — Titre + CTAs */}
           <div style={{ flex: "1 1 0", minWidth: 0 }}>
-            <h1 className="h-anim-2" style={{
-              fontSize: isMobile ? "clamp(2rem, 9vw, 2.6rem)" : "clamp(2.8rem, 3.6vw, 3.8rem)",
-              fontWeight: 800,
+            <h1 className="h1" style={{
+              fontSize: isMobile ? "clamp(2.4rem, 10vw, 3rem)" : "clamp(3.2rem, 4.5vw, 5rem)",
+              fontWeight: 900,
               color: "#FFFFFF",
-              lineHeight: 1.08,
-              letterSpacing: "-1.5px",
-              margin: "0 0 32px",
+              lineHeight: 1.05,
+              letterSpacing: "-2px",
+              margin: "0 0 36px",
             }}>
               {isFr
                 ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#D4AF37" }}>vraies récompenses</span></>
                 : <>Turn your trading<br />skills into<br /><span style={{ color: "#D4AF37" }}>real rewards</span></>}
             </h1>
 
-            <div className="h-anim-3" style={{
-              display: "flex",
-              flexDirection: isMobile ? "column" : "row",
-              gap: 12,
-            }}>
+            <div className="h2" style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
               <a href="/#pricing" className="hero-btn-primary">
                 {isFr ? "Commencer" : "Get Started"}
               </a>
@@ -201,6 +173,28 @@ export default function Hero() {
                 {isFr ? "Comment ça marche ?" : "How does it work?"}
               </a>
             </div>
+          </div>
+
+          {/* DROITE — Tagline + Carte */}
+          <div className="h3" style={{
+            flex: "0 0 auto",
+            width: isMobile ? "100%" : 400,
+            display: "flex",
+            flexDirection: "column",
+            gap: 28,
+          }}>
+            <p style={{
+              fontSize: isMobile ? 16 : 20,
+              fontWeight: 600,
+              color: "rgba(255,255,255,0.6)",
+              lineHeight: 1.5,
+              margin: 0,
+            }}>
+              {isFr
+                ? "La prop firm française qui récompense les traders disciplinés."
+                : "The French prop firm that rewards disciplined traders."}
+            </p>
+            <LiveRewardCard />
           </div>
 
         </div>
