@@ -16,8 +16,6 @@ const TRADERS = [
   { name: "Julien M.",      flag: "fr", payout: 2578.43,  size: "$100K", initials: "JM" },
   { name: "Lena H.",        flag: "de", payout: 1163.47,  size: "$25K",  initials: "LH" },
   { name: "Lucas M.",       flag: "fr", payout:  418.63,  size: "$10K",  initials: "LM" },
-  { name: "Emma R.",        flag: "fr", payout:  356.21,  size: "$10K",  initials: "ER" },
-  { name: "Yann T.",        flag: "fr", payout:  471.84,  size: "$10K",  initials: "YT" },
 ];
 
 function fmt(n: number) {
@@ -28,17 +26,17 @@ const doubled = [...TRADERS, ...TRADERS];
 
 export default function TraderMarquee() {
   return (
-    <div style={{ overflow: "hidden", borderTop: "1px solid rgba(13,27,62,0.2)", borderBottom: "1px solid rgba(13,27,62,0.2)", padding: "20px 0", background: "rgba(255,255,255,0.7)" }}>
+    <div style={{ overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "18px 0", background: "#0A0A0A" }}>
       <div className="marquee-track">
         {doubled.map((t, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 28, flexShrink: 0, padding: "5px 16px 5px 5px", background: "rgba(255,255,255,0.8)", borderRadius: 100, border: "1px solid rgba(13,27,62,0.25)" }}>
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 20, flexShrink: 0, padding: "5px 14px 5px 5px", background: "#111111", borderRadius: 100, border: "1px solid rgba(255,255,255,0.1)" }}>
             <div style={{ position: "relative", flexShrink: 0 }}>
-              <div style={{ width: 34, height: 34, borderRadius: "50%", background: "rgba(13,27,62,0.09)", border: "1.5px solid rgba(13,27,62,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 800, color: "#0D1B3E" }}>{t.initials}</div>
-              <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -2, right: -6, width: 16, height: 12, borderRadius: 2, objectFit: "cover", border: "1px solid rgba(255,255,255,0.8)" }} />
+              <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#FFFFFF" }}>{t.initials}</div>
+              <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -2, right: -6, width: 14, height: 11, borderRadius: 2, objectFit: "cover" }} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: 13, color: "#0D1B3E" }}>{t.name}</div>
-              <div style={{ fontSize: 11, color: "#0D1B3E", fontWeight: 600 }}>{fmt(t.payout)} · {t.size}</div>
+              <div style={{ fontWeight: 700, fontSize: 12, color: "#FFFFFF" }}>{t.name}</div>
+              <div style={{ fontSize: 11, color: "#9A7B2F", fontWeight: 700 }}>{fmt(t.payout)} · {t.size}</div>
             </div>
           </div>
         ))}

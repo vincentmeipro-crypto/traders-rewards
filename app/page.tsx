@@ -18,16 +18,12 @@ export default function Home() {
     <main className="page-main" style={{ minHeight: "100vh" }}>
       <PromoBanner />
       <Navbar />
-      <div style={{ background: "#ffffff" }}>
-        <Hero />
-        <Pricing />
-      </div>
+      <Hero />
+      <Pricing />
       <TopTraders />
-      <div style={{ background: "#ffffff" }}>
-        <Stats />
-        <TraderMarquee />
-        <Pricing />
-      </div>
+      <Stats />
+      <TraderMarquee />
+      <Pricing />
       <HowItWorks />
       <Rules />
       <FAQ />

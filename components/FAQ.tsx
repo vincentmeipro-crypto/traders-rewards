@@ -96,22 +96,20 @@ export default function FAQ() {
   const items = faqData[lang as keyof typeof faqData] || faqData.en;
 
   return (
-    <section id="faq" style={{ padding: "100px 24px", backgroundColor: "#fff" }}>
+    <section id="faq" style={{ padding: "80px 24px", backgroundColor: "#0A0A0A" }}>
       <div style={{ maxWidth: 780, margin: "0 auto" }}>
 
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 64 }}>
-          <span className="section-label" style={{ display: "block", marginBottom: 16 }}>FAQ</span>
-          <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(2rem, 5vw, 3.2rem)", fontWeight: 600, color: "#0D1B3E", letterSpacing: "1px" }}>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9A7B2F", marginBottom: 16 }}>FAQ</div>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
             {lang === "fr" ? "Questions fréquentes" : "Frequently Asked Questions"}
           </h2>
         </div>
 
-        {/* Items */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           {items.map((item, i) => (
             <div key={i} style={{
-              borderBottom: "1px solid rgba(0,0,0,0.07)",
+              borderBottom: "1px solid rgba(255,255,255,0.08)",
               overflow: "hidden",
             }}>
               <button
@@ -119,25 +117,25 @@ export default function FAQ() {
                 style={{
                   width: "100%", textAlign: "left",
                   background: "none", border: "none", cursor: "pointer",
-                  padding: "24px 0",
+                  padding: "22px 0",
                   display: "flex", justifyContent: "space-between", alignItems: "center",
                   gap: 16,
                 }}
               >
-                <span style={{ fontSize: 16, fontWeight: 600, color: "#0D1B3E", lineHeight: 1.4 }}>{item.q}</span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", lineHeight: 1.4 }}>{item.q}</span>
                 <div style={{
                   width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                  background: open === i ? "#0D1B3E" : "rgba(0,0,0,0.06)",
+                  background: open === i ? "#9A7B2F" : "rgba(255,255,255,0.08)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s",
                 }}>
-                  <ChevronDown size={14} color={open === i ? "#fff" : "#4a5568"}
+                  <ChevronDown size={14} color={open === i ? "#000" : "rgba(255,255,255,0.6)"}
                     style={{ transform: open === i ? "rotate(180deg)" : "none", transition: "transform 0.25s ease" }} />
                 </div>
               </button>
               {open === i && (
-                <div style={{ paddingBottom: 24, paddingRight: 44 }}>
-                  <p style={{ color: "#4a5568", fontSize: 15, lineHeight: 1.75, margin: 0 }}>{item.a}</p>
+                <div style={{ paddingBottom: 22, paddingRight: 44 }}>
+                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, lineHeight: 1.75, margin: 0 }}>{item.a}</p>
                 </div>
               )}
             </div>

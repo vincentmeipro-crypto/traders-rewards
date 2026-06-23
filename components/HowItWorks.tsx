@@ -4,76 +4,62 @@ import { useLanguage } from "@/lib/LanguageContext";
 const ICONS = ["◎", "◈", "◉"];
 
 export default function HowItWorks() {
-  const { T } = useLanguage();
+  const { T, lang } = useLanguage();
   return (
-    <section id="how-it-works" style={{ padding: "100px 24px", backgroundColor: "#ffffff", position: "relative", overflow: "hidden" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
+    <section id="how-it-works" style={{ padding: "80px 24px", backgroundColor: "#0A0A0A" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: 72 }}>
-          <span className="section-label" style={{ display: "block", marginBottom: 16 }}>{T.how.label}</span>
+        <div style={{ textAlign: "center", marginBottom: 56 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9A7B2F", marginBottom: 16 }}>
+            {T.how.label}
+          </div>
           <h2 style={{
-            fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(2.2rem, 5vw, 3.4rem)",
-            fontWeight: 600,
-            color: "#0D1B3E",
-            letterSpacing: "1px",
+            fontSize: "clamp(2rem, 4vw, 3rem)",
+            fontWeight: 800,
+            color: "#FFFFFF",
+            letterSpacing: "-1px",
             marginBottom: 16,
+            lineHeight: 1.1,
           }}>
-            {T.how.title} <em style={{ color: "#0D1B3E", fontStyle: "italic" }}>{T.how.titleGold}</em>
+            {T.how.title} <span style={{ color: "#9A7B2F" }}>{T.how.titleGold}</span>
           </h2>
-          <p style={{ color: "#4a5568", fontSize: 17, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>{T.how.sub}</p>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 16, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>{T.how.sub}</p>
         </div>
 
-        {/* Steps */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
           {T.how.steps.map((step, i) => (
             <div key={i} style={{
-              background: "#fff",
-              border: "1.5px solid #111",
-              borderRadius: 20,
-              padding: "44px 36px",
+              background: "#111111",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 16,
+              padding: "36px 28px",
               position: "relative",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
-              transition: "all 0.25s ease",
+              transition: "border-color 0.2s, transform 0.2s",
             }}
-              onMouseOver={e => { e.currentTarget.style.boxShadow = "0 12px 40px rgba(27,79,216,0.1)"; e.currentTarget.style.transform = "translateY(-4px)"; }}
-              onMouseOut={e => { e.currentTarget.style.boxShadow = "0 2px 20px rgba(0,0,0,0.04)"; e.currentTarget.style.transform = "none"; }}
+              onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)"; e.currentTarget.style.transform = "translateY(-4px)"; }}
+              onMouseOut={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.transform = "none"; }}
             >
-              {/* Step number */}
               <div style={{
-                fontSize: 72,
+                fontSize: 64,
                 fontWeight: 900,
-                color: "rgba(27,79,216,0.06)",
+                color: "rgba(255,255,255,0.04)",
                 lineHeight: 1,
-                marginBottom: 24,
-                fontFamily: "var(--font-cormorant)",
+                marginBottom: 20,
                 letterSpacing: "-2px",
               }}>0{i + 1}</div>
 
-              {/* Icon badge */}
               <div style={{
-                width: 48, height: 48, borderRadius: 12,
-                background: i === 1 ? "#1565C0" : "rgba(27,79,216,0.08)",
+                width: 44, height: 44, borderRadius: 10,
+                background: i === 1 ? "#9A7B2F" : "rgba(255,255,255,0.06)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 marginBottom: 20,
-                border: i === 1 ? "none" : "1px solid rgba(27,79,216,0.15)",
+                border: i === 1 ? "none" : "1px solid rgba(255,255,255,0.1)",
               }}>
-                <span style={{ color: i === 1 ? "#fff" : "#1B4FD8", fontSize: 20 }}>{ICONS[i]}</span>
+                <span style={{ color: i === 1 ? "#000" : "#FFFFFF", fontSize: 18 }}>{ICONS[i]}</span>
               </div>
 
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "#1565C0", marginBottom: 12, letterSpacing: "-0.3px" }}>{step.title}</h3>
-              <p style={{ color: "#4a5568", fontSize: 15, lineHeight: 1.75 }}>{step.desc}</p>
-
-              {/* Connector line (not last) */}
-              {i < T.how.steps.length - 1 && (
-                <div style={{
-                  position: "absolute", right: -12, top: "50%",
-                  width: 24, height: 1,
-                  background: "linear-gradient(to right, rgba(27,79,216,0.2), transparent)",
-                  display: "none",
-                }} />
-              )}
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: "#FFFFFF", marginBottom: 10, letterSpacing: "-0.3px" }}>{step.title}</h3>
+              <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 14, lineHeight: 1.75, margin: 0 }}>{step.desc}</p>
             </div>
           ))}
         </div>
