@@ -188,8 +188,8 @@ export default function Hero() {
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
               <svg
                 className="flag-float"
-                width="56" height="42" viewBox="0 0 3 2"
-                style={{ borderRadius: 4, flexShrink: 0, marginTop: 6 }}
+                width="28" height="21" viewBox="0 0 3 2"
+                style={{ borderRadius: 3, flexShrink: 0, marginTop: 8 }}
               >
                 <rect width="1" height="2" fill="#002395"/>
                 <rect x="1" width="1" height="2" fill="#EDEDED"/>
