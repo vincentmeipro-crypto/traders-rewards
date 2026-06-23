@@ -41,7 +41,7 @@ export default function Navbar() {
     [T.nav.rules, "/#rules"],
     [T.nav.faq, "/#faq"],
     ["Support", "/support"],
-    ["🤝 Partenariat", "/partenariat"],
+    ["Partenariat", "/partenariat"],
   ];
 
   return (
