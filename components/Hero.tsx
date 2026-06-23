@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
@@ -25,7 +24,7 @@ const HOLD_MS  = 3000;
 const EXIT_MS  = 400;
 const TOTAL_MS = ENTER_MS + HOLD_MS + EXIT_MS;
 
-function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
+function LiveRewardCard() {
   const [idx, setIdx]       = useState(0);
   const [amount, setAmount] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -66,30 +65,27 @@ function LiveRewardCard({ isMobile }: { isMobile: boolean }) {
       opacity: visible ? 1 : 0,
       transform: visible ? "translateY(0) scale(1)" : "translateY(-8px) scale(0.98)",
       transition: "opacity 0.4s ease, transform 0.4s ease",
-      background: "rgba(255,255,255,0.6)",
-      backdropFilter: "blur(20px)",
-      WebkitBackdropFilter: "blur(20px)",
-      border: "1.5px solid rgba(13,27,62,0.7)",
-      borderRadius: isMobile ? 17 : 24,
-      padding: isMobile ? "10px 11px" : "28px 36px",
-      boxShadow: "0 8px 40px rgba(21,101,192,0.15), 0 1px 0 rgba(255,255,255,0.9) inset",
-      display: "flex", alignItems: "center", gap: isMobile ? 15 : 22,
-      minWidth: isMobile ? 168 : 480,
-    }} className="reward-card-glow">
+      background: "#111111",
+      border: "1px solid rgba(212,175,55,0.35)",
+      borderRadius: 16,
+      padding: "20px 24px",
+      display: "flex", alignItems: "center", gap: 18,
+      width: "100%",
+    }}>
       <div style={{
-        width: isMobile ? 50 : 72, height: isMobile ? 50 : 72, borderRadius: "50%", flexShrink: 0,
-        background: "linear-gradient(135deg, #1565C0, #42A5F5)",
+        width: 52, height: 52, borderRadius: "50%", flexShrink: 0,
+        background: "linear-gradient(135deg, #D4AF37, #F6D976)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        color: "#fff", fontWeight: 800, fontSize: isMobile ? 15 : 22,
+        color: "#000", fontWeight: 800, fontSize: 16,
       }}>{t.initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 6 : 8, marginBottom: 4 }}>
-          <span style={{ color: "#1565C0", fontWeight: 700, fontSize: isMobile ? 15 : 22, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</span>
-          <img src={`https://flagcdn.com/40x30/${t.flag}.png`} alt="" style={{ width: isMobile ? 20 : 28, height: isMobile ? 15 : 21, borderRadius: 2, objectFit: "cover", flexShrink: 0 }} />
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+          <span style={{ color: "#FFFFFF", fontWeight: 700, fontSize: 16, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{t.name}</span>
+          <img src={`https://flagcdn.com/40x30/${t.flag}.png`} alt="" style={{ width: 22, height: 16, borderRadius: 2, objectFit: "cover", flexShrink: 0 }} />
         </div>
-        <div style={{ color: "#8a96aa", fontSize: isMobile ? 11 : 16 }}>{t.size} · Récompense reçue</div>
+        <div style={{ color: "#9CA3AF", fontSize: 13 }}>{t.size} · Récompense reçue</div>
       </div>
-      <div style={{ color: "#111", fontWeight: 900, fontSize: isMobile ? 11 : 30, flexShrink: 0 }}>{fmt(amount)}</div>
+      <div style={{ color: "#D4AF37", fontWeight: 900, fontSize: 26, flexShrink: 0 }}>{fmt(amount)}</div>
     </div>
   );
 }
@@ -100,136 +96,120 @@ export default function Hero() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => setIsMobile(window.innerWidth < 900);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const stats = [
-    { value: "200K€", label: isFr ? "Capital simulé" : "Simulated Capital" },
-    { value: "90%", label: isFr ? "Partage profit" : "Profit Split" },
-    { value: "150+", label: isFr ? "Actifs" : "Trading Assets" },
-  ];
-
   return (
     <>
       <style>{`
-        @keyframes waveMove {
-          0% { transform: translateX(0) translateY(0); }
-          50% { transform: translateX(-30px) translateY(10px); }
-          100% { transform: translateX(0) translateY(0); }
-        }
         @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-        .hero-animate-1 { animation: fadeUp 0.8s ease forwards; }
-        .hero-animate-2 { animation: fadeUp 0.8s ease 0.15s forwards; opacity: 0; }
-        .hero-animate-3 { animation: fadeUp 0.8s ease 0.3s forwards; opacity: 0; }
-        .hero-animate-4 { animation: fadeUp 0.8s ease 0.45s forwards; opacity: 0; }
-        .hero-animate-5 { animation: fadeUp 0.8s ease 0.6s forwards; opacity: 0; }
-        @keyframes borderGlow {
-          0%, 100% { box-shadow: 0 8px 40px rgba(13,27,62,0.15), 0 1px 0 rgba(255,255,255,0.9) inset, 0 0 0 1.5px rgba(13,27,62,0.5); }
-          50% { box-shadow: 0 8px 40px rgba(13,27,62,0.35), 0 1px 0 rgba(255,255,255,0.9) inset, 0 0 0 2px rgba(13,27,62,1), 0 0 24px rgba(13,27,62,0.3); }
-        }
-        .reward-card-glow {
-          animation: borderGlow 2s ease-in-out infinite !important;
-          border: 1.5px solid rgba(13,27,62,0.7) !important;
-        }
-        .hero-cta {
-          display: inline-flex; align-items: center; gap: 10px;
-          background: #1565C0; color: #fff;
-          padding: 16px 40px; border-radius: 8px;
-          font-size: 13px; font-weight: 700; letter-spacing: 1px;
+        .h-anim-1 { animation: fadeUp 0.7s ease forwards; }
+        .h-anim-2 { animation: fadeUp 0.7s ease 0.15s forwards; opacity: 0; }
+        .h-anim-3 { animation: fadeUp 0.7s ease 0.3s forwards; opacity: 0; }
+        .h-anim-4 { animation: fadeUp 0.7s ease 0.45s forwards; opacity: 0; }
+        .hero-btn-primary {
+          display: block; width: 100%; text-align: center;
+          padding: 16px 24px; border-radius: 8px;
+          font-size: 13px; font-weight: 800; letter-spacing: 1.5px;
           text-transform: uppercase; text-decoration: none;
-          transition: background 0.25s, transform 0.2s, box-shadow 0.2s;
-          box-shadow: 0 4px 20px rgba(21,101,192,0.3);
+          background: #FFFFFF; color: #000000;
+          transition: opacity 0.2s;
         }
-        .hero-cta:hover { background: #0D47A1; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(21,101,192,0.4); }
+        .hero-btn-primary:hover { opacity: 0.85; }
+        .hero-btn-secondary {
+          display: block; width: 100%; text-align: center;
+          padding: 14px 24px; border-radius: 8px;
+          font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+          text-transform: uppercase; text-decoration: none;
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.3);
+          color: rgba(255,255,255,0.8);
+          transition: border-color 0.2s, color 0.2s;
+        }
+        .hero-btn-secondary:hover { border-color: rgba(255,255,255,0.7); color: #FFFFFF; }
       `}</style>
 
       <section style={{
-        minHeight: "auto",
         background: "#0A0A0A",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        position: "relative",
-        overflow: "visible",
-        paddingTop: isMobile ? "calc(60px + var(--promo-banner-height, 0px))" : "calc(72px + var(--promo-banner-height, 0px))",
+        paddingTop: isMobile
+          ? "calc(60px + var(--promo-banner-height, 0px) + 48px)"
+          : "calc(72px + var(--promo-banner-height, 0px) + 64px)",
+        paddingBottom: isMobile ? 48 : 80,
+        paddingLeft: isMobile ? 24 : 64,
+        paddingRight: isMobile ? 24 : 64,
       }}>
+        <div style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
+          gap: isMobile ? 40 : 80,
+        }}>
 
-        {/* Mobile : H1 complet — carte centrée */}
-        {isMobile ? (
-          <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 0px" }}>
-<h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 16, marginTop: 0 }}>
-              {isFr
-                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#1565C0" }}>vraies récompenses</span></>
-                : <>Turn your trading<br />skills into<br /><span style={{ color: "#1565C0" }}>real rewards</span></>}
-            </h1>
-            <div className="hero-animate-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, width: "100%", marginBottom: 20 }}>
-              {[
-                isFr ? "Programme d'Évaluation" : "Trader Evaluation",
-                isFr ? "Trading Simulé" : "Simulated Trading",
-                isFr ? "Évaluation des Compétences" : "Skills Assessment",
-                isFr ? "Programme de Récompense" : "Performance Reward",
-              ].map((label) => (
-                <span key={label} style={{
-                  display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4,
-                  fontSize: 9.5, fontWeight: 600, letterSpacing: "0.3px",
-                  color: "rgba(255,255,255,0.65)",
-                  padding: "3px 4px",
-                  textAlign: "center",
-                  lineHeight: 1.3,
-                }}>
-                  {label}
-                </span>
-              ))}
+          {/* COLONNE GAUCHE — Texte */}
+          <div style={{ flex: "1 1 0", minWidth: 0 }}>
+            <div className="h-anim-1" style={{
+              display: "inline-block",
+              fontSize: 11, fontWeight: 700, letterSpacing: "2px",
+              textTransform: "uppercase", color: "#D4AF37",
+              marginBottom: 20,
+            }}>
+              {isFr ? "La Prop Firm Française" : "The French Prop Firm"}
             </div>
-            <div className="hero-animate-3" style={{ display: "flex", justifyContent: "center" }}>
-              <LiveRewardCard isMobile={true} />
+
+            <h1 className="h-anim-2" style={{
+              fontSize: isMobile ? "clamp(2rem, 9vw, 2.6rem)" : "clamp(2.8rem, 3.8vw, 4rem)",
+              fontWeight: 800,
+              color: "#FFFFFF",
+              lineHeight: 1.08,
+              letterSpacing: "-1.5px",
+              margin: "0 0 24px",
+            }}>
+              {isFr
+                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#D4AF37" }}>vraies récompenses</span></>
+                : <>Turn your trading<br />skills into<br /><span style={{ color: "#D4AF37" }}>real rewards</span></>}
+            </h1>
+
+            <p className="h-anim-3" style={{
+              fontSize: isMobile ? 14 : 16,
+              color: "rgba(255,255,255,0.55)",
+              lineHeight: 1.6,
+              margin: 0,
+              maxWidth: 460,
+            }}>
+              {isFr
+                ? "Qui récompense les traders sur toutes disciplines — Forex, Indices, Crypto, Matières premières."
+                : "Rewarding traders across all disciplines — Forex, Indices, Crypto, Commodities."}
+            </p>
+          </div>
+
+          {/* COLONNE DROITE — CTAs + Carte */}
+          <div className="h-anim-4" style={{
+            flex: "0 0 auto",
+            width: isMobile ? "100%" : 380,
+            display: "flex",
+            flexDirection: "column",
+            gap: 12,
+          }}>
+            <a href="/#pricing" className="hero-btn-primary">
+              {isFr ? "Commencer" : "Get Started"}
+            </a>
+            <a href="/#how-it-works" className="hero-btn-secondary">
+              {isFr ? "Comment ça marche ?" : "How does it work?"}
+            </a>
+            <div style={{ marginTop: 8 }}>
+              <LiveRewardCard />
             </div>
           </div>
-        ) : (
-          /* Desktop : H1 + badges + carte absolue en bas */
-          <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 1200, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "32px 24px 80px" }}>
-            <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#FFFFFF", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 20, whiteSpace: "nowrap" }}>
-              {isFr
-                ? <>Transformez votre trading démo<br />en <span style={{ color: "#1565C0" }}>vraies récompenses</span></>
-                : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
-            </h1>
-            <div className="hero-animate-2" style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "8px 16px", marginBottom: 28 }}>
-              {[
-                isFr ? "Programme d'Évaluation" : "Trader Evaluation",
-                isFr ? "Trading Simulé" : "Simulated Trading",
-                isFr ? "Évaluation des Compétences" : "Skills Assessment",
-                isFr ? "Programme de Récompense" : "Performance Reward",
-              ].map((label) => (
-                <span key={label} style={{
-                  display: "inline-flex", alignItems: "center", gap: 5,
-                  fontSize: 11, fontWeight: 600, letterSpacing: "0.4px",
-                  color: "rgba(255,255,255,0.65)",
-                  padding: "4px 10px",
-                  border: "1px solid rgba(255,255,255,0.15)",
-                  borderRadius: 100,
-                  background: "rgba(255,255,255,0.06)",
-                  backdropFilter: "blur(8px)",
-                  WebkitBackdropFilter: "blur(8px)",
-                }}>
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}>
-                    <path d="M5 0.5L9 2.5V5C9 7.2 7.3 9.2 5 9.8C2.7 9.2 1 7.2 1 5V2.5L5 0.5Z" stroke="rgba(13,27,62,0.4)" strokeWidth="0.8" fill="rgba(13,27,62,0.06)" />
-                  </svg>
-                  {label}
-                </span>
-              ))}
-            </div>
-            <div className="hero-animate-3" style={{ position: "absolute", bottom: -44, left: 0, right: 0, zIndex: 20, display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <LiveRewardCard isMobile={false} />
-            </div>
-          </div>
-        )}
+
+        </div>
       </section>
     </>
   );
