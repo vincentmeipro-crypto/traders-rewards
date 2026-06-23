@@ -1956,7 +1956,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {/* Historique des positions MT5 */}
             <div style={{ marginTop: 32 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16, color: "#1a2540" }}>
+              <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16, color: "#FFFFFF" }}>
                 {isFr ? "Historique des positions" : "Trade history"}
               </h2>
               {tradeHistoryLoading ? (
@@ -1964,11 +1964,11 @@ export default function DashboardClient({ user }: { user: User }) {
                   {isFr ? "Chargement…" : "Loading…"}
                 </div>
               ) : tradeHistory.length === 0 ? (
-                <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 24, fontSize: 13, backgroundColor: "#fff", borderRadius: 14, border: "1px solid rgba(255,255,255,0.07)" }}>
+                <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 24, fontSize: 13, backgroundColor: "#111111", borderRadius: 14, border: "1px solid rgba(255,255,255,0.07)" }}>
                   {isFr ? "Aucune position trouvée" : "No trades found"}
                 </div>
               ) : (
-                <div style={{ overflowX: "auto", borderRadius: 14, border: "1px solid rgba(255,255,255,0.08)", backgroundColor: "#fff" }}>
+                <div style={{ overflowX: "auto", borderRadius: 14, border: "1px solid rgba(255,255,255,0.08)", backgroundColor: "#111111" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.02)" }}>
