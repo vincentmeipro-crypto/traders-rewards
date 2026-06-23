@@ -151,3 +151,15 @@ body {
   .btn-primary, .btn-secondary { padding: 12px 20px; font-size: 12px; }
   .card { border-radius: 12px; }
 }
+
+.mt5-section-img {
+  width: 100%;
+  display: block;
+}
+
+@media (min-width: 769px) {
+  .mt5-section-img {
+    width: 75%;
+    margin: 0 auto;
+  }
+}
