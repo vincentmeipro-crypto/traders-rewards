@@ -1014,7 +1014,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
                 { title: isFr ? "Objectif de profit" : "Profit Target", desc: isFr ? "Phase 1 : atteindre 10% de profit. Phase 2 : atteindre 5% de profit." : "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#1565C0" /> },
-                { title: isFr ? "Jours de trading minimum" : "Minimum Trading Days", desc: isFr ? "Vous devez trader au moins 4 jours différents avant de valider une phase." : "You must trade at least 4 different days before passing a phase.", icon: <Calendar size={20} color="#1565C0" /> },
+                { title: isFr ? "Jours de trading minimum" : "Minimum Trading Days", desc: isFr ? "Vous devez trader au moins 5 jours différents avant de valider une phase." : "You must trade at least 5 different days before passing a phase.", icon: <Calendar size={20} color="#1565C0" /> },
                 { title: isFr ? "Drawdown journalier" : "Daily Drawdown", desc: isFr ? "Votre compte ne peut pas perdre plus de 5% de sa valeur en une journée (2 Étapes) ou 3% (1 Étape)." : "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#1565C0" /> },
                 { title: isFr ? "Drawdown total" : "Total Drawdown", desc: isFr ? "Votre compte ne peut pas descendre de plus de 10% sous le solde de départ." : "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#1565C0" /> },
                 { title: isFr ? "Sans limite de temps" : "No Time Limit", desc: isFr ? "Prenez le temps qu'il vous faut. Il n'y a pas de date d'expiration sur votre challenge." : "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#1565C0" /> },
@@ -1822,13 +1822,13 @@ export default function DashboardClient({ user }: { user: User }) {
                       }] : []),
                       {
                         label: `Min. ${T.dash.tradingDays}`,
-                        pct: challenge.phase === "funded" ? "7 jours" : "4 jours",
+                        pct: challenge.phase === "funded" ? "7 jours" : "5 jours",
                         usd: null,
                         usdColor: "#fff",
-                        ok: challenge.phase === "funded" ? challenge.trading_days >= 7 : challenge.trading_days >= 4,
+                        ok: challenge.phase === "funded" ? challenge.trading_days >= 7 : challenge.trading_days >= 5,
                         status: challenge.phase === "funded"
                           ? (challenge.trading_days >= 7 ? T.dash.passed : `${challenge.trading_days} / 7`)
-                          : (challenge.trading_days >= 4 ? T.dash.passed : `${challenge.trading_days} / 4`),
+                          : (challenge.trading_days >= 5 ? T.dash.passed : `${challenge.trading_days} / 5`),
                       },
                       {
                         label: T.dash.dailyDrawdown,

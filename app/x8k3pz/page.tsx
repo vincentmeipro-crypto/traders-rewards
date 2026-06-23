@@ -813,7 +813,7 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 55 }} />
-                              : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span>}
+                              : <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "#888" }}>{c.trading_days}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
@@ -1023,7 +1023,7 @@ export default function AdminPage() {
                                       </div>
                                       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "#6b7280" }}>
                                         <span>Phase : <span style={{ color: "#8a96aa" }}>{c.phase}</span></span>
-                                        <span>Jours tradés : <span style={{ color: c.trading_days >= 4 ? "#22c55e" : "#888" }}>{c.trading_days}</span></span>
+                                        <span>Jours tradés : <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "#888" }}>{c.trading_days}</span></span>
                                         {c.balance && <span>Balance : <span style={{ color: "#111" }}>${c.balance?.toLocaleString()}</span></span>}
                                         {profit && <span>P&L : <span style={{ color: Number(profit) >= 0 ? "#22c55e" : "#ef4444" }}>{profit}%</span></span>}
                                         {c.mt5_login    && <span>MT5 Login : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_login}</span></span>}

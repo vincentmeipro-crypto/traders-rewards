@@ -45,7 +45,7 @@ export const t = {
       sub: '',
       twoStep: '2-STEP', oneStep: '1-STEP ⚡', mostPopular: 'Most Popular',
       account: 'Account', getStarted: 'Get Started', allInclude: 'ALL CHALLENGES INCLUDE',
-      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 4 trading days','No time limit','80% profit split','Scale up to $400,000'],
+      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 5 trading days','No time limit','80% profit split','Scale up to $400,000'],
       features1: ['Single phase: +8% profit target','3% max daily loss','8% trailing drawdown','50% best day rule','Minimum 5 trading days','No time limit','90% profit split','Scale up to $400,000'],
     },
     rules: {
@@ -164,7 +164,7 @@ export const t = {
       sub: '',
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
-      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 4 jours de trading','Sans limite de temps','80% partage des profits','Évolution jusqu\'à 400 000$'],
+      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 5 jours de trading','Sans limite de temps','80% partage des profits','Évolution jusqu\'à 400 000$'],
       features1: ['Phase unique : +8% objectif profit','3% perte journalière max','8% drawdown trailing','Règle des 50% meilleur jour','Minimum 5 jours de trading','Sans limite de temps','90% partage des profits','Évolution jusqu\'à 400 000$'],
     },
     rules: {
@@ -637,8 +637,8 @@ export const t = {
       sub: '',
       twoStep: '2 STUFEN', oneStep: '1 STUFE ⚡', mostPopular: 'Am Beliebtesten',
       account: 'Konto', getStarted: 'Jetzt Starten', allInclude: 'ALLE CHALLENGES BEINHALTEN',
-      features2: ['Phase 1: +10% Gewinnziel','Phase 2: +5% Gewinnziel','5% max. Tagesverlust','10% max. Gesamtverlust','Mindestens 4 Handelstage','Kein Zeitlimit','80% Gewinnbeteiligung','Skalierung bis $400.000'],
-      features1: ['Einzelphase: +10% Gewinnziel','3% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 4 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Skalierung bis $400.000'],
+      features2: ['Phase 1: +10% Gewinnziel','Phase 2: +5% Gewinnziel','5% max. Tagesverlust','10% max. Gesamtverlust','Mindestens 5 Handelstage','Kein Zeitlimit','80% Gewinnbeteiligung','Skalierung bis $400.000'],
+      features1: ['Einzelphase: +10% Gewinnziel','3% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 5 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Skalierung bis $400.000'],
     },
     rules: {
       label: 'Transparenz Zuerst', title: 'Klare', titleGold: 'Regeln',
@@ -755,8 +755,8 @@ export const t = {
       sub: '',
       twoStep: '2 AŞAMA', oneStep: '1 AŞAMA ⚡', mostPopular: 'En Popüler',
       account: 'Hesap', getStarted: 'Başla', allInclude: 'TÜM MEYDAN OKUMALAR İÇERİR',
-      features2: ['Aşama 1: +%10 kâr hedefi','Aşama 2: +%5 kâr hedefi','Maks. %5 günlük kayıp','Maks. %10 toplam drawdown','Minimum 4 işlem günü','Zaman sınırı yok','%80 kâr paylaşımı','$100.000\'e kadar büyüme'],
-      features1: ['Tek aşama: +%10 kâr hedefi','Maks. %3 günlük kayıp','%10 trailing drawdown','%50 en iyi gün kuralı','Minimum 4 işlem günü','Zaman sınırı yok','%90 kâr paylaşımı','$100.000\'e kadar büyüme'],
+      features2: ['Aşama 1: +%10 kâr hedefi','Aşama 2: +%5 kâr hedefi','Maks. %5 günlük kayıp','Maks. %10 toplam drawdown','Minimum 5 işlem günü','Zaman sınırı yok','%80 kâr paylaşımı','$100.000\'e kadar büyüme'],
+      features1: ['Tek aşama: +%10 kâr hedefi','Maks. %3 günlük kayıp','%10 trailing drawdown','%50 en iyi gün kuralı','Minimum 5 işlem günü','Zaman sınırı yok','%90 kâr paylaşımı','$100.000\'e kadar büyüme'],
     },
     rules: {
       label: 'Önce Şeffaflık', title: 'Net', titleGold: 'Kurallar',

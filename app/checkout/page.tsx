@@ -24,7 +24,7 @@ const RULES_2STEP = [
   { label: "Objectif Phase 2", value: "5%" },
   { label: "Perte journalière max", value: "5%" },
   { label: "Perte totale max", value: "10%" },
-  { label: "Jours de trading min", value: "4 jours" },
+  { label: "Jours de trading min", value: "5 jours" },
   { label: "Limite de temps", value: "Illimitée" },
   { label: "Partage des profits", value: "Jusqu'à 80%" },
 ];
@@ -34,7 +34,7 @@ const RULES_1STEP = [
   { label: "Perte journalière max", value: "3%" },
   { label: "Perte totale (trailing EOD)", value: "10%" },
   { label: "Règle meilleur jour", value: "≤ 50%" },
-  { label: "Jours de trading min", value: "4 jours" },
+  { label: "Jours de trading min", value: "5 jours" },
   { label: "Limite de temps", value: "Illimitée" },
   { label: "Partage des profits", value: "Jusqu'à 90%" },
   { label: "Cumul comptes max", value: "$200K" },
