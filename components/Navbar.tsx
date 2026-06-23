@@ -94,13 +94,13 @@ export default function Navbar() {
             {isMobile ? (
               /* Mobile gauche : logo */
               <a href="/" style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", height: 60 }}>
-                <img src="/logo-texte-blanc.png" alt="Traders Rewards" style={{ height: 120, width: "auto", objectFit: "contain", marginLeft: -30, transform: "translateY(4px)" }} />
+                <img src="/logo-texte-blanc.png" alt="Traders Rewards" style={{ height: 84, width: "auto", objectFit: "contain", marginLeft: -20, transform: "translateY(4px)" }} />
               </a>
             ) : (
               /* Desktop gauche : logo + drapeaux */
               <>
                 <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-                  <img src="/logo-texte-blanc.png" alt="Traders Rewards" style={{ height: 198, width: "auto", objectFit: "contain", marginLeft: -20, transform: "translateY(6px)" }} />
+                  <img src="/logo-texte-blanc.png" alt="Traders Rewards" style={{ height: 139, width: "auto", objectFit: "contain", marginLeft: -14, transform: "translateY(6px)" }} />
                 </a>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
                   <div style={{ display: "flex", gap: 4 }}>
