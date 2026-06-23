@@ -164,8 +164,7 @@ export async function sendPhase1CertificateEmail(to: string, firstName: string, 
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/PHASE1.png" alt="Certificat Phase 1" style="width:100%;display:block;" />
@@ -198,8 +197,7 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/PHASE2.png" alt="Certificat Phase 2" style="width:100%;display:block;" />
@@ -238,8 +236,7 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/RECOMPENSE.png" alt="Certificat Récompense" style="width:100%;display:block;" />
@@ -277,8 +274,7 @@ function buildEmail({ title, titleColor, body, details, cta }: {
       <div style="max-width:580px;margin:0 auto;">
 
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:72px;width:auto;display:inline-block;" />
-          <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
+          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
 
         <div style="background:#ffffff;border-radius:12px;padding:40px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
