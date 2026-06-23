@@ -130,61 +130,52 @@ export default function Pricing() {
               <div key={acc.id} style={{
                 position: "relative",
                 flexShrink: 0,
-                width: model === "instant" ? (isMobile ? "90vw" : 320) : isMobile ? "82vw" : "auto",
+                width: model === "instant" ? (isMobile ? "90vw" : 340) : isMobile ? "82vw" : "auto",
                 scrollSnapAlign: isMobile ? "center" : "none",
-                background: "#FFFFFF",
-                border: "1.5px solid #e5e7eb",
-                borderRadius: 12,
-                padding: "18px 10px 10px",
-                marginTop: 14,
+                background: "#111111",
+                border: acc.popular ? "1.5px solid #D4AF37" : "1.5px solid rgba(255,255,255,0.1)",
+                borderRadius: 14,
+                padding: "0 0 16px",
+                marginTop: 20,
                 display: "flex",
                 flexDirection: "column",
-                boxShadow: "none",
-                transition: "transform 0.2s",
+                overflow: "hidden",
+                transition: "transform 0.2s, border-color 0.2s",
               }}
-                onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; }}
-                onMouseOut={e => { e.currentTarget.style.transform = "none"; }}
+                onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = acc.popular ? "#D4AF37" : "rgba(255,255,255,0.25)"; }}
+                onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = acc.popular ? "#D4AF37" : "rgba(255,255,255,0.1)"; }}
               >
-
-                {/* Badge MEILLEURE VALEUR — vert pour 100K */}
-                {acc.popular && (
-                  <div style={{
-                    position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
-                    background: "linear-gradient(135deg, #16a34a, #22c55e)",
-                    color: "#fff", fontSize: 10, fontWeight: 800,
-                    padding: "5px 16px", borderRadius: 100,
-                    letterSpacing: "1px", whiteSpace: "nowrap",
-                  }}>
-                    {isFr ? "MEILLEURE VALEUR" : "BEST VALUE"}
-                  </div>
-                )}
-
-                {/* Badge PREMIUM — doré pour 200K */}
-                {acc.premium && (
-                  <div style={{
-                    position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
-                    background: "linear-gradient(135deg, #92400e, #C9A84C, #F6D976)",
-                    color: "#000", fontSize: 10, fontWeight: 800,
-                    padding: "5px 16px", borderRadius: 100,
-                    letterSpacing: "1px", whiteSpace: "nowrap",
-                    boxShadow: "0 2px 8px rgba(201,168,76,0.4)",
-                  }}>
-                    {isFr ? "✦ PREMIUM" : "✦ PREMIUM"}
-                  </div>
-                )}
-
-                {/* Account size */}
-                <div style={{ marginBottom: 10 }}>
-                  <div style={{ color: "#8a96aa", fontSize: 8, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 2 }}>
+                {/* Header de la carte */}
+                <div style={{
+                  padding: "16px 16px 14px",
+                  borderBottom: "1px solid rgba(255,255,255,0.08)",
+                  position: "relative",
+                }}>
+                  {/* Badge */}
+                  {(acc.popular || acc.premium) && (
+                    <div style={{
+                      position: "absolute", top: -1, right: -1,
+                      background: acc.popular ? "#D4AF37" : "rgba(212,175,55,0.15)",
+                      color: acc.popular ? "#000" : "#D4AF37",
+                      fontSize: 9, fontWeight: 800,
+                      padding: "4px 12px",
+                      borderRadius: "0 14px 0 8px",
+                      letterSpacing: "1px", whiteSpace: "nowrap",
+                      border: acc.premium ? "1px solid #D4AF37" : "none",
+                    }}>
+                      {acc.popular ? (isFr ? "POPULAIRE" : "POPULAR") : (isFr ? "✦ PREMIUM" : "✦ PREMIUM")}
+                    </div>
+                  )}
+                  <div style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
+                  <div style={{ fontSize: isMobile ? 22 : 26, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
                     {acc.size}
                   </div>
                 </div>
 
                 {/* Rules rows */}
-                <div style={{ flex: 1, marginBottom: 10 }}>
+                <div style={{ flex: 1, padding: "10px 16px" }}>
                   {rows.map((row, i) => {
                     const accountNum = sizeMap[acc.size] ?? 0;
                     const usdAmt = row.pct != null ? Math.round(accountNum * Math.abs(row.pct)) : null;
@@ -192,112 +183,85 @@ export default function Pricing() {
                     return (
                       <div key={i} style={{
                         display: "flex", justifyContent: "space-between", alignItems: "center",
-                        padding: "3px 0",
-                        borderBottom: i < rows.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
+                        padding: "7px 0",
+                        borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
                       }}>
-                        <span style={{ color: "#8a96aa", fontSize: 9, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.3px" }}>
+                        <span style={{ color: "#9CA3AF", fontSize: 11, fontWeight: 500 }}>
                           {row.label}
                         </span>
                         <div style={{ textAlign: "right" }}>
-                          {row.highlight ? (
-                            <span style={{
-                              backgroundColor: "rgba(13,27,62,0.1)",
-                              color: "#0D1B3E",
-                              fontSize: 10, fontWeight: 800,
-                              padding: "1px 6px", borderRadius: 4,
-                              border: "1px solid rgba(13,27,62,0.2)",
-                            }}>{row.value}</span>
-                          ) : (
-                            <span style={{ color: "#0D1B3E", fontSize: 10, fontWeight: 700 }}>{row.value}</span>
-                          )}
-                          {usdStr && <div style={{ color: "#b0b8c8", fontSize: 9, marginTop: 0 }}>{usdStr}</div>}
+                          <span style={{ color: row.highlight ? "#D4AF37" : "#FFFFFF", fontSize: 11, fontWeight: 700 }}>
+                            {row.value}
+                          </span>
+                          {usdStr && <div style={{ color: "#6b7280", fontSize: 9, marginTop: 1 }}>{usdStr}</div>}
                         </div>
                       </div>
                     );
                   })}
                 </div>
 
-                <div style={{ height: 1, backgroundColor: "rgba(0,0,0,0.06)", marginBottom: 10 }} />
+                <div style={{ height: 1, backgroundColor: "rgba(255,255,255,0.08)", margin: "0 16px 14px" }} />
 
-                {/* Price */}
-                <div style={{ textAlign: "center", marginBottom: 6 }}>
+                {/* Prix */}
+                <div style={{ padding: "0 16px", marginBottom: 10 }}>
                   {model === "instant" ? (
-                    <>
-                      <div style={{ fontSize: 28, fontWeight: 900, color: "#C9A84C", letterSpacing: "-1px", lineHeight: 1 }}>€1,300</div>
-                      <div style={{ fontSize: 10, color: "#6b7280", marginTop: 4, fontWeight: 600 }}>
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ fontSize: 28, fontWeight: 800, color: "#D4AF37", letterSpacing: "-1px" }}>€1,300</div>
+                      <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 4 }}>
                         {isFr ? "Compte reward direct" : "Direct reward account"}
                       </div>
-                    </>
+                    </div>
                   ) : (
-                    <>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 4 }}>
-                        <span style={{ fontSize: 11, color: "#9ca3af", textDecoration: "line-through", fontWeight: 600 }}>{price}</span>
-                        <span style={{
-                          background: "linear-gradient(135deg, #dc2626, #ef4444)",
-                          color: "#fff", fontSize: 9, fontWeight: 900,
-                          padding: "2px 6px", borderRadius: 4, letterSpacing: "0.5px",
-                        }}>−{PROMO_PCT}%</span>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <div>
+                        <span style={{ fontSize: 12, color: "#6b7280", textDecoration: "line-through" }}>{price}</span>
+                        <span style={{ marginLeft: 8, background: "#D4AF37", color: "#000", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4 }}>−{PROMO_PCT}%</span>
                       </div>
-                      <div style={{ fontSize: 22, fontWeight: 900, color: "#1565C0", letterSpacing: "-1px", lineHeight: 1 }}>{promoPrice}</div>
-                      <div style={{ fontSize: 9, color: "#6b7280", marginTop: 2, fontWeight: 600 }}>
-                        {isFr ? `code : ${PROMO_CODE}` : `code: ${PROMO_CODE}`}
-                      </div>
-                    </>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: "#D4AF37", letterSpacing: "-0.5px" }}>{promoPrice}</div>
+                    </div>
                   )}
                 </div>
 
                 {/* Récompense moyenne */}
                 <div style={{
-                  background: "rgba(13,27,62,0.08)",
-                  border: "1px solid rgba(13,27,62,0.2)",
-                  borderRadius: 6, padding: "5px 8px",
-                  textAlign: "center", marginBottom: 8,
+                  margin: "0 16px 12px",
+                  background: "rgba(212,175,55,0.06)",
+                  border: "1px solid rgba(212,175,55,0.2)",
+                  borderRadius: 8, padding: "8px 12px",
+                  display: "flex", alignItems: "center", justifyContent: "space-between",
                 }}>
-                  <div style={{ fontSize: 8, fontWeight: 700, color: "#7a90b0", letterSpacing: "1px", textTransform: "uppercase", marginBottom: 1 }}>
+                  <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 500 }}>
                     {isFr ? "Récompense moy." : "Avg. reward"}
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 900, color: "#0D1B3E", letterSpacing: "-0.5px" }}>{acc.reward}</div>
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: "#D4AF37" }}>{acc.reward}</span>
                 </div>
 
                 {/* CTA */}
-                <a href={model === "instant" ? `/checkout?product=50k-instant` : `/checkout?product=${acc.id}-${model}`} style={{
-                  display: "block", textAlign: "center",
-                  padding: "10px 12px", borderRadius: 7,
-                  fontSize: 11, fontWeight: 800,
-                  textDecoration: "none", letterSpacing: "1.5px", textTransform: "uppercase",
-                  background: acc.popular
-                    ? "linear-gradient(135deg, #16a34a, #22c55e)"
-                    : acc.premium
-                    ? "linear-gradient(135deg, #92400e, #C9A84C, #F6D976)"
-                    : "#0D1B3E",
-                  color: acc.premium ? "#000" : "#fff",
-                  boxShadow: acc.popular
-                    ? "0 4px 18px rgba(22,163,74,0.4)"
-                    : acc.premium
-                    ? "0 4px 18px rgba(201,168,76,0.4)"
-                    : "0 4px 18px rgba(13,27,62,0.4)",
-                  transition: "all 0.2s",
-                }}
-                  onMouseOver={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
-                  onMouseOut={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
-                >
-                  {isFr ? "Commencer" : "Get Started"}
-                </a>
+                <div style={{ padding: "0 16px" }}>
+                  <a href={model === "instant" ? `/checkout?product=50k-instant` : `/checkout?product=${acc.id}-${model}`} style={{
+                    display: "block", textAlign: "center",
+                    padding: "12px", borderRadius: 8,
+                    fontSize: 12, fontWeight: 700,
+                    textDecoration: "none", letterSpacing: "1px", textTransform: "uppercase",
+                    background: acc.popular ? "#D4AF37" : "#FFFFFF",
+                    color: "#000",
+                    transition: "opacity 0.2s",
+                  }}
+                    onMouseOver={e => { (e.currentTarget as HTMLElement).style.opacity = "0.85"; }}
+                    onMouseOut={e => { (e.currentTarget as HTMLElement).style.opacity = "1"; }}
+                  >
+                    {isFr ? "Commencer" : "Get Started"}
+                  </a>
+                </div>
               </div>
             );
           })}
         </div>
 
         {isMobile && (
-          <>
-            <p style={{ textAlign: "center", color: "#8a96aa", fontSize: 12, marginTop: 12 }}>
-              {isFr ? "← Glissez pour voir tous les comptes →" : "← Swipe to see all accounts →"}
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, marginTop: 32 }}>
-              <img src="/MT5 ROND TRANSPARENT.png" alt="MetaTrader 5" style={{ width: "calc(100vw - 2cm)", maxWidth: 340, height: "auto", objectFit: "contain" }} />
-              <img src="/PATCH-400K-LONG.png" alt="400K" style={{ width: "calc(100vw - 2cm)", maxWidth: 340, height: "auto", objectFit: "contain" }} />
-            </div>
-          </>
+          <p style={{ textAlign: "center", color: "#6b7280", fontSize: 12, marginTop: 12 }}>
+            {isFr ? "← Glissez pour voir tous les comptes →" : "← Swipe to see all accounts →"}
+          </p>
         )}
       </div>
     </section>
