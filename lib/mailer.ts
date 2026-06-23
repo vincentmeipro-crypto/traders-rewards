@@ -202,7 +202,7 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
           <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-          <img src="${SITE}/CHALLENGE.png" alt="Certificat Challenge" style="width:100%;display:block;" />
+          <img src="${SITE}/PHASE2.png" alt="Certificat Phase 2" style="width:100%;display:block;" />
           <div style="padding:32px 36px;">
             <h2 style="color:#a855f7;font-size:22px;font-weight:700;margin:0 0 12px 0;">Challenge validé — ${firstName}, vous êtes Trader Reward !</h2>
             <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
@@ -242,7 +242,7 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
           <div style="color:#0D1B3E;font-size:17px;font-weight:800;letter-spacing:3px;margin-top:10px;">TRADERS REWARDS</div>
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-          <img src="${SITE}/REWARDS.png" alt="Certificat Récompense" style="width:100%;display:block;" />
+          <img src="${SITE}/RECOMPENSE.png" alt="Certificat Récompense" style="width:100%;display:block;" />
           <div style="padding:32px 36px;">
             <h2 style="color:#C9A84C;font-size:22px;font-weight:700;margin:0 0 12px 0;">Récompense validée — $${netAmount.toLocaleString()} pour vous !</h2>
             <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
