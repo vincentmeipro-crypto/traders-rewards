@@ -209,8 +209,8 @@ export default function Hero() {
                 margin: 0,
               }}>
                 {isFr
-                  ? <>La propfirm française qui récompense les <span style={{ color: "#9A7B2F" }}>traders disciplinés</span>.</>
-                  : <>The French propfirm that rewards <span style={{ color: "#9A7B2F" }}>disciplined traders</span>.</>}
+                  ? <>La propfirm française qui récompense les <span style={{ color: "#9A7B2F" }}>traders disciplinés</span></>
+                  : <>The French propfirm that rewards <span style={{ color: "#9A7B2F" }}>disciplined traders</span></>}
               </p>
             </div>
             <LiveRewardCard />
