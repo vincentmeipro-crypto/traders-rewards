@@ -13,47 +13,37 @@ export default function Image() {
           width: 1200,
           height: 630,
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           alignItems: "center",
-          justifyContent: "center",
-          background: "linear-gradient(135deg, #0D1B3E 0%, #1565C0 100%)",
+          background: "#0A0A0A",
           fontFamily: "system-ui, sans-serif",
-          position: "relative",
+          padding: "0 80px",
+          gap: 80,
         }}
       >
-        {/* Background pattern */}
-        <div style={{ position: "absolute", inset: 0, opacity: 0.05, background: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)", backgroundSize: "60px 60px", display: "flex" }} />
-
-        {/* Badge */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(201,168,76,0.2)", border: "1px solid rgba(201,168,76,0.5)", borderRadius: 100, padding: "8px 20px", marginBottom: 28 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: "#C9A84C", letterSpacing: 2, textTransform: "uppercase" }}>🇫🇷 Prop Firm Française</span>
+        {/* GAUCHE — Titre principal */}
+        <div style={{ flex: "1 1 0", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ fontSize: 80, fontWeight: 900, color: "#FFFFFF", lineHeight: 1.05, letterSpacing: "-2px" }}>
+            Transformez votre trading démo en
+          </div>
+          <div style={{ fontSize: 80, fontWeight: 900, color: "#9A7B2F", lineHeight: 1.05, letterSpacing: "-2px", marginTop: 8 }}>
+            vraies récompenses
+          </div>
         </div>
 
-        {/* Title */}
-        <div style={{ fontSize: 56, fontWeight: 900, color: "#ffffff", textAlign: "center", lineHeight: 1.1, marginBottom: 16, maxWidth: 900 }}>
-          Traders Rewards
-        </div>
-        <div style={{ fontSize: 26, color: "rgba(255,255,255,0.75)", textAlign: "center", marginBottom: 40, maxWidth: 700 }}>
-          Challenge Trading · Capital jusqu'à 200 000€ · 90% des profits
-        </div>
+        {/* Séparateur vertical */}
+        <div style={{ width: 1, background: "rgba(255,255,255,0.12)", alignSelf: "stretch", margin: "60px 0", display: "flex" }} />
 
-        {/* Stats */}
-        <div style={{ display: "flex", gap: 48 }}>
-          {[
-            { label: "Capital simulé", value: "200K€" },
-            { label: "Partage profit", value: "90%" },
-            { label: "Actifs tradables", value: "150+" },
-          ].map((s) => (
-            <div key={s.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-              <span style={{ fontSize: 36, fontWeight: 900, color: "#C9A84C" }}>{s.value}</span>
-              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", textTransform: "uppercase", letterSpacing: 1 }}>{s.label}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* URL */}
-        <div style={{ position: "absolute", bottom: 32, fontSize: 15, color: "rgba(255,255,255,0.4)", letterSpacing: 1 }}>
-          traders-rewards.eu
+        {/* DROITE — Tagline tricolore */}
+        <div style={{ flex: "0 0 420px", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ fontSize: 44, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.3 }}>
+            <span>La propfirm </span>
+            <span style={{ color: "#002395", fontWeight: 900 }}>FRA</span>
+            <span style={{ color: "#FFFFFF", fontWeight: 900 }}>NÇA</span>
+            <span style={{ color: "#ED2939", fontWeight: 900 }}>ISE</span>
+            <span> qui récompense les </span>
+            <span style={{ color: "#9A7B2F" }}>traders disciplinés</span>
+          </div>
         </div>
       </div>
     ),
