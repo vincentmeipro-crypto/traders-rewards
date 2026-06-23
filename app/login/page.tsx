@@ -57,7 +57,7 @@ export default function LoginPage() {
 
       <div style={{ width: "100%", maxWidth: 420, position: "relative", zIndex: 1 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <a href="/"><Image src="/nouveau-logo.png" alt="Traders Rewards" width={110} height={110} style={{ objectFit: "contain" }} /></a>
+          <a href="/"><Image src="/logo-nom-noir.png" alt="Traders Rewards" width={110} height={110} style={{ objectFit: "contain" }} /></a>
         </div>
 
         <div style={{ backgroundColor: "#fff", border: "1.5px solid #111", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.12)" }}>

@@ -84,7 +84,7 @@ function CertificateContent() {
 
         {/* Logo haut gauche */}
         <img
-          src="/nouveau-logo.png"
+          src="/logo-nom-noir.png"
           alt="Traders Rewards"
           style={{ position: "absolute", top: "4%", left: "4%", width: "clamp(32px, 7%, 52px)", height: "auto", opacity: 0.9 }}
         />

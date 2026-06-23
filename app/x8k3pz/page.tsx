@@ -534,7 +534,7 @@ export default function AdminPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ width: "100%", maxWidth: 400 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <img src="/nouveau-logo.png" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
+          <img src="/logo-nom-noir.png" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
           <div style={{ color: "#C9A84C", fontWeight: 800, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", marginTop: 12 }}>Admin Panel</div>
         </div>
         <div style={{ backgroundColor: "#ffffff", border: "1px solid #1e1e1e", borderRadius: 20, padding: "36px 32px" }}>
@@ -587,7 +587,7 @@ export default function AdminPage() {
       {!isMobile && (
         <div style={{ width: 220, backgroundColor: "#fff", borderRight: "1px solid #e5e7eb", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
           <div style={{ padding: "20px 16px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", gap: 10 }}>
-            <img src="/nouveau-logo.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
+            <img src="/logo-nom-noir.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
             <div>
               <div style={{ color: "#111", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Traders Rewards</div>
               <div style={{ color: "#111", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>

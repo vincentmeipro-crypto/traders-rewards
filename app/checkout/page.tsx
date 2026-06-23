@@ -244,7 +244,7 @@ function CheckoutContent() {
       {/* Header */}
       <div style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", padding: isMobile ? "10px 16px" : "10px 28px", display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
         <div style={{ width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Image src="/logo-bleu.png" alt="Traders Rewards" width={32} height={32} style={{ objectFit: "contain" }} />
+            <Image src="/logo-nom-noir.png" alt="Traders Rewards" width={32} height={32} style={{ objectFit: "contain" }} />
           </div>
         <span style={{ fontWeight: 800, fontSize: 15, color: "#111" }}>Traders Rewards</span>
         <span style={{ color: "#d1d5db", margin: "0 6px" }}>/</span>

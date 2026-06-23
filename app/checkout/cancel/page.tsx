@@ -5,7 +5,7 @@ export default function CancelPage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#ffffff", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
       <div style={{ textAlign: "center", maxWidth: 440 }}>
-        <Image src="/nouveau-logo.png" alt="Traders Rewards" width={80} height={80} style={{ objectFit: "contain", marginBottom: 32 }} />
+        <Image src="/logo-nom-noir.png" alt="Traders Rewards" width={80} height={80} style={{ objectFit: "contain", marginBottom: 32 }} />
 
         <div style={{ backgroundColor: "#ffffff", border: "1.5px solid #111", borderRadius: 20, padding: "48px 40px", boxShadow: "0 8px 40px rgba(21,101,192,0.08)" }}>
           <XCircle size={56} color="#ef4444" style={{ marginBottom: 24 }} />
