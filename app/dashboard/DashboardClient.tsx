@@ -1440,14 +1440,14 @@ export default function DashboardClient({ user }: { user: User }) {
                   key: "phase1",
                 },
                 {
-                  type: "challenge", image: "/CHALLENGE.png", label: "Challenge", btnColor: "#a855f7",
+                  type: "challenge", image: "/PHASE2.png", label: "Challenge", btnColor: "#a855f7",
                   unlocked: unlockedChallenge,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
                   key: "challenge",
                 },
                 ...(!unlockedReward ? [{
-                  type: "reward", image: "/REWARDS.png", label: "Récompense", btnColor: "#9A7B2F",
+                  type: "reward", image: "/RECOMPENSE.png", label: "Récompense", btnColor: "#9A7B2F",
                   unlocked: false,
                   amount: "$0",
                   date: "",
@@ -1500,7 +1500,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           return (
                             <div key={p.id} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                               <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
-                                <img src="/REWARDS.png" alt="Reward" style={{ width: "100%", display: "block" }} />
+                                <img src="/RECOMPENSE.png" alt="Reward" style={{ width: "100%", display: "block" }} />
                                 <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                   <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.5)", letterSpacing: "-1px" }}>{amt}</div>
                                   <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>{dt}</div>
