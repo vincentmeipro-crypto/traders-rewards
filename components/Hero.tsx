@@ -170,10 +170,7 @@ export default function Hero() {
                 : <>Turn your trading<br />skills into<br />real rewards</>}
             </h1>
 
-            <div className="h2" style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-              <a href="/#pricing" className="hero-btn-primary">
-                {isFr ? "Commencer" : "Get Started"}
-              </a>
+            <div className="h2">
               <a href="/#how-it-works" className="hero-btn-secondary">
                 {isFr ? "Comment ça marche ?" : "How does it work?"}
               </a>
