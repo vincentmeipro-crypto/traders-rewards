@@ -170,10 +170,16 @@ export default function Hero() {
                 : <>Turn your trading<br />skills into<br />real rewards</>}
             </h1>
 
-            <div className="h2">
+            <div className="h2" style={{ display: "flex", alignItems: "center", gap: 24 }}>
               <a href="/#how-it-works" className="hero-btn-secondary">
                 {isFr ? "Comment ça marche ?" : "How does it work?"}
               </a>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>
+                  {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
+                </span>
+              </div>
             </div>
           </div>
 
@@ -208,10 +214,6 @@ export default function Hero() {
               </p>
             </div>
             <LiveRewardCard />
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-              <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>Trading Simulé · Programme éducatif récompensé</span>
-            </div>
           </div>
 
         </div>
