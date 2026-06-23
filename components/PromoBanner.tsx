@@ -43,15 +43,15 @@ export default function PromoBanner() {
       top: 0, left: 0, right: 0,
       zIndex: 200,
       height: 40,
-      background: "linear-gradient(135deg, #0D1B3E 0%, #1565C0 100%)",
-      borderBottom: "1px solid rgba(21,101,192,0.4)",
+      background: "#9A7B2F",
+      borderBottom: "1px solid rgba(154,123,47,0.4)",
       display: "flex",
       alignItems: "center",
       overflow: "hidden",
     }}>
       <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 60, background: "linear-gradient(to right, #0D1B3E, transparent)", zIndex: 2, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", right: 32, top: 0, bottom: 0, width: 60, background: "linear-gradient(to left, #1565C0, transparent)", zIndex: 2, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 60, background: "linear-gradient(to right, #9A7B2F, transparent)", zIndex: 2, pointerEvents: "none" }} />
+        <div style={{ position: "absolute", right: 32, top: 0, bottom: 0, width: 60, background: "linear-gradient(to left, #9A7B2F, transparent)", zIndex: 2, pointerEvents: "none" }} />
 
         <div className="marquee-track">
           {texts.map((item, i) => (
