@@ -201,13 +201,13 @@ export default function Hero() {
               <p style={{
                 fontSize: isMobile ? 28 : 38,
                 fontWeight: 700,
-                color: "rgba(255,255,255,0.75)",
+                color: "#FFFFFF",
                 lineHeight: 1.35,
                 margin: 0,
               }}>
                 {isFr
-                  ? "La prop firm française qui récompense les traders disciplinés."
-                  : "The French prop firm that rewards disciplined traders."}
+                  ? "La propfirm française qui récompense les traders disciplinés."
+                  : "The French propfirm that rewards disciplined traders."}
               </p>
             </div>
             <LiveRewardCard />
