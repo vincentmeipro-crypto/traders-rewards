@@ -1769,7 +1769,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       ].map((item, i) => (
                         <div key={i} onClick={() => item.copy && navigator.clipboard.writeText(item.value)} style={{ backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 14px", cursor: item.copy ? "pointer" : "default" }} title={item.copy ? "Cliquer pour copier" : ""}>
                           <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}{item.copy && <span style={{ marginLeft: 4, opacity: 0.5 }}>⎘</span>}</div>
-                          <div style={{ fontSize: 13, fontWeight: 400, fontFamily: "monospace", color: "#9A7B2F", wordBreak: "break-all" }}>{item.value}</div>
+                          <div style={{ fontSize: 13, fontWeight: 400, fontFamily: "monospace", color: "#FFFFFF", wordBreak: "break-all" }}>{item.value}</div>
                         </div>
                       ))}
                     </div>
@@ -1782,7 +1782,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover" }} />
                     <div style={{ fontWeight: 700, fontSize: 14 }}>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</div>
                   </div>
-                  <div style={{ color: "#9A7B2F", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
+                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
                       { label: "🖥 Windows", href: "https://download.terminal.free/cdn/web/starwave.fx.ltd/mt5/starwavefx5setup.exe" },
@@ -1791,7 +1791,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
                     ].map((item, i) => (
                       <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
-                        style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#9A7B2F", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid rgba(255,255,255,0.1)", display: "inline-block" }}>
+                        style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#FFFFFF", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid rgba(255,255,255,0.1)", display: "inline-block" }}>
                         {item.label}
                       </a>
                     ))}
@@ -1805,7 +1805,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Rules checklist */}
                 <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#9A7B2F" }}>{T.dash.rulesStatus}</div>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#FFFFFF" }}>{T.dash.rulesStatus}</div>
                   {(() => {
                     const b = challenge.start_balance;
                     const profitUSD  = Math.round(b * challenge.profit_target / 100);
@@ -1901,7 +1901,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </div>
                           </div>
                         </div>
-                        <span style={{ color: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.status === "—" ? "#444" : (rule as {isDrawdown?: boolean}).isDrawdown ? (rule.ok ? "#9A7B2F" : "#ef4444") : (rule.ok ? "#9A7B2F" : "#9A7B2F"), fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
+                        <span style={{ color: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.status === "—" ? "rgba(255,255,255,0.3)" : "#FFFFFF", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
                       </div>
                     ));
                   })()}
@@ -1918,15 +1918,15 @@ export default function DashboardClient({ user }: { user: User }) {
                           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                             <div style={{ flex: 1, minWidth: 100 }}>
                               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Plus haut EOD" : "EOD High"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: "#9A7B2F" }}>${Math.round(challenge.highest_balance!).toLocaleString()}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${Math.round(challenge.highest_balance!).toLocaleString()}</div>
                             </div>
                             <div style={{ flex: 1, minWidth: 100 }}>
                               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Plancher actuel" : "Current floor"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: "#9A7B2F" }}>${floor.toLocaleString()}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${floor.toLocaleString()}</div>
                             </div>
                             <div style={{ flex: 1, minWidth: 100 }}>
                               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Marge restante" : "Buffer left"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: buffer > 0 ? "#9A7B2F" : "#ef4444" }}>${buffer.toLocaleString()}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: buffer > 0 ? "#FFFFFF" : "#ef4444" }}>${buffer.toLocaleString()}</div>
                             </div>
                           </div>
                         </div>
