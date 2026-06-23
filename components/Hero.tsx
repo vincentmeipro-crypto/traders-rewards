@@ -209,7 +209,7 @@ export default function Hero() {
                 margin: 0,
               }}>
                 {isFr
-                  ? <>La propfirm française qui récompense les <span style={{ color: "#9A7B2F" }}>traders disciplinés</span></>
+                  ? <>La propfirm <span style={{ fontWeight: 900 }}><span style={{ color: "#002395" }}>FRA</span><span style={{ color: "#FFFFFF" }}>NÇA</span><span style={{ color: "#ED2939" }}>ISE</span></span> qui récompense les <span style={{ color: "#9A7B2F" }}>traders disciplinés</span></>
                   : <>The French propfirm that rewards <span style={{ color: "#9A7B2F" }}>disciplined traders</span></>}
               </p>
             </div>
