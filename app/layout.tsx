@@ -11,7 +11,7 @@ const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-
 const SITE_URL = "https://www.traders-rewards.eu";
 const TITLE = "Traders Rewards | Prop Firm Française | Challenge Trading France";
 const DESCRIPTION =
-  "Traders Rewards est la première prop firm française. Accédez à jusqu'à 200 000 € de capital simulé, passez votre challenge trading et touchez jusqu'à 90% de vos profits. Challenge forex, indices, crypto — sans limite de temps.";
+  "Transformez votre trading démo en vraies récompenses. La prop firm FRANÇAISE qui récompense les traders disciplinés. Capital simulé jusqu'à 200 000 € · Partage des profits jusqu'à 90%.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
