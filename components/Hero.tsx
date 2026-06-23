@@ -158,25 +158,25 @@ export default function Hero() {
           {/* GAUCHE — Titre + CTAs */}
           <div style={{ flex: "1 1 0", minWidth: 0 }}>
             <h1 className="h1" style={{
-              fontSize: isMobile ? "clamp(2.4rem, 10vw, 3rem)" : "clamp(3.2rem, 4.5vw, 5rem)",
+              fontSize: isMobile ? "clamp(1.7rem, 7.5vw, 2.4rem)" : "clamp(3.2rem, 4.5vw, 5rem)",
               fontWeight: 900,
               color: "#FFFFFF",
-              lineHeight: 1.05,
-              letterSpacing: "-2px",
-              margin: "0 0 36px",
+              lineHeight: 1.1,
+              letterSpacing: isMobile ? "-1px" : "-2px",
+              margin: "0 0 28px",
             }}>
               {isFr
                 ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#9A7B2F" }}>vraies récompenses</span></>
                 : <>Turn your trading<br />skills into<br /><span style={{ color: "#9A7B2F" }}>real rewards</span></>}
             </h1>
 
-            <div className="h2" style={{ display: "flex", alignItems: "center", gap: 24 }}>
+            <div className="h2" style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "center", gap: isMobile ? 14 : 24 }}>
               <a href="/#how-it-works" className="hero-btn-secondary">
                 {isFr ? "Comment ça marche ?" : "How does it work?"}
               </a>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>
+                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
                   {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
                 </span>
               </div>
@@ -202,7 +202,7 @@ export default function Hero() {
                 <rect x="2" width="1" height="2" fill="#ED2939"/>
               </svg>
               <p style={{
-                fontSize: isMobile ? 28 : 38,
+                fontSize: isMobile ? 20 : 38,
                 fontWeight: 700,
                 color: "#FFFFFF",
                 lineHeight: 1.35,
