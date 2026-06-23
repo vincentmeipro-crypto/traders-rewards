@@ -207,19 +207,15 @@ export default function Hero() {
                   : "The French propfirm that rewards disciplined traders."}
               </p>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-              <div style={{ flex: 1 }}>
-                <LiveRewardCard />
+            <LiveRewardCard />
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>Trading Simulé</span>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                  <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>Trading Simulé</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                  <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" }}>Programme éducatif récompensé</span>
-                </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>Programme éducatif récompensé</span>
               </div>
             </div>
           </div>
