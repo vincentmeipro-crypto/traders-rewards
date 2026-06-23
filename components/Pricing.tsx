@@ -133,7 +133,7 @@ export default function Pricing() {
                 width: model === "instant" ? (isMobile ? "90vw" : 340) : isMobile ? "82vw" : "auto",
                 scrollSnapAlign: isMobile ? "center" : "none",
                 background: "#111111",
-                border: acc.popular ? "1.5px solid #D4AF37" : "1.5px solid rgba(255,255,255,0.1)",
+                border: acc.popular ? "1.5px solid #9A7B2F" : "1.5px solid rgba(255,255,255,0.1)",
                 borderRadius: 14,
                 padding: "0 0 16px",
                 marginTop: 20,
@@ -142,8 +142,8 @@ export default function Pricing() {
                 overflow: "hidden",
                 transition: "transform 0.2s, border-color 0.2s",
               }}
-                onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = acc.popular ? "#D4AF37" : "rgba(255,255,255,0.25)"; }}
-                onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = acc.popular ? "#D4AF37" : "rgba(255,255,255,0.1)"; }}
+                onMouseOver={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = acc.popular ? "#9A7B2F" : "rgba(255,255,255,0.25)"; }}
+                onMouseOut={e => { e.currentTarget.style.transform = "none"; e.currentTarget.style.borderColor = acc.popular ? "#9A7B2F" : "rgba(255,255,255,0.1)"; }}
               >
                 {/* Header de la carte */}
                 <div style={{
@@ -155,13 +155,13 @@ export default function Pricing() {
                   {(acc.popular || acc.premium) && (
                     <div style={{
                       position: "absolute", top: -1, right: -1,
-                      background: acc.popular ? "#D4AF37" : "rgba(212,175,55,0.15)",
-                      color: acc.popular ? "#000" : "#D4AF37",
+                      background: acc.popular ? "#9A7B2F" : "rgba(154,123,47,0.15)",
+                      color: acc.popular ? "#000" : "#9A7B2F",
                       fontSize: 9, fontWeight: 800,
                       padding: "4px 12px",
                       borderRadius: "0 14px 0 8px",
                       letterSpacing: "1px", whiteSpace: "nowrap",
-                      border: acc.premium ? "1px solid #D4AF37" : "none",
+                      border: acc.premium ? "1px solid #9A7B2F" : "none",
                     }}>
                       {acc.popular ? (isFr ? "POPULAIRE" : "POPULAR") : (isFr ? "✦ PREMIUM" : "✦ PREMIUM")}
                     </div>
@@ -190,7 +190,7 @@ export default function Pricing() {
                           {row.label}
                         </span>
                         <div style={{ textAlign: "right" }}>
-                          <span style={{ color: row.highlight ? "#D4AF37" : "#FFFFFF", fontSize: 11, fontWeight: 700 }}>
+                          <span style={{ color: row.highlight ? "#9A7B2F" : "#FFFFFF", fontSize: 11, fontWeight: 700 }}>
                             {row.value}
                           </span>
                           {usdStr && <div style={{ color: "#6b7280", fontSize: 9, marginTop: 1 }}>{usdStr}</div>}
@@ -206,7 +206,7 @@ export default function Pricing() {
                 <div style={{ padding: "0 16px", marginBottom: 10 }}>
                   {model === "instant" ? (
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: 28, fontWeight: 800, color: "#D4AF37", letterSpacing: "-1px" }}>€1,300</div>
+                      <div style={{ fontSize: 28, fontWeight: 800, color: "#9A7B2F", letterSpacing: "-1px" }}>€1,300</div>
                       <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 4 }}>
                         {isFr ? "Compte reward direct" : "Direct reward account"}
                       </div>
@@ -215,9 +215,9 @@ export default function Pricing() {
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <div>
                         <span style={{ fontSize: 12, color: "#6b7280", textDecoration: "line-through" }}>{price}</span>
-                        <span style={{ marginLeft: 8, background: "#D4AF37", color: "#000", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4 }}>−{PROMO_PCT}%</span>
+                        <span style={{ marginLeft: 8, background: "#9A7B2F", color: "#000", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4 }}>−{PROMO_PCT}%</span>
                       </div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: "#D4AF37", letterSpacing: "-0.5px" }}>{promoPrice}</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: "#9A7B2F", letterSpacing: "-0.5px" }}>{promoPrice}</div>
                     </div>
                   )}
                 </div>
@@ -225,15 +225,15 @@ export default function Pricing() {
                 {/* Récompense moyenne */}
                 <div style={{
                   margin: "0 16px 12px",
-                  background: "rgba(212,175,55,0.06)",
-                  border: "1px solid rgba(212,175,55,0.2)",
+                  background: "rgba(154,123,47,0.06)",
+                  border: "1px solid rgba(154,123,47,0.2)",
                   borderRadius: 8, padding: "8px 12px",
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                 }}>
                   <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 500 }}>
                     {isFr ? "Récompense moy." : "Avg. reward"}
                   </span>
-                  <span style={{ fontSize: 14, fontWeight: 800, color: "#D4AF37" }}>{acc.reward}</span>
+                  <span style={{ fontSize: 14, fontWeight: 800, color: "#9A7B2F" }}>{acc.reward}</span>
                 </div>
 
                 {/* CTA */}
@@ -243,7 +243,7 @@ export default function Pricing() {
                     padding: "12px", borderRadius: 8,
                     fontSize: 12, fontWeight: 700,
                     textDecoration: "none", letterSpacing: "1px", textTransform: "uppercase",
-                    background: acc.popular ? "#D4AF37" : "#FFFFFF",
+                    background: acc.popular ? "#9A7B2F" : "#FFFFFF",
                     color: "#000",
                     transition: "opacity 0.2s",
                   }}
