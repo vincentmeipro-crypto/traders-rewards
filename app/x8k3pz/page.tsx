@@ -724,16 +724,16 @@ export default function AdminPage() {
             {/* Entonnoir */}
             <div style={{ display: "flex", gap: 8, marginBottom: 24, alignItems: "stretch" }}>
               {[
-                { label: "Phase 1 (2-Step)", value: kpis.phase1,    color: "#8a96aa",    fs: "active"  },
-                { label: "1-Step actifs",    value: kpis.oneStep,   color: "#a78bfa", fs: "active"  },
-                { label: "Phase 2 (2-Step)", value: kpis.phase2,    color: "#111",    fs: "active"  },
-                { label: "Passés",           value: kpis.passed,    color: "#f59e0b", fs: "passed"  },
-                { label: "Reward",           value: kpis.certified, color: "#3b82f6", fs: "funded"  },
-                { label: "Failed",           value: kpis.failed,    color: "#ef4444", fs: "failed"  },
+                { label: "Phase 1 (2-Step)", value: kpis.phase1,    fs: "active"  },
+                { label: "1-Step actifs",    value: kpis.oneStep,   fs: "active"  },
+                { label: "Phase 2 (2-Step)", value: kpis.phase2,    fs: "active"  },
+                { label: "Passés",           value: kpis.passed,    fs: "passed"  },
+                { label: "Reward",           value: kpis.certified, fs: "funded"  },
+                { label: "Failed",           value: kpis.failed,    fs: "failed"  },
               ].map((s, i) => (
                 <div key={i} onClick={() => setFilterStatus(s.fs)}
-                  style={{ flex: 1, backgroundColor: "#ffffff", border: `1px solid ${s.color}30`, borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}>
-                  <div style={{ color: s.color, fontSize: 22, fontWeight: 900 }}>{s.value}</div>
+                  style={{ flex: 1, backgroundColor: "#ffffff", border: "1px solid #e5e7eb", borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}>
+                  <div style={{ color: "#111", fontSize: 22, fontWeight: 900 }}>{s.value}</div>
                   <div style={{ color: "#6b7280", fontSize: 11, marginTop: 4 }}>{s.label}</div>
                 </div>
               ))}
