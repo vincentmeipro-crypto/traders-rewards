@@ -26,8 +26,8 @@ const CERT_CONFIG = {
     nameColor: "#ffffff",
     amountColor: "#7dd3fc",
     dateColor: "#ffffff",
-    nameTop: "50%",
-    amountTop: "61%",
+    nameTop: "57%",
+    amountTop: "69%",
     dateTop: "85%",
   },
 };
