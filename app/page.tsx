@@ -18,8 +18,8 @@ export default function Home() {
     <main className="page-main" style={{ minHeight: "100vh" }}>
       <PromoBanner />
       <Navbar />
-      <Hero />
       <div style={{ background: "#ffffff" }}>
+        <Hero />
         <Pricing />
       </div>
       <TopTraders />

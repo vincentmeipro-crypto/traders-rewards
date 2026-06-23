@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Outfit, Bebas_Neue, Montserrat } from "next/font/google";
+import { Outfit, Bebas_Neue } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import PWARegister from "@/components/PWARegister";
@@ -7,7 +7,6 @@ import RefTracker from "@/components/RefTracker";
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", weight: ["300", "400", "500", "600", "700", "800", "900"] });
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat", weight: ["500", "600", "800"] });
 
 const SITE_URL = "https://www.traders-rewards.eu";
 const TITLE = "Traders Rewards | Prop Firm Française | Challenge Trading France";
@@ -266,7 +265,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${outfit.variable} ${bebas.variable} ${montserrat.variable}`}>
+    <html lang="fr" className={`${outfit.variable} ${bebas.variable}`}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#0D1B3E" />
@@ -285,7 +284,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${outfit.variable} ${bebas.variable} ${montserrat.variable}`}>
+      <body className={`${outfit.variable} ${bebas.variable}`}>
         <LanguageProvider>
           {children}
         </LanguageProvider>
