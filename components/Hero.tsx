@@ -151,7 +151,7 @@ export default function Hero() {
 
       <section style={{
         minHeight: "auto",
-        background: "transparent",
+        background: "#0A0A0A",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -164,7 +164,7 @@ export default function Hero() {
         {/* Mobile : H1 complet — carte centrée */}
         {isMobile ? (
           <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "20px 24px 0px" }}>
-<h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 16, marginTop: 0 }}>
+<h1 className="hero-animate-1" style={{ fontSize: "clamp(2.2rem, 8vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 16, marginTop: 0 }}>
               {isFr
                 ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#1565C0" }}>vraies récompenses</span></>
                 : <>Turn your trading<br />skills into<br /><span style={{ color: "#1565C0" }}>real rewards</span></>}
@@ -179,7 +179,7 @@ export default function Hero() {
                 <span key={label} style={{
                   display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4,
                   fontSize: 9.5, fontWeight: 600, letterSpacing: "0.3px",
-                  color: "rgba(13,27,62,0.55)",
+                  color: "rgba(255,255,255,0.65)",
                   padding: "3px 4px",
                   textAlign: "center",
                   lineHeight: 1.3,
@@ -195,7 +195,7 @@ export default function Hero() {
         ) : (
           /* Desktop : H1 + badges + carte absolue en bas */
           <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 1200, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "32px 24px 80px" }}>
-            <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 20, whiteSpace: "nowrap" }}>
+            <h1 className="hero-animate-1" style={{ fontSize: "clamp(3.6rem, 5.2vw, 5.2rem)", fontWeight: 800, color: "#FFFFFF", lineHeight: 1.1, letterSpacing: "-2px", marginBottom: 20, whiteSpace: "nowrap" }}>
               {isFr
                 ? <>Transformez votre trading démo<br />en <span style={{ color: "#1565C0" }}>vraies récompenses</span></>
                 : <>Turn your trading skills<br />into <span style={{ color: "#1565C0" }}>real rewards</span></>}
@@ -210,11 +210,11 @@ export default function Hero() {
                 <span key={label} style={{
                   display: "inline-flex", alignItems: "center", gap: 5,
                   fontSize: 11, fontWeight: 600, letterSpacing: "0.4px",
-                  color: "rgba(13,27,62,0.55)",
+                  color: "rgba(255,255,255,0.65)",
                   padding: "4px 10px",
-                  border: "1px solid rgba(13,27,62,0.12)",
+                  border: "1px solid rgba(255,255,255,0.15)",
                   borderRadius: 100,
-                  background: "rgba(255,255,255,0.45)",
+                  background: "rgba(255,255,255,0.06)",
                   backdropFilter: "blur(8px)",
                   WebkitBackdropFilter: "blur(8px)",
                 }}>
