@@ -70,9 +70,9 @@ function LiveRewardCard() {
     }}>
       <div style={{
         width: 52, height: 52, borderRadius: "50%", flexShrink: 0,
-        background: "linear-gradient(135deg, #D4AF37, #F6D976)",
+        background: "linear-gradient(135deg, #444, #888)",
         display: "flex", alignItems: "center", justifyContent: "center",
-        color: "#000", fontWeight: 800, fontSize: 16,
+        color: "#fff", fontWeight: 800, fontSize: 16,
       }}>{t.initials}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
@@ -81,7 +81,7 @@ function LiveRewardCard() {
         </div>
         <div style={{ color: "#9CA3AF", fontSize: 12 }}>{t.size} · Récompense reçue</div>
       </div>
-      <div style={{ color: "#D4AF37", fontWeight: 900, fontSize: 24, flexShrink: 0 }}>{fmt(amount)}</div>
+      <div style={{ color: "#FFFFFF", fontWeight: 900, fontSize: 24, flexShrink: 0 }}>{fmt(amount)}</div>
     </div>
   );
 }
@@ -101,6 +101,11 @@ export default function Hero() {
   return (
     <>
       <style>{`
+        @keyframes flagFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-4px); }
+        }
+        .flag-float { animation: flagFloat 2.4s ease-in-out infinite; }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -183,17 +188,25 @@ export default function Hero() {
             flexDirection: "column",
             gap: 28,
           }}>
-            <p style={{
-              fontSize: isMobile ? 16 : 20,
-              fontWeight: 600,
-              color: "rgba(255,255,255,0.6)",
-              lineHeight: 1.5,
-              margin: 0,
-            }}>
-              {isFr
-                ? "La prop firm française qui récompense les traders disciplinés."
-                : "The French prop firm that rewards disciplined traders."}
-            </p>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+              <img
+                src="https://flagcdn.com/40x30/fr.png"
+                alt="FR"
+                className="flag-float"
+                style={{ width: 28, height: 21, borderRadius: 3, objectFit: "cover", flexShrink: 0, marginTop: 4 }}
+              />
+              <p style={{
+                fontSize: isMobile ? 18 : 22,
+                fontWeight: 700,
+                color: "rgba(255,255,255,0.75)",
+                lineHeight: 1.45,
+                margin: 0,
+              }}>
+                {isFr
+                  ? "La prop firm française qui récompense les traders disciplinés."
+                  : "The French prop firm that rewards disciplined traders."}
+              </p>
+            </div>
             <LiveRewardCard />
           </div>
 
