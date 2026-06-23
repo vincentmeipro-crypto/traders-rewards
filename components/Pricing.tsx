@@ -75,8 +75,8 @@ export default function Pricing() {
           </h2>
           <p style={{ fontSize: isMobile ? 13 : 15, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
             {isFr
-              ? "Choisissez votre programme et accédez à jusqu'à $200,000 de capital simulé."
-              : "Choose your program and access up to $200,000 in simulated capital."}
+              ? "Tradez jusqu'à 400K en compte reward."
+              : "Trade up to $400K in reward account."}
           </p>
         </div>
 
