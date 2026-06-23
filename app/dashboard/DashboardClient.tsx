@@ -795,14 +795,14 @@ export default function DashboardClient({ user }: { user: User }) {
                           {[
                             { label: T.dash.startBalance, value: `$${c.start_balance?.toLocaleString()}` },
                             { label: T.dash.finalBalance, value: `$${finalBalance?.toLocaleString()}` },
-                            { label: "P&L", value: profit ? `${Number(profit) >= 0 ? "+" : ""}${profit}%` : "—", color: profit ? (Number(profit) >= 0 ? "#9A7B2F" : "#ef4444") : "rgba(255,255,255,0.45)" },
+                            { label: "P&L", value: profit ? `${Number(profit) >= 0 ? "+" : ""}${profit}%` : "—", color: profit ? (Number(profit) >= 0 ? "#FFFFFF" : "#ef4444") : "rgba(255,255,255,0.45)" },
                             { label: T.dash.daysTradedLabel, value: c.trading_days?.toString() || "0" },
-                            { label: isFr ? "Compte MT5" : "MT5 Account", value: c.mt5_login ? String(c.mt5_login) : "—", color: "#9A7B2F" },
+                            { label: isFr ? "Compte MT5" : "MT5 Account", value: c.mt5_login ? String(c.mt5_login) : "—" },
                             { label: T.dash.amountPaidLabel, value: `€${c.amount_paid}` },
                           ].map((s, i) => (
                             <div key={i} style={{ backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 14px" }}>
                               <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
-                              <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#9A7B2F" }}>{s.value}</div>
+                              <div style={{ fontWeight: 700, fontSize: 14, color: s.color || "#FFFFFF" }}>{s.value}</div>
                             </div>
                           ))}
                         </div>
