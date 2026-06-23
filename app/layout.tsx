@@ -88,10 +88,10 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: [
       {
-        url: "/opengraph-image",
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "Traders Rewards — Propfirm Française | Challenge Trading",
+        alt: "Traders Rewards — Propfirm Française",
       },
     ],
   },
@@ -100,7 +100,7 @@ export const metadata: Metadata = {
     site: "@TradersRewards",
     title: TITLE,
     description: DESCRIPTION,
-    images: ["/opengraph-image"],
+    images: [`${SITE_URL}/og-image.png`],
   },
 };
 
