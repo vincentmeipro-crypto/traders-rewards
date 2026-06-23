@@ -178,45 +178,64 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
   }
 
-  // 7. Transitions de phase -- meme compte MT5, on retire le profit et on update la ligne
+  // 7. Transitions de phase — nouveau compte MT5 à chaque phase, ancien désactivé (grp5)
   const profitPct = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
   const targetMet = profitPct >= profitTarget;
   const daysMet   = newTradingDays >= 5;
   const certDate  = new Date().toLocaleDateString("fr-FR");
 
+  const disableOldAccount = async (oldLogin: number) => {
+    await changeMT5Group(oldLogin, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${oldLogin}] grp5 failed:`, e));
+    await disableMT5Account(oldLogin).catch((e) => console.error(`[${oldLogin}] disable failed:`, e));
+    await changeMT5Password(oldLogin).catch((e) => console.error(`[${oldLogin}] pwd change failed:`, e));
+  };
+
   // 1-Step: phase1 -> certified
   if (is1Step && phase === "phase1" && targetMet && daysMet) {
-    await changeMT5Group(login, FUNDED_GROUP["1step"]).catch(() => {});
+    const newAcc = await makeMT5(FUNDED_GROUP["1step"]);
+    if (!newAcc) return { status: "error", reason: "mt5_creation_failed_1step_funded" };
+    await disableOldAccount(login);
     await admin.from("challenges").update({
       phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
       balance: startBalance, highest_balance: startBalance,
+      mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor,
     }).eq("id", id);
     await sendFundedEmail(userEmail, accountSize).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1->certified (1-step)" };
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    return { status: "synced", transition: "phase1->certified (1-step)", newLogin: newAcc.login };
   }
 
   // 2-Step: phase1 -> phase2
   if (!is1Step && phase === "phase1" && targetMet && daysMet) {
+    const newAcc = await makeMT5("Starwave\\demo\\FX1\\grp1");
+    if (!newAcc) return { status: "error", reason: "mt5_creation_failed_phase2" };
+    await disableOldAccount(login);
     await admin.from("challenges").update({
       phase: "phase2", status: "active", trading_days: 0, profit_target: 5,
       balance: startBalance, highest_balance: startBalance,
+      mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor,
     }).eq("id", id);
     await sendPhase2Email(userEmail, accountSize).catch(() => {});
     await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase1->phase2" };
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    return { status: "synced", transition: "phase1->phase2", newLogin: newAcc.login };
   }
 
   // 2-Step: phase2 -> certified
   if (!is1Step && phase === "phase2" && targetMet && daysMet) {
-    await changeMT5Group(login, FUNDED_GROUP["2step"]).catch(() => {});
+    const newAcc = await makeMT5(FUNDED_GROUP["2step"]);
+    if (!newAcc) return { status: "error", reason: "mt5_creation_failed_funded" };
+    await disableOldAccount(login);
     await admin.from("challenges").update({
       phase: "funded", status: "funded", trading_days: 0, profit_target: 0,
       balance: startBalance, highest_balance: startBalance,
+      mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor,
     }).eq("id", id);
     await sendFundedEmail(userEmail, accountSize).catch(() => {});
     await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    return { status: "synced", transition: "phase2->certified" };
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    return { status: "synced", transition: "phase2->certified", newLogin: newAcc.login };
   }
 
 
