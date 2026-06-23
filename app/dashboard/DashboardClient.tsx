@@ -1636,7 +1636,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ backgroundColor: "rgba(154,123,47,0.08)", border: "1px solid rgba(154,123,47,0.3)", borderRadius: 12, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
                 <span style={{ fontSize: 18, flexShrink: 0 }}>🎖️</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: "#9A7B2F", fontWeight: 700, fontSize: 12 }}>
+                  <div style={{ color: "#FFFFFF", fontWeight: 700, fontSize: 12 }}>
                     {isFr ? "Remise fidélité −20% à vie" : "Loyalty discount −20%"}
                   </div>
                   {!isMobile && (
