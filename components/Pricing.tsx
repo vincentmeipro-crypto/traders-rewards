@@ -123,10 +123,10 @@ export default function Pricing() {
           display: model === "instant" ? "flex" : isMobile ? "flex" : "grid",
           gridTemplateColumns: model === "instant" ? undefined : "repeat(5, 1fr)",
           justifyContent: model === "instant" ? "center" : undefined,
-          gap: 12,
+          gap: 8,
           overflowX: isMobile && model !== "instant" ? "scroll" : "visible",
-          paddingTop: 16,
-          paddingBottom: isMobile ? 16 : 8,
+          paddingTop: 8,
+          paddingBottom: isMobile ? 16 : 4,
           scrollSnapType: isMobile && model !== "instant" ? "x mandatory" : "none",
           WebkitOverflowScrolling: "touch",
         }}>
@@ -144,9 +144,9 @@ export default function Pricing() {
                 scrollSnapAlign: isMobile ? "center" : "none",
                 background: "#111111",
                 border: acc.popular ? "1.5px solid #9A7B2F" : "1.5px solid rgba(255,255,255,0.1)",
-                borderRadius: 14,
-                padding: "0 0 16px",
-                marginTop: 20,
+                borderRadius: 10,
+                padding: "0 0 10px",
+                marginTop: 8,
                 display: "flex",
                 flexDirection: "column",
                 overflow: "hidden",
@@ -157,7 +157,7 @@ export default function Pricing() {
               >
                 {/* Header de la carte */}
                 <div style={{
-                  padding: "16px 16px 14px",
+                  padding: "10px 12px 8px",
                   borderBottom: "1px solid rgba(255,255,255,0.08)",
                   position: "relative",
                 }}>
@@ -179,13 +179,13 @@ export default function Pricing() {
                   <div style={{ fontSize: 10, fontWeight: 600, color: "#9CA3AF", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>
                     {T.pricing.account}
                   </div>
-                  <div style={{ fontSize: isMobile ? 22 : 26, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
+                  <div style={{ fontSize: isMobile ? 18 : 20, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
                     {acc.size}
                   </div>
                 </div>
 
                 {/* Rules rows */}
-                <div style={{ flex: 1, padding: "10px 16px" }}>
+                <div style={{ flex: 1, padding: "6px 12px" }}>
                   {rows.map((row, i) => {
                     const accountNum = sizeMap[acc.size] ?? 0;
                     const usdAmt = row.pct != null ? Math.round(accountNum * Math.abs(row.pct)) : null;
@@ -193,27 +193,27 @@ export default function Pricing() {
                     return (
                       <div key={i} style={{
                         display: "flex", justifyContent: "space-between", alignItems: "center",
-                        padding: "7px 0",
+                        padding: "4px 0",
                         borderBottom: i < rows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
                       }}>
-                        <span style={{ color: "#9CA3AF", fontSize: 11, fontWeight: 500 }}>
+                        <span style={{ color: "#9CA3AF", fontSize: 10, fontWeight: 500 }}>
                           {row.label}
                         </span>
                         <div style={{ textAlign: "right" }}>
-                          <span style={{ color: row.highlight ? "#9A7B2F" : "#FFFFFF", fontSize: 11, fontWeight: 700 }}>
+                          <span style={{ color: row.highlight ? "#9A7B2F" : "#FFFFFF", fontSize: 10, fontWeight: 700 }}>
                             {row.value}
                           </span>
-                          {usdStr && <div style={{ color: "#6b7280", fontSize: 9, marginTop: 1 }}>{usdStr}</div>}
+                          {usdStr && <div style={{ color: "#6b7280", fontSize: 8, marginTop: 0 }}>{usdStr}</div>}
                         </div>
                       </div>
                     );
                   })}
                 </div>
 
-                <div style={{ height: 1, backgroundColor: "rgba(255,255,255,0.08)", margin: "0 16px 14px" }} />
+                <div style={{ height: 1, backgroundColor: "rgba(255,255,255,0.08)", margin: "0 12px 8px" }} />
 
                 {/* Prix */}
-                <div style={{ padding: "0 16px", marginBottom: 10 }}>
+                <div style={{ padding: "0 12px", marginBottom: 8 }}>
                   {model === "instant" ? (
                     <div style={{ textAlign: "center" }}>
                       <div style={{ fontSize: 28, fontWeight: 800, color: "#9A7B2F", letterSpacing: "-1px" }}>€1,300</div>
@@ -227,31 +227,31 @@ export default function Pricing() {
                         <span style={{ fontSize: 12, color: "#6b7280", textDecoration: "line-through" }}>{price}</span>
                         <span style={{ marginLeft: 8, background: "#9A7B2F", color: "#000", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4 }}>−{PROMO_PCT}%</span>
                       </div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: "#9A7B2F", letterSpacing: "-0.5px" }}>{promoPrice}</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: "#9A7B2F", letterSpacing: "-0.5px" }}>{promoPrice}</div>
                     </div>
                   )}
                 </div>
 
                 {/* Récompense moyenne */}
                 <div style={{
-                  margin: "0 16px 12px",
+                  margin: "0 12px 8px",
                   background: "rgba(154,123,47,0.06)",
                   border: "1px solid rgba(154,123,47,0.2)",
-                  borderRadius: 8, padding: "8px 12px",
+                  borderRadius: 6, padding: "5px 10px",
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                 }}>
                   <span style={{ fontSize: 11, color: "#9CA3AF", fontWeight: 500 }}>
                     {isFr ? "Récompense moy." : "Avg. reward"}
                   </span>
-                  <span style={{ fontSize: 14, fontWeight: 800, color: "#9A7B2F" }}>{acc.reward}</span>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: "#9A7B2F" }}>{acc.reward}</span>
                 </div>
 
                 {/* CTA */}
-                <div style={{ padding: "0 16px" }}>
+                <div style={{ padding: "0 12px" }}>
                   <a href={model === "instant" ? `/checkout?product=50k-instant` : `/checkout?product=${acc.id}-${model}`} style={{
                     display: "block", textAlign: "center",
-                    padding: "12px", borderRadius: 8,
-                    fontSize: 12, fontWeight: 700,
+                    padding: "9px", borderRadius: 6,
+                    fontSize: 11, fontWeight: 700,
                     textDecoration: "none", letterSpacing: "1px", textTransform: "uppercase",
                     background: acc.popular ? "#9A7B2F" : "#FFFFFF",
                     color: "#000",
