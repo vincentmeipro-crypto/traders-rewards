@@ -9,9 +9,9 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", weight: [
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
 
 const SITE_URL = "https://www.traders-rewards.eu";
-const TITLE = "Traders Rewards | Prop Firm Française | Challenge Trading France";
+const TITLE = "Traders Rewards | Propfirm Française";
 const DESCRIPTION =
-  "Transformez votre trading démo en vraies récompenses. La prop firm FRANÇAISE qui récompense les traders disciplinés. Capital simulé jusqu'à 400 000 € · Partage des profits jusqu'à 90%.";
+  "Transformez votre trading démo en vraies récompenses. La propfirm FRANÇAISE qui récompense les traders disciplinés. Capital simulé jusqu'à 400 000 € · Partage des profits jusqu'à 90%.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   },
   description: DESCRIPTION,
   keywords: [
-    "prop firm française",
-    "prop firm france",
+    "propfirm française",
+    "propfirm france",
     "propfirm france",
     "challenge trading france",
     "challenge forex france",
@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     "challenge trading",
     "compte récompense trading",
     "trading sans risque",
-    "prop firm paris",
+    "propfirm paris",
     "financement trader",
     "capital simulé trading",
     "challenge 1 step",
     "challenge 2 step",
     "instant reward trading",
     "propfirm française",
-    "meilleure prop firm france",
+    "meilleure propfirm france",
   ],
   authors: [{ name: "Traders Rewards", url: SITE_URL }],
   creator: "Traders Rewards",
@@ -91,7 +91,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Traders Rewards — Prop Firm Française | Challenge Trading",
+        alt: "Traders Rewards — Propfirm Française | Challenge Trading",
       },
     ],
   },
@@ -171,7 +171,7 @@ const jsonLd = {
         },
         {
           "@type": "Question",
-          name: "Combien puis-je gagner avec la prop firm Traders Rewards ?",
+          name: "Combien puis-je gagner avec la propfirm Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
             text: "Vous conservez jusqu'à 90% de vos profits simulés (90% pour le 1-Step, 80% pour le 2-Step). Sur un compte $100K avec 6% de profit, vous touchez environ €4,800.",
@@ -211,10 +211,10 @@ const jsonLd = {
         },
         {
           "@type": "Question",
-          name: "Traders Rewards est-elle une vraie prop firm française ?",
+          name: "Traders Rewards est-elle une vraie propfirm française ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Oui, Traders Rewards est une prop firm basée en France, avec un support en français et des paiements en euros. C'est la propfirm française de référence pour les traders européens.",
+            text: "Oui, Traders Rewards est une propfirm basée en France, avec un support en français et des paiements en euros. C'est la propfirm française de référence pour les traders européens.",
           },
         },
       ],
@@ -222,7 +222,7 @@ const jsonLd = {
     {
       "@type": "FinancialService",
       "@id": `${SITE_URL}/#service`,
-      name: "Challenge Trading — Prop Firm",
+      name: "Challenge Trading — Propfirm",
       provider: { "@id": `${SITE_URL}/#organization` },
       description: "Programme d'évaluation de traders : passez un challenge, devenez Trader Reward et touchez jusqu'à 90% de vos profits sur capital simulé.",
       areaServed: {
