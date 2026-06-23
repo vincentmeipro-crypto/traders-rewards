@@ -71,7 +71,7 @@ export default function Pricing() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 24 : 40 }}>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1.1, marginBottom: 12 }}>
-            {isFr ? "Commencez votre Challenge" : "Start your Challenge"}
+            {isFr ? <>Commencez votre <span style={{ color: "#9A7B2F" }}>Challenge</span></> : <>Start your <span style={{ color: "#9A7B2F" }}>Challenge</span></>}
           </h2>
           <p style={{ fontSize: isMobile ? 13 : 15, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
             {isFr

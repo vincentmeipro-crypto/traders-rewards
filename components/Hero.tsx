@@ -166,8 +166,8 @@ export default function Hero() {
               margin: "0 0 36px",
             }}>
               {isFr
-                ? <>Transformez votre<br />trading démo en<br />vraies récompenses</>
-                : <>Turn your trading<br />skills into<br />real rewards</>}
+                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#9A7B2F" }}>vraies récompenses</span></>
+                : <>Turn your trading<br />skills into<br /><span style={{ color: "#9A7B2F" }}>real rewards</span></>}
             </h1>
 
             <div className="h2" style={{ display: "flex", alignItems: "center", gap: 24 }}>
@@ -209,8 +209,8 @@ export default function Hero() {
                 margin: 0,
               }}>
                 {isFr
-                  ? "La propfirm française qui récompense les traders disciplinés."
-                  : "The French propfirm that rewards disciplined traders."}
+                  ? <>La propfirm française qui récompense les <span style={{ color: "#9A7B2F" }}>traders disciplinés</span>.</>
+                  : <>The French propfirm that rewards <span style={{ color: "#9A7B2F" }}>disciplined traders</span>.</>}
               </p>
             </div>
             <LiveRewardCard />
