@@ -69,43 +69,53 @@ export default function Pricing() {
       <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 28 }}>
-          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 16 }}>
-            {T.pricing.title} <span style={{ color: "#1565C0" }}>{T.pricing.titleGold}</span>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 24 : 40 }}>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1.1, marginBottom: 12 }}>
+            {isFr ? "Commencez votre Challenge" : "Start your Challenge"}
           </h2>
-
+          <p style={{ fontSize: isMobile ? 13 : 15, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
+            {isFr
+              ? "Choisissez votre programme et accédez à jusqu'à $200,000 de capital simulé."
+              : "Choose your program and access up to $200,000 in simulated capital."}
+          </p>
         </div>
 
-        {/* Toggle */}
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginBottom: isMobile ? 16 : 28 }}>
-          <div style={{ background: "#fff", border: "1.5px solid #111", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-            {(["2step", "1step", "instant"] as const).map(m => (
-              <button key={m} onClick={() => setModel(m)} style={{
-                padding: isMobile ? "10px 14px" : "10px 28px", borderRadius: 7, cursor: "pointer",
-                border: m === "instant" ? "1.5px solid #C9A84C" : "none",
-                fontSize: isMobile ? 11 : 13, fontWeight: 700, letterSpacing: "0.5px", transition: "all 0.2s",
-                background: m === "instant" && model === m
-                  ? "linear-gradient(135deg, #C9A84C, #F6D976)"
-                  : model === m ? "#0D1B3E" : "transparent",
-                color: m === "instant" && model === m ? "#000" : model === m ? "#fff" : "#8a96aa",
-                boxShadow: model === m ? "0 2px 10px rgba(13,27,62,0.2)" : "none",
-                whiteSpace: "nowrap",
+        {/* Toggle FTMO-style */}
+        <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 8 : 12, marginBottom: isMobile ? 20 : 36, flexWrap: "wrap" }}>
+          {([
+            { id: "2step", icon: "◈", label: isFr ? "2 Étapes" : "2-Step", sub: isFr ? "Challenge standard 2 phases" : "Standard 2-phase challenge" },
+            { id: "1step", icon: "◆", label: isFr ? "1 Étape" : "1-Step", sub: isFr ? "Challenge rapide 1 phase" : "Fast 1-phase challenge" },
+            { id: "instant", icon: "★", label: "Instant Reward", sub: isFr ? "Compte reward immédiat" : "Immediate reward account", isNew: true },
+          ] as const).map(tab => {
+            const active = model === tab.id;
+            return (
+              <button key={tab.id} onClick={() => setModel(tab.id as "2step" | "1step" | "instant")} style={{
+                position: "relative",
+                background: active ? "#FFFFFF" : "#111111",
+                border: active ? "none" : "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 12,
+                padding: isMobile ? "12px 16px" : "16px 28px",
+                cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 12,
+                transition: "all 0.2s",
+                minWidth: isMobile ? 140 : 180,
+                textAlign: "left",
               }}>
-                {m === "2step" ? T.pricing.twoStep : m === "1step" ? T.pricing.oneStep : (
-                  <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 5 }}>
-                    ⚡ INSTANT REWARD
-                    <span style={{
-                      position: "absolute", top: -14, right: -10,
-                      background: "linear-gradient(135deg, #ef4444, #f97316)",
-                      color: "#fff", fontSize: 8, fontWeight: 900,
-                      padding: "2px 5px", borderRadius: 4, letterSpacing: "0.5px",
-                      boxShadow: "0 2px 6px rgba(239,68,68,0.5)",
-                    }}>NEW</span>
-                  </span>
+                {tab.isNew && (
+                  <span style={{
+                    position: "absolute", top: -8, right: -8,
+                    background: "#ef4444", color: "#fff",
+                    fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4,
+                  }}>NEW</span>
                 )}
+                <span style={{ fontSize: 20, color: active ? "#000" : "rgba(255,255,255,0.4)" }}>{tab.icon}</span>
+                <div>
+                  <div style={{ fontSize: isMobile ? 13 : 15, fontWeight: 800, color: active ? "#000" : "#FFFFFF", letterSpacing: "0.2px" }}>{tab.label}</div>
+                  <div style={{ fontSize: isMobile ? 10 : 11, color: active ? "#555" : "rgba(255,255,255,0.4)", fontWeight: 500, marginTop: 2 }}>{tab.sub}</div>
+                </div>
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
         {/* Cards */}
