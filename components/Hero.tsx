@@ -161,8 +161,8 @@ export default function Hero() {
               margin: "0 0 36px",
             }}>
               {isFr
-                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#D4AF37" }}>vraies récompenses</span></>
-                : <>Turn your trading<br />skills into<br /><span style={{ color: "#D4AF37" }}>real rewards</span></>}
+                ? <>Transformez votre<br />trading démo en<br />vraies récompenses</>
+                : <>Turn your trading<br />skills into<br />real rewards</>}
             </h1>
 
             <div className="h2" style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
