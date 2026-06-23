@@ -618,8 +618,8 @@ export default function DashboardClient({ user }: { user: User }) {
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
               onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
               >
-                <span style={{ color: activeTab === item.tab ? "#9A7B2F" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "rgba(255,255,255,0.45)") }}>{item.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#9A7B2F" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "rgba(255,255,255,0.55)") }}>{item.label}</span>
+                <span style={{ color: activeTab === item.tab ? "#FFFFFF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "rgba(255,255,255,0.45)") }}>{item.icon}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#FFFFFF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "rgba(255,255,255,0.55)") }}>{item.label}</span>
               </div>
             ))}
           </nav>
@@ -713,9 +713,9 @@ export default function DashboardClient({ user }: { user: User }) {
                   backgroundColor: activeTab === item.tab ? "rgba(154,123,47,0.12)" : "transparent",
                   borderLeft: activeTab === item.tab ? "3px solid #9A7B2F" : "3px solid transparent",
                 }}>
-                  <span style={{ color: activeTab === item.tab ? "#9A7B2F" : "rgba(255,255,255,0.45)" }}>{item.icon}</span>
-                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#9A7B2F" : "rgba(255,255,255,0.7)" }}>{item.label}</span>
-                  {activeTab === item.tab && <ChevronRight size={16} color="#9A7B2F" style={{ marginLeft: "auto" }} />}
+                  <span style={{ color: activeTab === item.tab ? "#FFFFFF" : "rgba(255,255,255,0.45)" }}>{item.icon}</span>
+                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#FFFFFF" : "rgba(255,255,255,0.7)" }}>{item.label}</span>
+                  {activeTab === item.tab && <ChevronRight size={16} color="#FFFFFF" style={{ marginLeft: "auto" }} />}
                 </button>
               ))}
               <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: 8 }}>
