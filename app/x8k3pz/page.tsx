@@ -839,14 +839,6 @@ export default function AdminPage() {
                                 </div>
                               : <div style={{ display: "flex", gap: 6 }}>
                                   <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#111", border: "1px solid #ccc", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
-                                  <button onClick={() => fixMT5Balance(c)} style={{ backgroundColor: "rgba(255,193,7,0.15)", color: "#b45309", border: "1px solid #b4530933", borderRadius: 6, padding: "5px 8px", fontSize: 11, cursor: "pointer" }} title="Corriger balance MT5">⚡</button>
-                                  {c.status === "failed" && c.mt5_login && <button onClick={async () => {
-                                    if (!confirm(`Bloquer MT5 ${c.mt5_login} (grp5) ?`)) return;
-                                    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, group: "Starwave\\demo\\FX1\\grp5" }) });
-                                    const data = await res.json();
-                                    if (res.ok) alert(`✅ Compte ${c.mt5_login} bloqué (grp5)`);
-                                    else alert(`Erreur : ${data.error}`);
-                                  }} style={{ backgroundColor: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 8px", fontSize: 11, cursor: "pointer" }} title="Bloquer compte MT5">🔴</button>}
                                   <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(255,255,255,0.6)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
                           </td>
