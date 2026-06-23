@@ -82,14 +82,14 @@ export default function Pricing() {
 
         {/* Toggle FTMO-style */}
         <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 8 : 12, marginBottom: isMobile ? 20 : 36, flexWrap: "wrap" }}>
-          {([
-            { id: "2step", icon: "◈", label: isFr ? "2 Étapes" : "2-Step", sub: isFr ? "Challenge standard 2 phases" : "Standard 2-phase challenge" },
-            { id: "1step", icon: "◆", label: isFr ? "1 Étape" : "1-Step", sub: isFr ? "Challenge rapide 1 phase" : "Fast 1-phase challenge" },
+          {(([
+            { id: "2step", icon: "◈", label: isFr ? "2 Étapes" : "2-Step", sub: isFr ? "Challenge standard 2 phases" : "Standard 2-phase challenge", isNew: false },
+            { id: "1step", icon: "◆", label: isFr ? "1 Étape" : "1-Step", sub: isFr ? "Challenge rapide 1 phase" : "Fast 1-phase challenge", isNew: false },
             { id: "instant", icon: "★", label: "Instant Reward", sub: isFr ? "Compte reward immédiat" : "Immediate reward account", isNew: true },
-          ] as const).map(tab => {
+          ]) as { id: "2step"|"1step"|"instant"; icon: string; label: string; sub: string; isNew: boolean }[]).map(tab => {
             const active = model === tab.id;
             return (
-              <button key={tab.id} onClick={() => setModel(tab.id as "2step" | "1step" | "instant")} style={{
+              <button key={tab.id} onClick={() => setModel(tab.id)} style={{
                 position: "relative",
                 background: active ? "#FFFFFF" : "#111111",
                 border: active ? "none" : "1px solid rgba(255,255,255,0.1)",
