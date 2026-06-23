@@ -63,7 +63,7 @@ function LiveRewardCard() {
       transform: visible ? "translateY(0) scale(1)" : "translateY(-8px) scale(0.98)",
       transition: "opacity 0.4s ease, transform 0.4s ease",
       background: "#111111",
-      border: "1px solid rgba(212,175,55,0.4)",
+      border: "1px solid rgba(255,255,255,0.12)",
       borderRadius: 16,
       padding: "20px 24px",
       display: "flex", alignItems: "center", gap: 16,
@@ -190,16 +190,16 @@ export default function Hero() {
           }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
               <img
-                src="https://flagcdn.com/40x30/fr.png"
+                src="https://flagcdn.com/160x120/fr.png"
                 alt="FR"
                 className="flag-float"
-                style={{ width: 28, height: 21, borderRadius: 3, objectFit: "cover", flexShrink: 0, marginTop: 4 }}
+                style={{ width: 56, height: 42, borderRadius: 4, objectFit: "cover", flexShrink: 0, marginTop: 6 }}
               />
               <p style={{
-                fontSize: isMobile ? 18 : 22,
+                fontSize: isMobile ? 28 : 38,
                 fontWeight: 700,
                 color: "rgba(255,255,255,0.75)",
-                lineHeight: 1.45,
+                lineHeight: 1.35,
                 margin: 0,
               }}>
                 {isFr
