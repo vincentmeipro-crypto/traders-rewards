@@ -94,7 +94,7 @@ export default function Rules() {
               padding: "10px 28px", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer",
               border: tab === t ? "1px solid #9A7B2F" : "1px solid rgba(255,255,255,0.12)",
               backgroundColor: tab === t ? "#9A7B2F" : "transparent",
-              color: tab === t ? "#000" : "rgba(255,255,255,0.6)",
+              color: tab === t ? "#FFFFFF" : "rgba(255,255,255,0.6)",
               transition: "all 0.2s",
             }}>
               {t === "challenge" ? labels.tabChallenge : labels.tabFunded}
@@ -212,7 +212,7 @@ export default function Rules() {
             {T.rules.ctaTitle} <span style={{ color: "#9A7B2F" }}>{T.rules.ctaGold}</span>
           </h3>
           <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, marginBottom: 28 }}>{T.rules.ctaSub}</p>
-          <a href="/#pricing" style={{ display: "inline-block", background: "#9A7B2F", color: "#000", padding: "14px 44px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
+          <a href="/#pricing" style={{ display: "inline-block", background: "#9A7B2F", color: "#FFFFFF", padding: "14px 44px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
             onMouseOver={e => { e.currentTarget.style.background = "#b8923a"; }}
             onMouseOut={e => { e.currentTarget.style.background = "#9A7B2F"; }}
           >{T.rules.ctaBtn}</a>
