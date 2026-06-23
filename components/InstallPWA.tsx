@@ -185,14 +185,14 @@ export default function InstallPWA() {
   const sub = isFr ? "Accédez à Traders Rewards depuis votre écran d'accueil — sans passer par les stores." : "Access Traders Rewards from your home screen — no app store needed.";
 
   return (
-    <section style={{ background: "#fff", padding: "80px 24px", textAlign: "center" }}>
-      <span className="section-label" style={{ display: "block", marginBottom: 16 }}>
+    <section style={{ background: "#0A0A0A", padding: "80px 24px", textAlign: "center" }}>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9A7B2F", marginBottom: 16 }}>
         {isFr ? "Application Mobile" : "Mobile App"}
-      </span>
-      <h2 style={{ fontFamily: "var(--font-cormorant)", fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 600, color: "#0D1B3E", marginBottom: 12 }}>
+      </div>
+      <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.5px", marginBottom: 12 }}>
         {title}
       </h2>
-      <p style={{ color: "#6b7280", fontSize: 15, maxWidth: 700, margin: "0 auto 48px", whiteSpace: "nowrap" }}>{sub}</p>
+      <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, maxWidth: 700, margin: "0 auto 48px" }}>{sub}</p>
 
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 32, maxWidth: 420, margin: "0 auto" }}>
         {/* Phone mockup */}
@@ -228,7 +228,7 @@ export default function InstallPWA() {
               width: i === current ? 28 : 8,
               height: 8,
               borderRadius: 4,
-              background: i === current ? "#1565C0" : "#e0e0e0",
+              background: i === current ? "#9A7B2F" : "rgba(255,255,255,0.12)",
               transition: "all 0.4s ease",
               overflow: "hidden",
               position: "relative",
@@ -237,7 +237,7 @@ export default function InstallPWA() {
                 <div style={{
                   position: "absolute", left: 0, top: 0, bottom: 0,
                   width: `${progress}%`,
-                  background: "#C9A84C",
+                  background: "rgba(255,255,255,0.5)",
                   borderRadius: 4,
                   transition: "width 0.1s linear",
                 }} />
@@ -249,14 +249,14 @@ export default function InstallPWA() {
         {/* Step text */}
         <div style={{ minHeight: 70, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#1565C0", color: "#fff", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#9A7B2F", color: "#000", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               {current + 1}
             </div>
-            <p style={{ fontSize: 16, fontWeight: 700, color: "#0D1B3E", margin: 0, textAlign: "left", whiteSpace: "pre-line" }}>
+            <p style={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", margin: 0, textAlign: "left", whiteSpace: "pre-line" }}>
               {stepsData[current].label}
             </p>
           </div>
-          <p style={{ fontSize: 13, color: "#6b7280", margin: 0 }}>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", margin: 0 }}>
             {stepsData[current].sub}
           </p>
         </div>
