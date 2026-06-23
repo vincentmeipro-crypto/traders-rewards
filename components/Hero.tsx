@@ -208,15 +208,9 @@ export default function Hero() {
               </p>
             </div>
             <LiveRewardCard />
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>Trading Simulé</span>
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>Programme éducatif récompensé</span>
-              </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+              <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>Trading Simulé · Programme éducatif récompensé</span>
             </div>
           </div>
 
