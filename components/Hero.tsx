@@ -189,12 +189,15 @@ export default function Hero() {
             gap: 28,
           }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-              <img
-                src="https://flagcdn.com/160x120/fr.png"
-                alt="FR"
+              <svg
                 className="flag-float"
-                style={{ width: 56, height: 42, borderRadius: 4, objectFit: "cover", flexShrink: 0, marginTop: 6 }}
-              />
+                width="56" height="42" viewBox="0 0 3 2"
+                style={{ borderRadius: 4, flexShrink: 0, marginTop: 6 }}
+              >
+                <rect width="1" height="2" fill="#002395"/>
+                <rect x="1" width="1" height="2" fill="#EDEDED"/>
+                <rect x="2" width="1" height="2" fill="#ED2939"/>
+              </svg>
               <p style={{
                 fontSize: isMobile ? 28 : 38,
                 fontWeight: 700,
