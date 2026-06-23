@@ -23,6 +23,9 @@ export default function Home() {
       <TopTraders />
       <Stats />
       <TraderMarquee />
+      <section style={{ width: "100%", lineHeight: 0 }}>
+        <img src="/image-section-mt5.png" alt="MT5" style={{ width: "100%", display: "block", objectFit: "cover" }} />
+      </section>
       <Pricing />
       <HowItWorks />
       <Rules />
