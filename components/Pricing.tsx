@@ -65,12 +65,12 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
 
   return (
-    <section id="pricing" style={{ padding: isMobile ? "28px 16px 16px" : "60px 16px 60px", backgroundColor: "transparent", scrollMarginTop: "0px", position: "relative", zIndex: 1, overflow: "hidden" }}>
+    <section id="pricing" style={{ padding: isMobile ? "28px 16px 16px" : "60px 16px 60px", backgroundColor: "#0A0A0A", scrollMarginTop: "0px", position: "relative", zIndex: 1, overflow: "hidden" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 28 }}>
-          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#0D1B3E", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 16 }}>
+          <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.5px", lineHeight: 1.1, marginBottom: 16 }}>
             {T.pricing.title} <span style={{ color: "#1565C0" }}>{T.pricing.titleGold}</span>
           </h2>
 
@@ -78,9 +78,6 @@ export default function Pricing() {
 
         {/* Toggle */}
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginBottom: isMobile ? 16 : 28 }}>
-          {!isMobile && (
-            <img src="/PATCH-400K-LONG.png" alt="400K" style={{ height: 184, width: "auto", objectFit: "contain" }} />
-          )}
           <div style={{ background: "#fff", border: "1.5px solid #111", borderRadius: 10, padding: 4, display: "flex", gap: 4, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
             {(["2step", "1step", "instant"] as const).map(m => (
               <button key={m} onClick={() => setModel(m)} style={{
@@ -109,9 +106,6 @@ export default function Pricing() {
               </button>
             ))}
           </div>
-          {!isMobile && (
-            <img src="/mt5-logo.png" alt="MT5" style={{ height: 92, width: "auto", objectFit: "contain" }} />
-          )}
         </div>
 
         {/* Cards */}
