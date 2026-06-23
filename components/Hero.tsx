@@ -192,15 +192,6 @@ export default function Hero() {
             gap: 28,
           }}>
             <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-              <svg
-                className="flag-float"
-                width="28" height="21" viewBox="0 0 3 2"
-                style={{ borderRadius: 3, flexShrink: 0, marginTop: 8 }}
-              >
-                <rect width="1" height="2" fill="#002395"/>
-                <rect x="1" width="1" height="2" fill="#EDEDED"/>
-                <rect x="2" width="1" height="2" fill="#ED2939"/>
-              </svg>
               <p style={{
                 fontSize: isMobile ? 20 : 38,
                 fontWeight: 700,
