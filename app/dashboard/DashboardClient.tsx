@@ -752,7 +752,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     ? (c.breach_equity ?? c.balance)
                     : c.balance;
                   const profit = finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
-                  const phaseReached = c.phase === "funded" ? "Active" : c.phase === "phase2" ? "Phase 2" : "Phase 1";
+                  const phaseReached = c.phase === "funded" ? (isFr ? "🏆 Compte Reward" : "🏆 Reward Account") : c.phase === "phase2" ? "Phase 2" : "Phase 1";
                   const isLast = idx === allChallenges.length - 1;
                   const dotColor = c.status === "funded" ? "#C9A84C" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#9A7B2F" : "#9A7B2F";
                   const relatedPayouts = allPayouts.filter(p => {
@@ -781,7 +781,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                               <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{STATUS_LABELS[c.status] || c.status}</span>
-                              <span style={{ backgroundColor: "rgba(154,123,47,0.08)", color: "rgba(255,255,255,0.45)", fontSize: 12, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
+                              <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(154,123,47,0.08)", color: c.phase === "funded" ? "#C9A84C" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
                             </div>
                           </div>
                           <div style={{ textAlign: "right" }}>
