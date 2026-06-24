@@ -193,7 +193,7 @@ export default function Pricing() {
           {(([
             { id: "2step",   icon: "◈", label: isFr ? "2 Étapes" : "2-Step",       sub: isFr ? "Challenge standard" : "Standard challenge",      isNew: false },
             { id: "1step",   icon: "◆", label: isFr ? "1 Étape" : "1-Step",         sub: isFr ? "Challenge rapide" : "Fast challenge",              isNew: false },
-            { id: "instant", icon: "★", label: "Instant Reward",                     sub: isFr ? "Compte reward immédiat" : "Immediate reward",       isNew: true  },
+            { id: "instant", icon: "★", label: "Instant Reward",                     sub: isFr ? "Reward immédiat" : "Immediate reward",       isNew: true  },
           ]) as { id: "2step"|"1step"|"instant"; icon: string; label: string; sub: string; isNew: boolean }[]).map(tab => {
             const active = model === tab.id;
             return (
