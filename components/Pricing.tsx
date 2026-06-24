@@ -77,7 +77,7 @@ export default function Pricing() {
     return (
       <div style={{
         background: "#111111",
-        border: acc.popular ? "1.5px solid #3B82F6" : "1.5px solid rgba(255,255,255,0.1)",
+        border: acc.popular ? "1.5px solid #16a34a" : "1.5px solid rgba(255,255,255,0.1)",
         borderRadius: 14,
         overflow: "hidden",
         position: "relative",
