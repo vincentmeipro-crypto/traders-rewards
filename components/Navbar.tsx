@@ -87,31 +87,25 @@ export default function Navbar() {
         borderBottom: "1px solid rgba(255,255,255,0.75)",
         transition: "all 0.3s ease",
       }}>
-        <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: isMobile ? "hidden" : "visible" }}>
+        <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: isMobile ? "space-between" : "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: isMobile ? "hidden" : "visible" }}>
 
-          {/* GAUCHE */}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flex: isMobile ? "0 0 auto" : undefined }}>
-            {isMobile ? (
-              /* Mobile gauche : logo */
-              <a href="/" style={{ display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", height: 60 }}>
-                <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ height: 89, width: "auto", objectFit: "contain", marginLeft: -10, transform: "translateY(4px)" }} />
+          {/* GAUCHE / CENTRE mobile */}
+          {isMobile ? (
+            <>
+              {/* Spacer gauche pour centrer le logo */}
+              <div style={{ width: 36 }} />
+              {/* Logo centré */}
+              <a href="/" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", textDecoration: "none" }}>
+                <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ height: 134, width: "auto", objectFit: "contain", transform: "translateY(4px)" }} />
               </a>
-            ) : (
-              /* Desktop gauche : logo + drapeaux */
-              <>
-                <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-                  <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ height: 146, width: "auto", objectFit: "contain", marginLeft: -10, transform: "translateY(6px)" }} />
-                </a>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
-                  <div style={{ display: "flex", gap: 4 }}>
-                    <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                    <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 18, height: 14, borderRadius: 2, objectFit: "cover" }} />
-                  </div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "#FFFFFF", letterSpacing: "0.8px", whiteSpace: "nowrap" }}>PropFirm Française</div>
-                </div>
-              </>
-            )}
-          </div>
+            </>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+                <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ height: 146, width: "auto", objectFit: "contain", marginLeft: -10, transform: "translateY(6px)" }} />
+              </a>
+            </div>
+          )}
 
           {/* Desktop Nav */}
           {!isMobile && (
@@ -163,15 +157,6 @@ export default function Navbar() {
                 {T.nav.logIn}
               </a>
               <a href="/#pricing" className="nav-cta">{T.nav.startChallenge}</a>
-            </div>
-          )}
-
-          {/* CENTRE mobile : PropFirm Française */}
-          {isMobile && (
-            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 5 }}>
-              <img src="https://flagcdn.com/40x30/fr.png" alt="FR" className="flag-float-1" style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover" }} />
-              <span style={{ fontSize: 10, fontWeight: 800, color: "#FFFFFF", letterSpacing: "0.6px", whiteSpace: "nowrap" }}>PropFirm Française</span>
-              <img src="https://flagcdn.com/40x30/eu.png" alt="EU" className="flag-float-2" style={{ width: 16, height: 12, borderRadius: 2, objectFit: "cover" }} />
             </div>
           )}
 
