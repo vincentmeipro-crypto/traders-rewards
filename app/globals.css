@@ -155,13 +155,6 @@ body {
 .mt5-section-img {
   width: 100%;
   display: block;
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-}
-
-@media (min-width: 769px) {
-  .mt5-section-img {
-    width: 75%;
-    margin: 0 auto;
-  }
+  -webkit-mask-image: linear-gradient(to right, #0A0A0A 0%, black 15%, black 85%, #0A0A0A 100%);
+  mask-image: linear-gradient(to right, #0A0A0A 0%, black 15%, black 85%, #0A0A0A 100%);
 }
