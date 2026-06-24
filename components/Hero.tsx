@@ -187,7 +187,7 @@ export default function Hero() {
 
             {/* Mobile : phrase seule ici */}
             {isMobile && (
-              <div className="h2" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 0 }}>
+              <div className="h2" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: -16, marginBottom: -16 }}>
                 <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
                 <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
                   {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
