@@ -198,7 +198,7 @@ export default function Hero() {
                 color: "#FFFFFF",
                 lineHeight: 1.35,
                 margin: 0,
-                fontFamily: "var(--font-playfair)",
+                fontFamily: "var(--font-outfit)",
               }}>
                 {isFr
                   ? <>La propfirm <span style={{ fontWeight: 900 }}><span style={{ color: "#002395" }}>FRA</span><span style={{ color: "#FFFFFF" }}>NÇA</span><span style={{ color: "#ED2939" }}>ISE</span></span> qui récompense les <span style={{ color: "#3B82F6" }}>traders disciplinés</span></>
