@@ -23,9 +23,8 @@ export default function Home() {
       <TopTraders />
       <Stats />
       <TraderMarquee />
-      <section style={{ width: "100%", lineHeight: 0, position: "relative", backgroundColor: "#0A0A0A" }}>
+      <section style={{ width: "100%", lineHeight: 0, backgroundColor: "#0A0A0A" }}>
         <img src="/image-section-mt5.png" alt="MT5" className="mt5-section-img" />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #0A0A0A 0%, transparent 12%, transparent 88%, #0A0A0A 100%)", pointerEvents: "none" }} />
       </section>
       <Pricing />
       <HowItWorks />
