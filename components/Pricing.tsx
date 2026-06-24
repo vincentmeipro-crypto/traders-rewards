@@ -92,7 +92,7 @@ export default function Pricing() {
             borderRadius: "0 14px 0 8px",
             letterSpacing: "1px",
           }}>
-            {acc.popular ? (isFr ? "POPULAIRE" : "POPULAR") : "✦ PREMIUM"}
+            {acc.popular ? (isFr ? "EXPERT" : "EXPERT") : "✦ PREMIUM"}
           </div>
         )}
 
