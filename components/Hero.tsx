@@ -170,20 +170,33 @@ export default function Hero() {
                 : <>Turn your trading<br />skills into<br /><span style={{ color: "#3B82F6" }}>real rewards</span></>}
             </h1>
 
-            <div className="h2" style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: isMobile ? "flex-start" : "center", gap: isMobile ? 14 : 24 }}>
-              <a href="/#how-it-works" className="hero-btn-secondary">
-                {isFr ? "Comment ça marche ?" : "How does it work?"}
-              </a>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {/* Desktop : bouton + phrase sur la même ligne */}
+            {!isMobile && (
+              <div className="h2" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 24 }}>
+                <a href="/#how-it-works" className="hero-btn-secondary">
+                  {isFr ? "Comment ça marche ?" : "How does it work?"}
+                </a>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
+                    {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Mobile : phrase seule ici */}
+            {isMobile && (
+              <div className="h2" style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 0 }}>
                 <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
                 <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
                   {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
                 </span>
               </div>
-            </div>
+            )}
           </div>
 
-          {/* DROITE — Tagline + Carte */}
+          {/* DROITE — Tagline + Carte + bouton mobile en bas */}
           <div className="h3" style={{
             flex: "0 0 auto",
             width: isMobile ? "100%" : 400,
@@ -206,6 +219,13 @@ export default function Hero() {
               </p>
             </div>
             <LiveRewardCard />
+
+            {/* Bouton mobile en dessous de la carte */}
+            {isMobile && (
+              <a href="/#how-it-works" className="hero-btn-secondary" style={{ textAlign: "center" }}>
+                {isFr ? "Comment ça marche ?" : "How does it work?"}
+              </a>
+            )}
           </div>
 
         </div>
