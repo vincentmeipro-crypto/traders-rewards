@@ -85,7 +85,7 @@ export default function Pricing() {
         {(acc.popular || acc.premium) && (
           <div style={{
             position: "absolute", top: 0, right: 0,
-            background: acc.popular ? "#3b82f6" : "#7c3aed",
+            background: acc.popular ? "#16a34a" : "#7c3aed",
             color: "#FFFFFF",
             fontSize: 9, fontWeight: 800,
             padding: "4px 12px",
