@@ -162,3 +162,10 @@ body {
               linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
   mask-composite: intersect;
 }
+
+@media (min-width: 769px) {
+  .mt5-section-img {
+    width: 50%;
+    margin: 0 auto;
+  }
+}
