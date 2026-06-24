@@ -77,7 +77,7 @@ export default function Pricing() {
     return (
       <div style={{
         background: "#111111",
-        border: acc.popular ? "1.5px solid #16a34a" : acc.premium ? "1.5px solid #7c3aed" : acc.id === "50k" ? "1.5px solid #3B82F6" : "1.5px solid rgba(255,255,255,0.2)",
+        border: acc.popular ? "1.5px solid #16a34a" : acc.premium ? "1.5px solid #7c3aed" : acc.confirmed ? "1.5px solid #3B82F6" : acc.evolution ? "1.5px solid #f97316" : acc.beginner ? "1.5px solid #6b7280" : "1.5px solid rgba(255,255,255,0.2)",
         borderRadius: 14,
         overflow: "hidden",
         position: "relative",
