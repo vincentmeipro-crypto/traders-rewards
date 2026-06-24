@@ -5,12 +5,6 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const END = new Date("2026-07-15T23:59:59");
 
-const items = [
-  { en: "★ LIMITED OFFER — 50% OFF all challenges · Code TRD50", fr: "★ OFFRE LIMITÉE — 50% DE RÉDUCTION sur tous les challenges · Code TRD50" },
-  { en: "★ Valid until July 15, 2026 only", fr: "★ Valable jusqu'au 15 juillet 2026 uniquement" },
-  { en: "★ Use code TRD50 at checkout — 50% OFF", fr: "★ Utilisez le code TRD50 au paiement — 50% DE RÉDUCTION" },
-];
-
 export default function PromoBanner() {
   const { lang } = useLanguage();
   const [visible, setVisible] = useState(false);
@@ -34,8 +28,9 @@ export default function PromoBanner() {
 
   if (!visible) return null;
 
-  const isFr = lang === "fr";
-  const texts = [...items, ...items];
+  const text = lang === "fr"
+    ? "★ OFFRE LIMITÉE — 50% DE RÉDUCTION sur tous les challenges · Code TRD50"
+    : "★ LIMITED OFFER — 50% OFF all challenges · Code TRD50";
 
   return (
     <div style={{
@@ -43,33 +38,58 @@ export default function PromoBanner() {
       top: 0, left: 0, right: 0,
       zIndex: 200,
       height: 40,
-      background: "#FFFFFF",
-      borderBottom: "1px solid rgba(0,0,0,0.1)",
+      background: "#0A0A0A",
       display: "flex",
       alignItems: "center",
+      justifyContent: "center",
       overflow: "hidden",
     }}>
-      <div style={{ flex: 1, overflow: "hidden", position: "relative" }}>
-        <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 60, background: "linear-gradient(to right, #FFFFFF, transparent)", zIndex: 2, pointerEvents: "none" }} />
-        <div style={{ position: "absolute", right: 32, top: 0, bottom: 0, width: 60, background: "linear-gradient(to left, #FFFFFF, transparent)", zIndex: 2, pointerEvents: "none" }} />
+      {/* Spotlight glow au centre */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: "radial-gradient(ellipse 55% 200% at 50% 50%, rgba(255,255,255,0.13) 0%, transparent 70%)",
+        pointerEvents: "none",
+      }} />
 
-        <div className="marquee-track">
-          {texts.map((item, i) => (
-            <span key={i} style={{
-              display: "inline-flex", alignItems: "center",
-              whiteSpace: "nowrap", fontSize: 12, fontWeight: 700,
-              letterSpacing: "0.8px", color: "#000000", padding: "0 48px",
-            }}>
-              {isFr ? item.fr : item.en}
-              <span style={{ display: "inline-block", width: 4, height: 4, borderRadius: "50%", backgroundColor: "rgba(0,0,0,0.3)", margin: "0 0 0 48px" }} />
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* Fondu noir sur les côtés */}
+      <div style={{
+        position: "absolute",
+        left: 0, top: 0, bottom: 0, width: "20%",
+        background: "linear-gradient(to right, #0A0A0A 0%, transparent 100%)",
+        pointerEvents: "none",
+        zIndex: 1,
+      }} />
+      <div style={{
+        position: "absolute",
+        right: 0, top: 0, bottom: 0, width: "20%",
+        background: "linear-gradient(to left, #0A0A0A 0%, transparent 100%)",
+        pointerEvents: "none",
+        zIndex: 1,
+      }} />
 
-      <button onClick={dismiss} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(0,0,0,0.4)", padding: "0 12px", display: "flex", alignItems: "center", flexShrink: 0, transition: "color 0.2s" }}
-        onMouseOver={e => (e.currentTarget.style.color = "#000")}
-        onMouseOut={e => (e.currentTarget.style.color = "rgba(0,0,0,0.4)")}
+      <span style={{
+        fontSize: 12,
+        fontWeight: 700,
+        letterSpacing: "0.9px",
+        color: "#FFFFFF",
+        whiteSpace: "nowrap",
+        textShadow: "0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(255,255,255,0.2)",
+        zIndex: 2,
+      }}>
+        {text}
+      </span>
+
+      <button
+        onClick={dismiss}
+        style={{
+          position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+          background: "none", border: "none", cursor: "pointer",
+          color: "rgba(255,255,255,0.35)", padding: 4, display: "flex",
+          alignItems: "center", zIndex: 3, transition: "color 0.2s",
+        }}
+        onMouseOver={e => (e.currentTarget.style.color = "#fff")}
+        onMouseOut={e => (e.currentTarget.style.color = "rgba(255,255,255,0.35)")}
       >
         <X size={14} />
       </button>
