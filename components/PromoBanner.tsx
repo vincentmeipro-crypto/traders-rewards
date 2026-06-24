@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+
 import { useLanguage } from "@/lib/LanguageContext";
 
 const END = new Date("2026-07-15T23:59:59");
@@ -26,11 +26,6 @@ export default function PromoBanner() {
     document.documentElement.style.setProperty("--promo-banner-height", height);
     return () => { document.documentElement.style.setProperty("--promo-banner-height", "0px"); };
   }, [visible, isMobile]);
-
-  const dismiss = () => {
-    sessionStorage.setItem("promo_banner_dismissed", "1");
-    setVisible(false);
-  };
 
   if (!visible) return null;
 
@@ -97,19 +92,6 @@ export default function PromoBanner() {
         </span>
       )}
 
-      <button
-        onClick={dismiss}
-        style={{
-          position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
-          background: "none", border: "none", cursor: "pointer",
-          color: "rgba(255,255,255,0.4)", padding: 4, display: "flex",
-          alignItems: "center", zIndex: 3, transition: "color 0.2s",
-        }}
-        onMouseOver={e => (e.currentTarget.style.color = "#fff")}
-        onMouseOut={e => (e.currentTarget.style.color = "rgba(255,255,255,0.4)")}
-      >
-        <X size={14} />
-      </button>
     </div>
   );
 }
