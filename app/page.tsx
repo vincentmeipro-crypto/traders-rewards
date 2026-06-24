@@ -24,7 +24,7 @@ export default function Home() {
       <Stats />
       <TraderMarquee />
       <section style={{ width: "100%", lineHeight: 0, backgroundColor: "#0A0A0A" }}>
-        <img src="/image-section-mt5.png" alt="MT5" className="mt5-section-img" />
+        <img src="/image-section-mt5-new.png" alt="MT5" className="mt5-section-img" />
       </section>
       <Pricing />
       <HowItWorks />

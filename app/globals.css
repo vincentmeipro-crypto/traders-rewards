@@ -155,6 +155,10 @@ body {
 .mt5-section-img {
   width: 100%;
   display: block;
-  -webkit-mask-image: linear-gradient(to right, #0A0A0A 0%, black 15%, black 85%, #0A0A0A 100%);
-  mask-image: linear-gradient(to right, #0A0A0A 0%, black 15%, black 85%, #0A0A0A 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%),
+                      linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 88%, transparent 100%),
+              linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+  mask-composite: intersect;
 }
