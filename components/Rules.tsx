@@ -77,7 +77,7 @@ export default function Rules() {
   ];
 
   return (
-    <section id="rules" style={{ padding: "80px 24px", backgroundColor: "#0A0A0A", position: "relative", overflow: "hidden" }}>
+    <section id="rules" style={{ padding: "80px 24px", backgroundColor: "#000000", position: "relative", overflow: "hidden" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         <div style={{ textAlign: "center", marginBottom: 48 }}>

@@ -585,7 +585,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const totalDrawdownPct = Math.max(0, totalDrawdownRaw).toFixed(2);
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0A0A0A", fontFamily: "var(--font-outfit), 'Outfit', sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#000000", fontFamily: "var(--font-outfit), 'Outfit', sans-serif" }}>
 
       {/* Sidebar — desktop only */}
       {!isMobile && (

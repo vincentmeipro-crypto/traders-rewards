@@ -6,7 +6,7 @@ const ICONS = ["◎", "◈", "◉"];
 export default function HowItWorks() {
   const { T, lang } = useLanguage();
   return (
-    <section id="how-it-works" style={{ padding: "80px 24px", backgroundColor: "#0A0A0A" }}>
+    <section id="how-it-works" style={{ padding: "80px 24px", backgroundColor: "#000000" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <div style={{ textAlign: "center", marginBottom: 56 }}>

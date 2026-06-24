@@ -138,7 +138,7 @@ export default function Hero() {
       `}</style>
 
       <section style={{
-        background: "#0A0A0A",
+        background: "#000000",
         paddingTop: isMobile
           ? "calc(60px + var(--promo-banner-height, 0px) + 40px)"
           : "calc(72px + var(--promo-banner-height, 0px) + 56px)",

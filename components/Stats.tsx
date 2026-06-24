@@ -20,7 +20,7 @@ export default function Stats() {
   ];
 
   return (
-    <section style={{ padding: "40px 24px 60px", backgroundColor: "#0A0A0A" }}>
+    <section style={{ padding: "40px 24px 60px", backgroundColor: "#000000" }}>
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{
           display: "grid",

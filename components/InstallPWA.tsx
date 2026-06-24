@@ -185,7 +185,7 @@ export default function InstallPWA() {
   const sub = isFr ? "Accédez à Traders Rewards depuis votre écran d'accueil — sans passer par les stores." : "Access Traders Rewards from your home screen — no app store needed.";
 
   return (
-    <section style={{ background: "#0A0A0A", padding: "80px 24px", textAlign: "center" }}>
+    <section style={{ background: "#000000", padding: "80px 24px", textAlign: "center" }}>
       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>
         {isFr ? "Application Mobile" : "Mobile App"}
       </div>

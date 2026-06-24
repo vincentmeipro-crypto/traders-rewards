@@ -137,7 +137,7 @@ export default function TopTraders() {
   ];
 
   return (
-    <section style={{ padding: "72px 0 0", overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
+    <section style={{ padding: "72px 0 0", overflow: "hidden", background: "#000000", position: "relative" }}>
 
       <div style={{ textAlign: "center", marginBottom: 56, padding: "0 24px" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>

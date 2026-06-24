@@ -26,7 +26,7 @@ const doubled = [...TRADERS, ...TRADERS];
 
 export default function TraderMarquee() {
   return (
-    <div style={{ overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "18px 0", background: "#0A0A0A" }}>
+    <div style={{ overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "18px 0", background: "#000000" }}>
       <div className="marquee-track">
         {doubled.map((t, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 20, flexShrink: 0, padding: "5px 14px 5px 5px", background: "#111111", borderRadius: 100, border: "1px solid rgba(255,255,255,0.1)" }}>

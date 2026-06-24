@@ -43,7 +43,7 @@ export default function PromoBanner() {
       top: 0, left: 0, right: 0,
       zIndex: 200,
       height,
-      background: "#0A0A0A",
+      background: "#000000",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -61,14 +61,14 @@ export default function PromoBanner() {
       <div style={{
         position: "absolute",
         left: 0, top: 0, bottom: 0, width: "15%",
-        background: "linear-gradient(to right, #0A0A0A 0%, transparent 100%)",
+        background: "linear-gradient(to right, #000000 0%, transparent 100%)",
         pointerEvents: "none",
         zIndex: 1,
       }} />
       <div style={{
         position: "absolute",
         right: 0, top: 0, bottom: 0, width: "15%",
-        background: "linear-gradient(to left, #0A0A0A 0%, transparent 100%)",
+        background: "linear-gradient(to left, #000000 0%, transparent 100%)",
         pointerEvents: "none",
         zIndex: 1,
       }} />
