@@ -189,7 +189,7 @@ export default function Pricing() {
         </div>
 
         {/* Toggle modèle */}
-        <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 8 : 12, marginBottom: isMobile ? 20 : 36, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 6 : 12, marginBottom: isMobile ? 20 : 36, flexWrap: "nowrap" }}>
           {(([
             { id: "2step",   icon: "◈", label: isFr ? "2 Étapes" : "2-Step",       sub: isFr ? "Challenge standard" : "Standard challenge",      isNew: false },
             { id: "1step",   icon: "◆", label: isFr ? "1 Étape" : "1-Step",         sub: isFr ? "Challenge rapide" : "Fast challenge",              isNew: false },
@@ -202,20 +202,21 @@ export default function Pricing() {
                 background: active ? "#FFFFFF" : "#111111",
                 border: active ? "none" : "1px solid rgba(255,255,255,0.1)",
                 borderRadius: 12,
-                padding: isMobile ? "10px 14px" : "16px 28px",
+                padding: isMobile ? "8px 10px" : "16px 28px",
                 cursor: "pointer",
-                display: "flex", alignItems: "center", gap: isMobile ? 8 : 12,
+                display: "flex", alignItems: "center", gap: isMobile ? 6 : 12,
                 transition: "all 0.2s",
-                minWidth: isMobile ? 110 : 180,
+                flex: isMobile ? "1 1 0" : undefined,
+                minWidth: isMobile ? 0 : 180,
                 textAlign: "left",
               }}>
                 {tab.isNew && (
                   <span style={{ position: "absolute", top: -8, right: -8, background: "#ef4444", color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4 }}>NEW</span>
                 )}
-                <span style={{ fontSize: isMobile ? 16 : 20, color: active ? "#000" : "rgba(255,255,255,0.4)" }}>{tab.icon}</span>
+                <span style={{ fontSize: isMobile ? 14 : 20, color: active ? "#000" : "rgba(255,255,255,0.4)" }}>{tab.icon}</span>
                 <div>
-                  <div style={{ fontSize: isMobile ? 12 : 15, fontWeight: 800, color: active ? "#000" : "#FFFFFF" }}>{tab.label}</div>
-                  <div style={{ fontSize: isMobile ? 9 : 11, color: active ? "#555" : "rgba(255,255,255,0.4)", fontWeight: 500, marginTop: 2 }}>{tab.sub}</div>
+                  <div style={{ fontSize: isMobile ? 11 : 15, fontWeight: 800, color: active ? "#000" : "#FFFFFF", whiteSpace: "nowrap" }}>{tab.label}</div>
+                  <div style={{ fontSize: isMobile ? 8 : 11, color: active ? "#555" : "rgba(255,255,255,0.4)", fontWeight: 500, marginTop: 2, whiteSpace: "nowrap" }}>{tab.sub}</div>
                 </div>
               </button>
             );
