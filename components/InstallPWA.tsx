@@ -43,7 +43,7 @@ function PhoneScreen({ step }: { step: number }) {
           {/* Site preview */}
           <div style={{ flex: 1, background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 6 }}>
             <div style={{ fontSize: 11, fontWeight: 800, color: "#0D1B3E", textAlign: "center", letterSpacing: 1 }}>TRADERS REWARDS</div>
-            <div style={{ width: 60, height: 2, background: "#C9A84C", borderRadius: 2 }} />
+            <div style={{ width: 60, height: 2, background: "#60A5FA", borderRadius: 2 }} />
             <div style={{ fontSize: 7, color: "#0D1B3E", textAlign: "center", opacity: 0.7 }}>Performez votre Trading Demo</div>
             <div style={{ marginTop: 4, background: "#1565C0", borderRadius: 8, padding: "4px 10px" }}>
               <span style={{ fontSize: 7, color: "#fff", fontWeight: 700 }}>COMMENCER →</span>
@@ -107,7 +107,7 @@ function PhoneScreen({ step }: { step: number }) {
           <div style={{ background: "#fff", borderRadius: 14, width: "85%", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}>
             <div style={{ padding: "14px 12px 8px", borderBottom: "1px solid #eee", textAlign: "center" }}>
               <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #1565C0, #0D1B3E)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 6px" }}>
-                <span style={{ color: "#C9A84C", fontSize: 16, fontWeight: 800 }}>TR</span>
+                <span style={{ color: "#60A5FA", fontSize: 16, fontWeight: 800 }}>TR</span>
               </div>
               <div style={{ fontSize: 10, fontWeight: 700, color: "#0D1B3E" }}>Traders Rewards</div>
               <div style={{ fontSize: 8, color: "#888", marginTop: 2 }}>traders-rewards.eu</div>
@@ -134,15 +134,15 @@ function PhoneScreen({ step }: { step: number }) {
             </div>
             {/* New app highlighted */}
             <div style={{ marginTop: 10, display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2, paddingLeft: 4 }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #1565C0, #0D1B3E)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 0 3px #C9A84C, 0 4px 12px rgba(197,164,76,0.4)" }}>
-                <span style={{ color: "#C9A84C", fontSize: 14, fontWeight: 900 }}>TR</span>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #1565C0, #0D1B3E)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 0 0 3px #60A5FA, 0 4px 12px rgba(197,164,76,0.4)" }}>
+                <span style={{ color: "#60A5FA", fontSize: 14, fontWeight: 900 }}>TR</span>
               </div>
               <span style={{ fontSize: 7, color: "#fff", fontWeight: 700 }}>Traders</span>
               <span style={{ fontSize: 7, color: "#fff", fontWeight: 700 }}>Rewards</span>
             </div>
             <div style={{ marginTop: "auto", textAlign: "center" }}>
               <span style={{ fontSize: 18 }}>✅</span>
-              <div style={{ fontSize: 8, color: "#C9A84C", fontWeight: 700, marginTop: 2 }}>Installé !</div>
+              <div style={{ fontSize: 8, color: "#60A5FA", fontWeight: 700, marginTop: 2 }}>Installé !</div>
             </div>
           </div>
         </div>
@@ -186,7 +186,7 @@ export default function InstallPWA() {
 
   return (
     <section style={{ background: "#0A0A0A", padding: "80px 24px", textAlign: "center" }}>
-      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9A7B2F", marginBottom: 16 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>
         {isFr ? "Application Mobile" : "Mobile App"}
       </div>
       <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.5px", marginBottom: 12 }}>
@@ -228,7 +228,7 @@ export default function InstallPWA() {
               width: i === current ? 28 : 8,
               height: 8,
               borderRadius: 4,
-              background: i === current ? "#9A7B2F" : "rgba(255,255,255,0.12)",
+              background: i === current ? "#3B82F6" : "rgba(255,255,255,0.12)",
               transition: "all 0.4s ease",
               overflow: "hidden",
               position: "relative",
@@ -249,7 +249,7 @@ export default function InstallPWA() {
         {/* Step text */}
         <div style={{ minHeight: 70, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#9A7B2F", color: "#000", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#3B82F6", color: "#000", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               {current + 1}
             </div>
             <p style={{ fontSize: 16, fontWeight: 700, color: "#FFFFFF", margin: 0, textAlign: "left", whiteSpace: "pre-line" }}>

@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 
 const TIERS = [
   { label: "Débutant", sales: "1 – 10 ventes", rate: "10%", color: "#6b7280", bg: "rgba(107,114,128,0.08)", border: "rgba(107,114,128,0.2)" },
-  { label: "Partenaire", sales: "11 – 29 ventes", rate: "15%", color: "#C9A84C", bg: "rgba(201,168,76,0.08)", border: "rgba(201,168,76,0.3)" },
+  { label: "Partenaire", sales: "11 – 29 ventes", rate: "15%", color: "#60A5FA", bg: "rgba(201,168,76,0.08)", border: "rgba(201,168,76,0.3)" },
   { label: "Elite", sales: "30+ ventes", rate: "20%", color: "#1565C0", bg: "rgba(21,101,192,0.08)", border: "rgba(21,101,192,0.3)" },
 ];
 
@@ -58,7 +58,7 @@ export default function PartenariatPage() {
 
       {/* Hero */}
       <section className="part-hero" style={{ background: "linear-gradient(180deg, #f8f9ff 0%, #ffffff 100%)" }}>
-        <div style={{ display: "inline-block", background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 100, padding: "6px 18px", fontSize: 11, fontWeight: 700, color: "#C9A84C", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>
+        <div style={{ display: "inline-block", background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 100, padding: "6px 18px", fontSize: 11, fontWeight: 700, color: "#60A5FA", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>
           Programme Partenariat
         </div>
         <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", fontWeight: 900, color: "#0D1B3E", lineHeight: 1.1, letterSpacing: "-1.5px", marginBottom: 20 }}>
@@ -149,7 +149,7 @@ export default function PartenariatPage() {
               ].map((ex) => (
                 <div key={ex.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
                   <span style={{ fontSize: 14, color: "rgba(255,255,255,0.8)" }}>{ex.label}</span>
-                  <span style={{ fontWeight: 800, fontSize: 16, color: "#C9A84C" }}>{ex.earn}</span>
+                  <span style={{ fontWeight: 800, fontSize: 16, color: "#60A5FA" }}>{ex.earn}</span>
                 </div>
               ))}
               <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 16 }}>*Estimations basées sur un panier moyen de €250, avec tiers 10% à 20%.</p>

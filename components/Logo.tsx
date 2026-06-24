@@ -7,19 +7,19 @@ export default function Logo({ size = 40, full = false }: { size?: number; full?
       <defs>
         <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%"  stopColor="#6B4A10" />
-          <stop offset="30%" stopColor="#C9A84C" />
+          <stop offset="30%" stopColor="#60A5FA" />
           <stop offset="60%" stopColor="#FFD770" />
           <stop offset="100%" stopColor="#A07830" />
         </linearGradient>
         <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset="0%"  stopColor="#8B6010" />
           <stop offset="50%" stopColor="#E8C96C" />
-          <stop offset="100%" stopColor="#C9A84C" />
+          <stop offset="100%" stopColor="#60A5FA" />
         </linearGradient>
         <radialGradient id="sparkGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%"  stopColor="#FFFFFF" stopOpacity="1" />
           <stop offset="30%" stopColor="#FFE88A" stopOpacity="0.9" />
-          <stop offset="100%" stopColor="#C9A84C" stopOpacity="0" />
+          <stop offset="100%" stopColor="#60A5FA" stopOpacity="0" />
         </radialGradient>
         <filter id="glow">
           <feGaussianBlur stdDeviation="1.5" result="blur" />

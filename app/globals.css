@@ -5,16 +5,16 @@
   --bg-secondary: #111111;
   --bg-card: #111111;
   --bg-card-hover: #1a1a1a;
-  --accent: #9A7B2F;
-  --accent-light: #B8933A;
-  --accent-dark: #9A7B2F;
-  --accent-glow: rgba(154, 123, 47, 0.25);
+  --accent: #3B82F6;
+  --accent-light: #4F96FF;
+  --accent-dark: #3B82F6;
+  --accent-glow: rgba(59, 130, 246, 0.25);
   --text-primary: #FFFFFF;
   --text-secondary: rgba(255,255,255,0.7);
   --text-muted: rgba(255,255,255,0.45);
   --border: rgba(255,255,255,0.1);
   --border-accent: rgba(255,255,255,0.15);
-  --gold: #9A7B2F;
+  --gold: #3B82F6;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -35,7 +35,7 @@ body {
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, #C9A84C, #E8C97A);
+  background: linear-gradient(135deg, #3B82F6 0%, #BFDBFE 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -49,7 +49,7 @@ body {
 }
 
 .btn-primary {
-  background: #9A7B2F;
+  background: #3B82F6;
   color: #FFFFFF;
   font-weight: 800;
   padding: 14px 32px;
@@ -65,7 +65,7 @@ body {
 }
 
 .btn-primary:hover {
-  background: #b8933a;
+  background: #4f96ff;
   transform: translateY(-1px);
 }
 

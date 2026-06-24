@@ -145,7 +145,7 @@ export default function RegisterPage() {
                   </select>
                   <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
                     placeholder="6 12 34 56 78" style={{ ...inputStyle }}
-                    onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                    onFocus={e => (e.target.style.borderColor = "#60A5FA")}
                     onBlur={e => (e.target.style.borderColor = "#222")} />
                 </div>
               </div>

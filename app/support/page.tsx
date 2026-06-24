@@ -75,13 +75,13 @@ export default function SupportPage() {
               <div>
                 <label style={lbl}>Prénom *</label>
                 <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" required style={inp}
-                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onFocus={e => (e.target.style.borderColor = "#60A5FA")}
                   onBlur={e => (e.target.style.borderColor = "#222")} />
               </div>
               <div>
                 <label style={lbl}>Nom *</label>
                 <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" required style={inp}
-                  onFocus={e => (e.target.style.borderColor = "#C9A84C")}
+                  onFocus={e => (e.target.style.borderColor = "#60A5FA")}
                   onBlur={e => (e.target.style.borderColor = "#222")} />
               </div>
             </div>
@@ -114,7 +114,7 @@ export default function SupportPage() {
 
             <p style={{ textAlign: "center", color: "#444", fontSize: 13, margin: 0 }}>
               Vous pouvez aussi nous écrire directement à{" "}
-              <a href="mailto:contact@traders-rewards.eu" style={{ color: "#C9A84C", textDecoration: "none" }}>
+              <a href="mailto:contact@traders-rewards.eu" style={{ color: "#60A5FA", textDecoration: "none" }}>
                 contact@traders-rewards.eu
               </a>
             </p>

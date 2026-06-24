@@ -30,7 +30,7 @@ export default function ProjectionPage() {
           </div>
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>DOCUMENT DE PROJECTION</div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: "#C9A84C", letterSpacing: "2px", textTransform: "uppercase" }}>Investisseur — Confidentiel</div>
+            <div style={{ fontSize: 16, fontWeight: 600, color: "#60A5FA", letterSpacing: "2px", textTransform: "uppercase" }}>Investisseur — Confidentiel</div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 4 }}>Généré le {new Date().toLocaleDateString("fr-FR")}</div>
           </div>
         </div>
@@ -40,7 +40,7 @@ export default function ProjectionPage() {
           <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.15)", borderRadius: 100, padding: "5px 14px", marginBottom: 16 }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#C9A84C", display: "inline-block" }} />
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#60A5FA", display: "inline-block" }} />
               <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Opportunité de marché</span>
             </div>
             <h2 style={{ fontSize: 24, fontWeight: 900, color: "#fff", margin: "0 0 6px 0" }}>Le marché PropFirm mondial</h2>
@@ -52,7 +52,7 @@ export default function ProjectionPage() {
                 { value: "$15 Mds", label: "Marché estimé 2027", sub: "à taux de croissance constant" },
               ].map((s, i) => (
                 <div key={i} style={{ background: "rgba(255,255,255,0.12)", borderRadius: 12, padding: "18px 14px", textAlign: "center", border: "1px solid rgba(255,255,255,0.15)" }}>
-                  <div style={{ fontSize: 30, fontWeight: 900, color: "#C9A84C", lineHeight: 1 }}>{s.value}</div>
+                  <div style={{ fontSize: 30, fontWeight: 900, color: "#60A5FA", lineHeight: 1 }}>{s.value}</div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", marginTop: 6 }}>{s.label}</div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginTop: 3 }}>{s.sub}</div>
                 </div>
@@ -106,10 +106,10 @@ export default function ProjectionPage() {
         </div>
 
         {/* SYNTHÈSE STRATÉGIQUE */}
-        <div style={{ background: "#fff", borderRadius: 20, padding: "32px 40px", marginBottom: 20, border: "2px solid #C9A84C", boxShadow: "0 4px 24px rgba(201,168,76,0.1)" }}>
+        <div style={{ background: "#fff", borderRadius: 20, padding: "32px 40px", marginBottom: 20, border: "2px solid #60A5FA", boxShadow: "0 4px 24px rgba(201,168,76,0.1)" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#fdf8ee", borderRadius: 100, padding: "5px 14px", marginBottom: 18 }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#C9A84C", display: "inline-block" }} />
-            <span style={{ color: "#C9A84C", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Analyse stratégique</span>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#60A5FA", display: "inline-block" }} />
+            <span style={{ color: "#60A5FA", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Analyse stratégique</span>
           </div>
           <h2 style={{ fontSize: 20, fontWeight: 800, color: "#1565C0", margin: "0 0 18px 0" }}>Synthèse — Objectif & réalisme de marché</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
@@ -139,7 +139,7 @@ export default function ProjectionPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
             {[
               { label: "Scénario base (cette projection)", value: "300 / mois", sub: "Conservateur", color: "#1B4FD8" },
-              { label: "Objectif Y2 — France + EU",        value: "500 / mois", sub: "Réaliste 12–18 mois", color: "#C9A84C" },
+              { label: "Objectif Y2 — France + EU",        value: "500 / mois", sub: "Réaliste 12–18 mois", color: "#60A5FA" },
               { label: "Potentiel francophone global",     value: "2 000+ / mois", sub: "Horizon 3–5 ans", color: "#1a7a4a" },
             ].map((s, i) => (
               <div key={i} style={{ background: "#f8faff", borderRadius: 10, padding: "14px", textAlign: "center", border: "1px solid #e0eaff" }}>
@@ -182,7 +182,7 @@ export default function ProjectionPage() {
           <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 20, textAlign: "center" }}>OFFRES D'INVESTISSEMENT</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             {[
-              { invest: "5 000 €", parts: "5%", color: "#C9A84C", sub: "Ticket d'entrée" },
+              { invest: "5 000 €", parts: "5%", color: "#60A5FA", sub: "Ticket d'entrée" },
               { invest: "10 000 €", parts: "10%", color: "#fff", sub: "Ticket partenaire" },
             ].map((t, i) => (
               <div key={i} style={{ background: "rgba(255,255,255,0.07)", borderRadius: 14, padding: "24px", textAlign: "center", border: `1px solid ${i === 1 ? "rgba(255,255,255,0.25)" : "rgba(201,168,76,0.4)"}` }}>
@@ -207,9 +207,9 @@ export default function ProjectionPage() {
             ],
             bilan: [
               { label: "Capital investi",         value: "5 000 €",  color: "#6b7a99" },
-              { label: "1er versement (S1)",       value: "4 686 €",  color: "#C9A84C" },
+              { label: "1er versement (S1)",       value: "4 686 €",  color: "#60A5FA" },
               { label: "Dividendes cumulés 3 ans", value: "45 390 €", color: "#1B4FD8" },
-              { label: "ROI total 3 ans",          value: "908 %",    color: "#C9A84C" },
+              { label: "ROI total 3 ans",          value: "908 %",    color: "#60A5FA" },
             ],
           },
           { pct: "10%", invest: "10 000 €", divRate: 0.10,
@@ -224,14 +224,14 @@ export default function ProjectionPage() {
               { label: "Capital investi",         value: "10 000 €",  color: "#6b7a99" },
               { label: "1er versement (S1)",       value: "9 372 €",   color: "#1B4FD8" },
               { label: "Dividendes cumulés 3 ans", value: "90 780 €",  color: "#1B4FD8" },
-              { label: "ROI total 3 ans",          value: "908 %",     color: "#C9A84C" },
+              { label: "ROI total 3 ans",          value: "908 %",     color: "#60A5FA" },
             ],
           },
         ] as const).map((tier, ti) => (
           <div key={ti} style={{ background: "#fff", borderRadius: 20, padding: "32px 40px", marginBottom: 20, border: "1px solid #e0eaff", boxShadow: "0 4px 24px rgba(21,101,192,0.07)" }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: ti === 0 ? "#fdf8ee" : "#f0f4ff", borderRadius: 100, padding: "5px 14px", marginBottom: 18 }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: ti === 0 ? "#C9A84C" : "#1B4FD8", display: "inline-block" }} />
-              <span style={{ color: ti === 0 ? "#C9A84C" : "#1B4FD8", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Palier {ti + 1} — {tier.invest} / {tier.pct} des parts</span>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: ti === 0 ? "#60A5FA" : "#1B4FD8", display: "inline-block" }} />
+              <span style={{ color: ti === 0 ? "#60A5FA" : "#1B4FD8", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Palier {ti + 1} — {tier.invest} / {tier.pct} des parts</span>
             </div>
             <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1565C0", margin: "0 0 18px 0" }}>Projection — {tier.pct} des dividendes</h2>
 
@@ -249,7 +249,7 @@ export default function ProjectionPage() {
                   <div style={{ fontSize: 12, color: "#e05252", fontWeight: 600 }}>{row.payouts}</div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#1565C0" }}>{row.net}</div>
                   <div style={{ fontSize: 12, fontWeight: 800, color: "#1a7a4a" }}>{row.margin}</div>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: ti === 0 ? "#C9A84C" : "#1B4FD8" }}>{row.div}</div>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: ti === 0 ? "#60A5FA" : "#1B4FD8" }}>{row.div}</div>
                 </div>
               ))}
             </div>

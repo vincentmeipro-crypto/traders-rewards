@@ -535,7 +535,7 @@ export default function AdminPage() {
       <div style={{ width: "100%", maxWidth: 400 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <img src="/logo-nom-noir.png" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
-          <div style={{ color: "#C9A84C", fontWeight: 800, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", marginTop: 12 }}>Admin Panel</div>
+          <div style={{ color: "#60A5FA", fontWeight: 800, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", marginTop: 12 }}>Admin Panel</div>
         </div>
         <div style={{ backgroundColor: "#ffffff", border: "1px solid #1e1e1e", borderRadius: 20, padding: "36px 32px" }}>
           <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>Connexion Admin</h2>
@@ -566,7 +566,7 @@ export default function AdminPage() {
               </div>
             </div>
             {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
-            <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#C9A84C", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
+            <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#60A5FA", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
               {adminLoginLoading ? "Connexion..." : "ACCÉDER AU PANEL"}
             </button>
           </form>
@@ -908,7 +908,7 @@ export default function AdminPage() {
                             <div style={{ color: "#8a96aa", fontSize: 12 }}>{trader.email}</div>
                             {(profile?.phone || firstChallenge?.client_phone) && <div style={{ color: "#8a96aa", fontSize: 12 }}>{profile?.phone || firstChallenge?.client_phone}</div>}
                             {profile?.address && <div style={{ color: "#666", fontSize: 11, marginTop: 4 }}>{profile.address}{profile.postal_code ? `, ${profile.postal_code}` : ""} {profile.city || ""}{profile.country ? ` — ${profile.country}` : ""}</div>}
-                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid #333", borderRadius: 6, color: "#C9A84C", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
+                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid #333", borderRadius: 6, color: "#60A5FA", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
                               {accessEmailMsg[trader.email] || "✉ Envoyer email d'accès"}
                             </button>
                           </div>
@@ -1242,7 +1242,7 @@ export default function AdminPage() {
                           </>)}
                           {userChallenge?.mt5_login && (
                             <button onClick={() => triggerMT5WithdrawFromPayout(userChallenge.mt5_login!, userChallenge.start_balance)}
-                              style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 8, padding: "6px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                              style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#60A5FA", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 8, padding: "6px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
                               title="Retrait profit MT5">
                               💰 MT5
                             </button>
@@ -1473,7 +1473,7 @@ export default function AdminPage() {
               {createError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#ef444410", borderRadius: 8 }}>{createError}</div>}
               {createMsg && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#22c55e10", borderRadius: 8 }}>{createMsg}</div>}
               <button onClick={createChallenge} disabled={createLoading || !createForm.userEmail}
-                style={{ width: "100%", backgroundColor: createForm.type === "reward" ? "#1565C0" : "#C9A84C", color: createForm.type === "reward" ? "#fff" : "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
+                style={{ width: "100%", backgroundColor: createForm.type === "reward" ? "#1565C0" : "#60A5FA", color: createForm.type === "reward" ? "#fff" : "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
                 {createLoading ? "Création en cours..." : createForm.type === "reward" ? "⭐ Créer le compte Reward" : "🎯 Créer le challenge"}
               </button>
             </>)}
@@ -1520,7 +1520,7 @@ export default function AdminPage() {
                   { label: "Récompenses versées", value: paidPayouts.length, color: "#22c55e" },
                   { label: "Total versé (USD)", value: `$${totalVersé.toLocaleString()}`, color: "#111" },
                   { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#111" },
-                  { label: "Crypto USDC", value: paidPayouts.filter(p => p.payment_method === "crypto").length, color: "#C9A84C" },
+                  { label: "Crypto USDC", value: paidPayouts.filter(p => p.payment_method === "crypto").length, color: "#60A5FA" },
                 ].map((s, i) => (
                   <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
                     <div style={{ color: "#6b7280", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
@@ -1775,7 +1775,7 @@ export default function AdminPage() {
                     const paid = a.referrals.filter(r => r.status === "paid").reduce((s, r) => s + (r.commission_amount || 0), 0);
                     const isOpen = affiliateExpanded === a.id;
                     const tierLabel = a.commission_rate >= 20 ? "Elite" : a.commission_rate >= 15 ? "Partenaire" : "Débutant";
-                    const tierColor = a.commission_rate >= 20 ? "#1565C0" : a.commission_rate >= 15 ? "#C9A84C" : "#6b7280";
+                    const tierColor = a.commission_rate >= 20 ? "#1565C0" : a.commission_rate >= 15 ? "#60A5FA" : "#6b7280";
                     return (
                       <div key={a.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
                         {/* Ligne principale */}
@@ -1806,7 +1806,7 @@ export default function AdminPage() {
                             </div>
                           </div>
                           <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                            <button onClick={e => { e.stopPropagation(); setAffiliatePromoForm({ affiliateId: a.id, userId: a.user_id }); setAffiliatePromoData({ code: `${a.code}10`, discount: "10", maxUses: "" }); }} style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", color: "#C9A84C", borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                            <button onClick={e => { e.stopPropagation(); setAffiliatePromoForm({ affiliateId: a.id, userId: a.user_id }); setAffiliatePromoData({ code: `${a.code}10`, discount: "10", maxUses: "" }); }} style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", color: "#60A5FA", borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
                               + Code promo
                             </button>
                             <span style={{ color: "#9ca3af", fontSize: 16 }}>{isOpen ? "▲" : "▼"}</span>
@@ -1856,7 +1856,7 @@ export default function AdminPage() {
                                       <tr key={r.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
                                         <td style={{ padding: "10px 14px", color: "#6b7280", fontFamily: "monospace", fontSize: 11 }}>{r.referred_user_id?.slice(0, 16)}…</td>
                                         <td style={{ padding: "10px 14px", fontWeight: 700, color: "#111" }}>€{((r.purchase_amount || 0) / 100).toLocaleString()}</td>
-                                        <td style={{ padding: "10px 14px", fontWeight: 800, color: "#C9A84C" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
+                                        <td style={{ padding: "10px 14px", fontWeight: 800, color: "#60A5FA" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
                                         <td style={{ padding: "10px 14px" }}>
                                           <span style={{ background: r.status === "paid" ? "#22c55e15" : "#f59e0b15", color: r.status === "paid" ? "#22c55e" : "#f59e0b", padding: "2px 8px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{r.status === "paid" ? "Payé" : "En attente"}</span>
                                         </td>

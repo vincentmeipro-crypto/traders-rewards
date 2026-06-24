@@ -10,7 +10,7 @@ export default function HowItWorks() {
       <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
         <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9A7B2F", marginBottom: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>
             {T.how.label}
           </div>
           <h2 style={{
@@ -21,7 +21,7 @@ export default function HowItWorks() {
             marginBottom: 16,
             lineHeight: 1.1,
           }}>
-            {T.how.title} <span style={{ color: "#9A7B2F" }}>{T.how.titleGold}</span>
+            {T.how.title} <span style={{ color: "#3B82F6" }}>{T.how.titleGold}</span>
           </h2>
           <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 16, maxWidth: 480, margin: "0 auto", lineHeight: 1.7 }}>{T.how.sub}</p>
         </div>
@@ -50,7 +50,7 @@ export default function HowItWorks() {
 
               <div style={{
                 width: 44, height: 44, borderRadius: 10,
-                background: i === 1 ? "#9A7B2F" : "rgba(255,255,255,0.06)",
+                background: i === 1 ? "#3B82F6" : "rgba(255,255,255,0.06)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 marginBottom: 20,
                 border: i === 1 ? "none" : "1px solid rgba(255,255,255,0.1)",

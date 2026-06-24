@@ -111,7 +111,7 @@ export default function Scaling() {
                       <td style={{ padding: "13px 16px", textAlign: "right", color: "#1565C0", fontWeight: 700 }}>+{fmt(row.target).replace("$", "")} <span style={{ color: "#555", fontSize: 11 }}>(+10%)</span></td>
                       <td style={{ padding: "13px 16px", textAlign: "right" }}>
                         {isCap ? (
-                          <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#C9A84C", fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 6, border: "1px solid rgba(201,168,76,0.3)" }}>
+                          <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#60A5FA", fontSize: 11, fontWeight: 800, padding: "3px 10px", borderRadius: 6, border: "1px solid rgba(201,168,76,0.3)" }}>
                             {labels.cap} 🏆
                           </span>
                         ) : (
@@ -168,7 +168,7 @@ export default function Scaling() {
                 <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Par session" : "Per session"}</div>
               </div>
               <div>
-                <div style={{ color: "#C9A84C", fontSize: 22, fontWeight: 900 }}>$1M</div>
+                <div style={{ color: "#60A5FA", fontSize: 22, fontWeight: 900 }}>$1M</div>
                 <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Plafond" : "Cap"}</div>
               </div>
             </div>

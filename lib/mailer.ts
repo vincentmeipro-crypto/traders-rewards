@@ -30,7 +30,7 @@ export async function sendWelcomeEmail(
 ) {
   const modelLabel = model === "1step" ? "1 Étape" : "2 Étapes";
   const details: { label: string; value: string; color?: string }[] = [
-    { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
+    { label: "Taille du compte", value: accountSize, color: "#60A5FA" },
     { label: "Modèle", value: modelLabel },
     { label: "Objectif de profit", value: "10%" },
     { label: "Perte journalière max", value: model === "1step" ? "3%" : "5%" },
@@ -59,10 +59,10 @@ export async function sendWelcomeEmail(
 export async function sendPhase2Email(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }) {
   await sendEmail(to, "🏆 Phase 1 réussie — Bienvenue en Phase 2 !", buildEmail({
     title: "🏆 Phase 1 réussie !",
-    titleColor: "#C9A84C",
+    titleColor: "#60A5FA",
     body: `Félicitations ! Vous avez complété avec succès la Phase 1 de votre challenge ${accountSize}. Un nouveau compte de trading a été créé pour votre Phase 2.`,
     details: [
-      { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
+      { label: "Taille du compte", value: accountSize, color: "#60A5FA" },
       { label: "Nouvelle phase", value: "Phase 2" },
       { label: "Nouvel objectif", value: "5%" },
       ...(mt5 ? [
@@ -85,7 +85,7 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
     titleColor: "#ef4444",
     body: `Nous vous informons que votre challenge ${accountSize} a été automatiquement arrêté. ${reasonDetail}`,
     details: [
-      { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
+      { label: "Taille du compte", value: accountSize, color: "#60A5FA" },
       ...(mt5Login ? [{ label: "ID du compte MT5", value: String(mt5Login), color: "#1565C0" }] : []),
       { label: "Raison", value: reasonLabel, color: "#ef4444" },
       { label: "Statut", value: "Challenge clôturé" },
@@ -104,7 +104,7 @@ export async function sendFundedEmail(to: string, accountSize: string, mt5?: { l
     titleColor: "#3b82f6",
     body: `Performance exceptionnelle ! Vous êtes maintenant un Trader Reward sur votre compte ${accountSize}. Voici vos identifiants de compte Reward.`,
     details: [
-      { label: "Taille du compte", value: accountSize, color: "#C9A84C" },
+      { label: "Taille du compte", value: accountSize, color: "#60A5FA" },
       { label: "Statut", value: "Trader Reward ✓", color: "#3b82f6" },
       { label: "Partage des profits", value: profitSplit },
       ...(mt5 ? [
@@ -133,7 +133,7 @@ export async function sendDailyUpdateEmail(
   const details: { label: string; value: string; color?: string }[] = [
     { label: "Balance actuelle", value: `$${balance.toLocaleString()}` },
     { label: "Profit / Perte", value: `${profitSign}${profitPct.toFixed(2)}%`, color: profitColor },
-    { label: "Phase", value: phaseLabel, color: "#C9A84C" },
+    { label: "Phase", value: phaseLabel, color: "#60A5FA" },
     { label: "Jours de trading", value: `${tradingDays}` },
   ];
 
@@ -150,7 +150,7 @@ export async function sendDailyUpdateEmail(
 
   await sendEmail(to, `📊 Récap journalier — Challenge ${accountSize}`, buildEmail({
     title: "📊 Récapitulatif journalier",
-    titleColor: "#C9A84C",
+    titleColor: "#60A5FA",
     body: `Voici votre résumé de performance du jour pour votre challenge ${accountSize}.`,
     details,
     cta: { text: "Voir mon Dashboard →", href: `${SITE}/dashboard` },
@@ -241,7 +241,7 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <img src="${SITE}/RECOMPENSE.png" alt="Certificat Récompense" style="width:100%;display:block;" />
           <div style="padding:32px 36px;">
-            <h2 style="color:#C9A84C;font-size:22px;font-weight:700;margin:0 0 12px 0;">Récompense validée — $${netAmount.toLocaleString()} pour vous !</h2>
+            <h2 style="color:#60A5FA;font-size:22px;font-weight:700;margin:0 0 12px 0;">Récompense validée — $${netAmount.toLocaleString()} pour vous !</h2>
             <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
               Votre récompense a été validée et est en cours de traitement. Elle sera versée sous 24-48h.
             </p>
@@ -253,7 +253,7 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
               ${eurRow}
               <tr><td style="color:#777;font-size:14px;padding:12px 0;">Date :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;text-align:right;">${date}</td></tr>
             </table>
-            <a href="${certUrl}" style="display:block;background:#C9A84C;color:#000;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">Télécharger mon certificat →</a>
+            <a href="${certUrl}" style="display:block;background:#60A5FA;color:#000;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">Télécharger mon certificat →</a>
           </div>
         </div>
         <div style="margin-top:24px;padding:0 8px;">
@@ -290,13 +290,13 @@ function buildEmail({ title, titleColor, body, details, cta }: {
             `).join("")}
           </table>
 
-          <a href="${cta.href}" style="display:block;background:#C9A84C;color:#ffffff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">${cta.text}</a>
+          <a href="${cta.href}" style="display:block;background:#60A5FA;color:#ffffff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">${cta.text}</a>
         </div>
 
         <div style="margin-top:32px;padding:0 8px;">
           <p style="color:#555;font-size:14px;margin:0 0 8px 0;">💬 Besoin d'aide ?</p>
           <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 20px 0;">
-            Contactez-nous à <a href="mailto:contact@traders-rewards.eu" style="color:#C9A84C;text-decoration:none;">contact@traders-rewards.eu</a>
+            Contactez-nous à <a href="mailto:contact@traders-rewards.eu" style="color:#60A5FA;text-decoration:none;">contact@traders-rewards.eu</a>
           </p>
           <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
         </div>

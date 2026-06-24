@@ -36,7 +36,7 @@ export default function TraderMarquee() {
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: 12, color: "#FFFFFF" }}>{t.name}</div>
-              <div style={{ fontSize: 11, color: "#9A7B2F", fontWeight: 700 }}>{fmt(t.payout)} · {t.size}</div>
+              <div style={{ fontSize: 11, color: "#3B82F6", fontWeight: 700 }}>{fmt(t.payout)} · {t.size}</div>
             </div>
           </div>
         ))}

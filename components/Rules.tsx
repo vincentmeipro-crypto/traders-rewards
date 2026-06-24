@@ -81,9 +81,9 @@ export default function Rules() {
       <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9A7B2F", marginBottom: 16 }}>{T.rules.label}</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>{T.rules.label}</div>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
-            {T.rules.title} <span style={{ color: "#9A7B2F" }}>{T.rules.titleGold}</span>
+            {T.rules.title} <span style={{ color: "#3B82F6" }}>{T.rules.titleGold}</span>
           </h2>
         </div>
 
@@ -92,8 +92,8 @@ export default function Rules() {
           {(["challenge", "funded"] as const).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: "10px 28px", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer",
-              border: tab === t ? "1px solid #9A7B2F" : "1px solid rgba(255,255,255,0.12)",
-              backgroundColor: tab === t ? "#9A7B2F" : "transparent",
+              border: tab === t ? "1px solid #3B82F6" : "1px solid rgba(255,255,255,0.12)",
+              backgroundColor: tab === t ? "#3B82F6" : "transparent",
               color: tab === t ? "#FFFFFF" : "rgba(255,255,255,0.6)",
               transition: "all 0.2s",
             }}>
@@ -113,8 +113,8 @@ export default function Rules() {
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
                 <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Critère" : "Criteria"}</div>
-                <div style={{ padding: "8px 0", color: "#9A7B2F", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.phase1}</div>
-                <div style={{ padding: "8px 0", color: "#9A7B2F", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.phase2}</div>
+                <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.phase1}</div>
+                <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.phase2}</div>
                 {challengeRows2Step.map((row, i) => (
                   <>
                     <div key={`l${i}`} style={{ padding: "10px 0", color: "rgba(255,255,255,0.6)", fontSize: 13, borderBottom: i < challengeRows2Step.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.label}</div>
@@ -132,7 +132,7 @@ export default function Rules() {
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
                 <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Critère" : "Criteria"}</div>
-                <div style={{ padding: "8px 0", color: "#9A7B2F", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Valeur" : "Value"}</div>
+                <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Valeur" : "Value"}</div>
                 {challengeRows1Step.map((row, i) => (
                   <>
                     <div key={`l${i}`} style={{ padding: "10px 0", color: "rgba(255,255,255,0.6)", fontSize: 13, borderBottom: i < challengeRows1Step.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.label}</div>
@@ -151,15 +151,15 @@ export default function Rules() {
             <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: isMobile ? 16 : 24, overflowX: isMobile ? "auto" : "visible" }}>
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "140px 80px 80px 100px" : "2fr 1fr 1fr 1fr", gap: 0, minWidth: isMobile ? 400 : "auto" }}>
                 <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Critère" : "Criteria"}</div>
-                <div style={{ padding: "8px 0", color: "#9A7B2F", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.twoStep}</div>
-                <div style={{ padding: "8px 0", color: "#9A7B2F", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.oneStep} ⚡</div>
-                <div style={{ padding: "8px 0", color: "#9A7B2F", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>⚡ Instant Reward</div>
+                <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.twoStep}</div>
+                <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.oneStep} ⚡</div>
+                <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>⚡ Instant Reward</div>
                 {fundedRows.map((row, i) => (
                   <>
                     <div key={`l${i}`} style={{ padding: "10px 0", color: "rgba(255,255,255,0.6)", fontSize: 13, borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.label}</div>
                     <div key={`v2${i}`} style={{ padding: "10px 0", color: row.v2 === "—" ? "rgba(255,255,255,0.2)" : "#FFFFFF", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.v2}</div>
                     <div key={`v1${i}`} style={{ padding: "10px 0", color: row.v1 === "—" ? "rgba(255,255,255,0.2)" : "#FFFFFF", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.v1}</div>
-                    <div key={`vi${i}`} style={{ padding: "10px 0", color: row.vi === "—" ? "rgba(255,255,255,0.2)" : "#9A7B2F", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.vi}</div>
+                    <div key={`vi${i}`} style={{ padding: "10px 0", color: row.vi === "—" ? "rgba(255,255,255,0.2)" : "#3B82F6", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.vi}</div>
                   </>
                 ))}
               </div>
@@ -193,11 +193,11 @@ export default function Rules() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16 }}>
           {groups.map((group, i) => (
             <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 28 }}>
-              <h3 style={{ fontSize: 10, fontWeight: 700, marginBottom: 20, color: i === 0 ? "#9A7B2F" : "#ef4444", textTransform: "uppercase", letterSpacing: "2px" }}>{group.title}</h3>
+              <h3 style={{ fontSize: 10, fontWeight: 700, marginBottom: 20, color: i === 0 ? "#3B82F6" : "#ef4444", textTransform: "uppercase", letterSpacing: "2px" }}>{group.title}</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {group.items.map((rule, j) => (
                   <div key={j} style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
-                    <span style={{ color: i === 0 ? "#9A7B2F" : "#ef4444", fontSize: 14, marginTop: 1, flexShrink: 0, fontWeight: 700 }}>{group.icon}</span>
+                    <span style={{ color: i === 0 ? "#3B82F6" : "#ef4444", fontSize: 14, marginTop: 1, flexShrink: 0, fontWeight: 700 }}>{group.icon}</span>
                     <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 13, lineHeight: 1.6 }}>{rule}</span>
                   </div>
                 ))}
@@ -209,12 +209,12 @@ export default function Rules() {
         {/* CTA */}
         <div style={{ marginTop: 48, borderRadius: 16, padding: "48px 40px", textAlign: "center", background: "#111111", border: "1px solid rgba(255,255,255,0.1)" }}>
           <h3 style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.2rem)", fontWeight: 800, color: "#FFFFFF", marginBottom: 12, letterSpacing: "-0.5px" }}>
-            {T.rules.ctaTitle} <span style={{ color: "#9A7B2F" }}>{T.rules.ctaGold}</span>
+            {T.rules.ctaTitle} <span style={{ color: "#3B82F6" }}>{T.rules.ctaGold}</span>
           </h3>
           <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, marginBottom: 28 }}>{T.rules.ctaSub}</p>
-          <a href="/#pricing" style={{ display: "inline-block", background: "#9A7B2F", color: "#FFFFFF", padding: "14px 44px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
+          <a href="/#pricing" style={{ display: "inline-block", background: "#3B82F6", color: "#FFFFFF", padding: "14px 44px", borderRadius: 6, fontWeight: 800, fontSize: 12, letterSpacing: "2px", textTransform: "uppercase", textDecoration: "none", transition: "all 0.2s" }}
             onMouseOver={e => { e.currentTarget.style.background = "#b8923a"; }}
-            onMouseOut={e => { e.currentTarget.style.background = "#9A7B2F"; }}
+            onMouseOut={e => { e.currentTarget.style.background = "#3B82F6"; }}
           >{T.rules.ctaBtn}</a>
         </div>
 

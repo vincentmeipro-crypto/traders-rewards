@@ -2,7 +2,7 @@ export default function RiskPage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", color: "#fff", fontFamily: "Inter, sans-serif" }}>
       <div style={{ maxWidth: 800, margin: "0 auto", padding: "80px 24px" }}>
-        <a href="/" style={{ color: "#C9A84C", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 40 }}>← Back to Home</a>
+        <a href="/" style={{ color: "#60A5FA", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 40 }}>← Back to Home</a>
 
         <h1 style={{ fontSize: 36, fontWeight: 900, marginBottom: 8 }}>Risk Disclaimer</h1>
         <p style={{ color: "#555", fontSize: 14, marginBottom: 48 }}>Last updated: May 13, 2026</p>
@@ -49,7 +49,7 @@ export default function RiskPage() {
           },
         ].map((section, i) => (
           <div key={i} style={{ marginBottom: 40 }}>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#C9A84C", marginBottom: 12 }}>{section.title}</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: "#60A5FA", marginBottom: 12 }}>{section.title}</h2>
             <p style={{ color: "#888", lineHeight: 1.8, fontSize: 15 }}>{section.content}</p>
           </div>
         ))}

@@ -77,7 +77,7 @@ export default function Pricing() {
     return (
       <div style={{
         background: "#111111",
-        border: acc.popular ? "1.5px solid #9A7B2F" : "1.5px solid rgba(255,255,255,0.1)",
+        border: acc.popular ? "1.5px solid #3B82F6" : "1.5px solid rgba(255,255,255,0.1)",
         borderRadius: 14,
         overflow: "hidden",
         position: "relative",
@@ -128,7 +128,7 @@ export default function Pricing() {
             borderRadius: 8,
             fontSize: compact ? 13 : 11, fontWeight: 800,
             textDecoration: "none", letterSpacing: "1px", textTransform: "uppercase",
-            background: "#9A7B2F",
+            background: "#3B82F6",
             color: "#FFFFFF",
           }}>
             {isFr ? "Commencer maintenant" : "Get Started"}
@@ -162,8 +162,8 @@ export default function Pricing() {
         {/* Récompense moy. */}
         <div style={{
           margin: compact ? "0 16px 16px" : "0 12px 10px",
-          background: "rgba(154,123,47,0.06)",
-          border: "1px solid rgba(154,123,47,0.2)",
+          background: "rgba(59, 130, 246,0.06)",
+          border: "1px solid rgba(59, 130, 246,0.2)",
           borderRadius: 6, padding: "5px 10px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
@@ -181,7 +181,7 @@ export default function Pricing() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 20 : 40 }}>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1.1, marginBottom: 12 }}>
-            {isFr ? <>Commencez votre <span style={{ color: "#9A7B2F" }}>Challenge</span></> : <>Start your <span style={{ color: "#9A7B2F" }}>Challenge</span></>}
+            {isFr ? <>Commencez votre <span style={{ color: "#3B82F6" }}>Challenge</span></> : <>Start your <span style={{ color: "#3B82F6" }}>Challenge</span></>}
           </h2>
           <p style={{ fontSize: isMobile ? 13 : 15, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
             {isFr ? "Tradez jusqu'à 400K en compte reward." : "Trade up to $400K in reward account."}
@@ -234,7 +234,7 @@ export default function Pricing() {
                     padding: "8px 14px",
                     borderRadius: 20,
                     border: active ? "none" : "1px solid rgba(255,255,255,0.15)",
-                    background: active ? "#9A7B2F" : "#111111",
+                    background: active ? "#3B82F6" : "#111111",
                     color: active ? "#FFFFFF" : "rgba(255,255,255,0.6)",
                     fontSize: 13, fontWeight: 700,
                     cursor: "pointer",

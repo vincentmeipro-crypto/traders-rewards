@@ -69,11 +69,11 @@ function SpotlightCard({ lang }: { lang: string }) {
       animation: `spotCycle ${TOTAL_MS}ms linear forwards`,
     }}>
 
-      <div style={{ position: "absolute", top: 0, left: "15%", right: "15%", height: 2, background: "linear-gradient(to right, transparent, #9A7B2F, transparent)", borderRadius: "0 0 4px 4px" }} />
+      <div style={{ position: "absolute", top: 0, left: "15%", right: "15%", height: 2, background: "linear-gradient(to right, transparent, #3B82F6, transparent)", borderRadius: "0 0 4px 4px" }} />
 
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(154,123,47,0.12)", border: "1px solid rgba(154,123,47,0.3)", borderRadius: 100, padding: "5px 14px", marginBottom: 22 }}>
-        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#9A7B2F", display: "inline-block" }} />
-        <span style={{ color: "#9A7B2F", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(59, 130, 246,0.12)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 100, padding: "5px 14px", marginBottom: 22 }}>
+        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6", display: "inline-block" }} />
+        <span style={{ color: "#3B82F6", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
           {lang === "fr" ? "Récompense versée" : "Reward Paid"}
         </span>
       </div>
@@ -84,7 +84,7 @@ function SpotlightCard({ lang }: { lang: string }) {
           <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -3, right: -7, width: 18, height: 14, borderRadius: 3, objectFit: "cover" }} />
         </div>
         <div style={{ textAlign: "left" }}>
-          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "2px", color: "#9A7B2F", marginBottom: 3, textTransform: "uppercase" }}>Trader</div>
+          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "2px", color: "#3B82F6", marginBottom: 3, textTransform: "uppercase" }}>Trader</div>
           <div style={{ fontWeight: 800, fontSize: 16, color: "#FFFFFF" }}>{t.name}</div>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 1 }}>{lang === "fr" ? "Compte" : "Account"} {t.size}</div>
         </div>
@@ -101,8 +101,8 @@ function SpotlightCard({ lang }: { lang: string }) {
 
       <div style={{ height: 1, background: "rgba(255,255,255,0.07)", marginBottom: 16 }} />
 
-      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(154,123,47,0.1)", border: "1px solid rgba(154,123,47,0.25)", borderRadius: 8, padding: "6px 14px" }}>
-        <span style={{ fontSize: 11, color: "#9A7B2F", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader Reward" : "Reward Trader"}</span>
+      <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(59, 130, 246,0.1)", border: "1px solid rgba(59, 130, 246,0.25)", borderRadius: 8, padding: "6px 14px" }}>
+        <span style={{ fontSize: 11, color: "#3B82F6", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader Reward" : "Reward Trader"}</span>
       </div>
 
       <style>{`
@@ -140,12 +140,12 @@ export default function TopTraders() {
     <section style={{ padding: "72px 0 0", overflow: "hidden", background: "#0A0A0A", position: "relative" }}>
 
       <div style={{ textAlign: "center", marginBottom: 56, padding: "0 24px" }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9A7B2F", marginBottom: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>
           {lang === "fr" ? "Dernières Récompenses" : "Latest Rewards"}
         </div>
         <h2 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", marginBottom: 0 }}>
           {lang === "fr" ? "Nos traders touchent" : "Our traders receive"}
-          <br /><span style={{ color: "#9A7B2F" }}>{lang === "fr" ? "leurs récompenses chaque semaine." : "their rewards every week."}</span>
+          <br /><span style={{ color: "#3B82F6" }}>{lang === "fr" ? "leurs récompenses chaque semaine." : "their rewards every week."}</span>
         </h2>
       </div>
 
@@ -167,14 +167,14 @@ export default function TopTraders() {
           <div style={{ background: "#111111", borderRadius: 16, border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
               {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
-                <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#9A7B2F", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
+                <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#3B82F6", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
               ))}
             </div>
             {tableRows.map((row, i) => (
               <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "14px 20px", borderBottom: i < tableRows.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "#FFFFFF" }}>{row.size}</div>
                 <div style={{ fontSize: 14, color: "rgba(255,255,255,0.5)" }}>{row.profit}</div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#9A7B2F" }}>{row.reward}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#3B82F6" }}>{row.reward}</div>
               </div>
             ))}
           </div>
