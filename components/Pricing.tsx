@@ -55,7 +55,7 @@ export default function Pricing() {
     { label: isFr ? "Perte journalière" : "Max daily loss", value: "3% EOD",  pct: -0.03 },
     { label: isFr ? "Perte totale"      : "Max total loss", value: "8% EOD",  pct: -0.08 },
     { label: isFr ? "Trading news"      : "News trading",   value: isFr ? "±5 min interdit" : "±5 min banned" },
-    { label: isFr ? "Jours min"         : "Min days",       value: isFr ? "7 jours" : "7 days" },
+    { label: isFr ? "Jours min"         : "Min days",       value: isFr ? "15 jours" : "15 days" },
     { label: isFr ? "Risque par trade"  : "Risk per trade", value: "≤ 1.5%" },
     { label: "Stop Loss",                                    value: isFr ? "Obligatoire < 1min" : "Required < 1min" },
     { label: isFr ? "Partage profits"   : "Profit split",   value: "90%" },

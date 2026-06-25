@@ -45,7 +45,7 @@ const RULES_INSTANT = [
   { label: "Perte journalière max", value: "3% EOD" },
   { label: "Perte totale max", value: "8% EOD" },
   { label: "Trading news", value: "±5 min interdit" },
-  { label: "Jours de trading min", value: "7 jours" },
+  { label: "Jours de trading min", value: "15 jours" },
   { label: "Risque par trade max", value: "≤ 1.5%" },
   { label: "Stop Loss", value: "Obligatoire < 1 min" },
   { label: "Partage des profits", value: "90%" },

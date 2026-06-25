@@ -1822,7 +1822,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       }] : []),
                       {
                         label: `Min. ${T.dash.tradingDays}`,
-                        pct: challenge.phase === "funded" ? "7 jours" : "5 jours",
+                        pct: challenge.phase === "funded" ? "15 jours" : "5 jours",
                         usd: null,
                         usdColor: "#fff",
                         ok: challenge.phase === "funded" ? challenge.trading_days >= 7 : challenge.trading_days >= 5,

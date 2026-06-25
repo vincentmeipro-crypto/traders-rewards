@@ -207,7 +207,7 @@ const jsonLd = {
           name: "Comment et quand suis-je payé ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Première récompense disponible dès le jour 7. Ensuite tous les 15 jours. Traitement sous 24-48h via crypto ou virement bancaire (IBAN).",
+            text: "Première récompense disponible dès le 15ème jour. Ensuite tous les 15 jours. Traitement sous 24-48h via crypto ou virement bancaire (IBAN).",
           },
         },
         {
