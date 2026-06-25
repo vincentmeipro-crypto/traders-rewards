@@ -266,7 +266,9 @@ export default function Pricing() {
             gap: 8,
           }}>
             {displayAccounts.map(acc => (
-              <PriceCard key={acc.id} acc={acc} compact={false} />
+              <div key={acc.id} style={{ width: model === "instant" ? 320 : undefined }}>
+                <PriceCard acc={acc} compact={false} />
+              </div>
             ))}
           </div>
         )}
