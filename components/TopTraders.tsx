@@ -167,7 +167,7 @@ export default function TopTraders() {
           <div style={{ background: "#111111", borderRadius: 16, border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
               {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
-                <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#3B82F6", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
+                <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
               ))}
             </div>
             {tableRows.map((row, i) => (
