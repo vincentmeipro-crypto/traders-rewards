@@ -176,14 +176,14 @@ export default function Hero() {
                 <a href="/#how-it-works" className="hero-btn-secondary">
                   {isFr ? "Comment ça marche ?" : "How does it work?"}
                 </a>
-                <img src="/coq-francais.png" alt="Coq français" style={{ height: 48, objectFit: "contain" }} />
+                <img src="/coq-francais.png" alt="Coq français" style={{ height: 120, objectFit: "contain" }} />
               </div>
             )}
 
             {/* Mobile : image coq seule ici */}
             {isMobile && (
               <div className="h2" style={{ display: "flex", alignItems: "center", marginTop: -16, marginBottom: -16 }}>
-                <img src="/coq-francais.png" alt="Coq français" style={{ height: 40, objectFit: "contain" }} />
+                <img src="/coq-francais.png" alt="Coq français" style={{ height: 80, objectFit: "contain" }} />
               </div>
             )}
           </div>
