@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Outfit, Bebas_Neue, Playfair_Display } from "next/font/google";
+import { Outfit, Bebas_Neue, Playfair_Display, Geist } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import PWARegister from "@/components/PWARegister";
 import RefTracker from "@/components/RefTracker";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit", weight: ["300", "400", "500", "600", "700", "800", "900"] });
 const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-bebas" });
@@ -266,7 +269,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`${outfit.variable} ${bebas.variable} ${playfair.variable}`}>
+    <html lang="fr" className={cn(outfit.variable, bebas.variable, playfair.variable, "font-sans", geist.variable)}>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#000000" />
