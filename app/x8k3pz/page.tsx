@@ -760,7 +760,7 @@ export default function AdminPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                      {["Trader", "Compte", "Modèle", "Phase", "Statut", "Balance", "Payé", "Jours", "Account ID", "Password", "Serveur", "Date", "Actions"].map(h => (
+                      {["Trader", "Compte", "Modèle", "Phase", "Statut", "Balance", "Perte", "Payé", "Jours", "Account ID", "Password", "Serveur", "Date", "Actions"].map(h => (
                         <th key={h} style={{ padding: "13px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
@@ -808,6 +808,21 @@ export default function AdminPage() {
                             {editing === c.id
                               ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.6)", border: "1px solid rgba(21,101,192,0.15)", borderRadius: 6, padding: "4px 8px", color: "#111", fontSize: 12, width: 90 }} />
                               : `$${c.balance?.toLocaleString()}`}
+                          </td>
+                          <td style={{ padding: "13px 14px" }}>
+                            {(() => {
+                              if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
+                              const dd = ((c.start_balance - c.balance) / c.start_balance * 100);
+                              const maxTotal = c.model === "1step" ? 8 : 10;
+                              const maxDaily = c.model === "1step" ? 3 : 5;
+                              const color = dd >= maxTotal ? "#ef4444" : dd >= maxTotal * 0.7 ? "#f59e0b" : "#22c55e";
+                              return (
+                                <div style={{ fontSize: 11, lineHeight: 1.6 }}>
+                                  <div style={{ fontWeight: 700, color }}>{dd.toFixed(2)}%</div>
+                                  <div style={{ color: "#9ca3af", fontSize: 10 }}>Max: {maxTotal}% · J: {maxDaily}%</div>
+                                </div>
+                              );
+                            })()}
                           </td>
                           <td style={{ padding: "13px 14px", color: "#22c55e" }}>€{c.amount_paid}</td>
                           <td style={{ padding: "13px 14px" }}>
