@@ -66,12 +66,30 @@ function formatPrice(cents: number) {
   return `€${(cents / 100).toFixed(2).replace(".00", "")}`;
 }
 
+const SIZES = ["10k", "25k", "50k", "100k", "200k"];
+const SIZE_LABELS: Record<string, string> = { "10k": "$10K", "25k": "$25K", "50k": "$50K", "100k": "$100K", "200k": "$200K" };
+
 function CheckoutContent() {
   const params = useSearchParams();
   const router = useRouter();
-  const productId = params.get("product") || "50k-2step";
-  const challenge = CHALLENGES[productId] || CHALLENGES["50k-2step"];
+  const [selectedProduct, setSelectedProduct] = useState(params.get("product") || "50k-2step");
+  const challenge = CHALLENGES[selectedProduct] || CHALLENGES["50k-2step"];
   const rules = challenge.model === "2-Step" ? RULES_2STEP : challenge.model === "1-Step" ? RULES_1STEP : RULES_INSTANT;
+
+  const selectedModel = selectedProduct === "50k-instant" ? "instant" : selectedProduct.endsWith("2step") ? "2step" : "1step";
+  const selectedSize = selectedProduct.split("-")[0];
+
+  const changeModel = (model: string) => {
+    if (model === "instant") { setSelectedProduct("50k-instant"); return; }
+    const size = selectedSize === "50k" || SIZES.includes(selectedSize) ? selectedSize : "50k";
+    const pid = `${size}-${model}`;
+    if (CHALLENGES[pid]) setSelectedProduct(pid);
+  };
+  const changeSize = (size: string) => {
+    if (selectedModel === "instant") return;
+    const pid = `${size}-${selectedModel}`;
+    if (CHALLENGES[pid]) setSelectedProduct(pid);
+  };
 
   const [isMobile, setIsMobile] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -105,7 +123,7 @@ function CheckoutContent() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [refCode, setRefCode] = useState("");
 
-  const isInstant = productId === "50k-instant";
+  const isInstant = selectedProduct === "50k-instant";
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
   const isFree = discount === 100;
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
@@ -145,7 +163,7 @@ function CheckoutContent() {
         }
         // Vérifier si le client a déjà acheté un challenge → loyalty -20%
         const { count } = await supabase.from("challenges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id);
-        if (count && count >= 1 && productId !== "50k-instant") {
+        if (count && count >= 1 && selectedProduct !== "50k-instant") {
           setLoyaltyActive(true);
           setDiscount(20);
         }
@@ -199,7 +217,7 @@ function CheckoutContent() {
     if (!profileComplete) return;
     setLoadingStripe(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, userEmail: u.email, promoCode: appliedCode, discount, refCode }) });
+    const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, discount, refCode }) });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
     else { setPayError(data.error || "Erreur paiement."); setLoadingStripe(false); }
@@ -212,7 +230,7 @@ function CheckoutContent() {
     if (!profileComplete) return;
     setLoadingCrypto(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, promoCode: appliedCode, discount, refCode }) });
+    const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, discount, refCode }) });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
     else { setPayError(data.error || "Erreur paiement."); setLoadingCrypto(false); }
@@ -225,7 +243,7 @@ function CheckoutContent() {
     if (!profileComplete) return;
     setLoadingFree(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/promo/free", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId, userId: u.id, promoCode: appliedCode, refCode }) });
+    const res = await fetch("/api/promo/free", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode }) });
     const data = await res.json();
     if (data.ok) router.push("/dashboard");
     else { setPromoStatus("error"); setPromoError(data.error || "Erreur"); setLoadingFree(false); }
@@ -283,6 +301,24 @@ function CheckoutContent() {
 
           {/* Challenge + Rules */}
           <div style={card}>
+            {/* Sélecteur de modèle */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+              {[{ key: "2step", label: "2-Step" }, { key: "1step", label: "1-Step" }, { key: "instant", label: "Instant Reward" }].map(m => (
+                <button key={m.key} onClick={() => changeModel(m.key)}
+                  style={{ flex: 1, padding: "7px 4px", fontSize: 11, fontWeight: 700, borderRadius: 8, border: selectedModel === m.key ? "2px solid #2563eb" : "1.5px solid #e5e7eb", background: selectedModel === m.key ? "#eff6ff" : "#f9fafb", color: selectedModel === m.key ? "#2563eb" : "#6b7280", cursor: "pointer", transition: "all 0.15s" }}>
+                  {m.label}
+                </button>
+              ))}
+            </div>
+            {/* Sélecteur de taille */}
+            <div style={{ display: "flex", gap: 5, marginBottom: 14 }}>
+              {(selectedModel === "instant" ? ["50k"] : SIZES).map(size => (
+                <button key={size} onClick={() => changeSize(size)}
+                  style={{ flex: 1, padding: "6px 2px", fontSize: 11, fontWeight: 700, borderRadius: 7, border: selectedSize === size ? "2px solid #111" : "1.5px solid #e5e7eb", background: selectedSize === size ? "#111" : "#f9fafb", color: selectedSize === size ? "#fff" : "#374151", cursor: selectedModel === "instant" ? "default" : "pointer", transition: "all 0.15s" }}>
+                  {SIZE_LABELS[size]}
+                </button>
+              ))}
+            </div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 16, color: "#111" }}>{isInstant ? "Reward" : "Challenge"} {challenge.label}</div>
