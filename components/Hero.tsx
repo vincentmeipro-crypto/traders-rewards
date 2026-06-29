@@ -170,28 +170,20 @@ export default function Hero() {
                 : <>Turn your trading<br />skills into<br /><span style={{ color: "#3B82F6" }}>real rewards</span></>}
             </h1>
 
-            {/* Desktop : bouton + phrase sur la même ligne */}
+            {/* Desktop : bouton + image coq */}
             {!isMobile && (
               <div className="h2" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 24 }}>
                 <a href="/#how-it-works" className="hero-btn-secondary">
                   {isFr ? "Comment ça marche ?" : "How does it work?"}
                 </a>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
-                    {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
-                  </span>
-                </div>
+                <img src="/coq-francais.png" alt="Coq français" style={{ height: 48, objectFit: "contain" }} />
               </div>
             )}
 
-            {/* Mobile : phrase seule ici */}
+            {/* Mobile : image coq seule ici */}
             {isMobile && (
-              <div className="h2" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: -16, marginBottom: -16 }}>
-                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
-                  {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
-                </span>
+              <div className="h2" style={{ display: "flex", alignItems: "center", marginTop: -16, marginBottom: -16 }}>
+                <img src="/coq-francais.png" alt="Coq français" style={{ height: 40, objectFit: "contain" }} />
               </div>
             )}
           </div>
