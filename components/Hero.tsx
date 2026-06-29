@@ -170,20 +170,28 @@ export default function Hero() {
                 : <>Turn your trading<br />skills into<br /><span style={{ color: "#3B82F6" }}>real rewards</span></>}
             </h1>
 
-            {/* Desktop : bouton + image coq */}
+            {/* Desktop : bouton + phrase */}
             {!isMobile && (
               <div className="h2" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 24 }}>
                 <a href="/#how-it-works" className="hero-btn-secondary">
                   {isFr ? "Comment ça marche ?" : "How does it work?"}
                 </a>
-                <img src="/coq-francais.png" alt="Coq français" style={{ height: 120, objectFit: "contain" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
+                    {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
+                  </span>
+                </div>
               </div>
             )}
 
-            {/* Mobile : image coq seule ici */}
+            {/* Mobile : phrase seule ici */}
             {isMobile && (
-              <div className="h2" style={{ display: "flex", alignItems: "center", marginTop: -16, marginBottom: -16 }}>
-                <img src="/coq-francais.png" alt="Coq français" style={{ height: 80, objectFit: "contain" }} />
+              <div className="h2" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: -16, marginBottom: -16 }}>
+                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
+                  {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
+                </span>
               </div>
             )}
           </div>
@@ -196,19 +204,8 @@ export default function Hero() {
             flexDirection: "column",
             gap: 28,
           }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-              <p style={{
-                fontSize: isMobile ? 20 : 38,
-                fontWeight: 700,
-                color: "#FFFFFF",
-                lineHeight: 1.35,
-                margin: 0,
-                fontFamily: "var(--font-outfit)",
-              }}>
-                {isFr
-                  ? <>La propfirm <span style={{ fontWeight: 900 }}><span style={{ color: "#002395" }}>FRA</span><span style={{ color: "#FFFFFF" }}>NÇA</span><span style={{ color: "#ED2939" }}>ISE</span></span> qui récompense les <span style={{ color: "#3B82F6" }}>traders disciplinés</span></>
-                  : <>The French propfirm that rewards <span style={{ color: "#3B82F6" }}>disciplined traders</span></>}
-              </p>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <img src="/coq-francais.png" alt="Coq français" style={{ height: isMobile ? 160 : 220, objectFit: "contain" }} />
             </div>
             <LiveRewardCard />
 
