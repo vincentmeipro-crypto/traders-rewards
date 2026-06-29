@@ -815,7 +815,7 @@ export default function AdminPage() {
                               const dd = ((c.start_balance - c.balance) / c.start_balance * 100);
                               const maxTotal = c.model === "1step" ? 8 : 10;
                               const maxDaily = c.model === "1step" ? 3 : 5;
-                              const color = dd >= maxTotal ? "#ef4444" : dd >= maxTotal * 0.7 ? "#f59e0b" : "#22c55e";
+                              const color = c.status === "failed" ? "#ef4444" : dd >= maxTotal ? "#ef4444" : dd >= maxTotal * 0.7 ? "#f59e0b" : "#22c55e";
                               return (
                                 <div style={{ fontSize: 11, lineHeight: 1.6 }}>
                                   <div style={{ fontWeight: 700, color }}>{dd.toFixed(2)}%</div>
