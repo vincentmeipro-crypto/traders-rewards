@@ -64,7 +64,26 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies";
+type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite";
+
+type LoginEvent = {
+  id: string;
+  user_id: string;
+  user_email: string;
+  ip: string;
+  country: string;
+  is_vpn: boolean;
+  fingerprint: string;
+  user_agent: string;
+  created_at: string;
+};
+
+type SecurityData = {
+  shared_ips: { ip: string; emails: string[]; count: number; events: LoginEvent[] }[];
+  shared_fingerprints: { fingerprint: string; emails: string[]; count: number; events: LoginEvent[] }[];
+  vpn_users: LoginEvent[];
+  events: LoginEvent[];
+};
 
 const STATUS_LABELS: Record<string, string> = {
   funded: "Reward",
@@ -97,6 +116,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "affilies",  label: "🤝 Affiliés" },
   { id: "stats",     label: "📊 Statistiques" },
   { id: "compta",    label: "🧾 Comptabilité" },
+  { id: "securite",  label: "🔐 Sécurité" },
   { id: "create",    label: "➕ Créer Challenge" },
 ];
 
@@ -164,6 +184,10 @@ export default function AdminPage() {
   const [needsLogin, setNeedsLogin] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  // Sécurité state
+  const [securityData, setSecurityData] = useState<SecurityData | null>(null);
+  const [securityLoading, setSecurityLoading] = useState(false);
 
   // Affiliés state
   type AffiliateReferral = { id: string; referred_user_id: string; purchase_amount: number; commission_amount: number; status: string; created_at: string };
@@ -240,6 +264,14 @@ export default function AdminPage() {
     setKycLoading(false);
   };
 
+  const loadSecurity = async (t: string) => {
+    setSecurityLoading(true);
+    const res = await fetch("/api/admin/security", { headers: { Authorization: `Bearer ${t}` } });
+    const data = await res.json();
+    setSecurityData(data);
+    setSecurityLoading(false);
+  };
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
@@ -253,6 +285,10 @@ export default function AdminPage() {
 
   useEffect(() => {
     if ((tab === "kyc" || tab === "crm") && token) loadKyc(token);
+  }, [tab, token]);
+
+  useEffect(() => {
+    if (tab === "securite" && token) loadSecurity(token);
   }, [tab, token]);
 
   useEffect(() => {
@@ -1890,6 +1926,184 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {tab === "securite" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+            {/* KPIs sécurité */}
+            {securityData && (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
+                {[
+                  { label: "Connexions totales", value: securityData.events.length, color: "#111" },
+                  { label: "IPs partagées", value: securityData.shared_ips.length, color: securityData.shared_ips.length > 0 ? "#ef4444" : "#22c55e" },
+                  { label: "Appareils partagés", value: securityData.shared_fingerprints.length, color: securityData.shared_fingerprints.length > 0 ? "#ef4444" : "#22c55e" },
+                  { label: "Connexions VPN", value: securityData.vpn_users.length, color: securityData.vpn_users.length > 0 ? "#f59e0b" : "#22c55e" },
+                ].map((s, i) => (
+                  <div key={i} style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: "16px 20px" }}>
+                    <div style={{ color: "#8a96aa", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+                    <div style={{ fontSize: 26, fontWeight: 900, color: s.color }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {securityLoading && <div style={{ padding: 40, textAlign: "center", color: "#9ca3af" }}>Chargement…</div>}
+
+            {securityData && (
+              <>
+                {/* IPs partagées entre comptes */}
+                <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 18 }}>🚨</span>
+                    <span style={{ fontWeight: 700, fontSize: 14, color: "#111" }}>IPs partagées entre plusieurs comptes</span>
+                    {securityData.shared_ips.length === 0 && <span style={{ marginLeft: "auto", color: "#22c55e", fontSize: 12, fontWeight: 700 }}>✓ Aucune détection</span>}
+                  </div>
+                  {securityData.shared_ips.length === 0 ? (
+                    <div style={{ padding: 32, textAlign: "center", color: "#9ca3af", fontSize: 13 }}>Aucune IP partagée détectée</div>
+                  ) : (
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead><tr style={{ background: "#f9fafb" }}>
+                          {["IP", "Pays", "Comptes concernés", "Nb comptes", "Dernière connexion"].map(h => (
+                            <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
+                          ))}
+                        </tr></thead>
+                        <tbody>
+                          {securityData.shared_ips.map((item, i) => (
+                            <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: item.count >= 3 ? "#ef444408" : "#fff" }}>
+                              <td style={{ padding: "12px 14px", fontFamily: "monospace", fontWeight: 700, color: "#111" }}>{item.ip}</td>
+                              <td style={{ padding: "12px 14px", color: "#6b7280", fontSize: 12 }}>{item.events[0]?.country || "—"}</td>
+                              <td style={{ padding: "12px 14px" }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                  {item.emails.map((email, j) => (
+                                    <span key={j} style={{ fontSize: 12, color: "#1565C0", background: "#1565C010", padding: "2px 8px", borderRadius: 6, display: "inline-block", width: "fit-content" }}>{email}</span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td style={{ padding: "12px 14px" }}>
+                                <span style={{ background: item.count >= 3 ? "#ef444415" : "#f59e0b15", color: item.count >= 3 ? "#ef4444" : "#f59e0b", padding: "3px 10px", borderRadius: 100, fontSize: 12, fontWeight: 800 }}>{item.count} comptes</span>
+                              </td>
+                              <td style={{ padding: "12px 14px", color: "#9ca3af", fontSize: 11 }}>{new Date(item.events[0]?.created_at).toLocaleString("fr-FR")}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Appareils partagés */}
+                <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 18 }}>💻</span>
+                    <span style={{ fontWeight: 700, fontSize: 14, color: "#111" }}>Appareils partagés entre plusieurs comptes</span>
+                    {securityData.shared_fingerprints.length === 0 && <span style={{ marginLeft: "auto", color: "#22c55e", fontSize: 12, fontWeight: 700 }}>✓ Aucune détection</span>}
+                  </div>
+                  {securityData.shared_fingerprints.length === 0 ? (
+                    <div style={{ padding: 32, textAlign: "center", color: "#9ca3af", fontSize: 13 }}>Aucun appareil partagé détecté</div>
+                  ) : (
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead><tr style={{ background: "#f9fafb" }}>
+                          {["Fingerprint", "Comptes concernés", "Nb comptes", "OS / Navigateur", "Dernière connexion"].map(h => (
+                            <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
+                          ))}
+                        </tr></thead>
+                        <tbody>
+                          {securityData.shared_fingerprints.map((item, i) => (
+                            <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: "#ef444408" }}>
+                              <td style={{ padding: "12px 14px", fontFamily: "monospace", fontSize: 11, color: "#6b7280" }}>{item.fingerprint.slice(0, 16)}…</td>
+                              <td style={{ padding: "12px 14px" }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                  {item.emails.map((email, j) => (
+                                    <span key={j} style={{ fontSize: 12, color: "#ef4444", background: "#ef444410", padding: "2px 8px", borderRadius: 6, display: "inline-block", width: "fit-content" }}>{email}</span>
+                                  ))}
+                                </div>
+                              </td>
+                              <td style={{ padding: "12px 14px" }}>
+                                <span style={{ background: "#ef444415", color: "#ef4444", padding: "3px 10px", borderRadius: 100, fontSize: 12, fontWeight: 800 }}>{item.count} comptes</span>
+                              </td>
+                              <td style={{ padding: "12px 14px", color: "#6b7280", fontSize: 11 }}>{item.events[0]?.user_agent?.slice(0, 60) || "—"}</td>
+                              <td style={{ padding: "12px 14px", color: "#9ca3af", fontSize: 11 }}>{new Date(item.events[0]?.created_at).toLocaleString("fr-FR")}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Connexions VPN */}
+                <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 18 }}>🛡️</span>
+                    <span style={{ fontWeight: 700, fontSize: 14, color: "#111" }}>Connexions via VPN / Proxy détectées</span>
+                    {securityData.vpn_users.length === 0 && <span style={{ marginLeft: "auto", color: "#22c55e", fontSize: 12, fontWeight: 700 }}>✓ Aucune détection</span>}
+                  </div>
+                  {securityData.vpn_users.length === 0 ? (
+                    <div style={{ padding: 32, textAlign: "center", color: "#9ca3af", fontSize: 13 }}>Aucune connexion VPN détectée</div>
+                  ) : (
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead><tr style={{ background: "#f9fafb" }}>
+                          {["Trader", "IP", "Pays", "Date"].map(h => (
+                            <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
+                          ))}
+                        </tr></thead>
+                        <tbody>
+                          {securityData.vpn_users.map((e, i) => (
+                            <tr key={i} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                              <td style={{ padding: "12px 14px", color: "#1565C0", fontSize: 13 }}>{e.user_email}</td>
+                              <td style={{ padding: "12px 14px", fontFamily: "monospace", fontSize: 12, color: "#111" }}>{e.ip}</td>
+                              <td style={{ padding: "12px 14px", color: "#6b7280", fontSize: 12 }}>{e.country}</td>
+                              <td style={{ padding: "12px 14px", color: "#9ca3af", fontSize: 11 }}>{new Date(e.created_at).toLocaleString("fr-FR")}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Historique complet des connexions */}
+                <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 18 }}>📋</span>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: "#111" }}>Historique des connexions</span>
+                    </div>
+                    <button onClick={() => token && loadSecurity(token)} style={{ fontSize: 12, color: "#1565C0", background: "none", border: "1px solid #1565C020", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>↻ Rafraîchir</button>
+                  </div>
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead><tr style={{ background: "#f9fafb" }}>
+                        {["Trader", "IP", "Pays", "VPN", "Fingerprint", "Date"].map(h => (
+                          <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {securityData.events.slice(0, 100).map((e, i) => (
+                          <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: e.is_vpn ? "#f59e0b08" : "#fff" }}>
+                            <td style={{ padding: "10px 14px", color: "#1565C0", fontSize: 12 }}>{e.user_email}</td>
+                            <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11, color: "#111" }}>{e.ip}</td>
+                            <td style={{ padding: "10px 14px", color: "#6b7280", fontSize: 11 }}>{e.country}</td>
+                            <td style={{ padding: "10px 14px" }}>
+                              {e.is_vpn
+                                ? <span style={{ background: "#f59e0b15", color: "#f59e0b", padding: "2px 8px", borderRadius: 100, fontSize: 10, fontWeight: 700 }}>VPN</span>
+                                : <span style={{ color: "#22c55e", fontSize: 11 }}>✓</span>}
+                            </td>
+                            <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 10, color: "#9ca3af" }}>{e.fingerprint?.slice(0, 12)}…</td>
+                            <td style={{ padding: "10px 14px", color: "#9ca3af", fontSize: 11, whiteSpace: "nowrap" }}>{new Date(e.created_at).toLocaleString("fr-FR")}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         )}
 

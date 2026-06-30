@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import FingerprintJS from "@fingerprintjs/fingerprintjs";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -31,6 +32,23 @@ export default function LoginPage() {
     const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     setLoading(false);
     if (error) { setError("Email ou mot de passe invalide"); return; }
+
+    // Log security event (fingerprint + IP + VPN check)
+    try {
+      const fp = await FingerprintJS.load();
+      const result = await fp.get();
+      fetch("/api/security/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: data.user?.id,
+          user_email: data.user?.email,
+          fingerprint: result.visitorId,
+          user_agent: navigator.userAgent,
+        }),
+      });
+    } catch { /* ignore */ }
+
     if (data.user?.email === "vincentmeipro@gmail.com") {
       router.push("/x8k3pz");
     } else {
