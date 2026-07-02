@@ -205,7 +205,7 @@ export default function Hero() {
             gap: 28,
           }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <img src="/coq-seul.png" alt="Coq français" style={{ height: isMobile ? 160 : 220, objectFit: "contain" }} />
+              <img src="/coq-seul-2.png" alt="Coq français" style={{ height: isMobile ? 160 : 220, objectFit: "contain" }} />
             </div>
             <LiveRewardCard />
 
