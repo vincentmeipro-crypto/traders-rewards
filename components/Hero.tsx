@@ -226,28 +226,13 @@ export default function Hero() {
               style={{
                 textAlign: "center",
                 fontWeight: 800,
-                fontSize: isMobile ? 13 : 15,
+                fontSize: isMobile ? 39 : 45,
                 letterSpacing: "1px",
                 margin: 0,
               }}
             >
               La propfirm qui récompense les Traders disciplinés
             </motion.p>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <motion.img
-                src="/coq-seul-2.png"
-                alt="Coq français"
-                style={{ height: isMobile ? 160 : 220, objectFit: "contain" }}
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: [0, -10, 0] }}
-                transition={{
-                  opacity: { duration: 0.8, ease: "easeOut" },
-                  scale: { duration: 0.8, ease: "easeOut" },
-                  y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.8 }
-                }}
-                whileHover={{ scale: 1.08, transition: { duration: 0.3 } }}
-              />
-            </div>
             <LiveRewardCard />
 
             {/* Bouton mobile en dessous de la carte */}
