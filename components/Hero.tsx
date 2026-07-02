@@ -107,6 +107,19 @@ export default function Hero() {
           50% { transform: translateY(-4px); }
         }
         .flag-float { animation: flagFloat 2.4s ease-in-out infinite; }
+        @keyframes neonFlow {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        .neon-flow {
+          background: linear-gradient(90deg, #1d4ed8 0%, #3B82F6 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%, #3B82F6 100%);
+          background-size: 200% auto;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: neonFlow 3s linear infinite;
+          filter: drop-shadow(0 0 6px rgba(59,130,246,0.8));
+        }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(20px); }
           to   { opacity: 1; transform: translateY(0); }
@@ -209,18 +222,13 @@ export default function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.2 }}
+              className="neon-flow"
               style={{
                 textAlign: "center",
                 fontWeight: 800,
                 fontSize: isMobile ? 13 : 15,
                 letterSpacing: "1px",
                 margin: 0,
-                background: "linear-gradient(90deg, #2563EB 0%, #FFFFFF 50%, #EF4444 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                filter: "drop-shadow(0 0 8px rgba(37,99,235,0.7)) drop-shadow(0 0 16px rgba(239,68,68,0.4))",
-                textShadow: "none",
               }}
             >
               La propfirm qui récompense les Traders disciplinés
