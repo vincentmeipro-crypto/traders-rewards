@@ -209,7 +209,19 @@ export default function Hero() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.2 }}
-              style={{ textAlign: "center", color: "#3B82F6", fontWeight: 700, fontSize: isMobile ? 13 : 15, letterSpacing: "0.5px", margin: 0 }}
+              style={{
+                textAlign: "center",
+                fontWeight: 800,
+                fontSize: isMobile ? 13 : 15,
+                letterSpacing: "1px",
+                margin: 0,
+                background: "linear-gradient(90deg, #2563EB 0%, #FFFFFF 50%, #EF4444 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+                filter: "drop-shadow(0 0 8px rgba(37,99,235,0.7)) drop-shadow(0 0 16px rgba(239,68,68,0.4))",
+                textShadow: "none",
+              }}
             >
               La propfirm qui récompense les Traders disciplinés
             </motion.p>
