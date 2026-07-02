@@ -231,7 +231,7 @@ export default function Hero() {
                 margin: 0,
               }}
             >
-              La propfirm française qui récompense les Traders disciplinés
+              Le programme français qui récompense les Traders disciplinés
             </motion.p>
             <LiveRewardCard />
 
