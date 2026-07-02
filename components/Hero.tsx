@@ -205,6 +205,14 @@ export default function Hero() {
             flexDirection: "column",
             gap: 28,
           }}>
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.2 }}
+              style={{ textAlign: "center", color: "#3B82F6", fontWeight: 700, fontSize: isMobile ? 13 : 15, letterSpacing: "0.5px", margin: 0 }}
+            >
+              La propfirm qui récompense les Traders disciplinés
+            </motion.p>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
               <motion.img
                 src="/coq-seul-2.png"
