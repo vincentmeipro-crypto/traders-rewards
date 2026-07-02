@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
@@ -205,7 +206,19 @@ export default function Hero() {
             gap: 28,
           }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <img src="/coq-seul-2.png" alt="Coq français" style={{ height: isMobile ? 160 : 220, objectFit: "contain" }} />
+              <motion.img
+                src="/coq-seul-2.png"
+                alt="Coq français"
+                style={{ height: isMobile ? 160 : 220, objectFit: "contain" }}
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: [0, -10, 0] }}
+                transition={{
+                  opacity: { duration: 0.8, ease: "easeOut" },
+                  scale: { duration: 0.8, ease: "easeOut" },
+                  y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.8 }
+                }}
+                whileHover={{ scale: 1.08, transition: { duration: 0.3 } }}
+              />
             </div>
             <LiveRewardCard />
 
