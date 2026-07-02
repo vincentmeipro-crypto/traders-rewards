@@ -17,7 +17,7 @@ export const t = {
       rules: 'Rules', elevation: 'Elevation', trader: 'Trader', faq: 'FAQ', logIn: 'LOG IN', startChallenge: 'START CHALLENGE',
     },
     hero: {
-      badge: 'The Elite Prop Firm',
+      badge: 'The Elite Trading Program',
       headline1: 'Perform Your Trading Demo',
       headline2: 'Receive Real Rewards',
       sub: 'Access up to €200,000 in simulated capital. Earn rewards up to 90% of your simulated gains.',
@@ -58,7 +58,7 @@ export const t = {
       ctaBtn: 'Start Your Challenge Today',
     },
     footer: {
-      tagline: 'Traders Rewards — The French prop firm. Perform your demo trading and earn real rewards.',
+      tagline: 'Traders Rewards — The French trading program. Perform your demo trading and earn real rewards.',
       challenges: 'Challenges', company: 'Company', support: 'Support',
       challengeLinks: ['2-Step Challenge','1-Step Challenge','View Pricing'],
       companyLinks: ['How It Works','Rules','FAQ','Contact'],
@@ -136,7 +136,7 @@ export const t = {
       rules: 'Règles', elevation: 'Élévation', trader: 'Trader', faq: 'FAQ', logIn: 'LOGIN', startChallenge: 'COMMENCER',
     },
     hero: {
-      badge: 'La Prop Firm Élite',
+      badge: 'Le Programme Élite',
       headline1: 'Performez votre Trading Démo',
       headline2: 'Recevez de vraies récompenses',
       sub: 'Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu\'à 90% de vos gains simulés.',
@@ -177,7 +177,7 @@ export const t = {
       ctaBtn: 'Commencer le Challenge Aujourd\'hui',
     },
     footer: {
-      tagline: 'Traders Rewards — La PropFirm Française. Performez en demo et recevez de vraies récompenses.',
+      tagline: 'Traders Rewards — Le Programme Français. Performez en demo et recevez de vraies récompenses.',
       challenges: 'Challenges', company: 'Entreprise', support: 'Support',
       challengeLinks: ['Challenge 2 Étapes','Challenge 1 Étape','Voir les Tarifs'],
       companyLinks: ['Comment ça marche','Règles','FAQ','Contact'],
@@ -373,7 +373,7 @@ export const t = {
       rules: 'Reglas', elevation: 'Elevación', trader: 'Trader', faq: 'FAQ', logIn: 'INICIAR SESIÓN', startChallenge: 'EMPEZAR',
     },
     hero: {
-      badge: 'La Prop Firm Élite',
+      badge: 'Le Programme Élite',
       headline1: 'Realiza tu Trading Demo',
       headline2: 'Recibe recompensas reales',
       sub: 'Supera nuestro desafío y accede a €200,000 en capital financiado. Quédate hasta el 90% de tus ganancias. Sin riesgo personal.',
@@ -414,7 +414,7 @@ export const t = {
       ctaBtn: 'Inicia Tu Desafío Hoy',
     },
     footer: {
-      tagline: 'La prop firm élite. Empoderando a los traders para operar sin límites.',
+      tagline: 'Le programme élite. Empoderando a los traders para operar sin límites.',
       challenges: 'Desafíos', company: 'Empresa', support: 'Soporte',
       challengeLinks: ['Desafío 2 Pasos','Desafío 1 Paso','Programa de Escala','Precios'],
       companyLinks: ['Sobre Nosotros','Reglas','FAQ','Contacto'],
@@ -491,7 +491,7 @@ export const t = {
       rules: 'Regras', elevation: 'Elevação', trader: 'Trader', faq: 'FAQ', logIn: 'ENTRAR', startChallenge: 'COMEÇAR',
     },
     hero: {
-      badge: 'A Prop Firm de Elite',
+      badge: 'O Programa de Elite',
       headline1: 'Execute seu Trading Demo',
       headline2: 'Receba recompensas reais',
       sub: 'Passe nosso desafio e acesse até €200.000 em capital financiado. Fique com até 90% dos seus lucros. Sem risco pessoal.',
@@ -532,7 +532,7 @@ export const t = {
       ctaBtn: 'Inicie Seu Desafio Hoje',
     },
     footer: {
-      tagline: 'A prop firm de elite. Capacitando traders para operar além de todos os limites.',
+      tagline: 'O programa de elite. Capacitando traders para operar além de todos os limites.',
       challenges: 'Desafios', company: 'Empresa', support: 'Suporte',
       challengeLinks: ['Desafio 2 Etapas','Desafio 1 Etapa','Programa de Escala','Preços'],
       companyLinks: ['Sobre Nós','Regras','FAQ','Contato'],
@@ -609,7 +609,7 @@ export const t = {
       rules: 'Regeln', elevation: 'Aufstieg', trader: 'Trader', faq: 'FAQ', logIn: 'ANMELDEN', startChallenge: 'STARTEN',
     },
     hero: {
-      badge: 'Die Elite Prop Firm',
+      badge: 'Das Elite Trading Programm',
       headline1: 'Ihr Trading Demo',
       headline2: 'Echte Prämien erhalten',
       sub: 'Bestehe unsere Challenge und erhalte Zugang zu €200.000 an finanziertem Kapital. Behalte bis zu 90% deiner Gewinne. Kein persönliches Risiko.',
@@ -650,7 +650,7 @@ export const t = {
       ctaBtn: 'Starte deine Challenge Heute',
     },
     footer: {
-      tagline: 'Die Elite Prop Firm. Wir befähigen Trader, grenzenlos zu handeln.',
+      tagline: 'Das Elite Trading Programm. Wir befähigen Trader, grenzenlos zu handeln.',
       challenges: 'Challenges', company: 'Unternehmen', support: 'Support',
       challengeLinks: ['2-Stufen Challenge','1-Stufen Challenge','Skalierungsprogramm','Preise'],
       companyLinks: ['Über Uns','Regeln','FAQ','Kontakt'],
@@ -727,7 +727,7 @@ export const t = {
       rules: 'Kurallar', elevation: 'Yükseliş', trader: 'Trader', faq: 'SSS', logIn: 'GİRİŞ', startChallenge: 'BAŞLA',
     },
     hero: {
-      badge: 'Elit Prop Firm',
+      badge: 'Elit Trading Programı',
       headline1: 'Demo Ticaretinizi Yapın',
       headline2: 'Gerçek Ödüller Kazanın',
       sub: 'Meydan okumamızı geç ve $100.000\'e kadar fonlu sermayeye eriş. Kârının %90\'ına kadar al. Kişisel risk yok.',
@@ -768,7 +768,7 @@ export const t = {
       ctaBtn: 'Meydan Okumana Bugün Başla',
     },
     footer: {
-      tagline: 'Elit prop firm. Trader\'ları sınır tanımadan işlem yapmaya güçlendiriyoruz.',
+      tagline: 'Elit trading programı. Trader\'ları sınır tanımadan işlem yapmaya güçlendiriyoruz.',
       challenges: 'Meydan Okumalar', company: 'Şirket', support: 'Destek',
       challengeLinks: ['2 Aşamalı Meydan Okuma','1 Aşamalı Meydan Okuma','Büyüme Programı','Fiyatlar'],
       companyLinks: ['Hakkımızda','Kurallar','SSS','İletişim'],

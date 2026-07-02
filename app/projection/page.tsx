@@ -43,7 +43,7 @@ export default function ProjectionPage() {
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#60A5FA", display: "inline-block" }} />
               <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Opportunité de marché</span>
             </div>
-            <h2 style={{ fontSize: 24, fontWeight: 900, color: "#fff", margin: "0 0 6px 0" }}>Le marché PropFirm mondial</h2>
+            <h2 style={{ fontSize: 24, fontWeight: 900, color: "#fff", margin: "0 0 6px 0" }}>Le marché des programmes de trading</h2>
             <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, margin: "0 0 24px 0" }}>Un secteur en explosion porté par la démocratisation du trading</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
               {[
@@ -74,14 +74,14 @@ export default function ProjectionPage() {
               { flag: "fr", title: "France", rows: [
                 { l: "Traders retail actifs", v: "~800 000" },
                 { l: "3ème marché européen", v: "CFDs / Forex" },
-                { l: "Cible PropFirm qualifiée", v: "50 000 – 120 000" },
-                { l: "PropFirms 100% françaises", v: "Quasi inexistant" },
+                { l: "Cible programme trading", v: "50 000 – 120 000" },
+                { l: "Programmes 100% français", v: "Quasi inexistant" },
               ]},
               { flag: "eu", title: "Europe & Francophonie", rows: [
                 { l: "Traders retail actifs (Europe)", v: "~15 millions" },
                 { l: "Espace francophone mondial", v: "300 M locuteurs" },
                 { l: "Traders actifs francophones", v: "~2 – 3 millions" },
-                { l: "Croissance adoption PropFirm", v: "+40 %/an" },
+                { l: "Croissance adoption programme", v: "+40 %/an" },
               ]},
             ].map((col, i) => (
               <div key={i} style={{ background: "#f8faff", borderRadius: 12, padding: "18px 20px", border: "1px solid #e0eaff" }}>
@@ -100,7 +100,7 @@ export default function ProjectionPage() {
           </div>
           <div style={{ background: "linear-gradient(135deg, #f0f4ff, #e8f0ff)", borderRadius: 10, padding: "14px 18px", border: "1px solid #c5d5f5" }}>
             <p style={{ margin: 0, fontSize: 13, color: "#1565C0", fontWeight: 600 }}>
-              🎯 <strong>Avantage concurrentiel :</strong> premier acteur PropFirm 100% francophone dans un marché dominé par des acteurs anglophones (FTMO, MyFundedFX, E8 Funding).
+              🎯 <strong>Avantage concurrentiel :</strong> premier programme 100% francophone dans un marché dominé par des acteurs anglophones (FTMO, MyFundedFX, E8 Funding).
             </p>
           </div>
         </div>

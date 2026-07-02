@@ -13,9 +13,9 @@ const bebas = Bebas_Neue({ weight: "400", subsets: ["latin"], variable: "--font-
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", weight: ["700", "800", "900"] });
 
 const SITE_URL = "https://www.traders-rewards.eu";
-const TITLE = "Traders Rewards | Propfirm Française";
+const TITLE = "Traders Rewards | Programme Éducatif de Trading";
 const DESCRIPTION =
-  "Transformez votre trading démo en vraies récompenses. La propfirm FRANÇAISE qui récompense les traders disciplinés. Capital simulé jusqu'à 400 000 € · Partage des profits jusqu'à 90%.";
+  "Transformez votre trading démo en vraies récompenses. Le programme FRANÇAIS qui récompense les traders disciplinés. Capital simulé jusqu'à 400 000 € · Récompenses jusqu'à 90%.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -25,26 +25,25 @@ export const metadata: Metadata = {
   },
   description: DESCRIPTION,
   keywords: [
-    "propfirm française",
-    "propfirm france",
-    "propfirm france",
+    "programme éducatif trading",
+    "programme trading france",
     "challenge trading france",
     "challenge forex france",
-    "funded trader france",
-    "compte financé trading",
+    "programme trader france",
+    "compte récompense trading",
     "traders rewards",
-    "prop trading france",
+    "trading démo récompensé",
     "challenge trading",
     "compte récompense trading",
-    "trading sans risque",
-    "propfirm paris",
-    "financement trader",
+    "trading simulé récompensé",
+    "programme trading paris",
+    "formation trader récompensée",
     "capital simulé trading",
     "challenge 1 step",
     "challenge 2 step",
     "instant reward trading",
-    "propfirm française",
-    "meilleure propfirm france",
+    "programme français trading",
+    "meilleur programme trading france",
   ],
   authors: [{ name: "Traders Rewards", url: SITE_URL }],
   creator: "Traders Rewards",
@@ -95,7 +94,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "Traders Rewards — Propfirm Française",
+        alt: "Traders Rewards — Programme Éducatif de Trading Français",
       },
     ],
   },
@@ -121,7 +120,7 @@ const jsonLd = {
         "@type": "ImageObject",
         url: `${SITE_URL}/traders-rewards-logo.png`,
       },
-      description: "Prop firm française spécialisée dans le challenge trading. Accédez à du capital simulé et touchez jusqu'à 90% de vos profits.",
+      description: "Programme éducatif de trading français. Performez en compte démo et recevez jusqu'à 90% de récompenses sur vos profits simulés.",
       address: {
         "@type": "PostalAddress",
         addressCountry: "FR",
@@ -175,7 +174,7 @@ const jsonLd = {
         },
         {
           "@type": "Question",
-          name: "Combien puis-je gagner avec la propfirm Traders Rewards ?",
+          name: "Combien puis-je gagner avec le programme Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
             text: "Vous conservez jusqu'à 90% de vos profits simulés (90% pour le 1-Step, 80% pour le 2-Step). Sur un compte $100K avec 6% de profit, vous touchez environ €4,800.",
@@ -215,10 +214,10 @@ const jsonLd = {
         },
         {
           "@type": "Question",
-          name: "Traders Rewards est-elle une vraie propfirm française ?",
+          name: "Traders Rewards est-elle un programme français de trading ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Oui, Traders Rewards est une propfirm basée en France, avec un support en français et des paiements en euros. C'est la propfirm française de référence pour les traders européens.",
+            text: "Oui, Traders Rewards est un programme éducatif de trading basé en France, avec un support en français et des paiements en euros. C'est le programme français de référence pour les traders européens.",
           },
         },
       ],
@@ -226,7 +225,7 @@ const jsonLd = {
     {
       "@type": "FinancialService",
       "@id": `${SITE_URL}/#service`,
-      name: "Challenge Trading — Propfirm",
+      name: "Challenge Trading — Programme Éducatif",
       provider: { "@id": `${SITE_URL}/#organization` },
       description: "Programme d'évaluation de traders : passez un challenge, devenez Trader Reward et touchez jusqu'à 90% de vos profits sur capital simulé.",
       areaServed: {

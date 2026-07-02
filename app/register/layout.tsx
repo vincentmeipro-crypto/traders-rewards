@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Créer un compte | Traders Rewards",
   description:
-    "Créez votre compte Traders Rewards gratuitement et commencez votre challenge trading. La propfirm française pour accéder à du capital simulé jusqu'à 200 000€.",
+    "Créez votre compte Traders Rewards gratuitement et commencez votre challenge trading. Le programme français pour accéder à du capital simulé jusqu'à 200 000€.",
   alternates: {
     canonical: "https://www.traders-rewards.eu/register",
   },
