@@ -226,7 +226,7 @@ export default function Hero() {
               style={{
                 textAlign: "center",
                 fontWeight: 800,
-                fontSize: isMobile ? 39 : 45,
+                fontSize: isMobile ? 26 : 32,
                 letterSpacing: "1px",
                 margin: 0,
               }}
