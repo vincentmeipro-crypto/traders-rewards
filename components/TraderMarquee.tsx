@@ -15,7 +15,7 @@ const TRADERS = [
   { name: "Lukas W.",       flag: "ch", payout: 3574.36,  size: "$100K", initials: "LW" },
   { name: "Julien M.",      flag: "fr", payout: 2578.43,  size: "$100K", initials: "JM" },
   { name: "Lena H.",        flag: "de", payout: 1163.47,  size: "$25K",  initials: "LH" },
-  { name: "Lucas M.",       flag: "fr", payout:  418.63,  size: "$10K",  initials: "LM" },
+  { name: "Lucas M.",       flag: "fr", payout: 1046.58,  size: "$25K",  initials: "LM" },
 ];
 
 function fmt(n: number) {

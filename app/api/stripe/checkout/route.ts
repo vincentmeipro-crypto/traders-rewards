@@ -11,12 +11,10 @@ const SIZE_VALUES: Record<string, number> = {
 const MAX_CUMUL = 400000;
 
 const PRODUCTS = {
-  "10k-2step":  { name: "Challenge $10,000 — 2-Step", amount: 9900,   accountSize: "$10,000",  model: "2step" },
   "25k-2step":  { name: "Challenge $25,000 — 2-Step", amount: 19900,  accountSize: "$25,000",  model: "2step" },
   "50k-2step":  { name: "Challenge $50,000 — 2-Step", amount: 29900,  accountSize: "$50,000",  model: "2step" },
   "100k-2step": { name: "Challenge $100,000 — 2-Step",amount: 43900,  accountSize: "$100,000", model: "2step" },
   "200k-2step": { name: "Challenge $200,000 — 2-Step",amount: 79900,  accountSize: "$200,000", model: "2step" },
-  "10k-1step":  { name: "Challenge $10,000 — 1-Step", amount: 7900,   accountSize: "$10,000",  model: "1step" },
   "25k-1step":  { name: "Challenge $25,000 — 1-Step", amount: 16900,  accountSize: "$25,000",  model: "1step" },
   "50k-1step":  { name: "Challenge $50,000 — 1-Step", amount: 24900,  accountSize: "$50,000",  model: "1step" },
   "100k-1step": { name: "Challenge $100,000 — 1-Step",amount: 42900,  accountSize: "$100,000", model: "1step" },

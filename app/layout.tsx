@@ -169,7 +169,7 @@ const jsonLd = {
           name: "Comment démarrer avec Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($10K à $200K), effectuez le paiement et recevez vos identifiants instantanément par email.",
+            text: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($25K à $200K), effectuez le paiement et recevez vos identifiants instantanément par email.",
           },
         },
         {
@@ -236,14 +236,6 @@ const jsonLd = {
         "@type": "OfferCatalog",
         name: "Challenges Trading",
         itemListElement: [
-          {
-            "@type": "Offer",
-            name: "Challenge 2-Step $10,000",
-            description: "Challenge trading 2 phases, compte simulé $10,000, objectif Phase 1 : +10%, Phase 2 : +5%, partage des profits : 80%",
-            priceCurrency: "EUR",
-            price: "99",
-            url: `${SITE_URL}/#pricing`,
-          },
           {
             "@type": "Offer",
             name: "Challenge 1-Step $50,000",

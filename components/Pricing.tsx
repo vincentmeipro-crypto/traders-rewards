@@ -6,8 +6,7 @@ const PROMO_CODE = "TRD50";
 const PROMO_PCT  = 50;
 
 const accounts = [
-  { size: "$10,000",  id: "10k",  label: "10K",  price2: "€99",  price1: "€79",  promo2: "€49",  promo1: "€39",  popular: false, premium: false, confirmed: false, beginner: true,  reward: "~€480"   },
-  { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", promo2: "€99",  promo1: "€84",  popular: false, premium: false, confirmed: false, beginner: false, evolution: true,  reward: "~€1,200" },
+  { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", promo2: "€99",  promo1: "€84",  popular: false, premium: false, confirmed: false, beginner: true,  evolution: false, reward: "~€1,200" },
   { size: "$50,000",  id: "50k",  label: "50K",  price2: "€299", price1: "€249", promo2: "€149", promo1: "€124", popular: false, premium: false, confirmed: true,  beginner: false, evolution: false, reward: "~€2,400" },
   { size: "$100,000", id: "100k", label: "100K", price2: "€439", price1: "€429", promo2: "€219", promo1: "€214", popular: true,  premium: false, confirmed: false, beginner: false, evolution: false, reward: "~€4,800" },
   { size: "$200,000", id: "200k", label: "200K", price2: "€799", price1: "€779", promo2: "€399", promo1: "€389", popular: false, premium: true,  confirmed: false, beginner: false, evolution: false, reward: "~€9,600" },
@@ -249,12 +248,40 @@ export default function Pricing() {
 
             {/* Carte sélectionnée */}
             <PriceCard acc={currentAcc} compact={true} />
+
+            {/* Bouton "Comment ça marche ?" sous les cartes */}
+            <a href="/#how-it-works" style={{
+              display: "block", textAlign: "center",
+              marginTop: 16,
+              padding: "14px 32px", borderRadius: 8,
+              fontSize: 12, fontWeight: 700, letterSpacing: "1.5px",
+              textTransform: "uppercase", textDecoration: "none",
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.3)",
+              color: "rgba(255,255,255,0.8)",
+            }}>
+              {isFr ? "Comment ça marche ?" : "How does it work?"}
+            </a>
           </>
         )}
 
         {/* MOBILE instant */}
         {isMobile && model === "instant" && (
-          <PriceCard acc={displayAccounts[0]} compact={true} />
+          <>
+            <PriceCard acc={displayAccounts[0]} compact={true} />
+            <a href="/#how-it-works" style={{
+              display: "block", textAlign: "center",
+              marginTop: 16,
+              padding: "14px 32px", borderRadius: 8,
+              fontSize: 12, fontWeight: 700, letterSpacing: "1.5px",
+              textTransform: "uppercase", textDecoration: "none",
+              background: "transparent",
+              border: "1px solid rgba(255,255,255,0.3)",
+              color: "rgba(255,255,255,0.8)",
+            }}>
+              {isFr ? "Comment ça marche ?" : "How does it work?"}
+            </a>
+          </>
         )}
 
         {/* DESKTOP : grille 5 colonnes */}

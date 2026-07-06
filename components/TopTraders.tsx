@@ -17,9 +17,9 @@ const TRADERS = [
   { name: "Lukas W.",       flag: "ch", payout: 3574.36,  size: "$100K", initials: "LW" },
   { name: "Julien M.",      flag: "fr", payout: 2578.43,  size: "$100K", initials: "JM" },
   { name: "Lena H.",        flag: "de", payout: 1163.47,  size: "$25K",  initials: "LH" },
-  { name: "Lucas M.",       flag: "fr", payout:  418.63,  size: "$10K",  initials: "LM" },
-  { name: "Emma R.",        flag: "fr", payout:  356.21,  size: "$10K",  initials: "ER" },
-  { name: "Yann T.",        flag: "fr", payout:  471.84,  size: "$10K",  initials: "YT" },
+  { name: "Lucas M.",       flag: "fr", payout: 1046.58,  size: "$25K",  initials: "LM" },
+  { name: "Emma R.",        flag: "fr", payout:  890.53,  size: "$25K",  initials: "ER" },
+  { name: "Yann T.",        flag: "fr", payout: 1179.60,  size: "$25K",  initials: "YT" },
 ];
 
 function fmt(n: number) {
@@ -129,7 +129,6 @@ export default function TopTraders() {
   }, []);
 
   const tableRows = [
-    { size: "$10K",  profit: "€600",    reward: "~€480" },
     { size: "$25K",  profit: "€1,500",  reward: "~€1,200" },
     { size: "$50K",  profit: "€3,000",  reward: "~€2,400" },
     { size: "$100K", profit: "€6,000",  reward: "~€4,800" },

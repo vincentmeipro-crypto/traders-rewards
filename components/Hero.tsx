@@ -199,7 +199,7 @@ export default function Hero() {
               </div>
             )}
 
-            {/* Mobile : phrase seule ici */}
+            {/* Mobile : étoile seule ici, sans bouton */}
             {isMobile && (
               <div className="h2" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: -16, marginBottom: -16 }}>
                 <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
@@ -235,12 +235,6 @@ export default function Hero() {
             </motion.p>
             <LiveRewardCard />
 
-            {/* Bouton mobile en dessous de la carte */}
-            {isMobile && (
-              <a href="/#how-it-works" className="hero-btn-secondary" style={{ textAlign: "center" }}>
-                {isFr ? "Comment ça marche ?" : "How does it work?"}
-              </a>
-            )}
           </div>
 
         </div>
