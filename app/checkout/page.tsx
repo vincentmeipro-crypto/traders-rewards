@@ -117,6 +117,7 @@ function CheckoutContent() {
   const [promoError, setPromoError] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [discount, setDiscount] = useState(0);
+  const LOYALTY_PCT = 20; // remise fidélité fixe à vie
   const [loyaltyActive, setLoyaltyActive] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [refCode, setRefCode] = useState("");
@@ -163,7 +164,7 @@ function CheckoutContent() {
         const { count } = await supabase.from("challenges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id);
         if (count && count >= 1 && selectedProduct !== "50k-instant") {
           setLoyaltyActive(true);
-          setDiscount(20);
+          setDiscount(LOYALTY_PCT);
         }
       }
     });
@@ -183,13 +184,18 @@ function CheckoutContent() {
     setPromoError("");
     const res = await fetch("/api/promo/validate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: promoInput }) });
     const data = await res.json();
-    if (res.ok && data.discount) { setDiscount(data.discount); setAppliedCode(data.code); setPromoStatus("valid"); }
-    else { setPromoStatus("error"); setPromoError(data.error || "Code invalide"); }
+    if (res.ok && data.discount) {
+      // Toujours calculé sur le prix de base — jamais de cumul, on prend le meilleur des deux
+      const best = loyaltyActive ? Math.max(data.discount, LOYALTY_PCT) : data.discount;
+      setDiscount(best);
+      setAppliedCode(data.code);
+      setPromoStatus("valid");
+    } else { setPromoStatus("error"); setPromoError(data.error || "Code invalide"); }
   };
 
   const removePromo = () => {
     setPromoInput(""); setAppliedCode(""); setPromoStatus("idle"); setPromoError("");
-    setDiscount(loyaltyActive ? 20 : 0);
+    setDiscount(loyaltyActive ? LOYALTY_PCT : 0);
   };
 
   const createAccountAndGetUser = async () => {
