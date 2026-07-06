@@ -320,8 +320,10 @@ export default function AdminPage() {
     const inYear  = (d: string) => new Date(d).getFullYear() === yr;
     const inMonth = (d: string) => { const dt = new Date(d); return dt.getFullYear() === yr && dt.getMonth() === mo; };
 
-    const caYear  = challenges.filter(c => inYear(c.created_at)).reduce((s, c) => s + (c.amount_paid || 0), 0);
-    const caMonth = challenges.filter(c => inMonth(c.created_at)).reduce((s, c) => s + (c.amount_paid || 0), 0);
+    // Ne compter que les achats originaux (phase1 + instant) — phase2/funded sont auto-créés, pas de nouvelles ventes
+    const isPurchase = (c: Challenge) => c.phase === "phase1" || c.model === "instant";
+    const caYear  = challenges.filter(c => inYear(c.created_at)  && isPurchase(c)).reduce((s, c) => s + (c.amount_paid || 0), 0);
+    const caMonth = challenges.filter(c => inMonth(c.created_at) && isPurchase(c)).reduce((s, c) => s + (c.amount_paid || 0), 0);
     const pyYear  = payouts.filter(p => p.status === "paid" && inYear(p.created_at)).reduce((s, p) => s + p.amount, 0);
     const pyMonth = payouts.filter(p => p.status === "paid" && inMonth(p.created_at)).reduce((s, p) => s + p.amount, 0);
     const margeYear  = caYear  > 0 ? Math.round((caYear  - pyYear)  / caYear  * 100) : 0;
@@ -347,7 +349,7 @@ export default function AdminPage() {
     const convP2Fund = reachedP2 > 0 ? Math.round(certified / reachedP2 * 100) : 0;
 
     const traderSpend = new Map<string, number>();
-    challenges.forEach(c => traderSpend.set(c.user_email, (traderSpend.get(c.user_email) || 0) + (c.amount_paid || 0)));
+    challenges.filter(isPurchase).forEach(c => traderSpend.set(c.user_email, (traderSpend.get(c.user_email) || 0) + (c.amount_paid || 0)));
     const ltv = traderSpend.size > 0 ? Array.from(traderSpend.values()).reduce((s, v) => s + v, 0) / traderSpend.size : 0;
 
     const alerts = challenges.filter(c => {
@@ -363,7 +365,8 @@ export default function AdminPage() {
   /* ── Monthly revenue ── */
   const monthlyRevenue = useMemo(() => {
     const map = new Map<string, { ca: number; payoutsAmt: number; count: number }>();
-    challenges.forEach(c => {
+    const isPurchase = (c: Challenge) => c.phase === "phase1" || c.model === "instant";
+    challenges.filter(isPurchase).forEach(c => {
       const d = new Date(c.created_at);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       const ex = map.get(key) || { ca: 0, payoutsAmt: 0, count: 0 };
@@ -383,11 +386,12 @@ export default function AdminPage() {
   /* ── CA par taille de compte ── */
   const byAccountSize = useMemo(() => {
     const map = new Map<string, { count: number; revenue: number; active: number; certified: number; failed: number }>();
+    const isPurchase = (c: Challenge) => c.phase === "phase1" || c.model === "instant";
     challenges.forEach(c => {
       const key = c.account_size;
       const ex = map.get(key) || { count: 0, revenue: 0, active: 0, certified: 0, failed: 0 };
       ex.count   += 1;
-      ex.revenue += c.amount_paid || 0;
+      ex.revenue += isPurchase(c) ? (c.amount_paid || 0) : 0;
       if (c.status === "active" || c.status === "passed") ex.active    += 1;
       if (c.status === "funded")                          ex.certified += 1;
       if (c.status === "failed")                          ex.failed    += 1;
@@ -404,7 +408,7 @@ export default function AdminPage() {
     challenges.forEach(c => {
       const ex = map.get(c.user_email) || { email: c.user_email, name: `${c.client_first_name || ""} ${c.client_last_name || ""}`.trim() || c.user_email, challenges: [], totalSpent: 0, firstDate: c.created_at };
       ex.challenges.push(c);
-      ex.totalSpent += c.amount_paid || 0;
+      if (c.phase === "phase1" || c.model === "instant") ex.totalSpent += c.amount_paid || 0;
       if (c.created_at < ex.firstDate) ex.firstDate = c.created_at;
       map.set(c.user_email, ex);
     });
@@ -1113,7 +1117,7 @@ export default function AdminPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               {[
-                { label: "CA Total",          value: `€${challenges.reduce((s,c) => s + (c.amount_paid||0),0).toLocaleString()}` },
+                { label: "CA Total",          value: `€${challenges.filter(c => c.phase === "phase1" || c.model === "instant").reduce((s,c) => s + (c.amount_paid||0),0).toLocaleString()}` },
                 { label: "Récompenses versées", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}` },
                 { label: "Marge brute totale",value: `${kpis.margeYear}%` },
                 { label: "Nb challenges total",value: challenges.length },
@@ -1538,7 +1542,7 @@ export default function AdminPage() {
 
           // Récap mensuel
           const monthly = new Map<string, { ca: number; versements: number; count: number }>();
-          challenges.forEach(c => {
+          challenges.filter(c => c.phase === "phase1" || c.model === "instant").forEach(c => {
             const m = new Date(c.created_at).toLocaleDateString("fr-FR", { year: "numeric", month: "short" });
             const ex = monthly.get(m) || { ca: 0, versements: 0, count: 0 };
             ex.ca += c.amount_paid || 0; ex.count += 1;

@@ -49,7 +49,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
       trading_days: 0, profit_target: 0, daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit,
       mt5_login: newAccount.login, mt5_password: newAccount.password,
       mt5_password_investor: newAccount.password_investor, mt5_server: newAccount.server,
-      amount_paid: (challenge.amount_paid as number) || 0,
+      amount_paid: 0, // auto-created, not a new purchase
     });
     try { await sendFundedEmail(userEmail, accountSize, undefined, undefined, model); } catch {}
     try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
@@ -68,7 +68,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
       trading_days: 0, profit_target: 5, daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit,
       mt5_login: newAccount.login, mt5_password: newAccount.password,
       mt5_password_investor: newAccount.password_investor, mt5_server: newAccount.server,
-      amount_paid: (challenge.amount_paid as number) || 0,
+      amount_paid: 0, // auto-created, not a new purchase
     });
     try { await sendPhase2Email(userEmail, accountSize); } catch {}
     try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
@@ -87,7 +87,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>, userEmail
       trading_days: 0, profit_target: 0, daily_drawdown_limit: dailyLimit, total_drawdown_limit: totalLimit,
       mt5_login: newAccount.login, mt5_password: newAccount.password,
       mt5_password_investor: newAccount.password_investor, mt5_server: newAccount.server,
-      amount_paid: (challenge.amount_paid as number) || 0,
+      amount_paid: 0, // auto-created, not a new purchase
     });
     try { await sendFundedEmail(userEmail, accountSize, undefined, undefined, model); } catch {}
     try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate); } catch {}
