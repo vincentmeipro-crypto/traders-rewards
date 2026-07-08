@@ -180,8 +180,8 @@ export default function Hero() {
               margin: "0 0 28px",
             }}>
               {isFr
-                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#3B82F6" }}>vraies récompenses</span></>
-                : <>Turn your trading<br />skills into<br /><span style={{ color: "#3B82F6" }}>real rewards</span></>}
+                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#FFFFFF" }}>vraies récompenses</span></>
+                : <>Turn your trading<br />skills into<br /><span style={{ color: "#FFFFFF" }}>real rewards</span></>}
             </h1>
 
             {/* Desktop : bouton + phrase */}
