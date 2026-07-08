@@ -170,21 +170,35 @@ export default function Hero() {
         }}>
 
           <h1 className="h1" style={{
-            fontSize: isMobile ? "clamp(1.8rem, 8vw, 2.8rem)" : "clamp(3.2rem, 6vw, 8rem)",
             fontWeight: 900,
             color: "#FFFFFF",
-            lineHeight: 1.1,
-            letterSpacing: isMobile ? "-0.5px" : "-3px",
+            lineHeight: 1.05,
             margin: "0 0 40px",
             width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}>
-            {isFr
-              ? isMobile
-                ? "Transformez votre trading démo en vraies récompenses"
-                : <>Transformez votre trading<br />démo en vraies récompenses</>
-              : isMobile
-                ? "Turn your trading skills into real rewards"
-                : <>Turn your trading skills<br />into real rewards</>}
+            <span style={{
+              fontSize: isMobile ? "clamp(1.4rem, 6vw, 2rem)" : "clamp(2rem, 4vw, 5rem)",
+              letterSpacing: isMobile ? "-0.5px" : "-1px",
+              color: "rgba(255,255,255,0.75)",
+              fontWeight: 700,
+              display: "block",
+              marginBottom: isMobile ? 6 : 10,
+            }}>
+              {isFr ? "Transformez votre trading démo" : "Turn your trading skills"}
+            </span>
+            <span style={{
+              fontSize: isMobile ? "clamp(2.2rem, 11vw, 3.5rem)" : "clamp(4rem, 8vw, 11rem)",
+              letterSpacing: isMobile ? "-1px" : "-4px",
+              color: "#FFFFFF",
+              fontWeight: 900,
+              display: "block",
+              textTransform: "uppercase",
+            }}>
+              {isFr ? "en vraies récompenses" : "into real rewards"}
+            </span>
           </h1>
 
           <div className="h2" style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
