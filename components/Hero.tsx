@@ -179,7 +179,7 @@ export default function Hero() {
             width: "100%",
           }}>
             {isFr
-              ? <>Transformez votre trading démo<br />en vraies récompenses</>
+              ? <>Transformez votre trading<br />démo en vraies récompenses</>
               : <>Turn your trading skills<br />into real rewards</>}
           </h1>
 
