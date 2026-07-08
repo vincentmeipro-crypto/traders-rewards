@@ -187,7 +187,9 @@ export default function Hero() {
               display: "block",
               marginBottom: isMobile ? 6 : 10,
             }}>
-              {isFr ? "Transformez votre trading démo" : "Turn your trading skills"}
+              {isFr
+                ? <>Transformez votre trading <span style={{ color: "#5DC241" }}>démo</span></>
+                : "Turn your trading skills"}
             </span>
             <span style={{
               fontSize: isMobile ? "clamp(2.2rem, 11vw, 3.5rem)" : "clamp(4rem, 8vw, 11rem)",
