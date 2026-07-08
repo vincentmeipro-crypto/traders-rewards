@@ -201,10 +201,12 @@ export default function Hero() {
             </span>
           </h1>
 
-          <div className="h2" style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
-            <a href="/#how-it-works" className="hero-btn-secondary">
-              {isFr ? "Comment ça marche ?" : "How does it work?"}
-            </a>
+          <div className="h2" style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
+            {!isMobile && (
+              <a href="/#how-it-works" className="hero-btn-secondary">
+                {isFr ? "Comment ça marche ?" : "How does it work?"}
+              </a>
+            )}
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
               <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
