@@ -161,7 +161,7 @@ export default function Hero() {
         paddingRight: isMobile ? 24 : 80,
       }}>
         <div style={{
-          maxWidth: 1000,
+          width: "100%",
           margin: "0 auto",
           display: "flex",
           flexDirection: "column",
@@ -170,16 +170,17 @@ export default function Hero() {
         }}>
 
           <h1 className="h1" style={{
-            fontSize: isMobile ? "clamp(2.2rem, 9.75vw, 3.1rem)" : "clamp(4.15rem, 5.85vw, 6.5rem)",
+            fontSize: isMobile ? "clamp(2.4rem, 10.5vw, 3.5rem)" : "clamp(4rem, 7.2vw, 10rem)",
             fontWeight: 900,
             color: "#FFFFFF",
-            lineHeight: 1.1,
-            letterSpacing: isMobile ? "-1px" : "-2px",
-            margin: "0 0 36px",
+            lineHeight: 1.05,
+            letterSpacing: isMobile ? "-1px" : "-3px",
+            margin: "0 0 40px",
+            width: "100%",
           }}>
             {isFr
-              ? <>Transformez votre<br />trading démo en<br />vraies récompenses</>
-              : <>Turn your trading<br />skills into<br />real rewards</>}
+              ? <>Transformez votre trading démo<br />en vraies récompenses</>
+              : <>Turn your trading skills<br />into real rewards</>}
           </h1>
 
           <div className="h2" style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
