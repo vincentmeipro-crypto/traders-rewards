@@ -161,80 +161,37 @@ export default function Hero() {
         paddingRight: isMobile ? 24 : 80,
       }}>
         <div style={{
-          maxWidth: 1200,
+          maxWidth: 1000,
           margin: "0 auto",
           display: "flex",
-          flexDirection: isMobile ? "column" : "row",
+          flexDirection: "column",
           alignItems: "center",
-          gap: isMobile ? 40 : 80,
+          textAlign: "center",
         }}>
 
-          {/* GAUCHE — Titre + CTAs */}
-          <div style={{ flex: "1 1 0", minWidth: 0 }}>
-            <h1 className="h1" style={{
-              fontSize: isMobile ? "clamp(1.7rem, 7.5vw, 2.4rem)" : "clamp(3.2rem, 4.5vw, 5rem)",
-              fontWeight: 900,
-              color: "#FFFFFF",
-              lineHeight: 1.1,
-              letterSpacing: isMobile ? "-1px" : "-2px",
-              margin: "0 0 28px",
-            }}>
-              {isFr
-                ? <>Transformez votre<br />trading démo en<br /><span style={{ color: "#FFFFFF" }}>vraies récompenses</span></>
-                : <>Turn your trading<br />skills into<br /><span style={{ color: "#FFFFFF" }}>real rewards</span></>}
-            </h1>
-
-            {/* Desktop : bouton + phrase */}
-            {!isMobile && (
-              <div className="h2" style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 24 }}>
-                <a href="/#how-it-works" className="hero-btn-secondary">
-                  {isFr ? "Comment ça marche ?" : "How does it work?"}
-                </a>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
-                    {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Mobile : étoile seule ici, sans bouton */}
-            {isMobile && (
-              <div className="h2" style={{ display: "flex", alignItems: "center", gap: 6, marginTop: -16, marginBottom: -16 }}>
-                <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-                <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
-                  {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* DROITE — Tagline + Carte + bouton mobile en bas */}
-          <div className="h3" style={{
-            flex: "0 0 auto",
-            width: isMobile ? "100%" : 400,
-            display: "flex",
-            flexDirection: "column",
-            gap: 28,
+          <h1 className="h1" style={{
+            fontSize: isMobile ? "clamp(2.2rem, 9.75vw, 3.1rem)" : "clamp(4.15rem, 5.85vw, 6.5rem)",
+            fontWeight: 900,
+            color: "#FFFFFF",
+            lineHeight: 1.1,
+            letterSpacing: isMobile ? "-1px" : "-2px",
+            margin: "0 0 36px",
           }}>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.2 }}
-              className="neon-flow"
-              style={{
-                textAlign: "center",
-                fontWeight: 800,
-                fontSize: isMobile ? 26 : 32,
-                letterSpacing: "1px",
-                margin: 0,
-              }}
-            >
-              Le programme français qui récompense les Traders disciplinés
-            </motion.p>
-            <LiveRewardCard />
+            {isFr
+              ? <>Transformez votre<br />trading démo en<br />vraies récompenses</>
+              : <>Turn your trading<br />skills into<br />real rewards</>}
+          </h1>
 
+          <div className="h2" style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
+            <a href="/#how-it-works" className="hero-btn-secondary">
+              {isFr ? "Comment ça marche ?" : "How does it work?"}
+            </a>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
+              <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
+                {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
+              </span>
+            </div>
           </div>
 
         </div>
