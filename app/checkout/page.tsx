@@ -204,7 +204,10 @@ function CheckoutContent() {
     if (password.length < 8) { setPasswordError("Minimum 8 caractères"); return null; }
     setPasswordError("");
     const { data, error } = await supabase.auth.signUp({ email, password });
-    if (!error && data.session) return { id: data.user!.id, email: data.user!.email!, token: data.session.access_token };
+    if (!error && data.session) {
+      fetch("/api/security/register-ip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: data.user!.id }) }).catch(() => {});
+      return { id: data.user!.id, email: data.user!.email!, token: data.session.access_token };
+    }
     if (error?.message?.includes("already") || !data.session) {
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) { setPayError("Email déjà utilisé. Connecte-toi d'abord."); return null; }

@@ -85,6 +85,16 @@ type SecurityData = {
   events: LoginEvent[];
 };
 
+type MT5Session = {
+  user_email: string;
+  mt5_login: number;
+  account_size: string;
+  model: string;
+  status: string;
+  last_ip: string | null;
+  last_login: string | null;
+};
+
 const STATUS_LABELS: Record<string, string> = {
   funded: "Reward",
   active: "Active",
@@ -188,6 +198,8 @@ export default function AdminPage() {
   // Sécurité state
   const [securityData, setSecurityData] = useState<SecurityData | null>(null);
   const [securityLoading, setSecurityLoading] = useState(false);
+  const [mt5Sessions, setMt5Sessions] = useState<MT5Session[]>([]);
+  const [mt5Loading, setMt5Loading] = useState(false);
 
   // Affiliés state
   type AffiliateReferral = { id: string; referred_user_id: string; purchase_amount: number; commission_amount: number; status: string; created_at: string };
@@ -270,6 +282,13 @@ export default function AdminPage() {
     const data = await res.json();
     setSecurityData(data);
     setSecurityLoading(false);
+    // Charger les IPs MT5 en parallèle
+    setMt5Loading(true);
+    try {
+      const mt5Res = await fetch("/api/security/mt5-ips", { headers: { Authorization: `Bearer ${t}` } });
+      if (mt5Res.ok) { const mt5Data = await mt5Res.json(); setMt5Sessions(mt5Data.sessions || []); }
+    } catch { /* ignore */ }
+    setMt5Loading(false);
   };
 
   useEffect(() => {
@@ -2069,6 +2088,81 @@ export default function AdminPage() {
                       </table>
                     </div>
                   )}
+                </div>
+
+                {/* ── Comparaison IP Inscription vs Login vs MT5 ── */}
+                <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 16, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb", display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 18 }}>🔍</span>
+                    <span style={{ fontWeight: 700, fontSize: 14, color: "#111" }}>Comparaison IP : Inscription vs Login vs MT5</span>
+                    {mt5Loading && <span style={{ fontSize: 11, color: "#9ca3af" }}>Chargement MT5…</span>}
+                  </div>
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                      <thead><tr style={{ background: "#f9fafb" }}>
+                        {["Trader", "IP Inscription", "IP Dernière Connexion Site", "IP Trading MT5", "Statut"].map(h => (
+                          <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 11, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                        ))}
+                      </tr></thead>
+                      <tbody>
+                        {(() => {
+                          // Grouper les events par email pour avoir la dernière IP de login
+                          const lastLoginByEmail = new Map<string, string>();
+                          if (securityData) {
+                            for (const e of securityData.events) {
+                              if (!lastLoginByEmail.has(e.user_email)) lastLoginByEmail.set(e.user_email, e.ip);
+                            }
+                          }
+                          // Grouper les MT5 sessions par email
+                          const mt5ByEmail = new Map<string, MT5Session[]>();
+                          for (const s of mt5Sessions) {
+                            if (!mt5ByEmail.has(s.user_email)) mt5ByEmail.set(s.user_email, []);
+                            mt5ByEmail.get(s.user_email)!.push(s);
+                          }
+                          // Construire la liste unique des traders depuis challenges
+                          const emails = Array.from(new Set([
+                            ...Array.from(lastLoginByEmail.keys()),
+                            ...Array.from(mt5ByEmail.keys()),
+                          ]));
+                          if (emails.length === 0) return (
+                            <tr><td colSpan={5} style={{ padding: 24, textAlign: "center", color: "#9ca3af", fontSize: 13 }}>Aucune donnée disponible</td></tr>
+                          );
+                          return emails.map((email, i) => {
+                            const loginIP = lastLoginByEmail.get(email) || null;
+                            const sessions = mt5ByEmail.get(email) || [];
+                            const mt5IPs = [...new Set(sessions.map(s => s.last_ip).filter(Boolean))];
+                            const regIP = (kyc.find((k: { email: string; registration_ip?: string }) => k.email === email) as { registration_ip?: string } | undefined)?.registration_ip || null;
+                            const mismatch = regIP && loginIP && regIP !== loginIP;
+                            const mt5Mismatch = loginIP && mt5IPs.length > 0 && !mt5IPs.includes(loginIP);
+                            const alert = mismatch || mt5Mismatch;
+                            return (
+                              <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: alert ? "#ef444408" : "#fff" }}>
+                                <td style={{ padding: "10px 14px", color: "#1565C0", fontSize: 12, fontWeight: 600 }}>{email}</td>
+                                <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
+                                  {regIP ? <span style={{ color: "#374151" }}>{regIP}</span> : <span style={{ color: "#d1d5db" }}>—</span>}
+                                </td>
+                                <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
+                                  {loginIP
+                                    ? <span style={{ color: mismatch ? "#ef4444" : "#22c55e" }}>{loginIP}</span>
+                                    : <span style={{ color: "#d1d5db" }}>—</span>}
+                                </td>
+                                <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
+                                  {mt5IPs.length > 0
+                                    ? mt5IPs.map((ip, j) => <div key={j} style={{ color: mt5Mismatch ? "#ef4444" : "#374151" }}>{ip}</div>)
+                                    : <span style={{ color: "#d1d5db" }}>{mt5Loading ? "…" : "—"}</span>}
+                                </td>
+                                <td style={{ padding: "10px 14px" }}>
+                                  {alert
+                                    ? <span style={{ background: "#ef444415", color: "#ef4444", padding: "3px 8px", borderRadius: 100, fontSize: 10, fontWeight: 800 }}>⚠ IP DIFFÉRENTE</span>
+                                    : <span style={{ color: "#22c55e", fontSize: 11, fontWeight: 700 }}>✓ OK</span>}
+                                </td>
+                              </tr>
+                            );
+                          });
+                        })()}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
 
                 {/* Historique complet des connexions */}

@@ -75,11 +75,14 @@ export default function RegisterPage() {
     if (password.length < 8) { setError("Password must be at least 8 characters"); return; }
     setLoading(true);
     const fullPhone = phone ? `${dialCode.replace("-CA", "")} ${phone}` : "";
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { phone: fullPhone, birth_date: birthDate } },
     });
+    if (!error && signUpData.user) {
+      fetch("/api/security/register-ip", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id: signUpData.user.id }) }).catch(() => {});
+    }
     setLoading(false);
     if (error) { setError(error.message); return; }
     setSuccess(true);
