@@ -167,7 +167,7 @@ export default function AdminPage() {
   const [kycMsg, setKycMsg] = useState("");
 
   // Profiles state
-  const [profiles, setProfiles] = useState<{ user_id: string; email: string | null; first_name: string | null; last_name: string | null; phone: string | null; address: string | null; city: string | null; postal_code: string | null; country: string | null }[]>([]);
+  const [profiles, setProfiles] = useState<{ user_id: string; email: string | null; first_name: string | null; last_name: string | null; phone: string | null; address: string | null; city: string | null; postal_code: string | null; country: string | null; registration_ip?: string; registration_country?: string; registration_is_vpn?: boolean }[]>([]);
 
   // Sync state
   const [syncing, setSyncing] = useState(false);
@@ -2131,7 +2131,7 @@ export default function AdminPage() {
                             const loginIP = lastLoginByEmail.get(email) || null;
                             const sessions = mt5ByEmail.get(email) || [];
                             const mt5IPs = [...new Set(sessions.map(s => s.last_ip).filter(Boolean))];
-                            const regIP = (kyc.find((k: { email: string; registration_ip?: string }) => k.email === email) as { registration_ip?: string } | undefined)?.registration_ip || null;
+                            const regIP = profiles.find(p => p.email === email)?.registration_ip || null;
                             const mismatch = regIP && loginIP && regIP !== loginIP;
                             const mt5Mismatch = loginIP && mt5IPs.length > 0 && !mt5IPs.includes(loginIP);
                             const alert = mismatch || mt5Mismatch;
