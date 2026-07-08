@@ -132,7 +132,6 @@ export default function TopTraders() {
     { size: "$25K",  profit: "€1,500",  reward: "~€1,200" },
     { size: "$50K",  profit: "€3,000",  reward: "~€2,400" },
     { size: "$100K", profit: "€6,000",  reward: "~€4,800" },
-    { size: "$200K", profit: "€12,000", reward: "~€9,600" },
   ];
 
   return (

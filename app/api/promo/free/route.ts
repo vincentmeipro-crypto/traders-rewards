@@ -7,11 +7,9 @@ const PRODUCTS: Record<string, { accountSize: string; model: string; balance: nu
   "25k-2step":  { accountSize: "$25,000",  model: "2step", balance: 25000 },
   "50k-2step":  { accountSize: "$50,000",  model: "2step", balance: 50000 },
   "100k-2step": { accountSize: "$100,000", model: "2step", balance: 100000 },
-  "200k-2step": { accountSize: "$200,000", model: "2step", balance: 200000 },
   "25k-1step":  { accountSize: "$25,000",  model: "1step", balance: 25000 },
   "50k-1step":  { accountSize: "$50,000",  model: "1step", balance: 50000 },
   "100k-1step": { accountSize: "$100,000", model: "1step", balance: 100000 },
-  "200k-1step": { accountSize: "$200,000", model: "1step", balance: 200000 },
 };
 
 export async function POST(req: NextRequest) {

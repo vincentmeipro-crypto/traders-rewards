@@ -5,7 +5,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 const faqData = {
   en: [
-    { q: "How do I get started?", a: "Choose your challenge (2-Step or 1-Step), select your account size ($25K to $200K, up to $400K cumulative on Reward accounts), complete payment, and receive your trading account credentials instantly by email." },
+    { q: "How do I get started?", a: "Choose your challenge (2-Step or 1-Step), select your account size ($25K to $100K, up to $400K cumulative on Reward accounts), complete payment, and receive your trading account credentials instantly by email." },
     { q: "Is there a time limit to pass the challenge?", a: "No. There is absolutely no time limit on any of our challenges. Trade at your own pace — take days, weeks, or months." },
     { q: "What are the profit targets?", a: "2-Step: Phase 1 requires +10% profit, Phase 2 requires +5% profit. 1-Step: a single phase with a +8% profit target, then you become a Trader Reward." },
     { q: "What are the drawdown rules?", a: "2-Step: maximum 5% daily loss and 10% total loss. 1-Step: maximum 3% daily loss and 8% trailing total loss (EOD)." },
@@ -17,7 +17,7 @@ const faqData = {
     { q: "What is the profit split?", a: "2-Step Trader Rewards keep 80% of profits. 1-Step Trader Rewards keep 90% of profits." },
   ],
   fr: [
-    { q: "Comment démarrer ?", a: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($25K à $200K, jusqu'à $400K cumulé en Reward), effectuez le paiement et recevez vos identifiants instantanément par email." },
+    { q: "Comment démarrer ?", a: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($25K à $100K, jusqu'à $400K cumulé en Reward), effectuez le paiement et recevez vos identifiants instantanément par email." },
     { q: "Y a-t-il une limite de temps ?", a: "Non. Il n'y a absolument aucune limite de temps sur nos challenges. Tradez à votre rythme." },
     { q: "Quels sont les objectifs de profit ?", a: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase à +8%, puis vous devenez Trader Reward." },
     { q: "Quelles sont les règles de drawdown ?", a: "2-Step : 5% perte journalière max et 10% total. 1-Step : 3% journalier et 8% trailing total (EOD)." },
@@ -29,7 +29,7 @@ const faqData = {
     { q: "Quel est le partage des profits ?", a: "2-Step : 80% pour le trader. 1-Step : 90% pour le trader. Aucun plafond de gains." },
   ],
   es: [
-    { q: "¿Cómo empezar?", a: "Elige tu challenge (2-Step o 1-Step), selecciona el tamaño de cuenta ($25K a $200K, hasta $400K acumulado en cuentas Reward), realiza el pago y recibe tus credenciales al instante por email." },
+    { q: "¿Cómo empezar?", a: "Elige tu challenge (2-Step o 1-Step), selecciona el tamaño de cuenta ($25K a $100K, hasta $400K acumulado en cuentas Reward), realiza el pago y recibe tus credenciales al instante por email." },
     { q: "¿Hay límite de tiempo?", a: "No. No hay ningún límite de tiempo en nuestros challenges. Opera a tu ritmo." },
     { q: "¿Cuáles son los objetivos de beneficio?", a: "2-Step: Fase 1 = +10%, Fase 2 = +5%. 1-Step: una sola fase con +8%, luego te conviertes en Trader Reward." },
     { q: "¿Cuáles son las reglas de drawdown?", a: "2-Step: 5% pérdida diaria máx. y 10% total. 1-Step: 3% diario y 8% trailing total (EOD)." },
@@ -41,7 +41,7 @@ const faqData = {
     { q: "¿Cuál es el reparto de beneficios?", a: "2-Step: 80% para el trader. 1-Step: 90% para el trader." },
   ],
   pt: [
-    { q: "Como começar?", a: "Escolha seu challenge (2-Step ou 1-Step), selecione o tamanho da conta ($25K a $200K, até $400K acumulado em contas Reward), efetue o pagamento e receba suas credenciais instantaneamente por email." },
+    { q: "Como começar?", a: "Escolha seu challenge (2-Step ou 1-Step), selecione o tamanho da conta ($25K a $100K, até $400K acumulado em contas Reward), efetue o pagamento e receba suas credenciais instantaneamente por email." },
     { q: "Há limite de tempo?", a: "Não. Não há absolutamente nenhum limite de tempo nos nossos challenges. Opere no seu ritmo." },
     { q: "Quais são os objetivos de lucro?", a: "2-Step: Fase 1 = +10%, Fase 2 = +5%. 1-Step: uma única fase com +8%, depois você se torna Trader Reward." },
     { q: "Quais são as regras de drawdown?", a: "2-Step: 5% perda diária máx. e 10% total. 1-Step: 3% diário e 8% trailing total (EOD)." },
@@ -53,7 +53,7 @@ const faqData = {
     { q: "Qual é a divisão de lucros?", a: "2-Step: 80% para o trader. 1-Step: 90% para o trader." },
   ],
   de: [
-    { q: "Wie starte ich?", a: "Wähle deine Challenge (2-Step oder 1-Step), wähle die Kontogröße ($25K bis $200K, bis zu $400K kumuliert auf Reward-Konten), zahle und erhalte deine Zugangsdaten sofort per E-Mail." },
+    { q: "Wie starte ich?", a: "Wähle deine Challenge (2-Step oder 1-Step), wähle die Kontogröße ($25K bis $100K, bis zu $400K kumuliert auf Reward-Konten), zahle und erhalte deine Zugangsdaten sofort per E-Mail." },
     { q: "Gibt es ein Zeitlimit?", a: "Nein. Es gibt absolut kein Zeitlimit bei unseren Challenges. Handle in deinem eigenen Tempo." },
     { q: "Was sind die Gewinnziele?", a: "2-Step: Phase 1 = +10%, Phase 2 = +5%. 1-Step: eine einzige Phase mit +8%, dann wirst du Trader Reward." },
     { q: "Was sind die Drawdown-Regeln?", a: "2-Step: max. 5% Tagesverlust und 10% Gesamtverlust. 1-Step: 3% täglich und 8% Trailing-Gesamt (EOD)." },
@@ -65,7 +65,7 @@ const faqData = {
     { q: "Wie ist die Gewinnaufteilung?", a: "2-Step: 80% für den Trader. 1-Step: 90% für den Trader." },
   ],
   tr: [
-    { q: "Nasıl başlarım?", a: "Challenge'ınızı seçin (2-Step veya 1-Step), hesap boyutunu seçin ($25K-$200K, Reward hesaplarda kümülatif $400K'ya kadar), ödeme yapın ve kimlik bilgilerinizi anında email ile alın." },
+    { q: "Nasıl başlarım?", a: "Challenge'ınızı seçin (2-Step veya 1-Step), hesap boyutunu seçin ($25K-$100K, Reward hesaplarda kümülatif $400K'ya kadar), ödeme yapın ve kimlik bilgilerinizi anında email ile alın." },
     { q: "Zaman sınırı var mı?", a: "Hayır. Hiçbir challenge'ımızda zaman sınırı yoktur. Kendi hızınızda işlem yapın." },
     { q: "Kar hedefleri nelerdir?", a: "2-Step: Aşama 1 = +%10, Aşama 2 = +%5. 1-Step: +%8 hedefli tek aşama, ardından Trader Reward olursunuz." },
     { q: "Drawdown kuralları nelerdir?", a: "2-Step: Günlük max. %5 kayıp ve %10 toplam. 1-Step: Günlük %3 ve %8 trailing toplam (EOD)." },
@@ -77,7 +77,7 @@ const faqData = {
     { q: "Kar paylaşımı nasıl?", a: "2-Step: Trader için %80. 1-Step: Trader için %90." },
   ],
   ar: [
-    { q: "كيف أبدأ؟", a: "اختر تحديك (2-Step أو 1-Step)، حدد حجم حسابك ($25K إلى $200K، حتى $400K متراكم في حسابات Reward)، أكمل الدفع واستلم بيانات الدخول فوراً عبر البريد الإلكتروني." },
+    { q: "كيف أبدأ؟", a: "اختر تحديك (2-Step أو 1-Step)، حدد حجم حسابك ($25K إلى $100K، حتى $400K متراكم في حسابات Reward)، أكمل الدفع واستلم بيانات الدخول فوراً عبر البريد الإلكتروني." },
     { q: "هل يوجد حد زمني؟", a: "لا. لا يوجد أي حد زمني على تحدياتنا. تداول بوتيرتك الخاصة." },
     { q: "ما هي أهداف الربح؟", a: "2-Step: المرحلة 1 = +10%، المرحلة 2 = +5%. 1-Step: مرحلة واحدة بهدف +8%، ثم تصبح Trader Reward." },
     { q: "ما هي قواعد الـ drawdown؟", a: "2-Step: خسارة يومية 5% وإجمالي 10%. 1-Step: 3% يومياً و8% trailing إجمالي (EOD)." },

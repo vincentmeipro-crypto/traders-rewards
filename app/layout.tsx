@@ -169,7 +169,7 @@ const jsonLd = {
           name: "Comment démarrer avec Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($25K à $200K), effectuez le paiement et recevez vos identifiants instantanément par email.",
+            text: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($25K à $100K), effectuez le paiement et recevez vos identifiants instantanément par email.",
           },
         },
         {

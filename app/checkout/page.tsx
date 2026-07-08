@@ -9,11 +9,9 @@ const CHALLENGES: Record<string, { label: string; model: "2-Step" | "1-Step" | "
   "25k-2step":  { label: "$25,000",  model: "2-Step", price: "€199",  amount: 19900  },
   "50k-2step":  { label: "$50,000",  model: "2-Step", price: "€299",  amount: 29900  },
   "100k-2step": { label: "$100,000", model: "2-Step", price: "€439",  amount: 43900  },
-  "200k-2step": { label: "$200,000", model: "2-Step", price: "€799",  amount: 79900  },
   "25k-1step":  { label: "$25,000",  model: "1-Step", price: "€169",  amount: 16900  },
   "50k-1step":  { label: "$50,000",  model: "1-Step", price: "€249",  amount: 24900  },
   "100k-1step": { label: "$100,000", model: "1-Step", price: "€429",  amount: 42900  },
-  "200k-1step": { label: "$200,000", model: "1-Step", price: "€779",  amount: 77900  },
   "50k-instant": { label: "$50,000", model: "Instant Reward", price: "€1,300", amount: 130000 },
 };
 
@@ -64,8 +62,8 @@ function formatPrice(cents: number) {
   return `€${(cents / 100).toFixed(2).replace(".00", "")}`;
 }
 
-const SIZES = ["25k", "50k", "100k", "200k"];
-const SIZE_LABELS: Record<string, string> = { "25k": "$25K", "50k": "$50K", "100k": "$100K", "200k": "$200K" };
+const SIZES = ["25k", "50k", "100k"];
+const SIZE_LABELS: Record<string, string> = { "25k": "$25K", "50k": "$50K", "100k": "$100K" };
 
 function CheckoutContent() {
   const params = useSearchParams();

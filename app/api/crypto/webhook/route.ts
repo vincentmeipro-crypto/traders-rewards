@@ -9,12 +9,10 @@ const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "25k-2step":  { accountSize: "$25,000",  model: "2step" },
   "50k-2step":  { accountSize: "$50,000",  model: "2step" },
   "100k-2step": { accountSize: "$100,000", model: "2step" },
-  "200k-2step": { accountSize: "$200,000", model: "2step" },
   "10k-1step":  { accountSize: "$10,000",  model: "1step" },
   "25k-1step":  { accountSize: "$25,000",  model: "1step" },
   "50k-1step":  { accountSize: "$50,000",  model: "1step" },
   "100k-1step": { accountSize: "$100,000", model: "1step" },
-  "200k-1step": { accountSize: "$200,000", model: "1step" },
   "50k-instant": { accountSize: "$50,000",  model: "instant" },
 };
 
