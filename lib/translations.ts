@@ -23,7 +23,7 @@ export const t = {
       sub: 'Access up to €100,000 in simulated capital. Earn rewards up to 90% of your simulated gains.',
       cta1: 'Start Your Challenge',
       cta2: 'How It Works',
-      trust: 'No time limit · Instant account delivery · Scale up to $400,000',
+      trust: 'No time limit · Instant account delivery · Scale up to $200,000',
       maxFunding: 'Max Funding', profitSplit: 'Profit Split', feeRefunded: 'Fee Refunded',
       tagline: 'Pass the challenge. Join the elite.',
     },
@@ -37,7 +37,7 @@ export const t = {
       steps: [
         { title: 'Choose Your Challenge', desc: 'Select your account size from $25K to $100K. Choose between our 2-Step or 1-Step challenge.' },
         { title: 'Pass the Evaluation', desc: 'Trade with discipline. Hit your profit target while respecting the drawdown rules. No time pressure — trade at your own pace with no expiry date.' },
-        { title: 'Become a Trader Reward', desc: 'Receive your Reward account instantly. Keep up to 90% of your simulated profits. Scale up to $400,000 through our scaling program.' },
+        { title: 'Become a Trader Reward', desc: 'Receive your Reward account instantly. Keep up to 90% of your simulated profits. Scale up to $200,000 through our scaling program.' },
       ],
     },
     pricing: {
@@ -45,8 +45,8 @@ export const t = {
       sub: '',
       twoStep: '2-STEP', oneStep: '1-STEP ⚡', mostPopular: 'Most Popular',
       account: 'Account', getStarted: 'Get Started', allInclude: 'ALL CHALLENGES INCLUDE',
-      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 5 trading days','No time limit','80% profit split','Scale up to $400,000'],
-      features1: ['Single phase: +8% profit target','3% max daily loss','8% trailing drawdown','50% best day rule','Minimum 5 trading days','No time limit','90% profit split','Scale up to $400,000'],
+      features2: ['Phase 1: +10% profit target','Phase 2: +5% profit target','5% max daily loss','10% max total drawdown','Minimum 5 trading days','No time limit','80% profit split','Scale up to $200,000'],
+      features1: ['Single phase: +8% profit target','3% max daily loss','8% trailing drawdown','50% best day rule','Minimum 5 trading days','No time limit','90% profit split','Scale up to $200,000'],
     },
     rules: {
       label: 'Transparency First', title: 'Clear', titleGold: 'Rules',
@@ -275,7 +275,7 @@ export const t = {
       steps: [
         { title: 'اختر تحديك', desc: 'اختر حجم حسابك من 25K$ إلى 100K$. اختر بين تحدي خطوتين أو خطوة واحدة.' },
         { title: 'اجتز التقييم', desc: 'تداول بانضباط. حقق هدف الربح مع احترام قواعد الحد الأقصى للخسارة. لا ضغط زمني.' },
-        { title: 'كن Trader Reward واربح', desc: 'استلم حساب Reward الخاص بك فوراً. تداول برأس مال حقيقي واحتفظ بـ 90% من أرباحك. قد إلى 400,000$.' },
+        { title: 'كن Trader Reward واربح', desc: 'استلم حساب Reward الخاص بك فوراً. تداول برأس مال حقيقي واحتفظ بـ 90% من أرباحك. قد إلى 200,000$.' },
       ],
     },
     pricing: {
@@ -283,8 +283,8 @@ export const t = {
       sub: 'رسوم التحدي مستردة عند أول سحب.',
       twoStep: 'خطوتان', oneStep: 'خطوة واحدة ⚡', mostPopular: 'الأكثر شعبية',
       account: 'الحساب', getStarted: 'ابدأ الآن', allInclude: 'جميع التحديات تشمل',
-      features2: ['المرحلة 1: +10% هدف الربح','المرحلة 2: +5% هدف الربح','5% حد الخسارة اليومية','10% حد الخسارة الإجمالية','4 أيام تداول على الأقل','بلا حد زمني','80% توزيع الأرباح','تطوير حتى 400,000$'],
-      features1: ['مرحلة واحدة: +10% هدف الربح','3% حد الخسارة اليومية','10% حد الخسارة المتحرك','قاعدة 50% أفضل يوم','4 أيام تداول على الأقل','بلا حد زمني','90% توزيع الأرباح','تطوير حتى 400,000$'],
+      features2: ['المرحلة 1: +10% هدف الربح','المرحلة 2: +5% هدف الربح','5% حد الخسارة اليومية','10% حد الخسارة الإجمالية','4 أيام تداول على الأقل','بلا حد زمني','80% توزيع الأرباح','تطوير حتى 200,000$'],
+      features1: ['مرحلة واحدة: +10% هدف الربح','3% حد الخسارة اليومية','10% حد الخسارة المتحرك','قاعدة 50% أفضل يوم','4 أيام تداول على الأقل','بلا حد زمني','90% توزيع الأرباح','تطوير حتى 200,000$'],
     },
     rules: {
       label: 'الشفافية أولاً', title: 'قواعد', titleGold: 'واضحة',
@@ -379,7 +379,7 @@ export const t = {
       sub: 'Supera nuestro desafío y accede a €100,000 en capital financiado. Quédate hasta el 90% de tus ganancias. Sin riesgo personal.',
       cta1: 'Iniciar Desafío',
       cta2: 'Cómo Funciona',
-      trust: 'Sin límite de tiempo · Cuenta entregada al instante · Escala hasta $400,000',
+      trust: 'Sin límite de tiempo · Cuenta entregada al instante · Escala hasta $200,000',
       maxFunding: 'Capital Máx.', profitSplit: 'División de Ganancias', feeRefunded: 'Tarifa Reembolsada',
       tagline: 'Supera el desafío. Únete a la élite.',
     },
@@ -393,7 +393,7 @@ export const t = {
       steps: [
         { title: 'Elige tu Desafío', desc: 'Selecciona el tamaño de tu cuenta de $25K a $100K. Elige entre nuestro desafío de 2 pasos o 1 paso.' },
         { title: 'Supera la Evaluación', desc: 'Opera con disciplina. Alcanza tu objetivo de ganancia respetando las reglas de drawdown. Sin presión de tiempo, sin fecha de vencimiento.' },
-        { title: 'Conviértete en Trader Reward y Cobra', desc: 'Recibe tu cuenta Reward al instante. Opera con capital real y conserva hasta el 90% de tus ganancias. Escala hasta $400,000.' },
+        { title: 'Conviértete en Trader Reward y Cobra', desc: 'Recibe tu cuenta Reward al instante. Opera con capital real y conserva hasta el 90% de tus ganancias. Escala hasta $200,000.' },
       ],
     },
     pricing: {
@@ -401,8 +401,8 @@ export const t = {
       sub: 'La tarifa del desafío se reembolsa en tu primer pago.',
       twoStep: '2 PASOS', oneStep: '1 PASO ⚡', mostPopular: 'Más Popular',
       account: 'Cuenta', getStarted: 'Empezar', allInclude: 'TODOS LOS DESAFÍOS INCLUYEN',
-      features2: ['Fase 1: +10% objetivo de ganancia','Fase 2: +5% objetivo de ganancia','5% pérdida diaria máx.','10% drawdown total máx.','Mínimo 4 días de trading','Sin límite de tiempo','80% división de ganancias','Escala hasta $400,000'],
-      features1: ['Fase única: +10% objetivo de ganancia','3% pérdida diaria máx.','8% drawdown trailing','Regla del 50% mejor día','Mínimo 4 días de trading','Sin límite de tiempo','90% división de ganancias','Escala hasta $400,000'],
+      features2: ['Fase 1: +10% objetivo de ganancia','Fase 2: +5% objetivo de ganancia','5% pérdida diaria máx.','10% drawdown total máx.','Mínimo 4 días de trading','Sin límite de tiempo','80% división de ganancias','Escala hasta $200,000'],
+      features1: ['Fase única: +10% objetivo de ganancia','3% pérdida diaria máx.','8% drawdown trailing','Regla del 50% mejor día','Mínimo 4 días de trading','Sin límite de tiempo','90% división de ganancias','Escala hasta $200,000'],
     },
     rules: {
       label: 'Transparencia Total', title: 'Reglas', titleGold: 'Claras',
@@ -497,7 +497,7 @@ export const t = {
       sub: 'Passe nosso desafio e acesse até €200.000 em capital financiado. Fique com até 90% dos seus lucros. Sem risco pessoal.',
       cta1: 'Iniciar Desafio',
       cta2: 'Como Funciona',
-      trust: 'Sem limite de tempo · Conta entregue instantaneamente · Escale até $400.000',
+      trust: 'Sem limite de tempo · Conta entregue instantaneamente · Escale até $200.000',
       maxFunding: 'Capital Máx.', profitSplit: 'Divisão de Lucros', feeRefunded: 'Taxa Reembolsada',
       tagline: 'Passe o desafio. Entre na elite.',
     },
@@ -511,7 +511,7 @@ export const t = {
       steps: [
         { title: 'Escolha seu Desafio', desc: 'Selecione o tamanho da sua conta de $25K a $100K. Escolha entre nosso desafio de 2 etapas ou 1 etapa.' },
         { title: 'Passe a Avaliação', desc: 'Opere com disciplina. Atinja sua meta de lucro respeitando as regras de drawdown. Sem pressão de tempo, sem data de expiração.' },
-        { title: 'Torne-se Trader Reward e Receba', desc: 'Receba sua conta Reward instantaneamente. Opere com capital real e fique com até 90% dos seus lucros. Escale até $400.000.' },
+        { title: 'Torne-se Trader Reward e Receba', desc: 'Receba sua conta Reward instantaneamente. Opere com capital real e fique com até 90% dos seus lucros. Escale até $200.000.' },
       ],
     },
     pricing: {
@@ -519,8 +519,8 @@ export const t = {
       sub: '',
       twoStep: '2 ETAPAS', oneStep: '1 ETAPA ⚡', mostPopular: 'Mais Popular',
       account: 'Conta', getStarted: 'Começar', allInclude: 'TODOS OS DESAFIOS INCLUEM',
-      features2: ['Fase 1: +10% meta de lucro','Fase 2: +5% meta de lucro','5% perda diária máx.','10% drawdown total máx.','Mínimo 4 dias de operação','Sem limite de tempo','80% divisão de lucros','Escale até $400.000'],
-      features1: ['Fase única: +10% meta de lucro','3% perda diária máx.','8% drawdown trailing','Regra de 50% melhor dia','Mínimo 4 dias de operação','Sem limite de tempo','90% divisão de lucros','Escale até $400.000'],
+      features2: ['Fase 1: +10% meta de lucro','Fase 2: +5% meta de lucro','5% perda diária máx.','10% drawdown total máx.','Mínimo 4 dias de operação','Sem limite de tempo','80% divisão de lucros','Escale até $200.000'],
+      features1: ['Fase única: +10% meta de lucro','3% perda diária máx.','8% drawdown trailing','Regra de 50% melhor dia','Mínimo 4 dias de operação','Sem limite de tempo','90% divisão de lucros','Escale até $200.000'],
     },
     rules: {
       label: 'Transparência Total', title: 'Regras', titleGold: 'Claras',
@@ -615,7 +615,7 @@ export const t = {
       sub: 'Bestehe unsere Challenge und erhalte Zugang zu €200.000 an finanziertem Kapital. Behalte bis zu 90% deiner Gewinne. Kein persönliches Risiko.',
       cta1: 'Challenge Starten',
       cta2: 'So Funktioniert Es',
-      trust: 'Kein Zeitlimit · Sofortige Kontobereitstellung · Skalierung bis $400.000',
+      trust: 'Kein Zeitlimit · Sofortige Kontobereitstellung · Skalierung bis $200.000',
       maxFunding: 'Max. Kapital', profitSplit: 'Gewinnbeteiligung', feeRefunded: 'Gebühr Erstattet',
       tagline: 'Bestehe die Challenge. Tritt der Elite bei.',
     },
@@ -629,7 +629,7 @@ export const t = {
       steps: [
         { title: 'Wähle deine Challenge', desc: 'Wähle deine Kontogröße von $25K bis $100K. Entscheide dich für unsere 2-Stufen- oder 1-Stufen-Challenge.' },
         { title: 'Bestehe die Bewertung', desc: 'Handle diszipliniert. Erreiche dein Gewinnziel unter Einhaltung der Drawdown-Regeln. Kein Zeitdruck, kein Ablaufdatum.' },
-        { title: 'Trader Reward werden und Gewinne erhalten', desc: 'Erhalte dein Reward-Konto sofort. Handle mit echtem Kapital und behalte bis zu 90% deiner Gewinne. Skaliere bis zu $400.000.' },
+        { title: 'Trader Reward werden und Gewinne erhalten', desc: 'Erhalte dein Reward-Konto sofort. Handle mit echtem Kapital und behalte bis zu 90% deiner Gewinne. Skaliere bis zu $200.000.' },
       ],
     },
     pricing: {
@@ -637,8 +637,8 @@ export const t = {
       sub: '',
       twoStep: '2 STUFEN', oneStep: '1 STUFE ⚡', mostPopular: 'Am Beliebtesten',
       account: 'Konto', getStarted: 'Jetzt Starten', allInclude: 'ALLE CHALLENGES BEINHALTEN',
-      features2: ['Phase 1: +10% Gewinnziel','Phase 2: +5% Gewinnziel','5% max. Tagesverlust','10% max. Gesamtverlust','Mindestens 5 Handelstage','Kein Zeitlimit','80% Gewinnbeteiligung','Skalierung bis $400.000'],
-      features1: ['Einzelphase: +10% Gewinnziel','3% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 5 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Skalierung bis $400.000'],
+      features2: ['Phase 1: +10% Gewinnziel','Phase 2: +5% Gewinnziel','5% max. Tagesverlust','10% max. Gesamtverlust','Mindestens 5 Handelstage','Kein Zeitlimit','80% Gewinnbeteiligung','Skalierung bis $200.000'],
+      features1: ['Einzelphase: +10% Gewinnziel','3% max. Tagesverlust','10% Trailing Drawdown','50% Beste-Tag-Regel','Mindestens 5 Handelstage','Kein Zeitlimit','90% Gewinnbeteiligung','Skalierung bis $200.000'],
     },
     rules: {
       label: 'Transparenz Zuerst', title: 'Klare', titleGold: 'Regeln',
@@ -733,7 +733,7 @@ export const t = {
       sub: 'Meydan okumamızı geç ve $100.000\'e kadar fonlu sermayeye eriş. Kârının %90\'ına kadar al. Kişisel risk yok.',
       cta1: 'Meydan Okumayı Başlat',
       cta2: 'Nasıl Çalışır',
-      trust: 'Zaman sınırı yok · Anında hesap teslimi · $400.000\'e kadar büyüme',
+      trust: 'Zaman sınırı yok · Anında hesap teslimi · $200.000\'e kadar büyüme',
       maxFunding: 'Maks. Fon', profitSplit: 'Kâr Paylaşımı', feeRefunded: 'Ücret İadesi',
       tagline: 'Meydan okumayı geç. Elite\'e katıl.',
     },
@@ -747,7 +747,7 @@ export const t = {
       steps: [
         { title: 'Meydan Okumanı Seç', desc: '$25K\'dan $100K\'ya hesap büyüklüğünü seç. 2 aşamalı veya 1 aşamalı meydan okuma arasında seç.' },
         { title: 'Değerlendirmeyi Geç', desc: 'Disiplinli işlem yap. Drawdown kurallarına uymaya devam ederek kâr hedefine ulaş. Zaman baskısı yok, son tarih yok.' },
-        { title: 'Trader Reward Ol ve Kazan', desc: 'Reward hesabını anında al. Gerçek sermaye ile işlem yap ve kârının %90\'ına kadar al. $400.000\'e kadar büyü.' },
+        { title: 'Trader Reward Ol ve Kazan', desc: 'Reward hesabını anında al. Gerçek sermaye ile işlem yap ve kârının %90\'ına kadar al. $200.000\'e kadar büyü.' },
       ],
     },
     pricing: {

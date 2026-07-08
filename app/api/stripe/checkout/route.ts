@@ -8,7 +8,7 @@ const SIZE_VALUES: Record<string, number> = {
   "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
   "$100,000": 100000, "$200,000": 200000,
 };
-const MAX_CUMUL = 400000;
+const MAX_CUMUL = 200000;
 
 const PRODUCTS = {
   "25k-2step":  { name: "Challenge $25,000 — 2-Step", amount: 19900,  accountSize: "$25,000",  model: "2step" },
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       const currentTotal = (fundedAccounts || []).reduce((sum, c) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
       const newSize = SIZE_VALUES[product.accountSize] || 0;
       if (currentTotal + newSize > MAX_CUMUL) {
-        return NextResponse.json({ error: `Plafond $400,000 de comptes Reward atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
+        return NextResponse.json({ error: `Plafond $200,000 de comptes Reward atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
       }
     }
 

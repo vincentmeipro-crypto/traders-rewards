@@ -182,7 +182,7 @@ export default function Pricing() {
             {isFr ? <>Commencez votre <span style={{ color: "#3B82F6" }}>Challenge</span></> : <>Start your <span style={{ color: "#3B82F6" }}>Challenge</span></>}
           </h2>
           <p style={{ fontSize: isMobile ? 13 : 15, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
-            {isFr ? "Tradez jusqu'à 400K en compte reward." : "Trade up to $400K in reward account."}
+            {isFr ? "Tradez jusqu'à 200K en compte reward." : "Trade up to $200K in reward account."}
           </p>
         </div>
 

@@ -37,7 +37,7 @@ export default function Rules() {
     feeRefund: isFr ? "Remboursement des Frais" : "Fee Refund",
     feeRefundVal: isFr ? "À la 1ère récompense" : "At 1st reward",
     scaling: isFr ? "Scaling Possible" : "Scaling",
-    scalingVal: isFr ? "Jusqu'à $400,000" : "Up to $400,000",
+    scalingVal: isFr ? "Jusqu'à $200,000" : "Up to $200,000",
     noTarget: isFr ? "Aucun objectif" : "No target",
     keepRules: isFr ? "Maintenues" : "Maintained",
   };

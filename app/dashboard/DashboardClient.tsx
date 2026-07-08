@@ -1535,14 +1535,14 @@ export default function DashboardClient({ user }: { user: User }) {
             {activeChallenges.length > 0 && (() => {
               const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
               const total = activeChallenges.reduce((s, c) => s + (sizeMap[c.account_size] || 0), 0);
-              const pct = Math.min(100, (total / 400000) * 100);
+              const pct = Math.min(100, (total / 200000) * 100);
               const color = pct >= 100 ? "#ef4444" : pct >= 75 ? "#f59e0b" : "#3B82F6";
               return (
                 <div className="card" style={{ padding: "14px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 16 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                       <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital cumulé actif" : "Total active capital"}</span>
-                      <span style={{ fontWeight: 900, fontSize: 14, color }}>${total.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>/ $400,000</span></span>
+                      <span style={{ fontWeight: 900, fontSize: 14, color }}>${total.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>/ $200,000</span></span>
                     </div>
                     <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 100, height: 6, overflow: "hidden" }}>
                       <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 100, transition: "width 0.5s" }} />
