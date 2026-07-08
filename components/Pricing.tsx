@@ -9,7 +9,6 @@ const accounts = [
   { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", promo2: "€99",  promo1: "€84",  popular: false, premium: false, confirmed: false, beginner: false, evolution: true,  reward: "~€1,200" },
   { size: "$50,000",  id: "50k",  label: "50K",  price2: "€299", price1: "€249", promo2: "€149", promo1: "€124", popular: false, premium: false, confirmed: true,  beginner: false, evolution: false, reward: "~€2,400" },
   { size: "$100,000", id: "100k", label: "100K", price2: "€439", price1: "€429", promo2: "€219", promo1: "€214", popular: true,  premium: false, confirmed: false, beginner: false, evolution: false, reward: "~€4,800" },
-  { size: "$200,000", id: "200k", label: "200K", price2: "€799", price1: "€779", promo2: "€399", promo1: "€389", popular: false, premium: true,  confirmed: false, beginner: false, evolution: false, reward: "~€9,600" },
 ];
 
 export default function Pricing() {
