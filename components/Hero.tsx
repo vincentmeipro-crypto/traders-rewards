@@ -170,17 +170,21 @@ export default function Hero() {
         }}>
 
           <h1 className="h1" style={{
-            fontSize: isMobile ? "clamp(2.4rem, 10.5vw, 3.5rem)" : "clamp(4rem, 7.2vw, 10rem)",
+            fontSize: isMobile ? "clamp(1.8rem, 8vw, 2.8rem)" : "clamp(4rem, 7.2vw, 10rem)",
             fontWeight: 900,
             color: "#FFFFFF",
-            lineHeight: 1.05,
-            letterSpacing: isMobile ? "-1px" : "-3px",
+            lineHeight: 1.1,
+            letterSpacing: isMobile ? "-0.5px" : "-3px",
             margin: "0 0 40px",
             width: "100%",
           }}>
             {isFr
-              ? <>Transformez votre trading<br />démo en vraies récompenses</>
-              : <>Turn your trading skills<br />into real rewards</>}
+              ? isMobile
+                ? "Transformez votre trading démo en vraies récompenses"
+                : <>Transformez votre trading<br />démo en vraies récompenses</>
+              : isMobile
+                ? "Turn your trading skills into real rewards"
+                : <>Turn your trading skills<br />into real rewards</>}
           </h1>
 
           <div className="h2" style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
