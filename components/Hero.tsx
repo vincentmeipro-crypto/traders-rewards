@@ -156,7 +156,7 @@ export default function Hero() {
         paddingTop: isMobile
           ? "calc(60px + var(--promo-banner-height, 0px) + 40px)"
           : "calc(72px + var(--promo-banner-height, 0px) + 56px)",
-        paddingBottom: isMobile ? 16 : 32,
+        paddingBottom: isMobile ? 0 : 32,
         paddingLeft: isMobile ? 24 : 80,
         paddingRight: isMobile ? 24 : 80,
       }}>
