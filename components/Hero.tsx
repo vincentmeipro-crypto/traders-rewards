@@ -170,7 +170,7 @@ export default function Hero() {
         }}>
 
           <h1 className="h1" style={{
-            fontSize: isMobile ? "clamp(1.8rem, 8vw, 2.8rem)" : "clamp(4rem, 7.2vw, 10rem)",
+            fontSize: isMobile ? "clamp(1.8rem, 8vw, 2.8rem)" : "clamp(3.2rem, 6vw, 8rem)",
             fontWeight: 900,
             color: "#FFFFFF",
             lineHeight: 1.1,
