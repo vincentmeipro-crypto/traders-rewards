@@ -150,16 +150,6 @@ export default function Hero() {
           white-space: nowrap;
         }
         .hero-btn-secondary:hover { border-color: rgba(255,255,255,0.7); color: #FFFFFF; }
-        @keyframes marqueeScroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .neon-marquee-track {
-          display: flex;
-          width: max-content;
-          animation: marqueeScroll 18s linear infinite;
-          white-space: nowrap;
-        }
       `}</style>
 
       <section style={{
@@ -180,15 +170,11 @@ export default function Hero() {
           textAlign: "center",
         }}>
 
-          {/* Neon scrolling phrase */}
-          <div style={{ overflow: "hidden", width: "100%", marginBottom: isMobile ? 24 : 36 }}>
-            <div className="neon-marquee-track">
-              {[...Array(6)].map((_, i) => (
-                <span key={i} className="neon-flow" style={{ fontSize: isMobile ? 13 : 15, fontWeight: 700, letterSpacing: "0.5px", paddingRight: 80 }}>
-                  {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
-                </span>
-              ))}
-            </div>
+          {/* Neon phrase fixe */}
+          <div style={{ marginBottom: isMobile ? 24 : 36 }}>
+            <span className="neon-flow" style={{ fontSize: isMobile ? 13 : 16, fontWeight: 700, letterSpacing: "0.5px" }}>
+              {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
+            </span>
           </div>
 
           <h1 className="h1" style={{
