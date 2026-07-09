@@ -192,7 +192,7 @@ export default function Hero() {
                 : "Turn your trading skills"}
             </span>
             <span style={{
-              fontSize: isMobile ? "clamp(2.2rem, 11vw, 3.5rem)" : "clamp(4rem, 8vw, 11rem)",
+              fontSize: isMobile ? "clamp(2.2rem, 11vw, 3.5rem)" : "clamp(3rem, 5.8vw, 8rem)",
               letterSpacing: isMobile ? "-1px" : "-4px",
               color: "#FFFFFF",
               fontWeight: 900,
