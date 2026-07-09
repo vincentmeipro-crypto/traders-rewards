@@ -819,7 +819,7 @@ export default function AdminPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(0,0,0,0.06)" }}>
-                      {["Trader", "Compte", "Modèle", "Phase", "Statut", "Balance", "Perte", "Payé", "Jours", "Account ID", "Password", "Serveur", "Date", "Actions"].map(h => (
+                      {["Trader", "Compte", "Modèle", "Phase", "Statut", "Balance", "Gain", "Payé", "Jours", "Account ID", "Password", "Serveur", "Date", "Actions"].map(h => (
                         <th key={h} style={{ padding: "13px 14px", textAlign: "left", color: "#6b7280", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
@@ -871,13 +871,13 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {(() => {
                               if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
-                              const dd = ((c.start_balance - c.balance) / c.start_balance * 100);
+                              const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
                               const maxTotal = c.model === "1step" ? 8 : 10;
                               const maxDaily = c.model === "1step" ? 3 : 5;
-                              const color = c.status === "failed" ? "#ef4444" : dd >= maxTotal ? "#ef4444" : dd >= maxTotal * 0.7 ? "#f59e0b" : "#22c55e";
+                              const color = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
                               return (
                                 <div style={{ fontSize: 11, lineHeight: 1.6 }}>
-                                  <div style={{ fontWeight: 700, color }}>{dd.toFixed(2)}%</div>
+                                  <div style={{ fontWeight: 700, color }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</div>
                                   <div style={{ color: "#9ca3af", fontSize: 10 }}>Max: {maxTotal}% · J: {maxDaily}%</div>
                                 </div>
                               );
