@@ -112,6 +112,29 @@ export default function Hero() {
           0% { background-position: -200% center; }
           100% { background-position: 200% center; }
         }
+        @property --border-angle {
+          syntax: "<angle>";
+          initial-value: 0deg;
+          inherits: false;
+        }
+        @keyframes borderSpin {
+          to { --border-angle: 360deg; }
+        }
+        .neon-border-box {
+          padding: 1.5px;
+          border-radius: 100px;
+          display: inline-block;
+          background: conic-gradient(from var(--border-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
+          animation: borderSpin 3s linear infinite;
+          box-shadow: 0 0 10px rgba(59,130,246,0.4), 0 0 20px rgba(239,68,68,0.15);
+        }
+        .neon-border-inner {
+          background: #000000;
+          border-radius: 98px;
+          padding: 7px 28px;
+          display: flex;
+          align-items: center;
+        }
         .neon-flow {
           background: linear-gradient(90deg, #1d4ed8 0%, #3B82F6 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%, #3B82F6 100%);
           background-size: 200% auto;
@@ -171,10 +194,14 @@ export default function Hero() {
         }}>
 
           {/* Neon phrase fixe */}
-          <div style={{ marginBottom: isMobile ? 16 : 32, overflow: "hidden" }}>
-            <span className="neon-flow" style={{ fontSize: isMobile ? "clamp(8px, 3vw, 12px)" : 16, fontWeight: 700, letterSpacing: isMobile ? "0px" : "0.5px", whiteSpace: "nowrap" }}>
-              {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
-            </span>
+          <div style={{ marginBottom: isMobile ? 16 : 32 }}>
+            <div className="neon-border-box">
+              <div className="neon-border-inner">
+                <span className="neon-flow" style={{ fontSize: isMobile ? "clamp(8px, 3vw, 12px)" : 14, fontWeight: 700, letterSpacing: isMobile ? "0px" : "0.5px", whiteSpace: "nowrap" }}>
+                  {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
+                </span>
+              </div>
+            </div>
           </div>
 
           <h1 className="h1" style={{
