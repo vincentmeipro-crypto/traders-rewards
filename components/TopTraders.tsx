@@ -74,7 +74,7 @@ function SpotlightCard({ lang }: { lang: string }) {
       <div style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "rgba(59, 130, 246,0.12)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 100, padding: "5px 14px", marginBottom: 22 }}>
         <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6", display: "inline-block" }} />
         <span style={{ color: "#3B82F6", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>
-          {lang === "fr" ? "Récompense versée" : "Reward Paid"}
+          {lang === "fr" ? "Récompense versée" : lang === "es" ? "Recompensa pagada" : "Reward Paid"}
         </span>
       </div>
 
@@ -86,7 +86,7 @@ function SpotlightCard({ lang }: { lang: string }) {
         <div style={{ textAlign: "left" }}>
           <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "2px", color: "#3B82F6", marginBottom: 3, textTransform: "uppercase" }}>Trader</div>
           <div style={{ fontWeight: 800, fontSize: 16, color: "#FFFFFF" }}>{t.name}</div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 1 }}>{lang === "fr" ? "Compte" : "Account"} {t.size}</div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 1 }}>{lang === "fr" ? "Compte" : lang === "es" ? "Cuenta" : "Account"} {t.size}</div>
         </div>
       </div>
 
@@ -96,7 +96,7 @@ function SpotlightCard({ lang }: { lang: string }) {
         </div>
       </div>
       <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "3px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", marginBottom: 20 }}>
-        {lang === "fr" ? "Récompense reçue" : "Reward Received"}
+        {lang === "fr" ? "Récompense reçue" : lang === "es" ? "Recompensa recibida" : "Reward Received"}
       </div>
 
       <div style={{ height: 1, background: "rgba(255,255,255,0.07)", marginBottom: 16 }} />
@@ -119,6 +119,7 @@ function SpotlightCard({ lang }: { lang: string }) {
 
 export default function TopTraders() {
   const { lang } = useLanguage();
+  const L = (fr: string, es: string, en: string) => lang === "fr" ? fr : lang === "es" ? es : en;
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -139,11 +140,11 @@ export default function TopTraders() {
 
       <div style={{ textAlign: "center", marginBottom: 56, padding: "0 24px" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>
-          {lang === "fr" ? "Dernières Récompenses" : "Latest Rewards"}
+          {L("Dernières Récompenses","Últimas Recompensas","Latest Rewards")}
         </div>
         <h2 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", marginBottom: 0 }}>
-          {lang === "fr" ? "Nos traders touchent" : "Our traders receive"}
-          <br /><span style={{ color: "#3B82F6" }}>{lang === "fr" ? "leurs récompenses chaque semaine." : "their rewards every week."}</span>
+          {L("Nos traders touchent","Nuestros traders reciben","Our traders receive")}
+          <br /><span style={{ color: "#3B82F6" }}>{L("leurs récompenses chaque semaine.","sus recompensas cada semana.","their rewards every week.")}</span>
         </h2>
       </div>
 
@@ -154,17 +155,15 @@ export default function TopTraders() {
         <div>
           <div style={{ marginBottom: 20 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: "#FFFFFF", marginBottom: 8 }}>
-              {lang === "fr" ? "Votre récompense estimée" : "Your estimated reward"}
+              {L("Votre récompense estimée","Tu recompensa estimada","Your estimated reward")}
             </h3>
             <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 14, lineHeight: 1.7 }}>
-              {lang === "fr"
-                ? "Basé sur 6% de profit moyen, après les 20% de partage avec Traders Rewards."
-                : "Based on 6% average profit, after the 20% split with Traders Rewards."}
+              {L("Basé sur 6% de profit moyen, après les 20% de partage avec Traders Rewards.","Basado en 6% de profit promedio, después del 20% de reparto con Traders Rewards.","Based on 6% average profit, after the 20% split with Traders Rewards.")}
             </p>
           </div>
           <div style={{ background: "#111111", borderRadius: 16, border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", padding: "12px 20px", background: "rgba(255,255,255,0.03)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-              {[lang === "fr" ? "Compte" : "Account", lang === "fr" ? "Profit moy. 6%" : "Avg profit 6%", lang === "fr" ? "Votre récompense" : "Your reward"].map((h, i) => (
+              {[L("Compte","Cuenta","Account"), L("Profit moy. 6%","Profit prom. 6%","Avg profit 6%"), L("Votre récompense","Tu recompensa","Your reward")].map((h, i) => (
                 <div key={i} style={{ fontSize: 10, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase", letterSpacing: "1.5px" }}>{h}</div>
               ))}
             </div>

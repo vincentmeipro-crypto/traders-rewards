@@ -17,6 +17,8 @@ export default function Pricing() {
   const [isMobile, setIsMobile] = useState(false);
   const { T, lang } = useLanguage();
   const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -28,36 +30,36 @@ export default function Pricing() {
   type Row = { label: string; value: string; highlight?: boolean; pct?: number };
 
   const rows2step: Row[] = [
-    { label: isFr ? "Étape 1"           : "Phase 1",        value: "10%",   pct: 0.10  },
-    { label: isFr ? "Étape 2"           : "Phase 2",        value: "5%",    pct: 0.05  },
-    { label: isFr ? "Perte journalière" : "Max daily loss", value: "5%",    pct: -0.05 },
-    { label: isFr ? "Perte totale"      : "Max total loss", value: "10%",   pct: -0.10 },
-    { label: isFr ? "Jours min"         : "Min days",       value: isFr ? "5 jours" : "5 days" },
-    { label: isFr ? "Limite de temps"   : "Time limit",     value: isFr ? "Illimité" : "Unlimited" },
-    { label: isFr ? "Partage profits"   : "Profit split",   value: "80%" },
+    { label: L("Étape 1","Fase 1","Phase 1"),                 value: "10%",   pct: 0.10  },
+    { label: L("Étape 2","Fase 2","Phase 2"),                 value: "5%",    pct: 0.05  },
+    { label: L("Perte journalière","Pérdida diaria","Max daily loss"), value: "5%",  pct: -0.05 },
+    { label: L("Perte totale","Pérdida total","Max total loss"),       value: "10%", pct: -0.10 },
+    { label: L("Jours min","Días mín","Min days"),             value: L("5 jours","5 días","5 days") },
+    { label: L("Limite de temps","Límite tiempo","Time limit"),value: L("Illimité","Ilimitado","Unlimited") },
+    { label: L("Partage profits","Reparto profits","Profit split"), value: "80%" },
   ];
 
   const rows1step: Row[] = [
-    { label: isFr ? "Objectif profit"     : "Profit target",  value: "8%",      pct: 0.08  },
-    { label: isFr ? "Perte journalière"   : "Max daily loss", value: "3%",      pct: -0.03 },
-    { label: isFr ? "Perte totale"        : "Total loss",     value: "8% EOD",  pct: -0.08 },
-    { label: isFr ? "Règle meilleur jour" : "Best day rule",  value: "≤ 50%" },
-    { label: isFr ? "Jours min"           : "Min days",       value: isFr ? "5 jours" : "5 days" },
-    { label: isFr ? "Limite de temps"     : "Time limit",     value: isFr ? "Illimité" : "Unlimited" },
-    { label: isFr ? "Partage profits"     : "Profit split",   value: "90%" },
-    { label: isFr ? "Max cumulé"          : "Max cumulated",  value: "$200K" },
+    { label: L("Objectif profit","Objetivo profit","Profit target"),   value: "8%",     pct: 0.08  },
+    { label: L("Perte journalière","Pérdida diaria","Max daily loss"), value: "3%",     pct: -0.03 },
+    { label: L("Perte totale","Pérdida total","Total loss"),           value: "8% EOD", pct: -0.08 },
+    { label: L("Règle meilleur jour","Regla mejor día","Best day rule"), value: "≤ 50%" },
+    { label: L("Jours min","Días mín","Min days"),             value: L("5 jours","5 días","5 days") },
+    { label: L("Limite de temps","Límite tiempo","Time limit"),value: L("Illimité","Ilimitado","Unlimited") },
+    { label: L("Partage profits","Reparto profits","Profit split"), value: "90%" },
+    { label: L("Max cumulé","Máx acumulado","Max cumulated"),  value: "$200K" },
   ];
 
   const rowsInstant: Row[] = [
-    { label: isFr ? "Objectif profit"   : "Profit target",  value: isFr ? "Aucun" : "None" },
-    { label: isFr ? "Perte journalière" : "Max daily loss", value: "3% EOD",  pct: -0.03 },
-    { label: isFr ? "Perte totale"      : "Max total loss", value: "8% EOD",  pct: -0.08 },
-    { label: isFr ? "Trading news"      : "News trading",   value: isFr ? "±5 min interdit" : "±5 min banned" },
-    { label: isFr ? "Jours min"         : "Min days",       value: isFr ? "15 jours" : "15 days" },
-    { label: isFr ? "Risque par trade"  : "Risk per trade", value: "≤ 1.5%" },
-    { label: "Stop Loss",                                    value: isFr ? "Obligatoire < 1min" : "Required < 1min" },
-    { label: isFr ? "Partage profits"   : "Profit split",   value: "90%" },
-    { label: isFr ? "Compte reward"     : "Reward account", value: isFr ? "Immédiat ✓" : "Instant ✓", highlight: true },
+    { label: L("Objectif profit","Objetivo profit","Profit target"),   value: L("Aucun","Ninguno","None") },
+    { label: L("Perte journalière","Pérdida diaria","Max daily loss"), value: "3% EOD", pct: -0.03 },
+    { label: L("Perte totale","Pérdida total","Max total loss"),       value: "8% EOD", pct: -0.08 },
+    { label: L("Trading news","Trading noticias","News trading"),      value: L("±5 min interdit","±5 min prohibido","±5 min banned") },
+    { label: L("Jours min","Días mín","Min days"),             value: L("15 jours","15 días","15 days") },
+    { label: L("Risque par trade","Riesgo por trade","Risk per trade"), value: "≤ 1.5%" },
+    { label: "Stop Loss",                                              value: L("Obligatoire < 1min","Obligatorio < 1min","Required < 1min") },
+    { label: L("Partage profits","Reparto profits","Profit split"),    value: "90%" },
+    { label: L("Compte reward","Cuenta reward","Reward account"),      value: L("Immédiat ✓","Inmediato ✓","Instant ✓"), highlight: true },
   ];
 
   const rows = model === "2step" ? rows2step : model === "1step" ? rows1step : rowsInstant;
@@ -109,7 +111,7 @@ export default function Pricing() {
           {model === "instant" ? (
             <div style={{ marginBottom: 12, textAlign: "center" }}>
               <div style={{ fontSize: compact ? 28 : 22, fontWeight: 800, color: "#FFFFFF" }}>€1,300</div>
-              <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>{isFr ? "Compte reward direct" : "Direct reward account"}</div>
+              <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 2 }}>{L("Compte reward direct","Cuenta reward directa","Direct reward account")}</div>
             </div>
           ) : (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
@@ -129,10 +131,10 @@ export default function Pricing() {
             background: "#3B82F6",
             color: "#FFFFFF",
           }}>
-            {isFr ? "Commencer maintenant" : "Get Started"}
+            {L("Commencer maintenant","Empezar","Get Started")}
           </a>
           <div style={{ textAlign: "center", fontSize: 10, color: "#6b7280", marginTop: 8 }}>
-            {isFr ? "Frais unique (non remboursable)" : "One-time fee (non-refundable)"}
+            {L("Frais unique (non remboursable)","Cargo único (no reembolsable)","One-time fee (non-refundable)")}
           </div>
         </div>
 
@@ -165,7 +167,7 @@ export default function Pricing() {
           borderRadius: 6, padding: "5px 10px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
-          <span style={{ fontSize: 11, color: "#9CA3AF" }}>{isFr ? "Récompense moy." : "Avg. reward"}</span>
+          <span style={{ fontSize: 11, color: "#9CA3AF" }}>{L("Récompense moy.","Recompensa prom.","Avg. reward")}</span>
           <span style={{ fontSize: 12, fontWeight: 800, color: "#FFFFFF" }}>{acc.reward}</span>
         </div>
       </div>
@@ -179,19 +181,19 @@ export default function Pricing() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 20 : 40 }}>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1.1, marginBottom: 12 }}>
-            {isFr ? <>Commencez votre <span style={{ color: "#3B82F6" }}>Challenge</span></> : <>Start your <span style={{ color: "#3B82F6" }}>Challenge</span></>}
+            {L("Commencez votre","Inicia Tu","Start your")} <span style={{ color: "#3B82F6" }}>{L("Challenge","Desafío","Challenge")}</span>
           </h2>
           <p style={{ fontSize: isMobile ? 13 : 15, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
-            {isFr ? "Tradez jusqu'à 200K en compte reward." : "Trade up to $200K in reward account."}
+            {L("Tradez jusqu'à 200K en compte reward.","Opera hasta $200K en cuenta reward.","Trade up to $200K in reward account.")}
           </p>
         </div>
 
         {/* Toggle modèle */}
         <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 6 : 12, marginBottom: isMobile ? 20 : 36, flexWrap: "nowrap" }}>
           {(([
-            { id: "2step",   icon: "◈", label: isFr ? "2 Étapes" : "2-Step",       sub: isFr ? "Challenge standard" : "Standard challenge",      isNew: false },
-            { id: "1step",   icon: "◆", label: isFr ? "1 Étape" : "1-Step",         sub: isFr ? "Challenge rapide" : "Fast challenge",              isNew: false },
-            { id: "instant", icon: "★", label: "Instant Reward",                     sub: isFr ? "Compte reward" : "Reward account",       isNew: true  },
+            { id: "2step",   icon: "◈", label: L("2 Étapes","2 Pasos","2-Step"),    sub: L("Challenge standard","Desafío estándar","Standard challenge"), isNew: false },
+            { id: "1step",   icon: "◆", label: L("1 Étape","1 Paso","1-Step"),       sub: L("Challenge rapide","Desafío rápido","Fast challenge"),           isNew: false },
+            { id: "instant", icon: "★", label: "Instant Reward",                     sub: L("Compte reward","Cuenta reward","Reward account"),               isNew: true  },
           ]) as { id: "2step"|"1step"|"instant"; icon: string; label: string; sub: string; isNew: boolean }[]).map(tab => {
             const active = model === tab.id;
             return (

@@ -15,31 +15,32 @@ export default function Rules() {
   }, []);
 
   const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   const labels = {
-    tabChallenge: isFr ? "Règles Compte Challenge" : "Challenge Account Rules",
-    tabFunded: isFr ? "Règles Compte Reward" : "Reward Account Rules",
-    phase1: isFr ? "Phase 1" : "Phase 1",
-    phase2: isFr ? "Phase 2" : "Phase 2",
-    oneStep: isFr ? "1 Étape" : "1-Step",
-    twoStep: isFr ? "2 Étapes" : "2-Step",
-    profitTarget: isFr ? "Objectif de Profit" : "Profit Target",
-    dailyLoss: isFr ? "Perte Journalière Max" : "Max Daily Loss",
-    totalLoss: isFr ? "Perte Totale Max" : "Max Total Loss",
-    tradingDays: isFr ? "Jours de Trading Min" : "Min Trading Days",
-    timeLimit: isFr ? "Limite de Temps" : "Time Limit",
-    bestDay: isFr ? "Règle Meilleur Jour" : "Best Day Rule",
-    none: isFr ? "Aucune" : "None",
-    days: isFr ? "jours" : "days",
-    profitSplit: isFr ? "Partage des Profits" : "Profit Split",
-    payout: isFr ? "Fréquence des Récompenses" : "Reward Frequency",
-    payoutVal: isFr ? "J+7, puis tous les 15j" : "Day 7, then every 15 days",
-    feeRefund: isFr ? "Remboursement des Frais" : "Fee Refund",
-    feeRefundVal: isFr ? "À la 1ère récompense" : "At 1st reward",
-    scaling: isFr ? "Scaling Possible" : "Scaling",
-    scalingVal: isFr ? "Jusqu'à $200,000" : "Up to $200,000",
-    noTarget: isFr ? "Aucun objectif" : "No target",
-    keepRules: isFr ? "Maintenues" : "Maintained",
+    tabChallenge: L("Règles Compte Challenge","Reglas Cuenta Desafío","Challenge Account Rules"),
+    tabFunded:    L("Règles Compte Reward","Reglas Cuenta Reward","Reward Account Rules"),
+    phase1: "Phase 1", phase2: "Phase 2",
+    oneStep: L("1 Étape","1 Paso","1-Step"),
+    twoStep: L("2 Étapes","2 Pasos","2-Step"),
+    profitTarget: L("Objectif de Profit","Objetivo de Profit","Profit Target"),
+    dailyLoss:    L("Perte Journalière Max","Pérdida Diaria Máx","Max Daily Loss"),
+    totalLoss:    L("Perte Totale Max","Pérdida Total Máx","Max Total Loss"),
+    tradingDays:  L("Jours de Trading Min","Días de Trading Mín","Min Trading Days"),
+    timeLimit:    L("Limite de Temps","Límite de Tiempo","Time Limit"),
+    bestDay:      L("Règle Meilleur Jour","Regla Mejor Día","Best Day Rule"),
+    none:         L("Aucune","Ninguno","None"),
+    days:         L("jours","días","days"),
+    profitSplit:  L("Partage des Profits","Reparto de Profits","Profit Split"),
+    payout:       L("Fréquence des Récompenses","Frecuencia de Recompensas","Reward Frequency"),
+    payoutVal:    L("J+7, puis tous les 15j","Día 7, luego cada 15 días","Day 7, then every 15 days"),
+    feeRefund:    L("Remboursement des Frais","Reembolso de Tasas","Fee Refund"),
+    feeRefundVal: L("À la 1ère récompense","En la 1ª recompensa","At 1st reward"),
+    scaling:      L("Scaling Possible","Scaling Posible","Scaling"),
+    scalingVal:   L("Jusqu'à $200,000","Hasta $200,000","Up to $200,000"),
+    noTarget:     L("Aucun objectif","Sin objetivo","No target"),
+    keepRules:    L("Maintenues","Mantenidas","Maintained"),
   };
 
   const challengeRows2Step = [
@@ -53,8 +54,8 @@ export default function Rules() {
   const challengeRows1Step = [
     { label: labels.profitTarget,  val: "+8%"                               },
     { label: labels.dailyLoss,     val: "3%"                                },
-    { label: labels.totalLoss,     val: isFr ? "8% (Trailing EOD)" : "8% (Trailing EOD)" },
-    { label: labels.bestDay,       val: isFr ? "≤ 50% du profit total" : "≤ 50% of total profits" },
+    { label: labels.totalLoss,     val: "8% (Trailing EOD)" },
+    { label: labels.bestDay,       val: L("≤ 50% du profit total","≤ 50% del profit total","≤ 50% of total profits") },
     { label: labels.tradingDays,   val: `5 ${labels.days}`                  },
     { label: labels.timeLimit,     val: labels.none                         },
   ];
@@ -63,10 +64,10 @@ export default function Rules() {
     { label: labels.profitTarget,                         v2: labels.noTarget,             v1: labels.noTarget,              vi: labels.noTarget              },
     { label: labels.dailyLoss,                            v2: labels.keepRules + " (5%)",  v1: labels.keepRules + " (3%)",   vi: "3% EOD"                     },
     { label: labels.totalLoss,                            v2: labels.keepRules + " (10%)", v1: labels.keepRules + " (8% EOD)",vi: "8% EOD"                    },
-    { label: labels.tradingDays,                          v2: isFr ? "15 jours" : "15 days", v1: isFr ? "15 jours" : "15 days", vi: isFr ? "15 jours" : "15 days"  },
-    { label: isFr ? "Trading news" : "News trading",      v2: isFr ? "±5 min interdit" : "±5 min banned", v1: isFr ? "±5 min interdit" : "±5 min banned", vi: isFr ? "±5 min interdit" : "±5 min banned" },
-    { label: isFr ? "Risque par trade" : "Risk per trade",v2: "—",                         v1: "—",                          vi: "≤ 1.5%"                     },
-    { label: "Stop Loss",                                 v2: "—",                         v1: "—",                          vi: isFr ? "Obligatoire < 1min" : "Required < 1min" },
+    { label: labels.tradingDays,                                  v2: L("15 jours","15 días","15 days"), v1: L("15 jours","15 días","15 days"), vi: L("15 jours","15 días","15 days") },
+    { label: L("Trading news","Trading noticias","News trading"), v2: L("±5 min interdit","±5 min prohibido","±5 min banned"), v1: L("±5 min interdit","±5 min prohibido","±5 min banned"), vi: L("±5 min interdit","±5 min prohibido","±5 min banned") },
+    { label: L("Risque par trade","Riesgo por trade","Risk per trade"), v2: "—", v1: "—", vi: "≤ 1.5%" },
+    { label: "Stop Loss",                                         v2: "—",                  v1: "—",                          vi: L("Obligatoire < 1min","Obligatorio < 1min","Required < 1min") },
     { label: labels.profitSplit,                          v2: "80%",                       v1: "90%",                        vi: "90%"                        },
     { label: labels.payout,                               v2: labels.payoutVal,            v1: labels.payoutVal,             vi: labels.payoutVal             },
   ];
@@ -173,17 +174,21 @@ export default function Rules() {
             <span style={{ fontSize: 20, flexShrink: 0 }}>⚖️</span>
             <div>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "#FFFFFF", marginBottom: 10, letterSpacing: "-0.3px" }}>
-                {isFr ? "Notre approche sur la gestion du risque" : "Our approach to risk management"}
+                {L("Notre approche sur la gestion du risque","Nuestro enfoque sobre la gestión del riesgo","Our approach to risk management")}
               </h3>
               <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, lineHeight: 1.8, margin: 0 }}>
-                {isFr
-                  ? "Il n'existe pas de règle fixe sur la taille de vos positions. Nous surveillons activement l'activité de chaque trader et nous nous réservons le droit d'examiner tout compte présentant des signes de gestion du risque insuffisante ou non viable. Cet examen est mené au cas par cas."
-                  : "There is no fixed rule on position sizing. We actively monitor every trader's activity and reserve the right to review any account showing signs of insufficient or unsustainable risk management. Each review is conducted on a case-by-case basis."}
+                {L(
+                  "Il n'existe pas de règle fixe sur la taille de vos positions. Nous surveillons activement l'activité de chaque trader et nous nous réservons le droit d'examiner tout compte présentant des signes de gestion du risque insuffisante ou non viable. Cet examen est mené au cas par cas.",
+                  "No existe una regla fija sobre el tamaño de las posiciones. Monitoreamos activamente la actividad de cada trader y nos reservamos el derecho de revisar cualquier cuenta que muestre signos de gestión de riesgo insuficiente o insostenible. Cada revisión se realiza caso por caso.",
+                  "There is no fixed rule on position sizing. We actively monitor every trader's activity and reserve the right to review any account showing signs of insufficient or unsustainable risk management. Each review is conducted on a case-by-case basis."
+                )}
               </p>
               <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 13, lineHeight: 1.8, marginTop: 10 }}>
-                {isFr
-                  ? "De manière générale, risquer systématiquement une part importante de la perte journalière maximale sur une seule idée de trading sera considéré comme non viable. Chez Traders Rewards, nous privilégions les traders qui font preuve de constance, de discipline et d'une vision à long terme. Traitez votre compte comme vous le feriez avec votre propre capital réel."
-                  : "In general, consistently risking a significant portion of the maximum daily loss on a single trade idea will be considered unsustainable. At Traders Rewards, we look for traders who demonstrate consistency, discipline, and a long-term vision. Treat your account as you would your own real capital."}
+                {L(
+                  "De manière générale, risquer systématiquement une part importante de la perte journalière maximale sur une seule idée de trading sera considéré comme non viable. Chez Traders Rewards, nous privilégions les traders qui font preuve de constance, de discipline et d'une vision à long terme. Traitez votre compte comme vous le feriez avec votre propre capital réel.",
+                  "En general, arriesgar sistemáticamente una parte importante de la pérdida diaria máxima en una sola idea de trading será considerado insostenible. En Traders Rewards, buscamos traders que demuestren consistencia, disciplina y visión a largo plazo. Trata tu cuenta como tratarías tu propio capital real.",
+                  "In general, consistently risking a significant portion of the maximum daily loss on a single trade idea will be considered unsustainable. At Traders Rewards, we look for traders who demonstrate consistency, discipline, and a long-term vision. Treat your account as you would your own real capital."
+                )}
               </p>
             </div>
           </div>

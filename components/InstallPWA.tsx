@@ -11,6 +11,12 @@ const steps = {
     { label: "Sélectionne\n\"Ajouter à l'écran d'accueil\"", sub: "Puis confirme" },
     { label: "L'app est installée ✓", sub: "Lance-la depuis ton écran d'accueil" },
   ],
+  es: [
+    { label: "Abre el sitio en\ntu navegador móvil", sub: "Safari (iOS) o Chrome (Android)" },
+    { label: "Pulsa el botón\nCompartir / Menú", sub: "Abajo (iOS) o arriba a la derecha (Android)" },
+    { label: "Selecciona\n\"Añadir a pantalla de inicio\"", sub: "Luego confirma" },
+    { label: "App instalada ✓", sub: "Ábrela desde tu pantalla de inicio" },
+  ],
   en: [
     { label: "Open the site in\nyour mobile browser", sub: "Safari (iOS) or Chrome (Android)" },
     { label: "Tap the Share / Menu\nbutton", sub: "Bottom (iOS) or top right (Android)" },
@@ -154,7 +160,9 @@ function PhoneScreen({ step }: { step: number }) {
 export default function InstallPWA() {
   const { lang } = useLanguage();
   const isFr = lang === "fr";
-  const stepsData = isFr ? steps.fr : steps.en;
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
+  const stepsData = isFr ? steps.fr : isEs ? steps.es : steps.en;
   const [current, setCurrent] = useState(0);
   const [progress, setProgress] = useState(0);
 
@@ -181,13 +189,13 @@ export default function InstallPWA() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const title = isFr ? "Installer l'app sur votre téléphone" : "Install the app on your phone";
-  const sub = isFr ? "Accédez à Traders Rewards depuis votre écran d'accueil — sans passer par les stores." : "Access Traders Rewards from your home screen — no app store needed.";
+  const title = L("Installer l'app sur votre téléphone","Instala la app en tu teléfono","Install the app on your phone");
+  const sub = L("Accédez à Traders Rewards depuis votre écran d'accueil — sans passer par les stores.","Accede a Traders Rewards desde tu pantalla de inicio — sin pasar por las tiendas.","Access Traders Rewards from your home screen — no app store needed.");
 
   return (
     <section style={{ background: "#000000", padding: "80px 24px", textAlign: "center" }}>
       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 16 }}>
-        {isFr ? "Application Mobile" : "Mobile App"}
+        {L("Application Mobile","Aplicación Móvil","Mobile App")}
       </div>
       <h2 style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-0.5px", marginBottom: 12 }}>
         {title}
