@@ -155,8 +155,8 @@ export default function Hero() {
       <section style={{
         background: "#000000",
         paddingTop: isMobile
-          ? "calc(60px + var(--promo-banner-height, 0px) + 40px)"
-          : "calc(72px + var(--promo-banner-height, 0px) + 56px)",
+          ? "calc(60px + var(--promo-banner-height, 0px) + 24px)"
+          : "calc(72px + var(--promo-banner-height, 0px) + 32px)",
         paddingBottom: isMobile ? 0 : 32,
         paddingLeft: isMobile ? 24 : 80,
         paddingRight: isMobile ? 24 : 80,
@@ -171,8 +171,8 @@ export default function Hero() {
         }}>
 
           {/* Neon phrase fixe */}
-          <div style={{ marginBottom: isMobile ? 24 : 36 }}>
-            <span className="neon-flow" style={{ fontSize: isMobile ? 13 : 16, fontWeight: 700, letterSpacing: "0.5px" }}>
+          <div style={{ marginBottom: isMobile ? 16 : 32, overflow: "hidden" }}>
+            <span className="neon-flow" style={{ fontSize: isMobile ? "clamp(8px, 3vw, 12px)" : 16, fontWeight: 700, letterSpacing: isMobile ? "0px" : "0.5px", whiteSpace: "nowrap" }}>
               {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
             </span>
           </div>
