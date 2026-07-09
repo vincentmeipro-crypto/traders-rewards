@@ -199,7 +199,7 @@ export default function Hero() {
           <div style={{ marginBottom: isMobile ? 16 : 32, padding: isMobile ? "0 20px" : 0, width: "100%", boxSizing: "border-box" as const }}>
             <div className="neon-border-box">
               <div className="neon-border-inner">
-                <span className="neon-flow" style={{ fontSize: isMobile ? "clamp(8px, 3vw, 12px)" : 14, fontWeight: 700, letterSpacing: isMobile ? "0px" : "0.5px", whiteSpace: "nowrap" }}>
+                <span className="neon-flow" style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, letterSpacing: "0.3px", whiteSpace: isMobile ? "normal" : "nowrap", textAlign: "center", lineHeight: 1.5 }}>
                   {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
                 </span>
               </div>
