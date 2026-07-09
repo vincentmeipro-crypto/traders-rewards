@@ -90,6 +90,7 @@ function LiveRewardCard() {
 export default function Hero() {
   const { lang } = useLanguage();
   const isFr = lang === "fr";
+  const isEs = lang === "es";
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -189,7 +190,9 @@ export default function Hero() {
             }}>
               {isFr
                 ? <>Transformez votre trading <span style={{ color: "#5DC241" }}>démo</span></>
-                : "Turn your trading skills"}
+                : isEs
+                  ? <>Transforma tu trading <span style={{ color: "#5DC241" }}>demo</span></>
+                  : "Turn your trading skills"}
             </span>
             <span style={{
               fontSize: isMobile ? "clamp(2.2rem, 11vw, 3.5rem)" : "clamp(3rem, 5.8vw, 8rem)",
@@ -199,20 +202,20 @@ export default function Hero() {
               display: "block",
               textTransform: "uppercase",
             }}>
-              {isFr ? "en vraies récompenses" : "into real rewards"}
+              {isFr ? "en vraies récompenses" : isEs ? "en verdaderas recompensas" : "into real rewards"}
             </span>
           </h1>
 
           <div className="h2" style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
             {!isMobile && (
               <a href="/#how-it-works" className="hero-btn-secondary">
-                {isFr ? "Comment ça marche ?" : "How does it work?"}
+                {isFr ? "Comment ça marche ?" : isEs ? "¿Cómo funciona?" : "How does it work?"}
               </a>
             )}
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
               <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
-                {isFr ? "Trading Simulé · Programme éducatif récompensé" : "Simulated Trading · Rewarded educational program"}
+                {isFr ? "Trading Simulé · Programme éducatif récompensé" : isEs ? "Trading Simulado · Programa educativo recompensado" : "Simulated Trading · Rewarded educational program"}
               </span>
             </div>
           </div>

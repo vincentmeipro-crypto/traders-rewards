@@ -630,7 +630,7 @@ export default function DashboardClient({ user }: { user: User }) {
               {languages.map(l => (
                 <button key={l.code} onClick={() => setLang(l.code)}
                   style={{ background: "none", border: lang === l.code ? "1px solid #3B82F6" : "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
-                  <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code === "ar" ? "sa" : l.code === "pt" ? "br" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
+                  <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
                 </button>
               ))}
             </div>
