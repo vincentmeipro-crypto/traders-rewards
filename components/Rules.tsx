@@ -34,7 +34,7 @@ export default function Rules() {
     days:         L("jours","días","days"),
     profitSplit:  L("Partage des Profits","Reparto de Profits","Profit Split"),
     payout:       L("Fréquence des Récompenses","Frecuencia de Recompensas","Reward Frequency"),
-    payoutVal:    L("J+7, puis tous les 15j","Día 7, luego cada 15 días","Day 7, then every 15 days"),
+    payoutVal:    L("Tous les 15 jours","Cada 15 días","Every 15 days"),
     feeRefund:    L("Remboursement des Frais","Reembolso de Tasas","Fee Refund"),
     feeRefundVal: L("À la 1ère récompense","En la 1ª recompensa","At 1st reward"),
     scaling:      L("Scaling Possible","Scaling Posible","Scaling"),
