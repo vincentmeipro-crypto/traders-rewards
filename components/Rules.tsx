@@ -65,7 +65,6 @@ export default function Rules() {
     { label: labels.dailyLoss,                            v2: labels.keepRules + " (5%)",  v1: labels.keepRules + " (3%)",   vi: "3% EOD"                     },
     { label: labels.totalLoss,                            v2: labels.keepRules + " (10%)", v1: labels.keepRules + " (8% EOD)",vi: "8% EOD"                    },
     { label: labels.tradingDays,                                  v2: L("15 jours","15 días","15 days"), v1: L("15 jours","15 días","15 days"), vi: L("15 jours","15 días","15 days") },
-    { label: L("Trading news","Trading noticias","News trading"), v2: L("±5 min interdit","±5 min prohibido","±5 min banned"), v1: L("±5 min interdit","±5 min prohibido","±5 min banned"), vi: L("±5 min interdit","±5 min prohibido","±5 min banned") },
     { label: L("Risque par trade","Riesgo por trade","Risk per trade"), v2: "—", v1: "—", vi: "≤ 1.5%" },
     { label: "Stop Loss",                                         v2: "—",                  v1: "—",                          vi: L("Obligatoire < 1min","Obligatorio < 1min","Required < 1min") },
     { label: labels.profitSplit,                          v2: "80%",                       v1: "90%",                        vi: "90%"                        },
