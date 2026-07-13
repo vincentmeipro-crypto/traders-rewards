@@ -142,8 +142,9 @@ export async function POST(req: NextRequest) {
     const { data: { users } } = await admin.auth.admin.listUsers();
     const user = users.find(u => u.id === userId);
     const userEmail = user?.email || "";
-    const firstName = user?.user_metadata?.first_name || "Trader";
-    const lastName = user?.user_metadata?.last_name || "";
+    const { data: profile } = await admin.from("profiles").select("first_name, last_name").eq("user_id", userId).single();
+    const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
+    const lastName = user?.user_metadata?.last_name || profile?.last_name || "";
 
     let mt5Login: number | null = null;
     let mt5Password: string | null = null;

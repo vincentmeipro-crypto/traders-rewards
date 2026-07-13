@@ -29,10 +29,11 @@ export async function POST(req: NextRequest) {
     };
     const size = sizeMap[accountSize] || 10000;
 
-    // RÃ©cupÃ©rer les infos du user pour MT5
+    // Récupérer les infos du user pour MT5
     const { data: userData } = await admin.auth.admin.getUserById(userId);
-    const firstName = userData?.user?.user_metadata?.first_name || "Trader";
-    const lastName  = userData?.user?.user_metadata?.last_name  || "";
+    const { data: profile } = await admin.from("profiles").select("first_name, last_name").eq("user_id", userId).single();
+    const firstName = userData?.user?.user_metadata?.first_name || profile?.first_name || session.customer_details?.name?.split(" ")[0] || "Trader";
+    const lastName  = userData?.user?.user_metadata?.last_name  || profile?.last_name  || session.customer_details?.name?.split(" ").slice(1).join(" ") || "";
     const email     = userData?.user?.email || session.customer_details?.email || "";
 
     // CrÃ©er le compte MT5
