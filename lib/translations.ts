@@ -47,8 +47,8 @@ export const t = {
     rules: {
       label: 'Transparency First', title: 'Clear', titleGold: 'Rules',
       allowed: "What's Allowed", notAllowed: "What's Not Allowed",
-      allowedList: ['All instruments: Forex, Gold, Indices, Crypto, Oil','News trading — allowed on all accounts including Reward','Expert Advisors (EA) / trading bots','Holding positions overnight & over weekends','Scalping, day trading & swing trading','Multiple strategies simultaneously'],
-      notAllowedList: ['Arbitrage','Trading on behalf of others / account sharing','Gambling-style behavior (all-in positions)','Bi-directional trading between accounts'],
+      allowedList: ['All instruments: Forex, Gold, Indices, Crypto, Oil','News trading — allowed on all accounts including Reward','Holding positions overnight & over weekends','Scalping, day trading & swing trading','Multiple strategies simultaneously'],
+      notAllowedList: ['Arbitrage','Expert Advisors (EA) / trading bots','Trading on behalf of others / account sharing','Gambling-style behavior (all-in positions)','Bi-directional trading between accounts'],
       ctaTitle: 'Ready to Join the', ctaGold: 'Elite?',
       ctaSub: 'Join thousands of Trader Rewards.',
       ctaBtn: 'Start Your Challenge Today',
@@ -166,8 +166,8 @@ export const t = {
     rules: {
       label: 'Transparence Totale', title: 'Règles', titleGold: 'Claires',
       allowed: 'Ce qui est Autorisé', notAllowed: 'Ce qui est Interdit',
-      allowedList: ['Tous les instruments : Forex, Or, Indices, Crypto, Pétrole','Trading sur les news — autorisé sur tous les comptes y compris Reward','Expert Advisors (EA) / robots de trading','Positions overnight et le weekend','Scalping, day trading et swing trading','Plusieurs stratégies simultanément'],
-      notAllowedList: ['Arbitrage','Trading pour le compte d\'autrui / partage de compte','Comportement de gambling (positions all-in)','Bi-direction entre comptes'],
+      allowedList: ['Tous les instruments : Forex, Or, Indices, Crypto, Pétrole','Trading sur les news — autorisé sur tous les comptes y compris Reward','Positions overnight et le weekend','Scalping, day trading et swing trading','Plusieurs stratégies simultanément'],
+      notAllowedList: ['Arbitrage','Expert Advisors (EA) / robots de trading','Trading pour le compte d\'autrui / partage de compte','Comportement de gambling (positions all-in)','Bi-direction entre comptes'],
       ctaTitle: 'Prêt à Rejoindre l\'', ctaGold: 'Élite ?',
       ctaSub: 'Rejoignez des milliers de Traders Rewards.',
       ctaBtn: 'Commencer le Challenge Aujourd\'hui',
@@ -285,8 +285,8 @@ export const t = {
     rules: {
       label: 'Transparencia Total', title: 'Reglas', titleGold: 'Claras',
       allowed: 'Qué está Permitido', notAllowed: 'Qué no está Permitido',
-      allowedList: ['Todos los instrumentos (Forex, Oro, Índices, Cripto)','Trading en noticias — autorizado en todas las cuentas incluida Reward','Expert Advisors (EA) / robots de trading','Posiciones overnight y fin de semana','Múltiples pares de divisas','Cualquier estrategia de trading'],
-      notAllowedList: ['Arbitraje','Trading en nombre de otros / compartir cuenta','Comportamiento de gambling (all-in)','Trading bidireccional entre cuentas'],
+      allowedList: ['Todos los instrumentos (Forex, Oro, Índices, Cripto)','Trading en noticias — autorizado en todas las cuentas incluida Reward','Posiciones overnight y fin de semana','Múltiples pares de divisas','Cualquier estrategia de trading'],
+      notAllowedList: ['Arbitraje','Expert Advisors (EA) / robots de trading','Trading en nombre de otros / compartir cuenta','Comportamiento de gambling (all-in)','Trading bidireccional entre cuentas'],
       ctaTitle: '¿Listo para Unirte a la', ctaGold: 'Élite?',
       ctaSub: 'Únete a miles de Traders Rewards. Tu tarifa se reembolsa en el primer pago.',
       ctaBtn: 'Inicia Tu Desafío Hoy',
