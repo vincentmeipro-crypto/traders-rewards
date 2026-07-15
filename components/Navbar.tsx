@@ -48,7 +48,7 @@ export default function Navbar() {
     <a href="/vip" style={{ textDecoration: "none", display: "inline-block" }}>
       <div className="vip-border">
         <div className="vip-inner">
-          <span className="vip-text">{mobile ? "⚡ Challenge VIP" : "⚡ VIP"}</span>
+          <span className="vip-text">⚡ Challenge VIP</span>
         </div>
       </div>
     </a>
