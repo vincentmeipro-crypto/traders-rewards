@@ -3,6 +3,10 @@
     {
       "path": "/api/metaapi/sync",
       "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/mt5-snapshot",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
