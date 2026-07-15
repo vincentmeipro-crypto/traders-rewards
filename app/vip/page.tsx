@@ -4,9 +4,9 @@ import { Check, Zap, Shield, Clock, TrendingUp } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const PLANS = [
-  { size: "$25,000", price: "1 250€", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
-  { size: "$50,000", price: "2 500€", popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
-  { size: "$100,000", price: "5 000€", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
+  { size: "$25,000", price: "1 250€", productId: "25k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
+  { size: "$50,000", price: "2 500€", productId: "50k-vip", popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
+  { size: "$100,000", price: "5 000€", productId: "100k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
 ];
 
 const STEPS = [
@@ -136,7 +136,7 @@ export default function VipPage() {
                       </div>
                     ))}
                   </div>
-                  <a href="/login" style={{
+                  <a href={`/checkout-vip?product=${p.productId}`} style={{
                     display: "block", textAlign: "center",
                     background: p.popular ? "#3B82F6" : "rgba(255,255,255,0.08)",
                     color: "#fff", borderRadius: 10, padding: "14px 0",
