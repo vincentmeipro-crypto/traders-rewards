@@ -13,7 +13,7 @@ const STEPS = [
   { icon: <Zap size={22} color="#3B82F6" />, title: "Tu choisis ton compte", desc: "Sélectionne la taille de compte VIP. Tu paies l'accès une seule fois." },
   { icon: <TrendingUp size={22} color="#3B82F6" />, title: "L'algorithme trade", desc: "Une stratégie algorithmique professionnelle s'active sur ton compte et passe les deux phases automatiquement." },
   { icon: <Shield size={22} color="#3B82F6" />, title: "Validation automatique", desc: "Une fois les objectifs atteints, ton compte Reward est activé automatiquement. Aucune action requise." },
-  { icon: <Clock size={22} color="#3B82F6" />, title: "Récompenses tous les 15 jours", desc: "Les profits sont calculés et versés automatiquement tous les 15 jours sur ton compte Reward." },
+  { icon: <Clock size={22} color="#3B82F6" />, title: "Récompenses tous les 30 jours", desc: "Les profits sont calculés et versés automatiquement tous les 30 jours sur ton compte Reward." },
 ];
 
 export default function VipPage() {
@@ -90,10 +90,10 @@ export default function VipPage() {
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L'algorithme s'occupe de tout</span>
             </h1>
             <p className="fade-3" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)", maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.7 }}>
-              Tu paies l'accès une seule fois. Une stratégie algorithmique professionnelle s'active sur ton compte, passe les phases, et les récompenses tombent automatiquement tous les 15 jours.
+              Tu paies l'accès une seule fois. Une stratégie algorithmique professionnelle s'active sur ton compte, passe les phases, et les récompenses tombent automatiquement tous les 30 jours.
             </p>
             <div className="fade-4" style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" }}>
-              {[["60%", "Pour toi"], ["Automatique", "Validation"], ["15 jours", "Récompenses"], ["2 phases", "Même règles"]].map(([val, lbl]) => (
+              {[["60%", "Pour toi"], ["Automatique", "Validation"], ["30 jours", "Récompenses"], ["2 phases", "Même règles"]].map(([val, lbl]) => (
                 <div key={lbl} style={{ textAlign: "center" }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: "#3B82F6" }}>{val}</div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "1px", textTransform: "uppercase" }}>{lbl}</div>
