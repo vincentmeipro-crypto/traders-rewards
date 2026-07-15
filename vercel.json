@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/mt5-snapshot",
-      "schedule": "*/5 * * * *"
+      "schedule": "* * * * *"
     }
   ]
 }
