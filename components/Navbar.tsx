@@ -44,6 +44,16 @@ export default function Navbar() {
     ["Partenariat", "/partenariat"],
   ];
 
+  const VipLink = ({ mobile }: { mobile?: boolean }) => (
+    <a href="/vip" style={{ textDecoration: "none", display: "inline-block" }}>
+      <div className="vip-border">
+        <div className="vip-inner">
+          <span className="vip-text">{mobile ? "⚡ Challenge VIP" : "⚡ VIP"}</span>
+        </div>
+      </div>
+    </a>
+  );
+
   return (
     <>
       <style>{`
@@ -53,6 +63,32 @@ export default function Navbar() {
         }
         .flag-float-1 { animation: flagFloat 2.4s ease-in-out infinite; }
         .flag-float-2 { animation: flagFloat 2.4s ease-in-out 0.4s infinite; }
+        @property --vip-angle {
+          syntax: "<angle>"; initial-value: 0deg; inherits: false;
+        }
+        @keyframes vipSpin { to { --vip-angle: 360deg; } }
+        @keyframes vipFlow {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        .vip-border {
+          padding: 1.5px; border-radius: 6px; display: inline-block;
+          background: conic-gradient(from var(--vip-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
+          animation: vipSpin 3s linear infinite;
+          box-shadow: 0 0 8px rgba(59,130,246,0.5), 0 0 16px rgba(239,68,68,0.2);
+        }
+        .vip-inner {
+          background: #000; border-radius: 4px; padding: 6px 14px;
+          display: flex; align-items: center;
+        }
+        .vip-text {
+          background: linear-gradient(90deg, #1d4ed8 0%, #3B82F6 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%);
+          background-size: 200% auto;
+          -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: vipFlow 3s linear infinite;
+          font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+        }
         .nav-link {
           font-size: 11px;
           font-weight: 600;
@@ -113,6 +149,7 @@ export default function Navbar() {
               {navLinks.map(([label, href]) => (
                 <a key={href} href={href} className="nav-link">{label}</a>
               ))}
+              <VipLink />
             </div>
           )}
 
@@ -177,6 +214,7 @@ export default function Navbar() {
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, fontWeight: 500, textDecoration: "none" }}>{label}</a>
             ))}
+            <div onClick={() => setOpen(false)}><VipLink mobile /></div>
             <hr style={{ borderColor: "rgba(255,255,255,0.12)", margin: "4px 0" }} />
             <a href="/login" onClick={() => setOpen(false)}
               style={{ color: "#FFFFFF", fontSize: 15, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>
