@@ -2,13 +2,10 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const PROMO_CODE = "TRD50";
-const PROMO_PCT  = 50;
-
 const accounts = [
-  { size: "$100,000", id: "100k", label: "100K", price2: "€439", price1: "€429", promo2: "€219", promo1: "€214", popular: true,  badge: "EXPERT",    reward: "~€4,800" },
-  { size: "$50,000",  id: "50k",  label: "50K",  price2: "€299", price1: "€249", promo2: "€149", promo1: "€124", popular: false, badge: "CONFIRMÉ",  reward: "~€2,400" },
-  { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", promo2: "€99",  promo1: "€84",  popular: false, badge: "ÉVOLUTION", reward: "~€1,200" },
+  { size: "$100,000", id: "100k", label: "100K", price2: "€439", price1: "€429", popular: true,  badge: "EXPERT",    reward: "~€4,800" },
+  { size: "$50,000",  id: "50k",  label: "50K",  price2: "€299", price1: "€249", popular: false, badge: "CONFIRMÉ",  reward: "~€2,400" },
+  { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", popular: false, badge: "ÉVOLUTION", reward: "~€1,200" },
 ];
 
 export default function Pricing() {
@@ -55,8 +52,7 @@ export default function Pricing() {
   const currentAcc = accounts[selectedSize];
 
   const PriceCard = ({ acc, compact }: { acc: typeof accounts[0]; compact: boolean }) => {
-    const price      = model === "2step" ? acc.price2 : acc.price1;
-    const promoPrice = model === "2step" ? acc.promo2 : acc.promo1;
+    const price = model === "2step" ? acc.price2 : acc.price1;
     return (
       <div className={`pricing-card${acc.popular ? " pricing-card-popular" : ""}`}>
         {/* Badge */}
@@ -76,12 +72,8 @@ export default function Pricing() {
 
         {/* Prix + CTA */}
         <div style={{ padding: compact ? "14px 16px" : "12px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-            <div>
-              <span style={{ fontSize: 12, color: "#4b5563", textDecoration: "line-through" }}>{price}</span>
-              <span style={{ marginLeft: 8, background: "#ef4444", color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4 }}>−{PROMO_PCT}%</span>
-            </div>
-            <div style={{ fontSize: compact ? 26 : 22, fontWeight: 800, color: "#FFFFFF" }}>{promoPrice}</div>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: compact ? 30 : 26, fontWeight: 800, color: "#FFFFFF" }}>{price}</div>
           </div>
           <a href={`/checkout?product=${acc.id}-${model}`} style={{
             display: "block", textAlign: "center",

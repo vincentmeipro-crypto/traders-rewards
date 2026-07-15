@@ -10,13 +10,9 @@ import Rules from "@/components/Rules";
 import FAQ from "@/components/FAQ";
 import InstallPWA from "@/components/InstallPWA";
 import Footer from "@/components/Footer";
-import PromoPopup from "@/components/PromoPopup";
-import PromoBanner from "@/components/PromoBanner";
-
 export default function Home() {
   return (
     <main className="page-main" style={{ minHeight: "100vh" }}>
-      <PromoBanner />
       <Navbar />
       <Hero />
       <Pricing />
@@ -33,7 +29,6 @@ export default function Home() {
       <InstallPWA />
       <Footer />
       <DisclaimerBanner />
-      <PromoPopup />
     </main>
   );
 }
