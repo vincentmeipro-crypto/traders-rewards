@@ -108,43 +108,11 @@ export default function Hero() {
           50% { transform: translateY(-4px); }
         }
         .flag-float { animation: flagFloat 2.4s ease-in-out infinite; }
-        @keyframes neonFlow {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-        @property --border-angle {
-          syntax: "<angle>";
-          initial-value: 0deg;
-          inherits: false;
-        }
-        @keyframes borderSpin {
-          to { --border-angle: 360deg; }
-        }
-        .neon-border-box {
-          padding: 1.5px;
-          border-radius: 100px;
+        .hero-pill {
           display: inline-block;
-          max-width: 100%;
-          background: conic-gradient(from var(--border-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
-          animation: borderSpin 3s linear infinite;
-          box-shadow: 0 0 10px rgba(59,130,246,0.4), 0 0 20px rgba(239,68,68,0.15);
-        }
-        .neon-border-inner {
-          background: #000000;
-          border-radius: 98px;
+          border: 1px solid rgba(255,255,255,0.18);
+          border-radius: 100px;
           padding: 7px 28px;
-          display: flex;
-          align-items: center;
-          overflow: hidden;
-        }
-        .neon-flow {
-          background: linear-gradient(90deg, #1d4ed8 0%, #3B82F6 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%, #3B82F6 100%);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: neonFlow 3s linear infinite;
-          filter: drop-shadow(0 0 6px rgba(59,130,246,0.8));
         }
         @keyframes fadeUp {
           from { opacity: 0; transform: translateY(20px); }
@@ -197,12 +165,10 @@ export default function Hero() {
 
           {/* Neon phrase fixe */}
           <div style={{ marginBottom: isMobile ? 16 : 32, padding: isMobile ? "0 20px" : 0, width: "100%", boxSizing: "border-box" as const }}>
-            <div className="neon-border-box">
-              <div className="neon-border-inner">
-                <span className="neon-flow" style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, letterSpacing: "0.3px", whiteSpace: isMobile ? "normal" : "nowrap", textAlign: "center", lineHeight: 1.5 }}>
-                  {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
-                </span>
-              </div>
+            <div className="hero-pill">
+              <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 600, color: "rgba(255,255,255,0.75)", letterSpacing: "0.3px", whiteSpace: isMobile ? "normal" : "nowrap", textAlign: "center", lineHeight: 1.5 }}>
+                {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
+              </span>
             </div>
           </div>
 
