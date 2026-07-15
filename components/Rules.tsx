@@ -61,14 +61,12 @@ export default function Rules() {
   ];
 
   const fundedRows = [
-    { label: labels.profitTarget,                         v2: labels.noTarget,             v1: labels.noTarget,              vi: labels.noTarget              },
-    { label: labels.dailyLoss,                            v2: labels.keepRules + " (5%)",  v1: labels.keepRules + " (3%)",   vi: "3% EOD"                     },
-    { label: labels.totalLoss,                            v2: labels.keepRules + " (10%)", v1: labels.keepRules + " (8% EOD)",vi: "8% EOD"                    },
-    { label: labels.tradingDays,                                  v2: L("15 jours","15 días","15 days"), v1: L("15 jours","15 días","15 days"), vi: L("15 jours","15 días","15 days") },
-    { label: L("Risque par trade","Riesgo por trade","Risk per trade"), v2: "—", v1: "—", vi: "≤ 1.5%" },
-    { label: "Stop Loss",                                         v2: "—",                  v1: "—",                          vi: L("Obligatoire < 1min","Obligatorio < 1min","Required < 1min") },
-    { label: labels.profitSplit,                          v2: "80%",                       v1: "90%",                        vi: "90%"                        },
-    { label: labels.payout,                               v2: labels.payoutVal,            v1: labels.payoutVal,             vi: labels.payoutVal             },
+    { label: labels.profitTarget, v2: labels.noTarget,            v1: labels.noTarget              },
+    { label: labels.dailyLoss,    v2: labels.keepRules + " (5%)", v1: labels.keepRules + " (3%)"  },
+    { label: labels.totalLoss,    v2: labels.keepRules + " (10%)",v1: labels.keepRules + " (8% EOD)" },
+    { label: labels.tradingDays,  v2: L("15 jours","15 días","15 days"), v1: L("15 jours","15 días","15 days") },
+    { label: labels.profitSplit,  v2: "80%",                      v1: "90%"                        },
+    { label: labels.payout,       v2: labels.payoutVal,           v1: labels.payoutVal             },
   ];
 
   const groups = [
@@ -149,17 +147,15 @@ export default function Rules() {
         {tab === "funded" && (
           <div style={{ marginBottom: 32 }}>
             <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: isMobile ? 16 : 24, overflowX: isMobile ? "auto" : "visible" }}>
-              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "140px 80px 80px 100px" : "2fr 1fr 1fr 1fr", gap: 0, minWidth: isMobile ? 400 : "auto" }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "140px 100px 100px" : "2fr 1fr 1fr", gap: 0, minWidth: isMobile ? 340 : "auto" }}>
                 <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Critère" : "Criteria"}</div>
                 <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.twoStep}</div>
                 <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.oneStep} ⚡</div>
-                <div style={{ padding: "8px 0", color: "#3B82F6", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>⚡ Instant Reward</div>
                 {fundedRows.map((row, i) => (
                   <>
                     <div key={`l${i}`} style={{ padding: "10px 0", color: "rgba(255,255,255,0.6)", fontSize: 13, borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.label}</div>
-                    <div key={`v2${i}`} style={{ padding: "10px 0", color: row.v2 === "—" ? "rgba(255,255,255,0.2)" : "#FFFFFF", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.v2}</div>
-                    <div key={`v1${i}`} style={{ padding: "10px 0", color: row.v1 === "—" ? "rgba(255,255,255,0.2)" : "#FFFFFF", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.v1}</div>
-                    <div key={`vi${i}`} style={{ padding: "10px 0", color: row.vi === "—" ? "rgba(255,255,255,0.2)" : "#3B82F6", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.vi}</div>
+                    <div key={`v2${i}`} style={{ padding: "10px 0", color: "#FFFFFF", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.v2}</div>
+                    <div key={`v1${i}`} style={{ padding: "10px 0", color: "#FFFFFF", fontSize: 13, fontWeight: 700, textAlign: "center", borderBottom: i < fundedRows.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.v1}</div>
                   </>
                 ))}
               </div>
