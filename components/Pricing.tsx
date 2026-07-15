@@ -207,15 +207,6 @@ export default function Pricing() {
               })}
             </div>
             <PriceCard acc={currentAcc} compact={true} />
-            <a href="/#how-it-works" style={{
-              display: "block", textAlign: "center", marginTop: 16,
-              padding: "14px 32px", borderRadius: 8,
-              fontSize: 12, fontWeight: 700, letterSpacing: "1.5px",
-              textTransform: "uppercase", textDecoration: "none",
-              background: "transparent", border: "1px solid rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.8)",
-            }}>
-              {isFr ? "Comment ça marche ?" : "How does it work?"}
-            </a>
           </>
         )}
 
@@ -229,6 +220,20 @@ export default function Pricing() {
             ))}
           </div>
         )}
+
+        {/* Bouton Comment ça marche — visible partout */}
+        <div style={{ textAlign: "center", marginTop: isMobile ? 20 : 24 }}>
+          <a href="/#how-it-works" style={{
+            display: "inline-block",
+            padding: "14px 36px", borderRadius: 8,
+            fontSize: 12, fontWeight: 700, letterSpacing: "1.5px",
+            textTransform: "uppercase", textDecoration: "none",
+            background: "transparent", border: "1px solid rgba(255,255,255,0.3)", color: "rgba(255,255,255,0.8)",
+            transition: "border-color 0.2s, color 0.2s",
+          }}>
+            {L("Comment ça marche ?","¿Cómo funciona?","How does it work?")}
+          </a>
+        </div>
 
       </div>
     </section>

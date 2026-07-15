@@ -185,7 +185,7 @@ export default function Hero() {
             <span style={{
               fontSize: isMobile ? "clamp(1.4rem, 6vw, 2rem)" : "clamp(2rem, 4vw, 5rem)",
               letterSpacing: isMobile ? "-0.5px" : "-1px",
-              color: "rgba(255,255,255,0.75)",
+              color: "#FFFFFF",
               fontWeight: 700,
               display: "block",
               marginBottom: isMobile ? 6 : 10,
@@ -208,18 +208,10 @@ export default function Hero() {
             </span>
           </h1>
 
-          <div className="h2" style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 20 }}>
-            {!isMobile && (
-              <a href="/#how-it-works" className="hero-btn-secondary">
-                {isFr ? "Comment ça marche ?" : isEs ? "¿Cómo funciona?" : "How does it work?"}
-              </a>
-            )}
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ color: "#FFFFFF", fontSize: 11 }}>★</span>
-              <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
-                {isFr ? "Trading Simulé · Programme éducatif récompensé" : isEs ? "Trading Simulado · Programa educativo recompensado" : "Simulated Trading · Rewarded educational program"}
-              </span>
-            </div>
+          <div className="h2" style={{ textAlign: "center" }}>
+            <span style={{ color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 600 }}>
+              {isFr ? "Trading Simulé · Programme éducatif récompensé" : isEs ? "Trading Simulado · Programa educativo recompensado" : "Simulated Trading · Rewarded educational program"}
+            </span>
           </div>
 
         </div>
