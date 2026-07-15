@@ -40,8 +40,9 @@ export async function POST(req: NextRequest) {
 
     // Get user info for MT5
     const { data: { user } } = await admin.auth.admin.getUserById(userId);
-    const firstName = user?.user_metadata?.first_name || "Trader";
-    const lastName  = user?.user_metadata?.last_name  || "";
+    const { data: profile } = await admin.from("profiles").select("first_name, last_name").eq("user_id", userId).single();
+    const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
+    const lastName  = user?.user_metadata?.last_name  || profile?.last_name  || "";
     const email     = user?.email || "";
 
     // Create MT5 account
