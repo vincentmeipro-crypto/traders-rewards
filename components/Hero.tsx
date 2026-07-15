@@ -150,7 +150,7 @@ export default function Hero() {
         paddingTop: isMobile
           ? "calc(60px + var(--promo-banner-height, 0px) + 24px)"
           : "calc(72px + var(--promo-banner-height, 0px) + 32px)",
-        paddingBottom: isMobile ? 0 : 32,
+        paddingBottom: isMobile ? 0 : 16,
         paddingLeft: isMobile ? 24 : 80,
         paddingRight: isMobile ? 24 : 80,
       }}>
@@ -176,7 +176,7 @@ export default function Hero() {
             fontWeight: 900,
             color: "#FFFFFF",
             lineHeight: 1.05,
-            margin: isMobile ? "0 0 16px" : "0 0 40px",
+            margin: isMobile ? "0 0 8px" : "0 0 20px",
             width: "100%",
             display: "flex",
             flexDirection: "column",
