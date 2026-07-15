@@ -206,7 +206,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  active: "#3B82F6",
+  active: "#22c55e",
   passed: "#3B82F6",
   funded: "#3B82F6",
   failed: "#ef4444",
