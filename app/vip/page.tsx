@@ -77,11 +77,11 @@ export default function VipPage() {
         }
       `}</style>
 
-      <main style={{ background: "#000", minHeight: "100vh", paddingTop: "calc(72px + var(--promo-banner-height, 0px))", paddingBottom: 80, paddingLeft: 24, paddingRight: 24 }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-
-          {/* Hero */}
-          <div style={{ textAlign: "center", marginBottom: 80 }}>
+      <main style={{ background: "#000", paddingLeft: 24, paddingRight: 24 }}>
+        {/* Hero plein écran */}
+        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px))" }}>
+        <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto" }}>
+          <div style={{ textAlign: "center" }}>
             <div className="fade-1" style={{ display: "inline-block", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 100, padding: "6px 20px", fontSize: 11, fontWeight: 700, letterSpacing: "2px", color: "#3B82F6", textTransform: "uppercase", marginBottom: 24 }}>
               ⚡ Accès Limité
             </div>
@@ -101,6 +101,11 @@ export default function VipPage() {
               ))}
             </div>
           </div>
+
+          </div></div></div>
+
+        {/* Reste de la page */}
+        <div style={{ maxWidth: 1100, margin: "0 auto", paddingBottom: 80 }}>
 
           {/* Comment ça marche */}
           <div style={{ marginBottom: 80 }}>
@@ -161,6 +166,7 @@ export default function VipPage() {
             <strong style={{ color: "rgba(255,255,255,0.6)" }}>Avertissement :</strong> Les Challenges VIP Traders Rewards utilisent des comptes de trading simulés. L'algorithme activé opère sur un environnement de démonstration. Aucun capital réel n'est investi. Les récompenses versées proviennent du programme Traders Rewards et ne constituent pas des rendements d'investissement. Ce service est un outil d'entraînement algorithmique dans un cadre éducatif simulé. Les performances passées de l'algorithme ne garantissent pas les résultats futurs. Accès limité — Traders Rewards se réserve le droit de suspendre les nouvelles inscriptions à tout moment.
           </div>
 
+        </div>
         </div>
       </main>
     </>
