@@ -1,13 +1,12 @@
 "use client";
-import { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Check, Zap, Shield, Clock, TrendingUp } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 const PLANS = [
-  { size: "$25,000", price: "1 250€", monthly: null, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
-  { size: "$50,000", price: "2 500€", monthly: null, popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
-  { size: "$100,000", price: "5 000€", monthly: null, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
+  { size: "$25,000", price: "1 250€", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
+  { size: "$50,000", price: "2 500€", popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
+  { size: "$100,000", price: "5 000€", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
 ];
 
 const STEPS = [
@@ -18,14 +17,11 @@ const STEPS = [
 ];
 
 export default function VipPage() {
-  const { lang } = useLanguage();
-  const [hovered, setHovered] = useState<number | null>(null);
+  useLanguage();
 
   return (
     <>
       <style>{`
-        @property --vip-bg-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-        @keyframes vipBgSpin { to { --vip-bg-angle: 360deg; } }
         @keyframes vipTextFlow {
           0% { background-position: -200% center; }
           100% { background-position: 200% center; }
@@ -50,17 +46,10 @@ export default function VipPage() {
           border-radius: 20px;
           padding: 36px 28px;
           transition: border-color 0.2s, transform 0.2s;
-          cursor: default;
           position: relative;
         }
-        .plan-card:hover {
-          border-color: rgba(59,130,246,0.4);
-          transform: translateY(-4px);
-        }
-        .plan-card.popular {
-          border-color: #3B82F6;
-          background: linear-gradient(135deg, #0a0a0a 0%, #0d1829 100%);
-        }
+        .plan-card:hover { border-color: rgba(59,130,246,0.4); transform: translateY(-4px); }
+        .plan-card.popular { border-color: #3B82F6; background: linear-gradient(135deg, #0a0a0a 0%, #0d1829 100%); }
         .step-card {
           background: rgba(255,255,255,0.03);
           border: 1px solid rgba(255,255,255,0.06);
@@ -79,20 +68,21 @@ export default function VipPage() {
       `}</style>
 
       <Navbar />
+
       <main style={{ background: "#000", paddingLeft: 24, paddingRight: 24 }}>
+
         {/* Hero plein écran */}
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px))" }}>
-        <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto" }}>
-          <div style={{ textAlign: "center" }}>
+          <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", textAlign: "center" }}>
             <div className="fade-1" style={{ display: "inline-block", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 100, padding: "6px 20px", fontSize: 11, fontWeight: 700, letterSpacing: "2px", color: "#3B82F6", textTransform: "uppercase", marginBottom: 24 }}>
               ⚡ Accès Limité
             </div>
             <h1 className="fade-2" style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", fontWeight: 900, color: "#fff", lineHeight: 1.05, marginBottom: 24 }}>
               Challenge <span className="vip-hero-text">VIP</span><br />
-              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L'algorithme s'occupe de tout</span>
+              <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L&apos;algorithme s&apos;occupe de tout</span>
             </h1>
             <p className="fade-3" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)", maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.7 }}>
-              Tu paies l'accès une seule fois. Une stratégie algorithmique professionnelle s'active sur ton compte, passe les phases, et les récompenses tombent automatiquement tous les 30 jours.
+              Tu paies l&apos;accès une seule fois. Une stratégie algorithmique professionnelle s&apos;active sur ton compte, passe les phases, et les récompenses tombent automatiquement tous les 30 jours.
             </p>
             <div className="fade-4" style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" }}>
               {[["60%", "Pour toi"], ["Automatique", "Validation"], ["30 jours", "Récompenses"], ["2 phases", "Même règles"]].map(([val, lbl]) => (
@@ -103,8 +93,7 @@ export default function VipPage() {
               ))}
             </div>
           </div>
-
-          </div></div></div>
+        </div>
 
         {/* Reste de la page */}
         <div style={{ maxWidth: 1100, margin: "0 auto", paddingBottom: 80 }}>
@@ -165,10 +154,9 @@ export default function VipPage() {
 
           {/* Disclaimer légal */}
           <div className="disclaimer">
-            <strong style={{ color: "rgba(255,255,255,0.6)" }}>Avertissement :</strong> Les Challenges VIP Traders Rewards utilisent des comptes de trading simulés. L'algorithme activé opère sur un environnement de démonstration. Aucun capital réel n'est investi. Les récompenses versées proviennent du programme Traders Rewards et ne constituent pas des rendements d'investissement. Ce service est un outil d'entraînement algorithmique dans un cadre éducatif simulé. Les performances passées de l'algorithme ne garantissent pas les résultats futurs. Accès limité — Traders Rewards se réserve le droit de suspendre les nouvelles inscriptions à tout moment.
+            <strong style={{ color: "rgba(255,255,255,0.6)" }}>Avertissement :</strong> Les Challenges VIP Traders Rewards utilisent des comptes de trading simulés. L&apos;algorithme activé opère sur un environnement de démonstration. Aucun capital réel n&apos;est investi. Les récompenses versées proviennent du programme Traders Rewards et ne constituent pas des rendements d&apos;investissement. Ce service est un outil d&apos;entraînement algorithmique dans un cadre éducatif simulé. Les performances passées de l&apos;algorithme ne garantissent pas les résultats futurs. Accès limité — Traders Rewards se réserve le droit de suspendre les nouvelles inscriptions à tout moment.
           </div>
 
-        </div>
         </div>
       </main>
     </>
