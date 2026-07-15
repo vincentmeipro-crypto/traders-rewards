@@ -77,7 +77,7 @@ export default function VipPage() {
         }
       `}</style>
 
-      <main style={{ background: "#000", minHeight: "100vh", paddingTop: "calc(72px + var(--promo-banner-height, 0px) + 48px)", paddingBottom: 80, paddingLeft: 24, paddingRight: 24 }}>
+      <main style={{ background: "#000", minHeight: "100vh", paddingTop: "calc(72px + var(--promo-banner-height, 0px) + 80px)", paddingBottom: 80, paddingLeft: 24, paddingRight: 24 }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
 
           {/* Hero */}
