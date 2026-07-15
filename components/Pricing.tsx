@@ -150,7 +150,7 @@ export default function Pricing() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 20 }}>
           <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1.1, marginBottom: 6 }}>
-            {L("Commencez votre","Inicia Tu","Start your")} <span style={{ color: "#3B82F6" }}>{L("Challenge","Desafío","Challenge")}</span>
+            {L("Choisissez votre","Elige Tu","Choose your")} <span style={{ color: "#3B82F6" }}>{L("Challenge","Desafío","Challenge")}</span>
           </h2>
           <p style={{ fontSize: isMobile ? 12 : 13, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
             {L("Tradez jusqu'à 200K en compte reward.","Opera hasta $200K en cuenta reward.","Trade up to $200K in reward account.")}
