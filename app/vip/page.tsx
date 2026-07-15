@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Check, Zap, Shield, Clock, TrendingUp } from "lucide-react";
+import Navbar from "@/components/Navbar";
 
 const PLANS = [
   { size: "$25,000", price: "1 250€", monthly: null, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
@@ -77,6 +78,7 @@ export default function VipPage() {
         }
       `}</style>
 
+      <Navbar />
       <main style={{ background: "#000", paddingLeft: 24, paddingRight: 24 }}>
         {/* Hero plein écran */}
         <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px))" }}>
