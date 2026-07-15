@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient();
 
+    // Idempotency check — évite le double traitement si Stripe renvoie l'événement
+    const { data: existing } = await admin.from("challenges").select("id").eq("stripe_session_id", session.id).single();
+    if (existing) return NextResponse.json({ received: true, skipped: "duplicate" });
+
     const sizeMap: Record<string, number> = {
       "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
       "$100,000": 100000, "$200,000": 200000,
