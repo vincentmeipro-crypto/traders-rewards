@@ -167,7 +167,7 @@ export default function Hero() {
           <div style={{ marginBottom: isMobile ? 12 : 32 }}>
             <div className="hero-pill">
               <span style={{ fontSize: isMobile ? 12 : 14, fontWeight: 600, color: "rgba(255,255,255,0.75)", letterSpacing: "0.3px", whiteSpace: "nowrap", textAlign: "center", lineHeight: 1.5 }}>
-                {isFr ? "Programme éducatif · Traders Français 🇫🇷" : isEs ? "Programa educativo · Traders recompensados" : "Educational program · Rewarded traders"}
+                {isFr ? <>Programme éducatif · Traders Français <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20" style={{ display: "inline-block", width: 20, height: 14, verticalAlign: "middle", marginLeft: 4, borderRadius: 2 }}><rect width="10" height="20" fill="#002395"/><rect x="10" width="10" height="20" fill="#fff"/><rect x="20" width="10" height="20" fill="#ED2939"/></svg></> : isEs ? "Programa educativo · Traders recompensados" : "Educational program · Rewarded traders"}
               </span>
             </div>
           </div>
