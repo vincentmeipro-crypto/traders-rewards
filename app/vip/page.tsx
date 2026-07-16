@@ -71,8 +71,8 @@ export default function VipPage() {
 
       <main style={{ background: "#000", paddingLeft: 24, paddingRight: 24 }}>
 
-        {/* Hero plein écran */}
-        <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px))" }}>
+        {/* Hero */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px) + 40px)", paddingBottom: 48 }}>
           <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", textAlign: "center" }}>
             <div className="fade-1" style={{ display: "inline-block", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 100, padding: "6px 20px", fontSize: 11, fontWeight: 700, letterSpacing: "2px", color: "#3B82F6", textTransform: "uppercase", marginBottom: 24 }}>
               ⚡ Accès Limité
