@@ -81,7 +81,7 @@ export default function VipPage() {
               Challenge <span className="vip-hero-text">VIP</span><br />
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L&apos;algorithme s&apos;occupe de tout</span>
             </h1>
-            <p className="fade-3" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)", maxWidth: 600, margin: "0 auto 40px", lineHeight: 1.7 }}>
+            <p className="fade-3" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)", maxWidth: 900, margin: "0 auto 40px", lineHeight: 1.7 }}>
               Tu paies l&apos;accès une seule fois. Une stratégie algorithmique professionnelle s&apos;active sur ton compte, passe les phases, et les récompenses tombent automatiquement tous les 30 jours.
             </p>
             <div className="fade-4" style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" }}>
