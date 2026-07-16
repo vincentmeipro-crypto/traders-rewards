@@ -164,10 +164,10 @@ export default function Hero() {
         }}>
 
           {/* Neon phrase fixe */}
-          <div style={{ marginBottom: isMobile ? 16 : 32, padding: isMobile ? "0 20px" : 0, width: "100%", boxSizing: "border-box" as const }}>
+          <div style={{ marginBottom: isMobile ? 12 : 32 }}>
             <div className="hero-pill">
-              <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 600, color: "rgba(255,255,255,0.75)", letterSpacing: "0.3px", whiteSpace: isMobile ? "normal" : "nowrap", textAlign: "center", lineHeight: 1.5 }}>
-                {isFr ? "Le programme Français qui récompense les traders disciplinés" : isEs ? "El programa que recompensa a los traders disciplinados" : "The program that rewards disciplined traders"}
+              <span style={{ fontSize: isMobile ? 12 : 14, fontWeight: 600, color: "rgba(255,255,255,0.75)", letterSpacing: "0.3px", whiteSpace: "nowrap", textAlign: "center", lineHeight: 1.5 }}>
+                {isFr ? "Programme éducatif · Traders Français 🇫🇷" : isEs ? "Programa educativo · Traders recompensados" : "Educational program · Rewarded traders"}
               </span>
             </div>
           </div>
@@ -175,20 +175,20 @@ export default function Hero() {
           <h1 className="h1" style={{
             fontWeight: 900,
             color: "#FFFFFF",
-            lineHeight: 1.05,
-            margin: isMobile ? "0 0 8px" : "0 0 20px",
+            lineHeight: 1.08,
+            margin: isMobile ? "0 0 10px" : "0 0 20px",
             width: "100%",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
           }}>
             <span style={{
-              fontSize: isMobile ? "clamp(1.4rem, 6vw, 2rem)" : "clamp(2rem, 4vw, 5rem)",
+              fontSize: isMobile ? "clamp(1.7rem, 6.5vw, 2.4rem)" : "clamp(2rem, 4vw, 5rem)",
               letterSpacing: isMobile ? "-0.5px" : "-1px",
               color: "#FFFFFF",
               fontWeight: 700,
               display: "block",
-              marginBottom: isMobile ? 6 : 10,
+              marginBottom: isMobile ? 4 : 10,
             }}>
               {isFr
                 ? <>Transformez votre trading <span style={{ color: "#5DC241" }}>démo</span></>
@@ -197,8 +197,8 @@ export default function Hero() {
                   : "Turn your trading skills"}
             </span>
             <span style={{
-              fontSize: isMobile ? "clamp(2.2rem, 11vw, 3.5rem)" : "clamp(3rem, 5.8vw, 8rem)",
-              letterSpacing: isMobile ? "-1px" : "-4px",
+              fontSize: isMobile ? "clamp(2.4rem, 9.5vw, 3.5rem)" : "clamp(3rem, 5.8vw, 8rem)",
+              letterSpacing: isMobile ? "-1.5px" : "-4px",
               color: "#FFFFFF",
               fontWeight: 900,
               display: "block",
