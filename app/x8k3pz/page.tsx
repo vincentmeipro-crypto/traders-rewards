@@ -203,7 +203,7 @@ export default function AdminPage() {
 
   // Affiliés state
   type AffiliateReferral = { id: string; referred_user_id: string; purchase_amount: number; commission_amount: number; status: string; created_at: string };
-  type Affiliate = { id: string; user_id: string; code: string; commission_rate: number; total_earned: number; total_paid: number; created_at: string; referrals: AffiliateReferral[] };
+  type Affiliate = { id: string; user_id: string; code: string; commission_rate: number; total_earned: number; total_paid: number; created_at: string; referrals: AffiliateReferral[]; first_name?: string; last_name?: string; email?: string };
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [affiliatesLoaded, setAffiliatesLoaded] = useState(false);
   const [affiliateExpanded, setAffiliateExpanded] = useState<string | null>(null);
@@ -1873,7 +1873,10 @@ export default function AdminPage() {
                         {/* Ligne principale */}
                         <div onClick={() => setAffiliateExpanded(isOpen ? null : a.id)} style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
                           <div style={{ flex: 1, minWidth: 200 }}>
-                            <div style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 3 }}>{a.user_id}</div>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 2 }}>
+                              {a.first_name || a.last_name ? `${a.first_name} ${a.last_name}`.trim() : a.user_id.slice(0, 8) + "…"}
+                            </div>
+                            {a.email && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>{a.email}</div>}
                             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                               <code style={{ fontSize: 12, background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 6, color: "#fff", fontWeight: 700 }}>?ref={a.code}</code>
                               <span style={{ fontSize: 11, fontWeight: 700, color: tierColor, background: `${tierColor}15`, padding: "2px 8px", borderRadius: 100 }}>{tierLabel}</span>

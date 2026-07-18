@@ -25,15 +25,22 @@ export async function GET(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Fetch referrals for all affiliates
-  const { data: referrals } = await admin
-    .from("affiliate_referrals")
-    .select("*")
-    .order("created_at", { ascending: false });
+  // Fetch referrals, profiles, and auth users in parallel
+  const [{ data: referrals }, { data: profiles }, { data: { users } }] = await Promise.all([
+    admin.from("affiliate_referrals").select("*").order("created_at", { ascending: false }),
+    admin.from("profiles").select("user_id, first_name, last_name"),
+    admin.auth.admin.listUsers({ perPage: 1000 }),
+  ]);
 
-  // Attach referrals to each affiliate
+  const profileMap = Object.fromEntries((profiles || []).map(p => [p.user_id, p]));
+  const userMap = Object.fromEntries((users || []).map(u => [u.id, u]));
+
+  // Attach referrals + user info to each affiliate
   const result = (affiliates || []).map(a => ({
     ...a,
+    first_name: profileMap[a.user_id]?.first_name || "",
+    last_name: profileMap[a.user_id]?.last_name || "",
+    email: userMap[a.user_id]?.email || "",
     referrals: (referrals || []).filter(r => r.affiliate_user_id === a.user_id),
   }));
 
