@@ -695,7 +695,7 @@ export default function AdminPage() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {!isMobile && syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
-            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "#e5e7eb" : "#111", color: syncing ? "#8a96aa" : "#fff", border: "none", borderRadius: 8, padding: isMobile ? "7px 12px" : "8px 18px", fontSize: isMobile ? 12 : 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer", whiteSpace: "nowrap" }}>
+            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(255,255,255,0.08)" : "#3B82F6", color: syncing ? "rgba(255,255,255,0.35)" : "#fff", border: "none", borderRadius: 8, padding: isMobile ? "7px 12px" : "8px 18px", fontSize: isMobile ? 12 : 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer", whiteSpace: "nowrap" }}>
               {syncing ? "Sync..." : "Sync MT5"}
             </button>
           </div>
@@ -1103,7 +1103,7 @@ export default function AdminPage() {
                                         <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{c.model}</span>
                                         {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                                         <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700 }}>€{c.amount_paid} payé</span>
-                                        {c.payment_method && <span style={{ backgroundColor: c.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: c.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{c.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Carte"}</span>}
+                                        {c.payment_method && <span style={{ backgroundColor: c.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: c.payment_method === "crypto" ? "#f59e0b" : "#60A5FA", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{c.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Carte"}</span>}
                                       </div>
                                       <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
                                         <span>Phase : <span style={{ color: "rgba(255,255,255,0.45)" }}>{c.phase}</span></span>
@@ -1302,7 +1302,7 @@ export default function AdminPage() {
                       </td>
                       <td style={{ padding: "13px 16px" }}>
                         {p.payment_method ? (
-                          <span style={{ backgroundColor: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: p.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>
+                          <span style={{ backgroundColor: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: p.payment_method === "crypto" ? "#f59e0b" : "#60A5FA", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>
                             {p.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Virement"}
                           </span>
                         ) : <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>—</span>}
@@ -1528,7 +1528,7 @@ export default function AdminPage() {
                   <button key={val} onClick={() => setCreateForm(f => ({ ...f, type: val }))} style={{
                     flex: 1, padding: "10px", borderRadius: 7, border: "none", cursor: "pointer",
                     fontSize: 13, fontWeight: 700,
-                    backgroundColor: createForm.type === val ? (val === "reward" ? "#1565C0" : "#0D1B3E") : "transparent",
+                    backgroundColor: createForm.type === val ? (val === "reward" ? "#60A5FA" : "#0D1B3E") : "transparent",
                     color: createForm.type === val ? "#fff" : "#6b7280",
                     transition: "all 0.2s",
                   }}>{label}</button>
@@ -1565,7 +1565,7 @@ export default function AdminPage() {
               {createError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#ef444410", borderRadius: 8 }}>{createError}</div>}
               {createMsg && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#22c55e10", borderRadius: 8 }}>{createMsg}</div>}
               <button onClick={createChallenge} disabled={createLoading || !createForm.userEmail}
-                style={{ width: "100%", backgroundColor: createForm.type === "reward" ? "#1565C0" : "#60A5FA", color: createForm.type === "reward" ? "#fff" : "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
+                style={{ width: "100%", backgroundColor: createForm.type === "reward" ? "#60A5FA" : "#60A5FA", color: createForm.type === "reward" ? "#fff" : "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
                 {createLoading ? "Création en cours..." : createForm.type === "reward" ? "⭐ Créer le compte Reward" : "🎯 Créer le challenge"}
               </button>
             </>)}
@@ -1614,7 +1614,7 @@ export default function AdminPage() {
                   { label: "Virements bancaires", value: paidPayouts.filter(p => p.payment_method === "bank").length, color: "#fff" },
                   { label: "Crypto USDC", value: paidPayouts.filter(p => p.payment_method === "crypto").length, color: "#60A5FA" },
                 ].map((s, i) => (
-                  <div key={i} style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
+                  <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                     <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
@@ -1622,16 +1622,16 @@ export default function AdminPage() {
               </div>
 
               {/* Registre des versements */}
-              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, overflow: "hidden" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                   <div style={{ fontWeight: 800, fontSize: 16 }}>🧾 Registre des versements</div>
-                  <button onClick={exportCSV} style={{ background: "#1565C0", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                  <button onClick={exportCSV} style={{ background: "#60A5FA", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
                     ⬇ Export CSV
                   </button>
                 </div>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#f8faff" }}>
+                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.04)" }}>
                       {["Référence","Date","Client","Montant","Méthode","IBAN / Wallet","Justificatif"].map(h => (
                         <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
                       ))}
@@ -1643,13 +1643,13 @@ export default function AdminPage() {
                       const ch = challenges.find(c => c.id === p.challenge_id);
                       const receiptUrl = `/payout-receipt?ref=${ref}&date=${new Date(p.created_at).toLocaleDateString("fr-FR")}&amount=${p.amount}&method=${p.payment_method||""}&email=${encodeURIComponent(p.user_email||"")}&size=${encodeURIComponent(ch?.account_size||"")}&login=${ch?.mt5_login||""}`;
                       return (
-                        <tr key={p.id} style={{ borderBottom: i < paidPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
+                        <tr key={p.id} style={{ borderBottom: i < paidPayouts.length - 1 ? "1px solid rgba(0,0,0,0.05)" : "none", background: "transparent" }}>
                           <td style={{ padding: "11px 14px", fontWeight: 700, color: "#fff", fontSize: 12, fontFamily: "monospace" }}>{ref}</td>
                           <td style={{ padding: "11px 14px", color: "rgba(255,255,255,0.45)" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
                           <td style={{ padding: "11px 14px", color: "#fff" }}>{p.user_email}</td>
                           <td style={{ padding: "11px 14px", fontWeight: 800, color: "#22c55e" }}>${p.amount?.toLocaleString()}</td>
                           <td style={{ padding: "11px 14px" }}>
-                            <span style={{ background: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: p.payment_method === "crypto" ? "#f59e0b" : "#1565C0", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
+                            <span style={{ background: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: p.payment_method === "crypto" ? "#f59e0b" : "#60A5FA", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
                               {p.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Virement"}
                             </span>
                           </td>
@@ -1670,11 +1670,11 @@ export default function AdminPage() {
               </div>
 
               {/* Récap mensuel */}
-              <div style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, overflow: "hidden" }}>
+              <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, overflow: "hidden" }}>
                 <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontWeight: 800, fontSize: 16 }}>📅 Récapitulatif mensuel</div>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
-                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "#f8faff" }}>
+                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.04)" }}>
                       {["Mois","CA (€)","Récompenses versées ($)","Ventes","Marge brute"].map(h => (
                         <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
                       ))}
@@ -1682,7 +1682,7 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {Array.from(monthly.entries()).reverse().map(([m, v], i) => (
-                      <tr key={m} style={{ borderBottom: "1px solid rgba(0,0,0,0.05)", background: i % 2 === 0 ? "#fff" : "#f8faff" }}>
+                      <tr key={m} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "transparent" }}>
                         <td style={{ padding: "11px 14px", fontWeight: 700, color: "#fff" }}>{m}</td>
                         <td style={{ padding: "11px 14px", color: "#fff", fontWeight: 700 }}>€{v.ca.toLocaleString()}</td>
                         <td style={{ padding: "11px 14px", color: "#ef4444", fontWeight: 700 }}>-${v.versements.toLocaleString()}</td>
@@ -1735,18 +1735,18 @@ export default function AdminPage() {
           const caCard       = challenges.filter(c => !c.payment_method||c.payment_method==="card").reduce((s,c)=>s+(c.amount_paid||0),0);
           const caCrypto     = challenges.filter(c => c.payment_method==="crypto").reduce((s,c)=>s+(c.amount_paid||0),0);
 
-          const StatRow = ({ label, n, d = total, color = "#1565C0" }: { label: string; n: number; d?: number; color?: string }) => (
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(0,0,0,0.05)" }}>
-              <span style={{ fontSize:13, color:"#4a5568" }}>{label}</span>
+          const StatRow = ({ label, n, d = total, color = "#60A5FA" }: { label: string; n: number; d?: number; color?: string }) => (
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
+              <span style={{ fontSize:13, color:"rgba(255,255,255,0.6)" }}>{label}</span>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
                 <span style={{ fontSize:20, fontWeight:900, color, minWidth:36, textAlign:"right" }}>{n}</span>
-                <span style={{ fontSize:11, color:"#8a96aa", minWidth:40, textAlign:"right", background:"rgba(0,0,0,0.04)", borderRadius:6, padding:"2px 6px" }}>{pct(n,d)}%</span>
+                <span style={{ fontSize:11, color:"rgba(255,255,255,0.45)", minWidth:40, textAlign:"right", background:"rgba(255,255,255,0.07)", borderRadius:6, padding:"2px 6px" }}>{pct(n,d)}%</span>
               </div>
             </div>
           );
 
           const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-            <div style={{ background:"rgba(255,255,255,0.75)", backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)", border:"1px solid rgba(255,255,255,0.8)", borderRadius:12, padding:"20px 24px" }}>
+            <div style={{ background:"#111111", border:"1px solid rgba(255,255,255,0.1)", borderRadius:12, padding:"20px 24px" }}>
               <div style={{ fontWeight:800, fontSize:14, color:"#fff", marginBottom:12, paddingBottom:8, borderBottom:"2px solid rgba(255,255,255,0.1)" }}>{title}</div>
               {children}
             </div>
@@ -1765,8 +1765,8 @@ export default function AdminPage() {
                   { label:"Failed",         value:String(totalFailed),         color:"#ef4444" },
                   { label:"Passed",         value:String(totalPassed),         color:"#f59e0b" },
                 ].map((s,i) => (
-                  <div key={i} style={{ background:"rgba(255,255,255,0.75)", backdropFilter:"blur(20px)", WebkitBackdropFilter:"blur(20px)", border:"1px solid rgba(255,255,255,0.8)", borderRadius:12, padding:"16px 18px" }}>
-                    <div style={{ color:"#8a96aa", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
+                  <div key={i} style={{ background:"#111111", border:"1px solid rgba(255,255,255,0.1)", borderRadius:12, padding:"16px 18px" }}>
+                    <div style={{ color:"rgba(255,255,255,0.45)", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
                     <div style={{ fontSize:26, fontWeight:900, color:s.color }}>{s.value}</div>
                   </div>
                 ))}
@@ -1776,7 +1776,7 @@ export default function AdminPage() {
                 <Section title="💳 Par moyen de paiement">
                   <StatRow label="Carte bancaire" n={byCard} />
                   <StatRow label="Crypto" n={byCrypto} />
-                  <div style={{ display:"flex", justifyContent:"space-between", paddingTop:10, fontSize:12, color:"#8a96aa" }}>
+                  <div style={{ display:"flex", justifyContent:"space-between", paddingTop:10, fontSize:12, color:"rgba(255,255,255,0.45)" }}>
                     <span>CA carte : <strong style={{color:"#fff"}}>€{Math.round(caCard)}</strong></span>
                     <span>CA crypto : <strong style={{color:"#fff"}}>€{Math.round(caCrypto)}</strong></span>
                   </div>
@@ -1819,8 +1819,8 @@ export default function AdminPage() {
                     { label:"Conv. Reward (1-Step)",     value:`${pct(t1cert+t1certFail, t1tot)}%`,                                                                             color:"#22c55e" },
                     { label:"Taux reward global",        value:`${pct(totalCert)}%`,                                                                                            color:"#3b82f6" },
                   ].map((s,i) => (
-                    <div key={i} style={{ background:"rgba(255,255,255,0.5)", border:"1px solid rgba(0,0,0,0.06)", borderRadius:10, padding:"14px 16px" }}>
-                      <div style={{ color:"#8a96aa", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
+                    <div key={i} style={{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, padding:"14px 16px" }}>
+                      <div style={{ color:"rgba(255,255,255,0.45)", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
                       <div style={{ fontSize:26, fontWeight:900, color:s.color }}>{s.value}</div>
                     </div>
                   ))}
@@ -1843,7 +1843,7 @@ export default function AdminPage() {
                 { label: "Commissions en attente", value: `€${affiliates.reduce((s, a) => s + a.referrals.filter(r => r.status === "pending").reduce((ss, r) => ss + (r.commission_amount || 0), 0), 0).toLocaleString()}`, color: "#f59e0b" },
                 { label: "Commissions payées", value: `€${affiliates.reduce((s, a) => s + (a.total_paid || 0), 0).toLocaleString()}`, color: "#22c55e" },
               ].map((s, i) => (
-                <div key={i} style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px" }}>
+                <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px" }}>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                   <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
@@ -1853,10 +1853,10 @@ export default function AdminPage() {
             {affiliateMsg && <div style={{ color: affiliateMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700, padding: "10px 16px", background: affiliateMsg.startsWith("✓") ? "#22c55e10" : "#ef444410", borderRadius: 8 }}>{affiliateMsg}</div>}
 
             {/* Table affiliés */}
-            <div style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
+            <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
               <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Tous les affiliés</span>
-                <a href="/partenariat" target="_blank" style={{ fontSize: 12, color: "#1565C0", textDecoration: "none" }}>Voir la page partenariat →</a>
+                <a href="/partenariat" target="_blank" style={{ fontSize: 12, color: "#60A5FA", textDecoration: "none" }}>Voir la page partenariat →</a>
               </div>
               {affiliates.length === 0 ? (
                 <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun affilié pour le moment</div>
@@ -1867,15 +1867,15 @@ export default function AdminPage() {
                     const paid = a.referrals.filter(r => r.status === "paid").reduce((s, r) => s + (r.commission_amount || 0), 0);
                     const isOpen = affiliateExpanded === a.id;
                     const tierLabel = a.commission_rate >= 20 ? "Elite" : a.commission_rate >= 15 ? "Partenaire" : "Débutant";
-                    const tierColor = a.commission_rate >= 20 ? "#1565C0" : a.commission_rate >= 15 ? "#60A5FA" : "#6b7280";
+                    const tierColor = a.commission_rate >= 20 ? "#60A5FA" : a.commission_rate >= 15 ? "#60A5FA" : "#6b7280";
                     return (
-                      <div key={a.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                      <div key={a.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                         {/* Ligne principale */}
                         <div onClick={() => setAffiliateExpanded(isOpen ? null : a.id)} style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
                           <div style={{ flex: 1, minWidth: 200 }}>
                             <div style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 3 }}>{a.user_id}</div>
                             <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                              <code style={{ fontSize: 12, background: "#f3f4f6", padding: "2px 8px", borderRadius: 6, color: "#fff", fontWeight: 700 }}>?ref={a.code}</code>
+                              <code style={{ fontSize: 12, background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 6, color: "#fff", fontWeight: 700 }}>?ref={a.code}</code>
                               <span style={{ fontSize: 11, fontWeight: 700, color: tierColor, background: `${tierColor}15`, padding: "2px 8px", borderRadius: 100 }}>{tierLabel}</span>
                             </div>
                           </div>
@@ -1930,14 +1930,14 @@ export default function AdminPage() {
 
                         {/* Détail referrals */}
                         {isOpen && (
-                          <div style={{ margin: "0 20px 16px", background: "#f9fafb", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
+                          <div style={{ margin: "0 20px 16px", background: "rgba(255,255,255,0.04)", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
                             {a.referrals.length === 0 ? (
                               <div style={{ padding: "20px", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucune conversion pour le moment</div>
                             ) : (
                               <div style={{ overflowX: "auto" }}>
                                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                                   <thead>
-                                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", background: "#f3f4f6" }}>
+                                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)" }}>
                                       {["Referred User", "Achat", "Commission", "Statut", "Date"].map(h => (
                                         <th key={h} style={{ padding: "8px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
                                       ))}
@@ -1945,7 +1945,7 @@ export default function AdminPage() {
                                   </thead>
                                   <tbody>
                                     {a.referrals.map(r => (
-                                      <tr key={r.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                                      <tr key={r.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                                         <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.45)", fontFamily: "monospace", fontSize: 11 }}>{r.referred_user_id?.slice(0, 16)}…</td>
                                         <td style={{ padding: "10px 14px", fontWeight: 700, color: "#fff" }}>€{((r.purchase_amount || 0) / 100).toLocaleString()}</td>
                                         <td style={{ padding: "10px 14px", fontWeight: 800, color: "#60A5FA" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
@@ -1982,7 +1982,7 @@ export default function AdminPage() {
                   { label: "Appareils partagés", value: securityData.shared_fingerprints.length, color: securityData.shared_fingerprints.length > 0 ? "#ef4444" : "#22c55e" },
                   { label: "Connexions VPN", value: securityData.vpn_users.length, color: securityData.vpn_users.length > 0 ? "#f59e0b" : "#22c55e" },
                 ].map((s, i) => (
-                  <div key={i} style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px" }}>
+                  <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px" }}>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
                     <div style={{ fontSize: 26, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
@@ -1995,7 +1995,7 @@ export default function AdminPage() {
             {securityData && (
               <>
                 {/* IPs partagées entre comptes */}
-                <div style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
                   <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ fontSize: 18 }}>🚨</span>
                     <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>IPs partagées entre plusieurs comptes</span>
@@ -2006,20 +2006,20 @@ export default function AdminPage() {
                   ) : (
                     <div style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead><tr style={{ background: "#f9fafb" }}>
+                        <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
                           {["IP", "Pays", "Comptes concernés", "Nb comptes", "Dernière connexion"].map(h => (
                             <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
                           ))}
                         </tr></thead>
                         <tbody>
                           {securityData.shared_ips.map((item, i) => (
-                            <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: item.count >= 3 ? "#ef444408" : "#fff" }}>
+                            <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: item.count >= 3 ? "#ef444412" : "transparent" }}>
                               <td style={{ padding: "12px 14px", fontFamily: "monospace", fontWeight: 700, color: "#fff" }}>{item.ip}</td>
                               <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{item.events[0]?.country || "—"}</td>
                               <td style={{ padding: "12px 14px" }}>
                                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                   {item.emails.map((email, j) => (
-                                    <span key={j} style={{ fontSize: 12, color: "#1565C0", background: "#1565C010", padding: "2px 8px", borderRadius: 6, display: "inline-block", width: "fit-content" }}>{email}</span>
+                                    <span key={j} style={{ fontSize: 12, color: "#60A5FA", background: "rgba(96,165,250,0.1)", padding: "2px 8px", borderRadius: 6, display: "inline-block", width: "fit-content" }}>{email}</span>
                                   ))}
                                 </div>
                               </td>
@@ -2036,7 +2036,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Appareils partagés */}
-                <div style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
                   <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ fontSize: 18 }}>💻</span>
                     <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Appareils partagés entre plusieurs comptes</span>
@@ -2047,14 +2047,14 @@ export default function AdminPage() {
                   ) : (
                     <div style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead><tr style={{ background: "#f9fafb" }}>
+                        <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
                           {["Fingerprint", "Comptes concernés", "Nb comptes", "OS / Navigateur", "Dernière connexion"].map(h => (
                             <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
                           ))}
                         </tr></thead>
                         <tbody>
                           {securityData.shared_fingerprints.map((item, i) => (
-                            <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: "#ef444408" }}>
+                            <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "#ef444412" }}>
                               <td style={{ padding: "12px 14px", fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{item.fingerprint.slice(0, 16)}…</td>
                               <td style={{ padding: "12px 14px" }}>
                                 <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -2077,7 +2077,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Connexions VPN */}
-                <div style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
                   <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ fontSize: 18 }}>🛡️</span>
                     <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Connexions via VPN / Proxy détectées</span>
@@ -2088,15 +2088,15 @@ export default function AdminPage() {
                   ) : (
                     <div style={{ overflowX: "auto" }}>
                       <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead><tr style={{ background: "#f9fafb" }}>
+                        <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
                           {["Trader", "IP", "Pays", "Date"].map(h => (
                             <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
                           ))}
                         </tr></thead>
                         <tbody>
                           {securityData.vpn_users.map((e, i) => (
-                            <tr key={i} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                              <td style={{ padding: "12px 14px", color: "#1565C0", fontSize: 13 }}>{e.user_email}</td>
+                            <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                              <td style={{ padding: "12px 14px", color: "#60A5FA", fontSize: 13 }}>{e.user_email}</td>
                               <td style={{ padding: "12px 14px", fontFamily: "monospace", fontSize: 12, color: "#fff" }}>{e.ip}</td>
                               <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{e.country}</td>
                               <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.3)", fontSize: 11 }}>{new Date(e.created_at).toLocaleString("fr-FR")}</td>
@@ -2109,7 +2109,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* ── Comparaison IP Inscription vs Login vs MT5 ── */}
-                <div style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
                   <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ fontSize: 18 }}>🔍</span>
                     <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Comparaison IP : Inscription vs Login vs MT5</span>
@@ -2117,7 +2117,7 @@ export default function AdminPage() {
                   </div>
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                      <thead><tr style={{ background: "#f9fafb" }}>
+                      <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
                         {["Trader", "IP Inscription", "IP Dernière Connexion Site", "IP Trading MT5", "Statut"].map(h => (
                           <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                         ))}
@@ -2154,20 +2154,20 @@ export default function AdminPage() {
                             const mt5Mismatch = loginIP && mt5IPs.length > 0 && !mt5IPs.includes(loginIP);
                             const alert = mismatch || mt5Mismatch;
                             return (
-                              <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: alert ? "#ef444408" : "#fff" }}>
-                                <td style={{ padding: "10px 14px", color: "#1565C0", fontSize: 12, fontWeight: 600 }}>{email}</td>
+                              <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: alert ? "#ef444412" : "transparent" }}>
+                                <td style={{ padding: "10px 14px", color: "#60A5FA", fontSize: 12, fontWeight: 600 }}>{email}</td>
                                 <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
-                                  {regIP ? <span style={{ color: "#374151" }}>{regIP}</span> : <span style={{ color: "#d1d5db" }}>—</span>}
+                                  {regIP ? <span style={{ color: "rgba(255,255,255,0.7)" }}>{regIP}</span> : <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}
                                 </td>
                                 <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
                                   {loginIP
                                     ? <span style={{ color: mismatch ? "#ef4444" : "#22c55e" }}>{loginIP}</span>
-                                    : <span style={{ color: "#d1d5db" }}>—</span>}
+                                    : <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}
                                 </td>
                                 <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
                                   {mt5IPs.length > 0
                                     ? mt5IPs.map((ip, j) => <div key={j} style={{ color: mt5Mismatch ? "#ef4444" : "#374151" }}>{ip}</div>)
-                                    : <span style={{ color: "#d1d5db" }}>{mt5Loading ? "…" : "—"}</span>}
+                                    : <span style={{ color: "rgba(255,255,255,0.2)" }}>{mt5Loading ? "…" : "—"}</span>}
                                 </td>
                                 <td style={{ padding: "10px 14px" }}>
                                   {alert
@@ -2184,25 +2184,25 @@ export default function AdminPage() {
                 </div>
 
                 {/* Historique complet des connexions */}
-                <div style={{ background: "#fff", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
                   <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <span style={{ fontSize: 18 }}>📋</span>
                       <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Historique des connexions</span>
                     </div>
-                    <button onClick={() => token && loadSecurity(token)} style={{ fontSize: 12, color: "#1565C0", background: "none", border: "1px solid #1565C020", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>↻ Rafraîchir</button>
+                    <button onClick={() => token && loadSecurity(token)} style={{ fontSize: 12, color: "#60A5FA", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>↻ Rafraîchir</button>
                   </div>
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                      <thead><tr style={{ background: "#f9fafb" }}>
+                      <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
                         {["Trader", "IP", "Pays", "VPN", "Fingerprint", "Date"].map(h => (
                           <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
                         ))}
                       </tr></thead>
                       <tbody>
                         {securityData.events.slice(0, 100).map((e, i) => (
-                          <tr key={i} style={{ borderBottom: "1px solid #f3f4f6", background: e.is_vpn ? "#f59e0b08" : "#fff" }}>
-                            <td style={{ padding: "10px 14px", color: "#1565C0", fontSize: 12 }}>{e.user_email}</td>
+                          <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: e.is_vpn ? "#f59e0b12" : "transparent" }}>
+                            <td style={{ padding: "10px 14px", color: "#60A5FA", fontSize: 12 }}>{e.user_email}</td>
                             <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11, color: "#fff" }}>{e.ip}</td>
                             <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.45)", fontSize: 11 }}>{e.country}</td>
                             <td style={{ padding: "10px 14px" }}>
