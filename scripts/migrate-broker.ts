@@ -41,6 +41,27 @@ function getGroup(model: string, phase: string): string {
   return GROUP_MAP[model] ?? GROUP_MAP["2step"];
 }
 
+async function getMT5Balance(login: number): Promise<number | null> {
+  try {
+    const res = await fetch(`${MT5_URL}/accounts/${login}`, {
+      headers: { "x-api-key": MT5_SECRET },
+    });
+    if (!res.ok) return null;
+    const data = await res.json() as { balance?: number };
+    return data.balance ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function addMT5Balance(login: number, amount: number, comment: string) {
+  await fetch(`${MT5_URL}/accounts/add-balance`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-api-key": MT5_SECRET },
+    body: JSON.stringify({ login, amount, comment }),
+  });
+}
+
 async function createMT5Account(params: {
   firstName: string; lastName: string; email: string;
   leverage: number; group: string; accountSize: string;
@@ -58,7 +79,7 @@ async function createMT5Account(params: {
   return res.json() as Promise<{ login: number; password: string; password_investor: string; server: string }>;
 }
 
-async function sendMigrationEmail(to: string, firstName: string, accountSize: string, mt5: { login: number; password: string; server: string }) {
+async function sendMigrationEmail(to: string, firstName: string, accountSize: string, mt5: { login: number; password: string; server: string; balance?: number }) {
   const html = `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a0a0a;color:#fff;padding:32px;border-radius:12px">
         <h2 style="color:#fff;margin-bottom:8px">Mise à jour de votre compte MT5</h2>
@@ -83,7 +104,7 @@ async function sendMigrationEmail(to: string, firstName: string, accountSize: st
           </div>
         </div>
         <p style="color:rgba(255,255,255,0.45);font-size:12px">
-          Votre balance de ${accountSize} a été transférée sur le nouveau compte.<br>
+          Votre balance de <strong>$${mt5.balance?.toLocaleString("fr-FR") ?? accountSize.replace("$", "")}</strong> a été transférée sur le nouveau compte.<br>
           Connectez-vous à votre dashboard pour retrouver vos identifiants à tout moment.
         </p>
       </div>
@@ -133,25 +154,37 @@ async function main() {
     const email     = user?.email ?? "";
     const firstName = profile?.first_name ?? email.split("@")[0];
     const lastName  = profile?.last_name  ?? "";
-    const balance   = c.start_balance ?? c.balance ?? 10000;
-    const group     = getGroup(c.model, c.phase);
+    const startBalance = c.start_balance ?? c.balance ?? 10000;
+    const group        = getGroup(c.model, c.phase);
 
-    // Find account_size label from balance
+    // Get actual current MT5 balance (includes profit/loss)
+    const realBalance = await getMT5Balance(c.mt5_login);
+    const finalBalance = realBalance ?? startBalance;
+    const profit = finalBalance - startBalance;
+
     const sizeLabels: Record<number, string> = {
       10000: "$10,000", 25000: "$25,000", 50000: "$50,000",
       100000: "$100,000", 200000: "$200,000"
     };
-    const accountSize = sizeLabels[balance] ?? c.account_size ?? "$10,000";
+    const accountSize = sizeLabels[startBalance] ?? c.account_size ?? "$10,000";
 
     console.log(`⚙️  Migration: ${email} (${c.account_size} ${c.model} ${c.phase})`);
+    console.log(`   balance départ: $${startBalance} | balance réelle: $${finalBalance} | profit: $${profit.toFixed(2)}`);
     try {
-      // Create new MT5 account
+      // Create new MT5 account with start balance
       const newAccount = await createMT5Account({
         firstName, lastName, email,
         leverage: 100, group, accountSize,
       });
 
-      console.log(`   ✅ Nouveau compte créé: login ${newAccount.login}`);
+      console.log(`   ✅ Nouveau compte créé: login ${newAccount.login} (balance: $${startBalance})`);
+
+      // Add profit on top of start balance if any
+      if (profit > 0) {
+        await new Promise(r => setTimeout(r, 500));
+        await addMT5Balance(newAccount.login, profit, `Migration profit ${c.mt5_login}`);
+        console.log(`   ✅ Profit ajouté: +$${profit.toFixed(2)}`);
+      }
 
       // Update Supabase
       await supabase.from("challenges").update({
@@ -168,6 +201,7 @@ async function main() {
         login: newAccount.login,
         password: newAccount.password,
         server: NEW_SERVER,
+        balance: finalBalance,
       });
 
       console.log(`   ✅ Email envoyé à ${email}\n`);
