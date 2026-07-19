@@ -12,8 +12,8 @@ import {
 } from "@/lib/mailer";
 
 const FUNDED_GROUP: Record<string, string> = {
-  "2step": "Starwave\\demo\\FX1\\grp3",
-  "1step": "Starwave\\demo\\FX1\\grp4",
+  "2step": "HAR\\MAN32\\demoG3",
+  "1step": "HAR\\MAN32\\demoG4",
 };
 
 type Challenge = Record<string, unknown>;
@@ -45,7 +45,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 0. Pas de login MT5 â€” crÃ©er automatiquement le compte manquant
   if (!login) {
-    let group = is1Step ? "Starwave\\demo\\FX1\\grp2" : "Starwave\\demo\\FX1\\grp1";
+    let group = is1Step ? "HAR\\MAN32\\demoG2" : "HAR\\MAN32\\demoG1";
     if (phase === "funded") group = is1Step ? FUNDED_GROUP["1step"] : FUNDED_GROUP["2step"];
     const newAcc = await makeMT5(group);
     if (!newAcc) return { status: "mt5_creation_failed" };
@@ -122,7 +122,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
         })));
       } catch {}
     }
-    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
+    await changeMT5Group(login, "HAR\\MAN32\\demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
     const alreadyFailed = challenge.status === "failed";
@@ -161,7 +161,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
         })));
       } catch {}
     }
-    await changeMT5Group(login, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
+    await changeMT5Group(login, "HAR\\MAN32\\demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
     const alreadyFailed = challenge.status === "failed";
@@ -185,7 +185,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const certDate  = new Date().toLocaleDateString("fr-FR");
 
   const disableOldAccount = async (oldLogin: number) => {
-    await changeMT5Group(oldLogin, "Starwave\\demo\\FX1\\grp5").catch((e) => console.error(`[${oldLogin}] grp5 failed:`, e));
+    await changeMT5Group(oldLogin, "HAR\\MAN32\\demoG5").catch((e) => console.error(`[${oldLogin}] grp5 failed:`, e));
     await disableMT5Account(oldLogin).catch((e) => console.error(`[${oldLogin}] disable failed:`, e));
     await changeMT5Password(oldLogin).catch((e) => console.error(`[${oldLogin}] pwd change failed:`, e));
   };
@@ -208,7 +208,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 2-Step: phase1 -> phase2
   if (!is1Step && phase === "phase1" && targetMet && daysMet) {
-    const newAcc = await makeMT5("Starwave\\demo\\FX1\\grp1");
+    const newAcc = await makeMT5("HAR\\MAN32\\demoG1");
     if (!newAcc) return { status: "error", reason: "mt5_creation_failed_phase2" };
     await disableOldAccount(login);
     await admin.from("challenges").update({

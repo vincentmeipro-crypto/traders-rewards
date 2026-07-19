@@ -280,7 +280,7 @@ export async function PATCH(req: NextRequest) {
 
   // Disable MT5 + sync balance réelle si passage en failed
   if (updates.status === "failed" && data.mt5_login) {
-    try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+    try { await changeMT5Group(data.mt5_login, "HAR\\MAN32\\demoG5"); } catch {}
     try { await disableMT5Account(data.mt5_login); } catch {}
     // Sync balance réelle depuis MT5 (affiche la vraie perte dans les dashboards)
     try {
@@ -309,7 +309,7 @@ export async function PATCH(req: NextRequest) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
       try { await sendFailedEmail(userEmail, data.account_size, "total_drawdown"); } catch {}
       if (data.mt5_login) {
-        try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+        try { await changeMT5Group(data.mt5_login, "HAR\\MAN32\\demoG5"); } catch {}
         try { await disableMT5Account(data.mt5_login); } catch {}
       }
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
@@ -320,7 +320,7 @@ export async function PATCH(req: NextRequest) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
       try { await sendFailedEmail(userEmail, data.account_size, "daily_drawdown"); } catch {}
       if (data.mt5_login) {
-        try { await changeMT5Group(data.mt5_login, "Starwave\\demo\\FX1\\grp5"); } catch {}
+        try { await changeMT5Group(data.mt5_login, "HAR\\MAN32\\demoG5"); } catch {}
         try { await disableMT5Account(data.mt5_login); } catch {}
       }
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
