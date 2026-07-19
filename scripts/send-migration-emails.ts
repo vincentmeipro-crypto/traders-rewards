@@ -39,7 +39,7 @@ async function main() {
   const logins = MIGRATED.map(m => m.login);
   const { data: challenges } = await supabase
     .from("challenges")
-    .select("id, user_id, mt5_login, mt5_password, mt5_server, account_size, model, phase")
+    .select("id, user_id, mt5_login, mt5_password, mt5_password_investor, mt5_server, account_size, model, phase")
     .in("mt5_login", logins);
 
   if (!challenges?.length) { console.log("Aucun challenge trouvé"); return; }
