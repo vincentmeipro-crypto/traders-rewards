@@ -510,8 +510,11 @@ export default function AdminPage() {
     if (!confirm(`Ajouter $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance + amount).toLocaleString()}`)) return;
     const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: false, comment: "Ajout manuel admin" }) });
     const data = await res.json();
-    if (res.ok) alert(`✅ +$${amount.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
-    else alert(`Erreur : ${data.error}`);
+    if (res.ok) {
+      const newBalance = mt5Balance + amount;
+      setChallenges(cs => cs.map(x => x.id === c.id ? { ...x, balance: newBalance } : x));
+      alert(`✅ +$${amount.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
+    } else alert(`Erreur : ${data.error}`);
   };
 
   const withdrawMT5Custom = async (c: Challenge) => {
@@ -528,8 +531,11 @@ export default function AdminPage() {
     if (!confirm(`Retirer $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance - amount).toLocaleString()}`)) return;
     const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: true, comment: "Retrait manuel admin" }) });
     const data = await res.json();
-    if (res.ok) alert(`✅ Retrait de $${amount.toLocaleString()} effectué sur MT5 ${c.mt5_login}`);
-    else alert(`Erreur : ${data.error}`);
+    if (res.ok) {
+      const newBalance = mt5Balance - amount;
+      setChallenges(cs => cs.map(x => x.id === c.id ? { ...x, balance: newBalance } : x));
+      alert(`✅ Retrait de $${amount.toLocaleString()} effectué sur MT5 ${c.mt5_login}`);
+    } else alert(`Erreur : ${data.error}`);
   };
 
   const updatePayout = async (id: string, status: string) => {

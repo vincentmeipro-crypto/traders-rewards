@@ -37,7 +37,15 @@ export async function POST(req: NextRequest) {
     } else {
       await addMT5Balance(login, amount, comment || "Balance correction");
     }
-    return NextResponse.json({ ok: true, login, amount, withdraw: !!withdraw });
+    // Sync new balance to Supabase so dashboard reflects the change
+    const admin2 = createAdminClient();
+    const newInfo = await getMT5Account(login).catch(() => null);
+    if (newInfo?.balance != null) {
+      await admin2.from("challenges")
+        .update({ balance: newInfo.balance, last_synced_at: new Date().toISOString() })
+        .eq("mt5_login", login);
+    }
+    return NextResponse.json({ ok: true, login, amount, withdraw: !!withdraw, balance: newInfo?.balance });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
   }
