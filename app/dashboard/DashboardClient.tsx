@@ -1785,6 +1785,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
+                      { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
                       { label: "📱 iPhone / iPad", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
                       { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
                     ].map((item, i) => (
