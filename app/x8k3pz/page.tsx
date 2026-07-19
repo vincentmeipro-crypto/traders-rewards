@@ -241,6 +241,11 @@ export default function AdminPage() {
       setToken(t);
       await loadAdminData(t);
     });
+    // Refresh token automatically when Supabase renews the session
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.access_token) setToken(session.access_token);
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleAdminLogin = async (e: React.FormEvent) => {
@@ -486,9 +491,16 @@ export default function AdminPage() {
     else alert(`Erreur : ${data.error}`);
   };
 
+  const getFreshToken = async (): Promise<string | null> => {
+    const { data: { session } } = await createClient().auth.getSession();
+    if (session?.access_token) { setToken(session.access_token); return session.access_token; }
+    return token;
+  };
+
   const addMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const t = await getFreshToken();
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${t}` } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const input = prompt(`MT5 #${c.mt5_login} — Balance actuelle : $${mt5Balance.toLocaleString()}\n\nMontant à ajouter ($) :`);
@@ -496,7 +508,7 @@ export default function AdminPage() {
     const amount = parseFloat(input.replace(",", "."));
     if (isNaN(amount) || amount <= 0) { alert("Montant invalide"); return; }
     if (!confirm(`Ajouter $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance + amount).toLocaleString()}`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: false, comment: "Ajout manuel admin" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: false, comment: "Ajout manuel admin" }) });
     const data = await res.json();
     if (res.ok) alert(`✅ +$${amount.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
     else alert(`Erreur : ${data.error}`);
@@ -504,7 +516,8 @@ export default function AdminPage() {
 
   const withdrawMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const t = await getFreshToken();
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${t}` } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const input = prompt(`MT5 #${c.mt5_login} — Balance actuelle : $${mt5Balance.toLocaleString()}\n\nMontant à retirer ($) :`);
@@ -513,7 +526,7 @@ export default function AdminPage() {
     if (isNaN(amount) || amount <= 0) { alert("Montant invalide"); return; }
     if (amount > mt5Balance) { alert(`Impossible : $${amount.toLocaleString()} > balance ($${mt5Balance.toLocaleString()})`); return; }
     if (!confirm(`Retirer $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance - amount).toLocaleString()}`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: true, comment: "Retrait manuel admin" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: true, comment: "Retrait manuel admin" }) });
     const data = await res.json();
     if (res.ok) alert(`✅ Retrait de $${amount.toLocaleString()} effectué sur MT5 ${c.mt5_login}`);
     else alert(`Erreur : ${data.error}`);
