@@ -10,19 +10,19 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 app = Flask(__name__)
 
-MT5_SERVER     = os.environ.get("MT5_SERVER",     "84.201.6.142:443")
-TRADER_SERVER  = os.environ.get("TRADER_SERVER",  "StarwaveFX-Server")
-MT5_LOGIN      = int(os.environ.get("MT5_LOGIN",  "9901"))
-MT5_PASSWORD   = os.environ.get("MT5_PASSWORD",   "Allan@4321")
+MT5_SERVER     = os.environ.get("MT5_SERVER",     "144.91.107.183:443")
+TRADER_SERVER  = os.environ.get("TRADER_SERVER",  "TODO_ASK_ALLAN")
+MT5_LOGIN      = int(os.environ.get("MT5_LOGIN",  "5032"))
+MT5_PASSWORD   = os.environ.get("MT5_PASSWORD",   "_3UpOkWq")
 API_SECRET     = os.environ.get("MT5_API_SECRET", "elysium-mt5-secret-2025")
-TEMPLATE_LOGIN = 900909612732
+TEMPLATE_LOGIN = 0  # TODO: ask Allan for template login on new server
 
 GROUP_MAP = {
-    "2step":         r"Starwave\demo\FX1\grp1",
-    "1step":         r"Starwave\demo\FX1\grp2",
-    "funded_2step":  r"Starwave\demo\FX1\grp3",
-    "funded_1step":  r"Starwave\demo\FX1\grp4",
-    "disabled":      r"Starwave\demo\FX1\grp5",
+    "2step":         r"TODO_ASK_ALLAN\grp1",
+    "1step":         r"TODO_ASK_ALLAN\grp2",
+    "funded_2step":  r"TODO_ASK_ALLAN\grp3",
+    "funded_1step":  r"TODO_ASK_ALLAN\grp4",
+    "disabled":      r"TODO_ASK_ALLAN\grp5",
 }
 
 BALANCE_MAP = {
