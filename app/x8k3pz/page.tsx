@@ -484,6 +484,22 @@ export default function AdminPage() {
     else alert(`Erreur : ${data.error}`);
   };
 
+  const addMT5Custom = async (c: Challenge) => {
+    if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const syncData = await syncRes.json();
+    const mt5Balance = syncData.balance ?? 0;
+    const input = prompt(`MT5 #${c.mt5_login} — Balance actuelle : $${mt5Balance.toLocaleString()}\n\nMontant à ajouter ($) :`);
+    if (!input) return;
+    const amount = parseFloat(input.replace(",", "."));
+    if (isNaN(amount) || amount <= 0) { alert("Montant invalide"); return; }
+    if (!confirm(`Ajouter $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance + amount).toLocaleString()}`)) return;
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: false, comment: "Ajout manuel admin" }) });
+    const data = await res.json();
+    if (res.ok) alert(`✅ +$${amount.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
+    else alert(`Erreur : ${data.error}`);
+  };
+
   const withdrawMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
     const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
@@ -930,6 +946,7 @@ export default function AdminPage() {
                                 </div>
                               : <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                                   <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
+                                  {c.mt5_login && <button onClick={() => addMT5Custom(c)} style={{ backgroundColor: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid #22c55e33", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>+$</button>}
                                   {c.mt5_login && <button onClick={() => withdrawMT5Custom(c)} style={{ backgroundColor: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>−$</button>}
                                   <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
