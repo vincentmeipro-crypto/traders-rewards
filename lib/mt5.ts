@@ -7,18 +7,18 @@ const MT5_HEADERS = {
   "bypass-tunnel-reminder": "true",
 };
 
-// grp1 = Challenge 2-Step  (DD daily 5%, DD max 10%)
-// grp2 = Challenge 1-Step  (DD daily 3%, DD max 8%)
-// grp3 = Certified 2-Step  (règles funded)
-// grp4 = Certified 1-Step  (règles funded)
-// grp5 = Comptes désactivés / breach
+// demoG1 = Challenge 2-Step
+// demoG2 = Challenge 1-Step
+// demoG3 = Certified 2-Step
+// demoG4 = Certified 1-Step
+// demoG5 = Comptes désactivés / breach
 const GROUP_MAP: Record<string, string> = {
-  "2step":         "Starwave\\demo\\FX1\\grp1",
-  "1step":         "Starwave\\demo\\FX1\\grp2",
-  "funded_2step":  "Starwave\\demo\\FX1\\grp3",
-  "funded_1step":  "Starwave\\demo\\FX1\\grp4",
-  "instant":       "Starwave\\demo\\FX1\\grp4",  // ETAPE1 REWARD — même groupe que funded_1step
-  "disabled":      "Starwave\\demo\\FX1\\grp5",
+  "2step":         "HAR\\MAN32\\demoG1",
+  "1step":         "HAR\\MAN32\\demoG2",
+  "funded_2step":  "HAR\\MAN32\\demoG3",
+  "funded_1step":  "HAR\\MAN32\\demoG4",
+  "instant":       "HAR\\MAN32\\demoG4",
+  "disabled":      "HAR\\MAN32\\demoG5",
 };
 
 export function getMT5Group(model: string, phase = "challenge"): string {
