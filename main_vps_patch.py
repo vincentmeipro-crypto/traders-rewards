@@ -15,7 +15,6 @@ TRADER_SERVER  = os.environ.get("TRADER_SERVER",  "XyloMarkets-Markets")
 MT5_LOGIN      = int(os.environ.get("MT5_LOGIN",  "5032"))
 MT5_PASSWORD   = os.environ.get("MT5_PASSWORD",   "_3UpOkWq")
 API_SECRET     = os.environ.get("MT5_API_SECRET", "elysium-mt5-secret-2025")
-TEMPLATE_LOGIN = 0  # TODO: ask Allan for template login on new server
 
 GROUP_MAP = {
     "2step":         r"HAR\MAN32\demoG1",
@@ -69,17 +68,15 @@ def create_account():
     last_name    = data.get("last_name", "")
     email        = data.get("email", "")
     leverage     = int(data.get("leverage", 100))
-    group        = data.get("group", r"Starwave\demo\FX1\grp1")
+    group        = data.get("group", r"HAR\MAN32\demoG1")
     account_size = data.get("account_size", "$10,000")
     balance      = BALANCE_MAP.get(account_size, 10000.0)
     mgr = connect_mt5()
     if not mgr: return jsonify({"error": "Cannot connect to MT5"}), 500
     try:
-        users = mgr.UserGetByLogins([TEMPLATE_LOGIN])
-        if not users: return jsonify({"error": "Template user not found"}), 500
-        u = users[0]
         master_pass   = generate_password()
         investor_pass = generate_password()
+        u = MT5Manager.UserRecord()
         u.Login = 0
         u.Name  = f"{first_name} {last_name}".strip() or email
         u.FirstName = first_name
@@ -87,14 +84,14 @@ def create_account():
         u.EMail  = email
         u.Group  = group
         u.Leverage = leverage
-        u.Comment  = f"Elysium {account_size}"
+        u.Comment  = f"Traders Rewards {account_size}"
         ok = mgr.UserAdd(u, master_pass, investor_pass)
         if not ok:
             err = MT5Manager.LastError()
             return jsonify({"error": f"UserAdd failed: {err}"}), 500
         new_login = u.Login
         time.sleep(0.3)
-        mgr.DealerBalance(new_login, balance, 2, f"Elysium {account_size} Initial Balance")
+        mgr.DealerBalance(new_login, balance, 2, f"Traders Rewards {account_size} Initial Balance")
         mgr.Disconnect()
         return jsonify({"login": new_login, "password": master_pass, "password_investor": investor_pass, "server": TRADER_SERVER, "group": group, "balance": balance})
     except Exception as e:
