@@ -333,14 +333,17 @@ def close_positions(login):
         _mt5_lock.release()
         return jsonify({"error": "Cannot connect to MT5"}), 500
     try:
-        positions = mgr.PositionGetByLogin(login) or []
+        positions = mgr.PositionGetByLogins([login]) or []
         closed = 0
         for p in positions:
-            mgr.PositionClose(p.Position)
-            closed += 1
+            ticket = getattr(p, 'Position', None) or getattr(p, 'Ticket', None)
+            if ticket:
+                ok = mgr.PositionDelete(ticket)
+                if ok:
+                    closed += 1
         mgr.Disconnect()
         _mt5_lock.release()
-        return jsonify({"closed": closed})
+        return jsonify({"closed": closed, "found": len(positions)})
     except Exception as e:
         try: mgr.Disconnect()
         except: pass
