@@ -18,11 +18,11 @@ API_SECRET     = os.environ.get("MT5_API_SECRET", "elysium-mt5-secret-2025")
 TEMPLATE_LOGIN = 0  # TODO: ask Allan for template login on new server
 
 GROUP_MAP = {
-    "2step":         r"TODO_ASK_ALLAN\grp1",
-    "1step":         r"TODO_ASK_ALLAN\grp2",
-    "funded_2step":  r"TODO_ASK_ALLAN\grp3",
-    "funded_1step":  r"TODO_ASK_ALLAN\grp4",
-    "disabled":      r"TODO_ASK_ALLAN\grp5",
+    "2step":         r"HAR\MAN32\demoG1",
+    "1step":         r"HAR\MAN32\demoG2",
+    "funded_2step":  r"HAR\MAN32\demoG3",
+    "funded_1step":  r"HAR\MAN32\demoG4",
+    "disabled":      r"HAR\MAN32\demoG5",
 }
 
 BALANCE_MAP = {
