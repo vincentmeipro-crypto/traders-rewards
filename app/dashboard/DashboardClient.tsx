@@ -1785,9 +1785,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
-                      { label: "🖥 Windows", href: "https://download.terminal.free/cdn/web/starwave.fx.ltd/mt5/starwavefx5setup.exe" },
-                      { label: "🍎 Mac", href: "https://download.terminal.free/cdn/web/metaquotes.software.corp/mt5/MetaTrader5.pkg.zip?utm_campaign=metatrader5.help" },
-                      { label: "📱 iPhone / iPad", href: "https://apps.apple.com/app/id413251709" },
+                      { label: "📱 iPhone / iPad", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
                       { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
                     ].map((item, i) => (
                       <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
