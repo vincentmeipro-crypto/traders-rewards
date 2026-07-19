@@ -448,7 +448,9 @@ export default function AdminPage() {
   };
 
   const deleteChallenge = async (id: string) => {
-    if (!confirm("Supprimer ce challenge ?")) return;
+    const c = challenges.find(x => x.id === id);
+    const label = c ? `${c.client_first_name} ${c.client_last_name} — ${c.account_size} ${c.model} (${c.phase})` : id;
+    if (!confirm(`Supprimer définitivement ce challenge ?\n\n${label}\n\nCette action est irréversible.`)) return;
     await fetch("/api/admin/challenges", { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id }) });
     setChallenges(cs => cs.filter(x => x.id !== id));
   };
@@ -948,7 +950,7 @@ export default function AdminPage() {
                                   <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
                                   {c.mt5_login && <button onClick={() => addMT5Custom(c)} style={{ backgroundColor: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid #22c55e33", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>+$</button>}
                                   {c.mt5_login && <button onClick={() => withdrawMT5Custom(c)} style={{ backgroundColor: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>−$</button>}
-                                  <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                  <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>}
                           </td>
                         </tr>
