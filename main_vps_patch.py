@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 app = Flask(__name__)
 
 MT5_SERVER     = os.environ.get("MT5_SERVER",     "144.91.107.183:443")
-TRADER_SERVER  = os.environ.get("TRADER_SERVER",  "XyloMarkets-Markets")
+TRADER_SERVER  = os.environ.get("TRADER_SERVER",  "XyloMarkets-Server")
 MT5_LOGIN      = int(os.environ.get("MT5_LOGIN",  "5032"))
 MT5_PASSWORD   = os.environ.get("MT5_PASSWORD",   "_3UpOkWq")
 API_SECRET     = os.environ.get("MT5_API_SECRET", "elysium-mt5-secret-2025")
@@ -122,7 +122,7 @@ def create_account():
             return jsonify({"error": f"UserAdd failed: {err}"}), 500
         new_login = u.Login
         time.sleep(0.3)
-        mgr.DealerBalance(new_login, MT5Manager.MTDeal.EnDealEntry.ENTRY_IN, balance, f"Traders Rewards {account_size}")
+        mgr.DealerBalance(new_login, balance, 2, f"Traders Rewards {account_size}")
         mgr.Disconnect()
         _mt5_lock.release()
         return jsonify({"login": new_login, "password": master_pass, "password_investor": investor_pass, "server": TRADER_SERVER, "group": group, "balance": balance})
@@ -207,7 +207,7 @@ def add_balance():
         _mt5_lock.release()
         return jsonify({"error": "Cannot connect to MT5"}), 500
     try:
-        mgr.DealerBalance(login, MT5Manager.MTDeal.EnDealEntry.ENTRY_IN, amount, comment)
+        mgr.DealerBalance(login, amount, 2, comment)
         mgr.Disconnect()
         _mt5_lock.release()
         return jsonify({"success": True})
@@ -232,7 +232,7 @@ def withdraw_balance():
         _mt5_lock.release()
         return jsonify({"error": "Cannot connect to MT5"}), 500
     try:
-        mgr.DealerBalance(login, MT5Manager.MTDeal.EnDealEntry.ENTRY_OUT, abs(amount), comment)
+        mgr.DealerBalance(login, -abs(amount), 2, comment)
         mgr.Disconnect()
         _mt5_lock.release()
         return jsonify({"success": True})
