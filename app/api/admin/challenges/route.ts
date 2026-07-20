@@ -30,7 +30,7 @@ async function autoTransitionPhase(challenge: Record<string, unknown>) {
   if (status === "passed" || status === "funded") return null;
 
   const profitPct = ((balance - startBalance) / startBalance) * 100;
-  const conditionsMet = profitPct >= profitTarget && tradingDays >= 4;
+  const conditionsMet = profitPct >= profitTarget && tradingDays >= 5;
 
   if (!conditionsMet) return null;
 
