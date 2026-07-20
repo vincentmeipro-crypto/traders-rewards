@@ -185,6 +185,24 @@ export default function Pricing() {
               </button>
             );
           })}
+          <a href="/vip" style={{
+            background: "linear-gradient(135deg, #1d3a6e 0%, #1e3a8a 100%)",
+            border: "1px solid rgba(59,130,246,0.5)",
+            borderRadius: 10,
+            padding: isMobile ? "8px 10px" : "10px 20px",
+            cursor: "pointer",
+            display: "flex", alignItems: "center", gap: isMobile ? 6 : 10,
+            transition: "all 0.2s",
+            flex: isMobile ? "1 1 0" : undefined,
+            minWidth: isMobile ? 0 : 150,
+            textDecoration: "none",
+          }}>
+            <span style={{ fontSize: isMobile ? 14 : 16 }}>⚡</span>
+            <div>
+              <div style={{ fontSize: isMobile ? 11 : 13, fontWeight: 800, color: "#3B82F6", whiteSpace: "nowrap" }}>Challenge VIP</div>
+              <div style={{ fontSize: isMobile ? 8 : 10, color: "rgba(59,130,246,0.6)", fontWeight: 500, marginTop: 1, whiteSpace: "nowrap" }}>Algo intégré</div>
+            </div>
+          </a>
         </div>
 
         {/* MOBILE : sélecteur de taille + carte unique */}
