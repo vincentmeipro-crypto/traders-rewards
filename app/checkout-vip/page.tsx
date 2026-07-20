@@ -17,7 +17,7 @@ const VIP_RULES = [
   { label: "Perte totale max",      value: "10%" },
   { label: "Limite de temps",       value: "Illimitée" },
   { label: "Validation",            value: "Automatique ✓" },
-  { label: "Partage des profits",   value: "60%" },
+  { label: "Partage des profits",   value: "100%" },
   { label: "Récompenses",           value: "Tous les 30 jours" },
 ];
 
@@ -304,8 +304,7 @@ function VipCheckoutContent() {
               <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.7, margin: 0 }}>
                 • Le trading sur notre plateforme est <strong style={{ color: "rgba(255,255,255,0.7)" }}>100% simulé</strong> — aucun capital réel.<br />
                 • Les frais d&apos;accès sont <strong style={{ color: "rgba(255,255,255,0.7)" }}>non remboursables</strong> dès l&apos;activation du compte.<br />
-                • La récompense est de <strong style={{ color: "rgba(255,255,255,0.7)" }}>60%</strong> des profits simulés, versés tous les 30 jours.<br />
-                • En cas de violation des règles, le compte peut être résilié sans indemnité.<br />
+                • La récompense est de <strong style={{ color: "rgba(255,255,255,0.7)" }}>100%</strong> des profits simulés, versés tous les 30 jours.<br />
                 • Droit applicable : <strong style={{ color: "rgba(255,255,255,0.7)" }}>loi estonienne</strong>.
               </p>
             </div>
