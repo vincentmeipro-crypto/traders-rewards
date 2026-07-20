@@ -7,8 +7,8 @@ const faqData = {
   en: [
     { q: "How do I get started?", a: "Choose your challenge (2-Step or 1-Step), select your account size ($25K to $100K, up to $200K cumulative on Reward accounts), complete payment, and receive your trading account credentials instantly by email." },
     { q: "Is there a time limit to pass the challenge?", a: "No. There is absolutely no time limit on any of our challenges. Trade at your own pace — take days, weeks, or months." },
-    { q: "What are the profit targets?", a: "2-Step: Phase 1 requires +10% profit, Phase 2 requires +5% profit. 1-Step: a single phase with a +8% profit target, then you become a Trader Reward." },
-    { q: "What are the drawdown rules?", a: "2-Step: maximum 5% daily loss and 10% total loss. 1-Step: maximum 3% daily loss and 8% trailing total loss (EOD)." },
+    { q: "What are the profit targets?", a: "2-Step: Phase 1 requires +10% profit, Phase 2 requires +5% profit. 1-Step: a single phase with a +10% profit target, then you become a Trader Reward." },
+    { q: "What are the drawdown rules?", a: "2-Step: maximum 5% daily loss and 10% total loss. 1-Step: maximum 3% daily loss and 10% trailing total loss (EOD)." },
     { q: "What is the minimum number of trading days?", a: "You must trade on at least 5 different calendar days during each phase." },
     { q: "What instruments can I trade?", a: "All available instruments: Forex pairs, Gold, Silver, Oil, Stock Indices, Cryptocurrencies, and Commodities." },
     { q: "Can I trade during news events?", a: "Yes during evaluation. On Reward accounts, trading is suspended 5 minutes before and after major news releases." },
@@ -19,8 +19,8 @@ const faqData = {
   fr: [
     { q: "Comment démarrer ?", a: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($25K à $100K, jusqu'à $200K cumulé en Reward), effectuez le paiement et recevez vos identifiants instantanément par email." },
     { q: "Y a-t-il une limite de temps ?", a: "Non. Il n'y a absolument aucune limite de temps sur nos challenges. Tradez à votre rythme." },
-    { q: "Quels sont les objectifs de profit ?", a: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase à +8%, puis vous devenez Trader Reward." },
-    { q: "Quelles sont les règles de drawdown ?", a: "2-Step : 5% perte journalière max et 10% total. 1-Step : 3% journalier et 8% trailing total (EOD)." },
+    { q: "Quels sont les objectifs de profit ?", a: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase à +10%, puis vous devenez Trader Reward." },
+    { q: "Quelles sont les règles de drawdown ?", a: "2-Step : 5% perte journalière max et 10% total. 1-Step : 3% journalier et 10% trailing total (EOD)." },
     { q: "Combien de jours de trading minimum ?", a: "Au moins 5 jours calendaires différents par phase." },
     { q: "Quels instruments puis-je trader ?", a: "Tous les instruments : Forex, Or, Argent, Pétrole, Indices boursiers, Cryptomonnaies et Matières premières." },
     { q: "Peut-on trader sur les news ?", a: "Oui pendant l'évaluation. Sur les comptes Reward, le trading est suspendu 5 minutes avant et après les publications majeures." },
@@ -31,8 +31,8 @@ const faqData = {
   es: [
     { q: "¿Cómo empezar?", a: "Elige tu challenge (2-Step o 1-Step), selecciona el tamaño de cuenta ($25K a $100K, hasta $200K acumulado en cuentas Reward), realiza el pago y recibe tus credenciales al instante por email." },
     { q: "¿Hay límite de tiempo?", a: "No. No hay ningún límite de tiempo en nuestros challenges. Opera a tu ritmo." },
-    { q: "¿Cuáles son los objetivos de beneficio?", a: "2-Step: Fase 1 = +10%, Fase 2 = +5%. 1-Step: una sola fase con +8%, luego te conviertes en Trader Reward." },
-    { q: "¿Cuáles son las reglas de drawdown?", a: "2-Step: 5% pérdida diaria máx. y 10% total. 1-Step: 3% diario y 8% trailing total (EOD)." },
+    { q: "¿Cuáles son los objetivos de beneficio?", a: "2-Step: Fase 1 = +10%, Fase 2 = +5%. 1-Step: una sola fase con +10%, luego te conviertes en Trader Reward." },
+    { q: "¿Cuáles son las reglas de drawdown?", a: "2-Step: 5% pérdida diaria máx. y 10% total. 1-Step: 3% diario y 10% trailing total (EOD)." },
     { q: "¿Mínimo de días de trading?", a: "Al menos 5 días calendario diferentes por fase." },
     { q: "¿Qué instrumentos puedo operar?", a: "Todos los instrumentos: Forex, Oro, Plata, Petróleo, Índices, Criptomonedas y Materias primas." },
     { q: "¿Puedo operar durante noticias?", a: "Sí durante la evaluación. En cuentas Reward, el trading se suspende 5 minutos antes y después de noticias importantes." },
@@ -43,8 +43,8 @@ const faqData = {
   pt: [
     { q: "Como começar?", a: "Escolha seu challenge (2-Step ou 1-Step), selecione o tamanho da conta ($25K a $100K, até $200K acumulado em contas Reward), efetue o pagamento e receba suas credenciais instantaneamente por email." },
     { q: "Há limite de tempo?", a: "Não. Não há absolutamente nenhum limite de tempo nos nossos challenges. Opere no seu ritmo." },
-    { q: "Quais são os objetivos de lucro?", a: "2-Step: Fase 1 = +10%, Fase 2 = +5%. 1-Step: uma única fase com +8%, depois você se torna Trader Reward." },
-    { q: "Quais são as regras de drawdown?", a: "2-Step: 5% perda diária máx. e 10% total. 1-Step: 3% diário e 8% trailing total (EOD)." },
+    { q: "Quais são os objetivos de lucro?", a: "2-Step: Fase 1 = +10%, Fase 2 = +5%. 1-Step: uma única fase com +10%, depois você se torna Trader Reward." },
+    { q: "Quais são as regras de drawdown?", a: "2-Step: 5% perda diária máx. e 10% total. 1-Step: 3% diário e 10% trailing total (EOD)." },
     { q: "Mínimo de dias de trading?", a: "Pelo menos 5 dias calendário diferentes por fase." },
     { q: "Quais instrumentos posso operar?", a: "Todos os instrumentos: Forex, Ouro, Prata, Petróleo, Índices, Criptomoedas e Commodities." },
     { q: "Posso operar durante notícias?", a: "Sim durante a avaliação. Em contas Reward, o trading é suspenso 5 minutos antes e após publicações importantes." },
@@ -55,7 +55,7 @@ const faqData = {
   de: [
     { q: "Wie starte ich?", a: "Wähle deine Challenge (2-Step oder 1-Step), wähle die Kontogröße ($25K bis $100K, bis zu $200K kumuliert auf Reward-Konten), zahle und erhalte deine Zugangsdaten sofort per E-Mail." },
     { q: "Gibt es ein Zeitlimit?", a: "Nein. Es gibt absolut kein Zeitlimit bei unseren Challenges. Handle in deinem eigenen Tempo." },
-    { q: "Was sind die Gewinnziele?", a: "2-Step: Phase 1 = +10%, Phase 2 = +5%. 1-Step: eine einzige Phase mit +8%, dann wirst du Trader Reward." },
+    { q: "Was sind die Gewinnziele?", a: "2-Step: Phase 1 = +10%, Phase 2 = +5%. 1-Step: eine einzige Phase mit +10%, dann wirst du Trader Reward." },
     { q: "Was sind die Drawdown-Regeln?", a: "2-Step: max. 5% Tagesverlust und 10% Gesamtverlust. 1-Step: 3% täglich und 8% Trailing-Gesamt (EOD)." },
     { q: "Mindestanzahl an Handelstagen?", a: "Mindestens 5 verschiedene Kalendertage pro Phase." },
     { q: "Welche Instrumente kann ich handeln?", a: "Alle Instrumente: Forex, Gold, Silber, Öl, Indizes, Kryptowährungen und Rohstoffe." },
@@ -79,8 +79,8 @@ const faqData = {
   ar: [
     { q: "كيف أبدأ؟", a: "اختر تحديك (2-Step أو 1-Step)، حدد حجم حسابك ($25K إلى $100K، حتى $200K متراكم في حسابات Reward)، أكمل الدفع واستلم بيانات الدخول فوراً عبر البريد الإلكتروني." },
     { q: "هل يوجد حد زمني؟", a: "لا. لا يوجد أي حد زمني على تحدياتنا. تداول بوتيرتك الخاصة." },
-    { q: "ما هي أهداف الربح؟", a: "2-Step: المرحلة 1 = +10%، المرحلة 2 = +5%. 1-Step: مرحلة واحدة بهدف +8%، ثم تصبح Trader Reward." },
-    { q: "ما هي قواعد الـ drawdown؟", a: "2-Step: خسارة يومية 5% وإجمالي 10%. 1-Step: 3% يومياً و8% trailing إجمالي (EOD)." },
+    { q: "ما هي أهداف الربح؟", a: "2-Step: المرحلة 1 = +10%، المرحلة 2 = +5%. 1-Step: مرحلة واحدة بهدف +10%، ثم تصبح Trader Reward." },
+    { q: "ما هي قواعد الـ drawdown؟", a: "2-Step: خسارة يومية 5% وإجمالي 10%. 1-Step: 3% يومياً و10% trailing إجمالي (EOD)." },
     { q: "ما هو الحد الأدنى لأيام التداول؟", a: "5 أيام تقويمية مختلفة على الأقل لكل مرحلة." },
     { q: "ما الأدوات المتاحة للتداول؟", a: "جميع الأدوات: فوركس، ذهب، فضة، نفط، مؤشرات، عملات رقمية وسلع." },
     { q: "هل يمكنني التداول أثناء الأخبار؟", a: "نعم خلال التقييم. في حسابات Reward، يُوقف التداول 5 دقائق قبل وبعد الأخبار الرئيسية." },

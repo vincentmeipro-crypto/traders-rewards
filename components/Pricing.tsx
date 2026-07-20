@@ -37,9 +37,9 @@ export default function Pricing() {
   ];
 
   const rows1step: Row[] = [
-    { label: L("Objectif profit","Objetivo profit","Profit target"),    value: "8%",     pct: 0.08  },
-    { label: L("Perte journalière","Pérdida diaria","Max daily loss"),  value: "3%",     pct: -0.03 },
-    { label: L("Perte totale","Pérdida total","Total loss"),            value: "8% EOD", pct: -0.08 },
+    { label: L("Objectif profit","Objetivo profit","Profit target"),    value: "10%",     pct: 0.10  },
+    { label: L("Perte journalière","Pérdida diaria","Max daily loss"),  value: "3%",      pct: -0.03 },
+    { label: L("Perte totale","Pérdida total","Total loss"),            value: "10% EOD", pct: -0.10 },
     { label: L("Règle meilleur jour","Regla mejor día","Best day rule"),value: "≤ 50%" },
     { label: L("Jours min","Días mín","Min days"),                      value: L("5 jours","5 días","5 days") },
     { label: L("Limite de temps","Límite tiempo","Time limit"),         value: L("Illimité","Ilimitado","Unlimited") },
