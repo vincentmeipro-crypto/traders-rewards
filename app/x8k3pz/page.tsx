@@ -694,6 +694,11 @@ export default function AdminPage() {
   const p = isMobile ? "16px" : "32px";
 
   return (
+    <>
+    <style>{`
+      select option { background-color: #111111; color: #ffffff; }
+      select option:checked { background: linear-gradient(0deg, #1f2937 0%, #1f2937 100%); color: #ffffff; }
+    `}</style>
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#fff", background: "#000000", flexDirection: isMobile ? "column" : "row" }}>
 
       {/* ── SIDEBAR desktop ── */}
@@ -2267,5 +2272,6 @@ export default function AdminPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
