@@ -1,12 +1,19 @@
 "use client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { Check, Zap, Shield, Clock, TrendingUp } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 
 const PLANS = [
   { size: "$25,000", price: "1 250€", productId: "25k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
   { size: "$50,000", price: "2 500€", productId: "50k-vip", popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
   { size: "$100,000", price: "5 000€", productId: "100k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "60% des récompenses", "Sans limite de temps", "Résultats automatiques"] },
+];
+
+const VIP_SIMS = [
+  { label: "25K",  invest: 1250, challenge: 25000,  reward: 325,  total: 3900,  net: 2650  },
+  { label: "50K",  invest: 2500, challenge: 50000,  reward: 650,  total: 7800,  net: 5300  },
+  { label: "100K", invest: 5000, challenge: 100000, reward: 1300, total: 15600, net: 10600 },
 ];
 
 const STEPS = [
@@ -18,6 +25,117 @@ const STEPS = [
 
 export default function VipPage() {
   useLanguage();
+  const [simIdx, setSimIdx] = useState(2);
+  const chartRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = chartRef.current;
+    if (!canvas) return;
+    const plan = VIP_SIMS[simIdx];
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.parentElement!.clientWidth;
+    const H = 220;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    const ctx = canvas.getContext("2d")!;
+    ctx.scale(dpr, dpr);
+
+    const PL = 64, PR = 16, PT = 16, PB = 36;
+    const cW = W - PL - PR, cH = H - PT - PB;
+    const maxY = plan.total * 1.08;
+
+    const toX = (i: number) => PL + (i / 15) * cW;
+    const toY = (v: number) => PT + ((maxY - v) / maxY) * cH;
+
+    // Phase backgrounds
+    ctx.fillStyle = "rgba(59,130,246,0.06)";
+    ctx.fillRect(toX(0), PT, toX(3) - toX(0), cH);
+    ctx.fillStyle = "rgba(34,197,94,0.05)";
+    ctx.fillRect(toX(3), PT, toX(15) - toX(3), cH);
+
+    // Phase labels
+    ctx.font = "700 9px system-ui"; ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(59,130,246,0.6)";
+    ctx.fillText("CHALLENGE", toX(1.5), PT + 14);
+    ctx.fillStyle = "rgba(34,197,94,0.6)";
+    ctx.fillText("REWARDS", toX(9), PT + 14);
+
+    // Grid lines
+    const ticks = [0, plan.reward * 3, plan.reward * 6, plan.reward * 9, plan.total];
+    ticks.forEach(v => {
+      const y = toY(v);
+      ctx.beginPath(); ctx.moveTo(PL, y); ctx.lineTo(W - PR, y);
+      ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 1;
+      ctx.setLineDash([3, 4]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = "rgba(148,163,184,0.55)"; ctx.font = "9px system-ui";
+      ctx.textAlign = "right";
+      ctx.fillText(v >= 1000 ? (v / 1000).toFixed(1) + "K€" : v + "€", PL - 6, y + 3);
+    });
+
+    // Investment line
+    const invY = toY(plan.invest);
+    ctx.beginPath(); ctx.moveTo(PL, invY); ctx.lineTo(W - PR, invY);
+    ctx.strokeStyle = "rgba(245,158,11,0.5)"; ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(245,158,11,0.8)"; ctx.font = "700 9px system-ui";
+    ctx.textAlign = "left";
+    ctx.fillText("Investissement " + plan.invest.toLocaleString("fr-FR") + "€", PL + 4, invY - 5);
+
+    // Cumulative rewards data
+    const cumul: number[] = [];
+    let acc = 0;
+    for (let i = 0; i <= 15; i++) {
+      if (i >= 4) acc += plan.reward;
+      cumul.push(acc);
+    }
+
+    // Area fill
+    ctx.beginPath();
+    cumul.forEach((v, i) => ctx[i === 0 ? "moveTo" : "lineTo"](toX(i), toY(v)));
+    ctx.lineTo(toX(15), PT + cH); ctx.lineTo(toX(0), PT + cH); ctx.closePath();
+    const grad = ctx.createLinearGradient(0, PT, 0, PT + cH);
+    grad.addColorStop(0, "rgba(34,197,94,0.18)");
+    grad.addColorStop(1, "rgba(34,197,94,0.02)");
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Cumulative line
+    ctx.beginPath();
+    cumul.forEach((v, i) => ctx[i === 0 ? "moveTo" : "lineTo"](toX(i), toY(v)));
+    ctx.strokeStyle = "#22c55e"; ctx.lineWidth = 2.5; ctx.lineJoin = "round"; ctx.stroke();
+
+    // Break-even dot
+    const beMonth = Math.ceil(plan.invest / plan.reward) + 3;
+    if (beMonth <= 15) {
+      const beCumul = (beMonth - 3) * plan.reward;
+      ctx.beginPath(); ctx.arc(toX(beMonth), toY(beCumul), 5, 0, Math.PI * 2);
+      ctx.fillStyle = "#f59e0b"; ctx.strokeStyle = "#000"; ctx.lineWidth = 1.5;
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = "rgba(245,158,11,0.9)"; ctx.font = "700 9px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("Break-even", toX(beMonth), toY(beCumul) - 10);
+    }
+
+    // Dots on line
+    cumul.forEach((v, i) => {
+      if (i < 4) return;
+      ctx.beginPath(); ctx.arc(toX(i), toY(v), 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#22c55e"; ctx.strokeStyle = "#000"; ctx.lineWidth = 1;
+      ctx.fill(); ctx.stroke();
+    });
+
+    // X labels
+    [0, 1, 2, 3, 4, 7, 10, 13, 15].forEach(i => {
+      ctx.fillStyle = "rgba(148,163,184,0.6)"; ctx.font = "9px system-ui";
+      ctx.textAlign = "center";
+      ctx.fillText("M" + i, toX(i), H - 6);
+    });
+
+    // Final label
+    ctx.fillStyle = "rgba(34,197,94,0.9)"; ctx.font = "700 10px system-ui";
+    ctx.textAlign = "right";
+    ctx.fillText("+" + plan.total.toLocaleString("fr-FR") + "€", toX(15) - 2, toY(plan.total) - 8);
+
+  }, [simIdx]);
 
   return (
     <>
@@ -134,6 +252,65 @@ export default function VipPage() {
                   </a>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* Simulation de performance */}
+          <div style={{ marginBottom: 80, background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: "40px 32px" }}>
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <div style={{ display: "inline-block", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 100, padding: "4px 16px", fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#22c55e", textTransform: "uppercase", marginBottom: 12 }}>
+                Projection financière
+              </div>
+              <h2 style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Évolution de ton compte sur 15 mois</h2>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>1,3% de rewards versés automatiquement chaque mois dès le mois 4</p>
+            </div>
+
+            {/* Sélecteur compte */}
+            <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 28 }}>
+              {VIP_SIMS.map((s, i) => (
+                <button key={i} onClick={() => setSimIdx(i)} style={{
+                  padding: "8px 22px", borderRadius: 100, cursor: "pointer",
+                  background: simIdx === i ? "#3B82F6" : "rgba(255,255,255,0.06)",
+                  border: simIdx === i ? "none" : "1px solid rgba(255,255,255,0.1)",
+                  color: simIdx === i ? "#fff" : "rgba(255,255,255,0.5)",
+                  fontSize: 13, fontWeight: 800, transition: "all 0.2s",
+                }}>
+                  {s.label}
+                </button>
+              ))}
+            </div>
+
+            {/* KPIs */}
+            {(() => {
+              const p = VIP_SIMS[simIdx];
+              const beMonth = Math.ceil(p.invest / p.reward) + 3;
+              const roi = Math.round((p.net / p.invest) * 100);
+              return (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 28 }}>
+                  {[
+                    { label: "Investissement", value: p.invest.toLocaleString("fr-FR") + "€", color: "#94a3b8" },
+                    { label: "Reward / mois", value: "+" + p.reward.toLocaleString("fr-FR") + "€", color: "#22c55e" },
+                    { label: "Total rewards (12 mois)", value: "+" + p.total.toLocaleString("fr-FR") + "€", color: "#22c55e" },
+                    { label: "Gain net", value: "+" + p.net.toLocaleString("fr-FR") + "€", color: "#22c55e" },
+                    { label: "ROI", value: roi + "%", color: "#f59e0b" },
+                    { label: "Break-even", value: "Mois " + beMonth, color: "#f59e0b" },
+                  ].map((k, i) => (
+                    <div key={i} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "12px 14px", textAlign: "center" }}>
+                      <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>{k.label}</div>
+                      <div style={{ fontSize: 18, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
+            {/* Chart */}
+            <div style={{ width: "100%", position: "relative" }}>
+              <canvas ref={chartRef} style={{ display: "block", width: "100%" }} />
+            </div>
+
+            <div style={{ textAlign: "center", marginTop: 16, fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
+              Projection basée sur un taux fixe de 1,3%/mois sur le compte propfirm · Rewards versés du mois 4 au mois 15
             </div>
           </div>
 
