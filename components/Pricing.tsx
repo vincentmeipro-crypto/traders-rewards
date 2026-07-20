@@ -123,7 +123,7 @@ export default function Pricing() {
   };
 
   return (
-    <section id="pricing" style={{ padding: isMobile ? "16px 16px 24px" : "20px 16px 32px", backgroundColor: "#000000", scrollMarginTop: "0px", position: "relative", zIndex: 1, overflow: "hidden" }}>
+    <section id="pricing" style={{ padding: isMobile ? "16px 16px 24px" : "20px 16px 32px", backgroundColor: "#000000", scrollMarginTop: "calc(72px + var(--promo-banner-height, 0px))", position: "relative", zIndex: 1, overflow: "hidden" }}>
       <style>{`
         .pricing-card {
           background: #0a0a0a;
