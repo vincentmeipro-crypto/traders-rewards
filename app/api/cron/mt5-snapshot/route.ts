@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, getMT5Positions, changeMT5Group, disableMT5Account } from "@/lib/mt5";
+import { getMT5Account, getMT5Positions, getMT5History, changeMT5Group, disableMT5Account } from "@/lib/mt5";
 import { sendFailedEmail } from "@/lib/mailer";
 
 // Vercel Cron — toutes les minutes
-// Vérifie les drawdowns en temps réel et coupe immédiatement si limite atteinte
+// Double vérification : equity temps réel + historique deals du jour
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   const { data: challenges, error } = await admin
     .from("challenges")
-    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, highest_balance, daily_drawdown_limit, total_drawdown_limit")
+    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit")
     .not("mt5_login", "is", null)
     .in("status", ["active"]);
 
@@ -36,54 +36,81 @@ export async function GET(req: NextRequest) {
         getMT5Positions(challenge.mt5_login).catch(() => []),
       ]);
 
-      const equity = account.equity ?? account.balance ?? 0;
-      const startBalance = challenge.start_balance ?? challenge.balance ?? 0;
+      const equity        = account.equity   ?? account.balance ?? 0;
+      const startBalance  = challenge.start_balance ?? challenge.balance ?? 0;
       const currentBalance = challenge.balance ?? startBalance;
+      const totalLimit    = challenge.total_drawdown_limit ?? 10;
+      const dailyLimit    = challenge.daily_drawdown_limit ?? 5;
 
-      // Vérification drawdown total : (start_balance - equity) / start_balance
-      const totalDrawdownPct = startBalance > 0
-        ? ((startBalance - equity) / startBalance) * 100
-        : 0;
+      // --- CHECK 1 : equity temps réel ---
+      const totalDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
+      const dailyDD = currentBalance > 0 ? ((currentBalance - equity) / currentBalance) * 100 : 0;
 
-      // Vérification drawdown journalier : (balance_actuelle - equity) / balance_actuelle
-      const dailyDrawdownPct = currentBalance > 0
-        ? ((currentBalance - equity) / currentBalance) * 100
-        : 0;
+      let breachReason: string | null = null;
+      let breachEquity = equity;
 
-      const totalBreached = totalDrawdownPct >= (challenge.total_drawdown_limit ?? 10);
-      const dailyBreached = dailyDrawdownPct >= (challenge.daily_drawdown_limit ?? 5);
+      if (totalDD >= totalLimit)  breachReason = "total_drawdown";
+      if (dailyDD >= dailyLimit)  breachReason = breachReason ?? "daily_drawdown";
 
-      if (totalBreached || dailyBreached) {
-        const reason = totalBreached ? "total_drawdown" : "daily_drawdown";
-        console.error(`BREACH [${challenge.mt5_login}] ${reason} — equity: ${equity}, start: ${startBalance}, balance: ${currentBalance}, totalDD: ${totalDrawdownPct.toFixed(2)}%, dailyDD: ${dailyDrawdownPct.toFixed(2)}%`);
+      // --- CHECK 2 : historique deals du jour (détecte breach intra-minute) ---
+      if (!breachReason) {
+        try {
+          const history = await getMT5History(challenge.mt5_login) as Record<string, unknown>[];
+          const todayMs = new Date().setHours(0, 0, 0, 0);
 
-        // 1. Marquer failed en DB
+          // Deals du jour triés chronologiquement
+          const todayDeals = history
+            .filter(d => {
+              const t = (d.time as number) * 1000;
+              return t >= todayMs;
+            })
+            .sort((a, b) => (a.time as number) - (b.time as number));
+
+          // Reconstruction du solde courant à partir du start_balance
+          let runningBalance = startBalance;
+          for (const deal of todayDeals) {
+            const profit = typeof deal.profit === "number" ? deal.profit : 0;
+            runningBalance += profit;
+            const histTotalDD = ((startBalance - runningBalance) / startBalance) * 100;
+            if (histTotalDD >= totalLimit) {
+              breachReason = "total_drawdown";
+              breachEquity = runningBalance;
+              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] total_drawdown à ${runningBalance.toFixed(0)} (deal profit: ${profit})`);
+              break;
+            }
+          }
+        } catch (histErr) {
+          // Historique non disponible — on continue sans le check historique
+          console.warn(`History check skipped for ${challenge.mt5_login}:`, histErr);
+        }
+      }
+
+      // --- COUPE IMMÉDIATE si breach détecté ---
+      if (breachReason) {
+        console.error(`BREACH [${challenge.mt5_login}] ${breachReason} — equity: ${equity}, start: ${startBalance}, totalDD: ${totalDD.toFixed(2)}%, dailyDD: ${dailyDD.toFixed(2)}%`);
+
         await admin.from("challenges").update({
-          status: "failed",
-          balance: equity,
+          status:         "failed",
+          balance:        breachEquity,
           last_synced_at: new Date().toISOString(),
         }).eq("id", challenge.id);
 
-        // 2. Groupe 5 + désactivation MT5
-        try { await changeMT5Group(challenge.mt5_login, "HAR\\MAN32\\demoG5"); } catch (e) { console.error("changeMT5Group breach failed:", e); }
-        try { await disableMT5Account(challenge.mt5_login); } catch (e) { console.error("disableMT5Account breach failed:", e); }
+        try { await changeMT5Group(challenge.mt5_login, "HAR\\MAN32\\demoG5"); } catch (e) { console.error("changeMT5Group failed:", e); }
+        try { await disableMT5Account(challenge.mt5_login); }                   catch (e) { console.error("disableMT5Account failed:", e); }
 
-        // 3. Email client
         const userEmail = userEmailMap[challenge.user_id] ?? "";
-        if (userEmail) {
-          try { await sendFailedEmail(userEmail, challenge.account_size, reason); } catch {}
-        }
+        if (userEmail) try { await sendFailedEmail(userEmail, challenge.account_size, breachReason); } catch {}
 
         breaches++;
         continue;
       }
 
-      // Pas de breach : snapshot normal
+      // --- Pas de breach : snapshot normal ---
       await admin.from("challenges").update({
         equity:              equity,
+        balance:             account.balance ?? currentBalance,
         open_positions:      positions,
         positions_synced_at: new Date().toISOString(),
-        balance:             account.balance ?? currentBalance,
         last_synced_at:      new Date().toISOString(),
       }).eq("id", challenge.id);
 
@@ -92,9 +119,9 @@ export async function GET(req: NextRequest) {
         mt5_login:       challenge.mt5_login,
         balance:         account.balance ?? null,
         equity:          equity,
-        margin:          account.margin  ?? null,
+        margin:          account.margin      ?? null,
         free_margin:     account.margin_free ?? null,
-        profit:          account.profit  ?? null,
+        profit:          account.profit      ?? null,
         positions_count: positions.length,
         positions:       positions,
       });
