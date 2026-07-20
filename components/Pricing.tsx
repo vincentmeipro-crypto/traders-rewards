@@ -186,8 +186,8 @@ export default function Pricing() {
             );
           })}
           <a href="/vip" style={{
-            background: "linear-gradient(135deg, #1d3a6e 0%, #1e3a8a 100%)",
-            border: "1px solid rgba(59,130,246,0.5)",
+            background: "#111111",
+            border: "1.5px solid #3B82F6",
             borderRadius: 10,
             padding: isMobile ? "8px 10px" : "10px 20px",
             cursor: "pointer",
@@ -197,10 +197,10 @@ export default function Pricing() {
             minWidth: isMobile ? 0 : 150,
             textDecoration: "none",
           }}>
-            <span style={{ fontSize: isMobile ? 14 : 16 }}>⚡</span>
+            <span style={{ fontSize: isMobile ? 13 : 15, color: "#3B82F6" }}>⚡</span>
             <div>
-              <div style={{ fontSize: isMobile ? 11 : 13, fontWeight: 800, color: "#3B82F6", whiteSpace: "nowrap" }}>Challenge VIP</div>
-              <div style={{ fontSize: isMobile ? 8 : 10, color: "rgba(59,130,246,0.6)", fontWeight: 500, marginTop: 1, whiteSpace: "nowrap" }}>Algo intégré</div>
+              <div style={{ fontSize: isMobile ? 11 : 13, fontWeight: 800, color: "#FFFFFF", whiteSpace: "nowrap" }}>Challenge VIP</div>
+              <div style={{ fontSize: isMobile ? 8 : 10, color: "#3B82F6", fontWeight: 500, marginTop: 1, whiteSpace: "nowrap" }}>Algo intégré</div>
             </div>
           </a>
         </div>
