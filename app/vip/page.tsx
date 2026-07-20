@@ -192,18 +192,20 @@ export default function VipPage() {
         {/* Hero */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px) + 40px)", paddingBottom: 48, position: "relative", overflow: "hidden" }}>
           {/* Spotlight beam */}
-          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 900, height: 400, background: "radial-gradient(ellipse 65% 90% at 50% -5%, rgba(59,130,246,0.55) 0%, rgba(59,130,246,0.22) 35%, rgba(59,130,246,0.06) 60%, transparent 80%)", pointerEvents: "none", zIndex: 0 }} />
-          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 2, height: 120, background: "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(147,197,253,0.55) 55%, transparent 100%)", pointerEvents: "none", zIndex: 0 }} />
+          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 1000, height: 440, background: "radial-gradient(ellipse 60% 95% at 50% -10%, rgba(59,130,246,0.9) 0%, rgba(59,130,246,0.55) 18%, rgba(59,130,246,0.2) 42%, rgba(59,130,246,0.05) 65%, transparent 80%)", filter: "blur(3px)", pointerEvents: "none", zIndex: 0 }} />
+          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 420, height: 320, background: "radial-gradient(ellipse 45% 75% at 50% -20%, rgba(147,197,253,0.75) 0%, rgba(59,130,246,0.35) 40%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
+          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 2, height: 150, background: "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(200,225,255,0.8) 40%, rgba(147,197,253,0.3) 70%, transparent 100%)", boxShadow: "0 0 14px 5px rgba(147,197,253,0.65)", pointerEvents: "none", zIndex: 0 }} />
+          <div style={{ position: "absolute", top: -6, left: "50%", transform: "translateX(-50%)", width: 70, height: 12, background: "rgba(255,255,255,0.9)", borderRadius: "50%", filter: "blur(6px)", boxShadow: "0 0 24px 12px rgba(147,197,253,0.85)", pointerEvents: "none", zIndex: 0 }} />
           <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
             <h1 className="fade-1" style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", fontWeight: 900, color: "#fff", lineHeight: 1.05, marginBottom: 24, marginTop: 0 }}>
               Challenge <span className="vip-hero-text">VIP</span><br />
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L&apos;algorithme s&apos;occupe de tout</span>
             </h1>
             <p className="fade-3" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)", maxWidth: 900, margin: "0 auto 40px", lineHeight: 1.7 }}>
-              Tu paies l&apos;accès une seule fois. Une stratégie algorithmique professionnelle s&apos;active sur ton compte, passe les phases, et les récompenses sont disponibles tous les 30 jours sur demande.
+              Tu paies l&apos;accès une seule fois. Une stratégie algorithmique professionnelle s&apos;active sur ton compte, passe les phases, et les récompenses sont disponibles tous les 30 jours.
             </p>
             <div className="fade-4" style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" }}>
-              {[["100%", "Pour toi"], ["Sur demande", "Récompenses"], ["30 jours", "Cycle"], ["2 phases", "Même règles"]].map(([val, lbl]) => (
+              {[["100%", "Pour toi"], ["Mensuel", "Récompenses"], ["30 jours", "Cycle"], ["2 phases", "Même règles"]].map(([val, lbl]) => (
                 <div key={lbl} style={{ textAlign: "center" }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: "#3B82F6" }}>{val}</div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "1px", textTransform: "uppercase" }}>{lbl}</div>
