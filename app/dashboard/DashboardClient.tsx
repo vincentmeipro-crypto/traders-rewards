@@ -1786,7 +1786,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                     {[
                       { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
-                      { label: "🍎 Mac", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/MetaTrader5.dmg" },
+                      { label: "🍎 Mac", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
                       { label: "📱 iPhone / iPad", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
                       { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
                     ].map((item, i) => (
