@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -137,6 +137,44 @@ const card = (children: React.ReactNode, style?: React.CSSProperties) => (
 const badge = (label: string, color: string) => (
   <span style={{ backgroundColor: `${color}20`, color, padding: "3px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{label}</span>
 );
+
+function CustomSelect({ value, onChange, options, small }: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+  small?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const h = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, []);
+  const selected = options.find(o => o.value === value);
+  const pad = small ? "4px 8px" : "10px 16px";
+  const fs = small ? 12 : 13;
+  return (
+    <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
+      <button onClick={() => setOpen(o => !o)} style={{ backgroundColor: small ? "rgba(255,255,255,0.06)" : "#111111", border: `1px solid ${small ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.1)"}`, borderRadius: small ? 6 : 8, padding: pad, color: "#fff", fontSize: fs, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, outline: "none", whiteSpace: "nowrap" }}>
+        {selected?.label ?? value}
+        <span style={{ fontSize: 10, opacity: 0.6, marginLeft: 2 }}>▾</span>
+      </button>
+      {open && (
+        <div style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, minWidth: "100%", backgroundColor: "#1a1a1a", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, overflow: "hidden", zIndex: 1000, boxShadow: "0 8px 24px rgba(0,0,0,0.6)" }}>
+          {options.map(o => (
+            <div key={o.value} onClick={() => { onChange(o.value); setOpen(false); }}
+              onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#2a2a2a")}
+              onMouseLeave={e => (e.currentTarget.style.backgroundColor = o.value === value ? "#222" : "transparent")}
+              style={{ padding: small ? "6px 12px" : "9px 16px", cursor: "pointer", fontSize: fs, color: "#fff", backgroundColor: o.value === value ? "#222" : "transparent", whiteSpace: "nowrap" }}>
+              {o.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const router = useRouter();
@@ -695,10 +733,6 @@ export default function AdminPage() {
 
   return (
     <>
-    <style>{`
-      select option { background-color: #111111; color: #ffffff; }
-      select option:checked { background: linear-gradient(0deg, #1f2937 0%, #1f2937 100%); color: #ffffff; }
-    `}</style>
     <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#fff", background: "#000000", flexDirection: isMobile ? "column" : "row" }}>
 
       {/* ── SIDEBAR desktop ── */}
@@ -861,14 +895,13 @@ export default function AdminPage() {
             <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
               <input placeholder="Recherche email / nom..." value={search} onChange={e => setSearch(e.target.value)}
                 style={{ backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none", minWidth: 220 }} />
-              <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-                style={{ backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none" }}>
-                <option value="all">Tous les statuts</option>
-                <option value="active">Active</option>
-                <option value="passed">Passed</option>
-                <option value="funded">Reward</option>
-                <option value="failed">Failed</option>
-              </select>
+              <CustomSelect value={filterStatus} onChange={setFilterStatus} options={[
+                { value: "all", label: "Tous les statuts" },
+                { value: "active", label: "Active" },
+                { value: "passed", label: "Passed" },
+                { value: "funded", label: "Reward" },
+                { value: "failed", label: "Failed" },
+              ]} />
               <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, alignSelf: "center" }}>{filteredChallenges.length} résultat(s)</span>
             </div>
 
@@ -914,12 +947,12 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.45)" }}>{c.model}</td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.phase || c.phase} onChange={e => setEditData(d => ({ ...d, phase: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="phase1">Phase 1</option><option value="phase2">Phase 2</option><option value="funded">Reward</option></select>
+                              ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
                               : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "reward" : c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
-                              ? <select value={editData.status || c.status} onChange={e => setEditData(d => ({ ...d, status: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12 }}><option value="active">Active</option><option value="passed">Passed</option><option value="funded">Reward</option><option value="failed">Failed</option></select>
+                              ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
                               : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
