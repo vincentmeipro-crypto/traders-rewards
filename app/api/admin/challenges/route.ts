@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
   try {
     if (isReward) {
       await sendFundedEmail(userEmail, accountSize, mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined, finalSetupLink, model);
-      await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate);
+      // sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate);
     } else {
       await sendWelcomeEmail(
         userEmail, accountSize, model,
