@@ -98,21 +98,6 @@ export default function VipPage() {
         {/* Reste de la page */}
         <div style={{ maxWidth: 1100, margin: "0 auto", paddingBottom: 80 }}>
 
-          {/* Comment ça marche */}
-          <div style={{ marginBottom: 80 }}>
-            <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 40 }}>Comment ça marche</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
-              {STEPS.map((s, i) => (
-                <div key={i} className="step-card">
-                  <div style={{ marginBottom: 16 }}>{s.icon}</div>
-                  <div style={{ fontSize: 11, color: "#3B82F6", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>Étape {i + 1}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{s.title}</div>
-                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>{s.desc}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Plans */}
           <div style={{ marginBottom: 64 }}>
             <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 12 }}>Choisir ton compte VIP</h2>
@@ -147,6 +132,21 @@ export default function VipPage() {
                   }}>
                     Accéder au Challenge VIP
                   </a>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Comment ça marche */}
+          <div style={{ marginBottom: 80 }}>
+            <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 40 }}>Comment ça marche</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+              {STEPS.map((s, i) => (
+                <div key={i} className="step-card">
+                  <div style={{ marginBottom: 16 }}>{s.icon}</div>
+                  <div style={{ fontSize: 11, color: "#3B82F6", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 8 }}>Étape {i + 1}</div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{s.title}</div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>{s.desc}</div>
                 </div>
               ))}
             </div>
