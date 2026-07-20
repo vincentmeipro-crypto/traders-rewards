@@ -190,12 +190,12 @@ export default function VipPage() {
       <main style={{ background: "#000", paddingLeft: 24, paddingRight: 24 }}>
 
         {/* Hero */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px) + 40px)", paddingBottom: 48 }}>
-          <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", textAlign: "center" }}>
-            <div className="fade-1" style={{ display: "inline-block", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 100, padding: "6px 20px", fontSize: 11, fontWeight: 700, letterSpacing: "2px", color: "#3B82F6", textTransform: "uppercase", marginBottom: 24 }}>
-              ⚡ Accès Limité
-            </div>
-            <h1 className="fade-2" style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", fontWeight: 900, color: "#fff", lineHeight: 1.05, marginBottom: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", paddingTop: "calc(72px + var(--promo-banner-height, 0px) + 40px)", paddingBottom: 48, position: "relative", overflow: "hidden" }}>
+          {/* Spotlight beam */}
+          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 900, height: 400, background: "radial-gradient(ellipse 65% 90% at 50% -5%, rgba(59,130,246,0.55) 0%, rgba(59,130,246,0.22) 35%, rgba(59,130,246,0.06) 60%, transparent 80%)", pointerEvents: "none", zIndex: 0 }} />
+          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 2, height: 120, background: "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(147,197,253,0.55) 55%, transparent 100%)", pointerEvents: "none", zIndex: 0 }} />
+          <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
+            <h1 className="fade-1" style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", fontWeight: 900, color: "#fff", lineHeight: 1.05, marginBottom: 24, marginTop: 0 }}>
               Challenge <span className="vip-hero-text">VIP</span><br />
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L&apos;algorithme s&apos;occupe de tout</span>
             </h1>
