@@ -115,7 +115,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const bestDayLimit = startBalance * (profitTarget / 100) * 0.5;
   const bestDayViolated = is1Step && phase === "phase1" && profitTarget > 0 && dayProfit > bestDayLimit;
   if (bestDayViolated) {
-    await changeMT5Group(login, "HAR\\MAN32\\demoG5").catch(() => {});
+    await changeMT5Group(login, "HAR/MAN32/demoG5").catch(() => {});
     await disableMT5Account(login).catch(() => {});
     await changeMT5Password(login).catch(() => {});
     const alreadyFailed = challenge.status === "failed";
@@ -142,7 +142,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
         })));
       } catch {}
     }
-    await changeMT5Group(login, "HAR\\MAN32\\demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
+    await changeMT5Group(login, "HAR/MAN32/demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
     const alreadyFailed = challenge.status === "failed";
@@ -181,7 +181,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
         })));
       } catch {}
     }
-    await changeMT5Group(login, "HAR\\MAN32\\demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
+    await changeMT5Group(login, "HAR/MAN32/demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
     const alreadyFailed = challenge.status === "failed";
@@ -205,7 +205,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const certDate  = new Date().toLocaleDateString("fr-FR");
 
   const disableOldAccount = async (oldLogin: number) => {
-    await changeMT5Group(oldLogin, "HAR\\MAN32\\demoG5").catch((e) => console.error(`[${oldLogin}] grp5 failed:`, e));
+    await changeMT5Group(oldLogin, "HAR/MAN32/demoG5").catch((e) => console.error(`[${oldLogin}] grp5 failed:`, e));
     await disableMT5Account(oldLogin).catch((e) => console.error(`[${oldLogin}] disable failed:`, e));
     await changeMT5Password(oldLogin).catch((e) => console.error(`[${oldLogin}] pwd change failed:`, e));
   };

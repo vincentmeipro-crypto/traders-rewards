@@ -95,7 +95,7 @@ export async function GET(req: NextRequest) {
           last_synced_at: new Date().toISOString(),
         }).eq("id", challenge.id);
 
-        try { await changeMT5Group(challenge.mt5_login, "HAR\\MAN32\\demoG5"); } catch (e) { console.error("changeMT5Group failed:", e); }
+        try { await changeMT5Group(challenge.mt5_login, "HAR/MAN32/demoG5"); } catch (e) { console.error("changeMT5Group failed:", e); }
         try { await disableMT5Account(challenge.mt5_login); }                   catch (e) { console.error("disableMT5Account failed:", e); }
 
         const userEmail = userEmailMap[challenge.user_id] ?? "";

@@ -13,12 +13,12 @@ const MT5_HEADERS = {
 // demoG4 = Certified 1-Step
 // demoG5 = Comptes désactivés / breach
 const GROUP_MAP: Record<string, string> = {
-  "2step":         "HAR\\MAN32\\demoG1",
-  "1step":         "HAR\\MAN32\\demoG2",
-  "funded_2step":  "HAR\\MAN32\\demoG3",
-  "funded_1step":  "HAR\\MAN32\\demoG4",
+  "2step":         "HAR/MAN32/demoG1",
+  "1step":         "HAR/MAN32/demoG2",
+  "funded_2step":  "HAR/MAN32/demoG3",
+  "funded_1step":  "HAR/MAN32/demoG4",
 
-  "disabled":      "HAR\\MAN32\\demoG5",
+  "disabled":      "HAR/MAN32/demoG5",
 };
 
 export function getMT5Group(model: string, phase = "challenge"): string {

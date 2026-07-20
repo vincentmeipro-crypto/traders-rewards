@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
   try {
     if (group === "disable") {
       let groupResult = null; let disableResult = null; let groupErr = null; let disableErr = null;
-      try { await changeMT5Group(login, "HAR\\MAN32\\demoG5"); groupResult = "ok"; } catch (e) { groupErr = String(e); }
+      try { await changeMT5Group(login, "HAR/MAN32/demoG5"); groupResult = "ok"; } catch (e) { groupErr = String(e); }
       try { await disableMT5Account(login); disableResult = "ok"; } catch (e) { disableErr = String(e); }
       return NextResponse.json({ login, changeMT5Group: groupResult ?? groupErr, disableMT5Account: disableResult ?? disableErr });
     }
