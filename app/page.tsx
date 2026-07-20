@@ -16,6 +16,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Pricing />
+      <HowItWorks />
       <TopTraders />
       <Stats />
       <TraderMarquee />
@@ -23,7 +24,6 @@ export default function Home() {
         <img src="/image-section-mt5-new.png" alt="MT5" className="mt5-section-img" />
       </section>
       <Pricing />
-      <HowItWorks />
       <Rules />
       <FAQ />
       <InstallPWA />
