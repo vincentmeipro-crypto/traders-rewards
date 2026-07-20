@@ -11,9 +11,9 @@ const PLANS = [
 ];
 
 const VIP_SIMS = [
-  { label: "25K",  invest: 1250, challenge: 25000,  reward: 325,  total: 3900,  net: 2650  },
-  { label: "50K",  invest: 2500, challenge: 50000,  reward: 650,  total: 7800,  net: 5300  },
-  { label: "100K", invest: 5000, challenge: 100000, reward: 1300, total: 15600, net: 10600 },
+  { label: "25K",  invest: 1250, challenge: 25000,  reward: 325,  total: 2925,  net: 1675  },
+  { label: "50K",  invest: 2500, challenge: 50000,  reward: 650,  total: 5850,  net: 3350  },
+  { label: "100K", invest: 5000, challenge: 100000, reward: 1300, total: 11700, net: 6700  },
 ];
 
 const STEPS = [
@@ -44,24 +44,24 @@ export default function VipPage() {
     const cW = W - PL - PR, cH = H - PT - PB;
     const maxY = plan.total * 1.08;
 
-    const toX = (i: number) => PL + (i / 15) * cW;
+    const toX = (i: number) => PL + (i / 12) * cW;
     const toY = (v: number) => PT + ((maxY - v) / maxY) * cH;
 
     // Phase backgrounds
     ctx.fillStyle = "rgba(59,130,246,0.06)";
     ctx.fillRect(toX(0), PT, toX(3) - toX(0), cH);
     ctx.fillStyle = "rgba(34,197,94,0.05)";
-    ctx.fillRect(toX(3), PT, toX(15) - toX(3), cH);
+    ctx.fillRect(toX(3), PT, toX(12) - toX(3), cH);
 
     // Phase labels
     ctx.font = "700 9px system-ui"; ctx.textAlign = "center";
     ctx.fillStyle = "rgba(59,130,246,0.6)";
     ctx.fillText("CHALLENGE", toX(1.5), PT + 14);
     ctx.fillStyle = "rgba(34,197,94,0.6)";
-    ctx.fillText("REWARDS", toX(9), PT + 14);
+    ctx.fillText("REWARDS", toX(7.5), PT + 14);
 
     // Grid lines
-    const ticks = [0, plan.reward * 3, plan.reward * 6, plan.reward * 9, plan.total];
+    const ticks = [0, plan.reward * 3, plan.reward * 6, plan.total];
     ticks.forEach(v => {
       const y = toY(v);
       ctx.beginPath(); ctx.moveTo(PL, y); ctx.lineTo(W - PR, y);
@@ -84,7 +84,7 @@ export default function VipPage() {
     // Cumulative rewards data
     const cumul: number[] = [];
     let acc = 0;
-    for (let i = 0; i <= 15; i++) {
+    for (let i = 0; i <= 12; i++) {
       if (i >= 4) acc += plan.reward;
       cumul.push(acc);
     }
@@ -92,7 +92,7 @@ export default function VipPage() {
     // Area fill
     ctx.beginPath();
     cumul.forEach((v, i) => ctx[i === 0 ? "moveTo" : "lineTo"](toX(i), toY(v)));
-    ctx.lineTo(toX(15), PT + cH); ctx.lineTo(toX(0), PT + cH); ctx.closePath();
+    ctx.lineTo(toX(12), PT + cH); ctx.lineTo(toX(0), PT + cH); ctx.closePath();
     const grad = ctx.createLinearGradient(0, PT, 0, PT + cH);
     grad.addColorStop(0, "rgba(34,197,94,0.18)");
     grad.addColorStop(1, "rgba(34,197,94,0.02)");
@@ -105,7 +105,7 @@ export default function VipPage() {
 
     // Break-even dot
     const beMonth = Math.ceil(plan.invest / plan.reward) + 3;
-    if (beMonth <= 15) {
+    if (beMonth <= 12) {
       const beCumul = (beMonth - 3) * plan.reward;
       ctx.beginPath(); ctx.arc(toX(beMonth), toY(beCumul), 5, 0, Math.PI * 2);
       ctx.fillStyle = "#f59e0b"; ctx.strokeStyle = "#000"; ctx.lineWidth = 1.5;
@@ -124,7 +124,7 @@ export default function VipPage() {
     });
 
     // X labels
-    [0, 1, 2, 3, 4, 7, 10, 13, 15].forEach(i => {
+    [0, 1, 2, 3, 4, 7, 10, 12].forEach(i => {
       ctx.fillStyle = "rgba(148,163,184,0.6)"; ctx.font = "9px system-ui";
       ctx.textAlign = "center";
       ctx.fillText("M" + i, toX(i), H - 6);
@@ -133,7 +133,7 @@ export default function VipPage() {
     // Final label
     ctx.fillStyle = "rgba(34,197,94,0.9)"; ctx.font = "700 10px system-ui";
     ctx.textAlign = "right";
-    ctx.fillText("+" + plan.total.toLocaleString("fr-FR") + "€", toX(15) - 2, toY(plan.total) - 8);
+    ctx.fillText("+" + plan.total.toLocaleString("fr-FR") + "€", toX(12) - 2, toY(plan.total) - 8);
 
   }, [simIdx]);
 
@@ -263,7 +263,7 @@ export default function VipPage() {
               <div style={{ display: "inline-block", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 100, padding: "4px 16px", fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#22c55e", textTransform: "uppercase", marginBottom: 12 }}>
                 Projection financière
               </div>
-              <h2 style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Évolution de ton compte sur 15 mois</h2>
+              <h2 style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Évolution de ton compte sur 12 mois</h2>
               <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>1,3% de rewards disponibles sur demande chaque mois dès le mois 4 — Split 100% client</p>
             </div>
 
@@ -292,7 +292,7 @@ export default function VipPage() {
                   {[
                     { label: "Investissement", value: p.invest.toLocaleString("fr-FR") + "€", color: "#94a3b8" },
                     { label: "Reward / mois", value: "+" + p.reward.toLocaleString("fr-FR") + "€", color: "#22c55e" },
-                    { label: "Total rewards (12 mois)", value: "+" + p.total.toLocaleString("fr-FR") + "€", color: "#22c55e" },
+                    { label: "Total rewards 12 mois", value: "+" + p.total.toLocaleString("fr-FR") + "€", color: "#22c55e" },
                     { label: "Gain net", value: "+" + p.net.toLocaleString("fr-FR") + "€", color: "#22c55e" },
                     { label: "ROI", value: roi + "%", color: "#f59e0b" },
                     { label: "Break-even", value: "Mois " + beMonth, color: "#f59e0b" },
@@ -312,7 +312,7 @@ export default function VipPage() {
             </div>
 
             <div style={{ textAlign: "center", marginTop: 16, fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
-              Projection basée sur un taux fixe de 1,3%/mois sur le compte propfirm · Rewards disponibles sur demande du mois 4 au mois 15 · Split 100% client
+              Projection basée sur un taux fixe de 1,3%/mois sur le compte propfirm · Rewards disponibles sur demande du mois 4 au mois 12 · Split 100% client
             </div>
           </div>
 
