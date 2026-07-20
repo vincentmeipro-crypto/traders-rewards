@@ -18,11 +18,11 @@ MT5_PASSWORD   = os.environ.get("MT5_PASSWORD",   "_3UpOkWq")
 API_SECRET     = os.environ.get("MT5_API_SECRET", "elysium-mt5-secret-2025")
 
 GROUP_MAP = {
-    "2step":         r"HAR\MAN32\demoG1",
-    "1step":         r"HAR\MAN32\demoG2",
-    "funded_2step":  r"HAR\MAN32\demoG3",
-    "funded_1step":  r"HAR\MAN32\demoG4",
-    "disabled":      r"HAR\MAN32\demoG5",
+    "2step":        r"HAR\MAN32\demoG1",
+    "1step":        r"HAR\MAN32\demoG2",
+    "funded_2step": r"HAR\MAN32\demoG3",
+    "funded_1step": r"HAR\MAN32\demoG4",
+    "disabled":     r"HAR\MAN32\demoG5",
 }
 
 # Used as template base for UserAdd (MTUser() can't be instantiated directly)

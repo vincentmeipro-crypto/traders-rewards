@@ -14,7 +14,6 @@ const PRODUCTS: Record<string, { name: string; amount: number; accountSize: stri
   "25k-1step":  { name: "Challenge $25,000 — 1-Step", amount: 14900,  accountSize: "$25,000",  model: "1step" },
   "50k-1step":  { name: "Challenge $50,000 — 1-Step", amount: 24900,  accountSize: "$50,000",  model: "1step" },
   "100k-1step":  { name: "Challenge $100,000 — 1-Step",  amount: 39900,  accountSize: "$100,000", model: "1step" },
-  "50k-instant": { name: "Compte Reward $50,000 — Instant", amount: 130000, accountSize: "$50,000",  model: "instant" },
   "25k-vip":  { name: "Challenge VIP $25,000",  amount: 125000, accountSize: "$25,000",  model: "vip" },
   "50k-vip":  { name: "Challenge VIP $50,000",  amount: 250000, accountSize: "$50,000",  model: "vip" },
   "100k-vip": { name: "Challenge VIP $100,000", amount: 500000, accountSize: "$100,000", model: "vip" },
@@ -26,18 +25,7 @@ export async function POST(req: NextRequest) {
     const product = PRODUCTS[productId as keyof typeof PRODUCTS];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
 
-    // Plafond $400K : uniquement sur les comptes reward/funded (challenges illimités)
     const admin = createAdminClient();
-    if (product.model === "instant") {
-      const { data: fundedAccounts } = await admin.from("challenges").select("account_size").eq("user_id", userId).eq("status", "funded");
-      const currentTotal = (fundedAccounts || []).reduce((sum: number, c: { account_size: string }) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
-      const newSize = SIZE_VALUES[product.accountSize] || 0;
-      if (currentTotal + newSize > MAX_CUMUL) {
-        return NextResponse.json({ error: `Plafond $200,000 de comptes Reward atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
-      }
-    }
-    // product already defined above
-    if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
 
     const discountPct = Number(discount) || 0;
     const finalAmount = discountPct > 0

@@ -86,18 +86,17 @@ export async function POST(req: NextRequest) {
       if (existing) return NextResponse.json({ received: true, duplicate: true });
     }
 
-    const isInstant = model === "instant";
     const { data: inserted, error: insertError } = await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
       model,
-      status: isInstant ? "funded" : "active",
-      phase: isInstant ? "funded" : "phase1",
+      status: "active",
+      phase: "phase1",
       balance: size,
       start_balance: size,
-      profit_target: isInstant ? 0 : 10,
-      daily_drawdown_limit: (model === "1step" || isInstant) ? 3 : 5,
-      total_drawdown_limit: (model === "1step" || isInstant) ? 8 : 10,
+      profit_target: 10,
+      daily_drawdown_limit: model === "1step" ? 3 : 5,
+      total_drawdown_limit: 10,
       trading_days: 0,
       stripe_session_id: nowpaymentsId || null,
       amount_paid: Math.round(parseFloat(body.price_amount || "0") * 1e6) / 1e6,
@@ -165,8 +164,7 @@ export async function POST(req: NextRequest) {
       mt5Password = mt5Account.password;
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server = mt5Account.server;
-      const label = model === "instant" ? "Reward" : "Phase 1";
-      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, label); } catch {}
+      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, "Phase 1"); } catch {}
     } catch (e) { console.error("MT5 creation error:", e); }
 
     await admin.from("challenges").update({

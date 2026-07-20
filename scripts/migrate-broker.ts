@@ -34,7 +34,7 @@ const GROUP_MAP: Record<string, string> = {
   "1step":        "HAR\\MAN32\\demoG2",
   "funded_2step": "HAR\\MAN32\\demoG3",
   "funded_1step": "HAR\\MAN32\\demoG4",
-  "instant":      "HAR\\MAN32\\demoG4",
+
   "disabled":     "HAR\\MAN32\\demoG5",
 };
 
@@ -44,7 +44,7 @@ const SIZE_LABELS: Record<number, string> = {
 };
 
 function getGroup(model: string, phase: string): string {
-  if (phase === "funded" || phase === "instant") return GROUP_MAP[`funded_${model}`] ?? GROUP_MAP["2step"];
+  if (phase === "funded") return GROUP_MAP[`funded_${model}`] ?? GROUP_MAP["2step"];
   return GROUP_MAP[model] ?? GROUP_MAP["2step"];
 }
 

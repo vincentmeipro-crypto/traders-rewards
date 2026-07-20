@@ -110,7 +110,27 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   }).eq("id", id);
   try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay, daily_start_balance: dailyRefBalance }).eq("id", id); } catch {}
 
-  // 5. Breach drawdown journalier
+  // 5a. Règle du meilleur jour 50% (1-step phase1 uniquement)
+  // Un seul jour de profit ne peut pas dépasser 50% de l'objectif de profit
+  const bestDayLimit = startBalance * (profitTarget / 100) * 0.5;
+  const bestDayViolated = is1Step && phase === "phase1" && profitTarget > 0 && dayProfit > bestDayLimit;
+  if (bestDayViolated) {
+    await changeMT5Group(login, "HAR\\MAN32\\demoG5").catch(() => {});
+    await disableMT5Account(login).catch(() => {});
+    await changeMT5Password(login).catch(() => {});
+    const alreadyFailed = challenge.status === "failed";
+    await admin.from("challenges").update({
+      status: "failed",
+      last_synced_at: baseNow,
+      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "best_day_rule", breach_value: parseFloat((dayProfit / startBalance * 100).toFixed(2)), breach_equity: newEquity }),
+    }).eq("id", id);
+    if (!alreadyFailed) {
+      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login); } catch {}
+    }
+    return { status: "failed", reason: "best_day_rule", profit_pct: (dayProfit / startBalance * 100).toFixed(2) };
+  }
+
+  // 5b. Breach drawdown journalier
   if (dailyDD >= dailyLimit) {
     const closeResult = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
     if (closeResult.positions.length > 0) {

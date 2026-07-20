@@ -17,7 +17,7 @@ const GROUP_MAP: Record<string, string> = {
   "1step":         "HAR\\MAN32\\demoG2",
   "funded_2step":  "HAR\\MAN32\\demoG3",
   "funded_1step":  "HAR\\MAN32\\demoG4",
-  "instant":       "HAR\\MAN32\\demoG4",
+
   "disabled":      "HAR\\MAN32\\demoG5",
 };
 
