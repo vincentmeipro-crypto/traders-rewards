@@ -89,29 +89,33 @@ export async function GET(req: NextRequest) {
           const history = await getMT5History(challenge.mt5_login) as Record<string, unknown>[];
           const todayMs = new Date().setHours(0, 0, 0, 0);
 
-          // Deals du jour triés chronologiquement
           const todayDeals = history
-            .filter(d => {
-              const t = (d.time as number) * 1000;
-              return t >= todayMs;
-            })
+            .filter(d => (d.time as number) * 1000 >= todayMs)
             .sort((a, b) => (a.time as number) - (b.time as number));
 
-          // Reconstruction du solde courant à partir du start_balance
-          let runningBalance = startBalance;
+          // Reconstruction correcte : solde en début de journée = balance MT5 actuelle - profits d'aujourd'hui
+          const todayProfitTotal = todayDeals.reduce((s, d) => s + (typeof d.profit === "number" ? d.profit : 0), 0);
+          const balanceStartOfDay = (account.balance ?? startBalance) - todayProfitTotal;
+
+          let runningBalance = balanceStartOfDay;
           for (const deal of todayDeals) {
             const profit = typeof deal.profit === "number" ? deal.profit : 0;
             runningBalance += profit;
-            const histTotalDD = ((startBalance - runningBalance) / startBalance) * 100;
-            if (histTotalDD >= totalLimit) {
+            // Vérifier DAILY DD (5%) ET TOTAL DD (10%) sur chaque deal fermé
+            if (runningBalance <= dailyThreshold) {
+              breachReason = "daily_drawdown";
+              breachEquity = runningBalance;
+              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] daily_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${dailyThreshold})`);
+              break;
+            }
+            if (runningBalance <= totalThreshold) {
               breachReason = "total_drawdown";
               breachEquity = runningBalance;
-              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] total_drawdown à ${runningBalance.toFixed(0)} (deal profit: ${profit})`);
+              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] total_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${totalThreshold})`);
               break;
             }
           }
         } catch (histErr) {
-          // Historique non disponible — on continue sans le check historique
           console.warn(`History check skipped for ${challenge.mt5_login}:`, histErr);
         }
       }
