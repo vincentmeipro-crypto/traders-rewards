@@ -193,7 +193,7 @@ const jsonLd = {
           name: "Quels sont les objectifs de profit du challenge ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase avec un objectif de +8%. L'Instant Reward n'a pas d'objectif de profit.",
+            text: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase avec un objectif de +10%.",
           },
         },
         {
@@ -201,7 +201,7 @@ const jsonLd = {
           name: "Quelles sont les règles de drawdown ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "2-Step : 5% de perte journalière maximum et 10% total. 1-Step : 3% journalier et 8% trailing total (EOD).",
+            text: "2-Step : 5% de perte journalière maximum et 10% total. 1-Step : 3% journalier et 10% trailing total (EOD).",
           },
         },
         {
@@ -239,7 +239,7 @@ const jsonLd = {
           {
             "@type": "Offer",
             name: "Challenge 1-Step $50,000",
-            description: "Challenge trading 1 phase, compte simulé $50,000, objectif : +8%, partage des profits : 90%",
+            description: "Challenge trading 1 phase, compte simulé $50,000, objectif : +10%, partage des profits : 90%",
             priceCurrency: "EUR",
             price: "249",
             url: `${SITE_URL}/#pricing`,

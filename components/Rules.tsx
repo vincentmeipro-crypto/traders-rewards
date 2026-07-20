@@ -52,9 +52,9 @@ export default function Rules() {
   ];
 
   const challengeRows1Step = [
-    { label: labels.profitTarget,  val: "+8%"                               },
+    { label: labels.profitTarget,  val: "+10%"                              },
     { label: labels.dailyLoss,     val: "3%"                                },
-    { label: labels.totalLoss,     val: "8% (Trailing EOD)" },
+    { label: labels.totalLoss,     val: "10% (Trailing EOD)"                },
     { label: labels.bestDay,       val: L("≤ 50% du profit total","≤ 50% del profit total","≤ 50% of total profits") },
     { label: labels.tradingDays,   val: `5 ${labels.days}`                  },
     { label: labels.timeLimit,     val: labels.none                         },
@@ -63,7 +63,7 @@ export default function Rules() {
   const fundedRows = [
     { label: labels.profitTarget, v2: labels.noTarget,            v1: labels.noTarget              },
     { label: labels.dailyLoss,    v2: labels.keepRules + " (5%)", v1: labels.keepRules + " (3%)"  },
-    { label: labels.totalLoss,    v2: labels.keepRules + " (10%)",v1: labels.keepRules + " (8% EOD)" },
+    { label: labels.totalLoss,    v2: labels.keepRules + " (10%)",v1: labels.keepRules + " (10% EOD)" },
     { label: labels.tradingDays,  v2: L("15 jours","15 días","15 days"), v1: L("15 jours","15 días","15 days") },
     { label: labels.profitSplit,  v2: "80%",                      v1: "90%"                        },
     { label: labels.payout,       v2: labels.payoutVal,           v1: labels.payoutVal             },

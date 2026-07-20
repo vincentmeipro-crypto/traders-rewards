@@ -56,7 +56,7 @@ const faqData = {
     { q: "Wie starte ich?", a: "Wähle deine Challenge (2-Step oder 1-Step), wähle die Kontogröße ($25K bis $100K, bis zu $200K kumuliert auf Reward-Konten), zahle und erhalte deine Zugangsdaten sofort per E-Mail." },
     { q: "Gibt es ein Zeitlimit?", a: "Nein. Es gibt absolut kein Zeitlimit bei unseren Challenges. Handle in deinem eigenen Tempo." },
     { q: "Was sind die Gewinnziele?", a: "2-Step: Phase 1 = +10%, Phase 2 = +5%. 1-Step: eine einzige Phase mit +10%, dann wirst du Trader Reward." },
-    { q: "Was sind die Drawdown-Regeln?", a: "2-Step: max. 5% Tagesverlust und 10% Gesamtverlust. 1-Step: 3% täglich und 8% Trailing-Gesamt (EOD)." },
+    { q: "Was sind die Drawdown-Regeln?", a: "2-Step: max. 5% Tagesverlust und 10% Gesamtverlust. 1-Step: 3% täglich und 10% Trailing-Gesamt (EOD)." },
     { q: "Mindestanzahl an Handelstagen?", a: "Mindestens 5 verschiedene Kalendertage pro Phase." },
     { q: "Welche Instrumente kann ich handeln?", a: "Alle Instrumente: Forex, Gold, Silber, Öl, Indizes, Kryptowährungen und Rohstoffe." },
     { q: "Kann ich bei News-Events handeln?", a: "Ja während der Evaluation. Auf Reward-Konten ist der Handel 5 Minuten vor und nach wichtigen News gesperrt." },
