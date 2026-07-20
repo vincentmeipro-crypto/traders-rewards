@@ -36,23 +36,54 @@ export async function GET(req: NextRequest) {
         getMT5Positions(challenge.mt5_login).catch(() => []),
       ]);
 
-      const equity        = account.equity   ?? account.balance ?? 0;
-      const startBalance  = challenge.start_balance ?? challenge.balance ?? 0;
-      const currentBalance = challenge.balance ?? startBalance;
-      const totalLimit    = challenge.total_drawdown_limit ?? 10;
-      const dailyLimit    = challenge.daily_drawdown_limit ?? 5;
+      const equity       = account.equity ?? account.balance ?? 0;
+      const startBalance = challenge.start_balance ?? challenge.balance ?? 0;
+      const totalLimit   = challenge.total_drawdown_limit ?? 10;
+      const dailyLimit   = challenge.daily_drawdown_limit ?? 5;
+
+      // Seuils absolus (référence fixe = startBalance)
+      const totalThreshold = startBalance * (1 - totalLimit / 100);
+      const dailyThreshold = startBalance * (1 - dailyLimit / 100);
 
       // --- CHECK 1 : equity temps réel ---
       const totalDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
-      const dailyDD = currentBalance > 0 ? ((currentBalance - equity) / currentBalance) * 100 : 0;
+      const dailyDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
 
       let breachReason: string | null = null;
       let breachEquity = equity;
 
-      if (totalDD >= totalLimit)  breachReason = "total_drawdown";
-      if (dailyDD >= dailyLimit)  breachReason = breachReason ?? "daily_drawdown";
+      if (equity <= dailyThreshold)  breachReason = "daily_drawdown";
+      if (equity <= totalThreshold)  breachReason = "total_drawdown";
 
-      // --- CHECK 2 : historique deals du jour (détecte breach intra-minute) ---
+      // --- CHECK 2 : snapshots passés (rattrape un breach manqué par le cron) ---
+      if (!breachReason) {
+        const { data: pastSnaps } = await admin
+          .from("mt5_snapshots")
+          .select("equity, balance")
+          .eq("mt5_login", challenge.mt5_login)
+          .order("created_at", { ascending: false })
+          .limit(20);
+
+        if (pastSnaps?.length) {
+          for (const snap of pastSnaps) {
+            const snapEquity = snap.equity ?? snap.balance ?? 0;
+            if (snapEquity > 0 && snapEquity <= dailyThreshold) {
+              breachReason = "daily_drawdown";
+              breachEquity = snapEquity;
+              console.error(`BREACH SNAPSHOT [${challenge.mt5_login}] daily_drawdown — equity snapshot: ${snapEquity}`);
+              break;
+            }
+            if (snapEquity > 0 && snapEquity <= totalThreshold) {
+              breachReason = "total_drawdown";
+              breachEquity = snapEquity;
+              console.error(`BREACH SNAPSHOT [${challenge.mt5_login}] total_drawdown — equity snapshot: ${snapEquity}`);
+              break;
+            }
+          }
+        }
+      }
+
+      // --- CHECK 3 : historique deals du jour (détecte breach intra-minute) ---
       if (!breachReason) {
         try {
           const history = await getMT5History(challenge.mt5_login) as Record<string, unknown>[];
