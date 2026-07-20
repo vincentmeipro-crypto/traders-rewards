@@ -66,7 +66,7 @@ function PayoutReceiptContent() {
                 <div style={{ fontSize: 12, color: "#333" }}>{email}</div>
               </td>
               <td style={{ padding: 0, verticalAlign: "top", width: "50%", textAlign: "right" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, color: "#555" }}>Compte certifié</div>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8, color: "#555" }}>Compte Funded</div>
                 <div style={{ fontSize: 13, fontWeight: 700 }}>Taille : {accountSize || "—"}</div>
                 <div style={{ fontSize: 12, color: "#333" }}>N° MT5 : {mt5Login || "—"}</div>
               </td>

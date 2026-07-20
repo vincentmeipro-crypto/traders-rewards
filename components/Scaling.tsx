@@ -38,8 +38,8 @@ export default function Scaling() {
     title:   isFr ? "Progressez jusqu'à" : "Grow Your Account Up to",
     gold:    "$1,000,000",
     sub:     isFr
-      ? "Chaque trimestre de performance, votre capital certifié évolue vers le palier suivant. Atteignez le million sans changer de stratégie."
-      : "Every performance quarter, your certified account moves to the next level. Reach seven figures without changing your strategy.",
+      ? "Chaque trimestre de performance, votre capital funded évolue vers le palier suivant. Atteignez le million sans changer de stratégie."
+      : "Every performance quarter, your funded account moves to the next level. Reach seven figures without changing your strategy.",
     session: isFr ? "Session" : "Session",
     balance: isFr ? "Solde du compte" : "Account Balance",
     daily:   isFr ? "Perte journalière max" : "Max Daily Loss",
@@ -49,14 +49,14 @@ export default function Scaling() {
     cap:     isFr ? "Plafond atteint" : "Cap Reached",
     condTitle: isFr ? "Conditions pour évoluer" : "Conditions to Level Up",
     conds: isFr ? [
-      "Réaliser au moins 10% de profit sur le solde du compte certifié",
+      "Réaliser au moins 10% de profit sur le solde du compte funded",
       "Sur une session trimestrielle (3 mois)",
       "Avoir reçu au moins 2 récompenses pendant la session",
       "Aucune violation des règles de trading",
       "Solde du compte positif en permanence",
       "Traders Rewards se réserve le droit de restreindre l'accès au programme d'Élévation à l'issue d'une étude approfondie du profil et de l'historique de trading du trader",
     ] : [
-      "Achieve at least 10% profit on your certified account balance",
+      "Achieve at least 10% profit on your funded account balance",
       "Over a quarterly session (3 months)",
       "Have received at least 2 rewards during the session",
       "Zero trading rule violations",

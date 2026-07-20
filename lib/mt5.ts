@@ -9,8 +9,8 @@ const MT5_HEADERS = {
 
 // demoG1 = Challenge 2-Step
 // demoG2 = Challenge 1-Step
-// demoG3 = Certified 2-Step
-// demoG4 = Certified 1-Step
+// demoG3 = Funded 2-Step
+// demoG4 = Funded 1-Step
 // demoG5 = Comptes désactivés / breach
 const GROUP_MAP: Record<string, string> = {
   "2step":         "HAR/MAN32/demoG1",
