@@ -205,7 +205,7 @@ export default function VipPage() {
               Tu paies l&apos;accès une seule fois. Une stratégie algorithmique professionnelle s&apos;active sur ton compte, passe les phases, et les récompenses sont disponibles tous les 30 jours.
             </p>
             <div className="fade-4" style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" }}>
-              {[["100%", "Pour toi"], ["30 jours", "Cycle"], ["2 phases", "Même règles"]].map(([val, lbl]) => (
+              {[["100%", "Split"], ["30 jours", "Cycle"], ["2 phases", "Même règles"]].map(([val, lbl]) => (
                 <div key={lbl} style={{ textAlign: "center" }}>
                   <div style={{ fontSize: 22, fontWeight: 900, color: "#3B82F6" }}>{val}</div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "1px", textTransform: "uppercase" }}>{lbl}</div>
