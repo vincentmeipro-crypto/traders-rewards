@@ -194,8 +194,6 @@ export default function VipPage() {
           {/* Spotlight beam */}
           <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 1000, height: 440, background: "radial-gradient(ellipse 60% 95% at 50% -10%, rgba(59,130,246,0.9) 0%, rgba(59,130,246,0.55) 18%, rgba(59,130,246,0.2) 42%, rgba(59,130,246,0.05) 65%, transparent 80%)", filter: "blur(3px)", pointerEvents: "none", zIndex: 0 }} />
           <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 420, height: 320, background: "radial-gradient(ellipse 45% 75% at 50% -20%, rgba(147,197,253,0.75) 0%, rgba(59,130,246,0.35) 40%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
-          <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: 2, height: 150, background: "linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(200,225,255,0.8) 40%, rgba(147,197,253,0.3) 70%, transparent 100%)", boxShadow: "0 0 14px 5px rgba(147,197,253,0.65)", pointerEvents: "none", zIndex: 0 }} />
-          <div style={{ position: "absolute", top: -6, left: "50%", transform: "translateX(-50%)", width: 70, height: 12, background: "rgba(255,255,255,0.9)", borderRadius: "50%", filter: "blur(6px)", boxShadow: "0 0 24px 12px rgba(147,197,253,0.85)", pointerEvents: "none", zIndex: 0 }} />
           <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
             <h1 className="fade-1" style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", fontWeight: 900, color: "#fff", lineHeight: 1.05, marginBottom: 24, marginTop: 0 }}>
               Challenge <span className="vip-hero-text">VIP</span><br />
