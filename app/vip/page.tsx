@@ -17,10 +17,10 @@ const VIP_SIMS = [
 ];
 
 const STEPS = [
-  { icon: <Zap size={22} color="#3B82F6" />, title: "Tu choisis ton compte", desc: "Sélectionne la taille de compte VIP. Tu paies l'accès une seule fois." },
-  { icon: <TrendingUp size={22} color="#3B82F6" />, title: "L'algorithme trade", desc: "Une stratégie algorithmique professionnelle s'active sur ton compte et passe les deux phases automatiquement." },
-  { icon: <Shield size={22} color="#3B82F6" />, title: "Validation automatique", desc: "Une fois les objectifs atteints, ton compte Reward est activé automatiquement. Aucune action requise." },
-  { icon: <Clock size={22} color="#3B82F6" />, title: "Récompenses tous les 30 jours", desc: "Les profits sont calculés tous les 30 jours. Tu effectues ta demande de retrait pour recevoir tes récompenses." },
+  { icon: <Zap size={22} color="#3B82F6" />, title: "Vous choisissez votre compte", desc: "Sélectionnez la taille de compte VIP. Vous payez l'accès une seule fois." },
+  { icon: <TrendingUp size={22} color="#3B82F6" />, title: "L'algorithme trade", desc: "Une stratégie algorithmique professionnelle s'active sur votre compte et passe les deux phases automatiquement." },
+  { icon: <Shield size={22} color="#3B82F6" />, title: "Validation automatique", desc: "Une fois les objectifs atteints, votre compte Reward est activé automatiquement. Aucune action requise." },
+  { icon: <Clock size={22} color="#3B82F6" />, title: "Récompenses tous les 30 jours", desc: "Les profits sont calculés tous les 30 jours. Vous effectuez votre demande de retrait pour recevoir vos récompenses." },
 ];
 
 export default function VipPage() {
@@ -200,7 +200,7 @@ export default function VipPage() {
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L&apos;algorithme s&apos;occupe de tout</span>
             </h1>
             <p className="fade-3" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)", maxWidth: 900, margin: "0 auto 16px", lineHeight: 1.7 }}>
-              Tu paies l&apos;accès une seule fois. Une stratégie algorithmique professionnelle s&apos;active sur ton compte, passe les phases, et les récompenses sont disponibles tous les 30 jours.
+              Vous payez l&apos;accès une seule fois. Une stratégie algorithmique professionnelle s&apos;active sur votre compte, passe les phases, et les récompenses sont disponibles tous les 30 jours.
             </p>
           </div>
         </div>
@@ -254,7 +254,7 @@ export default function VipPage() {
               <div style={{ display: "inline-block", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 100, padding: "4px 16px", fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#22c55e", textTransform: "uppercase", marginBottom: 12 }}>
                 Projection financière
               </div>
-              <h2 style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Évolution de ton compte sur 12 mois</h2>
+              <h2 style={{ fontSize: 24, fontWeight: 800, color: "#fff", marginBottom: 8 }}>Évolution de votre compte sur 12 mois</h2>
               <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>1,3% de rewards disponibles sur demande chaque mois dès le mois 4 — Split 100% client</p>
             </div>
 
