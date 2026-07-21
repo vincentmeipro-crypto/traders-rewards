@@ -318,19 +318,21 @@ export default function VipPage() {
             </div>
 
             {/* Comparaison côte à côte */}
-            <div className={compVisible ? "comp-visible" : "comp-hidden"} style={{ animationDelay: "0.2s", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 20, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
+            <div className={compVisible ? "comp-visible" : "comp-hidden"} style={{ animationDelay: "0.2s", borderRadius: 20, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
 
               {/* En-têtes */}
-              <div style={{ background: "rgba(239,68,68,0.06)", padding: "24px 20px", textAlign: "center", borderRight: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(239,68,68,0.7)", marginBottom: 6 }}>❌ Challenge Classique</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>Vous tradez vous-même</div>
-              </div>
-              <div className="comp-vip-card" style={{ background: "rgba(59,130,246,0.08)", padding: "24px 20px", textAlign: "center", borderBottom: "1px solid rgba(59,130,246,0.2)" }}>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 6 }}>✦ Challenge VIP</div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>L&apos;algorithme s&apos;occupe de tout</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
+                <div style={{ background: "rgba(239,68,68,0.06)", padding: "24px 20px", textAlign: "center", borderRight: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(239,68,68,0.7)", marginBottom: 6 }}>❌ Challenge Classique</div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>Vous tradez vous-même</div>
+                </div>
+                <div className="comp-vip-card" style={{ background: "rgba(59,130,246,0.08)", padding: "24px 20px", textAlign: "center", borderBottom: "1px solid rgba(59,130,246,0.2)" }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 6 }}>✦ Challenge VIP</div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>L&apos;algorithme s&apos;occupe de tout</div>
+                </div>
               </div>
 
-              {/* Lignes de comparaison */}
+              {/* Lignes de comparaison — chaque ligne = grid 2 colonnes */}
               {[
                 {
                   label: "Qui trade ?",
@@ -373,7 +375,7 @@ export default function VipPage() {
                   good: "100% pour vous, sans exception",
                 },
               ].map((row, i) => (
-                <div key={i} className="comp-row">
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                   <div className="comp-cell comp-cell-bad" style={{ background: i % 2 === 0 ? "rgba(239,68,68,0.03)" : "transparent" }}>
                     <span style={{ color: "#EF4444", fontSize: 14, flexShrink: 0 }}>✗</span>
                     <span>{row.bad}</span>
