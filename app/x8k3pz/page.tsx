@@ -381,11 +381,17 @@ export default function AdminPage() {
 
     const inYear  = (d: string) => new Date(d).getFullYear() === yr;
     const inMonth = (d: string) => { const dt = new Date(d); return dt.getFullYear() === yr && dt.getMonth() === mo; };
+    const today = now.getDate();
+    const inDay  = (d: string) => { const dt = new Date(d); return dt.getFullYear() === yr && dt.getMonth() === mo && dt.getDate() === today; };
+    const weekStart = new Date(now); weekStart.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)); weekStart.setHours(0,0,0,0);
+    const inWeek = (d: string) => { const dt = new Date(d); return dt >= weekStart; };
 
     // Ne compter que les achats originaux (phase1 + instant) — phase2/funded sont auto-créés, pas de nouvelles ventes
     const isPurchase = (c: Challenge) => c.phase === "phase1" || c.model === "instant";
     const caYear  = challenges.filter(c => inYear(c.created_at)  && isPurchase(c)).reduce((s, c) => s + (c.amount_paid || 0), 0);
     const caMonth = challenges.filter(c => inMonth(c.created_at) && isPurchase(c)).reduce((s, c) => s + (c.amount_paid || 0), 0);
+    const caWeek  = challenges.filter(c => inWeek(c.created_at)  && isPurchase(c)).reduce((s, c) => s + (c.amount_paid || 0), 0);
+    const caToday = challenges.filter(c => inDay(c.created_at)   && isPurchase(c)).reduce((s, c) => s + (c.amount_paid || 0), 0);
     const pyYear  = payouts.filter(p => p.status === "paid" && inYear(p.created_at)).reduce((s, p) => s + p.amount, 0);
     const pyMonth = payouts.filter(p => p.status === "paid" && inMonth(p.created_at)).reduce((s, p) => s + p.amount, 0);
     const margeYear  = caYear  > 0 ? Math.round((caYear  - pyYear)  / caYear  * 100) : 0;
@@ -421,7 +427,7 @@ export default function AdminPage() {
       return dd >= limit * 0.75;
     });
 
-    return { caYear, caMonth, margeYear, margeMonth, totalTraders, activeTraders, phase1, oneStep, phase2, passed, certified, failed, total, pendingPayouts: pendingPayouts.length, pendingAmt, convP1P2, convP2Fund, ltv, alerts };
+    return { caYear, caMonth, caWeek, caToday, margeYear, margeMonth, totalTraders, activeTraders, phase1, oneStep, phase2, passed, certified, failed, total, pendingPayouts: pendingPayouts.length, pendingAmt, convP1P2, convP2Fund, ltv, alerts };
   }, [challenges, payouts]);
 
   /* ── Monthly revenue ── */
@@ -1230,14 +1236,17 @@ export default function AdminPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               {[
-                { label: "CA Total",          value: `€${challenges.filter(c => c.phase === "phase1" || c.model === "instant").reduce((s,c) => s + (c.amount_paid||0),0).toLocaleString()}` },
-                { label: "Récompenses versées", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}` },
-                { label: "Marge brute totale",value: `${kpis.margeYear}%` },
-                { label: "Nb challenges total",value: challenges.length },
+                { label: "CA Aujourd'hui",     value: `€${kpis.caToday.toLocaleString()}`,  color: kpis.caToday > 0 ? "#22c55e" : "#fff" },
+                { label: "CA Cette semaine",   value: `€${kpis.caWeek.toLocaleString()}`,   color: kpis.caWeek  > 0 ? "#22c55e" : "#fff" },
+                { label: "CA Ce mois",         value: `€${kpis.caMonth.toLocaleString()}`,  color: "#fff" },
+                { label: "CA Total",           value: `€${challenges.filter(c => c.phase === "phase1" || c.model === "instant").reduce((s,c) => s + (c.amount_paid||0),0).toLocaleString()}`, color: "#fff" },
+                { label: "Récompenses versées",value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: "#ef4444" },
+                { label: "Marge brute totale", value: `${kpis.margeYear}%`,                 color: "#22c55e" },
+                { label: "Nb challenges total",value: String(challenges.length),             color: "#fff" },
               ].map((s, i) => (
-                <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "18px 22px" }}>
+                <div key={i} style={{ background: "#111111", border: `1px solid ${i < 2 ? "rgba(34,197,94,0.25)" : "rgba(255,255,255,0.1)"}`, borderRadius: 12, padding: "18px 22px" }}>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 26, fontWeight: 900 }}>{s.value}</div>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: s.color }}>{s.value}</div>
                 </div>
               ))}
             </div>
