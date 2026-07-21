@@ -942,9 +942,9 @@ export default function AdminPage() {
                           </tr>
                         )}
                         <tr key={c.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                          <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.45)", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</td>
-                          <td style={{ padding: "13px 14px", fontWeight: 700 }}>{c.account_size}</td>
-                          <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.45)" }}>{c.model}</td>
+                          <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.7)", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12 }}>{c.user_email}</td>
+                          <td style={{ padding: "13px 14px", fontWeight: 800, color: "#fff" }}>{c.account_size}</td>
+                          <td style={{ padding: "13px 14px" }}><span style={{ background: c.model === "vip" ? "rgba(139,92,246,0.15)" : "rgba(255,255,255,0.06)", color: c.model === "vip" ? "#a78bfa" : "rgba(255,255,255,0.75)", fontWeight: 700, fontSize: 11, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{c.model}</span></td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />

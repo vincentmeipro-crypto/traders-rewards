@@ -1764,7 +1764,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       {[
                         { label: T.dash.platform, value: "MetaTrader 5", copy: false },
                         { label: "Login", value: String(challenge.mt5_login), copy: true },
-                        { label: T.dash.password, value: challenge.mt5_password || "—", copy: true },
+                        { label: T.dash.password, value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) || "—", copy: true },
                         { label: T.dash.server, value: challenge.mt5_server || "—", copy: true },
                       ].map((item, i) => (
                         <div key={i} onClick={() => item.copy && navigator.clipboard.writeText(item.value)} style={{ backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 14px", cursor: item.copy ? "pointer" : "default" }} title={item.copy ? "Cliquer pour copier" : ""}>

@@ -176,9 +176,11 @@ export async function POST(req: NextRequest) {
 
     if (userEmail) {
       try {
+        const isVip = model === "vip";
+        const clientPassword = isVip ? mt5PasswordInvestor : mt5Password;
         await sendWelcomeEmail(userEmail, accountSize, model,
-          mt5Login && mt5Password && mt5Server
-            ? { login: mt5Login, password: mt5Password, server: mt5Server }
+          mt5Login && clientPassword && mt5Server
+            ? { login: mt5Login, password: clientPassword, server: mt5Server }
             : undefined
         );
       } catch {}
