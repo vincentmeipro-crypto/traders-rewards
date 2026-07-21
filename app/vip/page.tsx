@@ -27,6 +27,30 @@ export default function VipPage() {
   useLanguage();
   const [simIdx, setSimIdx] = useState(2);
   const chartRef = useRef<HTMLCanvasElement>(null);
+  const [counter, setCounter] = useState(0);
+  const [compVisible, setCompVisible] = useState(false);
+  const compRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = compRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setCompVisible(true);
+        let start: number | null = null;
+        const animate = (ts: number) => {
+          if (!start) start = ts;
+          const p = Math.min((ts - start) / 1800, 1);
+          setCounter(Math.round(p * 95));
+          if (p < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+        observer.disconnect();
+      }
+    }, { threshold: 0.25 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = chartRef.current;
@@ -174,6 +198,32 @@ export default function VipPage() {
           border-radius: 16px;
           padding: 28px 24px;
         }
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(32px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 24px rgba(59,130,246,0.25), 0 0 0 1px rgba(59,130,246,0.4); }
+          50%       { box-shadow: 0 0 40px rgba(59,130,246,0.45), 0 0 0 1px rgba(59,130,246,0.6); }
+        }
+        .comp-visible { animation: fadeSlideUp 0.7s ease forwards; }
+        .comp-hidden  { opacity: 0; }
+        .comp-vip-card { animation: glowPulse 3s ease-in-out infinite; }
+        .comp-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .comp-row:last-child { border-bottom: none; }
+        .comp-cell {
+          padding: 16px 20px;
+          font-size: 13px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .comp-cell-bad  { color: rgba(255,255,255,0.45); border-right: 1px solid rgba(255,255,255,0.05); }
+        .comp-cell-good { color: rgba(255,255,255,0.9); font-weight: 600; }
         .disclaimer {
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.08);
@@ -245,6 +295,105 @@ export default function VipPage() {
                   </a>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* ── Comparatif VIP vs Classique ── */}
+          <div ref={compRef} style={{ marginBottom: 80 }}>
+
+            {/* Stat choc */}
+            <div className={compVisible ? "comp-visible" : "comp-hidden"} style={{ textAlign: "center", marginBottom: 56 }}>
+              <div style={{ display: "inline-block", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 100, padding: "4px 18px", fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#EF4444", textTransform: "uppercase", marginBottom: 20 }}>
+                Challenge classique — réalité du marché
+              </div>
+              <div style={{ fontSize: "clamp(88px, 18vw, 160px)", fontWeight: 900, color: "#EF4444", lineHeight: 0.9, fontVariantNumeric: "tabular-nums", letterSpacing: "-4px" }}>
+                {counter}%
+              </div>
+              <div style={{ fontSize: "clamp(16px, 3vw, 22px)", fontWeight: 700, color: "#fff", marginTop: 16, marginBottom: 8 }}>
+                des participants n&apos;atteignent jamais les récompenses
+              </div>
+              <div style={{ fontSize: 14, color: "rgba(255,255,255,0.35)", maxWidth: 520, margin: "0 auto" }}>
+                Seuls les traders les plus expérimentés et les plus disciplinés y parviennent. Le challenge classique n&apos;est pas fait pour tout le monde.
+              </div>
+            </div>
+
+            {/* Comparaison côte à côte */}
+            <div className={compVisible ? "comp-visible" : "comp-hidden"} style={{ animationDelay: "0.2s", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 20, overflow: "hidden", border: "1px solid rgba(255,255,255,0.06)" }}>
+
+              {/* En-têtes */}
+              <div style={{ background: "rgba(239,68,68,0.06)", padding: "24px 20px", textAlign: "center", borderRight: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(239,68,68,0.7)", marginBottom: 6 }}>❌ Challenge Classique</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>Vous tradez vous-même</div>
+              </div>
+              <div className="comp-vip-card" style={{ background: "rgba(59,130,246,0.08)", padding: "24px 20px", textAlign: "center", borderBottom: "1px solid rgba(59,130,246,0.2)" }}>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 6 }}>✦ Challenge VIP</div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>L&apos;algorithme s&apos;occupe de tout</div>
+              </div>
+
+              {/* Lignes de comparaison */}
+              {[
+                {
+                  label: "Qui trade ?",
+                  bad:  "Vous — avec le risque émotionnel et humain",
+                  good: "Un algorithme professionnel, sans émotion",
+                },
+                {
+                  label: "Taux de succès",
+                  bad:  "~5% des traders atteignent les récompenses",
+                  good: "100% — les phases sont passées automatiquement",
+                },
+                {
+                  label: "Expérience requise",
+                  bad:  "Des années de pratique et d'apprentissage",
+                  good: "Aucune — accès immédiat pour tous",
+                },
+                {
+                  label: "Temps quotidien",
+                  bad:  "4 à 8 heures d'analyse et de trading",
+                  good: "0 minute — l'algo tourne 24h/24",
+                },
+                {
+                  label: "Récompenses",
+                  bad:  "Incertaines — si et seulement si vous réussissez",
+                  good: "Garanties dès le 4ème mois, tous les 30 jours",
+                },
+                {
+                  label: "Limite de temps",
+                  bad:  "Stricte — échec si non respectée",
+                  good: "Aucune — l'algo avance à son rythme",
+                },
+                {
+                  label: "Stress",
+                  bad:  "Élevé — drawdown, pression, pertes",
+                  good: "Inexistant — vous suivez, l'algo exécute",
+                },
+                {
+                  label: "Split des récompenses",
+                  bad:  "Partiel selon les propfirms (70-80%)",
+                  good: "100% pour vous, sans exception",
+                },
+              ].map((row, i) => (
+                <div key={i} className="comp-row">
+                  <div className="comp-cell comp-cell-bad" style={{ background: i % 2 === 0 ? "rgba(239,68,68,0.03)" : "transparent" }}>
+                    <span style={{ color: "#EF4444", fontSize: 14, flexShrink: 0 }}>✗</span>
+                    <span>{row.bad}</span>
+                  </div>
+                  <div className="comp-cell comp-cell-good" style={{ background: i % 2 === 0 ? "rgba(59,130,246,0.05)" : "rgba(59,130,246,0.02)" }}>
+                    <span style={{ color: "#22c55e", fontSize: 14, flexShrink: 0 }}>✓</span>
+                    <span>{row.good}</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* CTA final */}
+              <div style={{ gridColumn: "1 / -1", background: "rgba(59,130,246,0.06)", padding: "28px 24px", textAlign: "center", borderTop: "1px solid rgba(59,130,246,0.15)" }}>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 6 }}>
+                  Pourquoi laisser 95% de chances à l&apos;échec quand vous pouvez garantir votre succès ?
+                </div>
+                <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
+                  Le Challenge VIP n&apos;est pas un avantage — c&apos;est une évidence.
+                </div>
+              </div>
             </div>
           </div>
 
