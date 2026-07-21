@@ -212,7 +212,7 @@ export default function VipPage() {
 
           {/* Plans */}
           <div style={{ marginBottom: 64 }}>
-            <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, color: "#fff", marginBottom: 12 }}>Choisir ton compte VIP</h2>
+            <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, marginBottom: 12, color: "#fff", textShadow: "0 0 8px rgba(59,130,246,0.9), 0 0 24px rgba(59,130,246,0.6), 0 0 48px rgba(59,130,246,0.35)" }}>Choisissez votre compte VIP</h2>
             <p style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 14, marginBottom: 40 }}>Accès unique — aucun abonnement</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
               {PLANS.map((p, i) => (
