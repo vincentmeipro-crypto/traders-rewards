@@ -222,7 +222,7 @@ export default function VipPage() {
                       Le Plus Populaire
                     </div>
                   )}
-                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: "1px" }}>Compte simulé</div>
+                  <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: "1px" }}>Compte</div>
                   <div style={{ fontSize: 36, fontWeight: 900, color: "#fff", marginBottom: 4 }}>{p.size}</div>
                   <div style={{ fontSize: 28, fontWeight: 900, color: "#3B82F6", marginBottom: 24 }}>{p.price}</div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
