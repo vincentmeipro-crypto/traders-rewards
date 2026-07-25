@@ -64,7 +64,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite";
+type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite";
 
 type LoginEvent = {
   id: string;
@@ -118,6 +118,7 @@ const STATUS_COLORS: Record<string, string> = {
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview",  label: "Vue d'ensemble" },
   { id: "pipeline",  label: "Pipeline" },
+  { id: "algo",      label: "⚡ Pipeline Algo" },
   { id: "crm",       label: "CRM Traders" },
   { id: "financier", label: "Financier" },
   { id: "payouts",   label: "Récompenses" },
@@ -191,6 +192,10 @@ export default function AdminPage() {
   const [editData, setEditData] = useState<Partial<Challenge>>({});
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+
+  // Pipeline Algo state
+  const [algoSearch, setAlgoSearch] = useState("");
+  const [algoFilterStatus, setAlgoFilterStatus] = useState("all");
 
   // Promo state
   const [promosLoading, setPromosLoading] = useState(false);
@@ -685,6 +690,13 @@ export default function AdminPage() {
     return matchSearch && matchStatus;
   });
 
+  const filteredAlgoChallenges = challenges.filter(c => {
+    if (c.model !== "vip") return false;
+    const matchSearch = c.user_email?.toLowerCase().includes(algoSearch.toLowerCase()) || c.client_first_name?.toLowerCase().includes(algoSearch.toLowerCase()) || c.client_last_name?.toLowerCase().includes(algoSearch.toLowerCase());
+    const matchStatus = algoFilterStatus === "all" || c.status === algoFilterStatus;
+    return matchSearch && matchStatus;
+  });
+
   const maxCA = monthlyRevenue.length > 0 ? Math.max(...monthlyRevenue.map(m => m.ca)) : 1;
 
   if (needsLogin) return (
@@ -1026,6 +1038,170 @@ export default function AdminPage() {
             </div>
           </>
         )}
+
+        {/* ══ PIPELINE ALGO ══ */}
+        {tab === "algo" && (() => {
+          const algoChallenges = challenges.filter(c => c.model === "vip");
+          const algoActive  = algoChallenges.filter(c => c.status === "active").length;
+          const algoFunded  = algoChallenges.filter(c => c.status === "funded").length;
+          const algoFailed  = algoChallenges.filter(c => c.status === "failed").length;
+          const algoPassed  = algoChallenges.filter(c => c.status === "passed").length;
+          return (
+            <>
+              {/* Header */}
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+                <div style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.35)", borderRadius: 8, padding: "6px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 16 }}>⚡</span>
+                  <span style={{ color: "#a78bfa", fontWeight: 800, fontSize: 13, letterSpacing: 1, textTransform: "uppercase" }}>Challenge ALGO</span>
+                </div>
+                <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 12 }}>Comptes avec algorithme intégré — mots de passe séparés client / master</span>
+              </div>
+
+              {/* KPI cards */}
+              <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
+                {[
+                  { label: "Total Algo", value: algoChallenges.length, color: "#a78bfa" },
+                  { label: "Actifs",     value: algoActive,           color: "#22c55e" },
+                  { label: "Passés",     value: algoPassed,           color: "#f59e0b" },
+                  { label: "Reward",     value: algoFunded,           color: "#3b82f6" },
+                  { label: "Failed",     value: algoFailed,           color: "#ef4444" },
+                ].map((s, i) => (
+                  <div key={i} style={{ flex: 1, minWidth: 90, background: "#111111", border: `1px solid ${s.color}33`, borderRadius: 10, padding: "14px 16px", textAlign: "center" }}>
+                    <div style={{ color: s.color, fontSize: 22, fontWeight: 900 }}>{s.value}</div>
+                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, marginTop: 4 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Filters */}
+              <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
+                <input placeholder="Recherche email / nom..." value={algoSearch} onChange={e => setAlgoSearch(e.target.value)}
+                  style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none", minWidth: 220 }} />
+                <CustomSelect value={algoFilterStatus} onChange={setAlgoFilterStatus} options={[
+                  { value: "all",    label: "Tous les statuts" },
+                  { value: "active", label: "Active" },
+                  { value: "passed", label: "Passed" },
+                  { value: "funded", label: "Reward" },
+                  { value: "failed", label: "Failed" },
+                ]} />
+                <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, alignSelf: "center" }}>{filteredAlgoChallenges.length} compte(s)</span>
+              </div>
+
+              {/* Table */}
+              <div style={{ background: "#111111", border: "1px solid rgba(139,92,246,0.2)", borderRadius: 16, overflow: "hidden" }}>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid rgba(139,92,246,0.15)", background: "rgba(139,92,246,0.06)" }}>
+                        {["Trader", "Compte", "Statut", "Balance", "Gain", "Login MT5", "🔒 MDP Investisseur (client)", "🗝️ MDP Master (admin)", "Serveur", "Date", "Actions"].map(h => (
+                          <th key={h} style={{ padding: "13px 14px", textAlign: "left", color: "rgba(167,139,250,0.75)", fontWeight: 700, fontSize: 11, whiteSpace: "nowrap", letterSpacing: "0.3px" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredAlgoChallenges.map(c => (
+                        <>
+                          {(c.client_first_name || c.client_last_name) && (
+                            <tr key={`${c.id}-info`} style={{ background: "rgba(139,92,246,0.04)" }}>
+                              <td colSpan={11} style={{ padding: "8px 14px" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                  {[
+                                    { label: "Prénom",  value: c.client_first_name },
+                                    { label: "Nom",     value: c.client_last_name  },
+                                    { label: "Email",   value: c.user_email        },
+                                    { label: "Mobile",  value: c.client_phone || "+33" },
+                                  ].map((f, i) => (
+                                    <button key={i} onClick={() => copyToClipboard(f.value)}
+                                      style={{ background: "rgba(139,92,246,0.1)", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 6, padding: "3px 8px", color: "#a78bfa", fontSize: 11, cursor: "pointer" }}>
+                                      <span style={{ color: "rgba(167,139,250,0.6)", fontSize: 10 }}>{f.label}: </span>
+                                      <span style={{ fontWeight: 600 }}>{f.value}</span>
+                                      <span style={{ color: "#999", fontSize: 10 }}> ⎘</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                          <tr key={c.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+                            <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.6)", maxWidth: 150, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12 }}>{c.user_email}</td>
+                            <td style={{ padding: "13px 14px", fontWeight: 800, color: "#fff" }}>{c.account_size}</td>
+                            <td style={{ padding: "13px 14px" }}>
+                              {editing === c.id
+                                ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
+                                : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
+                            </td>
+                            <td style={{ padding: "13px 14px", fontWeight: 700 }}>
+                              {editing === c.id
+                                ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
+                                : `$${c.balance?.toLocaleString()}`}
+                            </td>
+                            <td style={{ padding: "13px 14px" }}>
+                              {(() => {
+                                if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
+                                const gain = (c.balance - c.start_balance) / c.start_balance * 100;
+                                const color = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
+                                return <span style={{ fontWeight: 700, color }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</span>;
+                              })()}
+                            </td>
+                            <td style={{ padding: "13px 14px" }}>
+                              {editing === c.id
+                                ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
+                                : <span onClick={() => c.mt5_login && copyToClipboard(String(c.mt5_login))} style={{ color: c.mt5_login ? "#a78bfa" : "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: "monospace", cursor: c.mt5_login ? "pointer" : "default" }} title="Copier">{c.mt5_login || "—"}</span>}
+                            </td>
+                            {/* Investisseur (client) */}
+                            <td style={{ padding: "13px 14px" }}>
+                              {editing === c.id
+                                ? <input type="text" value={editData.mt5_password_investor ?? c.mt5_password_investor ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password_investor: e.target.value }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 120 }} />
+                                : (
+                                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                    <span style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 4, padding: "2px 6px", fontSize: 10, color: "#22c55e", fontWeight: 700, whiteSpace: "nowrap" }}>CLIENT</span>
+                                    <span onClick={() => c.mt5_password_investor && copyToClipboard(c.mt5_password_investor)} style={{ color: c.mt5_password_investor ? "#a78bfa" : "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: "monospace", cursor: c.mt5_password_investor ? "pointer" : "default" }} title="Copier">{c.mt5_password_investor || "—"}</span>
+                                  </div>
+                                )}
+                            </td>
+                            {/* Master (admin) */}
+                            <td style={{ padding: "13px 14px" }}>
+                              {editing === c.id
+                                ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 120 }} />
+                                : (
+                                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                    <span style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 4, padding: "2px 6px", fontSize: 10, color: "#ef4444", fontWeight: 700, whiteSpace: "nowrap" }}>MASTER</span>
+                                    <span onClick={() => c.mt5_password && copyToClipboard(c.mt5_password)} style={{ color: c.mt5_password ? "#f87171" : "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: "monospace", cursor: c.mt5_password ? "pointer" : "default" }} title="Copier">{c.mt5_password || "—"}</span>
+                                  </div>
+                                )}
+                            </td>
+                            <td style={{ padding: "13px 14px" }}>
+                              {editing === c.id
+                                ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 130 }} />
+                                : <span onClick={() => c.mt5_server && copyToClipboard(c.mt5_server)} style={{ color: c.mt5_server ? "#a78bfa" : "rgba(255,255,255,0.25)", fontSize: 12, fontFamily: "monospace", cursor: c.mt5_server ? "pointer" : "default" }} title="Copier">{c.mt5_server || "—"}</span>}
+                            </td>
+                            <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
+                            <td style={{ padding: "13px 14px" }}>
+                              {editing === c.id
+                                ? <div style={{ display: "flex", gap: 6 }}>
+                                    <button onClick={() => saveChallenge(c.id)} style={{ background: "#a78bfa", color: "#000", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
+                                    <button onClick={() => { setEditing(null); setEditData({}); }} style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                  </div>
+                                : <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                                    <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ background: "rgba(139,92,246,0.12)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
+                                    {c.mt5_login && <button onClick={() => addMT5Custom(c)} style={{ background: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid #22c55e33", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>+$</button>}
+                                    {c.mt5_login && <button onClick={() => withdrawMT5Custom(c)} style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>−$</button>}
+                                    <button onClick={() => deleteChallenge(c.id)} style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                  </div>}
+                            </td>
+                          </tr>
+                        </>
+                      ))}
+                      {filteredAlgoChallenges.length === 0 && (
+                        <tr><td colSpan={11} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun compte Algo</td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          );
+        })()}
 
         {/* ══ CRM TRADERS ══ */}
         {tab === "crm" && (
