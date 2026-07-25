@@ -187,8 +187,8 @@ export default function VipPage() {
         .plan-card {
           background: #0a0a0a;
           border: 1.5px solid rgba(255,255,255,0.08);
-          border-radius: 20px;
-          padding: 36px 28px;
+          border-radius: 16px;
+          padding: 24px 18px;
           transition: border-color 0.2s, transform 0.2s;
           position: relative;
         }
@@ -264,31 +264,31 @@ export default function VipPage() {
           <div style={{ marginBottom: 64 }}>
             <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, marginBottom: 12, color: "#fff", textShadow: "0 0 8px rgba(59,130,246,0.9), 0 0 24px rgba(59,130,246,0.6), 0 0 48px rgba(59,130,246,0.35)" }}>Choisissez votre compte Algo</h2>
             <p style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 14, marginBottom: 40 }}>Accès unique — aucun abonnement</p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
               {PLANS.map((p, i) => (
                 <div key={i} className={`plan-card${p.popular ? " popular" : ""}`}>
                   {p.popular && (
-                    <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)", background: "#3B82F6", color: "#fff", fontSize: 10, fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", padding: "4px 16px", borderRadius: 100 }}>
+                    <div style={{ position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)", background: "#3B82F6", color: "#fff", fontSize: 9, fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", padding: "3px 12px", borderRadius: 100, whiteSpace: "nowrap" }}>
                       Le Plus Populaire
                     </div>
                   )}
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: "1.5px" }}>Taille du compte</div>
-                  <div style={{ fontSize: 36, fontWeight: 900, color: "#fff", marginBottom: 10 }}>{p.size}</div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 4, textTransform: "uppercase", letterSpacing: "1.5px" }}>Prix d&apos;accès unique</div>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: "#3B82F6", marginBottom: 24 }}>{p.price}</div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 32 }}>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 3, textTransform: "uppercase", letterSpacing: "1.5px" }}>Taille du compte</div>
+                  <div style={{ fontSize: 26, fontWeight: 900, color: "#fff", marginBottom: 8 }}>{p.size}</div>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 3, textTransform: "uppercase", letterSpacing: "1.5px" }}>Prix d&apos;accès unique</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: "#3B82F6", marginBottom: 18 }}>{p.price}</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 20 }}>
                     {p.features.map((f, j) => (
-                      <div key={j} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <Check size={14} color="#22c55e" style={{ flexShrink: 0 }} />
-                        <span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>{f}</span>
+                      <div key={j} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Check size={12} color="#22c55e" style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.7)" }}>{f}</span>
                       </div>
                     ))}
                   </div>
                   <a href={`/checkout-vip?product=${p.productId}`} style={{
                     display: "block", textAlign: "center",
                     background: p.popular ? "#3B82F6" : "rgba(255,255,255,0.08)",
-                    color: "#fff", borderRadius: 10, padding: "14px 0",
-                    fontWeight: 800, fontSize: 13, letterSpacing: "1px",
+                    color: "#fff", borderRadius: 8, padding: "11px 0",
+                    fontWeight: 800, fontSize: 11, letterSpacing: "1px",
                     textTransform: "uppercase", textDecoration: "none",
                     border: p.popular ? "none" : "1px solid rgba(255,255,255,0.15)",
                     transition: "opacity 0.2s",
