@@ -5,15 +5,17 @@ import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 
 const PLANS = [
-  { size: "$25,000", price: "1 250€", productId: "25k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
-  { size: "$50,000", price: "2 500€", productId: "50k-vip", popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
-  { size: "$100,000", price: "5 000€", productId: "100k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
+  { size: "$25,000",  price: "1 250€",  productId: "25k-vip",  features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
+  { size: "$50,000",  price: "2 500€",  productId: "50k-vip",  popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
+  { size: "$100,000", price: "5 000€",  productId: "100k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
+  { size: "$200,000", price: "10 000€", productId: "200k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
 ];
 
 const VIP_SIMS = [
-  { label: "25K",  invest: 1250, challenge: 25000,  reward: 325,  total: 2925,  net: 1675  },
-  { label: "50K",  invest: 2500, challenge: 50000,  reward: 650,  total: 5850,  net: 3350  },
-  { label: "100K", invest: 5000, challenge: 100000, reward: 1300, total: 11700, net: 6700  },
+  { label: "25K",  invest: 1250,  challenge: 25000,  reward: 325,  total: 2925,  net: 1675  },
+  { label: "50K",  invest: 2500,  challenge: 50000,  reward: 650,  total: 5850,  net: 3350  },
+  { label: "100K", invest: 5000,  challenge: 100000, reward: 1300, total: 11700, net: 6700  },
+  { label: "200K", invest: 10000, challenge: 200000, reward: 2600, total: 23400, net: 13400 },
 ];
 
 const STEPS = [

@@ -5,9 +5,10 @@ import { createClient } from "@/lib/supabase/client";
 import { ChevronRight, ShieldCheck, X } from "lucide-react";
 
 const VIP_PRODUCTS: Record<string, { label: string; price: string; amount: number }> = {
-  "25k-vip":  { label: "$25,000",  price: "1 250€", amount: 125000 },
-  "50k-vip":  { label: "$50,000",  price: "2 500€", amount: 250000 },
-  "100k-vip": { label: "$100,000", price: "5 000€", amount: 500000 },
+  "25k-vip":  { label: "$25,000",  price: "1 250€",  amount: 125000  },
+  "50k-vip":  { label: "$50,000",  price: "2 500€",  amount: 250000  },
+  "100k-vip": { label: "$100,000", price: "5 000€",  amount: 500000  },
+  "200k-vip": { label: "$200,000", price: "10 000€", amount: 1000000 },
 };
 
 const VIP_RULES = [

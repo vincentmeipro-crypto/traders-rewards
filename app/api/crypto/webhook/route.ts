@@ -17,6 +17,7 @@ const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "25k-vip":  { accountSize: "$25,000",  model: "vip" },
   "50k-vip":  { accountSize: "$50,000",  model: "vip" },
   "100k-vip": { accountSize: "$100,000", model: "vip" },
+  "200k-vip": { accountSize: "$200,000", model: "vip" },
 };
 
 const SIZE_MAP: Record<string, number> = {
