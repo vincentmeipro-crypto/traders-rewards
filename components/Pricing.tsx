@@ -160,7 +160,7 @@ export default function Pricing() {
         {/* Toggle modèle */}
         <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 6 : 10, marginBottom: isMobile ? 16 : 20, flexWrap: "nowrap" }}>
           {(([
-            { id: "2step", icon: "◈", label: L("2 Étapes","2 Pasos","2-Step"), sub: L("Challenge standard","Desafío estándar","Standard challenge") },
+            { id: "2step", icon: "◈", label: L("2 Étapes","2 Pasos","2-Step"), sub: L("Challenge Trader","Desafío Trader","Trader Challenge") },
             { id: "1step", icon: "◆", label: L("1 Étape","1 Paso","1-Step"),   sub: L("Challenge rapide","Desafío rápido","Fast challenge") },
           ]) as { id: "2step"|"1step"; icon: string; label: string; sub: string }[]).map(tab => {
             const active = model === tab.id;
@@ -199,7 +199,7 @@ export default function Pricing() {
           }}>
             <span style={{ fontSize: isMobile ? 13 : 15, color: "#3B82F6" }}>⚡</span>
             <div>
-              <div style={{ fontSize: isMobile ? 11 : 13, fontWeight: 800, color: "#FFFFFF", whiteSpace: "nowrap" }}>Challenge VIP</div>
+              <div style={{ fontSize: isMobile ? 11 : 13, fontWeight: 800, color: "#FFFFFF", whiteSpace: "nowrap" }}>Challenge Algo</div>
               <div style={{ fontSize: isMobile ? 8 : 10, color: "#3B82F6", fontWeight: 500, marginTop: 1, whiteSpace: "nowrap" }}>Algo intégré</div>
             </div>
           </a>

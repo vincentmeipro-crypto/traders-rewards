@@ -17,7 +17,7 @@ const VIP_SIMS = [
 ];
 
 const STEPS = [
-  { icon: <Zap size={22} color="#3B82F6" />, title: "Vous choisissez votre compte", desc: "Sélectionnez la taille de compte VIP. Vous payez l'accès une seule fois." },
+  { icon: <Zap size={22} color="#3B82F6" />, title: "Vous choisissez votre compte", desc: "Sélectionnez la taille de compte Algo. Vous payez l'accès une seule fois." },
   { icon: <TrendingUp size={22} color="#3B82F6" />, title: "L'algorithme trade", desc: "Une stratégie algorithmique professionnelle s'active sur votre compte et passe les deux phases automatiquement." },
   { icon: <Shield size={22} color="#3B82F6" />, title: "Validation automatique", desc: "Une fois les objectifs atteints, votre compte Reward est activé automatiquement. Aucune action requise." },
   { icon: <Clock size={22} color="#3B82F6" />, title: "Récompenses tous les 30 jours", desc: "Les profits sont calculés tous les 30 jours. Vous effectuez votre demande de retrait pour recevoir vos récompenses." },
@@ -246,7 +246,7 @@ export default function VipPage() {
           <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 420, height: 320, background: "radial-gradient(ellipse 45% 75% at 50% -20%, rgba(147,197,253,0.75) 0%, rgba(59,130,246,0.35) 40%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
           <div style={{ maxWidth: 1100, width: "100%", margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
             <h1 className="fade-1" style={{ fontSize: "clamp(2.4rem, 6vw, 5rem)", fontWeight: 900, color: "#fff", lineHeight: 1.05, marginBottom: 24, marginTop: 0 }}>
-              Challenge <span className="vip-hero-text">VIP</span><br />
+              Challenge <span className="vip-hero-text">ALGO</span><br />
               <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.55em", fontWeight: 600 }}>L&apos;algorithme s&apos;occupe de tout</span>
             </h1>
             <p className="fade-3" style={{ fontSize: 17, color: "rgba(255,255,255,0.55)", maxWidth: 900, margin: "0 auto 16px", lineHeight: 1.7 }}>
@@ -260,7 +260,7 @@ export default function VipPage() {
 
           {/* Plans */}
           <div style={{ marginBottom: 64 }}>
-            <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, marginBottom: 12, color: "#fff", textShadow: "0 0 8px rgba(59,130,246,0.9), 0 0 24px rgba(59,130,246,0.6), 0 0 48px rgba(59,130,246,0.35)" }}>Choisissez votre compte VIP</h2>
+            <h2 style={{ textAlign: "center", fontSize: 28, fontWeight: 800, marginBottom: 12, color: "#fff", textShadow: "0 0 8px rgba(59,130,246,0.9), 0 0 24px rgba(59,130,246,0.6), 0 0 48px rgba(59,130,246,0.35)" }}>Choisissez votre compte Algo</h2>
             <p style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 14, marginBottom: 40 }}>Accès unique — aucun abonnement</p>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 20 }}>
               {PLANS.map((p, i) => (
@@ -291,7 +291,7 @@ export default function VipPage() {
                     border: p.popular ? "none" : "1px solid rgba(255,255,255,0.15)",
                     transition: "opacity 0.2s",
                   }}>
-                    Accéder au Challenge VIP
+                    Accéder au Challenge Algo
                   </a>
                 </div>
               ))}
@@ -304,7 +304,7 @@ export default function VipPage() {
             {/* Stat choc */}
             <div className={compVisible ? "comp-visible" : "comp-hidden"} style={{ textAlign: "center", marginBottom: 56 }}>
               <div style={{ display: "inline-block", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 100, padding: "4px 18px", fontSize: 10, fontWeight: 700, letterSpacing: "2px", color: "#EF4444", textTransform: "uppercase", marginBottom: 20 }}>
-                Challenge classique — réalité du marché
+                Challenge Trader — réalité du marché
               </div>
               <div style={{ fontSize: "clamp(88px, 18vw, 160px)", fontWeight: 900, color: "#EF4444", lineHeight: 0.9, fontVariantNumeric: "tabular-nums", letterSpacing: "-4px" }}>
                 {counter}%
@@ -313,7 +313,7 @@ export default function VipPage() {
                 des participants n&apos;atteignent jamais les récompenses
               </div>
               <div style={{ fontSize: 14, color: "rgba(255,255,255,0.35)", maxWidth: 520, margin: "0 auto" }}>
-                Seuls les traders les plus expérimentés et les plus disciplinés y parviennent. Le challenge classique n&apos;est pas fait pour tout le monde.
+                Seuls les traders les plus expérimentés et les plus disciplinés y parviennent. Le Challenge Trader n&apos;est pas fait pour tout le monde.
               </div>
             </div>
 
@@ -323,11 +323,11 @@ export default function VipPage() {
               {/* En-têtes */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
                 <div style={{ background: "rgba(239,68,68,0.06)", padding: "24px 20px", textAlign: "center", borderRight: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(239,68,68,0.7)", marginBottom: 6 }}>❌ Challenge Classique</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(239,68,68,0.7)", marginBottom: 6 }}>❌ Challenge Trader</div>
                   <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>Vous tradez vous-même</div>
                 </div>
                 <div className="comp-vip-card" style={{ background: "rgba(59,130,246,0.08)", padding: "24px 20px", textAlign: "center", borderBottom: "1px solid rgba(59,130,246,0.2)" }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 6 }}>✦ Challenge VIP</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#3B82F6", marginBottom: 6 }}>✦ Challenge Algo</div>
                   <div style={{ fontSize: 13, color: "rgba(255,255,255,0.6)" }}>L&apos;algorithme s&apos;occupe de tout</div>
                 </div>
               </div>
@@ -393,7 +393,7 @@ export default function VipPage() {
                   Pourquoi laisser 95% de chances à l&apos;échec quand vous pouvez garantir votre succès ?
                 </div>
                 <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>
-                  Le Challenge VIP n&apos;est pas un avantage — c&apos;est une évidence.
+                  Le Challenge Algo n&apos;est pas un avantage — c&apos;est une évidence.
                 </div>
               </div>
             </div>
@@ -475,7 +475,7 @@ export default function VipPage() {
 
           {/* Disclaimer légal */}
           <div className="disclaimer">
-            <strong style={{ color: "rgba(255,255,255,0.6)" }}>Avertissement :</strong> Les Challenges VIP Traders Rewards utilisent des comptes de trading simulés. L&apos;algorithme activé opère sur un environnement de démonstration. Aucun capital réel n&apos;est investi. Les récompenses versées proviennent du programme Traders Rewards et ne constituent pas des rendements d&apos;investissement. Ce service est un outil d&apos;entraînement algorithmique dans un cadre éducatif simulé. Les performances passées de l&apos;algorithme ne garantissent pas les résultats futurs. Accès limité — Traders Rewards se réserve le droit de suspendre les nouvelles inscriptions à tout moment.
+            <strong style={{ color: "rgba(255,255,255,0.6)" }}>Avertissement :</strong> Les Challenges Algo Traders Rewards utilisent des comptes de trading simulés. L&apos;algorithme activé opère sur un environnement de démonstration. Aucun capital réel n&apos;est investi. Les récompenses versées proviennent du programme Traders Rewards et ne constituent pas des rendements d&apos;investissement. Ce service est un outil d&apos;entraînement algorithmique dans un cadre éducatif simulé. Les performances passées de l&apos;algorithme ne garantissent pas les résultats futurs. Accès limité — Traders Rewards se réserve le droit de suspendre les nouvelles inscriptions à tout moment.
           </div>
 
         </div>

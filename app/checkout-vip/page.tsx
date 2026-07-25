@@ -174,12 +174,12 @@ function VipCheckoutContent() {
       {/* Header */}
       <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "12px 32px", display: "flex", alignItems: "center", gap: 12 }}>
         <a href="/vip" style={{ textDecoration: "none", color: "rgba(255,255,255,0.5)", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-          ← <span>Challenge VIP</span>
+          ← <span>Challenge Algo</span>
         </a>
         <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
         <span style={{ color: "#fff", fontSize: 13, fontWeight: 600 }}>Accès {product.label}</span>
         <div style={{ marginLeft: "auto", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 100, padding: "4px 14px", fontSize: 11, fontWeight: 700, color: "#3B82F6", letterSpacing: "1px" }}>
-          ⚡ VIP
+          ⚡ ALGO
         </div>
       </div>
 
@@ -189,7 +189,7 @@ function VipCheckoutContent() {
         {/* LEFT — Résumé + règles */}
         <div style={{ flex: "0 0 340px", padding: isMobile ? "24px 16px" : "0" }}>
           <div style={{ background: "#0a0a0a", border: "1.5px solid rgba(59,130,246,0.3)", borderRadius: 20, padding: "28px 24px", position: "sticky", top: 24 }}>
-            <div style={{ fontSize: 10, color: "#3B82F6", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 }}>Challenge VIP</div>
+            <div style={{ fontSize: 10, color: "#3B82F6", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 }}>Challenge Algo</div>
             <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", marginBottom: 2 }}>{product.label}</div>
             <div style={{ fontSize: 28, fontWeight: 900, color: "#3B82F6", marginBottom: 24 }}>{product.price}</div>
 
