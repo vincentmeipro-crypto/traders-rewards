@@ -154,10 +154,10 @@ export default function Navbar() {
           {!isMobile && (
             <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
               <TraderLink />
-              <VipLink />
               {navLinks.map(([label, href]) => (
                 <a key={href} href={href} className="nav-link">{label}</a>
               ))}
+              <VipLink />
             </div>
           )}
 
@@ -218,11 +218,11 @@ export default function Navbar() {
         {open && (
           <div style={{ backgroundColor: "#000000", borderTop: "1px solid rgba(255,255,255,0.75)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
             <div onClick={() => setOpen(false)}><TraderLink /></div>
-            <div onClick={() => setOpen(false)}><VipLink mobile /></div>
             {navLinks.map(([label, href]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, fontWeight: 500, textDecoration: "none" }}>{label}</a>
             ))}
+            <div onClick={() => setOpen(false)}><VipLink mobile /></div>
             <hr style={{ borderColor: "rgba(255,255,255,0.12)", margin: "4px 0" }} />
             <a href="/login" onClick={() => setOpen(false)}
               style={{ color: "#FFFFFF", fontSize: 15, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>
