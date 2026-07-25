@@ -6,8 +6,8 @@ import Navbar from "@/components/Navbar";
 
 const PLANS = [
   { size: "$25,000",  price: "1 250€",  productId: "25k-vip",  features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
-  { size: "$50,000",  price: "2 500€",  productId: "50k-vip",  popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
-  { size: "$100,000", price: "5 000€",  productId: "100k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
+  { size: "$50,000",  price: "2 500€",  productId: "50k-vip",  features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
+  { size: "$100,000", price: "5 000€",  productId: "100k-vip", popular: true, features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
   { size: "$200,000", price: "10 000€", productId: "200k-vip", features: ["Phase 1 : +10% objectif", "Phase 2 : +5% objectif", "Algorithme intégré actif", "100% des récompenses", "Sans limite de temps", "Récompenses tous les 30 jours"] },
 ];
 
