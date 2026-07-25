@@ -64,7 +64,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "payouts" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite";
+type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "financier_algo" | "payouts" | "payouts_algo" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite";
 
 type LoginEvent = {
   id: string;
@@ -120,8 +120,10 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "pipeline",  label: "Pipeline" },
   { id: "algo",      label: "⚡ Pipeline Algo" },
   { id: "crm",       label: "CRM Clients" },
-  { id: "financier", label: "Financier" },
-  { id: "payouts",   label: "Récompenses" },
+  { id: "financier",      label: "Financier Trader" },
+  { id: "financier_algo", label: "⚡ Financier Algo" },
+  { id: "payouts",        label: "Rewards Trader" },
+  { id: "payouts_algo",   label: "⚡ Rewards Algo" },
   { id: "promos",    label: "Promo Codes" },
   { id: "kyc",       label: "KYC" },
   { id: "affilies",  label: "🤝 Affiliés" },
@@ -1611,98 +1613,278 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ══ RÉCOMPENSES ══ */}
-        {tab === "payouts" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              {[
-                { label: "En attente",  value: payouts.filter(p=>p.status==="pending").length,  color: "#f59e0b" },
-                { label: "Validés",     value: payouts.filter(p=>p.status==="paid").length,     color: "#22c55e" },
-                { label: "Refusés",     value: payouts.filter(p=>p.status==="rejected").length, color: "#ef4444" },
-                { label: "Montant total versé", value: `€${payouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: "#22c55e" },
-              ].map((s, i) => (
-                <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
+        {/* ══ FINANCIER ALGO ══ */}
+        {tab === "financier_algo" && (() => {
+          const algoCh = challenges.filter(c => c.model === "vip");
+          const isPurchase = (c: Challenge) => c.phase === "phase1" || c.model === "vip";
+          const algoRev = algoCh.filter(isPurchase);
+          const now = new Date(); const yr = now.getFullYear(); const mo = now.getMonth();
+          const inMonth = (d: string) => { const dt = new Date(d); return dt.getFullYear() === yr && dt.getMonth() === mo; };
+          const inDay   = (d: string) => { const dt = new Date(d); return dt.getFullYear() === yr && dt.getMonth() === mo && dt.getDate() === now.getDate(); };
+          const caTotal = algoRev.reduce((s, c) => s + (c.amount_paid || 0), 0);
+          const caMonth = algoRev.filter(c => inMonth(c.created_at)).reduce((s, c) => s + (c.amount_paid || 0), 0);
+          const caDay   = algoRev.filter(c => inDay(c.created_at)).reduce((s, c) => s + (c.amount_paid || 0), 0);
+          const algoPayouts = payouts.filter(p => {
+            const c = challenges.find(x => x.id === p.challenge_id) || challenges.find(x => x.user_email === p.user_email && x.model === "vip" && x.status === "funded");
+            return c?.model === "vip";
+          });
+          const payoutsTotal = algoPayouts.filter(p => p.status === "paid").reduce((s, p) => s + p.amount, 0);
+          // Monthly revenue algo
+          const revMap = new Map<string, { ca: number; payoutsAmt: number; count: number }>();
+          algoRev.forEach(c => {
+            const d = new Date(c.created_at);
+            const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+            const ex = revMap.get(key) || { ca: 0, payoutsAmt: 0, count: 0 };
+            ex.ca += c.amount_paid || 0; ex.count += 1;
+            revMap.set(key, ex);
+          });
+          algoPayouts.filter(p => p.status === "paid").forEach(p => {
+            const d = new Date(p.created_at);
+            const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+            const ex = revMap.get(key) || { ca: 0, payoutsAmt: 0, count: 0 };
+            ex.payoutsAmt += p.amount;
+            revMap.set(key, ex);
+          });
+          const algoMonthly = Array.from(revMap.entries()).sort(([a],[b]) => a.localeCompare(b)).map(([month,v]) => ({ month, ...v, marge: v.ca > 0 ? Math.round((v.ca - v.payoutsAmt)/v.ca*100) : 0 }));
+          const maxAlgoCA = algoMonthly.length > 0 ? Math.max(...algoMonthly.map(m => m.ca)) : 1;
+          // By account size algo
+          const sizeMap = new Map<string, { count: number; revenue: number; active: number; certified: number; failed: number }>();
+          algoCh.forEach(c => {
+            const key = c.account_size;
+            const ex = sizeMap.get(key) || { count: 0, revenue: 0, active: 0, certified: 0, failed: 0 };
+            ex.count += 1; ex.revenue += isPurchase(c) ? (c.amount_paid || 0) : 0;
+            if (c.status === "active" || c.status === "passed") ex.active    += 1;
+            if (c.status === "funded")                          ex.certified += 1;
+            if (c.status === "failed")                          ex.failed    += 1;
+            sizeMap.set(key, ex);
+          });
+          const algoBySize = Array.from(sizeMap.entries()).sort(([a],[b]) => parseInt(a.replace(/\D/g,"")) - parseInt(b.replace(/\D/g,""))).map(([size, v]) => ({ size, ...v }));
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {/* Header */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.35)", borderRadius: 8, padding: "6px 14px" }}>
+                  <span style={{ color: "#a78bfa", fontWeight: 800, fontSize: 13, letterSpacing: 1 }}>⚡ FINANCIER ALGO</span>
                 </div>
-              ))}
-            </div>
-
-            <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, overflow: "hidden" }}>
-              <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 700 }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    {["Trader", "Montant", "KYC", "Capital / MT5", "Réception", "Adresse / IBAN", "Statut", "Date", "Actions"].map(h => (
-                      <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 12 }}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {payouts.map(p => {
-                    const userKyc = kycSubmissions.find(k => k.user_email === p.user_email);
-                    const userChallenge = challenges.find(c => c.id === p.challenge_id) || challenges.filter(c => c.user_email === p.user_email && c.phase === "funded").sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
-                    const kycColor = userKyc?.kyc_status === "approved" ? "#22c55e" : userKyc?.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
-                    const kycLabel = userKyc?.kyc_status === "approved" ? "✓ Validé" : userKyc?.kyc_status === "rejected" ? "✕ Refusé" : "En attente";
-                    return (
-                    <tr key={p.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                      <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>{p.user_email || p.user_id}</td>
-                      <td style={{ padding: "13px 16px", fontWeight: 800, color: "#22c55e", fontSize: 15 }}>€{p.amount?.toLocaleString()}</td>
-                      <td style={{ padding: "13px 16px" }}><span style={{ color: kycColor, fontWeight: 700, fontSize: 12 }}>{kycLabel}</span></td>
-                      <td style={{ padding: "13px 16px", fontSize: 12 }}>
-                        {userChallenge ? <><div style={{ fontWeight: 700 }}>{userChallenge.account_size}</div><div style={{ color: "#fff", fontFamily: "monospace" }}>{userChallenge.mt5_login}</div></> : <span style={{ color: "rgba(255,255,255,0.45)" }}>—</span>}
-                      </td>
-                      <td style={{ padding: "13px 16px" }}>
-                        {p.payment_method ? (
-                          <span style={{ backgroundColor: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: p.payment_method === "crypto" ? "#f59e0b" : "#60A5FA", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>
-                            {p.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Virement"}
-                          </span>
-                        ) : <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>—</span>}
-                      </td>
-                      <td style={{ padding: "13px 16px" }}>
-                        {p.wallet_address ? (
-                          <span onClick={() => navigator.clipboard.writeText(p.wallet_address!)} style={{ color: "#fff", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }} title="Cliquer pour copier">
-                            {p.wallet_address.length > 20 ? p.wallet_address.slice(0, 10) + "…" + p.wallet_address.slice(-6) : p.wallet_address} ⎘
-                          </span>
-                        ) : <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>—</span>}
-                      </td>
-                      <td style={{ padding: "13px 16px" }}>{badge(STATUS_LABELS[p.status] || p.status, STATUS_COLORS[p.status] || "#888")}</td>
-                      <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
-                      <td style={{ padding: "13px 16px" }}>
-                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                          {p.status === "pending" && (<>
-                            <button onClick={() => updatePayout(p.id, "paid")}
-                              style={{ backgroundColor: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                              ✓ Valider
-                            </button>
-                            <button onClick={async () => {
-                              const reason = prompt("Motif du refus (visible par le client) :") || "";
-                              const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id: p.id, status: "rejected", rejection_reason: reason }) });
-                              const data = await res.json();
-                              if (res.ok) setPayouts(ps => ps.map(x => x.id === p.id ? { ...x, ...data } : x));
-                            }} style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                              ✕ Refuser
-                            </button>
-                          </>)}
-                          {userChallenge?.mt5_login && (
-                            <button onClick={() => triggerMT5WithdrawFromPayout(userChallenge.mt5_login!, userChallenge.start_balance)}
-                              style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#60A5FA", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 8, padding: "6px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
-                              title="Retrait profit MT5">
-                              💰 MT5
-                            </button>
-                          )}
+              </div>
+              {/* KPIs */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16 }}>
+                {[
+                  { label: "CA Aujourd'hui",      value: `€${caDay.toLocaleString()}`,          color: caDay   > 0 ? "#a78bfa" : "#fff" },
+                  { label: "CA Ce mois",          value: `€${caMonth.toLocaleString()}`,         color: caMonth > 0 ? "#a78bfa" : "#fff" },
+                  { label: "CA Total Algo",        value: `€${caTotal.toLocaleString()}`,         color: "#fff" },
+                  { label: "Rewards versés",       value: `€${payoutsTotal.toLocaleString()}`,    color: "#ef4444" },
+                  { label: "Comptes Algo total",   value: String(algoCh.length),                  color: "#a78bfa" },
+                  { label: "Actifs",               value: String(algoCh.filter(c=>c.status==="active").length), color: "#22c55e" },
+                ].map((s, i) => (
+                  <div key={i} style={{ background: "#111111", border: "1px solid rgba(139,92,246,0.2)", borderRadius: 12, padding: "18px 22px" }}>
+                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
+                    <div style={{ fontSize: 26, fontWeight: 900, color: s.color }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+              {/* Graph mensuel */}
+              <div style={{ background: "#111111", border: "1px solid rgba(139,92,246,0.15)", borderRadius: 12, padding: "20px 24px" }}>
+                <div style={{ color: "#a78bfa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 20 }}>CA mensuel Algo</div>
+                {algoMonthly.length === 0
+                  ? <div style={{ color: "rgba(255,255,255,0.45)", textAlign: "center", padding: 20 }}>Aucune donnée</div>
+                  : <div style={{ display: "flex", gap: 8, alignItems: "flex-end", overflowX: "auto", paddingBottom: 8 }}>
+                      {algoMonthly.map(m => (
+                        <div key={m.month} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 60 }}>
+                          <div style={{ fontSize: 10, color: "#a78bfa", fontWeight: 700 }}>€{Math.round(m.ca/1000)}k</div>
+                          <div style={{ width: 44, backgroundColor: "#7c3aed", borderRadius: "4px 4px 0 0", height: Math.max(4, m.ca / maxAlgoCA * 140) }} title={`€${m.ca}`} />
+                          {m.payoutsAmt > 0 && <div style={{ width: 44, backgroundColor: "#ef4444", borderRadius: "0 0 4px 4px", height: Math.max(2, m.payoutsAmt/maxAlgoCA*140), marginTop: -4 }} />}
+                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.45)", textAlign: "center" }}>{m.month.slice(5)}/{m.month.slice(2,4)}</div>
+                          <div style={{ fontSize: 9, color: m.marge > 50 ? "#22c55e" : "#888" }}>{m.marge}%</div>
                         </div>
-                      </td>
-                    </tr>
-                    );
-                  })}
-                  {payouts.length === 0 && <tr><td colSpan={9} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucune récompense</td></tr>}
-                </tbody>
-              </table>
+                      ))}
+                    </div>}
+                <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
+                  <span style={{ fontSize: 10, color: "#7c3aed" }}>■ CA Algo</span>
+                  <span style={{ fontSize: 10, color: "#ef4444" }}>■ Rewards</span>
+                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>% = marge brute</span>
+                </div>
+              </div>
+              {/* Par taille */}
+              <div style={{ background: "#111111", border: "1px solid rgba(139,92,246,0.15)", borderRadius: 12, overflow: "hidden" }}>
+                <div style={{ padding: "16px 20px", color: "#a78bfa", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, borderBottom: "1px solid rgba(139,92,246,0.1)" }}>Répartition par taille de compte Algo</div>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 500 }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                        {["Compte", "Vendus", "CA total", "% du CA", "Actifs", "Reward", "Failed"].map(h => (
+                          <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 12 }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {algoBySize.map(row => {
+                        const pct = caTotal > 0 ? Math.round(row.revenue / caTotal * 100) : 0;
+                        return (
+                          <tr key={row.size} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                            <td style={{ padding: "12px 16px", fontWeight: 800, color: "#fff" }}>{row.size}</td>
+                            <td style={{ padding: "12px 16px", color: "#fff", fontWeight: 700 }}>{row.count}</td>
+                            <td style={{ padding: "12px 16px", color: "#a78bfa", fontWeight: 700 }}>€{row.revenue.toLocaleString()}</td>
+                            <td style={{ padding: "12px 16px" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                <div style={{ flex: 1, background: "rgba(255,255,255,0.1)", borderRadius: 4, height: 6, maxWidth: 80 }}>
+                                  <div style={{ width: `${pct}%`, background: "#7c3aed", height: 6, borderRadius: 4 }} />
+                                </div>
+                                <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{pct}%</span>
+                              </div>
+                            </td>
+                            <td style={{ padding: "12px 16px", color: "#22c55e" }}>{row.active}</td>
+                            <td style={{ padding: "12px 16px", color: "#3b82f6" }}>{row.certified}</td>
+                            <td style={{ padding: "12px 16px", color: "#ef4444" }}>{row.failed}</td>
+                          </tr>
+                        );
+                      })}
+                      {algoBySize.length === 0 && <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun compte Algo</td></tr>}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {/* Tableau mensuel */}
+              <div style={{ background: "#111111", border: "1px solid rgba(139,92,246,0.15)", borderRadius: 12, overflow: "hidden" }}>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 400 }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                        {["Mois", "Comptes", "CA", "Rewards versés", "Marge brute"].map(h => (
+                          <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 12 }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...algoMonthly].reverse().map(m => (
+                        <tr key={m.month} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                          <td style={{ padding: "12px 16px", fontWeight: 700 }}>{m.month}</td>
+                          <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.45)" }}>{m.count}</td>
+                          <td style={{ padding: "12px 16px", color: "#fff", fontWeight: 700 }}>€{m.ca.toLocaleString()}</td>
+                          <td style={{ padding: "12px 16px", color: "#ef4444" }}>€{m.payoutsAmt.toLocaleString()}</td>
+                          <td style={{ padding: "12px 16px", color: m.marge > 50 ? "#22c55e" : "#888", fontWeight: 700 }}>{m.marge}%</td>
+                        </tr>
+                      ))}
+                      {algoMonthly.length === 0 && <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucune donnée</td></tr>}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
+
+        {/* ══ REWARDS TRADER ══ */}
+        {(tab === "payouts" || tab === "payouts_algo") && (() => {
+          const isAlgoPayout = (p: Payout) => {
+            const c = challenges.find(x => x.id === p.challenge_id);
+            if (c) return c.model === "vip";
+            return challenges.some(x => x.user_email === p.user_email && x.model === "vip" && x.status === "funded");
+          };
+          const isAlgo = tab === "payouts_algo";
+          const filteredPayouts = payouts.filter(p => isAlgo ? isAlgoPayout(p) : !isAlgoPayout(p));
+          const accentColor  = isAlgo ? "#a78bfa" : "#22c55e";
+          const borderColor  = isAlgo ? "rgba(139,92,246,0.2)" : "rgba(255,255,255,0.1)";
+          const headerColor  = isAlgo ? "rgba(167,139,250,0.7)" : "rgba(255,255,255,0.45)";
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {isAlgo && (
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                  <div style={{ background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.35)", borderRadius: 8, padding: "6px 14px" }}>
+                    <span style={{ color: "#a78bfa", fontWeight: 800, fontSize: 13, letterSpacing: 1 }}>⚡ REWARDS ALGO</span>
+                  </div>
+                </div>
+              )}
+              <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                {[
+                  { label: "En attente",          value: filteredPayouts.filter(p=>p.status==="pending").length,  color: "#f59e0b" },
+                  { label: "Validés",             value: filteredPayouts.filter(p=>p.status==="paid").length,     color: accentColor },
+                  { label: "Refusés",             value: filteredPayouts.filter(p=>p.status==="rejected").length, color: "#ef4444" },
+                  { label: "Montant total versé", value: `€${filteredPayouts.filter(p=>p.status==="paid").reduce((s,p)=>s+p.amount,0).toLocaleString()}`, color: accentColor },
+                ].map((s, i) => (
+                  <div key={i} style={{ background: "#111111", border: `1px solid ${borderColor}`, borderRadius: 12, padding: "16px 22px", flex: 1, minWidth: 160 }}>
+                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
+                    <div style={{ fontSize: 24, fontWeight: 900, color: s.color }}>{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ background: "#111111", border: `1px solid ${borderColor}`, borderRadius: 12, overflow: "hidden" }}>
+                <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 700 }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: isAlgo ? "rgba(139,92,246,0.05)" : "transparent" }}>
+                      {["Client", "Montant", "KYC", "Capital / MT5", "Réception", "Adresse / IBAN", "Statut", "Date", "Actions"].map(h => (
+                        <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: headerColor, fontWeight: 600, fontSize: 12 }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredPayouts.map(p => {
+                      const userKyc = kycSubmissions.find(k => k.user_email === p.user_email);
+                      const userChallenge = challenges.find(c => c.id === p.challenge_id) || challenges.filter(c => c.user_email === p.user_email && c.phase === "funded").sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())[0];
+                      const kycColor = userKyc?.kyc_status === "approved" ? "#22c55e" : userKyc?.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
+                      const kycLabel = userKyc?.kyc_status === "approved" ? "✓ Validé" : userKyc?.kyc_status === "rejected" ? "✕ Refusé" : "En attente";
+                      return (
+                      <tr key={p.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                        <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>{p.user_email || p.user_id}</td>
+                        <td style={{ padding: "13px 16px", fontWeight: 800, color: accentColor, fontSize: 15 }}>€{p.amount?.toLocaleString()}</td>
+                        <td style={{ padding: "13px 16px" }}><span style={{ color: kycColor, fontWeight: 700, fontSize: 12 }}>{kycLabel}</span></td>
+                        <td style={{ padding: "13px 16px", fontSize: 12 }}>
+                          {userChallenge ? <><div style={{ fontWeight: 700 }}>{userChallenge.account_size}</div><div style={{ color: "#fff", fontFamily: "monospace" }}>{userChallenge.mt5_login}</div></> : <span style={{ color: "rgba(255,255,255,0.45)" }}>—</span>}
+                        </td>
+                        <td style={{ padding: "13px 16px" }}>
+                          {p.payment_method ? (
+                            <span style={{ backgroundColor: p.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: p.payment_method === "crypto" ? "#f59e0b" : "#60A5FA", fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 100 }}>
+                              {p.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Virement"}
+                            </span>
+                          ) : <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>—</span>}
+                        </td>
+                        <td style={{ padding: "13px 16px" }}>
+                          {p.wallet_address ? (
+                            <span onClick={() => navigator.clipboard.writeText(p.wallet_address!)} style={{ color: "#fff", fontSize: 12, fontFamily: "monospace", cursor: "pointer" }} title="Cliquer pour copier">
+                              {p.wallet_address.length > 20 ? p.wallet_address.slice(0, 10) + "…" + p.wallet_address.slice(-6) : p.wallet_address} ⎘
+                            </span>
+                          ) : <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>—</span>}
+                        </td>
+                        <td style={{ padding: "13px 16px" }}>{badge(STATUS_LABELS[p.status] || p.status, STATUS_COLORS[p.status] || "#888")}</td>
+                        <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
+                        <td style={{ padding: "13px 16px" }}>
+                          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                            {p.status === "pending" && (<>
+                              <button onClick={() => updatePayout(p.id, "paid")}
+                                style={{ backgroundColor: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                ✓ Valider
+                              </button>
+                              <button onClick={async () => {
+                                const reason = prompt("Motif du refus (visible par le client) :") || "";
+                                const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id: p.id, status: "rejected", rejection_reason: reason }) });
+                                const data = await res.json();
+                                if (res.ok) setPayouts(ps => ps.map(x => x.id === p.id ? { ...x, ...data } : x));
+                              }} style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                ✕ Refuser
+                              </button>
+                            </>)}
+                            {userChallenge?.mt5_login && (
+                              <button onClick={() => triggerMT5WithdrawFromPayout(userChallenge.mt5_login!, userChallenge.start_balance)}
+                                style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#60A5FA", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 8, padding: "6px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                                title="Retrait profit MT5">
+                                💰 MT5
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                      );
+                    })}
+                    {filteredPayouts.length === 0 && <tr><td colSpan={9} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucune récompense{isAlgo ? " Algo" : " Trader"}</td></tr>}
+                  </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* ══ PROMO CODES ══ */}
         {tab === "promos" && (
