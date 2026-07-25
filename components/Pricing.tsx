@@ -161,7 +161,7 @@ export default function Pricing() {
         <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 6 : 10, marginBottom: isMobile ? 16 : 20, flexWrap: "nowrap" }}>
           {(([
             { id: "2step", icon: "◈", label: L("2 Étapes","2 Pasos","2-Step"), sub: L("Challenge Trader","Desafío Trader","Trader Challenge") },
-            { id: "1step", icon: "◆", label: L("1 Étape","1 Paso","1-Step"),   sub: L("Challenge rapide","Desafío rápido","Fast challenge") },
+            { id: "1step", icon: "◆", label: L("1 Étape","1 Paso","1-Step"),   sub: L("Challenge Trader","Desafío Trader","Trader Challenge") },
           ]) as { id: "2step"|"1step"; icon: string; label: string; sub: string }[]).map(tab => {
             const active = model === tab.id;
             return (
