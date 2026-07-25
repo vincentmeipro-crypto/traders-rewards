@@ -119,7 +119,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "overview",  label: "Vue d'ensemble" },
   { id: "pipeline",  label: "Pipeline" },
   { id: "algo",      label: "⚡ Pipeline Algo" },
-  { id: "crm",       label: "CRM Traders" },
+  { id: "crm",       label: "CRM Clients" },
   { id: "financier", label: "Financier" },
   { id: "payouts",   label: "Récompenses" },
   { id: "promos",    label: "Promo Codes" },
@@ -1291,6 +1291,97 @@ export default function AdminPage() {
                             </div>
                           </div>
                         </div>
+                          );
+                        })()}
+
+                        {/* Comptes MT5 */}
+                        {(() => {
+                          const traderChallenges = trader.challenges.filter(c => c.model !== "vip");
+                          const algoChallenges   = trader.challenges.filter(c => c.model === "vip");
+                          const hasTrader = traderChallenges.length > 0;
+                          const hasAlgo   = algoChallenges.length > 0;
+                          if (!hasTrader && !hasAlgo) return null;
+                          return (
+                            <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>Comptes MT5</div>
+                              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+
+                                {/* Challenges Trader */}
+                                {hasTrader && (
+                                  <div>
+                                    <div style={{ color: "#60A5FA", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                                      <span style={{ background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 4, padding: "1px 8px" }}>TRADER</span>
+                                      <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400, fontSize: 10, textTransform: "none" }}>{traderChallenges.length} compte(s)</span>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                      {traderChallenges.map(c => (
+                                        <div key={c.id} style={{ background: "rgba(59,130,246,0.05)", border: "1px solid rgba(59,130,246,0.1)", borderRadius: 8, padding: "8px 12px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+                                          <span style={{ fontWeight: 800, color: "#fff", fontSize: 13 }}>{c.account_size}</span>
+                                          <span style={{ background: "rgba(255,255,255,0.06)", borderRadius: 4, padding: "1px 7px", fontSize: 10, color: "rgba(255,255,255,0.55)", textTransform: "uppercase" }}>{c.model}</span>
+                                          {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
+                                          {c.mt5_login && (
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
+                                              Login : <span onClick={() => copyToClipboard(String(c.mt5_login))} style={{ color: "#60A5FA", fontFamily: "monospace", cursor: "pointer" }} title="Copier">{c.mt5_login}</span>
+                                            </span>
+                                          )}
+                                          {c.mt5_password && (
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
+                                              MDP : <span onClick={() => copyToClipboard(c.mt5_password)} style={{ color: "#60A5FA", fontFamily: "monospace", cursor: "pointer" }} title="Copier">{c.mt5_password}</span>
+                                            </span>
+                                          )}
+                                          {c.mt5_server && (
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                              Serveur : <span style={{ color: "rgba(255,255,255,0.55)" }}>{c.mt5_server}</span>
+                                            </span>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Challenges Algo */}
+                                {hasAlgo && (
+                                  <div style={{ marginTop: hasTrader ? 8 : 0 }}>
+                                    <div style={{ color: "#a78bfa", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
+                                      <span style={{ background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 4, padding: "1px 8px" }}>⚡ ALGO</span>
+                                      <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400, fontSize: 10, textTransform: "none" }}>{algoChallenges.length} compte(s)</span>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                      {algoChallenges.map(c => (
+                                        <div key={c.id} style={{ background: "rgba(139,92,246,0.05)", border: "1px solid rgba(139,92,246,0.15)", borderRadius: 8, padding: "8px 12px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+                                          <span style={{ fontWeight: 800, color: "#fff", fontSize: 13 }}>{c.account_size}</span>
+                                          {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
+                                          {c.mt5_login && (
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
+                                              Login : <span onClick={() => copyToClipboard(String(c.mt5_login))} style={{ color: "#a78bfa", fontFamily: "monospace", cursor: "pointer" }} title="Copier">{c.mt5_login}</span>
+                                            </span>
+                                          )}
+                                          {c.mt5_password_investor && (
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", display: "flex", alignItems: "center", gap: 4 }}>
+                                              <span style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 3, padding: "1px 5px", fontSize: 9, color: "#22c55e", fontWeight: 700 }}>CLIENT</span>
+                                              <span onClick={() => copyToClipboard(c.mt5_password_investor)} style={{ color: "#a78bfa", fontFamily: "monospace", cursor: "pointer" }} title="Copier MDP investisseur">{c.mt5_password_investor}</span>
+                                            </span>
+                                          )}
+                                          {c.mt5_password && (
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", display: "flex", alignItems: "center", gap: 4 }}>
+                                              <span style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 3, padding: "1px 5px", fontSize: 9, color: "#ef4444", fontWeight: 700 }}>MASTER</span>
+                                              <span onClick={() => copyToClipboard(c.mt5_password)} style={{ color: "#f87171", fontFamily: "monospace", cursor: "pointer" }} title="Copier MDP master">{c.mt5_password}</span>
+                                            </span>
+                                          )}
+                                          {c.mt5_server && (
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                              Serveur : <span style={{ color: "rgba(255,255,255,0.55)" }}>{c.mt5_server}</span>
+                                            </span>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                              </div>
+                            </div>
                           );
                         })()}
 
