@@ -138,7 +138,7 @@ export const t = {
       sub: 'Accédez à 200 000€ de capital simulé. Gagnez des récompenses jusqu\'à 90% de vos gains simulés.',
       cta1: 'Commencer le Challenge',
       cta2: 'Comment ça marche',
-      trust: 'Sans limite de temps · Compte livré instantanément · Évoluez jusqu\'à 400 000$',
+      trust: 'Sans limite de temps · Compte livré instantanément · Évoluez jusqu\'à 200 000$',
       maxFunding: 'Capital Max', profitSplit: 'Partage Profit', feeRefunded: 'Frais Remboursés',
       tagline: 'Passe le challenge. Rejoins l\'élite.',
     },
@@ -150,9 +150,9 @@ export const t = {
       label: 'Le Processus', title: 'De Zéro à', titleGold: 'Reward',
       sub: 'Trois étapes. C\'est tout ce qu\'il faut pour rejoindre l\'élite.',
       steps: [
-        { title: 'Choisissez votre Challenge', desc: 'Sélectionnez votre taille de compte de 25K$ à 100K$. Choisissez entre notre challenge 2 étapes ou 1 étape.' },
+        { title: 'Choisissez votre Challenge Trader', desc: 'Sélectionnez votre taille de compte de 25K$ à 100K$. Choisissez entre notre challenge 2 étapes ou 1 étape.' },
         { title: 'Réussissez l\'Évaluation', desc: 'Tradez avec discipline. Atteignez votre objectif de profit tout en respectant les règles de drawdown. Aucune pression de temps, pas de date d\'expiration.' },
-        { title: 'Devenez Trader Reward', desc: 'Recevez votre compte Reward instantanément. Gardez jusqu\'à 90% de vos profits simulés. Évoluez jusqu\'à 400 000$.' },
+        { title: 'Devenez Trader Reward', desc: 'Recevez votre compte Reward instantanément. Gardez jusqu\'à 90% de vos profits simulés. Évoluez jusqu\'à 200 000$.' },
       ],
     },
     pricing: {
@@ -160,8 +160,8 @@ export const t = {
       sub: '',
       twoStep: '2 ÉTAPES', oneStep: '1 ÉTAPE ⚡', mostPopular: 'Le Plus Populaire',
       account: 'Compte', getStarted: 'Commencer', allInclude: 'TOUS LES CHALLENGES INCLUENT',
-      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 5 jours de trading','Sans limite de temps','80% partage des profits','Évolution jusqu\'à 400 000$'],
-      features1: ['Phase unique : +8% objectif profit','3% perte journalière max','8% drawdown trailing','Règle des 50% meilleur jour','Minimum 5 jours de trading','Sans limite de temps','90% partage des profits','Évolution jusqu\'à 400 000$'],
+      features2: ['Phase 1 : +10% objectif profit','Phase 2 : +5% objectif profit','5% perte journalière max','10% drawdown global max','Minimum 5 jours de trading','Sans limite de temps','80% partage des profits','Évolution jusqu\'à 200 000$'],
+      features1: ['Phase unique : +8% objectif profit','3% perte journalière max','8% drawdown trailing','Règle des 50% meilleur jour','Minimum 5 jours de trading','Sans limite de temps','90% partage des profits','Évolution jusqu\'à 200 000$'],
     },
     rules: {
       label: 'Transparence Totale', title: 'Règles', titleGold: 'Claires',

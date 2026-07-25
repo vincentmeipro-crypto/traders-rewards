@@ -15,7 +15,7 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 const SITE_URL = "https://www.traders-rewards.eu";
 const TITLE = "Traders Rewards | Programme Éducatif de Trading";
 const DESCRIPTION =
-  "Transformez votre trading démo en vraies récompenses. Le programme FRANÇAIS qui récompense les traders disciplinés. Capital simulé jusqu'à 400 000 € · Récompenses jusqu'à 90%.";
+  "Transformez votre trading démo en vraies récompenses. Le programme FRANÇAIS qui récompense les traders disciplinés. Capital simulé jusqu'à 200 000 € · Récompenses jusqu'à 90%.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
