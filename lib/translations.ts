@@ -28,7 +28,7 @@ export const t = {
       satisfaction: 'Satisfaction Rate', support: 'Support Response',
     },
     how: {
-      label: 'The Process', title: 'From Zero to', titleGold: 'Reward',
+      label: 'The Process', title: 'From Zero to', titleGold: 'Trader Reward',
       sub: "Three steps. That's all it takes to join the elite.",
       steps: [
         { title: 'Choose Your Challenge', desc: 'Select your account size from $25K to $100K. Choose between our 2-Step or 1-Step challenge.' },
@@ -147,7 +147,7 @@ export const t = {
       satisfaction: 'Taux de Satisfaction', support: 'Réponse Support',
     },
     how: {
-      label: 'Le Processus', title: 'De Zéro à', titleGold: 'Reward',
+      label: 'Le Processus', title: 'De Zéro à', titleGold: 'Trader Reward',
       sub: 'Trois étapes. C\'est tout ce qu\'il faut pour rejoindre l\'élite.',
       steps: [
         { title: 'Choisissez votre Challenge Trader', desc: 'Sélectionnez votre taille de compte de 25K$ à 100K$. Choisissez entre notre challenge 2 étapes ou 1 étape.' },
@@ -266,7 +266,7 @@ export const t = {
       satisfaction: 'Tasa de Satisfacción', support: 'Respuesta Soporte',
     },
     how: {
-      label: 'El Proceso', title: 'De Cero a', titleGold: 'Reward',
+      label: 'El Proceso', title: 'De Cero a', titleGold: 'Trader Reward',
       sub: 'Tres pasos. Eso es todo lo que necesitas para unirte a la élite.',
       steps: [
         { title: 'Elige tu Desafío', desc: 'Selecciona el tamaño de tu cuenta de $25K a $100K. Elige entre nuestro desafío de 2 pasos o 1 paso.' },
