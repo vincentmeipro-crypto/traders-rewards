@@ -36,7 +36,6 @@ export default function Navbar() {
   const current = languages.find(l => l.code === lang)!;
 
   const navLinks: [string, string][] = [
-    [T.nav.challenges, "/#pricing"],
     [T.nav.howItWorks, "/#how-it-works"],
     [T.nav.rules, "/#rules"],
     [T.nav.faq, "/#faq"],
@@ -44,11 +43,19 @@ export default function Navbar() {
     ["Partenariat", "/partenariat"],
   ];
 
+  const TraderLink = () => (
+    <a href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 10px" }}>
+      <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.85)" }}>Challenge</span>
+      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "#3B82F6", color: "#fff", padding: "2px 8px", borderRadius: 4 }}>TRADER</span>
+    </a>
+  );
+
   const VipLink = ({ mobile }: { mobile?: boolean }) => (
     <a href="/vip" style={{ textDecoration: "none", display: "inline-block" }}>
       <div className="vip-border">
-        <div className="vip-inner">
-          <span className="vip-text">⚡ Challenge VIP</span>
+        <div className="vip-inner" style={{ gap: 6 }}>
+          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.75)" }}>Challenge</span>
+          <span className="vip-text">ALGO</span>
         </div>
       </div>
     </a>
@@ -149,6 +156,7 @@ export default function Navbar() {
               {navLinks.map(([label, href]) => (
                 <a key={href} href={href} className="nav-link">{label}</a>
               ))}
+              <TraderLink />
               <VipLink />
             </div>
           )}
@@ -214,6 +222,7 @@ export default function Navbar() {
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, fontWeight: 500, textDecoration: "none" }}>{label}</a>
             ))}
+            <div onClick={() => setOpen(false)}><TraderLink /></div>
             <div onClick={() => setOpen(false)}><VipLink mobile /></div>
             <hr style={{ borderColor: "rgba(255,255,255,0.12)", margin: "4px 0" }} />
             <a href="/login" onClick={() => setOpen(false)}
