@@ -364,31 +364,6 @@ function VipCheckoutContent() {
             </label>
           </div>
 
-          {/* Code Promo */}
-          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Code Promo</div>
-            {promoDiscount > 0 ? (
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 8, padding: "10px 14px" }}>
-                <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>✓ {promoCode} — {promoDiscount}% de réduction{promoDiscount === 100 ? " (GRATUIT)" : ""}</span>
-                <button onClick={() => { setPromoDiscount(0); setPromoCode(""); setPromoInput(""); setPromoError(""); }}
-                  style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", padding: 0, display: "flex" }}>
-                  <X size={14} />
-                </button>
-              </div>
-            ) : (
-              <div style={{ display: "flex", gap: 8 }}>
-                <input className="vip-input" value={promoInput} onChange={e => setPromoInput(e.target.value.toUpperCase())}
-                  placeholder="CODE-PROMO" style={{ ...inp, flex: 1 }}
-                  onKeyDown={e => e.key === "Enter" && applyPromo()} />
-                <button onClick={applyPromo} disabled={promoLoading || !promoInput.trim()}
-                  style={{ background: "#3B82F6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 18px", fontSize: 12, fontWeight: 700, cursor: promoLoading || !promoInput.trim() ? "not-allowed" : "pointer", whiteSpace: "nowrap", opacity: promoLoading || !promoInput.trim() ? 0.5 : 1 }}>
-                  {promoLoading ? "..." : "Appliquer"}
-                </button>
-              </div>
-            )}
-            {promoError && <div style={{ color: "#ef4444", fontSize: 11, marginTop: 6 }}>{promoError}</div>}
-          </div>
-
           {/* Paiement */}
           <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
             {payError && (
