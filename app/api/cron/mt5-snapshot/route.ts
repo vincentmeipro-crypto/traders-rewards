@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getMT5Account, getMT5Positions, getMT5History, changeMT5Group, disableMT5Account } from "@/lib/mt5";
+import { getMT5Account, getMT5Positions, getMT5History, changeMT5Group, disableMT5Account, updateMT5AccountName } from "@/lib/mt5";
 import { sendFailedEmail } from "@/lib/mailer";
 
 // Vercel Cron — toutes les minutes
@@ -167,6 +167,26 @@ export async function GET(req: NextRequest) {
       errors++;
     }
   }
+
+  // --- Mise à jour noms MT5 pour comptes récents (< 2h) ---
+  try {
+    const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const { data: recentChallenges } = await admin
+      .from("challenges")
+      .select("id, mt5_login, model, phase, user_id")
+      .not("mt5_login", "is", null)
+      .gte("created_at", twoHoursAgo);
+
+    for (const c of recentChallenges ?? []) {
+      const { data: profile } = await admin.from("profiles").select("first_name, last_name").eq("user_id", c.user_id).single();
+      const { data: { user } } = await admin.auth.admin.getUserById(c.user_id);
+      const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
+      const lastName  = user?.user_metadata?.last_name  || profile?.last_name  || "";
+      const phaseLabel = c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Phase 2" : "Phase 1";
+      const label = c.model === "vip" ? `ALGO | ${phaseLabel.toUpperCase()}` : phaseLabel;
+      try { await updateMT5AccountName(c.mt5_login, firstName, lastName, label); } catch {}
+    }
+  } catch {}
 
   return NextResponse.json({ synced, breaches, errors, total: challenges.length });
 }
