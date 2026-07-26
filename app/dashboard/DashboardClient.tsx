@@ -1654,7 +1654,7 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Header */}
             <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "stretch" : "flex-start", gap: isMobile ? 12 : 0, marginBottom: 24 }}>
               <div>
-                <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.myChallenge}</h1>
+                <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{challenge.model === "vip" ? "Mon Challenge ALGO" : T.dash.myChallenge}</h1>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
                   <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#3B82F6", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
                     {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}

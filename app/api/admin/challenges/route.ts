@@ -280,7 +280,10 @@ export async function PATCH(req: NextRequest) {
   if (data.mt5_login && (firstName || lastName)) {
     const phaseLabel: Record<string, string> = { phase1: "Phase 1", phase2: "Phase 2", funded: "Reward" };
     const label = phaseLabel[data.phase] || "Phase 1";
-    try { await updateMT5AccountName(data.mt5_login, firstName, lastName, label); } catch {}
+    const isVip = data.model === "vip";
+    const mt5First = isVip ? "ALGO" : firstName;
+    const mt5Last  = isVip ? `| ${label.toUpperCase()}` : lastName;
+    try { await updateMT5AccountName(data.mt5_login, mt5First, mt5Last, label); } catch {}
   }
 
   // Auto-transition — jamais sur un compte failed
