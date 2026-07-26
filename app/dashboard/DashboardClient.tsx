@@ -1644,29 +1644,31 @@ export default function DashboardClient({ user }: { user: User }) {
             )}
             {/* Loyalty banner */}
             {allChallenges.length >= 1 && (
-              <div style={{ backgroundColor: "rgba(59, 130, 246,0.08)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 12, padding: "10px 14px", marginBottom: 16, display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 18, flexShrink: 0 }}>🎖️</span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ color: "#FFFFFF", fontWeight: 700, fontSize: 12 }}>
-                    {isFr ? "Remise fidélité −20% à vie" : "Loyalty discount −20%"}
-                  </div>
-                  {!isMobile && (
-                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>
-                      {isFr ? "Appliquée automatiquement (hors promo en cours)" : "Auto-applied on future challenges"}
+              <>
+                <div style={{ backgroundColor: "rgba(59, 130, 246,0.08)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 12, padding: "10px 14px", marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ fontSize: 18, flexShrink: 0 }}>🎖️</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ color: "#FFFFFF", fontWeight: 700, fontSize: 12 }}>
+                      {isFr ? "Remise fidélité −20% à vie" : "Loyalty discount −20%"}
                     </div>
-                  )}
+                    {!isMobile && (
+                      <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>
+                        {isFr ? "Appliquée automatiquement (hors promo en cours)" : "Auto-applied on future challenges"}
+                      </div>
+                    )}
+                  </div>
+                  <a href="/#pricing" className="dash-trader-btn">
+                    <span className="dash-trader-label">Challenge</span>
+                    <span className="dash-trader-badge">TRADER</span>
+                  </a>
                 </div>
-                <a href="/#pricing" className="dash-trader-btn">
-                  <span className="dash-trader-label">Challenge</span>
-                  <span className="dash-trader-badge">TRADER</span>
+                <a href="/vip" className="dash-vip-border" style={{ display: "flex", marginBottom: 16 }}>
+                  <div className="dash-vip-inner" style={{ width: "100%", justifyContent: "center" }}>
+                    <span className="dash-trader-label">Challenge</span>
+                    <span className="dash-vip-text">ALGO</span>
+                  </div>
                 </a>
-              </div>
-              <a href="/vip" className="dash-vip-border" style={{ display: "flex", marginTop: 8 }}>
-                <div className="dash-vip-inner" style={{ width: "100%", justifyContent: "center" }}>
-                  <span className="dash-trader-label">Challenge</span>
-                  <span className="dash-vip-text">ALGO</span>
-                </div>
-              </a>
+              </>
             )}
 
             {/* Header */}
