@@ -58,6 +58,11 @@ function VipCheckoutContent() {
   const [loading, setLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [refCode, setRefCode] = useState("");
+  const [promoInput, setPromoInput] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoCode, setPromoCode] = useState("");
+  const [promoError, setPromoError] = useState("");
 
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
   const isAdult = birthDate ? (() => { const b = new Date(birthDate); const min = new Date(); min.setFullYear(min.getFullYear() - 18); return b <= min; })() : false;
@@ -122,6 +127,44 @@ function VipCheckoutContent() {
     return null;
   };
 
+  const applyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setPromoLoading(true);
+    setPromoError("");
+    const res = await fetch("/api/promo/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: promoInput.trim() }),
+    });
+    const data = await res.json();
+    if (res.ok && data.discount !== undefined) {
+      setPromoCode(data.code);
+      setPromoDiscount(data.discount);
+    } else {
+      setPromoError(data.error || "Code invalide");
+      setPromoDiscount(0);
+      setPromoCode("");
+    }
+    setPromoLoading(false);
+  };
+
+  const handleFree = async () => {
+    setPayError("");
+    let u = user;
+    if (!u) { u = await createAccountAndGetUser(); if (!u) return; setUser(u); }
+    setLoading(true);
+    await saveProfile(u.token);
+    const res = await fetch("/api/promo/free", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${u.token}` },
+      body: JSON.stringify({ productId, userId: u.id, promoCode }),
+    });
+    const data = await res.json();
+    setLoading(false);
+    if (data.ok) router.push("/dashboard?algo=activated");
+    else setPayError(data.error || "Erreur activation.");
+  };
+
   const handleCrypto = async () => {
     setPayError("");
     let u = user;
@@ -131,7 +174,7 @@ function VipCheckoutContent() {
     const res = await fetch("/api/crypto/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId, userId: u.id, promoCode: "", discount: 0, refCode }),
+      body: JSON.stringify({ productId, userId: u.id, promoCode, discount: promoDiscount, refCode }),
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
@@ -321,6 +364,31 @@ function VipCheckoutContent() {
             </label>
           </div>
 
+          {/* Code Promo */}
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Code Promo</div>
+            {promoDiscount > 0 ? (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 8, padding: "10px 14px" }}>
+                <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>✓ {promoCode} — {promoDiscount}% de réduction{promoDiscount === 100 ? " (GRATUIT)" : ""}</span>
+                <button onClick={() => { setPromoDiscount(0); setPromoCode(""); setPromoInput(""); setPromoError(""); }}
+                  style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", padding: 0, display: "flex" }}>
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 8 }}>
+                <input className="vip-input" value={promoInput} onChange={e => setPromoInput(e.target.value.toUpperCase())}
+                  placeholder="CODE-PROMO" style={{ ...inp, flex: 1 }}
+                  onKeyDown={e => e.key === "Enter" && applyPromo()} />
+                <button onClick={applyPromo} disabled={promoLoading || !promoInput.trim()}
+                  style={{ background: "#3B82F6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 18px", fontSize: 12, fontWeight: 700, cursor: promoLoading || !promoInput.trim() ? "not-allowed" : "pointer", whiteSpace: "nowrap", opacity: promoLoading || !promoInput.trim() ? 0.5 : 1 }}>
+                  {promoLoading ? "..." : "Appliquer"}
+                </button>
+              </div>
+            )}
+            {promoError && <div style={{ color: "#ef4444", fontSize: 11, marginTop: 6 }}>{promoError}</div>}
+          </div>
+
           {/* Paiement */}
           <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
             {payError && (
@@ -335,11 +403,19 @@ function VipCheckoutContent() {
               <p style={{ textAlign: "center", color: "#f59e0b", fontSize: 12, margin: "0 0 12px" }}>Acceptez les CGV pour continuer.</p>
             )}
 
-            <div className="vip-border-co">
-              <button className="vip-btn" onClick={handleCrypto} disabled={loading || !canPay}>
-                {loading ? "Redirection..." : <><span style={{ fontSize: 18 }}>₿</span> Payer {product.price} en crypto <ChevronRight size={16} /></>}
-              </button>
-            </div>
+            {promoDiscount === 100 ? (
+              <div className="vip-border-co">
+                <button className="vip-btn" onClick={handleFree} disabled={loading || !canPay}>
+                  {loading ? "Activation..." : <>✓ Activer gratuitement <ChevronRight size={16} /></>}
+                </button>
+              </div>
+            ) : (
+              <div className="vip-border-co">
+                <button className="vip-btn" onClick={handleCrypto} disabled={loading || !canPay}>
+                  {loading ? "Redirection..." : <><span style={{ fontSize: 18 }}>₿</span> Payer {product.price} en crypto <ChevronRight size={16} /></>}
+                </button>
+              </div>
+            )}
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 14 }}>
               <ShieldCheck size={13} color="rgba(255,255,255,0.25)" />
