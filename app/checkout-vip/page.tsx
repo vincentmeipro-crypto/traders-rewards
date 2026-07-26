@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -21,25 +21,6 @@ const VIP_RULES = [
   { label: "Partage des profits",   value: "100%" },
   { label: "Récompenses",           value: "Tous les 30 jours" },
 ];
-
-// Tunnel SVG — calculé une fois
-const TUNNEL_D = (() => {
-  const W = 1440, H = 900, IX1 = 480, IY1 = 300, IX2 = 960, IY2 = 600;
-  const lp = (a: number, b: number, t: number) => Math.round((a + (b - a) * t) * 10) / 10;
-  const d: string[] = [];
-  for (let i = 0; i <= 12; i++) { const t = i/12; d.push(`M${lp(0,W,t)} 0L${lp(IX1,IX2,t)} ${IY1}`); }
-  for (let j = 1; j <= 6; j++) { const t = j/7; const y = lp(0,IY1,t); d.push(`M${lp(0,IX1,t)} ${y}L${lp(W,IX2,t)} ${y}`); }
-  for (let i = 0; i <= 12; i++) { const t = i/12; d.push(`M${lp(0,W,t)} ${H}L${lp(IX1,IX2,t)} ${IY2}`); }
-  for (let j = 1; j <= 6; j++) { const t = j/7; const y = lp(H,IY2,t); d.push(`M${lp(0,IX1,t)} ${y}L${lp(W,IX2,t)} ${y}`); }
-  for (let i = 0; i <= 8; i++) { const t = i/8; d.push(`M0 ${lp(0,H,t)}L${IX1} ${lp(IY1,IY2,t)}`); }
-  for (let j = 1; j <= 5; j++) { const t = j/6; d.push(`M${lp(0,IX1,t)} ${lp(0,IY1,t)}L${lp(0,IX1,t)} ${lp(H,IY2,t)}`); }
-  for (let i = 0; i <= 8; i++) { const t = i/8; d.push(`M${W} ${lp(0,H,t)}L${IX2} ${lp(IY1,IY2,t)}`); }
-  for (let j = 1; j <= 5; j++) { const t = j/6; d.push(`M${lp(W,IX2,t)} ${lp(0,IY1,t)}L${lp(W,IX2,t)} ${lp(H,IY2,t)}`); }
-  d.push(`M${IX1} ${IY1}L${IX2} ${IY1}L${IX2} ${IY2}L${IX1} ${IY2}Z`);
-  for (let i = 1; i <= 5; i++) { const x = lp(IX1,IX2,i/6); d.push(`M${x} ${IY1}L${x} ${IY2}`); }
-  for (let j = 1; j <= 3; j++) { const y = lp(IY1,IY2,j/4); d.push(`M${IX1} ${y}L${IX2} ${y}`); }
-  return d.join(" ");
-})();
 
 const DIAL_CODES = [
   { code: "+33", flag: "🇫🇷" }, { code: "+32", flag: "🇧🇪" }, { code: "+41", flag: "🇨🇭" },
@@ -213,183 +194,235 @@ function VipCheckoutContent() {
   const EyeOff = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
 
   return (
-    <div style={{ position: "fixed", inset: 0, background: "#000", color: "#fff", fontFamily: "system-ui, -apple-system, sans-serif", overflow: "hidden" }}>
-      {/* SVG Tunnel Background */}
-      <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0 }} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-        <path d={TUNNEL_D} stroke="rgba(255,255,255,0.45)" strokeWidth="1" fill="none" />
-      </svg>
-      {/* Vignette légère — assombrit juste les coins, préserve le centre */}
-      <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.55) 100%)" }} />
+    <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+      <style>{`
+        @property --vip-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+        @keyframes vipSpin { to { --vip-angle: 360deg; } }
+        .vip-border-co {
+          padding: 1.5px; border-radius: 12px; display: block;
+          background: conic-gradient(from var(--vip-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
+          animation: vipSpin 3s linear infinite;
+        }
+        .vip-btn {
+          display: flex; align-items: center; justify-content: center; gap: 10px;
+          width: 100%; padding: 16px; border-radius: 10px;
+          font-size: 14px; font-weight: 800; letter-spacing: 0.5px;
+          background: #000; color: #fff; border: none; cursor: pointer;
+          transition: opacity 0.2s;
+        }
+        .vip-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .vip-input:focus { border-color: rgba(59,130,246,0.5) !important; }
+        .vip-select option { background: #111; color: #fff; }
+      `}</style>
 
-      {/* Content */}
-      <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", height: "100vh" }}>
-        <style>{`
-          @property --vip-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-          @keyframes vipSpin { to { --vip-angle: 360deg; } }
-          .vip-border-co {
-            padding: 1.5px; border-radius: 10px; display: block;
-            background: conic-gradient(from var(--vip-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
-            animation: vipSpin 3s linear infinite;
-          }
-          .vip-btn {
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            width: 100%; padding: 13px; border-radius: 9px;
-            font-size: 14px; font-weight: 800; letter-spacing: 0.5px;
-            background: #000; color: #fff; border: none; cursor: pointer;
-            transition: opacity 0.2s;
-          }
-          .vip-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-          .vip-input:focus { border-color: rgba(59,130,246,0.5) !important; outline: none !important; }
-          .vip-select option { background: #111; color: #fff; }
-        `}</style>
+      {/* Header */}
+      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "12px 32px", display: "flex", alignItems: "center", gap: 12 }}>
+        <a href="/vip" style={{ textDecoration: "none", color: "rgba(255,255,255,0.5)", fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
+          ← <span>Challenge Algo</span>
+        </a>
+        <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
+        <span style={{ color: "#fff", fontSize: 13, fontWeight: 600 }}>Accès {product.label}</span>
+        <div style={{ marginLeft: "auto", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 100, padding: "4px 14px", fontSize: 11, fontWeight: 700, color: "#3B82F6", letterSpacing: "1px" }}>
+          ⚡ ALGO
+        </div>
+      </div>
 
-        {/* Header */}
-        <div style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "10px 24px", display: "flex", alignItems: "center", gap: 10, backdropFilter: "blur(10px)", background: "rgba(0,0,0,0.4)", flexShrink: 0 }}>
-          <a href="/vip" style={{ textDecoration: "none", color: "rgba(255,255,255,0.4)", fontSize: 12 }}>
-            ← Challenge Algo
-          </a>
-          <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
-          <span style={{ color: "#fff", fontSize: 12, fontWeight: 600 }}>Accès {product.label}</span>
-          <div style={{ marginLeft: "auto", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 100, padding: "3px 12px", fontSize: 10, fontWeight: 700, color: "#3B82F6", letterSpacing: "1px" }}>
-            ⚡ ALGO
+      {/* Body */}
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0" : "40px 24px", gap: isMobile ? 0 : 32 }}>
+
+        {/* LEFT — Résumé + règles */}
+        <div style={{ flex: "0 0 340px", padding: isMobile ? "24px 16px" : "0" }}>
+          <div style={{ background: "#0a0a0a", border: "1.5px solid rgba(59,130,246,0.3)", borderRadius: 20, padding: "28px 24px", position: "sticky", top: 24 }}>
+            <div style={{ fontSize: 10, color: "#3B82F6", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 }}>Challenge Algo</div>
+            <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", marginBottom: 2 }}>{product.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 900, color: "#3B82F6", marginBottom: 24 }}>{product.price}</div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 20 }}>
+              {VIP_RULES.map((r, i) => (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < VIP_RULES.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                  <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{r.label}</span>
+                  <span style={{ color: r.value.includes("✓") ? "#22c55e" : "#fff", fontSize: 12, fontWeight: 700 }}>{r.value}</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 10, padding: "12px 16px", fontSize: 11, color: "rgba(255,255,255,0.4)", lineHeight: 1.7 }}>
+              Accès unique — aucun abonnement. Paiement en crypto uniquement.
+            </div>
           </div>
         </div>
 
-        {/* Body */}
-        <div style={{ flex: 1, display: "flex", gap: 18, padding: "18px 24px", overflow: "hidden", maxWidth: 1080, margin: "0 auto", width: "100%", boxSizing: "border-box" }}>
+        {/* RIGHT — Formulaire + paiement */}
+        <div style={{ flex: 1, padding: isMobile ? "16px" : "0", display: "flex", flexDirection: "column", gap: 20 }}>
 
-          {/* LEFT — Résumé */}
-          <div style={{ width: 256, flexShrink: 0, display: "flex", flexDirection: "column" }}>
-            <div style={{ background: "rgba(6,6,10,0.78)", backdropFilter: "blur(20px)", border: "1px solid rgba(59,130,246,0.22)", borderRadius: 16, padding: "18px 16px", height: "100%", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 9, color: "#3B82F6", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 4 }}>Challenge Algo</div>
-              <div style={{ fontSize: 26, fontWeight: 900, color: "#fff", lineHeight: 1.1 }}>{product.label}</div>
-              <div style={{ fontSize: 20, fontWeight: 900, color: "#3B82F6", marginBottom: 14 }}>{product.price}</div>
+          {/* Infos personnelles */}
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "24px" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 16 }}>Informations</div>
 
-              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                {VIP_RULES.map((r, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: i < VIP_RULES.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
-                    <span style={{ color: "rgba(255,255,255,0.35)", fontSize: 10.5 }}>{r.label}</span>
-                    <span style={{ color: r.value.includes("✓") ? "#22c55e" : "#fff", fontSize: 10.5, fontWeight: 700 }}>{r.value}</span>
-                  </div>
-                ))}
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
+              <div>
+                <label style={lbl}>Prénom *</label>
+                <input className="vip-input" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" style={inp} />
               </div>
-
-              <div style={{ marginTop: 12, background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.12)", borderRadius: 8, padding: "7px 10px", fontSize: 10, color: "rgba(255,255,255,0.3)", lineHeight: 1.6 }}>
-                Accès unique — aucun abonnement.<br />Paiement en crypto uniquement.
+              <div>
+                <label style={lbl}>Nom *</label>
+                <input className="vip-input" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" style={inp} />
               </div>
-            </div>
-          </div>
-
-          {/* RIGHT — Formulaire */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
-
-            {/* Infos personnelles */}
-            <div style={{ background: "rgba(6,6,10,0.78)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "14px 16px", flexShrink: 0 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 10px" }}>
-                <input className="vip-input" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Prénom *" style={inp} />
-                <input className="vip-input" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Nom *" style={inp} />
-                <div style={{ gridColumn: "1 / -1" }}>
-                  <input className="vip-input" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email *" style={inp} />
-                </div>
-                <div style={{ display: "flex", gap: 6 }}>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label style={lbl}>Email *</label>
+                <input className="vip-input" value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com" style={inp} />
+              </div>
+              <div>
+                <label style={lbl}>Téléphone *</label>
+                <div style={{ display: "flex", gap: 8 }}>
                   <select className="vip-select" value={dialCode} onChange={e => setDialCode(e.target.value)}
-                    style={{ ...inp, width: 82, flexShrink: 0, cursor: "pointer", padding: "10px 4px" }}>
+                    style={{ ...inp, width: 90, flexShrink: 0, cursor: "pointer", padding: "10px 6px" }}>
                     {DIAL_CODES.map(c => <option key={c.code} value={c.code}>{c.flag} {c.code}</option>)}
                   </select>
-                  <input className="vip-input" value={phone} onChange={e => setPhone(e.target.value)} placeholder="Téléphone *" style={{ ...inp, flex: 1, width: "auto" }} />
+                  <input className="vip-input" value={phone} onChange={e => setPhone(e.target.value)} placeholder="6 00 00 00 00" style={{ ...inp, flex: 1 }} />
+                </div>
+              </div>
+              <div>
+                <label style={lbl}>Date de naissance *</label>
+                <input type="date" className="vip-input" value={birthDate} onChange={e => setBirthDate(e.target.value)}
+                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
+                  style={{ ...inp, colorScheme: "dark" }} />
+                {birthDate && !isAdult && <div style={{ color: "#ef4444", fontSize: 11, marginTop: 4 }}>Vous devez avoir au moins 18 ans.</div>}
+              </div>
+              <div>
+                <label style={lbl}>Ville *</label>
+                <input className="vip-input" value={city} onChange={e => setCity(e.target.value)} placeholder="Paris" style={inp} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                <div>
+                  <label style={lbl}>Code postal</label>
+                  <input className="vip-input" value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="75001" style={inp} />
                 </div>
                 <div>
-                  <input type="date" className="vip-input" value={birthDate} onChange={e => setBirthDate(e.target.value)}
-                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
-                    style={{ ...inp, colorScheme: "dark" }} />
-                  {birthDate && !isAdult && <div style={{ color: "#ef4444", fontSize: 10, marginTop: 2 }}>18 ans minimum.</div>}
-                </div>
-                <input className="vip-input" value={city} onChange={e => setCity(e.target.value)} placeholder="Ville *" style={inp} />
-                <div style={{ display: "flex", gap: 6 }}>
-                  <input className="vip-input" value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="Code postal" style={{ ...inp, width: "90px", flexShrink: 0 }} />
-                  <input className="vip-input" value={country} onChange={e => setCountry(e.target.value)} placeholder="Pays *" style={{ ...inp, flex: 1, width: "auto" }} />
+                  <label style={lbl}>Pays *</label>
+                  <input className="vip-input" value={country} onChange={e => setCountry(e.target.value)} placeholder="France" style={inp} />
                 </div>
               </div>
             </div>
 
-            {/* Compte — si non connecté */}
             {!user && (
-              <div style={{ background: "rgba(6,6,10,0.78)", backdropFilter: "blur(20px)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 14, padding: "12px 16px", flexShrink: 0 }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "#3B82F6", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 8 }}>Créer votre compte</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 10px" }}>
-                  <div style={{ position: "relative" }}>
-                    <input type={showPassword ? "text" : "password"} className="vip-input" value={password} onChange={e => setPassword(e.target.value)} placeholder="Mot de passe *" style={{ ...inp, paddingRight: 40 }} />
-                    <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: 0 }}>
-                      {showPassword ? <EyeOff /> : <EyeOpen />}
-                    </button>
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 16 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#3B82F6", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Créer votre compte</div>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
+                  <div>
+                    <label style={lbl}>Mot de passe *</label>
+                    <div style={{ position: "relative" }}>
+                      <input type={showPassword ? "text" : "password"} className="vip-input" value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 caractères" style={{ ...inp, paddingRight: 44 }} />
+                      <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: 0 }}>
+                        {showPassword ? <EyeOff /> : <EyeOpen />}
+                      </button>
+                    </div>
                   </div>
-                  <div style={{ position: "relative" }}>
-                    <input type={showConfirmPassword ? "text" : "password"} className="vip-input" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirmer *"
-                      style={{ ...inp, paddingRight: 40, borderColor: confirmPassword ? (confirmPassword === password ? "rgba(34,197,94,0.5)" : "rgba(239,68,68,0.5)") : "rgba(255,255,255,0.12)" }} />
-                    <button type="button" onClick={() => setShowConfirmPassword(v => !v)} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: 0 }}>
-                      {showConfirmPassword ? <EyeOff /> : <EyeOpen />}
-                    </button>
+                  <div>
+                    <label style={lbl}>Confirmer *</label>
+                    <div style={{ position: "relative" }}>
+                      <input type={showConfirmPassword ? "text" : "password"} className="vip-input" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Répéter"
+                        style={{ ...inp, paddingRight: 44, borderColor: confirmPassword ? (confirmPassword === password ? "rgba(34,197,94,0.5)" : "rgba(239,68,68,0.5)") : "rgba(255,255,255,0.12)" }} />
+                      <button type="button" onClick={() => setShowConfirmPassword(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: 0 }}>
+                        {showConfirmPassword ? <EyeOff /> : <EyeOpen />}
+                      </button>
+                    </div>
                   </div>
-                  {passwordError && <div style={{ gridColumn: "1/-1", color: "#ef4444", fontSize: 11 }}>{passwordError}</div>}
+                  {passwordError && <div style={{ gridColumn: "1/-1", color: "#ef4444", fontSize: 12 }}>{passwordError}</div>}
                 </div>
               </div>
             )}
 
             {user && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", background: "rgba(6,6,10,0.6)", backdropFilter: "blur(10px)", borderRadius: 10, border: "1px solid rgba(34,197,94,0.2)", flexShrink: 0 }}>
-                <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#22c55e" }} />
-                <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>Connecté — {user.email}</span>
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 12, marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
+                <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>Connecté en tant que {user.email}</span>
+              </div>
+            )}
+          </div>
+
+          {/* CGV */}
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Conditions Générales</div>
+            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "12px 16px", maxHeight: 100, overflowY: "auto", marginBottom: 12 }}>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.7, margin: 0 }}>
+                • Le trading sur notre plateforme est <strong style={{ color: "rgba(255,255,255,0.7)" }}>100% simulé</strong> — aucun capital réel.<br />
+                • Les frais d&apos;accès sont <strong style={{ color: "rgba(255,255,255,0.7)" }}>non remboursables</strong> dès l&apos;activation du compte.<br />
+                • La récompense est de <strong style={{ color: "rgba(255,255,255,0.7)" }}>100%</strong> des profits simulés, versés tous les 30 jours.<br />
+                • Droit applicable : <strong style={{ color: "rgba(255,255,255,0.7)" }}>loi estonienne</strong>.
+              </p>
+            </div>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+              <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
+                style={{ marginTop: 2, accentColor: "#3B82F6", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
+              <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.5 }}>
+                J&apos;ai lu et j&apos;accepte les{" "}
+                <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#3B82F6", textDecoration: "underline", fontWeight: 700 }}>
+                  Conditions Générales
+                </a>
+              </span>
+            </label>
+          </div>
+
+          {/* Code Promo */}
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Code Promo</div>
+            {promoDiscount > 0 ? (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 8, padding: "10px 14px" }}>
+                <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>✓ {promoCode} — {promoDiscount}% de réduction{promoDiscount === 100 ? " (GRATUIT)" : ""}</span>
+                <button onClick={() => { setPromoDiscount(0); setPromoCode(""); setPromoInput(""); setPromoError(""); }}
+                  style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", padding: 0, display: "flex" }}>
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 8 }}>
+                <input className="vip-input" value={promoInput} onChange={e => setPromoInput(e.target.value.toUpperCase())}
+                  placeholder="CODE-PROMO" style={{ ...inp, flex: 1 }}
+                  onKeyDown={e => e.key === "Enter" && applyPromo()} />
+                <button onClick={applyPromo} disabled={promoLoading || !promoInput.trim()}
+                  style={{ background: "#3B82F6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 18px", fontSize: 12, fontWeight: 700, cursor: promoLoading || !promoInput.trim() ? "not-allowed" : "pointer", whiteSpace: "nowrap", opacity: promoLoading || !promoInput.trim() ? 0.5 : 1 }}>
+                  {promoLoading ? "..." : "Appliquer"}
+                </button>
+              </div>
+            )}
+            {promoError && <div style={{ color: "#ef4444", fontSize: 11, marginTop: 6 }}>{promoError}</div>}
+          </div>
+
+          {/* Paiement */}
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
+            {payError && (
+              <div style={{ color: "#ef4444", fontSize: 12, padding: "10px 14px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, marginBottom: 12 }}>
+                {payError}
+              </div>
+            )}
+            {!profileComplete && (
+              <p style={{ textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 12, margin: "0 0 12px" }}>Remplissez tous les champs pour continuer.</p>
+            )}
+            {profileComplete && !agreedToTerms && (
+              <p style={{ textAlign: "center", color: "#f59e0b", fontSize: 12, margin: "0 0 12px" }}>Acceptez les CGV pour continuer.</p>
+            )}
+
+            {promoDiscount === 100 ? (
+              <div className="vip-border-co">
+                <button className="vip-btn" onClick={handleFree} disabled={loading || !canPay}>
+                  {loading ? "Activation..." : <>✓ Activer gratuitement <ChevronRight size={16} /></>}
+                </button>
+              </div>
+            ) : (
+              <div className="vip-border-co">
+                <button className="vip-btn" onClick={handleCrypto} disabled={loading || !canPay}>
+                  {loading ? "Redirection..." : <><span style={{ fontSize: 18 }}>₿</span> Payer {product.price} en crypto <ChevronRight size={16} /></>}
+                </button>
               </div>
             )}
 
-            {/* Spacer — tunnel visible ici */}
-            <div style={{ flex: 1 }} />
-
-            {/* CGV + Paiement */}
-            <div style={{ background: "rgba(6,6,10,0.78)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "14px 16px", flexShrink: 0 }}>
-              <label style={{ display: "flex", alignItems: "flex-start", gap: 9, cursor: "pointer", marginBottom: 12 }}>
-                <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
-                  style={{ marginTop: 2, accentColor: "#3B82F6", width: 13, height: 13, flexShrink: 0, cursor: "pointer" }} />
-                <span style={{ color: "rgba(255,255,255,0.38)", fontSize: 11, lineHeight: 1.5 }}>
-                  J&apos;accepte les{" "}
-                  <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#3B82F6", textDecoration: "underline" }}>Conditions Générales</a>
-                  {" "}— trading 100% simulé, frais non remboursables, récompenses 100% des profits.
-                </span>
-              </label>
-
-              {payError && (
-                <div style={{ color: "#ef4444", fontSize: 12, padding: "7px 12px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, marginBottom: 10 }}>
-                  {payError}
-                </div>
-              )}
-              {!profileComplete && (
-                <p style={{ textAlign: "center", color: "rgba(255,255,255,0.22)", fontSize: 11, margin: "0 0 10px" }}>Remplissez tous les champs pour continuer.</p>
-              )}
-              {profileComplete && !agreedToTerms && (
-                <p style={{ textAlign: "center", color: "#f59e0b", fontSize: 11, margin: "0 0 10px" }}>Acceptez les CGV pour continuer.</p>
-              )}
-
-              {promoDiscount === 100 ? (
-                <div className="vip-border-co">
-                  <button className="vip-btn" onClick={handleFree} disabled={loading || !canPay}>
-                    {loading ? "Activation..." : <>✓ Activer gratuitement <ChevronRight size={15} /></>}
-                  </button>
-                </div>
-              ) : (
-                <div className="vip-border-co">
-                  <button className="vip-btn" onClick={handleCrypto} disabled={loading || !canPay}>
-                    {loading ? "Redirection..." : <><span style={{ fontSize: 16 }}>₿</span> Payer {product.price} en crypto <ChevronRight size={15} /></>}
-                  </button>
-                </div>
-              )}
-
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 10 }}>
-                <ShieldCheck size={12} color="rgba(255,255,255,0.2)" />
-                <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 10 }}>Paiement sécurisé · NOWPayments · SSL</span>
-              </div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 14 }}>
+              <ShieldCheck size={13} color="rgba(255,255,255,0.25)" />
+              <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 11 }}>Paiement sécurisé via NOWPayments · SSL · Aucun abonnement</span>
             </div>
-
           </div>
+
         </div>
       </div>
     </div>
