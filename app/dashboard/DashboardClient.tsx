@@ -1529,7 +1529,18 @@ export default function DashboardClient({ user }: { user: User }) {
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.challenges}</h1>
                 <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.dash.challengesSub}</p>
               </div>
-              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", textDecoration: "none" }}>{T.dash.newChallenge}</a>
+              <div className="dash-new-challenges">
+                <a href="/#pricing" className="dash-trader-btn">
+                  <span className="dash-trader-label">+ Nouveau</span>
+                  <span className="dash-trader-badge">TRADER</span>
+                </a>
+                <a href="/vip" className="dash-vip-border">
+                  <div className="dash-vip-inner">
+                    <span className="dash-trader-label">+ Nouveau</span>
+                    <span className="dash-vip-text">ALGO</span>
+                  </div>
+                </a>
+              </div>
             </div>
             {/* Total cumulé */}
             {activeChallenges.length > 0 && (() => {
@@ -1670,17 +1681,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       </div>
                     )}
                   </div>
-                  <a href="/#pricing" className="dash-trader-btn">
-                    <span className="dash-trader-label">Challenge</span>
-                    <span className="dash-trader-badge">TRADER</span>
-                  </a>
                 </div>
-                <a href="/vip" className="dash-vip-border" style={{ display: "flex", marginBottom: 16 }}>
-                  <div className="dash-vip-inner" style={{ width: "100%", justifyContent: "center" }}>
-                    <span className="dash-trader-label">Challenge</span>
-                    <span className="dash-vip-text">ALGO</span>
-                  </div>
-                </a>
               </>
             )}
 
@@ -1697,6 +1698,18 @@ export default function DashboardClient({ user }: { user: User }) {
                     {challenge.status === "funded" ? "Reward" : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
                   </span>
                 </div>
+              </div>
+              <div className="dash-new-challenges">
+                <a href="/#pricing" className="dash-trader-btn">
+                  <span className="dash-trader-label">+ Nouveau</span>
+                  <span className="dash-trader-badge">TRADER</span>
+                </a>
+                <a href="/vip" className="dash-vip-border">
+                  <div className="dash-vip-inner">
+                    <span className="dash-trader-label">+ Nouveau</span>
+                    <span className="dash-vip-text">ALGO</span>
+                  </div>
+                </a>
               </div>
             </div>
 
