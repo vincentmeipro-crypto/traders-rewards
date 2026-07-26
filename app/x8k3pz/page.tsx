@@ -117,7 +117,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview",  label: "Vue d'ensemble" },
-  { id: "pipeline",  label: "Pipeline" },
+  { id: "pipeline",  label: "Pipeline Trader" },
   { id: "algo",      label: "⚡ Pipeline Algo" },
   { id: "crm",       label: "CRM Clients" },
   { id: "financier",      label: "Financier Trader" },
@@ -687,6 +687,7 @@ export default function AdminPage() {
   const copyToClipboard = (text: string) => navigator.clipboard.writeText(text);
 
   const filteredChallenges = challenges.filter(c => {
+    if (c.model === "vip") return false;
     const matchSearch = c.user_email?.toLowerCase().includes(search.toLowerCase()) || c.client_first_name?.toLowerCase().includes(search.toLowerCase()) || c.client_last_name?.toLowerCase().includes(search.toLowerCase());
     const matchStatus = filterStatus === "all" || c.status === filterStatus;
     return matchSearch && matchStatus;
@@ -964,7 +965,7 @@ export default function AdminPage() {
                         <tr key={c.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                           <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.7)", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12 }}>{c.user_email}</td>
                           <td style={{ padding: "13px 14px", fontWeight: 800, color: "#fff" }}>{c.account_size}</td>
-                          <td style={{ padding: "13px 14px" }}><span style={{ background: c.model === "vip" ? "rgba(139,92,246,0.15)" : "rgba(255,255,255,0.06)", color: c.model === "vip" ? "#a78bfa" : "rgba(255,255,255,0.75)", fontWeight: 700, fontSize: 11, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{c.model}</span></td>
+                          <td style={{ padding: "13px 14px" }}><span style={{ background: c.model === "vip" ? "rgba(139,92,246,0.15)" : "rgba(255,255,255,0.06)", color: c.model === "vip" ? "#a78bfa" : "rgba(255,255,255,0.75)", fontWeight: 700, fontSize: 11, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{c.model === "vip" ? "ALGO" : c.model}</span></td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
