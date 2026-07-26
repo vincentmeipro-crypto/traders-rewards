@@ -216,10 +216,10 @@ function VipCheckoutContent() {
     <div style={{ position: "fixed", inset: 0, background: "#000", color: "#fff", fontFamily: "system-ui, -apple-system, sans-serif", overflow: "hidden" }}>
       {/* SVG Tunnel Background */}
       <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", zIndex: 0 }} viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
-        <path d={TUNNEL_D} stroke="rgba(255,255,255,0.12)" strokeWidth="1" fill="none" />
+        <path d={TUNNEL_D} stroke="rgba(255,255,255,0.45)" strokeWidth="1" fill="none" />
       </svg>
-      {/* Radial vignette — keeps center lighter, edges dark */}
-      <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "radial-gradient(ellipse 55% 55% at 50% 50%, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.88) 100%)" }} />
+      {/* Vignette légère — assombrit juste les coins, préserve le centre */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.55) 100%)" }} />
 
       {/* Content */}
       <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -281,7 +281,7 @@ function VipCheckoutContent() {
           </div>
 
           {/* RIGHT — Formulaire */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10, overflow: "hidden" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
 
             {/* Infos personnelles */}
             <div style={{ background: "rgba(6,6,10,0.78)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "14px 16px", flexShrink: 0 }}>
@@ -341,6 +341,9 @@ function VipCheckoutContent() {
                 <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>Connecté — {user.email}</span>
               </div>
             )}
+
+            {/* Spacer — tunnel visible ici */}
+            <div style={{ flex: 1 }} />
 
             {/* CGV + Paiement */}
             <div style={{ background: "rgba(6,6,10,0.78)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 14, padding: "14px 16px", flexShrink: 0 }}>
