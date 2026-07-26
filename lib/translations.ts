@@ -209,7 +209,7 @@ export const t = {
       rulesStatus: 'Statut des règles', passed: 'atteint ✓', inProgress: 'en cours',
       withinLimit: 'OK ✓', violated: 'violé ❌', noTimeLimit: 'Pas de limite de temps — tradez à votre rythme.',
       requestReward: 'Demander une récompense →', accountReady: 'Compte prêt', accountPending: 'Compte de trading — En attente',
-      accountPendingMsg: 'Votre compte est en cours de configuration. Vous recevrez vos identifiants par email ET ici dans quelques minutes.',
+      accountPendingMsg: 'Votre compte est en cours de configuration. Vous recevrez vos identifiants par email et ici dans quelques minutes.',
       downloadTitle: 'Télécharger les plateformes MT5', downloadSub: 'Connectez-vous avec vos identifiants MT5 pour commencer à trader.',
       buyNew: '+ Nouveau',
       logOut: 'Déconnexion', loggedInAs: 'Connecté en tant que',
