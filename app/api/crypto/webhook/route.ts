@@ -165,6 +165,7 @@ export async function POST(req: NextRequest) {
       mt5Password = mt5Account.password;
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server = mt5Account.server;
+      await new Promise(r => setTimeout(r, 1500));
       try { await updateMT5AccountName(mt5Account.login, firstName, lastName, "Phase 1"); } catch {}
     } catch (e) { console.error("MT5 creation error:", e); }
 

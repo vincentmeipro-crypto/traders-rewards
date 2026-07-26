@@ -1908,7 +1908,7 @@ export default function AdminPage() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                 <button onClick={createPromo} disabled={!newCode.code || !newCode.discount_percent}
-                  style={{ backgroundColor: "#0a0a0a", color: "#000", border: "none", borderRadius: 10, padding: "11px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer", opacity: (!newCode.code || !newCode.discount_percent) ? 0.4 : 1 }}>
+                  style={{ backgroundColor: "#3B82F6", color: "#fff", border: "none", borderRadius: 10, padding: "11px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer", opacity: (!newCode.code || !newCode.discount_percent) ? 0.4 : 1 }}>
                   Créer
                 </button>
                 {promoMsg   && <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>{promoMsg}</span>}
