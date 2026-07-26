@@ -46,7 +46,7 @@ export async function createMT5Account(params: {
     headers: MT5_HEADERS,
     body: JSON.stringify({
       first_name:   params.firstName,
-      last_name:    params.lastName,
+      last_name:    params.label ? `${params.lastName} | ${params.label}` : params.lastName,
       email:        params.email,
       leverage:     params.leverage,
       group:        params.group,
@@ -83,22 +83,6 @@ export async function createMT5Account(params: {
       }
     } catch (e) {
       console.error("MT5 balance check failed:", e);
-    }
-  } else if (account.login) {
-    // Pour les comptes 10k sans top-up, attendre que le compte soit prêt
-    await new Promise(r => setTimeout(r, 2000));
-  }
-
-  // Mise à jour du nom avec label (compte confirmé actif à ce stade)
-  if (params.label && account.login) {
-    let nameSet = false;
-    for (let i = 0; i < 3 && !nameSet; i++) {
-      try {
-        await updateMT5AccountName(account.login, params.firstName, params.lastName, params.label);
-        nameSet = true;
-      } catch {
-        await new Promise(r => setTimeout(r, 2000));
-      }
     }
   }
 
