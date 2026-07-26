@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendFundedEmail, sendFailedEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName, updateMT5AccountNameWithRetry } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
       mt5Server = mt5Account.server;
       const label = isReward ? "Reward" : "Phase 1";
       const mt5NameLabel = model === "vip" ? `ALGO | ${label.toUpperCase()}` : label;
-      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, mt5NameLabel); } catch {}
+      updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, mt5NameLabel).catch(() => {});
     } catch (e) { console.error("MT5 error:", e); }
   }
 

@@ -1,7 +1,7 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, updateMT5AccountName } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, updateMT5AccountNameWithRetry } from "@/lib/mt5";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string; balance: number }> = {
   "25k-2step":  { accountSize: "$25,000",  model: "2step", balance: 25000 },
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server           = mt5Account.server;
       const mt5Phase = product.model === "vip" ? "ALGO | PHASE 1" : "Phase 1";
-      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, mt5Phase); } catch {}
+      updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, mt5Phase).catch(() => {});
     } catch (e) {
       console.error("MT5 account creation failed:", e);
     }
