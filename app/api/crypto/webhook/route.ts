@@ -2,7 +2,7 @@
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, updateMT5AccountNameWithRetry } from "@/lib/mt5";
+import { createMT5Account, getMT5Group } from "@/lib/mt5";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "10k-2step":  { accountSize: "$10,000",  model: "2step" },
@@ -160,12 +160,12 @@ export async function POST(req: NextRequest) {
         leverage: 100,
         group: getMT5Group(model),
         account_size: accountSize,
+        label: model === "vip" ? "ALGO | PHASE 1" : "Phase 1",
       });
       mt5Login = mt5Account.login;
       mt5Password = mt5Account.password;
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server = mt5Account.server;
-      await updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, "Phase 1");
     } catch (e) { console.error("MT5 creation error:", e); }
 
     await admin.from("challenges").update({

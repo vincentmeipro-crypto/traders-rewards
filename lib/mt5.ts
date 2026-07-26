@@ -38,6 +38,7 @@ export async function createMT5Account(params: {
   leverage: number;
   group: string;
   account_size?: string;
+  label?: string;
 }): Promise<{ login: number; password: string; password_investor: string; server: string }> {
   const balance = params.account_size ? (SIZE_MAP[params.account_size] ?? 10000) : 10000;
   const res = await fetch(`${MT5_URL}/accounts/create`, {
@@ -82,6 +83,22 @@ export async function createMT5Account(params: {
       }
     } catch (e) {
       console.error("MT5 balance check failed:", e);
+    }
+  } else if (account.login) {
+    // Pour les comptes 10k sans top-up, attendre que le compte soit prêt
+    await new Promise(r => setTimeout(r, 2000));
+  }
+
+  // Mise à jour du nom avec label (compte confirmé actif à ce stade)
+  if (params.label && account.login) {
+    let nameSet = false;
+    for (let i = 0; i < 3 && !nameSet; i++) {
+      try {
+        await updateMT5AccountName(account.login, params.firstName, params.lastName, params.label);
+        nameSet = true;
+      } catch {
+        await new Promise(r => setTimeout(r, 2000));
+      }
     }
   }
 

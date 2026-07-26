@@ -1,4 +1,10 @@
 {
+  "functions": {
+    "app/api/promo/free/route.ts":      { "maxDuration": 60 },
+    "app/api/crypto/webhook/route.ts":  { "maxDuration": 60 },
+    "app/api/stripe/webhook/route.ts":  { "maxDuration": 60 },
+    "app/api/admin/challenges/route.ts": { "maxDuration": 60 }
+  },
   "crons": [
     {
       "path": "/api/metaapi/sync",

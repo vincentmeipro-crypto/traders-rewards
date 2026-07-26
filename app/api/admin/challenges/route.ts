@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendFundedEmail, sendFailedEmail, sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName, updateMT5AccountNameWithRetry } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -130,19 +130,19 @@ export async function POST(req: NextRequest) {
 
   if (createMT5) {
     try {
+      const label = isReward ? "Reward" : "Phase 1";
+      const mt5NameLabel = model === "vip" ? `ALGO | ${label.toUpperCase()}` : label;
       const mt5Account = await createMT5Account({
         firstName, lastName, email: userEmail,
         leverage: 100,
         group: isReward ? getMT5Group(model, "funded") : getMT5Group(model),
         account_size: accountSize,
+        label: mt5NameLabel,
       });
       mt5Login = mt5Account.login;
       mt5Password = mt5Account.password;
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server = mt5Account.server;
-      const label = isReward ? "Reward" : "Phase 1";
-      const mt5NameLabel = model === "vip" ? `ALGO | ${label.toUpperCase()}` : label;
-      await updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, mt5NameLabel);
     } catch (e) { console.error("MT5 error:", e); }
   }
 
