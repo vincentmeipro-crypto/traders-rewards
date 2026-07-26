@@ -183,11 +183,11 @@ function VipCheckoutContent() {
 
   const inp: React.CSSProperties = {
     width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8,
-    padding: "10px 14px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box",
+    padding: "8px 12px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box",
   };
   const lbl: React.CSSProperties = {
     color: "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: 700, letterSpacing: "1px",
-    marginBottom: 6, display: "block", textTransform: "uppercase",
+    marginBottom: 4, display: "block", textTransform: "uppercase",
   };
 
   const EyeOpen = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
@@ -205,7 +205,7 @@ function VipCheckoutContent() {
         }
         .vip-btn {
           display: flex; align-items: center; justify-content: center; gap: 10px;
-          width: 100%; padding: 16px; border-radius: 10px;
+          width: 100%; padding: 12px; border-radius: 10px;
           font-size: 14px; font-weight: 800; letter-spacing: 0.5px;
           background: #000; color: #fff; border: none; cursor: pointer;
           transition: opacity 0.2s;
@@ -228,38 +228,38 @@ function VipCheckoutContent() {
       </div>
 
       {/* Body */}
-      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0" : "40px 24px", gap: isMobile ? 0 : 32 }}>
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", maxWidth: 1100, margin: "0 auto", padding: isMobile ? "0" : "20px 24px", gap: isMobile ? 0 : 32 }}>
 
         {/* LEFT — Résumé + règles */}
         <div style={{ flex: "0 0 340px", padding: isMobile ? "24px 16px" : "0" }}>
-          <div style={{ background: "#0a0a0a", border: "1.5px solid rgba(59,130,246,0.3)", borderRadius: 20, padding: "28px 24px", position: "sticky", top: 24 }}>
-            <div style={{ fontSize: 10, color: "#3B82F6", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 8 }}>Challenge Algo</div>
-            <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", marginBottom: 2 }}>{product.label}</div>
-            <div style={{ fontSize: 28, fontWeight: 900, color: "#3B82F6", marginBottom: 24 }}>{product.price}</div>
+          <div style={{ background: "#0a0a0a", border: "1.5px solid rgba(59,130,246,0.3)", borderRadius: 20, padding: "20px 20px", position: "sticky", top: 24 }}>
+            <div style={{ fontSize: 10, color: "#3B82F6", fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>Challenge Algo</div>
+            <div style={{ fontSize: 26, fontWeight: 900, color: "#fff", marginBottom: 2 }}>{product.label}</div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#3B82F6", marginBottom: 14 }}>{product.price}</div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 20 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0, marginBottom: 14 }}>
               {VIP_RULES.map((r, i) => (
-                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 0", borderBottom: i < VIP_RULES.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "5px 0", borderBottom: i < VIP_RULES.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
                   <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>{r.label}</span>
                   <span style={{ color: r.value.includes("✓") ? "#22c55e" : "#fff", fontSize: 12, fontWeight: 700 }}>{r.value}</span>
                 </div>
               ))}
             </div>
 
-            <div style={{ background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 10, padding: "12px 16px", fontSize: 11, color: "rgba(255,255,255,0.4)", lineHeight: 1.7 }}>
+            <div style={{ background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 10, padding: "8px 12px", fontSize: 11, color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>
               Accès unique — aucun abonnement. Paiement en crypto uniquement.
             </div>
           </div>
         </div>
 
         {/* RIGHT — Formulaire + paiement */}
-        <div style={{ flex: 1, padding: isMobile ? "16px" : "0", display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ flex: 1, padding: isMobile ? "16px" : "0", display: "flex", flexDirection: "column", gap: 12 }}>
 
           {/* Infos personnelles */}
-          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "24px" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 16 }}>Informations</div>
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "16px 20px" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 10 }}>Informations</div>
 
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "8px 12px" }}>
               <div>
                 <label style={lbl}>Prénom *</label>
                 <input className="vip-input" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" style={inp} />
@@ -306,9 +306,9 @@ function VipCheckoutContent() {
             </div>
 
             {!user && (
-              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 16 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#3B82F6", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Créer votre compte</div>
-                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 10, marginTop: 10 }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#3B82F6", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 8 }}>Créer votre compte</div>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "8px 12px" }}>
                   <div>
                     <label style={lbl}>Mot de passe *</label>
                     <div style={{ position: "relative" }}>
@@ -334,7 +334,7 @@ function VipCheckoutContent() {
             )}
 
             {user && (
-              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 12, marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
                 <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>Connecté en tant que {user.email}</span>
               </div>
@@ -342,30 +342,22 @@ function VipCheckoutContent() {
           </div>
 
           {/* CGV */}
-          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Conditions Générales</div>
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "12px 16px", maxHeight: 100, overflowY: "auto", marginBottom: 12 }}>
-              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.7, margin: 0 }}>
-                • Le trading sur notre plateforme est <strong style={{ color: "rgba(255,255,255,0.7)" }}>100% simulé</strong> — aucun capital réel.<br />
-                • Les frais d&apos;accès sont <strong style={{ color: "rgba(255,255,255,0.7)" }}>non remboursables</strong> dès l&apos;activation du compte.<br />
-                • La récompense est de <strong style={{ color: "rgba(255,255,255,0.7)" }}>100%</strong> des profits simulés, versés tous les 30 jours.<br />
-                • Droit applicable : <strong style={{ color: "rgba(255,255,255,0.7)" }}>loi estonienne</strong>.
-              </p>
-            </div>
-            <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "14px 20px" }}>
+            <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
               <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
-                style={{ marginTop: 2, accentColor: "#3B82F6", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
-              <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.5 }}>
+                style={{ accentColor: "#3B82F6", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
+              <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11 }}>
                 J&apos;ai lu et j&apos;accepte les{" "}
                 <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#3B82F6", textDecoration: "underline", fontWeight: 700 }}>
                   Conditions Générales
                 </a>
+                {" "}— trading 100% simulé, frais non remboursables, profits versés à 100%.
               </span>
             </label>
           </div>
 
           {/* Paiement */}
-          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px" }}>
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "14px 20px" }}>
             {payError && (
               <div style={{ color: "#ef4444", fontSize: 12, padding: "10px 14px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, marginBottom: 12 }}>
                 {payError}
@@ -392,7 +384,7 @@ function VipCheckoutContent() {
               </div>
             )}
 
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 10 }}>
               <ShieldCheck size={13} color="rgba(255,255,255,0.25)" />
               <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 11 }}>Paiement sécurisé via NOWPayments · SSL · Aucun abonnement</span>
             </div>
