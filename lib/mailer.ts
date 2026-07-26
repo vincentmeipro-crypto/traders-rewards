@@ -1,5 +1,5 @@
-const SITE = "https://www.traders-rewards.eu";
-const LOGO = "https://www.traders-rewards.eu/logo-email.png";
+﻿const SITE = "https://www.traders-rewards.eu";
+const LOGO = "data:image/png;base64,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";
 
 async function sendEmail(to: string, subject: string, html: string) {
   const res = await fetch("https://api.resend.com/emails", {
@@ -28,28 +28,40 @@ export async function sendWelcomeEmail(
   mt5?: { login: number; password: string; server: string },
   setupLink?: string
 ) {
-  const modelLabel = model === "1step" ? "1 Étape" : "2 Étapes";
+  const isAlgo = model === "vip";
+  const modelLabel = isAlgo ? "Challenge ALGO" : model === "1step" ? "Challenge Trader 1-Step" : "Challenge Trader 2-Step";
   const details: { label: string; value: string; color?: string }[] = [
     { label: "Taille du compte", value: accountSize, color: "#60A5FA" },
-    { label: "Modèle", value: modelLabel },
-    { label: "Objectif de profit", value: "10%" },
-    { label: "Perte journalière max", value: model === "1step" ? "3%" : "5%" },
+    { label: "Type de challenge", value: modelLabel, color: isAlgo ? "#3B82F6" : undefined },
+    { label: "Objectif Phase 1", value: "+10%" },
+    ...(isAlgo
+      ? [
+          { label: "Objectif Phase 2", value: "+5%" },
+          { label: "Partage des profits", value: "100%" },
+          { label: "Perte journalière max", value: "5%" },
+        ]
+      : [
+          { label: "Perte journalière max", value: model === "1step" ? "3%" : "5%" },
+        ]
+    ),
   ];
   if (mt5) {
     details.push(
-      { label: "Serveur MT5",   value: mt5.server,        color: "#1a73e8" },
-      { label: "Login MT5",     value: String(mt5.login), color: "#1a73e8" },
-      { label: "Mot de passe MT5", value: mt5.password,   color: "#1a73e8" },
+      { label: "Serveur MT5",      value: mt5.server,        color: "#1a73e8" },
+      { label: "Login MT5",        value: String(mt5.login), color: "#1a73e8" },
+      { label: "Mot de passe MT5", value: mt5.password,      color: "#1a73e8" },
     );
   }
   const ctaHref = setupLink || `${SITE}/dashboard`;
   const ctaText = setupLink ? "Créer mon mot de passe & accéder au Dashboard →" : "Accéder à mon Dashboard →";
   const bodyText = setupLink
-    ? `Bienvenue dans l'élite. Votre compte challenge a été créé. Cliquez sur le bouton ci-dessous pour définir votre mot de passe et accéder à votre dashboard.`
-    : `Bienvenue dans l'élite. Votre compte challenge a été créé. Connectez-vous à MT5 avec les identifiants ci-dessous et commencez à trader.`;
-  await sendEmail(to, "🎯 Votre Challenge Traders Rewards est prêt !", buildEmail({
-    title: "✔ Votre compte Traders Rewards est actif",
-    titleColor: "#1565C0",
+    ? `Bienvenue dans l'élite. Votre ${modelLabel} ${accountSize} a été créé. Cliquez sur le bouton ci-dessous pour définir votre mot de passe et accéder à votre dashboard.`
+    : `Bienvenue dans l'élite. Votre ${modelLabel} ${accountSize} a été créé. Connectez-vous à MT5 avec les identifiants ci-dessous et commencez à trader.`;
+  const subject = isAlgo ? "🤖 Votre Challenge ALGO est prêt !" : "🎯 Votre Challenge Traders Rewards est prêt !";
+  const title = isAlgo ? "✔ Votre Challenge ALGO est actif" : "✔ Votre compte Traders Rewards est actif";
+  await sendEmail(to, subject, buildEmail({
+    title,
+    titleColor: isAlgo ? "#3B82F6" : "#1565C0",
     body: bodyText,
     details,
     cta: { text: ctaText, href: ctaHref },
