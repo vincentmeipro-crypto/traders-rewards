@@ -183,7 +183,7 @@ export async function GET(req: NextRequest) {
       const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
       const lastName  = user?.user_metadata?.last_name  || profile?.last_name  || "";
       const phaseLabel = c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Phase 2" : "Phase 1";
-      const label = c.model === "vip" ? `ALGO | ${phaseLabel.toUpperCase()}` : phaseLabel;
+      const label = c.model === "vip" ? `Algo | ${phaseLabel}` : `Trader | ${phaseLabel}`;
       try { await updateMT5AccountName(c.mt5_login, firstName, lastName, label); } catch {}
     }
   } catch {}

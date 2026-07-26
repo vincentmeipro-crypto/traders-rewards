@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
   if (createMT5) {
     try {
       const label = isReward ? "Reward" : "Phase 1";
-      const mt5NameLabel = model === "vip" ? `ALGO | ${label.toUpperCase()}` : label;
+      const mt5NameLabel = model === "vip" ? `Algo | ${label}` : `Trader | ${label}`;
       const mt5Account = await createMT5Account({
         firstName, lastName, email: userEmail,
         leverage: 100,
@@ -282,7 +282,7 @@ export async function PATCH(req: NextRequest) {
     const phaseLabel: Record<string, string> = { phase1: "Phase 1", phase2: "Phase 2", funded: "Reward" };
     const label = phaseLabel[data.phase] || "Phase 1";
     const isVip = data.model === "vip";
-    const mt5Label = isVip ? `ALGO | ${label.toUpperCase()}` : label;
+    const mt5Label = isVip ? `Algo | ${label}` : `Trader | ${label}`;
     try { await updateMT5AccountName(data.mt5_login, firstName, lastName, mt5Label); } catch {}
   }
 

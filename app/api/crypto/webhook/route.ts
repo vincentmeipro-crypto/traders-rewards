@@ -160,7 +160,7 @@ export async function POST(req: NextRequest) {
         leverage: 100,
         group: getMT5Group(model),
         account_size: accountSize,
-        label: model === "vip" ? "ALGO | PHASE 1" : "Phase 1",
+        label: model === "vip" ? "Algo | Phase 1" : "Trader | Phase 1",
       });
       mt5Login = mt5Account.login;
       mt5Password = mt5Account.password;

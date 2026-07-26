@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     let mt5Server: string | null = null;
 
     try {
-      const mt5Phase = product.model === "vip" ? "ALGO | PHASE 1" : "Phase 1";
+      const mt5Phase = product.model === "vip" ? "Algo | Phase 1" : "Trader | Phase 1";
       const mt5Account = await createMT5Account({
         firstName,
         lastName,
