@@ -1529,7 +1529,18 @@ export default function DashboardClient({ user }: { user: User }) {
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.challenges}</h1>
                 <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.dash.challengesSub}</p>
               </div>
-              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", textDecoration: "none" }}>{T.dash.newChallenge}</a>
+              <div className="dash-new-challenges">
+                <a href="/#pricing" className="dash-trader-btn">
+                  <span className="dash-trader-label">Challenge</span>
+                  <span className="dash-trader-badge">TRADER</span>
+                </a>
+                <a href="/vip" className="dash-vip-border">
+                  <div className="dash-vip-inner">
+                    <span className="dash-trader-label">Challenge</span>
+                    <span className="dash-vip-text">ALGO</span>
+                  </div>
+                </a>
+              </div>
             </div>
             {/* Total cumulé */}
             {activeChallenges.length > 0 && (() => {
@@ -1611,7 +1622,18 @@ export default function DashboardClient({ user }: { user: User }) {
             <Trophy size={64} color="#3B82F6" style={{ marginBottom: 24, opacity: 0.5 }} />
             <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{T.dash.noChallengeTitle}</h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
-            <a href="/#pricing" className="btn-primary" style={{ padding: "14px 32px", fontSize: 15 }}>{T.dash.startChallenge}</a>
+            <div className="dash-new-challenges">
+              <a href="/#pricing" className="dash-trader-btn">
+                <span className="dash-trader-label">Challenge</span>
+                <span className="dash-trader-badge">TRADER</span>
+              </a>
+              <a href="/vip" className="dash-vip-border">
+                <div className="dash-vip-inner">
+                  <span className="dash-trader-label">Challenge</span>
+                  <span className="dash-vip-text">ALGO</span>
+                </div>
+              </a>
+            </div>
           </div>
         ) : (activeTab === "dashboard") && challenge && (
           <>
@@ -1645,9 +1667,18 @@ export default function DashboardClient({ user }: { user: User }) {
                     </div>
                   )}
                 </div>
-                <a href="/#pricing" style={{ backgroundColor: "rgba(255,255,255,0.1)", color: "#3B82F6", fontSize: 11, fontWeight: 700, padding: "5px 12px", borderRadius: 8, textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
-                  {isFr ? "Nouveau →" : "New →"}
-                </a>
+                <div className="dash-new-challenges">
+                  <a href="/#pricing" className="dash-trader-btn">
+                    <span className="dash-trader-label">Challenge</span>
+                    <span className="dash-trader-badge">TRADER</span>
+                  </a>
+                  <a href="/vip" className="dash-vip-border">
+                    <div className="dash-vip-inner">
+                      <span className="dash-trader-label">Challenge</span>
+                      <span className="dash-vip-text">ALGO</span>
+                    </div>
+                  </a>
+                </div>
               </div>
             )}
 
@@ -1665,9 +1696,18 @@ export default function DashboardClient({ user }: { user: User }) {
                   </span>
                 </div>
               </div>
-              <a href="/#pricing" className="btn-primary" style={{ fontSize: 13, padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, flexShrink: 0 }}>
-                {T.dash.newChallenge} <ChevronRight size={14} />
-              </a>
+              <div className="dash-new-challenges">
+                <a href="/#pricing" className="dash-trader-btn">
+                  <span className="dash-trader-label">Challenge</span>
+                  <span className="dash-trader-badge">TRADER</span>
+                </a>
+                <a href="/vip" className="dash-vip-border">
+                  <div className="dash-vip-inner">
+                    <span className="dash-trader-label">Challenge</span>
+                    <span className="dash-vip-text">ALGO</span>
+                  </div>
+                </a>
+              </div>
             </div>
 
             {/* Phase Banner */}
