@@ -196,25 +196,38 @@ function VipCheckoutContent() {
   return (
     <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "system-ui, -apple-system, sans-serif", position: "relative", overflow: "hidden" }}>
       {/* Perspective grid background */}
-      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+      <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden", background: "#000" }}>
+        {/* Floor grid */}
         <div style={{
-          position: "absolute", inset: 0,
+          position: "absolute", left: "-50%", right: "-50%", bottom: 0, height: "75%",
           backgroundImage: `
-            linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)
+            linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)
           `,
-          backgroundSize: "60px 60px",
-          transform: "perspective(600px) rotateX(40deg) scale(2.5)",
+          backgroundSize: "80px 80px",
+          transform: "perspective(500px) rotateX(70deg)",
+          transformOrigin: "50% 100%",
+        }} />
+        {/* Ceiling grid */}
+        <div style={{
+          position: "absolute", left: "-50%", right: "-50%", top: 0, height: "75%",
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.25) 1px, transparent 1px)
+          `,
+          backgroundSize: "80px 80px",
+          transform: "perspective(500px) rotateX(-70deg)",
           transformOrigin: "50% 0%",
-          top: "-20%",
         }} />
+        {/* Fade center */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(to bottom, #000 0%, transparent 30%, transparent 70%, #000 100%)",
+          background: "radial-gradient(ellipse 60% 40% at 50% 50%, #000 0%, transparent 100%)",
         }} />
+        {/* Fade sides */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "radial-gradient(ellipse 80% 50% at 50% 50%, transparent 40%, #000 100%)",
+          background: "linear-gradient(90deg, #000 0%, transparent 20%, transparent 80%, #000 100%)",
         }} />
       </div>
       <div style={{ position: "relative", zIndex: 1 }}>
