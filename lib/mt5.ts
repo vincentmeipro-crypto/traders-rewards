@@ -161,10 +161,10 @@ export async function updateMT5AccountName(login: number, firstName: string, las
   if (!res.ok) throw new Error(`MT5 update-name failed: ${await res.text()}`);
 }
 
-// Retry version — use this right after createMT5Account (account may not be ready immediately)
+// Retry version — await this right after createMT5Account (account may not be ready immediately)
 export async function updateMT5AccountNameWithRetry(
   login: number, firstName: string, lastName: string, label: string,
-  maxAttempts = 5, delayMs = 3000
+  maxAttempts = 4, delayMs = 2000
 ): Promise<void> {
   for (let i = 0; i < maxAttempts; i++) {
     await new Promise(r => setTimeout(r, delayMs));

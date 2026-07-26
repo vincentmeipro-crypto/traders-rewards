@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
       mt5Password = mt5Account.password;
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server = mt5Account.server;
-      updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, "Phase 1").catch(() => {});
+      await updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, "Phase 1");
     } catch (e) { console.error("MT5 creation error:", e); }
 
     await admin.from("challenges").update({

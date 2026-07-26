@@ -142,7 +142,7 @@ export async function POST(req: NextRequest) {
       mt5Server = mt5Account.server;
       const label = isReward ? "Reward" : "Phase 1";
       const mt5NameLabel = model === "vip" ? `ALGO | ${label.toUpperCase()}` : label;
-      updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, mt5NameLabel).catch(() => {});
+      await updateMT5AccountNameWithRetry(mt5Account.login, firstName, lastName, mt5NameLabel);
     } catch (e) { console.error("MT5 error:", e); }
   }
 
