@@ -1534,20 +1534,33 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Total cumulé */}
             {activeChallenges.length > 0 && (() => {
               const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
-              const total = activeChallenges.reduce((s, c) => s + (sizeMap[c.account_size] || 0), 0);
-              const pct = Math.min(100, (total / 200000) * 100);
+              const traderChallenges = activeChallenges.filter(c => c.model !== "vip");
+              const algoChallenges   = activeChallenges.filter(c => c.model === "vip");
+              const traderTotal = traderChallenges.reduce((s, c) => s + (sizeMap[c.account_size] || 0), 0);
+              const algoTotal   = algoChallenges.reduce((s, c)   => s + (sizeMap[c.account_size] || 0), 0);
+              const pct = Math.min(100, (traderTotal / 200000) * 100);
               const color = pct >= 100 ? "#ef4444" : pct >= 75 ? "#f59e0b" : "#3B82F6";
               return (
-                <div className="card" style={{ padding: "14px 20px", marginBottom: 16, display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                      <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital cumulé actif" : "Total active capital"}</span>
-                      <span style={{ fontWeight: 900, fontSize: 14, color }}>${total.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>/ $200,000</span></span>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
+                  {traderChallenges.length > 0 && (
+                    <div className="card" style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 16 }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                          <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital Trader actif" : "Active Trader capital"}</span>
+                          <span style={{ fontWeight: 900, fontSize: 14, color }}>${traderTotal.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>/ $200,000</span></span>
+                        </div>
+                        <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 100, height: 6, overflow: "hidden" }}>
+                          <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 100, transition: "width 0.5s" }} />
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 100, height: 6, overflow: "hidden" }}>
-                      <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 100, transition: "width 0.5s" }} />
+                  )}
+                  {algoChallenges.length > 0 && (
+                    <div className="card" style={{ padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital ALGO actif" : "Active ALGO capital"}</span>
+                      <span style={{ fontWeight: 900, fontSize: 14, color: "#3B82F6" }}>${algoTotal.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>{isFr ? "/ Illimité" : "/ Unlimited"}</span></span>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })()}
@@ -1569,7 +1582,7 @@ export default function DashboardClient({ user }: { user: User }) {
                       className="card" style={{ padding: 24, cursor: "pointer", border: isSelected ? "1.5px solid #3B82F6" : "1.5px solid rgba(255,255,255,0.07)", transition: "border 0.2s" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div>
-                          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "2step" ? "2-Step" : "1-Step"}</div>
+                          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "vip" ? "Challenge ALGO" : c.model === "2step" ? "Challenge Trader 2-Step" : "Challenge Trader 1-Step"}</div>
                           <div style={{ display: "flex", gap: 8 }}>
                             <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(59, 130, 246,0.12)", color: c.phase === "funded" ? "#60A5FA" : "#3B82F6", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.phase === "funded" && <Trophy size={11} />}{PHASE_LABELS[c.phase] || c.phase}</span>
                             <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status === "funded" ? "Active" : STATUS_LABELS[c.status] || c.status}</span>
@@ -1637,7 +1650,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     color: challenge.id === c.id ? "#3B82F6" : "rgba(255,255,255,0.45)",
                     transition: "all 0.15s",
                   }}>
-                    {c.account_size} · {c.model === "2step" ? "2-Step" : "1-Step"}
+                    {c.account_size} · {c.model === "vip" ? "ALGO" : c.model === "2step" ? "2-Step" : "1-Step"}
                   </button>
                 ))}
               </div>

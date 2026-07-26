@@ -24,11 +24,14 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient();
 
-    const SIZE_VALUES: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
-    const { data: activeChallenges } = await admin.from("challenges").select("account_size").eq("user_id", userId).in("status", ["active", "funded"]);
-    const currentTotal = (activeChallenges || []).reduce((sum: number, c: { account_size: string }) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
-    if (currentTotal + (SIZE_VALUES[product.accountSize] || 0) > 200000) {
-      return NextResponse.json({ error: `Plafond $200,000 atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
+    if (product.model !== "vip") {
+      const SIZE_VALUES: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
+      const { data: activeChallenges } = await admin.from("challenges").select("account_size, model").eq("user_id", userId).in("status", ["active", "funded"]);
+      const traderChallenges = (activeChallenges || []).filter((c: { model: string }) => c.model !== "vip");
+      const currentTotal = traderChallenges.reduce((sum: number, c: { account_size: string }) => sum + (SIZE_VALUES[c.account_size] || 0), 0);
+      if (currentTotal + (SIZE_VALUES[product.accountSize] || 0) > 200000) {
+        return NextResponse.json({ error: `Plafond $200,000 atteint. Total actuel : $${currentTotal.toLocaleString()}` }, { status: 400 });
+      }
     }
 
     // Re-validate the promo code server-side
