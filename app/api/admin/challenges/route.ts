@@ -282,8 +282,9 @@ export async function PATCH(req: NextRequest) {
     const label = phaseLabel[data.phase] || "Phase 1";
     const isVip = data.model === "vip";
     const mt5First = isVip ? "ALGO" : firstName;
-    const mt5Last  = isVip ? `| ${label.toUpperCase()}` : lastName;
-    try { await updateMT5AccountName(data.mt5_login, mt5First, mt5Last, label); } catch {}
+    const mt5Last  = isVip ? "" : lastName;
+    const mt5Label = isVip ? label.toUpperCase() : label;
+    try { await updateMT5AccountName(data.mt5_login, mt5First, mt5Last, mt5Label); } catch {}
   }
 
   // Auto-transition — jamais sur un compte failed
