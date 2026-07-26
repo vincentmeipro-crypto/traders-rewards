@@ -68,10 +68,8 @@ export async function POST(req: NextRequest) {
       mt5Password         = mt5Account.password;
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server           = mt5Account.server;
-      const mt5First = product.model === "vip" ? "ALGO" : firstName;
-      const mt5Last  = product.model === "vip" ? "" : lastName;
-      const mt5Phase = product.model === "vip" ? "PHASE 1" : "Phase 1";
-      try { await updateMT5AccountName(mt5Account.login, mt5First, mt5Last, mt5Phase); } catch {}
+      const mt5Phase = product.model === "vip" ? "ALGO | PHASE 1" : "Phase 1";
+      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, mt5Phase); } catch {}
     } catch (e) {
       console.error("MT5 account creation failed:", e);
     }

@@ -141,7 +141,8 @@ export async function POST(req: NextRequest) {
       mt5PasswordInvestor = mt5Account.password_investor;
       mt5Server = mt5Account.server;
       const label = isReward ? "Reward" : "Phase 1";
-      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, label); } catch {}
+      const mt5NameLabel = model === "vip" ? `ALGO | ${label.toUpperCase()}` : label;
+      try { await updateMT5AccountName(mt5Account.login, firstName, lastName, mt5NameLabel); } catch {}
     } catch (e) { console.error("MT5 error:", e); }
   }
 
@@ -281,10 +282,8 @@ export async function PATCH(req: NextRequest) {
     const phaseLabel: Record<string, string> = { phase1: "Phase 1", phase2: "Phase 2", funded: "Reward" };
     const label = phaseLabel[data.phase] || "Phase 1";
     const isVip = data.model === "vip";
-    const mt5First = isVip ? "ALGO" : firstName;
-    const mt5Last  = isVip ? "" : lastName;
-    const mt5Label = isVip ? label.toUpperCase() : label;
-    try { await updateMT5AccountName(data.mt5_login, mt5First, mt5Last, mt5Label); } catch {}
+    const mt5Label = isVip ? `ALGO | ${label.toUpperCase()}` : label;
+    try { await updateMT5AccountName(data.mt5_login, firstName, lastName, mt5Label); } catch {}
   }
 
   // Auto-transition — jamais sur un compte failed
