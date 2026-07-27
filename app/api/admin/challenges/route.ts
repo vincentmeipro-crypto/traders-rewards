@@ -258,8 +258,8 @@ export async function PATCH(req: NextRequest) {
   const firstName = profile?.first_name || "";
   const lastName = profile?.last_name || "";
 
-  // Check drawdown violations
-  if (updates.balance !== undefined && current) {
+  // Check drawdown violations (ignoré lors d'un reset de phase)
+  if (updates.balance !== undefined && current && !isPhaseTransition) {
     const totalDrawdownPct = ((data.start_balance - data.balance) / data.start_balance) * 100;
     const dailyDrawdownPct = current.balance > 0 ? ((current.balance - data.balance) / current.balance) * 100 : 0;
 
