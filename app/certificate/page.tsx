@@ -116,12 +116,12 @@ function CertContent() {
         </svg>
 
         {/* TOP ROW */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28, flexShrink: 0 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28, flexShrink: 0, position: "relative", zIndex: 1 }}>
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 6 }}>{cfg.top}</div>
             <div style={{ fontSize: 50, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.01em", textTransform: "uppercase", color: "#fff" }}>{cfg.main}</div>
           </div>
-          <img src={LOGO} alt="Traders Rewards" style={{ width: 211, height: 141, objectFit: "contain", flexShrink: 0 }} />
+          <img src={LOGO} alt="Traders Rewards" style={{ width: 211, height: 141, objectFit: "contain", flexShrink: 0, position: "relative", zIndex: 2 }} />
         </div>
 
         {/* DIVIDER */}
