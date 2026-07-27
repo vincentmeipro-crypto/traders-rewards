@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendFundedEmail, sendFailedEmail, sendWelcomeEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendPhase2Email } from "@/lib/mailer";
-import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName } from "@/lib/mt5";
+import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName, addMT5Balance, withdrawMT5Balance, enableMT5Account } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -231,6 +231,22 @@ export async function PATCH(req: NextRequest) {
 
   const { data, error } = await admin.from("challenges").update(updates).eq("id", id).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Reset balance MT5 réelle lors d'une transition de phase
+  if (isPhaseTransition && data.mt5_login) {
+    try {
+      const mt5Info = await getMT5Account(data.mt5_login);
+      const realBalance = mt5Info.balance ?? 0;
+      const target = current!.start_balance;
+      const diff = realBalance - target;
+      if (diff > 0.01) await withdrawMT5Balance(data.mt5_login, diff, "Phase transition reset");
+      else if (diff < -0.01) await addMT5Balance(data.mt5_login, Math.abs(diff), "Phase transition reset");
+      if (updates.phase === "funded") {
+        try { await enableMT5Account(data.mt5_login); } catch {}
+        try { await changeMT5Group(data.mt5_login, getMT5Group(data.model, "funded")); } catch {}
+      }
+    } catch (e) { console.error("MT5 phase reset error:", e); }
+  }
 
   // Disable MT5 + sync balance réelle si passage en failed
   if (updates.status === "failed" && data.mt5_login) {
