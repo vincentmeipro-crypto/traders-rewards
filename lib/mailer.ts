@@ -179,7 +179,12 @@ export async function sendPhase1CertificateEmail(to: string, firstName: string, 
           <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-          <img src="${SITE}/PHASE1.png" alt="Certificat Phase 1" style="width:100%;display:block;" />
+          <div style="background:#0e0e0e;padding:32px 36px 24px;border-bottom:1px solid #1a1a1a;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#3b82f6;margin-bottom:8px;">Traders Rewards — Certification</div>
+            <div style="font-size:44px;font-weight:900;color:#ffffff;letter-spacing:-1px;text-transform:uppercase;line-height:1;margin-bottom:16px;">Phase 1</div>
+            <div style="height:1px;background:linear-gradient(to right,#3b82f640,#3b82f6,#3b82f640);margin-bottom:16px;"></div>
+            <div style="font-size:22px;font-weight:700;color:#3b82f6;">${name}</div>
+          </div>
           <div style="padding:32px 36px;">
             <h2 style="color:#00C2FF;font-size:22px;font-weight:700;margin:0 0 12px 0;">Phase 1 validée — Bravo ${firstName} !</h2>
             <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
@@ -212,7 +217,12 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
           <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-          <img src="${SITE}/PHASE2.png" alt="Certificat Phase 2" style="width:100%;display:block;" />
+          <div style="background:#0e0e0e;padding:32px 36px 24px;border-bottom:1px solid #1a1a1a;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#3b82f6;margin-bottom:8px;">Traders Rewards — Certification</div>
+            <div style="font-size:44px;font-weight:900;color:#ffffff;letter-spacing:-1px;text-transform:uppercase;line-height:1;margin-bottom:16px;">Phase 2</div>
+            <div style="height:1px;background:linear-gradient(to right,#3b82f640,#3b82f6,#3b82f640);margin-bottom:16px;"></div>
+            <div style="font-size:22px;font-weight:700;color:#3b82f6;">${name}</div>
+          </div>
           <div style="padding:32px 36px;">
             <h2 style="color:#a855f7;font-size:22px;font-weight:700;margin:0 0 12px 0;">Challenge validé — ${firstName}, vous êtes Trader Reward !</h2>
             <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
@@ -251,7 +261,12 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
           <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-          <img src="${SITE}/RECOMPENSE.png" alt="Certificat Récompense" style="width:100%;display:block;" />
+          <div style="background:#0e0e0e;padding:32px 36px 24px;border-bottom:1px solid #1a1a1a;">
+            <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#3b82f6;margin-bottom:8px;">Traders Rewards — Versement</div>
+            <div style="font-size:44px;font-weight:900;color:#ffffff;letter-spacing:-1px;text-transform:uppercase;line-height:1;margin-bottom:16px;">REWARD</div>
+            <div style="height:1px;background:linear-gradient(to right,#3b82f640,#3b82f6,#3b82f640);margin-bottom:16px;"></div>
+            <div style="font-size:22px;font-weight:700;color:#3b82f6;">${name}</div>
+          </div>
           <div style="padding:32px 36px;">
             <h2 style="color:#60A5FA;font-size:22px;font-weight:700;margin:0 0 12px 0;">Récompense validée — $${netAmount.toLocaleString()} pour vous !</h2>
             <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 20px 0;">
