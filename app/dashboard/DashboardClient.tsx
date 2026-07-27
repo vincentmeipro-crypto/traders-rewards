@@ -1433,21 +1433,24 @@ export default function DashboardClient({ user }: { user: User }) {
 
               const baseCerts = [
                 {
-                  type: "phase1", image: "/PHASE1.png", label: "Phase 1", btnColor: "#3B82F6",
+                  type: "phase1", label: "Phase 1", btnColor: "#3B82F6",
+                  title: "Phase 1", topLabel: "Traders Rewards — Certification",
                   unlocked: unlockedPhase1,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
                   key: "phase1",
                 },
                 {
-                  type: "challenge", image: "/PHASE2.png", label: "Challenge", btnColor: "#a855f7",
+                  type: "challenge", label: "Phase 2", btnColor: "#3B82F6",
+                  title: "Phase 2", topLabel: "Traders Rewards — Certification",
                   unlocked: unlockedChallenge,
                   amount: challenge?.account_size || "$100,000",
                   date: challengeDate,
                   key: "challenge",
                 },
                 ...(!unlockedReward ? [{
-                  type: "reward", image: "/RECOMPENSE.png", label: "Récompense", btnColor: "#3B82F6",
+                  type: "reward", label: "Reward", btnColor: "#3B82F6",
+                  title: "REWARD", topLabel: "Traders Rewards — Versement",
                   unlocked: false,
                   amount: "$0",
                   date: "",
@@ -1463,8 +1466,28 @@ export default function DashboardClient({ user }: { user: User }) {
                       const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(cert.amount)}&date=${encodeURIComponent(cert.date)}`;
                       return (
                         <div key={cert.key} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                          <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-                            <img src={cert.image} alt={cert.label} style={{ width: "100%", display: "block", filter: cert.unlocked ? "none" : "brightness(0.25)" }} />
+                          <div style={{ position: "relative", borderRadius: 10, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", filter: cert.unlocked ? "none" : "brightness(0.3)" }}>
+                            {/* Mini preview new design */}
+                            <div style={{ background: "#0e0e0e", border: "1px solid #222", padding: "16px 20px 14px", aspectRatio: "680/520", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
+                              <svg style={{ position: "absolute", top: 0, right: 0, width: 70, height: 70 }} viewBox="0 0 160 160" fill="none">
+                                <polygon points="160,0 160,160 0,0" fill="#3b82f608"/>
+                                <polygon points="160,0 160,100 60,0" fill="#3b82f618"/>
+                                <polygon points="160,0 160,55 105,0" fill="#3b82f630"/>
+                              </svg>
+                              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 3 }}>{cert.topLabel}</div>
+                              <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1, textTransform: "uppercase" }}>{cert.title}</div>
+                              <div style={{ height: 1, background: "linear-gradient(to right, #3b82f640, #3b82f6, #3b82f640)", margin: "10px 0 8px" }} />
+                              <div style={{ fontSize: 13, fontWeight: 700, color: "#3b82f6", marginBottom: 4 }}>{name}</div>
+                              <div style={{ fontSize: 8, color: "#555", lineHeight: 1.5, flex: 1 }}>
+                                {cert.type === "reward" ? "Certificat de versement de récompense de trading accordée par Traders Rewards." : "Certificat de validation de challenge de trading — Traders Rewards."}
+                              </div>
+                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 8 }}>
+                                <div style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{cert.date}</div>
+                                <div style={{ width: 28, height: 28, background: "#fff", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                  <div style={{ width: 22, height: 22, background: "repeating-linear-gradient(0deg,#000 0,#000 2px,#fff 2px,#fff 4px),repeating-linear-gradient(90deg,#000 0,#000 2px,#fff 2px,#fff 4px)", backgroundBlendMode: "multiply" }} />
+                                </div>
+                              </div>
+                            </div>
                             {!cert.unlocked && (
                               <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
                                 <Lock size={28} color="rgba(255,255,255,0.45)" />
@@ -1499,11 +1522,22 @@ export default function DashboardClient({ user }: { user: User }) {
                           const href = `/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amt)}&date=${encodeURIComponent(dt)}`;
                           return (
                             <div key={p.id} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                              <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
-                                <img src="/RECOMPENSE.png" alt="Reward" style={{ width: "100%", display: "block" }} />
-                                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                                  <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.5)", letterSpacing: "-1px" }}>{amt}</div>
-                                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 4 }}>{dt}</div>
+                              <div style={{ borderRadius: 10, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
+                                <div style={{ background: "#0e0e0e", border: "1px solid #222", padding: "16px 20px 14px", aspectRatio: "680/520", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
+                                  <svg style={{ position: "absolute", top: 0, right: 0, width: 70, height: 70 }} viewBox="0 0 160 160" fill="none">
+                                    <polygon points="160,0 160,160 0,0" fill="#3b82f608"/>
+                                    <polygon points="160,0 160,100 60,0" fill="#3b82f618"/>
+                                    <polygon points="160,0 160,55 105,0" fill="#3b82f630"/>
+                                  </svg>
+                                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 3 }}>Traders Rewards — Versement</div>
+                                  <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>REWARD</div>
+                                  <div style={{ height: 1, background: "linear-gradient(to right, #3b82f640, #3b82f6, #3b82f640)", margin: "10px 0 8px" }} />
+                                  <div style={{ fontSize: 13, fontWeight: 700, color: "#3b82f6", marginBottom: 4 }}>{name}</div>
+                                  <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{amt}</div>
+                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto" }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dt}</div>
+                                    <div style={{ width: 28, height: 28, background: "#fff", borderRadius: 2 }} />
+                                  </div>
                                 </div>
                               </div>
                               <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: "#3B82F6", color: "#fff" }}>
