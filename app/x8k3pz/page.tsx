@@ -109,7 +109,7 @@ const STATUS_COLORS: Record<string, string> = {
   active:  "#22c55e",
   failed:  "#ef4444",
   passed:  "#f59e0b",
-  funded:  "#3b82f6",
+  funded:  "#22c55e",
   pending: "#f59e0b",
   paid:    "#22c55e",
   rejected:"#ef4444",
@@ -969,7 +969,7 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
-                              : <span style={{ color: c.phase === "funded" ? "#3b82f6" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "reward" : c.phase}</span>}
+                              : <span style={{ color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "reward" : c.phase}</span>}
                           </td>
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
