@@ -214,10 +214,6 @@ export async function PATCH(req: NextRequest) {
     updates.last_synced_at = new Date().toISOString();
   }
 
-  // Proteger le statut "failed" contre un ecrasement accidentel
-  if (current?.status === "failed" && updates.status === "active") {
-    delete updates.status;
-  }
 
   // Transition manuelle passed → phase2 ou funded : reset balance + trading_days + status
   const isPhaseTransition = updates.phase && updates.phase !== current?.phase && current?.status === "passed";
