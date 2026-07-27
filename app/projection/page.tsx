@@ -161,13 +161,13 @@ export default function ProjectionPage() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 9 }}>
             {[
               { label: "Prix moyen challenge (promo 50%)",                              value: "183 EUR",            hi: true  },
-              { label: "Charges mensuelles (fixes)",                                    value: "10 000 EUR",         hi: false },
+              { label: "Charges mensuelles (fixes)",                                    value: "5 000 EUR",          hi: false },
               { label: "Récompenses clients (20% traders × 3% profit × 80% split)",   value: "≈ 20 % du CA",       hi: false },
               { label: "CA mensuel au plafond (300 ventes/mois)",                       value: "54 900 EUR / mois",  hi: false },
-              { label: "Résultat net mensuel au plafond",                               value: "32 920 EUR / mois",  hi: true  },
-              { label: "Marge nette mensuelle au plafond",                              value: "59,9 %",             hi: true  },
+              { label: "Résultat net mensuel au plafond",                               value: "37 920 EUR / mois",  hi: true  },
+              { label: "Marge nette mensuelle au plafond",                              value: "69,1 %",             hi: true  },
               { label: "CA annuel stabilisé (2027+)",                                   value: "658 800 EUR / an",   hi: false },
-              { label: "Résultat annuel stabilisé",                                     value: "395 040 EUR / an",   hi: true  },
+              { label: "Résultat annuel stabilisé",                                     value: "455 040 EUR / an",   hi: true  },
             ].map((row, i) => (
               <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "13px 16px", background: row.hi ? "linear-gradient(135deg, #f0f4ff, #e8f2ff)" : "#f8faff", borderRadius: 10, border: `1px solid ${row.hi ? "#c5d5f5" : "#eef2fa"}` }}>
                 <span style={{ fontSize: 12, color: "#4a5568" }}>{row.label}</span>
@@ -199,32 +199,32 @@ export default function ProjectionPage() {
         {([
           { pct: "5%", invest: "5 000 €", divRate: 0.05,
             rows: [
-              { sem: "S1  Juin – Déc. 2026",  ca: "192 150 €", charges: "60 000 €", payouts: "38 430 €", net: "93 720 €", margin: "48,8 %", div: "4 686 €",  roi: "94 %"   },
-              { sem: "S2  Janv. – Juin 2027", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "10 176 €", roi: "297 %", bold: true },
-              { sem: "S3  Juil. – Déc. 2027", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "10 176 €", roi: "501 %" },
-              { sem: "S4  Janv. – Juin 2028", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "10 176 €", roi: "704 %" },
-              { sem: "S5  Juil. – Déc. 2028", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "10 176 €", roi: "908 %" },
+              { sem: "S1  Juin – Déc. 2026",  ca: "192 150 €", charges: "30 000 €", payouts: "38 430 €", net: "123 720 €", margin: "64,4 %", div: "6 186 €",  roi: "124 %"    },
+              { sem: "S2  Janv. – Juin 2027", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "11 676 €", roi: "357 %", bold: true },
+              { sem: "S3  Juil. – Déc. 2027", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "11 676 €", roi: "591 %" },
+              { sem: "S4  Janv. – Juin 2028", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "11 676 €", roi: "824 %" },
+              { sem: "S5  Juil. – Déc. 2028", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "11 676 €", roi: "1 058 %" },
             ],
             bilan: [
               { label: "Capital investi",         value: "5 000 €",  color: "#6b7a99" },
-              { label: "1er versement (S1)",       value: "4 686 €",  color: "#60A5FA" },
-              { label: "Dividendes cumulés 3 ans", value: "45 390 €", color: "#1B4FD8" },
-              { label: "ROI total 3 ans",          value: "908 %",    color: "#60A5FA" },
+              { label: "1er versement (S1)",       value: "6 186 €",  color: "#60A5FA" },
+              { label: "Dividendes cumulés 3 ans", value: "52 890 €", color: "#1B4FD8" },
+              { label: "ROI total 3 ans",          value: "1 058 %",  color: "#60A5FA" },
             ],
           },
           { pct: "10%", invest: "10 000 €", divRate: 0.10,
             rows: [
-              { sem: "S1  Juin – Déc. 2026",  ca: "192 150 €", charges: "60 000 €", payouts: "38 430 €", net: "93 720 €", margin: "48,8 %", div: "9 372 €",  roi: "94 %"   },
-              { sem: "S2  Janv. – Juin 2027", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "20 352 €", roi: "297 %", bold: true },
-              { sem: "S3  Juil. – Déc. 2027", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "20 352 €", roi: "501 %" },
-              { sem: "S4  Janv. – Juin 2028", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "20 352 €", roi: "704 %" },
-              { sem: "S5  Juil. – Déc. 2028", ca: "329 400 €", charges: "60 000 €", payouts: "65 880 €", net: "203 520 €", margin: "61,8 %", div: "20 352 €", roi: "908 %" },
+              { sem: "S1  Juin – Déc. 2026",  ca: "192 150 €", charges: "30 000 €", payouts: "38 430 €", net: "123 720 €", margin: "64,4 %", div: "12 372 €", roi: "124 %"    },
+              { sem: "S2  Janv. – Juin 2027", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "23 352 €", roi: "357 %", bold: true },
+              { sem: "S3  Juil. – Déc. 2027", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "23 352 €", roi: "591 %" },
+              { sem: "S4  Janv. – Juin 2028", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "23 352 €", roi: "824 %" },
+              { sem: "S5  Juil. – Déc. 2028", ca: "329 400 €", charges: "30 000 €", payouts: "65 880 €", net: "233 520 €", margin: "70,9 %", div: "23 352 €", roi: "1 058 %" },
             ],
             bilan: [
               { label: "Capital investi",         value: "10 000 €",  color: "#6b7a99" },
-              { label: "1er versement (S1)",       value: "9 372 €",   color: "#1B4FD8" },
-              { label: "Dividendes cumulés 3 ans", value: "90 780 €",  color: "#1B4FD8" },
-              { label: "ROI total 3 ans",          value: "908 %",     color: "#60A5FA" },
+              { label: "1er versement (S1)",       value: "12 372 €",  color: "#1B4FD8" },
+              { label: "Dividendes cumulés 3 ans", value: "105 780 €", color: "#1B4FD8" },
+              { label: "ROI total 3 ans",          value: "1 058 %",   color: "#60A5FA" },
             ],
           },
         ] as const).map((tier, ti) => (
@@ -268,9 +268,9 @@ export default function ProjectionPage() {
         {/* FOOTER */}
         <div style={{ background: "linear-gradient(135deg, #f0f4ff, #e8f2ff)", borderRadius: 14, padding: "18px 28px", textAlign: "center", border: "1px solid #c5d5f5", marginBottom: 8 }}>
           <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1B4FD8" }}>
-            5 000 € → 45 390 € de dividendes sur 3 ans (ROI 908 %)&nbsp;&nbsp;|&nbsp;&nbsp;10 000 € → 90 780 € sur 3 ans (ROI 908 %)
+            5 000 € → 52 890 € de dividendes sur 3 ans (ROI 1 058 %)&nbsp;&nbsp;|&nbsp;&nbsp;10 000 € → 105 780 € sur 3 ans (ROI 1 058 %)
           </p>
-          <p style={{ margin: "6px 0 0 0", fontSize: 11, color: "#6b7a99" }}>Hypothèse : 20% des traders certifiés effectuent un retrait à 3% de profit — marge nette plateau : 59,9%</p>
+          <p style={{ margin: "6px 0 0 0", fontSize: 11, color: "#6b7a99" }}>Hypothèse : 20% des traders certifiés effectuent un retrait à 3% de profit — marge nette plateau : 69,1%</p>
         </div>
         <p style={{ textAlign: "center", fontSize: 11, color: "#9aa5be", fontStyle: "italic", marginTop: 8 }}>Document confidentiel — Usage exclusif réservé au destinataire</p>
 
