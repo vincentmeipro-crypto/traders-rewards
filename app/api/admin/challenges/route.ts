@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendFundedEmail, sendFailedEmail, sendWelcomeEmail } from "@/lib/mailer";
+import { sendFundedEmail, sendFailedEmail, sendWelcomeEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendPhase2Email } from "@/lib/mailer";
 import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName } from "@/lib/mt5";
 
 const ADMIN_EMAIL = "vincentmeipro@gmail.com";
@@ -219,6 +219,15 @@ export async function PATCH(req: NextRequest) {
     delete updates.status;
   }
 
+  // Transition manuelle passed → phase2 ou funded : reset balance + trading_days + status
+  const isPhaseTransition = updates.phase && updates.phase !== current?.phase && current?.status === "passed";
+  if (isPhaseTransition) {
+    updates.balance = current!.start_balance;
+    updates.trading_days = 0;
+    if (updates.phase === "phase2") updates.status = "active";
+    if (updates.phase === "funded") updates.status = "funded";
+  }
+
   // Garantir qu'il y a toujours au moins un champ à mettre à jour (évite l'erreur Supabase sur update vide)
   if (Object.keys(updates).length === 0) {
     updates.last_synced_at = current?.last_synced_at ?? new Date().toISOString();
@@ -274,6 +283,18 @@ export async function PATCH(req: NextRequest) {
       }
       const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
       return NextResponse.json({ ...latest, user_email: userEmail, transitioned: "failed_daily_drawdown" });
+    }
+  }
+
+  // Emails automatiques lors d'une transition manuelle passed → phase suivante
+  if (isPhaseTransition && userEmail) {
+    const certDate = new Date().toLocaleDateString("fr-FR");
+    if (data.phase === "phase2") {
+      try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, data.account_size, certDate); } catch (e) { console.error("sendPhase1CertificateEmail error:", e); }
+      try { await sendPhase2Email(userEmail, data.account_size); } catch (e) { console.error("sendPhase2Email error:", e); }
+    } else if (data.phase === "funded") {
+      try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, data.account_size, certDate); } catch (e) { console.error("sendChallengeCertificateEmail error:", e); }
+      try { await sendFundedEmail(userEmail, data.account_size, undefined, undefined, data.model); } catch (e) { console.error("sendFundedEmail error:", e); }
     }
   }
 
