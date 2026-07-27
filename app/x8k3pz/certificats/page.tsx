@@ -7,8 +7,7 @@ export default async function CertificatsPage() {
 
   const { data: challenges } = await admin
     .from("challenges")
-    .select("id, client_first_name, client_last_name, account_size, model, created_at, amount_paid")
-    .eq("phase", "funded")
+    .select("id, client_first_name, client_last_name, account_size, model, created_at, amount_paid, phase, status")
     .eq("status", "funded")
     .order("created_at", { ascending: false });
 
