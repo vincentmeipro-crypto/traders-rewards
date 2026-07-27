@@ -216,7 +216,7 @@ export async function PATCH(req: NextRequest) {
 
 
   // Transition manuelle passed → phase2 ou funded : reset balance + trading_days + status
-  const isPhaseTransition = updates.phase && updates.phase !== current?.phase && current?.status === "passed";
+  const isPhaseTransition = updates.phase && updates.phase !== current?.phase && (current?.status === "passed" || current?.status === "active");
   if (isPhaseTransition) {
     updates.balance = current!.start_balance;
     updates.trading_days = 0;
