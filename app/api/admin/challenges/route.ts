@@ -220,7 +220,7 @@ export async function PATCH(req: NextRequest) {
   if (isPhaseTransition) {
     updates.balance = current!.start_balance;
     updates.trading_days = 0;
-    if (updates.phase === "phase2") updates.status = "active";
+    if (updates.phase === "phase2") { updates.status = "active"; updates.profit_target = 5; }
     if (updates.phase === "funded") updates.status = "funded";
   }
 
