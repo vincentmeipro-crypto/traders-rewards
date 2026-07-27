@@ -1021,7 +1021,7 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px" }}>
                             {editing === c.id
                               ? <div style={{ display: "flex", gap: 6 }}>
-                                  <button onClick={() => saveChallenge(c.id)} style={{ backgroundColor: "#0a0a0a", color: "#000", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
+                                  <button onClick={() => saveChallenge(c.id)} style={{ backgroundColor: "#22c55e", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
                                   <button onClick={() => { setEditing(null); setEditData({}); }} style={{ backgroundColor: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                 </div>
                               : <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
