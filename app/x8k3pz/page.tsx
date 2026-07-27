@@ -96,7 +96,7 @@ type MT5Session = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  funded: "Reward",
+  funded: "Active",
   active: "Active",
   failed: "Failed",
   passed: "Passed",
