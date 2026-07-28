@@ -2,11 +2,15 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
+const PROMO_ACTIVE = new Date() < new Date("2026-09-01T00:00:00");
+const PROMO_CODE = "TR33";
+const PROMO_PCT = 33;
+
 const accounts = [
-  { size: "$200,000", id: "200k", label: "200K", price2: "€799", price1: "€749", popular: false, badge: "PRESTIGE",  reward: "~€9,600" },
-  { size: "$100,000", id: "100k", label: "100K", price2: "€439", price1: "€429", popular: true,  badge: "EXPERT",    reward: "~€4,800" },
-  { size: "$50,000",  id: "50k",  label: "50K",  price2: "€299", price1: "€249", popular: false, badge: "CONFIRMÉ",  reward: "~€2,400" },
-  { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", popular: false, badge: "ÉVOLUTION", reward: "~€1,200" },
+  { size: "$200,000", id: "200k", label: "200K", price2: "€799", price1: "€749", promo2: "€535", promo1: "€502", popular: false, badge: "PRESTIGE",  reward: "~€9,600" },
+  { size: "$100,000", id: "100k", label: "100K", price2: "€439", price1: "€429", promo2: "€294", promo1: "€287", popular: true,  badge: "EXPERT",    reward: "~€4,800" },
+  { size: "$50,000",  id: "50k",  label: "50K",  price2: "€299", price1: "€249", promo2: "€200", promo1: "€167", popular: false, badge: "CONFIRMÉ",  reward: "~€2,400" },
+  { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", promo2: "€133", promo1: "€113", popular: false, badge: "ÉVOLUTION", reward: "~€1,200" },
 ];
 
 export default function Pricing() {
@@ -54,6 +58,7 @@ export default function Pricing() {
 
   const PriceCard = ({ acc, compact }: { acc: typeof accounts[0]; compact: boolean }) => {
     const price = model === "2step" ? acc.price2 : acc.price1;
+    const promoPrice = model === "2step" ? acc.promo2 : acc.promo1;
     return (
       <div className={`pricing-card${acc.popular ? " pricing-card-popular" : ""}`}>
         {/* Badge */}
@@ -74,7 +79,14 @@ export default function Pricing() {
         {/* Prix + CTA */}
         <div style={{ padding: compact ? "10px 16px" : "7px 12px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ marginBottom: 7 }}>
-            <div style={{ fontSize: compact ? 26 : 18, fontWeight: 800, color: "#FFFFFF" }}>{price}</div>
+            {PROMO_ACTIVE ? (
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                <div style={{ fontSize: compact ? 13 : 11, fontWeight: 700, color: "#6b7280", textDecoration: "line-through", textDecorationColor: "#ef4444", textDecorationThickness: 2 }}>{price}</div>
+                <div style={{ fontSize: compact ? 26 : 18, fontWeight: 900, color: "#f97316", textShadow: "0 0 12px rgba(249,115,22,0.4)" }}>{promoPrice}</div>
+              </div>
+            ) : (
+              <div style={{ fontSize: compact ? 26 : 18, fontWeight: 800, color: "#FFFFFF" }}>{price}</div>
+            )}
           </div>
           <a href={`/checkout?product=${acc.id}-${model}`} style={{
             display: "block", textAlign: "center",
@@ -157,6 +169,29 @@ export default function Pricing() {
             {L("Tradez jusqu'à 200K en compte reward.","Opera hasta $200K en cuenta reward.","Trade up to $200K in reward account.")}
           </p>
         </div>
+
+        {/* Badge promo neon */}
+        {PROMO_ACTIVE && (
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: isMobile ? 14 : 18 }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", gap: isMobile ? 8 : 12,
+              background: "rgba(249,115,22,0.08)",
+              border: "1px solid rgba(249,115,22,0.35)",
+              borderRadius: 100,
+              padding: isMobile ? "6px 14px" : "7px 20px",
+              boxShadow: "0 0 20px rgba(249,115,22,0.12), inset 0 0 20px rgba(249,115,22,0.04)",
+            }}>
+              <span style={{ fontSize: isMobile ? 18 : 22, fontWeight: 900, color: "#f97316", letterSpacing: "-0.5px", textShadow: "0 0 12px rgba(249,115,22,0.7), 0 0 30px rgba(249,115,22,0.3)" }}>-{PROMO_PCT}%</span>
+              <span style={{ width: 1, height: isMobile ? 14 : 16, background: "rgba(249,115,22,0.3)" }} />
+              <span style={{ fontSize: isMobile ? 10 : 11, fontWeight: 700, color: "rgba(255,255,255,0.7)", letterSpacing: "0.5px" }}>
+                Code <span style={{ color: "#f97316", fontWeight: 900, letterSpacing: "1px" }}>{PROMO_CODE}</span>
+              </span>
+              <span style={{ fontSize: isMobile ? 9 : 10, fontWeight: 600, color: "#555", letterSpacing: "0.3px" }}>
+                · {L("jusqu'au 31 août","hasta el 31 ago","until Aug 31")}
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Toggle modèle */}
         <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 6 : 10, marginBottom: isMobile ? 16 : 20, flexWrap: "nowrap" }}>
