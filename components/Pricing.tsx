@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const accounts = [
+  { size: "$200,000", id: "200k", label: "200K", price2: "€799", price1: "€749", popular: false, badge: "PRESTIGE",  reward: "~€9,600" },
   { size: "$100,000", id: "100k", label: "100K", price2: "€439", price1: "€429", popular: true,  badge: "EXPERT",    reward: "~€4,800" },
   { size: "$50,000",  id: "50k",  label: "50K",  price2: "€299", price1: "€249", popular: false, badge: "CONFIRMÉ",  reward: "~€2,400" },
   { size: "$25,000",  id: "25k",  label: "25K",  price2: "€199", price1: "€169", popular: false, badge: "ÉVOLUTION", reward: "~€1,200" },
@@ -61,25 +62,25 @@ export default function Pricing() {
         </div>
 
         {/* Header */}
-        <div style={{ padding: compact ? "18px 16px 10px" : "12px 16px 8px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ padding: compact ? "18px 16px 10px" : "10px 12px 8px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <div style={{ fontSize: 9, fontWeight: 600, color: "#6b7280", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 2 }}>
             {T.pricing.account}
           </div>
-          <div style={{ fontSize: compact ? 28 : 20, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
+          <div style={{ fontSize: compact ? 28 : 18, fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
             {acc.size}
           </div>
         </div>
 
         {/* Prix + CTA */}
-        <div style={{ padding: compact ? "10px 16px" : "8px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <div style={{ marginBottom: 8 }}>
-            <div style={{ fontSize: compact ? 26 : 20, fontWeight: 800, color: "#FFFFFF" }}>{price}</div>
+        <div style={{ padding: compact ? "10px 16px" : "7px 12px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ marginBottom: 7 }}>
+            <div style={{ fontSize: compact ? 26 : 18, fontWeight: 800, color: "#FFFFFF" }}>{price}</div>
           </div>
           <a href={`/checkout?product=${acc.id}-${model}`} style={{
             display: "block", textAlign: "center",
-            padding: compact ? "11px" : "8px",
+            padding: compact ? "11px" : "7px",
             borderRadius: 8,
-            fontSize: 11, fontWeight: 800,
+            fontSize: 10, fontWeight: 800,
             textDecoration: "none", letterSpacing: "1px", textTransform: "uppercase",
             background: acc.popular ? "#3B82F6" : "rgba(255,255,255,0.08)",
             color: "#FFFFFF",
@@ -88,17 +89,17 @@ export default function Pricing() {
           }}>
             {L("Commencer maintenant","Empezar","Get Started")}
           </a>
-          <div style={{ textAlign: "center", fontSize: 9, color: "#4b5563", marginTop: 5 }}>
+          <div style={{ textAlign: "center", fontSize: 9, color: "#4b5563", marginTop: 4 }}>
             {L("Frais unique (non remboursable)","Cargo único (no reembolsable)","One-time fee (non-refundable)")}
           </div>
         </div>
 
         {/* Rules */}
-        <div style={{ padding: compact ? "6px 16px 8px" : "4px 16px 6px" }}>
+        <div style={{ padding: compact ? "6px 16px 8px" : "3px 12px 5px" }}>
           {rows.map((row, i) => (
             <div key={i} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
-              padding: compact ? "5px 0" : "4px 0",
+              padding: compact ? "5px 0" : "3px 0",
               borderBottom: i < rows.length - 1 ? "1px dotted rgba(255,255,255,0.06)" : "none",
             }}>
               <span style={{ color: "#6b7280", fontSize: compact ? 11 : 10, fontWeight: 500 }}>{row.label}</span>
@@ -109,14 +110,14 @@ export default function Pricing() {
 
         {/* Récompense moy. */}
         <div style={{
-          margin: "0 16px 12px",
+          margin: compact ? "0 16px 12px" : "0 12px 10px",
           background: "rgba(59,130,246,0.06)",
           border: "1px solid rgba(59,130,246,0.15)",
-          borderRadius: 6, padding: "5px 10px",
+          borderRadius: 6, padding: "4px 8px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
           <span style={{ fontSize: 10, color: "#6b7280" }}>{L("Récompense moy.","Recompensa prom.","Avg. reward")}</span>
-          <span style={{ fontSize: 11, fontWeight: 800, color: "#FFFFFF" }}>{acc.reward}</span>
+          <span style={{ fontSize: 10, fontWeight: 800, color: "#FFFFFF" }}>{acc.reward}</span>
         </div>
       </div>
     );
@@ -228,11 +229,11 @@ export default function Pricing() {
           </>
         )}
 
-        {/* DESKTOP : grille 3 colonnes */}
+        {/* DESKTOP : grille 4 colonnes */}
         {!isMobile && (
-          <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "nowrap" }}>
+          <div style={{ display: "flex", justifyContent: "center", gap: 10, flexWrap: "nowrap" }}>
             {accounts.map(acc => (
-              <div key={acc.id} style={{ flex: "1 1 0", maxWidth: 320 }}>
+              <div key={acc.id} style={{ flex: "1 1 0", minWidth: 0, maxWidth: 280 }}>
                 <PriceCard acc={acc} compact={false} />
               </div>
             ))}
