@@ -194,7 +194,7 @@ export default function Pricing() {
         )}
 
         {/* Toggle modèle */}
-        <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 6 : 10, marginBottom: isMobile ? 16 : 20, flexWrap: "nowrap" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: isMobile ? 6 : 10, marginBottom: isMobile ? 16 : 20, flexWrap: isMobile ? "wrap" : "nowrap" }}>
           {(([
             { id: "2step", icon: "◈", label: L("2 Étapes","2 Pasos","2-Step"), sub: L("Challenge Trader","Desafío Trader","Trader Challenge") },
             { id: "1step", icon: "◆", label: L("1 Étape","1 Paso","1-Step"),   sub: L("Challenge Trader","Desafío Trader","Trader Challenge") },
@@ -225,18 +225,19 @@ export default function Pricing() {
             background: "#111111",
             border: "1.5px solid #3B82F6",
             borderRadius: 10,
-            padding: isMobile ? "8px 10px" : "10px 20px",
+            padding: isMobile ? "10px 16px" : "10px 20px",
             cursor: "pointer",
-            display: "flex", alignItems: "center", gap: isMobile ? 6 : 10,
+            display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "flex-start",
+            gap: 10,
             transition: "all 0.2s",
-            flex: isMobile ? "1 1 0" : undefined,
+            flex: isMobile ? "1 1 100%" : undefined,
             minWidth: isMobile ? 0 : 150,
             textDecoration: "none",
           }}>
-            <span style={{ fontSize: isMobile ? 13 : 15, color: "#3B82F6" }}>⚡</span>
+            <span style={{ fontSize: isMobile ? 14 : 15, color: "#3B82F6" }}>⚡</span>
             <div>
-              <div style={{ fontSize: isMobile ? 11 : 13, fontWeight: 800, color: "#FFFFFF", whiteSpace: "nowrap" }}>Challenge Algo</div>
-              <div style={{ fontSize: isMobile ? 8 : 10, color: "#3B82F6", fontWeight: 500, marginTop: 1, whiteSpace: "nowrap" }}>Algo intégré</div>
+              <div style={{ fontSize: isMobile ? 12 : 13, fontWeight: 800, color: "#FFFFFF" }}>Challenge Algo</div>
+              <div style={{ fontSize: isMobile ? 9 : 10, color: "#3B82F6", fontWeight: 500, marginTop: 1 }}>Algo intégré</div>
             </div>
           </a>
         </div>
