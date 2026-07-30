@@ -80,22 +80,40 @@ function CertContent() {
   const download = async () => {
     if (!certRef.current || downloading) return;
     setDownloading(true);
+    let qrImg: HTMLImageElement | null = null;
     try {
+      // Remplace le canvas QR par une img pour éviter le canvas-taint dans html2canvas
+      if (qrRef.current) {
+        const qrDataUrl = qrRef.current.toDataURL("image/png");
+        qrImg = document.createElement("img");
+        qrImg.src = qrDataUrl;
+        qrImg.style.imageRendering = "pixelated";
+        qrImg.style.width = "82px";
+        qrImg.style.height = "82px";
+        qrRef.current.style.display = "none";
+        qrRef.current.parentNode?.insertBefore(qrImg, qrRef.current);
+      }
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(certRef.current, {
         scale: 3,
         useCORS: true,
-        allowTaint: true,
         backgroundColor: "#0e0e0e",
         logging: false,
+        imageTimeout: 0,
       });
       const link = document.createElement("a");
       link.download = `traders-rewards-${type}-${name.replace(/\s+/g, "-")}.jpg`;
       link.href = canvas.toDataURL("image/jpeg", 0.96);
       link.click();
-    } catch {
-      window.print();
+    } catch (e) {
+      console.error("Certificate download error:", e);
+      alert("Erreur de téléchargement — réessayez ou faites Ctrl+P pour imprimer.");
     } finally {
+      // Restaure le canvas QR
+      if (qrRef.current && qrImg) {
+        qrRef.current.style.display = "";
+        qrImg.remove();
+      }
       setDownloading(false);
     }
   };
