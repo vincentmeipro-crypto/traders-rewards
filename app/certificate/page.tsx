@@ -1,6 +1,6 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useRef, useEffect } from "react";
+import { Suspense, useRef, useEffect, useState } from "react";
 
 const BODY: Record<string, string> = {
   phase1: `Le trader a réussi la <b>Phase 1 du Challenge Traders Rewards</b> en atteignant les objectifs requis. En maintenant une gestion rigoureuse du risque et en générant les performances attendues, le trader a validé ses compétences et sa discipline. Ce certificat confirme l'accès à la <b>Phase 2</b> du programme.`,
@@ -60,17 +60,44 @@ function CertContent() {
 
   const certRef = useRef<HTMLDivElement>(null);
   const qrRef = useRef<HTMLCanvasElement>(null);
+  const [logoDataUrl, setLogoDataUrl] = useState<string>("/logo-blanc-transparent.png");
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => { if (qrRef.current) drawQR(qrRef.current, id); }, [id]);
 
+  useEffect(() => {
+    fetch("/logo-blanc-transparent.png")
+      .then(r => r.blob())
+      .then(blob => new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      }))
+      .then(setLogoDataUrl)
+      .catch(() => {});
+  }, []);
+
   const download = async () => {
-    if (!certRef.current) return;
-    const html2canvas = (await import("html2canvas")).default;
-    const canvas = await html2canvas(certRef.current, { scale: 3, useCORS: true, backgroundColor: null, logging: false });
-    const link = document.createElement("a");
-    link.download = `traders-rewards-${type}-${name.replace(/\s+/g, "-")}.jpg`;
-    link.href = canvas.toDataURL("image/jpeg", 0.96);
-    link.click();
+    if (!certRef.current || downloading) return;
+    setDownloading(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(certRef.current, {
+        scale: 3,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#0e0e0e",
+        logging: false,
+      });
+      const link = document.createElement("a");
+      link.download = `traders-rewards-${type}-${name.replace(/\s+/g, "-")}.jpg`;
+      link.href = canvas.toDataURL("image/jpeg", 0.96);
+      link.click();
+    } catch {
+      window.print();
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const cfg = TITLE[type] || TITLE.phase1;
@@ -80,8 +107,8 @@ function CertContent() {
     <div style={{ minHeight: "100vh", background: "#050505", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
 
       <div className="no-print" style={{ position: "fixed", top: 20, right: 20, zIndex: 100, display: "flex", gap: 10 }}>
-        <button onClick={download} style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>
-          ↓ Télécharger JPEG
+        <button onClick={download} disabled={downloading} style={{ background: downloading ? "#1d4ed8" : "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 800, cursor: downloading ? "wait" : "pointer", opacity: downloading ? 0.8 : 1 }}>
+          {downloading ? "⏳ En cours…" : "↓ Télécharger JPEG"}
         </button>
         <button onClick={() => window.print()} style={{ background: "#1a1a1a", color: "#aaa", border: "1px solid #333", borderRadius: 8, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
           Imprimer
@@ -111,7 +138,7 @@ function CertContent() {
             <div style={{ fontSize: 50, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.01em", textTransform: "uppercase", color: "#fff" }}>{cfg.main}</div>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 211, height: 141, objectFit: "contain", flexShrink: 0 }} />
+          <img src={logoDataUrl} alt="Traders Rewards" style={{ width: 211, height: 141, objectFit: "contain", flexShrink: 0 }} />
         </div>
 
         {/* DIVIDER */}
