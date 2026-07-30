@@ -78,42 +78,116 @@ function CertContent() {
   }, []);
 
   const download = async () => {
-    if (!certRef.current || downloading) return;
+    if (downloading) return;
     setDownloading(true);
-    let qrImg: HTMLImageElement | null = null;
     try {
-      // Remplace le canvas QR par une img pour éviter le canvas-taint dans html2canvas
-      if (qrRef.current) {
-        const qrDataUrl = qrRef.current.toDataURL("image/png");
-        qrImg = document.createElement("img");
-        qrImg.src = qrDataUrl;
-        qrImg.style.imageRendering = "pixelated";
-        qrImg.style.width = "82px";
-        qrImg.style.height = "82px";
-        qrRef.current.style.display = "none";
-        qrRef.current.parentNode?.insertBefore(qrImg, qrRef.current);
+      const W = 680, H = 520, S = 3;
+      const cv = document.createElement("canvas");
+      cv.width = W * S; cv.height = H * S;
+      const ctx = cv.getContext("2d")!;
+      ctx.scale(S, S);
+
+      // Background
+      ctx.fillStyle = "#0e0e0e";
+      ctx.fillRect(0, 0, W, H);
+
+      // Top-right triangle decorations
+      const tri = (pts: [number,number][], color: string) => {
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+        pts.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
+        ctx.closePath(); ctx.fill();
+      };
+      tri([[W,0],[W,160],[W-160,0]], "rgba(59,130,246,0.03)");
+      tri([[W,0],[W,100],[W-100,0]], "rgba(59,130,246,0.09)");
+      tri([[W,0],[W, 55],[W- 55,0]], "rgba(59,130,246,0.18)");
+      // Diagonal line top-right
+      ctx.strokeStyle = "rgba(59,130,246,0.3)"; ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(W-160,160); ctx.stroke();
+      // Bottom-left triangle
+      tri([[0,H],[90,H],[0,H-90]], "rgba(59,130,246,0.07)");
+
+      // Top label
+      ctx.fillStyle = "#3b82f6";
+      ctx.font = "700 11px 'Segoe UI',system-ui,sans-serif";
+      ctx.fillText(cfg.top.toUpperCase(), 56, 54);
+
+      // Main title
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "900 50px 'Segoe UI',system-ui,sans-serif";
+      ctx.fillText(cfg.main, 56, 110);
+
+      // Logo
+      if (logoDataUrl) {
+        const img = new Image();
+        await new Promise<void>(r => { img.onload = () => r(); img.onerror = () => r(); img.src = logoDataUrl; });
+        ctx.drawImage(img, W - 56 - 211, 30, 211, 141);
       }
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(certRef.current, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: "#0e0e0e",
-        logging: false,
-        imageTimeout: 0,
-      });
+
+      // Divider (y = 40 + 141 logo + 28 gap = 209)
+      const divY = 209;
+      const grd = ctx.createLinearGradient(56, 0, W-56, 0);
+      grd.addColorStop(0, "rgba(59,130,246,0.25)"); grd.addColorStop(0.5, "#3b82f6"); grd.addColorStop(1, "rgba(59,130,246,0.25)");
+      ctx.fillStyle = grd; ctx.fillRect(56, divY, W-112, 1);
+
+      // Trader name
+      ctx.fillStyle = "#3b82f6";
+      ctx.font = "700 30px 'Segoe UI',system-ui,sans-serif";
+      ctx.fillText(name, 56, divY + 40);
+
+      // Body text with inline bold (parse <b> tags)
+      type Seg = {text: string; bold: boolean};
+      const segs: Seg[] = [];
+      let rem = body;
+      while (rem.length) {
+        const bs = rem.indexOf("<b>");
+        if (bs === -1) { segs.push({text: rem, bold: false}); break; }
+        if (bs > 0) segs.push({text: rem.slice(0, bs), bold: false});
+        const be = rem.indexOf("</b>", bs);
+        if (be === -1) { segs.push({text: rem.slice(bs+3), bold: true}); break; }
+        segs.push({text: rem.slice(bs+3, be), bold: true});
+        rem = rem.slice(be+4);
+      }
+      const words: Seg[] = segs.flatMap(s => s.text.split(/(\s+)/).filter(Boolean).map(t => ({text:t,bold:s.bold})));
+
+      const getW = (w: Seg) => { ctx.font = w.bold ? "600 13px 'Segoe UI',sans-serif" : "13px 'Segoe UI',sans-serif"; return ctx.measureText(w.text).width; };
+      let lWords: Seg[] = [], lW = 0, ty = divY + 68;
+      const flushL = () => {
+        let lx = 56;
+        lWords.forEach(w => { ctx.font = w.bold ? "600 13px 'Segoe UI',sans-serif" : "13px 'Segoe UI',sans-serif"; ctx.fillStyle = w.bold ? "#cccccc" : "#999999"; ctx.fillText(w.text, lx, ty); lx += ctx.measureText(w.text).width; });
+        ty += 22; lWords = []; lW = 0;
+      };
+      for (const w of words) {
+        if (/^\s+$/.test(w.text)) { if (lWords.length) { lWords.push(w); lW += getW(w); } continue; }
+        const ww = getW(w);
+        if (lW + ww > 500 && lWords.length) flushL();
+        lWords.push(w); lW += ww;
+      }
+      if (lWords.length) flushL();
+
+      // Amount block (reward only)
+      if (type === "reward" && amount) {
+        ctx.fillStyle = "#555"; ctx.font = "700 9px 'Segoe UI',sans-serif";
+        ctx.fillText("MONTANT VERSÉ", 56, ty + 14);
+        ctx.fillStyle = "#fff"; ctx.font = "900 32px 'Segoe UI',sans-serif";
+        ctx.fillText(amount, 56 + 115, ty + 18);
+      }
+
+      // Footer
+      ctx.fillStyle = "#ffffff"; ctx.font = "700 16px 'Segoe UI',sans-serif";
+      ctx.fillText(date, 56, H - 36);
+
+      // QR code (copy from existing canvas — same origin, never tainted)
+      if (qrRef.current) ctx.drawImage(qrRef.current, W - 56 - 82, H - 36 - 82, 82, 82);
+
       const link = document.createElement("a");
       link.download = `traders-rewards-${type}-${name.replace(/\s+/g, "-")}.jpg`;
-      link.href = canvas.toDataURL("image/jpeg", 0.96);
+      link.href = cv.toDataURL("image/jpeg", 0.96);
       link.click();
     } catch (e) {
       console.error("Certificate download error:", e);
-      alert("Erreur de téléchargement — réessayez ou faites Ctrl+P pour imprimer.");
+      alert("Erreur: " + String(e));
     } finally {
-      // Restaure le canvas QR
-      if (qrRef.current && qrImg) {
-        qrRef.current.style.display = "";
-        qrImg.remove();
-      }
       setDownloading(false);
     }
   };
