@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const PROMO_ACTIVE = new Date() < new Date("2026-09-01T00:00:00");
+const PROMO_ACTIVE = new Date() < new Date("2026-08-16T00:00:00");
 const PROMO_CODE = "TR33";
 const PROMO_PCT = 33;
 
@@ -187,7 +187,7 @@ export default function Pricing() {
                 Code <span style={{ color: "#f97316", fontWeight: 900, letterSpacing: "1px" }}>{PROMO_CODE}</span>
               </span>
               <span style={{ fontSize: isMobile ? 9 : 10, fontWeight: 600, color: "#555", letterSpacing: "0.3px" }}>
-                · {L("jusqu'au 31 août","hasta el 31 ago","until Aug 31")}
+                · {L("jusqu'au 15 août","hasta el 15 ago","until Aug 15")}
               </span>
             </div>
           </div>

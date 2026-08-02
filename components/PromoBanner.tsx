@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const END = new Date("2026-08-31T23:59:59");
+const END = new Date("2026-08-15T23:59:59");
 
 export default function PromoBanner() {
   const { lang } = useLanguage();
@@ -29,9 +29,9 @@ export default function PromoBanner() {
   if (!visible) return null;
 
   const line1 = lang === "fr" ? "🔥 OFFRE ÉTÉ — 33% DE RÉDUCTION" : "🔥 SUMMER OFFER — 33% OFF";
-  const line2 = lang === "fr" ? "sur tous les challenges · Code TR33 · Jusqu'au 31 août" : "all challenges · Code TR33 · Until Aug 31";
+  const line2 = lang === "fr" ? "sur tous les challenges · Code TR33 · Jusqu'au 15 août" : "all challenges · Code TR33 · Until Aug 31";
   const textDesktop = lang === "fr"
-    ? "🔥 OFFRE ÉTÉ — 33% DE RÉDUCTION sur tous les challenges · Code TR33 · Jusqu'au 31 août"
+    ? "🔥 OFFRE ÉTÉ — 33% DE RÉDUCTION sur tous les challenges · Code TR33 · Jusqu'au 15 août"
     : "🔥 SUMMER OFFER — 33% OFF all challenges · Code TR33 · Until Aug 31";
 
   const height = isMobile ? 56 : 40;

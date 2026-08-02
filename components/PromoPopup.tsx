@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const START = new Date("2026-07-28T00:00:00");
-const END   = new Date("2026-08-31T23:59:59");
+const END   = new Date("2026-08-15T23:59:59");
 
 export default function PromoPopup() {
   const { lang } = useLanguage();
@@ -91,7 +91,7 @@ export default function PromoPopup() {
           {isFr ? "Offre Été — 33% de réduction" : "Summer Deal — 33% off"}
         </div>
         <div style={{ color: "#666", fontSize: 13, marginBottom: 24 }}>
-          {isFr ? "Sur tous vos challenges · Jusqu'au 31 août 2026" : "On all challenges · Until Aug 31, 2026"}
+          {isFr ? "Sur tous vos challenges · Jusqu'au 15 août 2026" : "On all challenges · Until Aug 15, 2026"}
         </div>
 
         {/* Code promo */}
@@ -137,7 +137,7 @@ export default function PromoPopup() {
         </a>
 
         <div style={{ marginTop: 14, fontSize: 11, color: "#444" }}>
-          {isFr ? "Valable jusqu'au 31 août 2026" : "Valid until August 31, 2026"}
+          {isFr ? "Valable jusqu'au 15 août 2026" : "Valid until August 15, 2026"}
         </div>
       </div>
     </div>
