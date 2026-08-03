@@ -617,6 +617,33 @@ export default function AdminPage() {
     else alert(`Erreur MT5 : ${data.error}`);
   };
 
+  const [provisioningId, setProvisioningId] = useState<string | null>(null);
+  const [provisionMsg, setProvisionMsg] = useState<Record<string, string>>({});
+
+  const provisionMT5 = async (c: Challenge) => {
+    if (!token) return;
+    setProvisioningId(c.id);
+    try {
+      const t = await getFreshToken();
+      const res = await fetch("/api/admin/provision-mt5", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` },
+        body: JSON.stringify({ challengeId: c.id }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setProvisionMsg(m => ({ ...m, [c.id]: `✓ MT5 #${data.login}` }));
+        setChallenges(cs => cs.map(x => x.id === c.id ? { ...x, mt5_login: data.login, mt5_password: data.password, mt5_server: data.server } : x));
+      } else {
+        setProvisionMsg(m => ({ ...m, [c.id]: `✗ ${data.error}` }));
+      }
+    } catch (e) {
+      setProvisionMsg(m => ({ ...m, [c.id]: `✗ ${String(e)}` }));
+    }
+    setProvisioningId(null);
+    setTimeout(() => setProvisionMsg(m => { const n = { ...m }; delete n[c.id]; return n; }), 8000);
+  };
+
   const createChallenge = async () => {
     if (!token || !createForm.userEmail || !createForm.accountSize) return;
     setCreateLoading(true); setCreateError(""); setCreateMsg("");
@@ -1026,6 +1053,13 @@ export default function AdminPage() {
                                 </div>
                               : <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                                   <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
+                                  {!c.mt5_login && (
+                                    provisionMsg[c.id]
+                                      ? <span style={{ fontSize: 11, color: provisionMsg[c.id].startsWith("✓") ? "#22c55e" : "#ef4444", fontWeight: 700 }}>{provisionMsg[c.id]}</span>
+                                      : <button onClick={() => provisionMT5(c)} disabled={provisioningId === c.id} style={{ backgroundColor: "rgba(249,115,22,0.12)", color: "#f97316", border: "1px solid rgba(249,115,22,0.35)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: provisioningId === c.id ? "not-allowed" : "pointer", opacity: provisioningId === c.id ? 0.5 : 1, fontWeight: 700 }}>
+                                        {provisioningId === c.id ? "..." : "MT5"}
+                                      </button>
+                                  )}
                                   {c.mt5_login && <button onClick={() => addMT5Custom(c)} style={{ backgroundColor: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid #22c55e33", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>+$</button>}
                                   {c.mt5_login && <button onClick={() => withdrawMT5Custom(c)} style={{ backgroundColor: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>−$</button>}
                                   <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
