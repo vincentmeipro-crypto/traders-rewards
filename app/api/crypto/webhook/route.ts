@@ -1,7 +1,6 @@
 ﻿import { NextRequest, NextResponse, after } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendWelcomeEmail } from "@/lib/mailer";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "10k-2step":  { accountSize: "$10,000",  model: "2step" },
@@ -158,12 +157,6 @@ export async function POST(req: NextRequest) {
         });
       } catch (e) { console.error("MT5 provision error:", e); }
     });
-
-    if (userEmail) {
-      try {
-        await sendWelcomeEmail(userEmail, accountSize, model);
-      } catch {}
-    }
 
     return NextResponse.json({ received: true });
   } catch (err) {

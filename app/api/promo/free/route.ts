@@ -1,6 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendWelcomeEmail } from "@/lib/mailer";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string; balance: number }> = {
   "25k-2step":  { accountSize: "$25,000",  model: "2step", balance: 25000 },
@@ -46,13 +45,13 @@ export async function POST(req: NextRequest) {
     if (promo.max_uses !== null && promo.used_count >= promo.max_uses) return NextResponse.json({ error: "Code limit reached" }, { status: 400 });
     if (promo.discount_percent !== 100) return NextResponse.json({ error: "Not a 100% code" }, { status: 400 });
 
-    // Get user info for email
+    // Get user info
     const { data: { user } } = await admin.auth.admin.getUserById(userId);
     const { data: profile } = await admin.from("profiles").select("first_name, last_name").eq("user_id", userId).single();
     const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
     const lastName  = user?.user_metadata?.last_name  || profile?.last_name  || "";
 
-    // Create the challenge (MT5 credentials will be provisioned by VPS poller)
+    // Create the challenge
     const { data: challenge } = await admin.from("challenges").insert({
       user_id: userId,
       account_size: product.accountSize,
@@ -71,33 +70,28 @@ export async function POST(req: NextRequest) {
     // Increment used_count
     await admin.from("promo_codes").update({ used_count: promo.used_count + 1 }).eq("id", promo.id);
 
-    // Fire-and-forget: trigger VPS poller to provision MT5 immediately
+    const challengeId = challenge?.id as string | undefined;
     const mt5Url = process.env.MT5_API_URL;
     const mt5Secret = process.env.MT5_API_SECRET;
-    if (mt5Url && mt5Secret && challenge?.id) {
-      fetch(`${mt5Url}/provision-challenge`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-api-key": mt5Secret },
-        body: JSON.stringify({
-          challenge_id: challenge.id,
-          first_name: firstName,
-          last_name: lastName,
-          email: user?.email || "",
-          account_size: product.accountSize,
-          model: product.model,
-          balance: product.balance,
-        }),
-      }).catch(() => {});
-    }
 
-    // Send welcome email (no MT5 creds yet — VPS will send them once provisioned)
-    if (user?.email) {
+    // Fire-and-forget after response: provision MT5 on VPS, which then sends the welcome email with creds
+    after(async () => {
+      if (!mt5Url || !mt5Secret || !challengeId) return;
       try {
-        await sendWelcomeEmail(user.email, product.accountSize, product.model, undefined);
-      } catch (emailErr) {
-        console.error("Welcome email failed:", emailErr);
-      }
-    }
+        await fetch(`${mt5Url}/provision-challenge`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-api-key": mt5Secret },
+          body: JSON.stringify({
+            challenge_id: challengeId,
+            first_name: firstName,
+            last_name: lastName,
+            email: user?.email || "",
+            model: product.model,
+            balance: product.balance,
+          }),
+        });
+      } catch (e) { console.error("MT5 provision error:", e); }
+    });
 
     return NextResponse.json({ ok: true });
   } catch (err) {
