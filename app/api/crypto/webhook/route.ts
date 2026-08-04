@@ -1,6 +1,7 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendWelcomeEmail } from "@/lib/mailer";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "10k-2step":  { accountSize: "$10,000",  model: "2step" },
@@ -149,11 +150,23 @@ export async function POST(req: NextRequest) {
 
     // Provision MT5 synchronously (after() requires Vercel Pro for guaranteed execution)
     try {
-      await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
+      const mt5Res = await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
         method: "POST",
         headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
         body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email: userEmail, model, balance: size }),
       });
+      if (mt5Res.ok) {
+        const mt5Data = await mt5Res.json();
+        if (mt5Data.ok && mt5Data.login && userEmail) {
+          try {
+            await sendWelcomeEmail(userEmail, accountSize, model, {
+              login: mt5Data.login,
+              password: mt5Data.password,
+              server: mt5Data.server,
+            });
+          } catch (e) { console.error("Welcome email failed:", e); }
+        }
+      }
     } catch (e) { console.error("MT5 provision error:", e); }
 
     return NextResponse.json({ received: true });

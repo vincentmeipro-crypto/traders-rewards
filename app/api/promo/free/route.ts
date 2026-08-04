@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendWelcomeEmail } from "@/lib/mailer";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string; balance: number }> = {
   "25k-2step":  { accountSize: "$25,000",  model: "2step", balance: 25000 },
@@ -77,18 +78,31 @@ export async function POST(req: NextRequest) {
     // Provision MT5 synchronously (after() requires Vercel Pro for guaranteed execution)
     if (mt5Url && mt5Secret && challengeId) {
       try {
-        await fetch(`${mt5Url}/provision-challenge`, {
+        const userEmail = user?.email || "";
+        const mt5Res = await fetch(`${mt5Url}/provision-challenge`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-api-key": mt5Secret },
           body: JSON.stringify({
             challenge_id: challengeId,
             first_name: firstName,
             last_name: lastName,
-            email: user?.email || "",
+            email: userEmail,
             model: product.model,
             balance: product.balance,
           }),
         });
+        if (mt5Res.ok) {
+          const mt5Data = await mt5Res.json();
+          if (mt5Data.ok && mt5Data.login && userEmail) {
+            try {
+              await sendWelcomeEmail(userEmail, product.accountSize, product.model, {
+                login: mt5Data.login,
+                password: mt5Data.password,
+                server: mt5Data.server,
+              });
+            } catch (e) { console.error("Welcome email failed:", e); }
+          }
+        }
       } catch (e) { console.error("MT5 provision error:", e); }
     }
 

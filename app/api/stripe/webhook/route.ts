@@ -1,6 +1,7 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendWelcomeEmail } from "@/lib/mailer";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -60,11 +61,23 @@ export async function POST(req: NextRequest) {
     // Provision MT5 synchronously (after() requires Vercel Pro for guaranteed execution)
     if (challengeId) {
       try {
-        await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
+        const mt5Res = await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
           method: "POST",
           headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
           body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email, model, balance: size }),
         });
+        if (mt5Res.ok) {
+          const mt5Data = await mt5Res.json();
+          if (mt5Data.ok && mt5Data.login && email) {
+            try {
+              await sendWelcomeEmail(email, accountSize, model, {
+                login: mt5Data.login,
+                password: mt5Data.password,
+                server: mt5Data.server,
+              });
+            } catch (e) { console.error("Welcome email failed:", e); }
+          }
+        }
       } catch (e) { console.error("MT5 provision error:", e); }
     }
 
