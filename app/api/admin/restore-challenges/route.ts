@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       login: number;
       firstName: string;
       lastName: string;
+      email?: string;
       model?: string;
       phase?: string;
     }>;
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
   const userEmailMap = Object.fromEntries(allUsers.map(u => [u.id, u.email ?? ""]));
 
   for (const acct of accounts) {
-    const { login, firstName, lastName, model = "2step", phase = "phase1" } = acct;
+    const { login, firstName, lastName, email: emailOverride, model = "2step", phase = "phase1" } = acct;
 
     try {
       // 1. Idempotency — skip if mt5_login already linked
@@ -82,21 +83,28 @@ export async function POST(req: NextRequest) {
       const balance = mt5Data.balance as number ?? 0;
       const { label: accountSize, value: startBalance } = balanceToAccountSize(balance);
 
-      // 3. Find Supabase user by firstName + lastName (case-insensitive)
-      const fnLower = firstName.toLowerCase().trim();
-      const lnLower = lastName.toLowerCase().trim();
-      const profile = (allProfiles ?? []).find(p =>
-        (p.first_name ?? "").toLowerCase().trim() === fnLower &&
-        (p.last_name  ?? "").toLowerCase().trim() === lnLower
-      );
+      // 3. Find Supabase user — by email if provided, otherwise by firstName + lastName
+      let userId: string | undefined;
+      let email: string = emailOverride?.toLowerCase().trim() ?? "";
 
-      if (!profile) {
-        results.push({ login, status: "no_user", firstName, lastName, note: "Profile not found in Supabase" });
-        continue;
+      if (email) {
+        const user = allUsers.find(u => u.email?.toLowerCase() === email);
+        userId = user?.id;
+      } else {
+        const fnLower = firstName.toLowerCase().trim();
+        const lnLower = lastName.toLowerCase().trim();
+        const profile = (allProfiles ?? []).find(p =>
+          (p.first_name ?? "").toLowerCase().trim() === fnLower &&
+          (p.last_name  ?? "").toLowerCase().trim() === lnLower
+        );
+        userId = profile?.user_id;
+        if (userId) email = userEmailMap[userId] ?? "";
       }
 
-      const userId = profile.user_id;
-      const email  = userEmailMap[userId] ?? "";
+      if (!userId) {
+        results.push({ login, status: "no_user", firstName, lastName, email, note: "User not found in Supabase" });
+        continue;
+      }
 
       // 4. Create challenge row
       const status = (phase === "funded") ? "funded" : "active";
