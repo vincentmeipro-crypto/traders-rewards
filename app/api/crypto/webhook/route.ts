@@ -157,14 +157,23 @@ export async function POST(req: NextRequest) {
       });
       if (mt5Res.ok) {
         const mt5Data = await mt5Res.json();
-        if (mt5Data.ok && mt5Data.login && userEmail) {
-          try {
-            await sendWelcomeEmail(userEmail, accountSize, model, {
-              login: mt5Data.login,
-              password: mt5Data.password,
-              server: mt5Data.server,
-            });
-          } catch (e) { console.error("Welcome email failed:", e); }
+        if (mt5Data.ok && mt5Data.login) {
+          // Update Supabase from Vercel as well (VPS _supabase_patch may fail if env vars not set)
+          await admin.from("challenges").update({
+            mt5_login:             mt5Data.login,
+            mt5_password:          mt5Data.password,
+            mt5_password_investor: mt5Data.password_investor,
+            mt5_server:            mt5Data.server,
+          }).eq("id", challengeId);
+          if (userEmail) {
+            try {
+              await sendWelcomeEmail(userEmail, accountSize, model, {
+                login: mt5Data.login,
+                password: mt5Data.password,
+                server: mt5Data.server,
+              });
+            } catch (e) { console.error("Welcome email failed:", e); }
+          }
         }
       }
     } catch (e) { console.error("MT5 provision error:", e); }
