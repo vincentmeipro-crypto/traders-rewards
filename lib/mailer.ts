@@ -291,6 +291,31 @@ export async function sendRewardCertificateEmail(to: string, firstName: string, 
   `);
 }
 
+export async function sendApologyEmail(
+  to: string,
+  firstName: string,
+  accountSize: string,
+  phase: string,
+  mt5: { login: number; password: string; server: string }
+) {
+  const phaseLabel = phase === "funded" ? "Trader Reward" : phase === "phase2" ? "Phase 2" : "Phase 1";
+  const titleColor = phase === "funded" ? "#3b82f6" : "#1565C0";
+  await sendEmail(to, "✅ Votre compte Traders Rewards est rétabli", buildEmail({
+    title: `✅ Compte rétabli — ${phaseLabel}`,
+    titleColor,
+    body: `Bonjour ${firstName},\n\nNous nous excusons pour la gêne occasionnée suite à une erreur technique survenue récemment sur notre plateforme. Votre compte ${accountSize} a été entièrement restauré et est de nouveau actif. Toutes vos positions et votre historique de trading sont intacts.`,
+    details: [
+      { label: "Taille du compte", value: accountSize, color: "#60A5FA" },
+      { label: "Phase actuelle",   value: phaseLabel },
+      { label: "Statut",          value: "Actif ✓", color: "#22c55e" },
+      { label: "Serveur MT5",     value: mt5.server,        color: "#1a73e8" },
+      { label: "Login MT5",       value: String(mt5.login), color: "#1a73e8" },
+      { label: "Mot de passe",    value: mt5.password,      color: "#1a73e8" },
+    ],
+    cta: { text: "Accéder à mon Dashboard →", href: `${SITE}/dashboard` },
+  }));
+}
+
 function buildEmail({ title, titleColor, body, details, cta }: {
   title: string; titleColor: string; body: string;
   details: { label: string; value: string; color?: string }[];
