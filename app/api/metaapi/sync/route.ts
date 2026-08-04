@@ -58,6 +58,11 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const info = await getMT5Account(login).catch(() => null);
   if (!info) return { status: "balance_unavailable" };
 
+  // Guard: VPS returns balance=0 in PUMP_NONE mode (stale cache) — skip to avoid false breach
+  if ((info.balance ?? 0) === 0 && (info.equity ?? 0) === 0) {
+    return { status: "balance_stale_skipped" };
+  }
+
   const newBalance = info.balance as number;
   // Equity réelle = balance + profit flottant (a.Equity du Manager API n'est pas toujours temps réel)
   const floatingProfit = typeof info.profit === "number" ? info.profit : 0;
