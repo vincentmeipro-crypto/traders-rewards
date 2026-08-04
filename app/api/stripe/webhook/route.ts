@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse, after } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -57,8 +57,8 @@ export async function POST(req: NextRequest) {
 
     const challengeId = inserted?.id as string | undefined;
 
-    // Fire-and-forget MT5 provisioning via VPS (runs after response is sent)
-    after(async () => {
+    // Provision MT5 synchronously (after() requires Vercel Pro for guaranteed execution)
+    if (challengeId) {
       try {
         await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
           method: "POST",
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email, model, balance: size }),
         });
       } catch (e) { console.error("MT5 provision error:", e); }
-    });
+    }
 
     // Affiliate referral tracking
     if (refCode) {

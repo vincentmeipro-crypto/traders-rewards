@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse, after } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string; balance: number }> = {
@@ -74,9 +74,8 @@ export async function POST(req: NextRequest) {
     const mt5Url = process.env.MT5_API_URL;
     const mt5Secret = process.env.MT5_API_SECRET;
 
-    // Fire-and-forget after response: provision MT5 on VPS, which then sends the welcome email with creds
-    after(async () => {
-      if (!mt5Url || !mt5Secret || !challengeId) return;
+    // Provision MT5 synchronously (after() requires Vercel Pro for guaranteed execution)
+    if (mt5Url && mt5Secret && challengeId) {
       try {
         await fetch(`${mt5Url}/provision-challenge`, {
           method: "POST",
@@ -91,7 +90,7 @@ export async function POST(req: NextRequest) {
           }),
         });
       } catch (e) { console.error("MT5 provision error:", e); }
-    });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {

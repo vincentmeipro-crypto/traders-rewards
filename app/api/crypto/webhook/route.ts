@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse, after } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -147,16 +147,14 @@ export async function POST(req: NextRequest) {
     const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
     const lastName = user?.user_metadata?.last_name || profile?.last_name || "";
 
-    // Fire-and-forget MT5 provisioning via VPS (runs after response is sent)
-    after(async () => {
-      try {
-        await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
-          method: "POST",
-          headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
-          body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email: userEmail, model, balance: size }),
-        });
-      } catch (e) { console.error("MT5 provision error:", e); }
-    });
+    // Provision MT5 synchronously (after() requires Vercel Pro for guaranteed execution)
+    try {
+      await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
+        method: "POST",
+        headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
+        body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email: userEmail, model, balance: size }),
+      });
+    } catch (e) { console.error("MT5 provision error:", e); }
 
     return NextResponse.json({ received: true });
   } catch (err) {
