@@ -1,8 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse, after } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group } from "@/lib/mt5";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "10k-2step":  { accountSize: "$10,000",  model: "2step" },
@@ -149,41 +148,20 @@ export async function POST(req: NextRequest) {
     const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
     const lastName = user?.user_metadata?.last_name || profile?.last_name || "";
 
-    let mt5Login: number | null = null;
-    let mt5Password: string | null = null;
-    let mt5PasswordInvestor: string | null = null;
-    let mt5Server: string | null = null;
-
-    try {
-      const mt5Account = await createMT5Account({
-        firstName, lastName, email: userEmail,
-        leverage: 100,
-        group: getMT5Group(model),
-        account_size: accountSize,
-        label: model === "vip" ? "Algo | Phase 1" : "Trader | Phase 1",
-      });
-      mt5Login = mt5Account.login;
-      mt5Password = mt5Account.password;
-      mt5PasswordInvestor = mt5Account.password_investor;
-      mt5Server = mt5Account.server;
-    } catch (e) { console.error("MT5 creation error:", e); }
-
-    await admin.from("challenges").update({
-      mt5_login: mt5Login,
-      mt5_password: mt5Password,
-      mt5_password_investor: mt5PasswordInvestor,
-      mt5_server: mt5Server,
-    }).eq("id", challengeId);
+    // Fire-and-forget MT5 provisioning via VPS (runs after response is sent)
+    after(async () => {
+      try {
+        await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
+          method: "POST",
+          headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
+          body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email: userEmail, model, balance: size }),
+        });
+      } catch (e) { console.error("MT5 provision error:", e); }
+    });
 
     if (userEmail) {
       try {
-        const isVip = model === "vip";
-        const clientPassword = isVip ? mt5PasswordInvestor : mt5Password;
-        await sendWelcomeEmail(userEmail, accountSize, model,
-          mt5Login && clientPassword && mt5Server
-            ? { login: mt5Login, password: clientPassword, server: mt5Server }
-            : undefined
-        );
+        await sendWelcomeEmail(userEmail, accountSize, model);
       } catch {}
     }
 

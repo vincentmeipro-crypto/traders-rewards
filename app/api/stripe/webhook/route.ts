@@ -1,8 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse, after } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
-import { createMT5Account, getMT5Group } from "@/lib/mt5";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -40,31 +39,7 @@ export async function POST(req: NextRequest) {
     const lastName  = userData?.user?.user_metadata?.last_name  || profile?.last_name  || session.customer_details?.name?.split(" ").slice(1).join(" ") || "";
     const email     = userData?.user?.email || session.customer_details?.email || "";
 
-    // CrÃ©er le compte MT5
-    let mt5Login: number | null = null;
-    let mt5Password: string | null = null;
-    let mt5PasswordInvestor: string | null = null;
-    let mt5Server: string | null = null;
-
-    try {
-      const mt5Account = await createMT5Account({
-        firstName,
-        lastName,
-        email,
-        leverage: 100,
-        group: getMT5Group(model),
-        account_size: accountSize,
-        label: model === "vip" ? "Algo | Phase 1" : "Trader | Phase 1",
-      });
-      mt5Login           = mt5Account.login;
-      mt5Password        = mt5Account.password;
-      mt5PasswordInvestor = mt5Account.password_investor;
-      mt5Server          = mt5Account.server;
-    } catch (e) {
-      console.error("MT5 account creation failed:", e);
-    }
-
-    await admin.from("challenges").insert({
+    const { data: inserted } = await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
       model,
@@ -79,10 +54,19 @@ export async function POST(req: NextRequest) {
       stripe_session_id: session.id,
       amount_paid: (session.amount_total || 0) / 100,
       payment_method: "card",
-      mt5_login:            mt5Login,
-      mt5_password:         mt5Password,
-      mt5_password_investor: mt5PasswordInvestor,
-      mt5_server:           mt5Server,
+    }).select("id").single();
+
+    const challengeId = inserted?.id as string | undefined;
+
+    // Fire-and-forget MT5 provisioning via VPS (runs after response is sent)
+    after(async () => {
+      try {
+        await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
+          method: "POST",
+          headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
+          body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email, model, balance: size }),
+        });
+      } catch (e) { console.error("MT5 provision error:", e); }
     });
 
     // Affiliate referral tracking
@@ -120,14 +104,7 @@ export async function POST(req: NextRequest) {
     const userEmail = session.customer_email || session.customer_details?.email;
     if (userEmail) {
       try {
-        const isVip = model === "vip";
-        const clientPassword = isVip ? mt5PasswordInvestor : mt5Password;
-        await sendWelcomeEmail(
-          userEmail, accountSize, model,
-          mt5Login && clientPassword && mt5Server
-            ? { login: mt5Login, password: clientPassword, server: mt5Server }
-            : undefined
-        );
+        await sendWelcomeEmail(userEmail, accountSize, model);
       } catch (e) { console.error("Email error:", e); }
     }
   }
