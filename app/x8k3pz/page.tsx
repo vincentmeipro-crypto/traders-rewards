@@ -228,6 +228,10 @@ export default function AdminPage() {
   const [createMsg, setCreateMsg] = useState("");
   const [createError, setCreateError] = useState("");
 
+  // Restore challenges state
+  const [restoreLoading, setRestoreLoading] = useState(false);
+  const [restoreMsg, setRestoreMsg] = useState("");
+
   // Admin login form state
   const [adminEmail, setAdminEmail] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
@@ -292,6 +296,38 @@ export default function AdminPage() {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  const handleRestoreChallenges = async () => {
+    if (!token) return;
+    setRestoreLoading(true);
+    setRestoreMsg("Restauration en cours...");
+    try {
+      const res = await fetch("/api/admin/restore-challenges", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({
+          masterPassword: "M@SeSh2u",
+          server: "XyloMarkets-Server",
+          accounts: [
+            { login: 9009094831596, firstName: "Bruno",    lastName: "Penard",  email: "bpenard@yahoo.fr",             model: "2step", phase: "phase1" },
+            { login: 9009094831597, firstName: "Aurélien", lastName: "Roussel", email: "aurelien.rou@gmail.com",        model: "2step", phase: "phase1" },
+            { login: 9009094831598, firstName: "Régis",    lastName: "Allidé",  email: "regis.allide-codjo@orange.fr", model: "2step", phase: "phase1" },
+            { login: 9009094832394, firstName: "Régis",    lastName: "Allidé",  email: "regis.allide-codjo@orange.fr", model: "1step", phase: "funded"  },
+            { login: 9009094835395, firstName: "Samir",    lastName: "KHELIF",  email: "samir.khelif@yahoo.fr",        model: "1step", phase: "phase1" },
+          ],
+        }),
+      });
+      const data = await res.json();
+      const results = data.results as { login: number; status: string; email?: string; error?: string }[];
+      const ok = results.filter(r => r.status === "restored" || r.status === "already_exists").length;
+      const fail = results.filter(r => r.status !== "restored" && r.status !== "already_exists").length;
+      setRestoreMsg(`✅ ${ok} compte(s) restauré(s)${fail ? ` — ⚠ ${fail} erreur(s): ${results.filter(r => r.status !== "restored" && r.status !== "already_exists").map(r => `${r.login}:${r.status}`).join(", ")}` : ""}`);
+    } catch (e) {
+      setRestoreMsg(`Erreur: ${e}`);
+    } finally {
+      setRestoreLoading(false);
+    }
+  };
 
   const handleAdminLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -851,6 +887,18 @@ export default function AdminPage() {
         {/* ══ VUE D'ENSEMBLE ══ */}
         {tab === "overview" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+
+            {/* Restaurer clients affectés */}
+            <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ color: "#60a5fa", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Restauration clients (action unique)</div>
+                <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>Bruno Penard · Aurélien Roussel · Régis Allidé (x2) · Samir KHELIF</div>
+                {restoreMsg && <div style={{ color: restoreMsg.startsWith("✅") ? "#22c55e" : "#f59e0b", fontSize: 12, marginTop: 6, fontWeight: 600 }}>{restoreMsg}</div>}
+              </div>
+              <button onClick={handleRestoreChallenges} disabled={restoreLoading} style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", fontWeight: 700, fontSize: 13, cursor: restoreLoading ? "not-allowed" : "pointer", opacity: restoreLoading ? 0.6 : 1, whiteSpace: "nowrap" }}>
+                {restoreLoading ? "En cours..." : "Restaurer les dashboards"}
+              </button>
+            </div>
 
             {/* Alertes drawdown */}
             {kpis.alerts.length > 0 && (
