@@ -895,6 +895,13 @@ export default function AdminPage() {
                 <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>Bruno Penard · Aurélien Roussel · Régis Allidé (x2) · Samir KHELIF</div>
                 {restoreMsg && <div style={{ color: restoreMsg.startsWith("✅") ? "#22c55e" : "#f59e0b", fontSize: 12, marginTop: 6, fontWeight: 600 }}>{restoreMsg}</div>}
               </div>
+              <button onClick={async () => {
+                if (!token) return;
+                await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "Authorization": `Bearer ${token}` } });
+                setRestoreMsg("📧 Email de prévisualisation envoyé à vincentmeipro@gmail.com");
+              }} style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.4)", borderRadius: 8, padding: "10px 16px", fontWeight: 600, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap" }}>
+                Recevoir une copie
+              </button>
               <button onClick={handleRestoreChallenges} disabled={restoreLoading} style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", fontWeight: 700, fontSize: 13, cursor: restoreLoading ? "not-allowed" : "pointer", opacity: restoreLoading ? 0.6 : 1, whiteSpace: "nowrap" }}>
                 {restoreLoading ? "En cours..." : "Restaurer les dashboards"}
               </button>
