@@ -41,6 +41,13 @@ export async function GET(req: NextRequest) {
       const totalLimit   = challenge.total_drawdown_limit ?? 10;
       const dailyLimit   = challenge.daily_drawdown_limit ?? 5;
 
+      // Guard: VPS returns balance=0 in PUMP_NONE mode (stale cache) — skip breach detection
+      if ((account.balance ?? 0) === 0 && (account.equity ?? 0) === 0 && startBalance > 0) {
+        console.warn(`[${challenge.mt5_login}] balance=0 from VPS (PUMP_NONE stale data) — skipping breach check`);
+        errors++;
+        continue;
+      }
+
       // Seuils absolus (référence fixe = startBalance)
       const totalThreshold = startBalance * (1 - totalLimit / 100);
       const dailyThreshold = startBalance * (1 - dailyLimit / 100);
