@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
   if (!challenges?.length) return NextResponse.json({ synced: 0, breaches: 0 });
 
   const { data: { users } } = await admin.auth.admin.listUsers();
+  const userEmailMap = Object.fromEntries(users.map(u => [u.id, u.email ?? ""]));
 
   let synced = 0;
   let breaches = 0;
