@@ -2013,6 +2013,34 @@ export default function DashboardClient({ user }: { user: User }) {
                       );
                     })()
                   )}
+                  {challenge.model === "1step" && challenge.daily_start_balance && (
+                    (() => {
+                      const eodBal    = challenge.daily_start_balance!;
+                      const dailyFloor = Math.round(eodBal * (1 - (challenge.daily_drawdown_limit ?? 3) / 100));
+                      const dailyBuffer = Math.round(challenge.balance - dailyFloor);
+                      return (
+                        <div style={{ marginTop: 10, padding: "12px 14px", backgroundColor: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 10 }}>
+                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
+                            {isFr ? "DD Journalier EOD — 1-Step" : "Daily DD EOD — 1-Step"}
+                          </div>
+                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                            <div style={{ flex: 1, minWidth: 100 }}>
+                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Clôture veille" : "Prev. close"}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${Math.round(eodBal).toLocaleString()}</div>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 100 }}>
+                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Plancher daily" : "Daily floor"}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${dailyFloor.toLocaleString()}</div>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 100 }}>
+                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Marge restante" : "Buffer left"}</div>
+                              <div style={{ fontSize: 14, fontWeight: 800, color: dailyBuffer > 0 ? "#FFFFFF" : "#ef4444" }}>${dailyBuffer.toLocaleString()}</div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()
+                  )}
                   {challenge.phase === "funded" && (() => {
                     const dailyOk = dailyDrawdownPct < (challenge.daily_drawdown_limit ?? 5);
                     const totalOk = parseFloat(totalDrawdownPct) < (challenge.total_drawdown_limit ?? 10);
