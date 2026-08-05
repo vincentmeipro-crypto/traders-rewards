@@ -31,6 +31,7 @@ type Challenge = {
   total_drawdown_limit: number;
   daily_dd?: number;
   daily_start_balance?: number;
+  highest_balance?: number;
   breach_equity?: number;
   breach_reason?: string;
   breach_value?: number;
@@ -1088,14 +1089,22 @@ export default function AdminPage() {
                               const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
                               const ddPct = dailyUsed / maxDaily * 100;
                               const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";
+                              // DD Max
+                              const highestBal = c.highest_balance ?? c.start_balance;
+                              const totalRef = is1Step ? highestBal : c.start_balance;
+                              const totalUsed = Math.max(0, (totalRef - c.balance) / c.start_balance * 100);
+                              const totalFloor = is1Step
+                                ? Math.round(highestBal - c.start_balance * maxTotal / 100)
+                                : Math.round(c.start_balance * (1 - maxTotal / 100));
+                              const totalPct = totalUsed / maxTotal * 100;
+                              const totalColor = totalUsed >= maxTotal ? "#ef4444" : totalUsed >= maxTotal * 0.7 ? "#f59e0b" : "#a78bfa";
                               return (
                                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                                  {/* Gain/Perte */}
                                   <span style={{ fontWeight: 800, fontSize: 13, color: gainColor }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</span>
-                                  {/* DD Daily */}
+                                  {/* DD Journalier */}
                                   <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${ddColor}33` }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Journalier</span>
+                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Jour</span>
                                       <span style={{ fontSize: 11, fontWeight: 700, color: ddColor }}>-{dailyUsed.toFixed(2)}% / {maxDaily}%</span>
                                     </div>
                                     <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
@@ -1104,7 +1113,16 @@ export default function AdminPage() {
                                     <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>Plancher : <span style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>${dailyFloor.toLocaleString()}</span></div>
                                   </div>
                                   {/* DD Max */}
-                                  <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)" }}>DD Max : <span style={{ color: "rgba(255,255,255,0.55)" }}>{maxTotal}%</span></div>
+                                  <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${totalColor}33` }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Max{is1Step ? " (trailing)" : ""}</span>
+                                      <span style={{ fontSize: 11, fontWeight: 700, color: totalColor }}>-{totalUsed.toFixed(2)}% / {maxTotal}%</span>
+                                    </div>
+                                    <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
+                                      <div style={{ width: `${Math.min(totalPct, 100)}%`, height: "100%", backgroundColor: totalColor, borderRadius: 99 }} />
+                                    </div>
+                                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>Plancher : <span style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>${totalFloor.toLocaleString()}</span></div>
+                                  </div>
                                 </div>
                               );
                             })()}
