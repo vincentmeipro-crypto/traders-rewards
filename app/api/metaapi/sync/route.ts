@@ -69,15 +69,20 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const newEquity = newBalance + floatingProfit;
 
   // 2. Jours de trading
+  // Broker EOD = 22:00 UTC (XyloMarkets). Trading day runs 22:00 UTC → 21:59 UTC next day.
+  const now = new Date();
+  const tradingDayStart = new Date(now);
+  if (now.getUTCHours() < 22) tradingDayStart.setUTCDate(tradingDayStart.getUTCDate() - 1);
+  tradingDayStart.setUTCHours(22, 0, 0, 0);
+  const tradingDayId    = tradingDayStart.toISOString().split("T")[0]; // "2026-08-04"
+
   const prevTradingDays  = challenge.trading_days as number;
   const lastSyncedAt     = challenge.last_synced_at as string | null;
-  const lastSyncedDay    = lastSyncedAt ? new Date(lastSyncedAt).toDateString() : null;
-  const today            = new Date().toDateString();
-  const isNewDay         = lastSyncedDay !== today;
+  const isNewDay         = !lastSyncedAt || new Date(lastSyncedAt) < tradingDayStart;
   // Use dedicated last_trading_day field so that a sync with no activity doesn't
   // block counting a day later when the trader opens a position the same day.
   const lastTradingDay   = (challenge.last_trading_day as string | null) ?? null;
-  const alreadyCounted   = lastTradingDay === today;
+  const alreadyCounted   = lastTradingDay === tradingDayId;
   // Count trading day if balance changed (closed trade) OR there is floating P&L (open trade)
   const hadActivity      = Math.abs(newBalance - prevBalance) > 0.01 || Math.abs(floatingProfit) > 0.01;
   const dayWasCounted    = hadActivity && !alreadyCounted;
@@ -111,7 +116,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     trading_days: newTradingDays,
     last_synced_at: baseNow,
     daily_low_equity: dailyLowEquity,
-    ...(dayWasCounted && { last_trading_day: today }),
+    ...(dayWasCounted && { last_trading_day: tradingDayId }),
   }).eq("id", id);
   try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay, daily_start_balance: dailyRefBalance }).eq("id", id); } catch {}
 
@@ -266,8 +271,8 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 8. Email rÃ©cap journalier
   const createdAt = challenge.created_at as string | null;
-  const alreadySentToday = lastSyncedAt ? new Date(lastSyncedAt).toDateString() === today : false;
-  const purchasedToday   = createdAt ? new Date(createdAt).toDateString() === today : false;
+  const alreadySentToday = lastSyncedAt ? new Date(lastSyncedAt) >= tradingDayStart : false;
+  const purchasedToday   = createdAt ? new Date(createdAt) >= tradingDayStart : false;
   if (!alreadySentToday && !purchasedToday) {
     await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, { model, highestBalance: newHighest, totalLimit, startBalance }).catch(() => {});
   }
