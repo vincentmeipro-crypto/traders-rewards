@@ -31,6 +31,10 @@ type Challenge = {
   total_drawdown_limit: number;
   daily_dd?: number;
   daily_start_balance?: number;
+  breach_equity?: number;
+  breach_reason?: string;
+  breach_value?: number;
+  breach_at?: string;
 };
 
 type PromoCode = {
@@ -1063,7 +1067,13 @@ export default function AdminPage() {
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
                             {editing === c.id
                               ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
-                              : `$${c.balance?.toLocaleString()}`}
+                              : c.status === "failed" && c.breach_equity
+                                ? <div>
+                                    <div style={{ color: "#ef4444", fontSize: 13 }}>${Math.round(c.breach_equity).toLocaleString()}</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>cramé à -{c.breach_value?.toFixed(2)}%</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>{c.breach_reason === "daily_drawdown" ? "DD jour" : "DD max"}</div>
+                                  </div>
+                                : `$${c.balance?.toLocaleString()}`}
                           </td>
                           <td style={{ padding: "8px 14px", minWidth: 160 }}>
                             {(() => {

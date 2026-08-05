@@ -138,11 +138,18 @@ export async function GET(req: NextRequest) {
 
       // --- COUPE IMMÉDIATE si breach détecté ---
       if (breachReason) {
-        console.error(`BREACH [${challenge.mt5_login}] ${breachReason} — equity: ${equity}, start: ${startBalance}, totalDD: ${totalDD.toFixed(2)}%, dailyDD: ${dailyDD.toFixed(2)}%`);
+        const breachPct = breachReason === "daily_drawdown"
+          ? parseFloat(((dailyRef - breachEquity) / dailyRef * 100).toFixed(2))
+          : parseFloat(((startBalance - breachEquity) / startBalance * 100).toFixed(2));
+        console.error(`BREACH [${challenge.mt5_login}] ${breachReason} — equity: ${breachEquity}, pct: ${breachPct}%`);
 
         await admin.from("challenges").update({
           status:         "failed",
           balance:        breachEquity,
+          breach_equity:  breachEquity,
+          breach_at:      new Date().toISOString(),
+          breach_reason:  breachReason,
+          breach_value:   breachPct,
           last_synced_at: new Date().toISOString(),
         }).eq("id", challenge.id);
 
