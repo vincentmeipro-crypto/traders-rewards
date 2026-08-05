@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   const { data: challenges, error } = await admin
     .from("challenges")
-    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance")
+    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, daily_low_equity")
     .not("mt5_login", "is", null)
     .in("status", ["active"]);
 
@@ -63,8 +63,13 @@ export async function GET(req: NextRequest) {
       let breachReason: string | null = null;
       let breachEquity = equity;
 
-      if (equity <= dailyThreshold)  breachReason = "daily_drawdown";
-      if (equity <= totalThreshold)  breachReason = "total_drawdown";
+      // daily_low_equity = plus bas equity atteint aujourd'hui (trackée par metaapi/sync)
+      // Permet de catcher un breach même si l'equity a récupéré depuis
+      const dailyLow = (challenge.daily_low_equity as number | null) ?? equity;
+      const worstEquity = Math.min(equity, dailyLow);
+
+      if (worstEquity <= dailyThreshold) { breachReason = "daily_drawdown"; breachEquity = worstEquity; }
+      if (worstEquity <= totalThreshold) { breachReason = "total_drawdown"; breachEquity = worstEquity; }
 
       // --- CHECK 2 : snapshots passés (rattrape un breach manqué par le cron) ---
       if (!breachReason) {
