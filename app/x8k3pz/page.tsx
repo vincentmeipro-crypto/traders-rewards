@@ -29,8 +29,8 @@ type Challenge = {
   server: string;
   daily_drawdown_limit: number;
   total_drawdown_limit: number;
-  daily_dd?: number;
   daily_start_balance?: number;
+  daily_low_equity?: number;
   highest_balance?: number;
   breach_equity?: number;
   breach_reason?: string;
@@ -1079,47 +1079,80 @@ export default function AdminPage() {
                           <td style={{ padding: "8px 14px", minWidth: 160 }}>
                             {(() => {
                               if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
-                              const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
-                              const maxTotal = c.total_drawdown_limit ?? 10;
-                              const maxDaily = c.daily_drawdown_limit ?? 5;
-                              const dailyUsed = c.daily_dd ?? 0;
                               const is1Step = c.model === "1step";
+                              const maxTotal = c.total_drawdown_limit ?? 10;
+                              const maxDaily = c.daily_drawdown_limit ?? (is1Step ? 3 : 5);
                               const eodBal = c.daily_start_balance ?? c.start_balance;
-                              const dailyFloor = is1Step ? Math.round(eodBal * (1 - maxDaily / 100)) : Math.round(c.start_balance * (1 - maxDaily / 100));
-                              const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
-                              const ddPct = dailyUsed / maxDaily * 100;
-                              const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";
-                              // DD Max
+                              const dailyRef = is1Step ? eodBal : c.start_balance;
                               const highestBal = c.highest_balance ?? c.start_balance;
                               const totalRef = is1Step ? highestBal : c.start_balance;
-                              const totalUsed = Math.max(0, (totalRef - c.balance) / c.start_balance * 100);
+
+                              // Pour comptes failed : afficher info breach uniquement
+                              if (c.status === "failed") {
+                                const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
+                                const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
+                                return (
+                                  <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                                    <span style={{ fontWeight: 800, fontSize: 13, color: gainColor }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</span>
+                                    {c.breach_value != null && (
+                                      <div style={{ backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 6, padding: "4px 7px", border: "1px solid rgba(239,68,68,0.25)" }}>
+                                        <div style={{ fontSize: 9, color: "#ef4444", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.5px", marginBottom: 2 }}>
+                                          {c.breach_reason === "daily_drawdown" ? "DD Jour" : "DD Max"} — BREACH
+                                        </div>
+                                        <div style={{ fontSize: 11, fontWeight: 800, color: "#ef4444" }}>
+                                          -{c.breach_value.toFixed(2)}%
+                                        </div>
+                                        {c.breach_equity != null && (
+                                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
+                                            equity crash: ${Math.round(c.breach_equity).toLocaleString()}
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              }
+
+                              // Pour comptes actifs : calcul DD live
+                              const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
+                              const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
+
+                              // DD Jour — utilise daily_low_equity pour catcher les equity basses récupérées
+                              const dailyLow = c.daily_low_equity ?? c.balance;
+                              const worstToday = Math.min(c.balance, dailyLow);
+                              const dailyUsed = Math.max(0, (dailyRef - worstToday) / dailyRef * 100);
+                              const dailyFloor = Math.round(dailyRef * (1 - maxDaily / 100));
+                              const ddPct = Math.min(dailyUsed / maxDaily * 100, 100);
+                              const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";
+
+                              // DD Max — divise par totalRef (pas start_balance) pour trailing correct
+                              const totalUsed = Math.max(0, (totalRef - c.balance) / totalRef * 100);
                               const totalFloor = is1Step
                                 ? Math.round(highestBal - c.start_balance * maxTotal / 100)
                                 : Math.round(c.start_balance * (1 - maxTotal / 100));
-                              const totalPct = totalUsed / maxTotal * 100;
+                              const totalPct = Math.min(totalUsed / maxTotal * 100, 100);
                               const totalColor = totalUsed >= maxTotal ? "#ef4444" : totalUsed >= maxTotal * 0.7 ? "#f59e0b" : "#a78bfa";
+
                               return (
                                 <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
                                   <span style={{ fontWeight: 800, fontSize: 13, color: gainColor }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</span>
-                                  {/* DD Journalier */}
                                   <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${ddColor}33` }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
                                       <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Jour</span>
                                       <span style={{ fontSize: 11, fontWeight: 700, color: ddColor }}>-{dailyUsed.toFixed(2)}% / {maxDaily}%</span>
                                     </div>
                                     <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
-                                      <div style={{ width: `${Math.min(ddPct, 100)}%`, height: "100%", backgroundColor: ddColor, borderRadius: 99 }} />
+                                      <div style={{ width: `${ddPct}%`, height: "100%", backgroundColor: ddColor, borderRadius: 99 }} />
                                     </div>
                                     <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>Plancher : <span style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>${dailyFloor.toLocaleString()}</span></div>
                                   </div>
-                                  {/* DD Max */}
                                   <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${totalColor}33` }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
                                       <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Max{is1Step ? " (trailing)" : ""}</span>
                                       <span style={{ fontSize: 11, fontWeight: 700, color: totalColor }}>-{totalUsed.toFixed(2)}% / {maxTotal}%</span>
                                     </div>
                                     <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
-                                      <div style={{ width: `${Math.min(totalPct, 100)}%`, height: "100%", backgroundColor: totalColor, borderRadius: 99 }} />
+                                      <div style={{ width: `${totalPct}%`, height: "100%", backgroundColor: totalColor, borderRadius: 99 }} />
                                     </div>
                                     <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>Plancher : <span style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>${totalFloor.toLocaleString()}</span></div>
                                   </div>
