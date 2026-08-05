@@ -42,6 +42,7 @@ type Challenge = {
   breach_equity?: number;
   best_day_profit?: number;
   daily_low_equity?: number;
+  daily_start_balance?: number;
 };
 
 function ProgressBar({ value, max, color = "#3B82F6", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
@@ -1886,7 +1887,9 @@ export default function DashboardClient({ user }: { user: User }) {
                   {(() => {
                     const b = challenge.start_balance;
                     const profitUSD  = Math.round(b * challenge.profit_target / 100);
-                    const dailyUSD   = Math.round(b * challenge.daily_drawdown_limit / 100);
+                    // 1-step: daily limit based on EOD balance (trailing); 2-step: fixed from start_balance
+                    const dailyRef   = is1StepChallenge ? (challenge.daily_start_balance ?? b) : b;
+                    const dailyUSD   = Math.round(dailyRef * challenge.daily_drawdown_limit / 100);
                     const totalUSD   = Math.round(b * challenge.total_drawdown_limit / 100);
                     const rules = [
                       ...(challenge.phase !== "funded" ? [{
