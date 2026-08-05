@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   const { data: challenges, error } = await admin
     .from("challenges")
-    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit")
+    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance")
     .not("mt5_login", "is", null)
     .in("status", ["active"]);
 
@@ -23,24 +23,6 @@ export async function GET(req: NextRequest) {
   if (!challenges?.length) return NextResponse.json({ synced: 0, breaches: 0 });
 
   const { data: { users } } = await admin.auth.admin.listUsers();
-  const userEmailMap = Object.fromEntries(users.map(u => [u.id, u.email ?? ""]));
-
-  // Pre-load EOD balances for 1-step challenges (3% of previous day's closing balance)
-  const todayMidnightUTC = new Date();
-  todayMidnightUTC.setUTCHours(0, 0, 0, 0);
-  const oneStepLogins = challenges.filter(c => c.model === "1step").map(c => c.mt5_login);
-  const eodBalanceMap: Record<number, number> = {};
-  for (const login of oneStepLogins) {
-    const { data: snap } = await admin
-      .from("mt5_snapshots")
-      .select("balance, equity")
-      .eq("mt5_login", login)
-      .lt("created_at", todayMidnightUTC.toISOString())
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (snap) eodBalanceMap[login] = snap.balance ?? snap.equity ?? 0;
-  }
 
   let synced = 0;
   let breaches = 0;
@@ -65,10 +47,10 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      // 1-step : daily threshold = 3% of yesterday's EOD balance (trailing)
+      // 1-step : daily threshold = 3% of yesterday's EOD balance (daily_start_balance, set by metaapi/sync at day rollover)
       // 2-step : daily threshold = 5% of initial start balance (absolute/fixed)
       const dailyRef     = challenge.model === "1step"
-        ? (eodBalanceMap[challenge.mt5_login] || startBalance)
+        ? ((challenge.daily_start_balance as number | null) || startBalance)
         : startBalance;
       const totalThreshold = startBalance * (1 - totalLimit / 100);
       const dailyThreshold = dailyRef     * (1 - dailyLimit / 100);
