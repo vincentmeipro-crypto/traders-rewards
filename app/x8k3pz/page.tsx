@@ -29,6 +29,7 @@ type Challenge = {
   server: string;
   daily_drawdown_limit: number;
   total_drawdown_limit: number;
+  daily_dd?: number;
 };
 
 type PromoCode = {
@@ -1067,13 +1068,15 @@ export default function AdminPage() {
                             {(() => {
                               if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
                               const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
-                              const maxTotal = c.model === "1step" ? 8 : 10;
-                              const maxDaily = c.model === "1step" ? 3 : 5;
+                              const maxTotal = c.total_drawdown_limit ?? 10;
+                              const maxDaily = c.daily_drawdown_limit ?? 5;
+                              const dailyUsed = c.daily_dd ?? 0;
                               const color = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
+                              const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "rgba(255,255,255,0.3)";
                               return (
                                 <div style={{ fontSize: 11, lineHeight: 1.6 }}>
                                   <div style={{ fontWeight: 700, color }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</div>
-                                  <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 10 }}>Max: {maxTotal}% · J: {maxDaily}%</div>
+                                  <div style={{ color: ddColor, fontSize: 10 }}>Max: {maxTotal}% · J: -{dailyUsed.toFixed(2)}%/{maxDaily}%</div>
                                 </div>
                               );
                             })()}
