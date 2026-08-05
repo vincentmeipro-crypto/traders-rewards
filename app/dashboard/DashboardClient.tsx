@@ -579,9 +579,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const is1StepChallenge = challenge?.model?.toLowerCase().replace(/[\s-]/g,"").includes("1step") ?? false;
   const highestBalance = challenge?.highest_balance ?? challenge?.start_balance ?? 0;
   const totalDrawdownRaw = challenge
-    ? is1StepChallenge
-      ? (highestBalance > 0 ? ((highestBalance - effectiveBalance) / highestBalance) * 100 : 0)
-      : ((challenge.start_balance - effectiveBalance) / challenge.start_balance) * 100
+    ? ((challenge.start_balance - effectiveBalance) / challenge.start_balance) * 100
     : 0;
   const totalDrawdownPct = Math.max(0, totalDrawdownRaw).toFixed(2);
 
@@ -1887,9 +1885,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {(() => {
                     const b = challenge.start_balance;
                     const profitUSD  = Math.round(b * challenge.profit_target / 100);
-                    // 1-step: daily limit based on EOD balance (trailing); 2-step: fixed from start_balance
-                    const dailyRef   = is1StepChallenge ? (challenge.daily_start_balance ?? b) : b;
-                    const dailyUSD   = Math.round(dailyRef * challenge.daily_drawdown_limit / 100);
+                    const dailyUSD   = Math.round(b * challenge.daily_drawdown_limit / 100);
                     const totalUSD   = Math.round(b * challenge.total_drawdown_limit / 100);
                     const rules = [
                       ...(challenge.phase !== "funded" ? [{
@@ -1923,7 +1919,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           : `-${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`,
                       },
                       {
-                        label: is1StepChallenge ? `${T.dash.totalDrawdown} (trailing)` : T.dash.totalDrawdown,
+                        label: T.dash.totalDrawdown,
                         pct: `${challenge.total_drawdown_limit}%`,
                         usd: `-$${totalUSD.toLocaleString()}`,
                         usdColor: "rgba(255,255,255,0.45)",
@@ -1951,22 +1947,6 @@ export default function DashboardClient({ user }: { user: User }) {
                             status: bestDay === 0 ? "—" : violated ? T.dash.violated : `+${bestDayPct.toFixed(2)}% / ${(challenge.profit_target * 0.5).toFixed(1)}%`,
                           };
                         })(),
-                        (() => {
-                          const highest = challenge.highest_balance ?? b;
-                          const riskAmount = Math.round(b * challenge.total_drawdown_limit / 100);
-                          const floor = highest - riskAmount;
-                          const floorPct = b > 0 ? (((highest - b) / b) * 100) : 0;
-                          return {
-                            label: isFr ? "Plancher trailing EOD" : "Trailing EOD floor",
-                            pct: `${challenge.total_drawdown_limit}% trailing`,
-                            usd: `$${Math.round(floor).toLocaleString()}`,
-                            usdColor: "#3B82F6",
-                            ok: true,
-                            violated: false,
-                            isDrawdown: true,
-                            status: `$${Math.round(floor).toLocaleString()} (high: $${Math.round(highest).toLocaleString()})`,
-                          };
-                        })(),
                       ] : []),
                     ];
                     return rules.map((rule, i) => (
@@ -1985,62 +1965,6 @@ export default function DashboardClient({ user }: { user: User }) {
                       </div>
                     ));
                   })()}
-                  {challenge.model === "1step" && challenge.highest_balance && (
-                    (() => {
-                      const riskAmount = Math.round(challenge.start_balance * challenge.total_drawdown_limit / 100);
-                      const floor = Math.round(challenge.highest_balance! - riskAmount);
-                      const buffer = Math.round(challenge.balance - floor);
-                      return (
-                        <div style={{ marginTop: 14, padding: "12px 14px", backgroundColor: "rgba(245,158,11,0.06)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 10 }}>
-                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
-                            {isFr ? "Trailing EOD — 1-Step" : "Trailing EOD — 1-Step"}
-                          </div>
-                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                            <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Plus haut EOD" : "EOD High"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${Math.round(challenge.highest_balance!).toLocaleString()}</div>
-                            </div>
-                            <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Plancher actuel" : "Current floor"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${floor.toLocaleString()}</div>
-                            </div>
-                            <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Marge restante" : "Buffer left"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: buffer > 0 ? "#FFFFFF" : "#ef4444" }}>${buffer.toLocaleString()}</div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })()
-                  )}
-                  {challenge.model === "1step" && challenge.daily_start_balance && (
-                    (() => {
-                      const eodBal    = challenge.daily_start_balance!;
-                      const dailyFloor = Math.round(eodBal * (1 - (challenge.daily_drawdown_limit ?? 3) / 100));
-                      const dailyBuffer = Math.round(challenge.balance - dailyFloor);
-                      return (
-                        <div style={{ marginTop: 10, padding: "12px 14px", backgroundColor: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 10 }}>
-                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>
-                            {isFr ? "DD Journalier EOD — 1-Step" : "Daily DD EOD — 1-Step"}
-                          </div>
-                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                            <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Clôture veille" : "Prev. close"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${Math.round(eodBal).toLocaleString()}</div>
-                            </div>
-                            <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Plancher daily" : "Daily floor"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: "#FFFFFF" }}>${dailyFloor.toLocaleString()}</div>
-                            </div>
-                            <div style={{ flex: 1, minWidth: 100 }}>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 2 }}>{isFr ? "Marge restante" : "Buffer left"}</div>
-                              <div style={{ fontSize: 14, fontWeight: 800, color: dailyBuffer > 0 ? "#FFFFFF" : "#ef4444" }}>${dailyBuffer.toLocaleString()}</div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })()
-                  )}
                   {challenge.phase === "funded" && (() => {
                     const dailyOk = dailyDrawdownPct < (challenge.daily_drawdown_limit ?? 5);
                     const totalOk = parseFloat(totalDrawdownPct) < (challenge.total_drawdown_limit ?? 10);

@@ -102,11 +102,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     ? newEquity
     : Math.min(storedDailyLow, newEquity);
 
-  // Reference fixe au debut du jour: empeche qu un profit qui se retourne cree un faux DD
-  const storedDailyRef  = (challenge.daily_start_balance as number | null) ?? null;
-  const dailyRefBalance = (isNewDay || storedDailyRef === null) ? prevBalance : storedDailyRef;
-  const dailyDD         = dailyRefBalance > 0 ? ((dailyRefBalance - dailyLowEquity) / dailyRefBalance) * 100 : 0;
-  const dailyDDRounded  = parseFloat(dailyDD.toFixed(2));
+  // DD journalier : toujours calculé depuis start_balance (référence fixe du compte)
+  const dailyDD        = startBalance > 0 ? ((startBalance - dailyLowEquity) / startBalance) * 100 : 0;
+  const dailyDDRounded = parseFloat(dailyDD.toFixed(2));
 
   // 4. Mise Ã  jour balance dans Supabase
   const baseNow = new Date().toISOString();
@@ -118,7 +116,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     daily_low_equity: dailyLowEquity,
     ...(dayWasCounted && { last_trading_day: tradingDayId }),
   }).eq("id", id);
-  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay, daily_start_balance: dailyRefBalance }).eq("id", id); } catch {}
+  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch {}
 
   // 5a. Règle du meilleur jour 50% (1-step phase1 uniquement)
   // Un seul jour de profit ne peut pas dépasser 50% de l'objectif de profit
@@ -170,16 +168,11 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "failed", reason: "daily_drawdown", pct: dailyDD.toFixed(2) };
   }
 
-  // 6. Breach drawdown total
+  // 6. Breach drawdown total — référence fixe start_balance pour tous les modèles
   let totalDD = 0;
   let totalViolated = false;
-  if (is1Step) {
-    totalDD = newHighest > 0 ? ((newHighest - newEquity) / newHighest) * 100 : 0;
-    if (totalDD >= totalLimit) totalViolated = true;
-  } else {
-    totalDD = startBalance > 0 ? ((startBalance - newBalance) / startBalance) * 100 : 0;
-    if (totalDD >= totalLimit) totalViolated = true;
-  }
+  totalDD = startBalance > 0 ? ((startBalance - newBalance) / startBalance) * 100 : 0;
+  if (totalDD >= totalLimit) totalViolated = true;
   if (totalViolated) {
     const closeResult2 = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
     if (closeResult2.positions.length > 0) {

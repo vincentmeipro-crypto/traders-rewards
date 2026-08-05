@@ -201,7 +201,7 @@ const jsonLd = {
           name: "Quelles sont les règles de drawdown ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "2-Step : 5% de perte journalière maximum et 10% total. 1-Step : 3% journalier et 10% trailing total (EOD).",
+            text: "2-Step : 5% de perte journalière maximum et 10% total. 1-Step : 3% journalier et 10% total.",
           },
         },
         {

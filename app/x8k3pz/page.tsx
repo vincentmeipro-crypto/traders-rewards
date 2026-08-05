@@ -1082,10 +1082,9 @@ export default function AdminPage() {
                               const is1Step = c.model === "1step";
                               const maxTotal = c.total_drawdown_limit ?? 10;
                               const maxDaily = c.daily_drawdown_limit ?? (is1Step ? 3 : 5);
-                              const eodBal = c.daily_start_balance ?? c.start_balance;
-                              const dailyRef = is1Step ? eodBal : c.start_balance;
                               const highestBal = c.highest_balance ?? c.start_balance;
-                              const totalRef = is1Step ? highestBal : c.start_balance;
+                              const dailyRef = c.start_balance;
+                              const totalRef = c.start_balance;
 
                               // Pour comptes failed : afficher info breach uniquement
                               if (c.status === "failed") {
@@ -1127,9 +1126,7 @@ export default function AdminPage() {
 
                               // DD Max — divise par totalRef (pas start_balance) pour trailing correct
                               const totalUsed = Math.max(0, (totalRef - c.balance) / totalRef * 100);
-                              const totalFloor = is1Step
-                                ? Math.round(highestBal - c.start_balance * maxTotal / 100)
-                                : Math.round(c.start_balance * (1 - maxTotal / 100));
+                              const totalFloor = Math.round(c.start_balance * (1 - maxTotal / 100));
                               const totalPct = Math.min(totalUsed / maxTotal * 100, 100);
                               const totalColor = totalUsed >= maxTotal ? "#ef4444" : totalUsed >= maxTotal * 0.7 ? "#f59e0b" : "#a78bfa";
 
@@ -1148,7 +1145,7 @@ export default function AdminPage() {
                                   </div>
                                   <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${totalColor}33` }}>
                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Max{is1Step ? " (trailing)" : ""}</span>
+                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Max</span>
                                       <span style={{ fontSize: 11, fontWeight: 700, color: totalColor }}>-{totalUsed.toFixed(2)}% / {maxTotal}%</span>
                                     </div>
                                     <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>

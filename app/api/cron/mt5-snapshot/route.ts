@@ -48,17 +48,13 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      // 1-step : daily threshold = 3% of yesterday's EOD balance (daily_start_balance, set by metaapi/sync at day rollover)
-      // 2-step : daily threshold = 5% of initial start balance (absolute/fixed)
-      const dailyRef     = challenge.model === "1step"
-        ? ((challenge.daily_start_balance as number | null) || startBalance)
-        : startBalance;
+      // DD daily et total : référence fixe start_balance pour tous les modèles
       const totalThreshold = startBalance * (1 - totalLimit / 100);
-      const dailyThreshold = dailyRef     * (1 - dailyLimit / 100);
+      const dailyThreshold = startBalance * (1 - dailyLimit / 100);
 
       // --- CHECK 1 : equity temps réel ---
       const totalDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
-      const dailyDD = dailyRef     > 0 ? ((dailyRef     - equity) / dailyRef)     * 100 : 0;
+      const dailyDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
 
       let breachReason: string | null = null;
       let breachEquity = equity;
@@ -138,9 +134,7 @@ export async function GET(req: NextRequest) {
 
       // --- COUPE IMMÉDIATE si breach détecté ---
       if (breachReason) {
-        const breachPct = breachReason === "daily_drawdown"
-          ? parseFloat(((dailyRef - breachEquity) / dailyRef * 100).toFixed(2))
-          : parseFloat(((startBalance - breachEquity) / startBalance * 100).toFixed(2));
+        const breachPct = parseFloat(((startBalance - breachEquity) / startBalance * 100).toFixed(2));
         console.error(`BREACH [${challenge.mt5_login}] ${breachReason} — equity: ${breachEquity}, pct: ${breachPct}%`);
 
         await admin.from("challenges").update({
