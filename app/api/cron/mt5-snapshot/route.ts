@@ -25,6 +25,23 @@ export async function GET(req: NextRequest) {
   const { data: { users } } = await admin.auth.admin.listUsers();
   const userEmailMap = Object.fromEntries(users.map(u => [u.id, u.email ?? ""]));
 
+  // Pre-load EOD balances for 1-step challenges (3% of previous day's closing balance)
+  const todayMidnightUTC = new Date();
+  todayMidnightUTC.setUTCHours(0, 0, 0, 0);
+  const oneStepLogins = challenges.filter(c => c.model === "1step").map(c => c.mt5_login);
+  const eodBalanceMap: Record<number, number> = {};
+  for (const login of oneStepLogins) {
+    const { data: snap } = await admin
+      .from("mt5_snapshots")
+      .select("balance, equity")
+      .eq("mt5_login", login)
+      .lt("created_at", todayMidnightUTC.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (snap) eodBalanceMap[login] = snap.balance ?? snap.equity ?? 0;
+  }
+
   let synced = 0;
   let breaches = 0;
   let errors = 0;
@@ -48,13 +65,17 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      // Seuils absolus (référence fixe = startBalance)
+      // 1-step : daily threshold = 3% of yesterday's EOD balance (trailing)
+      // 2-step : daily threshold = 5% of initial start balance (absolute/fixed)
+      const dailyRef     = challenge.model === "1step"
+        ? (eodBalanceMap[challenge.mt5_login] || startBalance)
+        : startBalance;
       const totalThreshold = startBalance * (1 - totalLimit / 100);
-      const dailyThreshold = startBalance * (1 - dailyLimit / 100);
+      const dailyThreshold = dailyRef     * (1 - dailyLimit / 100);
 
       // --- CHECK 1 : equity temps réel ---
       const totalDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
-      const dailyDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
+      const dailyDD = dailyRef     > 0 ? ((dailyRef     - equity) / dailyRef)     * 100 : 0;
 
       let breachReason: string | null = null;
       let breachEquity = equity;
