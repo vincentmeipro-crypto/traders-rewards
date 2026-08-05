@@ -30,6 +30,7 @@ type Challenge = {
   daily_drawdown_limit: number;
   total_drawdown_limit: number;
   daily_dd?: number;
+  daily_start_balance?: number;
 };
 
 type PromoCode = {
@@ -1071,12 +1072,16 @@ export default function AdminPage() {
                               const maxTotal = c.total_drawdown_limit ?? 10;
                               const maxDaily = c.daily_drawdown_limit ?? 5;
                               const dailyUsed = c.daily_dd ?? 0;
+                              const is1Step = c.model === "1step";
+                              const eodBal = c.daily_start_balance ?? c.start_balance;
+                              const dailyFloor = is1Step ? Math.round(eodBal * (1 - maxDaily / 100)) : null;
                               const color = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
                               const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "rgba(255,255,255,0.3)";
                               return (
                                 <div style={{ fontSize: 11, lineHeight: 1.6 }}>
                                   <div style={{ fontWeight: 700, color }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</div>
                                   <div style={{ color: ddColor, fontSize: 10 }}>Max: {maxTotal}% · J: -{dailyUsed.toFixed(2)}%/{maxDaily}%</div>
+                                  {is1Step && dailyFloor !== null && <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 10 }}>Plancher: ${dailyFloor.toLocaleString()}</div>}
                                 </div>
                               );
                             })()}
