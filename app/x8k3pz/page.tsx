@@ -1065,7 +1065,7 @@ export default function AdminPage() {
                               ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
                               : `$${c.balance?.toLocaleString()}`}
                           </td>
-                          <td style={{ padding: "13px 14px" }}>
+                          <td style={{ padding: "8px 14px", minWidth: 160 }}>
                             {(() => {
                               if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
                               const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
@@ -1074,14 +1074,27 @@ export default function AdminPage() {
                               const dailyUsed = c.daily_dd ?? 0;
                               const is1Step = c.model === "1step";
                               const eodBal = c.daily_start_balance ?? c.start_balance;
-                              const dailyFloor = is1Step ? Math.round(eodBal * (1 - maxDaily / 100)) : null;
-                              const color = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
-                              const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "rgba(255,255,255,0.3)";
+                              const dailyFloor = is1Step ? Math.round(eodBal * (1 - maxDaily / 100)) : Math.round(c.start_balance * (1 - maxDaily / 100));
+                              const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
+                              const ddPct = dailyUsed / maxDaily * 100;
+                              const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";
                               return (
-                                <div style={{ fontSize: 11, lineHeight: 1.6 }}>
-                                  <div style={{ fontWeight: 700, color }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</div>
-                                  <div style={{ color: ddColor, fontSize: 10 }}>Max: {maxTotal}% · J: -{dailyUsed.toFixed(2)}%/{maxDaily}%</div>
-                                  {is1Step && dailyFloor !== null && <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 10 }}>Plancher: ${dailyFloor.toLocaleString()}</div>}
+                                <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                                  {/* Gain/Perte */}
+                                  <span style={{ fontWeight: 800, fontSize: 13, color: gainColor }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</span>
+                                  {/* DD Daily */}
+                                  <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${ddColor}33` }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
+                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Journalier</span>
+                                      <span style={{ fontSize: 11, fontWeight: 700, color: ddColor }}>-{dailyUsed.toFixed(2)}% / {maxDaily}%</span>
+                                    </div>
+                                    <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
+                                      <div style={{ width: `${Math.min(ddPct, 100)}%`, height: "100%", backgroundColor: ddColor, borderRadius: 99 }} />
+                                    </div>
+                                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>Plancher : <span style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>${dailyFloor.toLocaleString()}</span></div>
+                                  </div>
+                                  {/* DD Max */}
+                                  <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)" }}>DD Max : <span style={{ color: "rgba(255,255,255,0.55)" }}>{maxTotal}%</span></div>
                                 </div>
                               );
                             })()}
