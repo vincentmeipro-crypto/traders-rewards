@@ -652,7 +652,6 @@ export default function AdminPage() {
 
   const withdrawMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const t = await getFreshToken();
     const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
@@ -704,7 +703,6 @@ export default function AdminPage() {
   const provisionMT5 = async (c: Challenge) => {
     setProvisioningId(c.id);
     try {
-      const t = await getFreshToken();
       const res = await fetch("/api/admin/provision-mt5", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
