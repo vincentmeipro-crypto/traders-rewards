@@ -1083,7 +1083,7 @@ export default function AdminPage() {
                               const maxTotal = c.total_drawdown_limit ?? 10;
                               const maxDaily = c.daily_drawdown_limit ?? (is1Step ? 3 : 5);
                               const highestBal = c.highest_balance ?? c.start_balance;
-                              const dailyRef = c.start_balance;
+                              const dailyRef = c.daily_start_balance ?? c.start_balance;
                               const totalRef = c.start_balance;
 
                               // Pour comptes failed : afficher info breach uniquement
@@ -1120,7 +1120,7 @@ export default function AdminPage() {
                               const dailyLow = c.daily_low_equity ?? c.balance;
                               const worstToday = Math.min(c.balance, dailyLow);
                               const dailyUsed = Math.max(0, (dailyRef - worstToday) / dailyRef * 100);
-                              const dailyFloor = Math.round(dailyRef * (1 - maxDaily / 100));
+                              const dailyFloor = Math.round(c.start_balance * (1 - maxDaily / 100));
                               const ddPct = Math.min(dailyUsed / maxDaily * 100, 100);
                               const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";
 

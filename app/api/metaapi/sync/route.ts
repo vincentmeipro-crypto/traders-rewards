@@ -102,8 +102,12 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     ? newEquity
     : Math.min(storedDailyLow, newEquity);
 
-  // DD journalier : toujours calculé depuis start_balance (référence fixe du compte)
-  const dailyDD        = startBalance > 0 ? ((startBalance - dailyLowEquity) / startBalance) * 100 : 0;
+  // daily_start_balance = solde d'ouverture du jour courant (reset chaque nouveau jour)
+  const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
+  const dailyStartBalance = (isNewDay || storedDailyStart === null) ? newBalance : storedDailyStart;
+
+  // DD journalier affiche : perte depuis l'ouverture du jour (0 si aucune perte aujourd'hui)
+  const dailyDD        = dailyStartBalance > 0 ? Math.max(0, (dailyStartBalance - dailyLowEquity) / dailyStartBalance * 100) : 0;
   const dailyDDRounded = parseFloat(dailyDD.toFixed(2));
 
   // 4. Mise Ã  jour balance dans Supabase
@@ -114,6 +118,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     trading_days: newTradingDays,
     last_synced_at: baseNow,
     daily_low_equity: dailyLowEquity,
+    ...(isNewDay && { daily_start_balance: newBalance }),
     ...(dayWasCounted && { last_trading_day: tradingDayId }),
   }).eq("id", id);
   try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch {}
@@ -138,8 +143,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     return { status: "failed", reason: "best_day_rule", profit_pct: (dayProfit / startBalance * 100).toFixed(2) };
   }
 
-  // 5b. Breach drawdown journalier
-  if (dailyDD >= dailyLimit) {
+  // 5b. Breach drawdown journalier — plancher fixe base sur start_balance original
+  const dailyFloorEquity = startBalance * (1 - dailyLimit / 100);
+  if (dailyLowEquity < dailyFloorEquity) {
     const closeResult = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
     if (closeResult.positions.length > 0) {
       try {
