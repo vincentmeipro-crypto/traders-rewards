@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { addMT5Balance, getMT5Account, withdrawMT5Balance, changeMT5Group, disableMT5Account } from "@/lib/mt5";
 
@@ -11,7 +12,7 @@ async function checkAdmin(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const login = Number(req.nextUrl.searchParams.get("login"));
   if (!login) return NextResponse.json({ error: "Missing login" }, { status: 400 });
   try {
@@ -23,7 +24,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { login, amount, comment, withdraw, group } = await req.json();
   if (!login) return NextResponse.json({ error: "Missing login" }, { status: 400 });
   try {

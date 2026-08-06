@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const MT5_URL    = process.env.MT5_API_URL!;
@@ -14,7 +15,7 @@ async function checkAdmin(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const login = Number(req.nextUrl.searchParams.get("login") || "0");
   if (!login) return NextResponse.json({ error: "Passe ?login=XXXXXX dans l'URL" }, { status: 400 });

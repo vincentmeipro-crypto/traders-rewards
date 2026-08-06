@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendRewardCertificateEmail } from "@/lib/mailer";
 import { getMT5Account, withdrawMT5Balance } from "@/lib/mt5";
 
-const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
 async function checkAdmin(req: NextRequest) {
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -14,7 +14,7 @@ async function checkAdmin(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const admin = createAdminClient();
   const { data } = await admin.from("payouts").select("*").order("created_at", { ascending: false });
   const { data: { users } } = await admin.auth.admin.listUsers();
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id, status, rejection_reason } = await req.json();
   const admin = createAdminClient();
 

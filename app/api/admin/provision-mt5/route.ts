@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createMT5Account, getMT5Group } from "@/lib/mt5";
 import { sendWelcomeEmail } from "@/lib/mailer";
@@ -12,7 +13,7 @@ async function checkAdmin(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!await checkAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { challengeId } = await req.json();
   if (!challengeId) return NextResponse.json({ error: "Missing challengeId" }, { status: 400 });

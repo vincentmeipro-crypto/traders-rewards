@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 import { useEffect, useState, useMemo, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+
+// Clé admin statique — accès sans connexion Supabase
+const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 type Challenge = {
   id: string;
@@ -190,9 +191,8 @@ function CustomSelect({ value, onChange, options, small }: {
 }
 
 export default function AdminPage() {
-  const router = useRouter();
+  const token = true; // accès sans connexion — toujours autorisé
   const [tab, setTab] = useState<Tab>("overview");
-  const [token, setToken] = useState<string | null>(null);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [promos, setPromos] = useState<PromoCode[]>([]);
@@ -242,15 +242,6 @@ export default function AdminPage() {
   const [restoreLoading, setRestoreLoading] = useState(false);
   const [restoreMsg, setRestoreMsg] = useState("");
 
-  // Admin login form state
-  const [adminEmail, setAdminEmail] = useState("");
-  const [adminPassword, setAdminPassword] = useState("");
-  const [adminPin, setAdminPin] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPin, setShowPin] = useState(false);
-  const [adminLoginError, setAdminLoginError] = useState("");
-  const [adminLoginLoading, setAdminLoginLoading] = useState(false);
-  const [needsLogin, setNeedsLogin] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
@@ -278,10 +269,8 @@ export default function AdminPage() {
   const [settingsSaving, setSettingsSaving] = useState<string | null>(null); // key en cours de sauvegarde
   const [settingsMsg, setSettingsMsg] = useState<Record<string, { ok: boolean; msg: string }>>({});
 
-  const ADMIN_EMAIL = "vincentmeipro@gmail.com";
-
-  const loadAdminData = async (t: string) => {
-    const headers = { Authorization: `Bearer ${t}` };
+  const loadAdminData = async () => {
+    const headers = { "x-admin-key": ADMIN_KEY };
     const [cRes, pRes, kRes, prRes] = await Promise.all([
       fetch("/api/admin/challenges", { headers }),
       fetch("/api/admin/payouts",    { headers }),
@@ -296,33 +285,15 @@ export default function AdminPage() {
     setLoading(false);
   };
 
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!session || session.user.email !== ADMIN_EMAIL) {
-        setNeedsLogin(true);
-        setLoading(false);
-        return;
-      }
-      const t = session.access_token;
-      setToken(t);
-      await loadAdminData(t);
-    });
-    // Refresh token automatically when Supabase renews the session
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.access_token) setToken(session.access_token);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
+  useEffect(() => { loadAdminData(); }, []);
 
   const handleRestoreChallenges = async () => {
-    if (!token) return;
     setRestoreLoading(true);
     setRestoreMsg("Restauration en cours...");
     try {
       const res = await fetch("/api/admin/restore-challenges", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
         body: JSON.stringify({
           masterPassword: "M@SeSh2u",
           server: "XyloMarkets-Server",
@@ -347,49 +318,34 @@ export default function AdminPage() {
     }
   };
 
-  const handleAdminLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAdminLoginError("");
-    if (adminEmail !== ADMIN_EMAIL) { setAdminLoginError("Accès refusé"); return; }
-    setAdminLoginLoading(true);
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({ email: adminEmail, password: adminPassword });
-    if (error || !data.session) { setAdminLoginError("Email ou mot de passe incorrect"); setAdminLoginLoading(false); return; }
-    const t = data.session.access_token;
-    const pinRes = await fetch("/api/admin/verify-pin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ pin: adminPin, token: t }) });
-    if (!pinRes.ok) { setAdminLoginError("Code secret incorrect"); setAdminLoginLoading(false); await supabase.auth.signOut(); return; }
-    setToken(t);
-    setNeedsLogin(false);
-    setLoading(true);
-    await loadAdminData(t);
-  };
+  // handleAdminLogin supprimé — accès sans connexion
 
-  const loadPromos = async (t: string) => {
+  const loadPromos = async () => {
     setPromosLoading(true);
-    const res = await fetch("/api/admin/promo-codes", { headers: { Authorization: `Bearer ${t}` } });
+    const res = await fetch("/api/admin/promo-codes", { headers: { "x-admin-key": ADMIN_KEY } });
     const data = await res.json();
     if (Array.isArray(data)) setPromos(data);
     setPromosLoading(false);
   };
 
-  const loadKyc = async (t: string) => {
+  const loadKyc = async () => {
     setKycLoading(true);
-    const res = await fetch("/api/admin/kyc", { headers: { Authorization: `Bearer ${t}` } });
+    const res = await fetch("/api/admin/kyc", { headers: { "x-admin-key": ADMIN_KEY } });
     const data = await res.json();
     if (Array.isArray(data)) setKycSubmissions(data);
     setKycLoading(false);
   };
 
-  const loadSecurity = async (t: string) => {
+  const loadSecurity = async () => {
     setSecurityLoading(true);
-    const res = await fetch("/api/admin/security", { headers: { Authorization: `Bearer ${t}` } });
+    const res = await fetch("/api/admin/security", { headers: { "x-admin-key": ADMIN_KEY } });
     const data = await res.json();
     setSecurityData(data);
     setSecurityLoading(false);
     // Charger les IPs MT5 en parallèle
     setMt5Loading(true);
     try {
-      const mt5Res = await fetch("/api/security/mt5-ips", { headers: { Authorization: `Bearer ${t}` } });
+      const mt5Res = await fetch("/api/security/mt5-ips", { headers: { "x-admin-key": ADMIN_KEY } });
       if (mt5Res.ok) { const mt5Data = await mt5Res.json(); setMt5Sessions(mt5Data.sessions || []); }
     } catch { /* ignore */ }
     setMt5Loading(false);
@@ -403,23 +359,23 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    if (tab === "promos" && token && promos.length === 0) loadPromos(token);
+    if (tab === "promos" && promos.length === 0) loadPromos();
   }, [tab, token]);
 
   useEffect(() => {
-    if ((tab === "kyc" || tab === "crm") && token) loadKyc(token);
+    if ((tab === "kyc" || tab === "crm")) loadKyc();
   }, [tab, token]);
 
   useEffect(() => {
-    if (tab === "securite" && token) loadSecurity(token);
+    if (tab === "securite") loadSecurity();
   }, [tab, token]);
 
   const [settingsApiError, setSettingsApiError] = useState<string>("");
   useEffect(() => {
-    if (tab === "settings" && token && settingsData.length === 0) {
+    if (tab === "settings" && settingsData.length === 0) {
       setSettingsLoading(true);
       setSettingsApiError("");
-      fetch("/api/admin/settings", { headers: { Authorization: `Bearer ${token}` } })
+      fetch("/api/admin/settings", { headers: { "x-admin-key": ADMIN_KEY } })
         .then(async r => {
           const data = await r.json();
           console.log("[settings] API response:", r.status, data);
@@ -439,8 +395,8 @@ export default function AdminPage() {
   }, [tab, token]);
 
   useEffect(() => {
-    if (tab === "affilies" && token && !affiliatesLoaded) {
-      fetch("/api/admin/affiliates", { headers: { Authorization: `Bearer ${token}` } })
+    if (tab === "affilies" && !affiliatesLoaded) {
+      fetch("/api/admin/affiliates", { headers: { "x-admin-key": ADMIN_KEY } })
         .then(r => r.json()).then(data => { if (Array.isArray(data)) { setAffiliates(data); setAffiliatesLoaded(true); } });
     }
   }, [tab, token, affiliatesLoaded]);
@@ -449,7 +405,7 @@ export default function AdminPage() {
     if (!affiliatePromoForm || !affiliatePromoData.code) return;
     const res = await fetch("/api/admin/affiliates", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
       body: JSON.stringify({ action: "create_promo", code: affiliatePromoData.code, discount_percent: affiliatePromoData.discount, max_uses: affiliatePromoData.maxUses || null, affiliate_user_id: affiliatePromoForm.userId }),
     });
     const data = await res.json();
@@ -572,7 +528,7 @@ export default function AdminPage() {
   const saveChallenge = async (id: string) => {
     const res = await fetch("/api/admin/challenges", {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
       body: JSON.stringify({ id, ...editData }),
     });
     const updated = await res.json();
@@ -585,7 +541,7 @@ export default function AdminPage() {
     const c = challenges.find(x => x.id === id);
     const label = c ? `${c.client_first_name} ${c.client_last_name} — ${c.account_size} ${c.model} (${c.phase})` : id;
     if (!confirm(`Supprimer définitivement ce challenge ?\n\n${label}\n\nCette action est irréversible.`)) return;
-    await fetch("/api/admin/challenges", { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id }) });
+    await fetch("/api/admin/challenges", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
     setChallenges(cs => cs.filter(x => x.id !== id));
   };
 
@@ -594,13 +550,13 @@ export default function AdminPage() {
     const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
     const expected = sizeMap[c.account_size] ?? 0;
     // Lire la vraie balance MT5
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const diff = expected - mt5Balance;
     if (diff <= 0) { alert(`Balance MT5 déjà correcte : $${mt5Balance.toLocaleString()}`); return; }
     if (!confirm(`MT5 balance actuelle : $${mt5Balance.toLocaleString()}\nAjouter $${diff.toLocaleString()} pour atteindre $${expected.toLocaleString()} ?`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount: diff }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount: diff }) });
     const data = await res.json();
     if (res.ok) alert(`✅ +$${diff.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
     else alert(`Erreur : ${data.error}`);
@@ -608,28 +564,21 @@ export default function AdminPage() {
 
   const withdrawMT5Profit = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const profit = Math.round((mt5Balance - c.start_balance) * 100) / 100;
     if (profit <= 0) { alert(`Aucun profit à retirer. Balance MT5 : $${mt5Balance.toLocaleString()}`); return; }
     if (!confirm(`Retirer le profit de $${profit.toLocaleString()} sur MT5 ${c.mt5_login} ?\n(Balance actuelle : $${mt5Balance.toLocaleString()} → $${c.start_balance.toLocaleString()})`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: c.mt5_login, amount: profit, withdraw: true, comment: "Profit withdrawal" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount: profit, withdraw: true, comment: "Profit withdrawal" }) });
     const data = await res.json();
     if (res.ok) alert(`✅ Retrait de $${profit.toLocaleString()} effectué sur MT5 ${c.mt5_login}`);
     else alert(`Erreur : ${data.error}`);
   };
 
-  const getFreshToken = async (): Promise<string | null> => {
-    const { data: { session } } = await createClient().auth.getSession();
-    if (session?.access_token) { setToken(session.access_token); return session.access_token; }
-    return token;
-  };
-
   const addMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const t = await getFreshToken();
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${t}` } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const input = prompt(`MT5 #${c.mt5_login} — Balance actuelle : $${mt5Balance.toLocaleString()}\n\nMontant à ajouter ($) :`);
@@ -637,7 +586,7 @@ export default function AdminPage() {
     const amount = parseFloat(input.replace(",", "."));
     if (isNaN(amount) || amount <= 0) { alert("Montant invalide"); return; }
     if (!confirm(`Ajouter $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance + amount).toLocaleString()}`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: false, comment: "Ajout manuel admin" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: false, comment: "Ajout manuel admin" }) });
     const data = await res.json();
     if (res.ok) {
       const newBalance = mt5Balance + amount;
@@ -649,7 +598,7 @@ export default function AdminPage() {
   const withdrawMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
     const t = await getFreshToken();
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { Authorization: `Bearer ${t}` } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const input = prompt(`MT5 #${c.mt5_login} — Balance actuelle : $${mt5Balance.toLocaleString()}\n\nMontant à retirer ($) :`);
@@ -658,7 +607,7 @@ export default function AdminPage() {
     if (isNaN(amount) || amount <= 0) { alert("Montant invalide"); return; }
     if (amount > mt5Balance) { alert(`Impossible : $${amount.toLocaleString()} > balance ($${mt5Balance.toLocaleString()})`); return; }
     if (!confirm(`Retirer $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance - amount).toLocaleString()}`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: true, comment: "Retrait manuel admin" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: true, comment: "Retrait manuel admin" }) });
     const data = await res.json();
     if (res.ok) {
       const newBalance = mt5Balance - amount;
@@ -668,14 +617,13 @@ export default function AdminPage() {
   };
 
   const updatePayout = async (id: string, status: string) => {
-    if (!token) return;
-    const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id, status }) });
+    const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id, status }) });
     const data = await res.json();
     if (res.ok) {
       setPayouts(ps => ps.map(p => p.id === id ? { ...p, ...data } : p));
       // Refresh challenges so trading_days + balance display the reset values
       if (status === "paid") {
-        fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } })
+        fetch("/api/admin/challenges", { headers: { "x-admin-key": ADMIN_KEY } })
           .then(r => r.json()).then(d => { if (Array.isArray(d)) setChallenges(d); }).catch(() => {});
       }
     }
@@ -683,13 +631,13 @@ export default function AdminPage() {
 
   const triggerMT5WithdrawFromPayout = async (mt5Login: number, startBalance: number) => {
     if (!mt5Login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${mt5Login}`, { headers: { Authorization: `Bearer ${token}` } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${mt5Login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const profit = Math.round((mt5Balance - startBalance) * 100) / 100;
     if (profit <= 0) { alert(`Aucun profit MT5 à retirer.\nBalance actuelle : $${mt5Balance.toLocaleString()}`); return; }
     if (!confirm(`Retrait MT5 de $${profit.toLocaleString()} sur login ${mt5Login} ?\n(Balance : $${mt5Balance.toLocaleString()} → $${startBalance.toLocaleString()})`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ login: mt5Login, amount: profit, withdraw: true, comment: "Profit Withdrawal — Traders Rewards" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: mt5Login, amount: profit, withdraw: true, comment: "Profit Withdrawal — Traders Rewards" }) });
     const data = await res.json();
     if (res.ok) alert(`✅ Retrait MT5 de $${profit.toLocaleString()} effectué`);
     else alert(`Erreur MT5 : ${data.error}`);
@@ -699,13 +647,12 @@ export default function AdminPage() {
   const [provisionMsg, setProvisionMsg] = useState<Record<string, string>>({});
 
   const provisionMT5 = async (c: Challenge) => {
-    if (!token) return;
     setProvisioningId(c.id);
     try {
       const t = await getFreshToken();
       const res = await fetch("/api/admin/provision-mt5", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${t}` },
+        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
         body: JSON.stringify({ challengeId: c.id }),
       });
       const data = await res.json();
@@ -725,13 +672,13 @@ export default function AdminPage() {
   const createChallenge = async () => {
     if (!token || !createForm.userEmail || !createForm.accountSize) return;
     setCreateLoading(true); setCreateError(""); setCreateMsg("");
-    const res = await fetch("/api/admin/challenges", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
+    const res = await fetch("/api/admin/challenges", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
     const data = await res.json();
     setCreateLoading(false);
     if (res.ok) {
       setCreateMsg("✅ Challenge créé ! Email envoyé au trader.");
       setCreateForm(f => ({ ...f, userEmail: "", firstName: "", lastName: "", amountPaid: "" }));
-      const r = await fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } });
+      const r = await fetch("/api/admin/challenges", { headers: { "x-admin-key": ADMIN_KEY } });
       const d = await r.json();
       if (Array.isArray(d)) setChallenges(d);
     } else setCreateError(data.error || "Erreur");
@@ -740,30 +687,27 @@ export default function AdminPage() {
   const createPromo = async () => {
     if (!token || !newCode.code || !newCode.discount_percent) return;
     setPromoError("");
-    const res = await fetch("/api/admin/promo-codes", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ code: newCode.code, discount_percent: Number(newCode.discount_percent), max_uses: newCode.max_uses ? Number(newCode.max_uses) : null, expires_at: newCode.expires_at || null }) });
+    const res = await fetch("/api/admin/promo-codes", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ code: newCode.code, discount_percent: Number(newCode.discount_percent), max_uses: newCode.max_uses ? Number(newCode.max_uses) : null, expires_at: newCode.expires_at || null }) });
     const data = await res.json();
     if (res.ok) { setPromos(p => [data, ...p]); setNewCode({ code: "", discount_percent: "", max_uses: "", expires_at: "" }); setPromoMsg("Code créé !"); setTimeout(() => setPromoMsg(""), 3000); }
     else setPromoError(data.error || "Erreur");
   };
 
   const togglePromo = async (promo: PromoCode) => {
-    if (!token) return;
-    const res = await fetch("/api/admin/promo-codes", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id: promo.id, active: !promo.active }) });
+    const res = await fetch("/api/admin/promo-codes", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id: promo.id, active: !promo.active }) });
     const data = await res.json();
     if (res.ok) setPromos(p => p.map(x => x.id === promo.id ? data : x));
   };
 
   const [accessEmailMsg, setAccessEmailMsg] = useState<Record<string, string>>({});
   const sendAccessEmail = async (email: string) => {
-    if (!token) return;
-    const res = await fetch("/api/admin/send-access-email", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ email }) });
+    const res = await fetch("/api/admin/send-access-email", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ email }) });
     setAccessEmailMsg(m => ({ ...m, [email]: res.ok ? "✓ Email envoyé" : "Erreur" }));
     setTimeout(() => setAccessEmailMsg(m => { const n = { ...m }; delete n[email]; return n; }), 4000);
   };
 
   const updateKyc = async (user_id: string, status: string, rejection_reason?: string) => {
-    if (!token) return;
-    const res = await fetch("/api/admin/kyc", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ user_id, status, rejection_reason }) });
+    const res = await fetch("/api/admin/kyc", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ user_id, status, rejection_reason }) });
     if (res.ok) {
       setKycSubmissions(ks => ks.map(k => k.id === user_id ? { ...k, kyc_status: status, kyc_rejection_reason: rejection_reason || null } : k));
       setKycMsg(status === "approved" ? "✓ KYC approuvé" : "KYC refusé");
@@ -773,7 +717,7 @@ export default function AdminPage() {
 
   const deletePromo = async (id: string) => {
     if (!token || !confirm("Supprimer ce code ?")) return;
-    await fetch("/api/admin/promo-codes", { method: "DELETE", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id }) });
+    await fetch("/api/admin/promo-codes", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
     setPromos(p => p.filter(x => x.id !== id));
   };
 
@@ -784,7 +728,7 @@ export default function AdminPage() {
       const data = await res.json();
       setSyncMsg(`✓ ${data.synced ?? 0}/${data.total ?? 0} synchronisé(s)`);
       setSyncDetail(JSON.stringify(data.results ?? data, null, 2));
-      if (token) { const r = await fetch("/api/admin/challenges", { headers: { Authorization: `Bearer ${token}` } }); const d = await r.json(); if (Array.isArray(d)) setChallenges(d); }
+      if (token) { const r = await fetch("/api/admin/challenges", { headers: { "x-admin-key": ADMIN_KEY } }); const d = await r.json(); if (Array.isArray(d)) setChallenges(d); }
     } catch (e) { setSyncMsg("Erreur sync"); setSyncDetail(String(e)); }
     setSyncing(false);
   };
@@ -807,50 +751,7 @@ export default function AdminPage() {
 
   const maxCA = monthlyRevenue.length > 0 ? Math.max(...monthlyRevenue.map(m => m.ca)) : 1;
 
-  if (needsLogin) return (
-    <div style={{ minHeight: "100vh", backgroundColor: "#111111", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <div style={{ width: "100%", maxWidth: 400 }}>
-        <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <img src="/logo-nom-noir.png" style={{ width: 60, height: 60, objectFit: "contain", mixBlendMode: "screen" }} />
-          <div style={{ color: "#60A5FA", fontWeight: 800, fontSize: 13, letterSpacing: 3, textTransform: "uppercase", marginTop: 12 }}>Admin Panel</div>
-        </div>
-        <div style={{ backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "36px 32px" }}>
-          <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24, textAlign: "center" }}>Connexion Admin</h2>
-          <form onSubmit={handleAdminLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div>
-              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Email</div>
-              <input type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} placeholder="vincentmeipro@gmail.com" required
-                style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 10, padding: "12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-            </div>
-            <div>
-              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Mot de passe</div>
-              <div style={{ position: "relative" }}>
-                <input type={showPassword ? "text" : "password"} value={adminPassword} onChange={e => setAdminPassword(e.target.value)} placeholder="••••••••" required
-                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 10, padding: "12px 44px 12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-                <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.45)", padding: 0, fontSize: 18, lineHeight: 1 }}>
-                  {showPassword ? "🙈" : "👁️"}
-                </button>
-              </div>
-            </div>
-            <div>
-              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>Code secret</div>
-              <div style={{ position: "relative" }}>
-                <input type={showPin ? "text" : "password"} value={adminPin} onChange={e => setAdminPin(e.target.value)} placeholder="••••••••" required
-                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 10, padding: "12px 44px 12px 16px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
-                <button type="button" onClick={() => setShowPin(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.45)", padding: 0, fontSize: 18, lineHeight: 1 }}>
-                  {showPin ? "🙈" : "👁️"}
-                </button>
-              </div>
-            </div>
-            {adminLoginError && <div style={{ color: "#ef4444", fontSize: 13, textAlign: "center" }}>{adminLoginError}</div>}
-            <button type="submit" disabled={adminLoginLoading} style={{ width: "100%", padding: "14px", backgroundColor: "#60A5FA", border: "none", borderRadius: 10, color: "#000", fontWeight: 900, fontSize: 14, cursor: adminLoginLoading ? "not-allowed" : "pointer", opacity: adminLoginLoading ? 0.7 : 1, marginTop: 4 }}>
-              {adminLoginLoading ? "Connexion..." : "ACCÉDER AU PANEL"}
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+  // Formulaire login supprimé — accès direct sans connexion
 
   if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#000000", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Chargement...</div>;
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#000000", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#0a0a0a", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
@@ -882,7 +783,7 @@ export default function AdminPage() {
           </nav>
           <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", gap: 8 }}>
             <a href="/dashboard" style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
-            <button onClick={async () => { await createClient().auth.signOut(); setToken(null); setNeedsLogin(true); }} style={{ width: "100%", padding: "8px", backgroundColor: "rgba(239,68,68,0.12)", border: "none", borderRadius: 8, color: "#ef4444", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Déconnexion</button>
+            {/* Déconnexion supprimée — accès sans login */}
           </div>
         </div>
       )}
@@ -938,8 +839,7 @@ export default function AdminPage() {
                 {restoreMsg && <div style={{ color: restoreMsg.startsWith("✅") ? "#22c55e" : "#f59e0b", fontSize: 12, marginTop: 6, fontWeight: 600 }}>{restoreMsg}</div>}
               </div>
               <button onClick={async () => {
-                if (!token) return;
-                await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "Authorization": `Bearer ${token}` } });
+                            await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
                 setRestoreMsg("📧 Email de prévisualisation envoyé à vincentmeipro@gmail.com");
               }} style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.4)", borderRadius: 8, padding: "10px 16px", fontWeight: 600, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap" }}>
                 Recevoir une copie
@@ -2071,7 +1971,7 @@ export default function AdminPage() {
                               </button>
                               <button onClick={async () => {
                                 const reason = prompt("Motif du refus (visible par le client) :") || "";
-                                const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ id: p.id, status: "rejected", rejection_reason: reason }) });
+                                const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id: p.id, status: "rejected", rejection_reason: reason }) });
                                 const data = await res.json();
                                 if (res.ok) setPayouts(ps => ps.map(x => x.id === p.id ? { ...x, ...data } : x));
                               }} style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
@@ -2940,7 +2840,7 @@ export default function AdminPage() {
                       <span style={{ fontSize: 18 }}>📋</span>
                       <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Historique des connexions</span>
                     </div>
-                    <button onClick={() => token && loadSecurity(token)} style={{ fontSize: 12, color: "#60A5FA", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>↻ Rafraîchir</button>
+                    <button onClick={() => token && loadSecurity()} style={{ fontSize: 12, color: "#60A5FA", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>↻ Rafraîchir</button>
                   </div>
                   <div style={{ overflowX: "auto" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -2990,8 +2890,7 @@ export default function AdminPage() {
           }, {});
 
           const saveSetting = async (key: string) => {
-            if (!token) return;
-            const rawVal = settingsEdit[key];
+                    const rawVal = settingsEdit[key];
             if (rawVal === undefined) return;
             // Tenter de parser en nombre si possible
             let value: unknown = rawVal;
@@ -3002,7 +2901,7 @@ export default function AdminPage() {
             try {
               const res = await fetch("/api/admin/settings", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
                 body: JSON.stringify({ key, value }),
               });
               const data = await res.json();
@@ -3037,7 +2936,7 @@ export default function AdminPage() {
                   <button
                     onClick={() => {
                       setSettingsData([]); setSettingsLoading(true);
-                      fetch("/api/admin/settings", { headers: { Authorization: `Bearer ${token}` } })
+                      fetch("/api/admin/settings", { headers: { "x-admin-key": ADMIN_KEY } })
                         .then(r => r.json()).then(d => { if (d.settings) setSettingsData(d.settings); })
                         .finally(() => setSettingsLoading(false));
                     }}

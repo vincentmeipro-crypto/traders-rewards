@@ -1,22 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-const ADMIN_EMAIL = "vincentmeipro@gmail.com";
-
-async function checkAdmin(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) return null;
-  const admin = createAdminClient();
-  const { data: { user }, error } = await admin.auth.getUser(token);
-  if (error || !user || user.email !== ADMIN_EMAIL) return null;
-  return { admin, token };
-}
+import { checkAdmin } from "@/lib/admin-auth";
 
 // GET: all affiliates with their referrals
 export async function GET(req: NextRequest) {
-  const auth = await checkAdmin(req);
-  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { admin } = auth;
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const admin = createAdminClient();
 
   const { data: affiliates, error } = await admin
     .from("affiliates")
@@ -49,9 +38,8 @@ export async function GET(req: NextRequest) {
 
 // POST: update commission rate OR create promo code for affiliate
 export async function POST(req: NextRequest) {
-  const auth = await checkAdmin(req);
-  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const { admin } = auth;
+  if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const admin = createAdminClient();
 
   const body = await req.json();
 

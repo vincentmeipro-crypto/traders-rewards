@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendApologyEmail } from "@/lib/mailer";
 
-const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 const MT5_URL     = process.env.MT5_API_URL!;
 const MT5_SECRET  = process.env.MT5_API_SECRET!;
 const MT5_HEADERS = { "x-api-key": MT5_SECRET, "bypass-tunnel-reminder": "true" };
@@ -37,7 +37,7 @@ function balanceToAccountSize(balance: number): { label: string; value: number }
 // }
 
 export async function POST(req: NextRequest) {
-  if (!await checkAdmin(req)) {
+  if (!(await checkAdmin(req)).ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
