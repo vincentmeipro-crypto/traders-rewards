@@ -21,16 +21,16 @@ import {
   type SettingValue,
 } from "@/lib/config";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "vincentmeipro@gmail.com";
+const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
 async function checkAdmin(req: NextRequest) {
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) return { ok: false, userId: null as string | null };
+  if (!token) return { ok: false, userId: null as string | null, reason: "no token" };
   const admin = createAdminClient();
   const { data: { user }, error } = await admin.auth.getUser(token);
-  if (error || !user) return { ok: false, userId: null as string | null };
-  if (user.email !== ADMIN_EMAIL) return { ok: false, userId: null as string | null };
-  return { ok: true, userId: user.id };
+  if (error || !user) return { ok: false, userId: null as string | null, reason: error?.message || "no user" };
+  if (user.email !== ADMIN_EMAIL) return { ok: false, userId: null as string | null, reason: `email mismatch: ${user.email}` };
+  return { ok: true, userId: user.id, reason: "ok" };
 }
 
 const VALID_CATEGORIES = new Set<SettingCategory>([
@@ -42,7 +42,7 @@ const VALID_CATEGORIES = new Set<SettingCategory>([
 export async function GET(req: NextRequest) {
   const auth = await checkAdmin(req);
   if (!auth.ok) {
-    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+    return NextResponse.json({ error: "Accès refusé", debug: (auth as { reason?: string }).reason }, { status: 403 });
   }
 
   const { searchParams } = new URL(req.url);
@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const auth = await checkAdmin(req);
   if (!auth.ok) {
-    return NextResponse.json({ error: "Accès refusé" }, { status: 403 });
+    return NextResponse.json({ error: "Accès refusé", debug: (auth as { reason?: string }).reason }, { status: 403 });
   }
 
   let body: { key?: unknown; value?: unknown };
