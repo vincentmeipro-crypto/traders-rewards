@@ -502,7 +502,7 @@ function CheckoutContent() {
                 • Le trading sur notre plateforme est <strong style={{ color: "rgba(255,255,255,0.7)" }}>100% simulé</strong> — aucun capital réel, aucun ordre exécuté sur les marchés.<br />
                 • Les Frais de Challenge sont <strong style={{ color: "rgba(255,255,255,0.7)" }}>non remboursables</strong> dès l&apos;ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).<br />
                 • La récompense est de <strong style={{ color: "rgba(255,255,255,0.7)" }}>80% (2 Étapes)</strong> ou <strong style={{ color: "rgba(255,255,255,0.7)" }}>90% (1 Étape)</strong> des profits simulés.<br />
-                • Le capital simulé total est limité à <strong style={{ color: "rgba(255,255,255,0.7)" }}>100 000 USD</strong> par client.<br />
+                • Le capital simulé total est limité à <strong style={{ color: "rgba(255,255,255,0.7)" }}>200 000 USD</strong> par client.<br />
                 • En cas de violation des règles, nous pouvons résilier votre compte sans indemnité.<br />
                 • Droit applicable : <strong style={{ color: "rgba(255,255,255,0.7)" }}>loi estonienne</strong>.
               </p>

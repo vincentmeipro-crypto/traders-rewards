@@ -17,6 +17,8 @@ export default function Pricing() {
   const [model, setModel] = useState<"2step" | "1step">("2step");
   const [selectedSize, setSelectedSize] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  // Prix depuis la DB — remplace les valeurs hardcodées si disponibles
+  const [dbPrices, setDbPrices] = useState<Record<string, number>>({});
   const { T, lang } = useLanguage();
   const isFr = lang === "fr";
   const isEs = lang === "es";
@@ -27,6 +29,20 @@ export default function Pricing() {
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then(r => r.json())
+      .then((data: Array<{ slug: string; effective_price_cents: number }>) => {
+        if (!Array.isArray(data)) return;
+        const prices: Record<string, number> = {};
+        for (const p of data) {
+          if (p.slug && p.effective_price_cents) prices[p.slug] = p.effective_price_cents;
+        }
+        setDbPrices(prices);
+      })
+      .catch(() => { /* Fallback aux prix hardcodés */ });
   }, []);
 
   type Row = { label: string; value: string; highlight?: boolean; pct?: number };
@@ -56,9 +72,21 @@ export default function Pricing() {
   const sizeMap: Record<string, number> = { "$200,000": 200000, "$100,000": 100000, "$50,000": 50000, "$25,000": 25000, "$10,000": 10000 };
   const currentAcc = accounts[selectedSize];
 
+  // Retourne le prix formaté depuis la DB, ou null si non disponible (fallback aux props hardcodées)
+  const getDbPrice = (accId: string, m: string): string | null => {
+    const cents = dbPrices[`${accId}-${m}`];
+    return cents ? `€${Math.round(cents / 100)}` : null;
+  };
+  const getDbPromoPrice = (accId: string, m: string): string | null => {
+    const cents = dbPrices[`${accId}-${m}`];
+    if (!cents) return null;
+    const discounted = Math.round(cents * (100 - PROMO_PCT) / 100);
+    return `€${Math.round(discounted / 100)}`;
+  };
+
   const PriceCard = ({ acc, compact }: { acc: typeof accounts[0]; compact: boolean }) => {
-    const price = model === "2step" ? acc.price2 : acc.price1;
-    const promoPrice = model === "2step" ? acc.promo2 : acc.promo1;
+    const price      = getDbPrice(acc.id, model)      ?? (model === "2step" ? acc.price2 : acc.price1);
+    const promoPrice = getDbPromoPrice(acc.id, model) ?? (model === "2step" ? acc.promo2 : acc.promo1);
     return (
       <div className={`pricing-card${acc.popular ? " pricing-card-popular" : ""}`}>
         {/* Badge */}
