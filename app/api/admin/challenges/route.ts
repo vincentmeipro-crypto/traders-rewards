@@ -212,6 +212,13 @@ export async function PATCH(req: NextRequest) {
       updates.trading_days = (current.trading_days || 0) + 1;
     }
     updates.last_synced_at = new Date().toISOString();
+    // Si la balance descend sous daily_low_equity, mettre à jour le plancher du jour
+    if (updates.daily_low_equity === undefined) {
+      const curLow = current.daily_low_equity ?? current.balance;
+      if (updates.balance < curLow) {
+        updates.daily_low_equity = updates.balance;
+      }
+    }
   }
 
 
