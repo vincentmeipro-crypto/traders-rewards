@@ -97,14 +97,21 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const newHighest = is1Step
     ? (isNewDay ? Math.max(safeHighest, newBalance) : safeHighest)
     : Math.max(safeHighest, newBalance);
-  const storedDailyLow = (challenge.daily_low_equity as number | null) ?? null;
-  const dailyLowEquity = (isNewDay || storedDailyLow === null)
+  const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
+  const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
+
+  // daily_start_balance perimee = valeur laissee par l'ancien code EOD (= start_balance original)
+  // mais la balance a baisse depuis => on force un reset au solde du jour actuel
+  const dailyStartIsStale = !isNewDay
+    && storedDailyStart !== null
+    && Math.abs(storedDailyStart - startBalance) < 0.01
+    && newBalance < startBalance - 0.01;
+  const effectiveNewDay = isNewDay || dailyStartIsStale;
+
+  const dailyStartBalance = (effectiveNewDay || storedDailyStart === null) ? newBalance : storedDailyStart;
+  const dailyLowEquity    = (effectiveNewDay || storedDailyLow   === null)
     ? newEquity
     : Math.min(storedDailyLow, newEquity);
-
-  // daily_start_balance = solde d'ouverture du jour courant (reset chaque nouveau jour)
-  const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
-  const dailyStartBalance = (isNewDay || storedDailyStart === null) ? newBalance : storedDailyStart;
 
   // DD journalier affiche : perte depuis l'ouverture du jour (0 si aucune perte aujourd'hui)
   const dailyDD        = dailyStartBalance > 0 ? Math.max(0, (dailyStartBalance - dailyLowEquity) / dailyStartBalance * 100) : 0;
@@ -118,7 +125,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     trading_days: newTradingDays,
     last_synced_at: baseNow,
     daily_low_equity: dailyLowEquity,
-    ...(isNewDay && { daily_start_balance: newBalance }),
+    ...(effectiveNewDay && { daily_start_balance: newBalance }),
     ...(dayWasCounted && { last_trading_day: tradingDayId }),
   }).eq("id", id);
   try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch {}

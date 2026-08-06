@@ -56,13 +56,23 @@ export async function GET(req: NextRequest) {
       const lastSyncedAt = (challenge.last_synced_at as string | null) ?? null;
       const isNewDay = !lastSyncedAt || new Date(lastSyncedAt) < tradingDayStart;
 
-      // daily_start_balance = balance à l'ouverture du jour (reset sur nouveau jour)
       const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
-      const dailyStartBalance = (isNewDay || storedDailyStart === null) ? (account.balance ?? startBalance) : storedDailyStart;
+      const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
+      const curBalance       = account.balance ?? startBalance;
 
-      // daily_low_equity = plus bas equity du jour courant (reset sur nouveau jour)
-      const storedDailyLow = (challenge.daily_low_equity as number | null) ?? null;
-      const dailyLowEquity = (isNewDay || storedDailyLow === null) ? equity : Math.min(storedDailyLow, equity);
+      // Valeur perimee laissee par l'ancien code EOD : daily_start_balance = start_balance original
+      // alors que la balance a baisse => force reset au solde actuel
+      const dailyStartIsStale = !isNewDay
+        && storedDailyStart !== null
+        && Math.abs(storedDailyStart - startBalance) < 0.01
+        && curBalance < startBalance - 0.01;
+      const effectiveNewDay = isNewDay || dailyStartIsStale;
+
+      // daily_start_balance = balance ouverture du jour (reset sur nouveau jour ou perimee)
+      const dailyStartBalance = (effectiveNewDay || storedDailyStart === null) ? curBalance : storedDailyStart;
+
+      // daily_low_equity = plus bas equity du jour courant (reset sur nouveau jour ou perimee)
+      const dailyLowEquity = (effectiveNewDay || storedDailyLow === null) ? equity : Math.min(storedDailyLow, equity);
 
       // daily_dd affiché = perte depuis l'ouverture du jour (0 si pas de perte aujourd'hui)
       const dailyDDDisplay = dailyStartBalance > 0 ? Math.max(0, (dailyStartBalance - dailyLowEquity) / dailyStartBalance * 100) : 0;
@@ -179,7 +189,7 @@ export async function GET(req: NextRequest) {
         last_synced_at:      new Date().toISOString(),
         daily_low_equity:    dailyLowEquity,
         daily_dd:            parseFloat(dailyDDDisplay.toFixed(2)),
-        ...(isNewDay && { daily_start_balance: account.balance ?? startBalance }),
+        ...(effectiveNewDay && { daily_start_balance: curBalance }),
       }).eq("id", challenge.id);
 
       await admin.from("mt5_snapshots").insert({
