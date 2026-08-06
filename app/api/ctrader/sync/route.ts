@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
   // Get all active challenges with cTrader tokens
   const { data: challenges } = await admin
     .from("challenges")
-    .select("*")
+    .select("*, daily_start_balance, daily_low_equity, last_synced_at")
     .not("ctrader_refresh_token", "is", null)
     .eq("status", "active");
 
@@ -120,7 +120,31 @@ export async function GET(req: NextRequest) {
       const account = await getAccountData(accessToken);
       if (!account) continue;
 
-      const newBalance = account.balance ? account.balance / 100 : challenge.balance;
+      const newBalance   = account.balance ? account.balance / 100 : challenge.balance;
+      const startBalance = challenge.start_balance ?? challenge.balance;
+
+      // Tracking du jour de trading (22:00 UTC)
+      const now2 = new Date();
+      const tradingDayStart = new Date(now2);
+      if (now2.getUTCHours() < 22) tradingDayStart.setUTCDate(tradingDayStart.getUTCDate() - 1);
+      tradingDayStart.setUTCHours(22, 0, 0, 0);
+      const lastSyncedAt = (challenge.last_synced_at as string | null) ?? null;
+      const isNewDay = !lastSyncedAt || new Date(lastSyncedAt) < tradingDayStart;
+
+      const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
+      const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
+
+      // Detecte donnees perimees
+      const dailyStartIsStale = !isNewDay && storedDailyStart !== null
+        && Math.abs(storedDailyStart - startBalance) < 0.01
+        && newBalance < startBalance - 0.01;
+      const dailyLowIsStale = !isNewDay && storedDailyLow !== null
+        && storedDailyLow < newBalance - startBalance * 0.01;
+      const effectiveNewDay = isNewDay || dailyStartIsStale || dailyLowIsStale;
+
+      const dailyStartBalance = (effectiveNewDay || storedDailyStart === null) ? newBalance : storedDailyStart;
+      const dailyLowEquity    = (effectiveNewDay || storedDailyLow   === null) ? newBalance : Math.min(storedDailyLow, newBalance);
+      const dailyDD = dailyStartBalance > 0 ? Math.max(0, (dailyStartBalance - dailyLowEquity) / dailyStartBalance * 100) : 0;
 
       // Count today as trading day if there was activity
       const hasActivity = account.balance !== (challenge.balance * 100);
@@ -132,6 +156,9 @@ export async function GET(req: NextRequest) {
         balance: newBalance,
         trading_days: newTradingDays,
         last_synced_at: new Date().toISOString(),
+        daily_low_equity:   dailyLowEquity,
+        daily_dd:           parseFloat(dailyDD.toFixed(2)),
+        ...(effectiveNewDay && { daily_start_balance: newBalance }),
       }).eq("id", challenge.id);
 
       // Check phase transition + drawdown (prevBalance = balance before this sync)

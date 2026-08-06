@@ -100,13 +100,16 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
   const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
 
-  // daily_start_balance perimee = valeur laissee par l'ancien code EOD (= start_balance original)
-  // mais la balance a baisse depuis => on force un reset au solde du jour actuel
-  const dailyStartIsStale = !isNewDay
-    && storedDailyStart !== null
+  // Detecte donnees perimees de l'ancien code EOD
+  const noOpenPos        = Math.abs(newEquity - newBalance) < 0.50;
+  const dailyStartIsStale = !isNewDay && storedDailyStart !== null
     && Math.abs(storedDailyStart - startBalance) < 0.01
     && newBalance < startBalance - 0.01;
-  const effectiveNewDay = isNewDay || dailyStartIsStale;
+  // daily_low_equity perimee : valeur bien plus basse que la balance actuelle sans position ouverte
+  const dailyLowIsStale  = !isNewDay && storedDailyLow !== null
+    && noOpenPos
+    && storedDailyLow < newBalance - startBalance * 0.01;
+  const effectiveNewDay  = isNewDay || dailyStartIsStale || dailyLowIsStale;
 
   const dailyStartBalance = (effectiveNewDay || storedDailyStart === null) ? newBalance : storedDailyStart;
   const dailyLowEquity    = (effectiveNewDay || storedDailyLow   === null)
