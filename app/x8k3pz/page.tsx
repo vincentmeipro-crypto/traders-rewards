@@ -1068,7 +1068,11 @@ export default function AdminPage() {
                           </td>
                           <td style={{ padding: "13px 14px", fontWeight: 700 }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
+                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => {
+                                  const nb = Number(e.target.value);
+                                  const curLow = editData.daily_low_equity ?? c.daily_low_equity ?? c.balance;
+                                  setEditData(d => ({ ...d, balance: nb, daily_low_equity: Math.min(curLow, nb) }));
+                                }} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
                               : c.status === "failed" && c.breach_equity
                                 ? <div>
                                     <div style={{ color: "#ef4444", fontSize: 13 }}>${Math.round(c.breach_equity).toLocaleString()}</div>
