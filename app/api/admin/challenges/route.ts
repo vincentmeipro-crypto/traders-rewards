@@ -212,8 +212,20 @@ export async function PATCH(req: NextRequest) {
       updates.trading_days = (current.trading_days || 0) + 1;
     }
     updates.last_synced_at = new Date().toISOString();
-    // Si la balance descend sous daily_low_equity, mettre à jour le plancher du jour
-    if (updates.daily_low_equity === undefined) {
+
+    // Détection nouveau jour de trading (22:00 UTC → 21:59 UTC)
+    const now = new Date();
+    const tradingDayStart = new Date(now);
+    if (now.getUTCHours() < 22) tradingDayStart.setUTCDate(tradingDayStart.getUTCDate() - 1);
+    tradingDayStart.setUTCHours(22, 0, 0, 0);
+    const isNewTradingDay = !current.last_synced_at || new Date(current.last_synced_at) < tradingDayStart;
+
+    if (isNewTradingDay) {
+      // Premier update de la journée → reset référence DD JOUR
+      updates.daily_start_balance = updates.balance;
+      updates.daily_low_equity    = updates.balance;
+    } else if (updates.daily_low_equity === undefined) {
+      // Même jour → faire descendre le plancher si balance baisse
       const curLow = current.daily_low_equity ?? current.balance;
       if (updates.balance < curLow) {
         updates.daily_low_equity = updates.balance;
