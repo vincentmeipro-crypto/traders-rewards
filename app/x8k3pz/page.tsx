@@ -414,15 +414,26 @@ export default function AdminPage() {
     if (tab === "securite" && token) loadSecurity(token);
   }, [tab, token]);
 
+  const [settingsApiError, setSettingsApiError] = useState<string>("");
   useEffect(() => {
     if (tab === "settings" && token && settingsData.length === 0) {
       setSettingsLoading(true);
+      setSettingsApiError("");
       fetch("/api/admin/settings", { headers: { Authorization: `Bearer ${token}` } })
-        .then(r => r.json())
-        .then(data => {
-          if (data.settings) setSettingsData(data.settings);
+        .then(async r => {
+          const data = await r.json();
+          console.log("[settings] API response:", r.status, data);
+          if (data.settings && data.settings.length > 0) {
+            setSettingsData(data.settings);
+          } else if (data.error) {
+            setSettingsApiError(`Erreur API (${r.status}): ${data.error}`);
+          } else if (data.settings && data.settings.length === 0) {
+            setSettingsApiError("API OK mais table settings vide — migration SQL non exécutée ?");
+          } else {
+            setSettingsApiError(`Réponse inattendue: ${JSON.stringify(data)}`);
+          }
         })
-        .catch(() => {})
+        .catch(e => setSettingsApiError(`Erreur réseau: ${e.message}`))
         .finally(() => setSettingsLoading(false));
     }
   }, [tab, token]);
@@ -3042,8 +3053,10 @@ export default function AdminPage() {
               )}
 
               {!settingsLoading && settingsData.length === 0 && (
-                <div style={{ textAlign: "center", padding: 60, color: "#ef4444" }}>
-                  Aucun setting trouvé. La migration SQL a-t-elle été exécutée ?
+                <div style={{ textAlign: "center", padding: 40, color: "#ef4444", background: "#ef444410", borderRadius: 8, border: "1px solid #ef444430" }}>
+                  <div style={{ fontWeight: 700, marginBottom: 8 }}>⚠ Settings non chargés</div>
+                  <div style={{ fontSize: 13, opacity: 0.8 }}>{settingsApiError || "Erreur inconnue"}</div>
+                  <div style={{ fontSize: 11, marginTop: 12, color: "rgba(255,255,255,0.3)" }}>Détails dans la console navigateur (F12)</div>
                 </div>
               )}
 
