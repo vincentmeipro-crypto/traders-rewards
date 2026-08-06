@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getStringConfig } from "@/lib/config";
 
 async function getAuthUser(req: NextRequest) {
   const token = req.headers.get("Authorization")?.replace("Bearer ", "");
@@ -76,7 +77,7 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     code: affiliate?.code,
-    link: `https://www.traders-rewards.eu/?ref=${affiliate?.code}`,
+    link: `${await getStringConfig("branding.site_url")}/?ref=${affiliate?.code}`,
     total_conversions,
     total_commission,
     pending_commission,

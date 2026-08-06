@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getStringConfig } from "@/lib/config";
 
 const SIZE_VALUES: Record<string, number> = {
   "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,
@@ -39,7 +40,8 @@ export async function POST(req: NextRequest) {
     const orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}`;
     const amountEur = parseFloat((finalAmount / 100).toFixed(6));
 
-    const siteUrl = "https://www.traders-rewards.eu";
+    // V2 Phase 1 — URL depuis settings (fallback si Supabase indisponible)
+    const siteUrl = await getStringConfig("branding.site_url");
 
     const res = await fetch("https://api.nowpayments.io/v1/invoice", {
       method: "POST",

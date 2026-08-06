@@ -1,25 +1,97 @@
-﻿const SITE = "https://www.traders-rewards.eu";
-const LOGO = "https://www.traders-rewards.eu/logo-email-small.png";
+/**
+ * ============================================================
+ * MAILER — Traders Rewards V2 Phase 1
+ * ============================================================
+ * V2 Phase 1 : les valeurs branding (SITE, LOGO, sender) et les
+ * paramètres de payout sont chargés depuis la table settings via
+ * lib/config.ts. Fallback hardcodé si Supabase indisponible.
+ *
+ * Pour modifier ces valeurs : Admin → Settings (interface admin).
+ * Ne plus éditer les URLs ou emails directement dans ce fichier.
+ * ============================================================
+ */
+
+import { getBrandingConfig, getPayoutSplits } from "@/lib/config";
+
+// ── Sender résolution ─────────────────────────────────────────
+
+async function resolveSender(): Promise<string> {
+  try {
+    const b = await getBrandingConfig();
+    return `${b.senderName} <${b.senderEmail}>`;
+  } catch {
+    return "Traders Rewards <contact@traders-rewards.eu>";
+  }
+}
+
+// ── Transport email ───────────────────────────────────────────
 
 async function sendEmail(to: string, subject: string, html: string) {
+  const from = await resolveSender();
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      from: "Traders Rewards <contact@traders-rewards.eu>",
-      to: [to],
-      subject,
-      html,
-    }),
+    body: JSON.stringify({ from, to: [to], subject, html }),
   });
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`Resend error: ${err}`);
   }
 }
+
+// ── Builder d'email générique ─────────────────────────────────
+
+function buildEmail({
+  title, titleColor, body, details, cta, logoUrl,
+}: {
+  title: string;
+  titleColor: string;
+  body: string;
+  details: { label: string; value: string; color?: string }[];
+  cta: { text: string; href: string };
+  logoUrl: string;
+}) {
+  return `
+    <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
+      <div style="max-width:580px;margin:0 auto;">
+
+        <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
+          <img src="${logoUrl}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
+        </div>
+
+        <div style="background:#ffffff;border-radius:12px;padding:40px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+          <h2 style="color:${titleColor};font-size:22px;font-weight:700;margin:0 0 12px 0;">${title}</h2>
+          <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 28px 0;">${body}</p>
+
+          <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
+            ${details.map(d => `
+              <tr>
+                <td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;width:55%;">${d.label} :</td>
+                <td style="color:${d.color || "#111"};font-size:14px;font-weight:700;font-family:monospace;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${d.value}</td>
+              </tr>
+            `).join("")}
+          </table>
+
+          <a href="${cta.href}" style="display:block;background:#60A5FA;color:#ffffff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">${cta.text}</a>
+        </div>
+
+        <div style="margin-top:32px;padding:0 8px;">
+          <p style="color:#555;font-size:14px;margin:0 0 8px 0;">💬 Besoin d'aide ?</p>
+          <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 20px 0;">
+            Contactez-nous à <a href="mailto:contact@traders-rewards.eu" style="color:#60A5FA;text-decoration:none;">contact@traders-rewards.eu</a>
+          </p>
+          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+// ── Emails exportés ───────────────────────────────────────────
 
 export async function sendWelcomeEmail(
   to: string,
@@ -28,6 +100,9 @@ export async function sendWelcomeEmail(
   mt5?: { login: number; password: string; server: string },
   setupLink?: string
 ) {
+  const branding = await getBrandingConfig();
+  const { siteUrl, logoUrl } = branding;
+
   const isAlgo = model === "vip";
   const modelLabel = isAlgo ? "Challenge ALGO" : model === "1step" ? "Challenge Trader 1-Step" : "Challenge Trader 2-Step";
   const details: { label: string; value: string; color?: string }[] = [
@@ -52,7 +127,7 @@ export async function sendWelcomeEmail(
       { label: "Mot de passe MT5", value: mt5.password,      color: "#1a73e8" },
     );
   }
-  const ctaHref = setupLink || `${SITE}/dashboard`;
+  const ctaHref = setupLink || `${siteUrl}/dashboard`;
   const ctaText = setupLink ? "Créer mon mot de passe & accéder au Dashboard →" : "Accéder à mon Dashboard →";
   const bodyText = setupLink
     ? `Bienvenue dans l'élite. Votre ${modelLabel} ${accountSize} a été créé. Cliquez sur le bouton ci-dessous pour définir votre mot de passe et accéder à votre dashboard.`
@@ -65,10 +140,16 @@ export async function sendWelcomeEmail(
     body: bodyText,
     details,
     cta: { text: ctaText, href: ctaHref },
+    logoUrl,
   }));
 }
 
-export async function sendPhase2Email(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }) {
+export async function sendPhase2Email(
+  to: string,
+  accountSize: string,
+  mt5?: { login: number; password: string; server: string }
+) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
   await sendEmail(to, "🏆 Phase 1 réussie — Bienvenue en Phase 2 !", buildEmail({
     title: "🏆 Phase 1 réussie !",
     titleColor: "#60A5FA",
@@ -83,11 +164,18 @@ export async function sendPhase2Email(to: string, accountSize: string, mt5?: { l
         { label: "Serveur", value: mt5.server },
       ] : []),
     ],
-    cta: { text: "Voir mon Dashboard →", href: `${SITE}/dashboard` },
+    cta: { text: "Voir mon Dashboard →", href: `${siteUrl}/dashboard` },
+    logoUrl,
   }));
 }
 
-export async function sendFailedEmail(to: string, accountSize: string, reason: "daily_drawdown" | "total_drawdown", mt5Login?: number) {
+export async function sendFailedEmail(
+  to: string,
+  accountSize: string,
+  reason: "daily_drawdown" | "total_drawdown",
+  mt5Login?: number
+) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
   const reasonLabel = reason === "daily_drawdown" ? "Drawdown journalier dépassé" : "Drawdown total dépassé";
   const reasonDetail = reason === "daily_drawdown"
     ? "Votre limite de perte journalière a été atteinte. C'est une règle automatique de protection du capital."
@@ -102,15 +190,28 @@ export async function sendFailedEmail(to: string, accountSize: string, reason: "
       { label: "Raison", value: reasonLabel, color: "#ef4444" },
       { label: "Statut", value: "Challenge clôturé" },
     ],
-    cta: { text: "Commencer un nouveau challenge →", href: `${SITE}/#pricing` },
+    cta: { text: "Commencer un nouveau challenge →", href: `${siteUrl}/#pricing` },
+    logoUrl,
   }));
 }
 
-export async function sendFundedEmail(to: string, accountSize: string, mt5?: { login: number; password: string; server: string }, setupLink?: string, model?: string) {
-  const ctaHref = setupLink || `${SITE}/dashboard`;
+export async function sendFundedEmail(
+  to: string,
+  accountSize: string,
+  mt5?: { login: number; password: string; server: string },
+  setupLink?: string,
+  model?: string
+) {
+  const [branding, splits] = await Promise.all([
+    getBrandingConfig(),
+    getPayoutSplits(),
+  ]);
+  const { siteUrl, logoUrl } = branding;
+  const ctaHref = setupLink || `${siteUrl}/dashboard`;
   const ctaText = setupLink ? "Créer mon mot de passe & accéder au Dashboard →" : "Demander ma première récompense →";
   const is1Step = model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
-  const profitSplit = is1Step ? "90% pour vous" : "80% pour vous";
+  const splitPct = is1Step ? splits.split1step : splits.split2step;
+  const profitSplit = `${splitPct}% pour vous`;
   await sendEmail(to, "🎉 Vous êtes Trader Reward ! Bienvenue chez Traders Rewards", buildEmail({
     title: "🎉 Félicitations — Vous êtes Trader Reward !",
     titleColor: "#3b82f6",
@@ -126,6 +227,7 @@ export async function sendFundedEmail(to: string, accountSize: string, mt5?: { l
       ] : []),
     ],
     cta: { text: ctaText, href: ctaHref },
+    logoUrl,
   }));
 }
 
@@ -138,6 +240,7 @@ export async function sendDailyUpdateEmail(
   tradingDays: number,
   opts?: { model?: string; highestBalance?: number; totalLimit?: number; startBalance?: number }
 ) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
   const phaseLabel = phase === "phase1" ? "Phase 1" : phase === "phase2" ? "Phase 2" : "Reward";
   const profitColor = profitPct >= 0 ? "#22c55e" : "#ef4444";
   const profitSign = profitPct >= 0 ? "+" : "";
@@ -165,18 +268,22 @@ export async function sendDailyUpdateEmail(
     titleColor: "#60A5FA",
     body: `Voici votre résumé de performance du jour pour votre challenge ${accountSize}.`,
     details,
-    cta: { text: "Voir mon Dashboard →", href: `${SITE}/dashboard` },
+    cta: { text: "Voir mon Dashboard →", href: `${siteUrl}/dashboard` },
+    logoUrl,
   }));
 }
 
-export async function sendPhase1CertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, date: string) {
+export async function sendPhase1CertificateEmail(
+  to: string, firstName: string, lastName: string, accountSize: string, date: string
+) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
   const name = `${firstName} ${lastName}`.trim();
-  const certUrl = `${SITE}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
+  const certUrl = `${siteUrl}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
   await sendEmail(to, `🏆 Félicitations ${firstName} — Certificat Phase 1 obtenu !`, `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
+          <img src="${logoUrl}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <div style="background:#0e0e0e;padding:32px 36px 24px;border-bottom:1px solid #1a1a1a;">
@@ -207,14 +314,17 @@ export async function sendPhase1CertificateEmail(to: string, firstName: string, 
   `);
 }
 
-export async function sendChallengeCertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, date: string) {
+export async function sendChallengeCertificateEmail(
+  to: string, firstName: string, lastName: string, accountSize: string, date: string
+) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
   const name = `${firstName} ${lastName}`.trim();
-  const certUrl = `${SITE}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
+  const certUrl = `${siteUrl}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
   await sendEmail(to, `🎉 ${firstName} — Vous êtes Trader Reward !`, `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
+          <img src="${logoUrl}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <div style="background:#0e0e0e;padding:32px 36px 24px;border-bottom:1px solid #1a1a1a;">
@@ -245,20 +355,29 @@ export async function sendChallengeCertificateEmail(to: string, firstName: strin
   `);
 }
 
-export async function sendRewardCertificateEmail(to: string, firstName: string, lastName: string, accountSize: string, grossAmount: number, model: string, date: string, netAmountEur?: number) {
+export async function sendRewardCertificateEmail(
+  to: string, firstName: string, lastName: string, accountSize: string,
+  grossAmount: number, model: string, date: string, netAmountEur?: number
+) {
+  const [branding, splits] = await Promise.all([
+    getBrandingConfig(),
+    getPayoutSplits(),
+  ]);
+  const { siteUrl, logoUrl } = branding;
   const name = `${firstName} ${lastName}`.trim();
   const is1Step = model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
-  const splitPct = is1Step ? 90 : 80;
+  const splitPct = is1Step ? splits.split1step : splits.split2step;
   const netAmount = Math.round(grossAmount * splitPct / 100);
-  const certUrl = `${SITE}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}`;
+  const certUrl = `${siteUrl}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}`;
   const eurRow = netAmountEur != null
     ? `<tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Équivalent EUR :</td><td style="color:#3b82f6;font-size:15px;font-weight:800;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td></tr>`
     : "";
-  await sendEmail(to, `💰 ${firstName} — Votre récompense de $${netAmount.toLocaleString()}${netAmountEur != null ? ` (≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €)` : ""} est en cours !`, `
+  const subjectSuffix = netAmountEur != null ? ` (≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €)` : "";
+  await sendEmail(to, `💰 ${firstName} — Votre récompense de $${netAmount.toLocaleString()}${subjectSuffix} est en cours !`, `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
+          <img src="${logoUrl}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
         </div>
         <div style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
           <div style="background:#0e0e0e;padding:32px 36px 24px;border-bottom:1px solid #1a1a1a;">
@@ -298,6 +417,7 @@ export async function sendApologyEmail(
   phase: string,
   mt5: { login: number; password: string; server: string }
 ) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
   const phaseLabel = phase === "funded" ? "Trader Reward" : phase === "phase2" ? "Phase 2" : "Phase 1";
   const titleColor = phase === "funded" ? "#3b82f6" : "#1565C0";
   await sendEmail(to, "✅ Votre compte Traders Rewards est rétabli", buildEmail({
@@ -312,49 +432,7 @@ export async function sendApologyEmail(
       { label: "Login MT5",       value: String(mt5.login), color: "#1a73e8" },
       { label: "Mot de passe",    value: mt5.password,      color: "#1a73e8" },
     ],
-    cta: { text: "Accéder à mon Dashboard →", href: `${SITE}/dashboard` },
+    cta: { text: "Accéder à mon Dashboard →", href: `${siteUrl}/dashboard` },
+    logoUrl,
   }));
 }
-
-function buildEmail({ title, titleColor, body, details, cta }: {
-  title: string; titleColor: string; body: string;
-  details: { label: string; value: string; color?: string }[];
-  cta: { text: string; href: string };
-}) {
-  return `
-    <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
-      <div style="max-width:580px;margin:0 auto;">
-
-        <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
-          <img src="${LOGO}" alt="Traders Rewards" style="height:216px;width:auto;display:inline-block;" />
-        </div>
-
-        <div style="background:#ffffff;border-radius:12px;padding:40px 36px;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-          <h2 style="color:${titleColor};font-size:22px;font-weight:700;margin:0 0 12px 0;">${title}</h2>
-          <p style="color:#444;font-size:15px;line-height:1.7;margin:0 0 28px 0;">${body}</p>
-
-          <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #e8e8e8;margin-bottom:28px;">
-            ${details.map(d => `
-              <tr>
-                <td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;width:55%;">${d.label} :</td>
-                <td style="color:${d.color || "#111"};font-size:14px;font-weight:700;font-family:monospace;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">${d.value}</td>
-              </tr>
-            `).join("")}
-          </table>
-
-          <a href="${cta.href}" style="display:block;background:#60A5FA;color:#ffffff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">${cta.text}</a>
-        </div>
-
-        <div style="margin-top:32px;padding:0 8px;">
-          <p style="color:#555;font-size:14px;margin:0 0 8px 0;">💬 Besoin d'aide ?</p>
-          <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 20px 0;">
-            Contactez-nous à <a href="mailto:contact@traders-rewards.eu" style="color:#60A5FA;text-decoration:none;">contact@traders-rewards.eu</a>
-          </p>
-          <p style="color:#777;font-size:13px;margin:0;">Cordialement,<br/><strong style="color:#444;">L'équipe Traders Rewards</strong></p>
-        </div>
-
-      </div>
-    </div>
-  `;
-}
-

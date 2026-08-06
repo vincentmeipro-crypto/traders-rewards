@@ -1,12 +1,14 @@
 import { MetadataRoute } from "next";
+import { getStringConfig } from "@/lib/config";
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://www.traders-rewards.eu";
+// V2 Phase 1 — URL du site depuis settings (fallback si Supabase indisponible)
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const base = await getStringConfig("branding.site_url");
   const now = new Date();
 
   return [
     {
-      url: base,
+      url: String(base),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 1.0,

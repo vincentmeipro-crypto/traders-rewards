@@ -72,7 +72,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "financier_algo" | "payouts" | "payouts_algo" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite";
+type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "financier_algo" | "payouts" | "payouts_algo" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite" | "settings";
 
 type LoginEvent = {
   id: string;
@@ -139,6 +139,7 @@ const TABS: { id: Tab; label: string }[] = [
   { id: "compta",    label: "🧾 Comptabilité" },
   { id: "securite",  label: "🔐 Sécurité" },
   { id: "create",    label: "➕ Créer Challenge" },
+  { id: "settings",  label: "⚙️ Settings" },
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
@@ -267,6 +268,14 @@ export default function AdminPage() {
   const [affiliatePromoForm, setAffiliatePromoForm] = useState<{ affiliateId: string; userId: string } | null>(null);
   const [affiliatePromoData, setAffiliatePromoData] = useState({ code: "", discount: "10", maxUses: "" });
   const [affiliateMsg, setAffiliateMsg] = useState("");
+
+  // Settings state (V2 Phase 1)
+  type SettingRow = { key: string; value: unknown; category: string; description: string | null; updated_at: string };
+  const [settingsData, setSettingsData] = useState<SettingRow[]>([]);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsEdit, setSettingsEdit] = useState<Record<string, string>>({}); // key → edited value string
+  const [settingsSaving, setSettingsSaving] = useState<string | null>(null); // key en cours de sauvegarde
+  const [settingsMsg, setSettingsMsg] = useState<Record<string, { ok: boolean; msg: string }>>({});
 
   const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
@@ -402,6 +411,19 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (tab === "securite" && token) loadSecurity(token);
+  }, [tab, token]);
+
+  useEffect(() => {
+    if (tab === "settings" && token && settingsData.length === 0) {
+      setSettingsLoading(true);
+      fetch("/api/admin/settings", { headers: { Authorization: `Bearer ${token}` } })
+        .then(r => r.json())
+        .then(data => {
+          if (data.settings) setSettingsData(data.settings);
+        })
+        .catch(() => {})
+        .finally(() => setSettingsLoading(false));
+    }
   }, [tab, token]);
 
   useEffect(() => {
@@ -2938,6 +2960,167 @@ export default function AdminPage() {
             )}
           </div>
         )}
+
+        {/* ── SETTINGS ── V2 Phase 1 ──────────────────────────── */}
+        {tab === "settings" && (() => {
+          const CATEGORY_LABELS: Record<string, string> = {
+            branding:   "🎨 Branding",
+            trading:    "📈 Trading / MT5 Groups",
+            challenges: "🎯 Challenges (defaults globaux)",
+            payouts:    "💰 Payouts",
+            emails:     "✉️ Emails",
+            general:    "⚙️ Général",
+          };
+          const grouped = settingsData.reduce((acc: Record<string, SettingRow[]>, row) => {
+            if (!acc[row.category]) acc[row.category] = [];
+            acc[row.category].push(row);
+            return acc;
+          }, {});
+
+          const saveSetting = async (key: string) => {
+            if (!token) return;
+            const rawVal = settingsEdit[key];
+            if (rawVal === undefined) return;
+            // Tenter de parser en nombre si possible
+            let value: unknown = rawVal;
+            const num = Number(rawVal);
+            if (rawVal.trim() !== "" && !isNaN(num)) value = num;
+
+            setSettingsSaving(key);
+            try {
+              const res = await fetch("/api/admin/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                body: JSON.stringify({ key, value }),
+              });
+              const data = await res.json();
+              if (data.success) {
+                setSettingsMsg(p => ({ ...p, [key]: { ok: true, msg: "✓ Sauvegardé" } }));
+                // Mettre à jour la liste locale
+                setSettingsData(prev => prev.map(r => r.key === key ? { ...r, value } : r));
+                setSettingsEdit(p => { const n = { ...p }; delete n[key]; return n; });
+              } else {
+                setSettingsMsg(p => ({ ...p, [key]: { ok: false, msg: data.error || "Erreur" } }));
+              }
+            } catch {
+              setSettingsMsg(p => ({ ...p, [key]: { ok: false, msg: "Erreur réseau" } }));
+            } finally {
+              setSettingsSaving(null);
+              setTimeout(() => setSettingsMsg(p => { const n = { ...p }; delete n[key]; return n; }), 3000);
+            }
+          };
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+              {/* Header */}
+              <div style={{ background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "20px 24px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                  <div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 4 }}>⚙️ Paramètres de la plateforme</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                      V2 Phase 1 — Les modifications prennent effet dans les 5 minutes (cache TTL).<br/>
+                      <span style={{ color: "#f59e0b" }}>⚠ Ne jamais stocker des secrets ici (Stripe keys, API keys, passwords)</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setSettingsData([]); setSettingsLoading(true);
+                      fetch("/api/admin/settings", { headers: { Authorization: `Bearer ${token}` } })
+                        .then(r => r.json()).then(d => { if (d.settings) setSettingsData(d.settings); })
+                        .finally(() => setSettingsLoading(false));
+                    }}
+                    style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 8, color: "#60A5FA", padding: "8px 16px", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+                  >
+                    ↻ Rafraîchir
+                  </button>
+                </div>
+              </div>
+
+              {settingsLoading && (
+                <div style={{ textAlign: "center", padding: 60, color: "rgba(255,255,255,0.3)" }}>Chargement des settings…</div>
+              )}
+
+              {!settingsLoading && settingsData.length === 0 && (
+                <div style={{ textAlign: "center", padding: 60, color: "#ef4444" }}>
+                  Aucun setting trouvé. La migration SQL a-t-elle été exécutée ?
+                </div>
+              )}
+
+              {/* Settings par catégorie */}
+              {Object.entries(CATEGORY_LABELS).map(([cat, catLabel]) => {
+                const rows = grouped[cat] || [];
+                if (rows.length === 0) return null;
+                const isCritical = cat === "trading" || cat === "challenges" || cat === "payouts";
+                return (
+                  <div key={cat} style={{ background: "#111", border: `1px solid ${isCritical ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.1)"}`, borderRadius: 12, overflow: "hidden" }}>
+                    <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>{catLabel}</span>
+                      {isCritical && <span style={{ fontSize: 10, background: "#ef444415", color: "#ef4444", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>CRITIQUE — fallback logué</span>}
+                      {cat === "challenges" && <span style={{ fontSize: 10, background: "#f59e0b15", color: "#f59e0b", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>DEFAULTS GLOBAUX Phase 1</span>}
+                    </div>
+                    <div style={{ padding: "8px 0" }}>
+                      {rows.map(row => {
+                        const currentEdit = settingsEdit[row.key];
+                        const displayVal = typeof row.value === "string" ? row.value : JSON.stringify(row.value);
+                        const editVal = currentEdit !== undefined ? currentEdit : displayVal;
+                        const isDirty = currentEdit !== undefined;
+                        const msg = settingsMsg[row.key];
+                        const saving = settingsSaving === row.key;
+                        return (
+                          <div key={row.key} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", marginBottom: 2, fontFamily: "monospace" }}>{row.key}</div>
+                              {row.description && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 6 }}>{row.description}</div>}
+                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>
+                                Modifié le {new Date(row.updated_at).toLocaleString("fr-FR")}
+                              </div>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                              <input
+                                value={editVal}
+                                onChange={e => setSettingsEdit(p => ({ ...p, [row.key]: e.target.value }))}
+                                style={{
+                                  background: isDirty ? "rgba(96,165,250,0.08)" : "rgba(255,255,255,0.05)",
+                                  border: `1px solid ${isDirty ? "#60A5FA" : "rgba(255,255,255,0.1)"}`,
+                                  borderRadius: 6, padding: "6px 10px", color: "#fff",
+                                  fontSize: 12, fontFamily: "monospace", width: 260, outline: "none",
+                                }}
+                              />
+                              {isDirty && (
+                                <button
+                                  onClick={() => saveSetting(row.key)}
+                                  disabled={saving}
+                                  style={{
+                                    background: saving ? "#374151" : "#60A5FA",
+                                    border: "none", borderRadius: 6, color: saving ? "rgba(255,255,255,0.4)" : "#000",
+                                    padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer",
+                                  }}
+                                >
+                                  {saving ? "…" : "Sauvegarder"}
+                                </button>
+                              )}
+                              {isDirty && !saving && (
+                                <button
+                                  onClick={() => setSettingsEdit(p => { const n = { ...p }; delete n[row.key]; return n; })}
+                                  style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "6px 10px", fontSize: 12, cursor: "pointer" }}
+                                >
+                                  ✕
+                                </button>
+                              )}
+                              {msg && (
+                                <span style={{ fontSize: 11, fontWeight: 700, color: msg.ok ? "#22c55e" : "#ef4444" }}>{msg.msg}</span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         </div>
       </div>

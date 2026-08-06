@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getBrandingConfig } from "@/lib/config";
 
 export async function POST(req: NextRequest) {
+  // V2 Phase 1 — sender depuis settings (fallback si Supabase indisponible)
+  const branding = await getBrandingConfig();
   const { firstName, lastName, email, message } = await req.json();
 
   if (!firstName || !lastName || !email || !message) {
@@ -36,8 +39,8 @@ export async function POST(req: NextRequest) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Traders Rewards Support <contact@traders-rewards.eu>",
-      to: ["vincentmeipro@gmail.com"],
+      from: `${branding.senderName} Support <${branding.senderEmail}>`,
+      to: [process.env.ADMIN_EMAIL || "vincentmeipro@gmail.com"],
       reply_to: email,
       subject: `[Support] ${firstName} ${lastName} — nouveau message`,
       html,

@@ -2,6 +2,7 @@
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
+import { getChallengeDefaults } from "@/lib/config";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -39,6 +40,9 @@ export async function POST(req: NextRequest) {
     const lastName  = userData?.user?.user_metadata?.last_name  || profile?.last_name  || session.customer_details?.name?.split(" ").slice(1).join(" ") || "";
     const email     = userData?.user?.email || session.customer_details?.email || "";
 
+    // V2 Phase 1 : paramètres challenge depuis settings (fallback hardcodé si Supabase indisponible)
+    const challengeDefaults = await getChallengeDefaults();
+
     const { data: inserted } = await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
@@ -47,9 +51,9 @@ export async function POST(req: NextRequest) {
       phase: "phase1",
       balance: size,
       start_balance: size,
-      profit_target: 10,
-      daily_drawdown_limit: model === "1step" ? 3 : 5,
-      total_drawdown_limit: 10,
+      profit_target: challengeDefaults.profitTarget,
+      daily_drawdown_limit: model === "1step" ? challengeDefaults.dailyDd1step : challengeDefaults.dailyDd2step,
+      total_drawdown_limit: challengeDefaults.totalDdDefault,
       trading_days: 0,
       stripe_session_id: session.id,
       amount_paid: (session.amount_total || 0) / 100,

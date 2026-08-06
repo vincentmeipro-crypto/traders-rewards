@@ -2,6 +2,7 @@
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
+import { getChallengeDefaults } from "@/lib/config";
 
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "10k-2step":  { accountSize: "$10,000",  model: "2step" },
@@ -86,6 +87,9 @@ export async function POST(req: NextRequest) {
       if (existing) return NextResponse.json({ received: true, duplicate: true });
     }
 
+    // V2 Phase 1 : paramètres challenge depuis settings (fallback hardcodé si Supabase indisponible)
+    const challengeDefaults = await getChallengeDefaults();
+
     const { data: inserted, error: insertError } = await admin.from("challenges").insert({
       user_id: userId,
       account_size: accountSize,
@@ -94,9 +98,9 @@ export async function POST(req: NextRequest) {
       phase: "phase1",
       balance: size,
       start_balance: size,
-      profit_target: 10,
-      daily_drawdown_limit: model === "1step" ? 3 : 5,
-      total_drawdown_limit: 10,
+      profit_target: challengeDefaults.profitTarget,
+      daily_drawdown_limit: model === "1step" ? challengeDefaults.dailyDd1step : challengeDefaults.dailyDd2step,
+      total_drawdown_limit: challengeDefaults.totalDdDefault,
       trading_days: 0,
       stripe_session_id: nowpaymentsId || null,
       amount_paid: Math.round(parseFloat(body.price_amount || "0") * 1e6) / 1e6,

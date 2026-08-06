@@ -12,6 +12,12 @@ const MT5_HEADERS = {
 // demoG3 = Funded 2-Step
 // demoG4 = Funded 1-Step
 // demoG5 = Comptes désactivés / breach
+//
+// Note V2 Phase 1 : les groupes sont configurables via la table settings.
+// getMT5Group() reste SYNCHRONE (rétrocompatibilité avec tous les appelants).
+// Pour une version dynamique (Settings DB), passer overrideMap :
+//   const map = await getMT5GroupMap();   // lib/config.ts
+//   const group = getMT5Group(model, phase, map);
 const GROUP_MAP: Record<string, string> = {
   "2step":         "HAR/MAN32/demoG1",
   "1step":         "HAR/MAN32/demoG2",
@@ -21,9 +27,24 @@ const GROUP_MAP: Record<string, string> = {
   "disabled":      "HAR/MAN32/demoG5",
 };
 
-export function getMT5Group(model: string, phase = "challenge"): string {
-  if (phase === "funded") return GROUP_MAP[`funded_${model}`] ?? GROUP_MAP["2step"];
-  return GROUP_MAP[model] ?? GROUP_MAP["2step"];
+/**
+ * Retourne le groupe MT5 pour un modèle et une phase donnés.
+ *
+ * @param model       - "2step" | "1step" | "vip" | ...
+ * @param phase       - "challenge" (défaut) | "funded"
+ * @param overrideMap - (optionnel) map issu de getMT5GroupMap() pour config dynamique.
+ *                      Si absent, utilise GROUP_MAP hardcodé (rétrocompatible).
+ *
+ * IMPORTANT: NE PAS passer d'overrideMap dans mt5-snapshot/route.ts (ABSOLUTE RULE).
+ */
+export function getMT5Group(
+  model: string,
+  phase = "challenge",
+  overrideMap?: Record<string, string>
+): string {
+  const map = overrideMap ?? GROUP_MAP;
+  if (phase === "funded") return map[`funded_${model}`] ?? map["2step"] ?? GROUP_MAP["2step"];
+  return map[model] ?? map["2step"] ?? GROUP_MAP["2step"];
 }
 
 const SIZE_MAP: Record<string, number> = {

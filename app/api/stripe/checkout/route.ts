@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getStringConfig } from "@/lib/config";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -21,13 +22,14 @@ const PRODUCTS = {
   "200k-1step": { name: "Challenge $200,000 — 1-Step",amount: 74900,  accountSize: "$200,000", model: "1step" },
 };
 
-const SITE_URL = "https://www.traders-rewards.eu";
-
 export async function POST(req: NextRequest) {
   try {
     const { productId, userId, userEmail, promoCode, discount, refCode } = await req.json();
     const product = PRODUCTS[productId as keyof typeof PRODUCTS];
     if (!product) return NextResponse.json({ error: "Invalid product" }, { status: 400 });
+
+    // V2 Phase 1 — URL depuis settings (fallback si Supabase indisponible)
+    const SITE_URL = await getStringConfig("branding.site_url");
 
     const admin = createAdminClient();
 
