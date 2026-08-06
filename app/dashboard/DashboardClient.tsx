@@ -575,7 +575,15 @@ export default function DashboardClient({ user }: { user: User }) {
   const profitPct = challenge ? ((profitAmount / challenge.start_balance) * 100).toFixed(2) : "0";
   const targetAmount = challenge ? challenge.start_balance * (1 + challenge.profit_target / 100) : 0;
   const targetPct = challenge ? Math.min(((profitAmount / (targetAmount - challenge.start_balance)) * 100), 100).toFixed(0) : "0";
-  const dailyDrawdownPct = challenge?.daily_dd ?? 0;
+  // DD Jour : depuis l'ouverture du jour (22h reset). Si daily_start_balance = start_balance
+  // (valeur perimee ancienne code), on prend la balance actuelle comme reference => 0% si pas de trade
+  const _b   = challenge?.balance ?? 0;
+  const _sb  = challenge?.start_balance ?? _b;
+  const _dS  = challenge?.daily_start_balance ?? null;
+  const _dL  = challenge?.daily_low_equity ?? _b;
+  const _periodStart = (_dS !== null && Math.abs(_dS - _sb) > 1) ? _dS : _b;
+  const _periodLow   = (_dL >= _b - _sb * 0.015) ? _dL : _b;
+  const dailyDrawdownPct = _periodStart > 0 ? Math.max(0, (_periodStart - _periodLow) / _periodStart * 100) : 0;
   const is1StepChallenge = challenge?.model?.toLowerCase().replace(/[\s-]/g,"").includes("1step") ?? false;
   const highestBalance = challenge?.highest_balance ?? challenge?.start_balance ?? 0;
   const totalDrawdownRaw = challenge
