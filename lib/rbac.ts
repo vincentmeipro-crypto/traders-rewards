@@ -4,15 +4,13 @@
  * ============================================================
  * Phase 1 : authentification → identification → rôle → permission
  *
- * Implémentation minimale :
- *   - Seul rôle : "admin"
- *   - Admin = email dans ADMIN_EMAIL (env var)
- *   - Permissions définies statiquement par rôle
+ * Supporte deux modes d'authentification :
+ *   1. Bearer token (Authorization header) — admin panel fetch
+ *   2. Session cookie — accès navigateur direct
  *
  * Phase 1.2 (évolution future sans breaking change) :
- *   - Remplacer isAdmin() par une query table user_roles
+ *   - Remplacer resolveRole() par une query table user_roles
  *   - La signature checkPermission() reste identique
- *   - Aucun appelant existant ne sera cassé
  *
  * SÉCURITÉ :
  *   - Ne jamais faire confiance au frontend pour les rôles
@@ -21,6 +19,8 @@
  * ============================================================
  */
 
+import { NextRequest } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 // ── Types ─────────────────────────────────────────────────────
@@ -43,20 +43,14 @@ export type Permission =
 
 /** Résultat d'une vérification RBAC */
 export interface AuthCheckResult {
-  /** Utilisateur authentifié avec succès */
   authenticated: boolean;
-  /** L'utilisateur possède le rôle/permission requis */
-  authorized: boolean;
-  /** UUID de l'utilisateur authentifié */
-  userId: string | null;
-  /** Email de l'utilisateur authentifié */
-  email:  string | null;
-  /** Message d'erreur si !authenticated || !authorized */
-  error?: string;
+  authorized:    boolean;
+  userId:        string | null;
+  email:         string | null;
+  error?:        string;
 }
 
 // ── Matrice des permissions par rôle ─────────────────────────
-// Phase 1 : admin only. Étendre pour support/trader en Phase 1.2.
 const ROLE_PERMISSIONS: Record<Role, Set<Permission>> = {
   admin: new Set([
     "settings.read",
@@ -87,25 +81,60 @@ const ROLE_PERMISSIONS: Record<Role, Set<Permission>> = {
 
 /**
  * Détermine le rôle d'un utilisateur.
- * Phase 1 : compare l'email à ADMIN_EMAIL (env var).
+ * Phase 1 : compare l'email à ADMIN_EMAIL (env var) avec fallback hardcodé.
  * Phase 1.2 : remplacer par une query table user_roles.
  */
 function resolveRole(email: string): Role {
-  const adminEmail = process.env.ADMIN_EMAIL;
-  if (!adminEmail) {
-    // Sécurité : si ADMIN_EMAIL n'est pas configuré, personne n'est admin
-    console.error("[rbac] ADMIN_EMAIL non configuré — aucun admin possible");
-    return "trader";
-  }
+  // Fallback hardcodé si ADMIN_EMAIL n'est pas défini en prod (Vercel)
+  const adminEmail = process.env.ADMIN_EMAIL || "vincentmeipro@gmail.com";
   if (email === adminEmail) return "admin";
   return "trader";
 }
 
-/**
- * Vérifie si un rôle possède une permission.
- */
 function roleHasPermission(role: Role, permission: Permission): boolean {
   return ROLE_PERMISSIONS[role]?.has(permission) ?? false;
+}
+
+// ── Résolution de l'utilisateur ───────────────────────────────
+
+/**
+ * Récupère l'utilisateur depuis :
+ *   1. Bearer token (Authorization header) — admin panel
+ *   2. Session cookie — navigateur direct
+ * Retourne null si non authentifié.
+ */
+async function resolveUser(
+  req?: NextRequest
+): Promise<{ id: string; email: string } | null> {
+  // 1. Essayer Bearer token (pattern des autres routes admin)
+  if (req) {
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "").trim();
+    if (token) {
+      try {
+        const admin = createAdminClient();
+        const { data: { user }, error } = await admin.auth.getUser(token);
+        if (!error && user?.email) {
+          return { id: user.id, email: user.email };
+        }
+      } catch {
+        // Continuer vers le fallback cookie
+      }
+    }
+  }
+
+  // 2. Fallback : session cookie (Next.js server component / direct browser access)
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (!error && user?.email) {
+      return { id: user.id, email: user.email };
+    }
+  } catch {
+    // Non authentifié
+  }
+
+  return null;
 }
 
 // ── API publique ──────────────────────────────────────────────
@@ -113,27 +142,23 @@ function roleHasPermission(role: Role, permission: Permission): boolean {
 /**
  * Vérifie l'authentification ET la permission d'un utilisateur.
  *
- * Pattern d'utilisation dans une route API :
+ * @param permission - Permission requise pour l'action
+ * @param req        - NextRequest optionnel pour lire le Bearer token
+ *
+ * Exemple dans une route API :
  * ```typescript
- * const check = await checkPermission("settings.update");
+ * const check = await checkPermission("settings.update", req);
  * if (!check.authenticated) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
  * if (!check.authorized)    return NextResponse.json({ error: "Accès refusé" },    { status: 403 });
- * // check.userId et check.email sont disponibles
  * ```
- *
- * @param permission - Permission requise pour l'action
  */
 export async function checkPermission(
-  permission: Permission
+  permission: Permission,
+  req?: NextRequest
 ): Promise<AuthCheckResult> {
-  // 1. Authentification : récupérer l'utilisateur courant
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabase.auth.getUser();
-
-  if (authError || !user) {
+  // 1. Authentification
+  const user = await resolveUser(req);
+  if (!user) {
     return {
       authenticated: false,
       authorized:    false,
@@ -143,23 +168,18 @@ export async function checkPermission(
     };
   }
 
-  const email = user.email ?? "";
-
-  // 2. Identification : résoudre le rôle
-  const role = resolveRole(email);
+  // 2. Identification → rôle
+  const role = resolveRole(user.email);
 
   // 3. Vérification de la permission
   const authorized = roleHasPermission(role, permission);
-
   if (!authorized) {
-    console.warn(
-      `[rbac] Accès refusé — user="${email}" role="${role}" permission="${permission}"`
-    );
+    console.warn(`[rbac] Accès refusé — user="${user.email}" role="${role}" permission="${permission}"`);
     return {
       authenticated: true,
       authorized:    false,
       userId:        user.id,
-      email,
+      email:         user.email,
       error:         `Permission insuffisante: ${permission} requiert rôle admin`,
     };
   }
@@ -168,15 +188,11 @@ export async function checkPermission(
     authenticated: true,
     authorized:    true,
     userId:        user.id,
-    email,
+    email:         user.email,
   };
 }
 
-/**
- * Vérifie si l'utilisateur courant est admin.
- * Raccourci pour les routes qui vérifient uniquement le rôle admin
- * sans se soucier d'une permission spécifique.
- */
-export async function requireAdmin(): Promise<AuthCheckResult> {
-  return checkPermission("settings.read"); // Permission minimale admin
+/** Raccourci pour vérifier le rôle admin uniquement */
+export async function requireAdmin(req?: NextRequest): Promise<AuthCheckResult> {
+  return checkPermission("settings.read", req);
 }

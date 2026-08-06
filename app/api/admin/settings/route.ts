@@ -47,8 +47,8 @@ const VALID_CATEGORIES = new Set<SettingCategory>([
 // ── GET ───────────────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
-  // 1. Auth + RBAC
-  const check = await checkPermission("settings.read");
+  // 1. Auth + RBAC (Bearer token depuis admin panel ou cookie navigateur)
+  const check = await checkPermission("settings.read", req);
   if (!check.authenticated) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
@@ -89,8 +89,8 @@ export async function GET(req: NextRequest) {
 // ── PUT ───────────────────────────────────────────────────────
 
 export async function PUT(req: NextRequest) {
-  // 1. Auth + RBAC
-  const check = await checkPermission("settings.update");
+  // 1. Auth + RBAC (Bearer token depuis admin panel ou cookie navigateur)
+  const check = await checkPermission("settings.update", req);
   if (!check.authenticated) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
