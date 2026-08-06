@@ -1022,8 +1022,8 @@ export default function AdminPage() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                      {["Trader", "Compte", "Modèle", "Phase", "Statut", "Balance", "Gain", "Payé", "Jours", "Account ID", "Password", "Serveur", "Date", "Actions"].map(h => (
-                        <th key={h} style={{ padding: "13px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
+                      {["Trader", "Compte", "Type", "Statut", "Balance", "Gain", "Payé", "J", "MT5", "Actions"].map(h => (
+                        <th key={h} style={{ padding: "9px 8px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, whiteSpace: "nowrap" }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -1032,7 +1032,7 @@ export default function AdminPage() {
                       <>
                         {(c.client_first_name || c.client_last_name) && (
                           <tr key={`${c.id}-icm`} style={{ backgroundColor: "rgba(201,168,76,0.03)" }}>
-                            <td colSpan={14} style={{ padding: "8px 14px" }}>
+                            <td colSpan={10} style={{ padding: "6px 8px" }}>
                               <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                                 {[
                                   { label: "Prénom", value: c.client_first_name },
@@ -1053,20 +1053,22 @@ export default function AdminPage() {
                           </tr>
                         )}
                         <tr key={c.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                          <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.7)", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 12 }}>{c.user_email}</td>
-                          <td style={{ padding: "13px 14px", fontWeight: 800, color: "#fff" }}>{c.account_size}</td>
-                          <td style={{ padding: "13px 14px" }}><span style={{ background: c.model === "vip" ? "rgba(139,92,246,0.15)" : "rgba(255,255,255,0.06)", color: c.model === "vip" ? "#a78bfa" : "rgba(255,255,255,0.75)", fontWeight: 700, fontSize: 11, padding: "3px 8px", borderRadius: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{c.model === "vip" ? "ALGO" : c.model}</span></td>
-                          <td style={{ padding: "13px 14px" }}>
-                            {editing === c.id
-                              ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
-                              : <span style={{ color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 12 }}>{c.phase === "funded" ? "reward" : c.phase}</span>}
+                          <td style={{ padding: "9px 8px", color: "rgba(255,255,255,0.7)", maxWidth: 130, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 11 }}>{c.user_email}</td>
+                          <td style={{ padding: "9px 8px", fontWeight: 800, color: "#fff", fontSize: 12, whiteSpace: "nowrap" }}>{c.account_size}</td>
+                          <td style={{ padding: "9px 8px" }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                              <span style={{ background: c.model === "vip" ? "rgba(139,92,246,0.15)" : "rgba(255,255,255,0.06)", color: c.model === "vip" ? "#a78bfa" : "rgba(255,255,255,0.75)", fontWeight: 700, fontSize: 10, padding: "2px 5px", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.5px", alignSelf: "flex-start" }}>{c.model === "vip" ? "ALGO" : c.model}</span>
+                              {editing === c.id
+                                ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
+                                : <span style={{ color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 11 }}>{c.phase === "funded" ? "reward" : c.phase}</span>}
+                            </div>
                           </td>
-                          <td style={{ padding: "13px 14px" }}>
+                          <td style={{ padding: "9px 8px" }}>
                             {editing === c.id
                               ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
                               : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                           </td>
-                          <td style={{ padding: "13px 14px", fontWeight: 700 }}>
+                          <td style={{ padding: "9px 8px", fontWeight: 700 }}>
                             {editing === c.id
                               ? <input type="number" value={editData.balance ?? c.balance} onChange={e => {
                                   const nb = Number(e.target.value);
@@ -1083,7 +1085,7 @@ export default function AdminPage() {
                                   </div>
                                 : `$${c.balance?.toLocaleString()}`}
                           </td>
-                          <td style={{ padding: "8px 14px", minWidth: 160 }}>
+                          <td style={{ padding: "6px 8px", minWidth: 130 }}>
                             {(() => {
                               if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
                               const is1Step = c.model === "1step";
@@ -1168,29 +1170,26 @@ export default function AdminPage() {
                               );
                             })()}
                           </td>
-                          <td style={{ padding: "13px 14px", color: "#22c55e" }}>€{c.amount_paid}</td>
-                          <td style={{ padding: "13px 14px" }}>
+                          <td style={{ padding: "9px 8px", color: "#22c55e", fontSize: 12, whiteSpace: "nowrap" }}>€{c.amount_paid}</td>
+                          <td style={{ padding: "9px 8px", textAlign: "center" }}>
                             {editing === c.id
-                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
-                              : <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "#888" }}>{c.trading_days}</span>}
+                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "3px 5px", color: "#fff", fontSize: 12, width: 45 }} />
+                              : <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "#888", fontWeight: 700 }}>{c.trading_days}</span>}
                           </td>
-                          <td style={{ padding: "13px 14px" }}>
-                            {editing === c.id
-                              ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 120 }} />
-                              : <span onClick={() => c.mt5_login && copyToClipboard(String(c.mt5_login))} style={{ color: c.mt5_login ? "#60A5FA" : "rgba(255,255,255,0.35)", fontSize: 12, fontWeight: 400, cursor: c.mt5_login ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_login || "—"}</span>}
+                          <td style={{ padding: "9px 8px" }}>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                              {editing === c.id
+                                ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#60A5FA", fontSize: 11, width: 108, fontFamily: "monospace" }} />
+                                : <span onClick={() => c.mt5_login && copyToClipboard(String(c.mt5_login))} style={{ color: c.mt5_login ? "#60A5FA" : "rgba(255,255,255,0.25)", fontSize: 11, cursor: c.mt5_login ? "pointer" : "default", fontFamily: "monospace" }} title="Copier ID">{c.mt5_login || "—"}</span>}
+                              {editing === c.id
+                                ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#fff", fontSize: 11, width: 88, fontFamily: "monospace" }} />
+                                : <span onClick={() => c.mt5_password && copyToClipboard(c.mt5_password)} style={{ color: c.mt5_password ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.2)", fontSize: 10, cursor: c.mt5_password ? "pointer" : "default", fontFamily: "monospace" }} title="Copier MDP">{c.mt5_password || "—"}</span>}
+                              {editing === c.id
+                                ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#fff", fontSize: 10, width: 108, fontFamily: "monospace" }} />
+                                : <span onClick={() => c.mt5_server && copyToClipboard(c.mt5_server)} style={{ color: c.mt5_server ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.15)", fontSize: 9, cursor: c.mt5_server ? "pointer" : "default", fontFamily: "monospace" }} title="Copier Serveur">{c.mt5_server || "—"}</span>}
+                            </div>
                           </td>
-                          <td style={{ padding: "13px 14px" }}>
-                            {editing === c.id
-                              ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 100 }} />
-                              : <span onClick={() => c.mt5_password && copyToClipboard(c.mt5_password)} style={{ color: c.mt5_password ? "#60A5FA" : "rgba(255,255,255,0.35)", fontSize: 12, fontWeight: 400, cursor: c.mt5_password ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_password || "—"}</span>}
-                          </td>
-                          <td style={{ padding: "13px 14px" }}>
-                            {editing === c.id
-                              ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 140 }} />
-                              : <span onClick={() => c.mt5_server && copyToClipboard(c.mt5_server)} style={{ color: c.mt5_server ? "#60A5FA" : "rgba(255,255,255,0.35)", fontSize: 12, fontWeight: 400, cursor: c.mt5_server ? "pointer" : "default", fontFamily: "monospace" }} title="Cliquer pour copier">{c.mt5_server || "—"}</span>}
-                          </td>
-                          <td style={{ padding: "13px 14px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{new Date(c.created_at).toLocaleDateString()}</td>
-                          <td style={{ padding: "13px 14px" }}>
+                          <td style={{ padding: "9px 8px" }}>
                             {editing === c.id
                               ? <div style={{ display: "flex", gap: 6 }}>
                                   <button onClick={() => saveChallenge(c.id)} style={{ backgroundColor: "#22c55e", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
@@ -1213,7 +1212,7 @@ export default function AdminPage() {
                         </tr>
                       </>
                     ))}
-                    {filteredChallenges.length === 0 && <tr><td colSpan={13} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun challenge</td></tr>}
+                    {filteredChallenges.length === 0 && <tr><td colSpan={10} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun challenge</td></tr>}
                   </tbody>
                 </table>
               </div>
@@ -1312,7 +1311,7 @@ export default function AdminPage() {
                                 ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
                                 : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                             </td>
-                            <td style={{ padding: "13px 14px", fontWeight: 700 }}>
+                            <td style={{ padding: "9px 8px", fontWeight: 700 }}>
                               {editing === c.id
                                 ? <input type="number" value={editData.balance ?? c.balance} onChange={e => setEditData(d => ({ ...d, balance: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(139,92,246,0.3)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
                                 : `$${c.balance?.toLocaleString()}`}
