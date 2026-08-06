@@ -1120,8 +1120,10 @@ export default function AdminPage() {
                               // Si daily_start_balance = start_balance (ancien code EOD), on prend balance actuelle
                               const _dS2 = c.daily_start_balance ?? null;
                               const _dL2 = c.daily_low_equity ?? c.balance;
-                              const _pStart = (_dS2 !== null && Math.abs(_dS2 - c.start_balance) > 1) ? _dS2 : c.balance;
-                              const _pLow   = (_dL2 >= c.balance - c.start_balance * 0.015) ? _dL2 : c.balance;
+                              const _st1 = _dS2 !== null && Math.abs(_dS2 - c.start_balance) < 1;
+                              const _st2 = _dS2 !== null && _dS2 > c.start_balance + 1 && c.balance < c.start_balance - 1;
+                              const _pStart = (_dS2 !== null && !_st1 && !_st2) ? _dS2 : c.balance;
+                              const _pLow   = (_st1 || _st2) ? c.balance : (_dL2 >= c.balance - c.start_balance * 0.015 ? _dL2 : c.balance);
                               const dailyUsed = _pStart > 0 ? Math.max(0, (_pStart - _pLow) / _pStart * 100) : 0;
                               const dailyFloor = Math.round(c.start_balance * (1 - maxDaily / 100));
                               const ddPct = Math.min(dailyUsed / maxDaily * 100, 100);
