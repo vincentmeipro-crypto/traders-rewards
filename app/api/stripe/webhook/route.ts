@@ -1,10 +1,20 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
 import { getChallengeDefaults } from "@/lib/config";
+import {
+  loadProductFull,
+  buildRulesSnapshot,
+  getPhase1Defaults,
+} from "@/lib/product-engine";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+/** Détecte si une chaîne est un UUID v4 (nouvelle session) ou un slug (ancienne session). */
+function isUUID(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -19,12 +29,16 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { userId, accountSize, model, promoCode, refCode } = session.metadata!;
+    const { userId, productId, accountSize, model, promoCode, refCode } = session.metadata!;
 
     const admin = createAdminClient();
 
     // Idempotency check — évite le double traitement si Stripe renvoie l'événement
-    const { data: existing } = await admin.from("challenges").select("id").eq("stripe_session_id", session.id).single();
+    const { data: existing } = await admin
+      .from("challenges")
+      .select("id")
+      .eq("stripe_session_id", session.id)
+      .single();
     if (existing) return NextResponse.json({ received: true, skipped: "duplicate" });
 
     const sizeMap: Record<string, number> = {
@@ -35,45 +49,123 @@ export async function POST(req: NextRequest) {
 
     // Récupérer les infos du user pour MT5
     const { data: userData } = await admin.auth.admin.getUserById(userId);
-    const { data: profile } = await admin.from("profiles").select("first_name, last_name").eq("user_id", userId).single();
+    const { data: profile }   = await admin.from("profiles").select("first_name, last_name").eq("user_id", userId).single();
     const firstName = userData?.user?.user_metadata?.first_name || profile?.first_name || session.customer_details?.name?.split(" ")[0] || "Trader";
     const lastName  = userData?.user?.user_metadata?.last_name  || profile?.last_name  || session.customer_details?.name?.split(" ").slice(1).join(" ") || "";
     const email     = userData?.user?.email || session.customer_details?.email || "";
 
-    // V2 Phase 1 : paramètres challenge depuis settings (fallback hardcodé si Supabase indisponible)
-    const challengeDefaults = await getChallengeDefaults();
+    const amountPaidCents = session.amount_total || 0;
 
-    const { data: inserted } = await admin.from("challenges").insert({
-      user_id: userId,
-      account_size: accountSize,
-      model,
-      status: "active",
-      phase: "phase1",
-      balance: size,
-      start_balance: size,
-      profit_target: challengeDefaults.profitTarget,
-      daily_drawdown_limit: model === "1step" ? challengeDefaults.dailyDd1step : challengeDefaults.dailyDd2step,
-      total_drawdown_limit: challengeDefaults.totalDdDefault,
-      trading_days: 0,
-      stripe_session_id: session.id,
-      amount_paid: (session.amount_total || 0) / 100,
-      payment_method: "card",
-    }).select("id").single();
+    // ── Règles du challenge ────────────────────────────────────────────
+    //
+    // NOUVELLE SESSION (productId = UUID) : charge depuis la DB → snapshot immuable.
+    // ANCIENNE SESSION  (productId = slug) : fallback getChallengeDefaults() — rétrocompat
+    //   pour les sessions Stripe ouvertes avant le déploiement de Phase 2B.
+    //
+    // Dans tous les cas les colonnes que metaapi/sync lit directement sont peuplées.
+
+    let challengeInsert: Record<string, unknown>;
+
+    if (isUUID(productId)) {
+      // ── Nouveau chemin : Product Engine ───────────────────────────────
+      try {
+        const { product, phases, rules } = await loadProductFull(productId);
+        const phase1    = getPhase1Defaults(phases);
+        const snapshot  = buildRulesSnapshot(product, phases, rules, amountPaidCents);
+
+        challengeInsert = {
+          user_id:              userId,
+          account_size:         product.account_size,
+          model:                product.model,
+          status:               "active",
+          phase:                "phase1",
+          balance:              product.balance_usd,
+          start_balance:        product.balance_usd,
+          // Colonnes lues par metaapi/sync — JAMAIS nulles
+          profit_target:        phase1.profit_target,
+          daily_drawdown_limit: phase1.daily_drawdown_limit,
+          total_drawdown_limit: phase1.total_drawdown_limit,
+          trading_days:         0,
+          stripe_session_id:    session.id,
+          amount_paid:          amountPaidCents / 100,
+          payment_method:       "card",
+          // Nouvelles colonnes Phase 2B
+          product_id:           product.id,
+          rules_snapshot:       snapshot,
+        };
+      } catch (engineErr) {
+        // Si le Product Engine échoue (produit supprimé entre checkout et paiement),
+        // on log l'erreur et on retombe sur le fallback plutôt que de perdre la vente.
+        console.error("[stripe/webhook] Product Engine error, fallback to defaults:", engineErr);
+        const challengeDefaults = await getChallengeDefaults();
+        challengeInsert = {
+          user_id:              userId,
+          account_size:         accountSize,
+          model,
+          status:               "active",
+          phase:                "phase1",
+          balance:              size,
+          start_balance:        size,
+          profit_target:        challengeDefaults.profitTarget,
+          daily_drawdown_limit: model === "1step" ? challengeDefaults.dailyDd1step : challengeDefaults.dailyDd2step,
+          total_drawdown_limit: challengeDefaults.totalDdDefault,
+          trading_days:         0,
+          stripe_session_id:    session.id,
+          amount_paid:          amountPaidCents / 100,
+          payment_method:       "card",
+        };
+      }
+    } else {
+      // ── Ancien chemin : session ouverte avant Phase 2B (slug dans metadata) ──
+      const challengeDefaults = await getChallengeDefaults();
+      challengeInsert = {
+        user_id:              userId,
+        account_size:         accountSize,
+        model,
+        status:               "active",
+        phase:                "phase1",
+        balance:              size,
+        start_balance:        size,
+        profit_target:        challengeDefaults.profitTarget,
+        daily_drawdown_limit: model === "1step" ? challengeDefaults.dailyDd1step : challengeDefaults.dailyDd2step,
+        total_drawdown_limit: challengeDefaults.totalDdDefault,
+        trading_days:         0,
+        stripe_session_id:    session.id,
+        amount_paid:          amountPaidCents / 100,
+        payment_method:       "card",
+      };
+    }
+
+    const { data: inserted } = await admin
+      .from("challenges")
+      .insert(challengeInsert)
+      .select("id")
+      .single();
 
     const challengeId = inserted?.id as string | undefined;
 
-    // Provision MT5 synchronously (after() requires Vercel Pro for guaranteed execution)
+    // ── Provision MT5 ─────────────────────────────────────────────────
     if (challengeId) {
+      const challengeModel       = (challengeInsert.model       as string) || model;
+      const challengeAccountSize = (challengeInsert.account_size as string) || accountSize;
+      const challengeBalance     = (challengeInsert.balance      as number) || size;
+
       try {
         const mt5Res = await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
           method: "POST",
           headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
-          body: JSON.stringify({ challenge_id: challengeId, first_name: firstName, last_name: lastName, email, model, balance: size }),
+          body: JSON.stringify({
+            challenge_id: challengeId,
+            first_name:   firstName,
+            last_name:    lastName,
+            email,
+            model:        challengeModel,
+            balance:      challengeBalance,
+          }),
         });
         if (mt5Res.ok) {
           const mt5Data = await mt5Res.json();
           if (mt5Data.ok && mt5Data.login) {
-            // Update Supabase from Vercel as well (VPS _supabase_patch may fail if env vars not set)
             await admin.from("challenges").update({
               mt5_login:             mt5Data.login,
               mt5_password:          mt5Data.password,
@@ -82,10 +174,10 @@ export async function POST(req: NextRequest) {
             }).eq("id", challengeId);
             if (email) {
               try {
-                await sendWelcomeEmail(email, accountSize, model, {
-                  login: mt5Data.login,
+                await sendWelcomeEmail(email, challengeAccountSize, challengeModel, {
+                  login:    mt5Data.login,
                   password: mt5Data.password,
-                  server: mt5Data.server,
+                  server:   mt5Data.server,
                 });
               } catch (e) { console.error("Welcome email failed:", e); }
             }
@@ -94,38 +186,45 @@ export async function POST(req: NextRequest) {
       } catch (e) { console.error("MT5 provision error:", e); }
     }
 
-    // Affiliate referral tracking
+    // ── Affiliation ───────────────────────────────────────────────────
     if (refCode) {
       try {
-        const { data: affiliate } = await admin.from("affiliates").select("user_id, commission_rate, total_earned").eq("code", refCode).single();
+        const { data: affiliate } = await admin
+          .from("affiliates")
+          .select("user_id, commission_rate, total_earned")
+          .eq("code", refCode)
+          .single();
         if (affiliate && affiliate.user_id !== userId) {
-          const rate = (affiliate.commission_rate || 10) / 100;
-          const amountPaid = (session.amount_total || 0) / 100;
+          const rate       = (affiliate.commission_rate || 10) / 100;
+          const amountPaid = amountPaidCents / 100;
           const commission = Math.round(amountPaid * rate * 100) / 100;
           await admin.from("affiliate_referrals").insert({
             affiliate_user_id: affiliate.user_id,
-            referred_user_id: userId,
-            purchase_amount: amountPaid,
+            referred_user_id:  userId,
+            purchase_amount:   amountPaid,
             commission_amount: commission,
-            status: "pending",
+            status:            "pending",
           });
-          await admin.from("affiliates").update({ total_earned: (affiliate.total_earned || 0) + commission }).eq("user_id", affiliate.user_id);
+          await admin.from("affiliates")
+            .update({ total_earned: (affiliate.total_earned || 0) + commission })
+            .eq("user_id", affiliate.user_id);
         }
       } catch (e) { console.error("Affiliate referral error:", e); }
     }
 
-    // Increment promo code usage if applicable
+    // ── Incrément promo code ──────────────────────────────────────────
     if (promoCode) {
       const { data: promo } = await admin
-        .from("promo_codes").select("id, used_count")
-        .eq("code", promoCode).single();
+        .from("promo_codes")
+        .select("id, used_count")
+        .eq("code", promoCode)
+        .single();
       if (promo) {
         await admin.from("promo_codes")
           .update({ used_count: promo.used_count + 1 })
           .eq("id", promo.id);
       }
     }
-
   }
 
   return NextResponse.json({ received: true });
