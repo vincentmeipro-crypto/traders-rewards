@@ -31,6 +31,7 @@ type Challenge = {
   total_drawdown_limit: number;
   daily_start_balance?: number;
   daily_low_equity?: number;
+  daily_dd?: number;
   highest_balance?: number;
   breach_equity?: number;
   breach_reason?: string;
@@ -1083,7 +1084,6 @@ export default function AdminPage() {
                               const maxTotal = c.total_drawdown_limit ?? 10;
                               const maxDaily = c.daily_drawdown_limit ?? (is1Step ? 3 : 5);
                               const highestBal = c.highest_balance ?? c.start_balance;
-                              const dailyRef = c.daily_start_balance ?? c.start_balance;
                               const totalRef = c.start_balance;
 
                               // Pour comptes failed : afficher info breach uniquement
@@ -1116,10 +1116,8 @@ export default function AdminPage() {
                               const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
                               const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
 
-                              // DD Jour — utilise daily_low_equity pour catcher les equity basses récupérées
-                              const dailyLow = c.daily_low_equity ?? c.balance;
-                              const worstToday = Math.min(c.balance, dailyLow);
-                              const dailyUsed = Math.max(0, (dailyRef - worstToday) / dailyRef * 100);
+                              // DD Jour — lit daily_dd depuis DB (calculé et reset chaque jour par le sync)
+                              const dailyUsed = Math.max(0, c.daily_dd ?? 0);
                               const dailyFloor = Math.round(c.start_balance * (1 - maxDaily / 100));
                               const ddPct = Math.min(dailyUsed / maxDaily * 100, 100);
                               const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";

@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   const { data: challenges, error } = await admin
     .from("challenges")
-    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, daily_low_equity")
+    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, daily_low_equity, last_synced_at")
     .not("mt5_login", "is", null)
     .in("status", ["active"]);
 
@@ -48,21 +48,34 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      // DD daily et total : référence fixe start_balance pour tous les modèles
+      // Tracking du jour de trading (22:00 UTC → 21:59 UTC)
+      const now = new Date();
+      const tradingDayStart = new Date(now);
+      if (now.getUTCHours() < 22) tradingDayStart.setUTCDate(tradingDayStart.getUTCDate() - 1);
+      tradingDayStart.setUTCHours(22, 0, 0, 0);
+      const lastSyncedAt = (challenge.last_synced_at as string | null) ?? null;
+      const isNewDay = !lastSyncedAt || new Date(lastSyncedAt) < tradingDayStart;
+
+      // daily_start_balance = balance à l'ouverture du jour (reset sur nouveau jour)
+      const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
+      const dailyStartBalance = (isNewDay || storedDailyStart === null) ? (account.balance ?? startBalance) : storedDailyStart;
+
+      // daily_low_equity = plus bas equity du jour courant (reset sur nouveau jour)
+      const storedDailyLow = (challenge.daily_low_equity as number | null) ?? null;
+      const dailyLowEquity = (isNewDay || storedDailyLow === null) ? equity : Math.min(storedDailyLow, equity);
+
+      // daily_dd affiché = perte depuis l'ouverture du jour (0 si pas de perte aujourd'hui)
+      const dailyDDDisplay = dailyStartBalance > 0 ? Math.max(0, (dailyStartBalance - dailyLowEquity) / dailyStartBalance * 100) : 0;
+
+      // Seuils de breach : plancher fixe basé sur start_balance original
       const totalThreshold = startBalance * (1 - totalLimit / 100);
       const dailyThreshold = startBalance * (1 - dailyLimit / 100);
-
-      // --- CHECK 1 : equity temps réel ---
-      const totalDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
-      const dailyDD = startBalance > 0 ? ((startBalance - equity) / startBalance) * 100 : 0;
 
       let breachReason: string | null = null;
       let breachEquity = equity;
 
-      // daily_low_equity = plus bas equity atteint aujourd'hui (trackée par metaapi/sync)
-      // Permet de catcher un breach même si l'equity a récupéré depuis
-      const dailyLow = (challenge.daily_low_equity as number | null) ?? equity;
-      const worstEquity = Math.min(equity, dailyLow);
+      // Worst equity du jour (day-reset) pour le check de breach
+      const worstEquity = Math.min(equity, dailyLowEquity);
 
       if (worstEquity <= dailyThreshold) { breachReason = "daily_drawdown"; breachEquity = worstEquity; }
       if (worstEquity <= totalThreshold) { breachReason = "total_drawdown"; breachEquity = worstEquity; }
@@ -164,6 +177,9 @@ export async function GET(req: NextRequest) {
         open_positions:      positions,
         positions_synced_at: new Date().toISOString(),
         last_synced_at:      new Date().toISOString(),
+        daily_low_equity:    dailyLowEquity,
+        daily_dd:            parseFloat(dailyDDDisplay.toFixed(2)),
+        ...(isNewDay && { daily_start_balance: account.balance ?? startBalance }),
       }).eq("id", challenge.id);
 
       await admin.from("mt5_snapshots").insert({
