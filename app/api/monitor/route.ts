@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     // ── Challenges ─────────────────────────────────────────────────
     const { data: challenges, error: cErr } = await admin
       .from("challenges")
-      .select("id, status, phase, model, balance, start_balance, created_at, updated_at");
+      .select("id, status, phase, model, balance, start_balance, created_at");
 
     if (cErr) throw new Error(`challenges: ${cErr.message}`);
 
@@ -74,6 +74,7 @@ export async function GET(req: NextRequest) {
         start_balance: c.start_balance,
         created_at: c.created_at,
       }));
+
 
     // ── Payouts ────────────────────────────────────────────────────
     const { data: payouts, error: pErr } = await admin
