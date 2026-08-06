@@ -73,6 +73,7 @@ type KycSubmission = {
 };
 
 type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "financier_algo" | "payouts" | "payouts_algo" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite" | "settings";
+// Note : algo / financier_algo / payouts_algo retirés du menu — contenu conservé en code
 
 type LoginEvent = {
   id: string;
@@ -126,12 +127,12 @@ const STATUS_COLORS: Record<string, string> = {
 const TABS: { id: Tab; label: string }[] = [
   { id: "overview",  label: "Vue d'ensemble" },
   { id: "pipeline",  label: "Pipeline Trader" },
-  { id: "algo",      label: "⚡ Pipeline Algo" },
+  // { id: "algo",      label: "⚡ Pipeline Algo" },      // masqué
   { id: "crm",       label: "CRM Clients" },
   { id: "financier",      label: "Financier Trader" },
-  { id: "financier_algo", label: "⚡ Financier Algo" },
+  // { id: "financier_algo", label: "⚡ Financier Algo" }, // masqué
   { id: "payouts",        label: "Rewards Trader" },
-  { id: "payouts_algo",   label: "⚡ Rewards Algo" },
+  // { id: "payouts_algo",   label: "⚡ Rewards Algo" },  // masqué
   { id: "promos",    label: "Promo Codes" },
   { id: "kyc",       label: "KYC" },
   { id: "affilies",  label: "🤝 Affiliés" },
