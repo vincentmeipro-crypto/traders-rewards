@@ -6,13 +6,6 @@ const MT5_URL    = process.env.MT5_API_URL!;
 const MT5_SECRET = process.env.MT5_API_SECRET!;
 const MT5_HEADERS = { "x-api-key": MT5_SECRET, "bypass-tunnel-reminder": "true" };
 
-async function checkAdmin(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) return false;
-  const admin = createAdminClient();
-  const { data: { user } } = await admin.auth.getUser(token);
-  return user?.email === "vincentmeipro@gmail.com";
-}
 
 export async function GET(req: NextRequest) {
   if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

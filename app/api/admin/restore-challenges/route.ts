@@ -7,13 +7,6 @@ const MT5_URL     = process.env.MT5_API_URL!;
 const MT5_SECRET  = process.env.MT5_API_SECRET!;
 const MT5_HEADERS = { "x-api-key": MT5_SECRET, "bypass-tunnel-reminder": "true" };
 
-async function checkAdmin(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) return false;
-  const admin = createAdminClient();
-  const { data: { user } } = await admin.auth.getUser(token);
-  return user?.email === ADMIN_EMAIL;
-}
 
 function balanceToAccountSize(balance: number): { label: string; value: number } {
   if (balance >= 150000) return { label: "$200,000", value: 200000 };

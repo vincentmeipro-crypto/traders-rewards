@@ -3,13 +3,6 @@ import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { addMT5Balance, getMT5Account, withdrawMT5Balance, changeMT5Group, disableMT5Account } from "@/lib/mt5";
 
-async function checkAdmin(req: NextRequest) {
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) return false;
-  const admin = createAdminClient();
-  const { data: { user } } = await admin.auth.getUser(token);
-  return user?.email === "vincentmeipro@gmail.com";
-}
 
 export async function GET(req: NextRequest) {
   if (!(await checkAdmin(req)).ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
