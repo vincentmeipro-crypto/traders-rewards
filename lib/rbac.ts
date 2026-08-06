@@ -21,7 +21,7 @@
  * ============================================================
  */
 
-import { createServerClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -127,7 +127,7 @@ export async function checkPermission(
   permission: Permission
 ): Promise<AuthCheckResult> {
   // 1. Authentification : récupérer l'utilisateur courant
-  const supabase = await createServerClient();
+  const supabase = await createClient();
   const {
     data: { user },
     error: authError,
