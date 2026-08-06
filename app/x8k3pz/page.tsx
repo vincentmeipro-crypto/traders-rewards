@@ -73,7 +73,7 @@ type KycSubmission = {
   doc_urls: { id_front: string | null; id_back: string | null; residence: string | null; selfie: string | null };
 };
 
-type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "financier_algo" | "payouts" | "payouts_algo" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite" | "settings";
+type Tab = "overview" | "pipeline" | "algo" | "crm" | "financier" | "financier_algo" | "payouts" | "payouts_algo" | "promos" | "kyc" | "create" | "stats" | "compta" | "affilies" | "securite" | "settings" | "maintenance";
 // Note : algo / financier_algo / payouts_algo retirés du menu — contenu conservé en code
 
 type LoginEvent = {
@@ -125,23 +125,78 @@ const STATUS_COLORS: Record<string, string> = {
   rejected:"#ef4444",
 };
 
+// Labels pour le header (titre de page)
+const TAB_LABELS: Record<Tab, string> = {
+  overview:      "🏠 Overview",
+  pipeline:      "📋 Challenges",
+  algo:          "⚡ Algo",
+  crm:           "👥 Clients",
+  kyc:           "KYC",
+  payouts:       "💰 Rewards",
+  financier:     "Transactions",
+  financier_algo:"Financier Algo",
+  compta:        "Comptabilité",
+  payouts_algo:  "Rewards Algo",
+  promos:        "Codes promo",
+  affilies:      "Affiliés",
+  stats:         "📊 Analytics",
+  securite:      "🔐 Sécurité",
+  create:        "➕ Nouveau Challenge",
+  settings:      "Plateforme",
+  maintenance:   "Maintenance",
+};
+
+// Structure de navigation groupée
+type NavItem = { id: Tab; label: string; sub?: boolean };
+type NavGroup = { section?: string; items: NavItem[] } | { separator: true } | { cta: Tab; label: string };
+
+const NAV: (NavGroup)[] = [
+  { items: [{ id: "overview", label: "🏠 Overview" }] },
+  { section: "CHALLENGES", items: [
+    { id: "pipeline", label: "Tous les challenges" },
+  ]},
+  { section: "TRADERS", items: [
+    { id: "crm",  label: "Clients" },
+    { id: "kyc",  label: "KYC", sub: true },
+  ]},
+  { section: "FINANCE", items: [
+    { id: "payouts",   label: "Rewards" },
+    { id: "financier", label: "Transactions", sub: true },
+    { id: "compta",    label: "Comptabilité", sub: true },
+  ]},
+  { section: "MARKETING", items: [
+    { id: "affilies", label: "Affiliés" },
+    { id: "promos",   label: "Codes promo", sub: true },
+  ]},
+  { items: [
+    { id: "stats",    label: "📊 Analytics" },
+    { id: "securite", label: "🔐 Sécurité" },
+  ]},
+  { separator: true },
+  { cta: "create", label: "➕ Nouveau Challenge" },
+  { separator: true },
+  { section: "SETTINGS", items: [
+    { id: "settings",     label: "Plateforme" },
+    { id: "maintenance",  label: "Maintenance", sub: true },
+  ]},
+];
+
+// TABS conservé pour compatibilité (mobile nav)
 const TABS: { id: Tab; label: string }[] = [
-  { id: "overview",  label: "Vue d'ensemble" },
-  { id: "pipeline",  label: "Pipeline Trader" },
-  // { id: "algo",      label: "⚡ Pipeline Algo" },      // masqué
-  { id: "crm",       label: "CRM Clients" },
-  { id: "financier",      label: "Financier Trader" },
-  // { id: "financier_algo", label: "⚡ Financier Algo" }, // masqué
-  { id: "payouts",        label: "Rewards Trader" },
-  // { id: "payouts_algo",   label: "⚡ Rewards Algo" },  // masqué
-  { id: "promos",    label: "Promo Codes" },
-  { id: "kyc",       label: "KYC" },
-  { id: "affilies",  label: "🤝 Affiliés" },
-  { id: "stats",     label: "📊 Statistiques" },
-  { id: "compta",    label: "🧾 Comptabilité" },
-  { id: "securite",  label: "🔐 Sécurité" },
-  { id: "create",    label: "➕ Créer Challenge" },
-  { id: "settings",  label: "⚙️ Settings" },
+  { id: "overview",     label: "🏠 Overview" },
+  { id: "pipeline",     label: "📋 Challenges" },
+  { id: "crm",          label: "👥 Clients" },
+  { id: "kyc",          label: "KYC" },
+  { id: "payouts",      label: "💰 Rewards" },
+  { id: "financier",    label: "Transactions" },
+  { id: "compta",       label: "Comptabilité" },
+  { id: "promos",       label: "Codes promo" },
+  { id: "affilies",     label: "Affiliés" },
+  { id: "stats",        label: "Analytics" },
+  { id: "securite",     label: "🔐 Sécurité" },
+  { id: "create",       label: "➕ Nouveau" },
+  { id: "settings",     label: "⚙️ Settings" },
+  { id: "maintenance",  label: "Maintenance" },
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
@@ -765,25 +820,48 @@ export default function AdminPage() {
       {/* ── SIDEBAR desktop ── */}
       {!isMobile && (
         <div style={{ width: 220, backgroundColor: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
-          <div style={{ padding: "20px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
+          {/* Logo */}
+          <div style={{ padding: "18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
             <img src="/logo-nom-noir.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
             <div>
-              <div style={{ color: "#fff", fontWeight: 900, fontSize: 14, letterSpacing: 0.5 }}>Traders Rewards</div>
-              <div style={{ color: "#fff", fontWeight: 700, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
+              <div style={{ color: "#fff", fontWeight: 900, fontSize: 13, letterSpacing: 0.5 }}>Traders Rewards</div>
+              <div style={{ color: "rgba(255,255,255,0.35)", fontWeight: 600, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
             </div>
           </div>
-          <nav style={{ padding: "12px 8px", flex: 1 }}>
-            {TABS.map(t => (
-              <button key={t.id} onClick={() => setTab(t.id)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 14px", background: tab === t.id ? "rgba(59,130,246,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === t.id ? "#3B82F6" : "transparent"}`, color: tab === t.id ? "#fff" : "rgba(255,255,255,0.45)", fontWeight: tab === t.id ? 700 : 500, fontSize: 13, cursor: "pointer", textAlign: "left", marginBottom: 2, borderRadius: "0 8px 8px 0" }}>
-                {t.label}
-                {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
-                {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
-              </button>
-            ))}
+
+          {/* Nav groupée */}
+          <nav style={{ padding: "10px 8px", flex: 1 }}>
+            {NAV.map((group, gi) => {
+              if ("separator" in group) return (
+                <div key={gi} style={{ height: 1, backgroundColor: "rgba(255,255,255,0.07)", margin: "8px 8px" }} />
+              );
+              if ("cta" in group) return (
+                <button key={gi} onClick={() => setTab(group.cta)} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", padding: "9px 14px", background: tab === group.cta ? "#2563eb" : "rgba(59,130,246,0.18)", border: "1px solid rgba(59,130,246,0.4)", borderRadius: 8, color: "#60a5fa", fontWeight: 700, fontSize: 12, cursor: "pointer", margin: "4px 0", letterSpacing: 0.3 }}>
+                  {group.label}
+                </button>
+              );
+              const kycBadge = kycSubmissions.filter(k => k.kyc_status === "pending").length;
+              const secBadge = (securityData?.shared_ips?.length ?? 0) > 0;
+              return (
+                <div key={gi} style={{ marginBottom: 4 }}>
+                  {"section" in group && group.section && (
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, textTransform: "uppercase", padding: "10px 14px 4px" }}>{group.section}</div>
+                  )}
+                  {group.items.map((item: NavItem) => (
+                    <button key={item.id} onClick={() => setTab(item.id)} style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: item.sub ? "7px 14px 7px 22px" : "9px 14px", background: tab === item.id ? "rgba(59,130,246,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === item.id ? "#3B82F6" : "transparent"}`, color: tab === item.id ? "#fff" : item.sub ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.6)", fontWeight: tab === item.id ? 700 : 400, fontSize: item.sub ? 12 : 13, cursor: "pointer", textAlign: "left", borderRadius: "0 8px 8px 0", marginBottom: 1 }}>
+                      {item.label}
+                      {item.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
+                      {item.id === "kyc" && kycBadge > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycBadge}</span>}
+                      {item.id === "securite" && secBadge && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>!</span>}
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
           </nav>
-          <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", gap: 8 }}>
-            <a href="/dashboard" style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
-            {/* Déconnexion supprimée — accès sans login */}
+
+          <div style={{ padding: "12px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+            <a href="/dashboard" style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
           </div>
         </div>
       )}
@@ -794,7 +872,7 @@ export default function AdminPage() {
         <div style={{ backgroundColor: "#0a0a0a", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
           <div>
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 1 }}>Admin</div>
-            <div style={{ fontSize: isMobile ? 16 : 20, fontWeight: 800, color: "#fff" }}>{TABS.find(t => t.id === tab)?.label}</div>
+            <div style={{ fontSize: isMobile ? 16 : 20, fontWeight: 800, color: "#fff" }}>{TAB_LABELS[tab] ?? tab}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {!isMobile && syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
@@ -804,18 +882,28 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Mobile bottom nav */}
-        {isMobile && (
-          <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, backgroundColor: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", overflowX: "auto", padding: "4px 0" }}>
-            {TABS.map(t => (
-              <button key={t.id} onClick={() => { setTab(t.id); setMobileNavOpen(false); }} style={{ position: "relative", flexShrink: 0, padding: "8px 12px", background: "none", border: "none", borderTop: `2px solid ${tab === t.id ? "#3B82F6" : "transparent"}`, color: tab === t.id ? "#fff" : "rgba(255,255,255,0.3)", fontWeight: tab === t.id ? 700 : 400, fontSize: 11, cursor: "pointer", whiteSpace: "nowrap" }}>
-                {t.label}
-                {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ position: "absolute", top: 4, right: 4, backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 4px", fontSize: 8, lineHeight: 1.5 }}>{kpis.pendingPayouts}</span>}
-                {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ position: "absolute", top: 4, right: 4, backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 4px", fontSize: 8, lineHeight: 1.5 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Mobile bottom nav — 6 onglets principaux uniquement */}
+        {isMobile && (() => {
+          const mobileNav: { id: Tab; label: string }[] = [
+            { id: "overview",  label: "🏠" },
+            { id: "pipeline",  label: "📋" },
+            { id: "payouts",   label: "💰" },
+            { id: "kyc",       label: "KYC" },
+            { id: "create",    label: "➕" },
+            { id: "settings",  label: "⚙️" },
+          ];
+          return (
+            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, backgroundColor: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", padding: "4px 0" }}>
+              {mobileNav.map(t => (
+                <button key={t.id} onClick={() => setTab(t.id)} style={{ position: "relative", flex: 1, padding: "10px 4px", background: "none", border: "none", borderTop: `2px solid ${tab === t.id ? "#3B82F6" : "transparent"}`, color: tab === t.id ? "#fff" : "rgba(255,255,255,0.3)", fontWeight: tab === t.id ? 700 : 400, fontSize: 13, cursor: "pointer" }}>
+                  {t.label}
+                  {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ position: "absolute", top: 4, right: "20%", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 4px", fontSize: 8 }}>{kpis.pendingPayouts}</span>}
+                  {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ position: "absolute", top: 4, right: "20%", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 4px", fontSize: 8 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
+                </button>
+              ))}
+            </div>
+          );
+        })()}
         {syncDetail && (
           <div style={{ margin: "16px 32px 0", background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: 16 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
@@ -831,23 +919,7 @@ export default function AdminPage() {
         {tab === "overview" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 
-            {/* Restaurer clients affectés */}
-            <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ color: "#60a5fa", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Restauration clients (action unique)</div>
-                <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 12 }}>Bruno Penard · Aurélien Roussel · Régis Allidé (x2) · Samir KHELIF</div>
-                {restoreMsg && <div style={{ color: restoreMsg.startsWith("✅") ? "#22c55e" : "#f59e0b", fontSize: 12, marginTop: 6, fontWeight: 600 }}>{restoreMsg}</div>}
-              </div>
-              <button onClick={async () => {
-                            await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
-                setRestoreMsg("📧 Email de prévisualisation envoyé à vincentmeipro@gmail.com");
-              }} style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.4)", borderRadius: 8, padding: "10px 16px", fontWeight: 600, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap" }}>
-                Recevoir une copie
-              </button>
-              <button onClick={handleRestoreChallenges} disabled={restoreLoading} style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", fontWeight: 700, fontSize: 13, cursor: restoreLoading ? "not-allowed" : "pointer", opacity: restoreLoading ? 0.6 : 1, whiteSpace: "nowrap" }}>
-                {restoreLoading ? "En cours..." : "Restaurer les dashboards"}
-              </button>
-            </div>
+            {/* Restauration déplacée → Settings > Maintenance */}
 
             {/* Alertes drawdown */}
             {kpis.alerts.length > 0 && (
@@ -2870,6 +2942,29 @@ export default function AdminPage() {
                 </div>
               </>
             )}
+          </div>
+        )}
+
+        {/* ── MAINTENANCE ── */}
+        {tab === "maintenance" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginBottom: 4 }}>Outils de maintenance — actions ponctuelles et réparations.</div>
+            <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 12, padding: "20px 24px" }}>
+              <div style={{ color: "#60a5fa", fontWeight: 700, fontSize: 13, marginBottom: 6 }}>Restauration clients (action unique)</div>
+              <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, marginBottom: 16 }}>Bruno Penard · Aurélien Roussel · Régis Allidé (x2) · Samir KHELIF</div>
+              {restoreMsg && <div style={{ color: restoreMsg.startsWith("✅") ? "#22c55e" : "#f59e0b", fontSize: 13, marginBottom: 12, fontWeight: 600 }}>{restoreMsg}</div>}
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <button onClick={async () => {
+                  await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
+                  setRestoreMsg("📧 Email de prévisualisation envoyé à vincentmeipro@gmail.com");
+                }} style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.4)", borderRadius: 8, padding: "10px 16px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
+                  Recevoir une copie email
+                </button>
+                <button onClick={handleRestoreChallenges} disabled={restoreLoading} style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", fontWeight: 700, fontSize: 13, cursor: restoreLoading ? "not-allowed" : "pointer", opacity: restoreLoading ? 0.6 : 1 }}>
+                  {restoreLoading ? "En cours..." : "Restaurer les dashboards"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
