@@ -1579,12 +1579,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <span className="dash-trader-label">+ Nouveau</span>
                   <span className="dash-trader-badge">TRADER</span>
                 </a>
-                <a href="/vip" className="dash-vip-border">
-                  <div className="dash-vip-inner">
-                    <span className="dash-trader-label">+ Nouveau</span>
-                    <span className="dash-vip-text">ALGO</span>
-                  </div>
-                </a>
+                {/* ALGO masqué */}
               </div>
             </div>
             {/* Total cumulé */}
@@ -1685,12 +1680,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <span className="dash-trader-label">Challenge</span>
                 <span className="dash-trader-badge">TRADER</span>
               </a>
-              <a href="/vip" className="dash-vip-border">
-                <div className="dash-vip-inner">
-                  <span className="dash-trader-label">Challenge</span>
-                  <span className="dash-vip-text">ALGO</span>
-                </div>
-              </a>
+              {/* ALGO masqué */}
             </div>
           </div>
         ) : (activeTab === "dashboard") && challenge && (
@@ -1749,12 +1739,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <span className="dash-trader-label">+ Nouveau</span>
                   <span className="dash-trader-badge">TRADER</span>
                 </a>
-                <a href="/vip" className="dash-vip-border">
-                  <div className="dash-vip-inner">
-                    <span className="dash-trader-label">+ Nouveau</span>
-                    <span className="dash-vip-text">ALGO</span>
-                  </div>
-                </a>
+                {/* ALGO masqué */}
               </div>
             </div>
 

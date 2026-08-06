@@ -221,25 +221,7 @@ export default function Pricing() {
               </button>
             );
           })}
-          <a href="/vip" style={{
-            background: "#111111",
-            border: "1.5px solid #3B82F6",
-            borderRadius: 10,
-            padding: isMobile ? "10px 16px" : "10px 20px",
-            cursor: "pointer",
-            display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "flex-start",
-            gap: 10,
-            transition: "all 0.2s",
-            flex: isMobile ? "1 1 100%" : undefined,
-            minWidth: isMobile ? 0 : 150,
-            textDecoration: "none",
-          }}>
-            <span style={{ fontSize: isMobile ? 14 : 15, color: "#3B82F6" }}>⚡</span>
-            <div>
-              <div style={{ fontSize: isMobile ? 12 : 13, fontWeight: 800, color: "#FFFFFF" }}>Challenge Algo</div>
-              <div style={{ fontSize: isMobile ? 9 : 10, color: "#3B82F6", fontWeight: 500, marginTop: 1 }}>Algo intégré</div>
-            </div>
-          </a>
+          {/* Challenge Algo masqué — temporairement désactivé */}
         </div>
 
         {/* MOBILE : sélecteur de taille + carte unique */}

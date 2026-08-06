@@ -50,16 +50,8 @@ export default function Navbar() {
     </a>
   );
 
-  const VipLink = ({ mobile }: { mobile?: boolean }) => (
-    <a href="/vip" style={{ textDecoration: "none", display: "inline-block" }}>
-      <div className="vip-border">
-        <div className="vip-inner" style={{ gap: 6 }}>
-          <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.75)" }}>Challenge</span>
-          <span className="vip-text">ALGO</span>
-        </div>
-      </div>
-    </a>
-  );
+  // VipLink masqué — Challenge ALGO temporairement désactivé
+  const VipLink = ({ mobile }: { mobile?: boolean }) => null;
 
   return (
     <>
