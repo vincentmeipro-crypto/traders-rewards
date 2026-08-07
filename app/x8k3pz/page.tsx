@@ -128,7 +128,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 // Labels pour le header (titre de page)
 const TAB_LABELS: Record<Tab, string> = {
-  overview:      "Overview",
+  overview:      "Cockpit",
   pipeline:      "Challenges",
   algo:          "Algo",
   crm:           "Clients",
@@ -873,77 +873,229 @@ function AdminPageInner() {
         )}
         <div style={{ padding: isMobile ? "16px 12px" : "28px 32px" }}>
 
-        {/* ══ VUE D'ENSEMBLE ══ */}
-        {tab === "overview" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        {/* ══ COCKPIT OVERVIEW ══ */}
+        {tab === "overview" && (() => {
+          const kycPending  = kycSubmissions.filter(k => k.kyc_status === "pending").length;
+          const activeCount = kpis.phase1 + kpis.oneStep + kpis.phase2;
 
-            {/* Restauration déplacée → Settings > Maintenance */}
+          // ── Risk Watch : top 5 comptes les plus proches de leur limite ──
+          const riskWatch = challenges
+            .filter(c => c.status === "active" && c.start_balance && c.balance)
+            .map(c => {
+              const totalDD       = Math.max(0, (c.start_balance - c.balance) / c.start_balance * 100);
+              const totalLimit    = c.total_drawdown_limit  || 10;
+              const totalConsumed = totalDD / totalLimit * 100;
 
-            {/* Alertes drawdown */}
-            {kpis.alerts.length > 0 && (
-              <div style={{ background: "rgba(239,68,68,0.08)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "14px 20px" }}>
-                <div style={{ color: "#ef4444", fontWeight: 700, fontSize: 12, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>⚠ {kpis.alerts.length} alerte(s) drawdown proche</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {kpis.alerts.map(c => (
-                    <span key={c.id} style={{ backgroundColor: "#ef444415", border: "1px solid #ef444430", borderRadius: 8, padding: "4px 12px", fontSize: 12, color: "#ef4444" }}>
-                      {c.user_email} — {c.account_size} ({c.phase})
-                    </span>
-                  ))}
+              const dS     = c.daily_start_balance;
+              const dL     = c.daily_low_equity ?? c.balance;
+              const stale  = dS !== undefined && Math.abs(dS - c.start_balance) < 1;
+              let dailyDD = 0; let dailyConsumed = 0;
+              const hasDailyData = !!(dS && !stale);
+              if (hasDailyData && dS) {
+                dailyDD       = Math.max(0, (dS - Math.min(dL, c.balance)) / dS * 100);
+                dailyConsumed = dailyDD / (c.daily_drawdown_limit || 5) * 100;
+              }
+              return { c, totalDD, totalConsumed, dailyDD, dailyConsumed, hasDailyData };
+            })
+            .filter(x => x.totalConsumed >= 40 || x.dailyConsumed >= 40)
+            .sort((a, b) => Math.max(b.totalConsumed, b.dailyConsumed) - Math.max(a.totalConsumed, a.dailyConsumed))
+            .slice(0, 5);
+
+          // ── Activité récente : merge + tri par date desc ──
+          type EvType = { at: string; label: string; sub: string; color: string };
+          const events: EvType[] = [
+            ...challenges
+              .filter(c => c.phase === "phase1" || c.model === "instant")
+              .map(c => ({ at: c.created_at, label: "Nouveau challenge", sub: `${c.account_size} · ${c.user_email}`, color: "#3b82f6" })),
+            ...challenges
+              .filter(c => c.phase === "phase2" && c.status !== "failed")
+              .map(c => ({ at: c.created_at, label: "Phase 1 réussie", sub: `${c.account_size} · ${c.user_email}`, color: "#22c55e" })),
+            ...payouts.map(p => ({
+              at: p.created_at,
+              label: p.status === "paid" ? "Reward validé" : "Reward demandé",
+              sub: `€${p.amount?.toLocaleString() ?? "—"} · ${p.user_email}`,
+              color: p.status === "paid" ? "#22c55e" : "#f59e0b",
+            })),
+            ...challenges
+              .filter(c => c.status === "failed" && !!c.breach_at)
+              .map(c => ({ at: c.breach_at as string, label: "Challenge échoué", sub: `${c.account_size} · ${c.user_email}`, color: "#ef4444" })),
+          ]
+            .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
+            .slice(0, 8);
+
+          // ── Helpers ──
+          const fmtTime = (iso: string) => {
+            const d = new Date(iso);
+            const diffH = (Date.now() - d.getTime()) / 3600000;
+            if (diffH < 24) return d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+            if (diffH < 48) return "Hier";
+            return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+          };
+          const riskBadge = (pct: number) => {
+            if (pct >= 90) return { label: "Critique", color: "#ef4444" };
+            if (pct >= 75) return { label: "Élevé",    color: "#f97316" };
+            return               { label: "Modéré",    color: "#f59e0b" };
+          };
+
+          // ── KPI cards ──
+          const kpiCards: { label: string; value: string | number; sub: string; tabId?: Tab; accent?: string }[] = [
+            { label: "Challenges actifs",  value: activeCount,                           sub: `${kpis.phase1} Ph1 · ${kpis.oneStep} 1-Step · ${kpis.phase2} Ph2`, tabId: "pipeline" },
+            { label: "Comptes certifiés",  value: kpis.certified,                        sub: `${kpis.passed} en attente de certification`,                        tabId: "pipeline" },
+            { label: "Rewards à traiter",  value: kpis.pendingPayouts,                   sub: kpis.pendingPayouts > 0 ? `€${kpis.pendingAmt.toLocaleString()} en attente` : "Aucun reward en attente", tabId: "payouts", accent: kpis.pendingPayouts > 0 ? "#f59e0b" : undefined },
+            { label: "CA du mois",         value: `€${kpis.caMonth.toLocaleString()}`,   sub: `€${kpis.caYear.toLocaleString()} sur l'année`,                      accent: "#22c55e" },
+          ];
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+              {/* A — KPI ROW */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(196px, 1fr))", gap: 12 }}>
+                {kpiCards.map((k, i) => (
+                  <div key={i} onClick={() => k.tabId && setTab(k.tabId)} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 22px", cursor: k.tabId ? "pointer" : "default" }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>{k.label}</div>
+                    <div style={{ fontSize: 28, fontWeight: 900, color: k.accent ?? "#fff", marginBottom: 6, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>{k.sub}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* B + C — À TRAITER / CHALLENGES À SURVEILLER */}
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1.5fr", gap: 16, alignItems: "start" }}>
+
+                {/* B — À TRAITER */}
+                <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.5 }}>À traiter</span>
+                  </div>
+                  <div>
+                    {kycPending === 0 && kpis.pendingPayouts === 0 && kpis.alerts.length === 0 ? (
+                      <div style={{ padding: "24px 20px", color: "#22c55e", fontSize: 13, fontWeight: 600, textAlign: "center" }}>Aucune action requise</div>
+                    ) : (<>
+                      {kycPending > 0 && (
+                        <button onClick={() => setTab("kyc")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "14px 20px", background: "none", border: "none", borderBottom: "1px solid rgba(255,255,255,0.05)", cursor: "pointer", textAlign: "left" }}>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 2 }}>KYC en attente</div>
+                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{kycPending} dossier{kycPending > 1 ? "s" : ""} à traiter</div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ background: "#f59e0b20", color: "#f59e0b", fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100 }}>{kycPending}</span>
+                            <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 12 }}>→</span>
+                          </div>
+                        </button>
+                      )}
+                      {kpis.pendingPayouts > 0 && (
+                        <button onClick={() => setTab("payouts")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "14px 20px", background: "none", border: "none", borderBottom: "1px solid rgba(255,255,255,0.05)", cursor: "pointer", textAlign: "left" }}>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 2 }}>Rewards en attente</div>
+                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>€{kpis.pendingAmt.toLocaleString()} à valider</div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ background: "#3b82f620", color: "#3b82f6", fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100 }}>{kpis.pendingPayouts}</span>
+                            <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 12 }}>→</span>
+                          </div>
+                        </button>
+                      )}
+                      {kpis.alerts.length > 0 && (
+                        <button onClick={() => setTab("pipeline")} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "14px 20px", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+                          <div>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 2 }}>Comptes à risque</div>
+                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>DD proche de la limite</div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ background: "#ef444420", color: "#ef4444", fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100 }}>{kpis.alerts.length}</span>
+                            <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 12 }}>→</span>
+                          </div>
+                        </button>
+                      )}
+                    </>)}
+                  </div>
+                </div>
+
+                {/* C — CHALLENGES À SURVEILLER */}
+                <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.5 }}>Challenges à surveiller</span>
+                    {riskWatch.length > 0 && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)" }}>{riskWatch.length} compte{riskWatch.length > 1 ? "s" : ""}</span>}
+                  </div>
+                  {riskWatch.length === 0 ? (
+                    <div style={{ padding: "24px 20px", color: "rgba(255,255,255,0.25)", fontSize: 13, textAlign: "center" }}>Aucun compte en zone de risque</div>
+                  ) : riskWatch.map(({ c, totalDD, totalConsumed, dailyDD, dailyConsumed, hasDailyData }) => {
+                    const tLimit = c.total_drawdown_limit || 10;
+                    const dLimit = c.daily_drawdown_limit || 5;
+                    const rb     = riskBadge(Math.max(totalConsumed, dailyConsumed));
+                    return (
+                      <div key={c.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</div>
+                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
+                            {c.account_size} · {c.phase === "phase2" ? "Phase 2" : c.phase === "phase1" ? "Phase 1" : (c.model?.toUpperCase() || "—")}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2, flexShrink: 0 }}>
+                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", fontVariantNumeric: "tabular-nums" }}>
+                            Max <span style={{ color: "#fff", fontWeight: 700 }}>{totalDD.toFixed(1)}%</span> / {tLimit}%
+                          </div>
+                          {hasDailyData && (
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontVariantNumeric: "tabular-nums" }}>
+                              Daily {dailyDD.toFixed(1)}% / {dLimit}%
+                            </div>
+                          )}
+                        </div>
+                        <span style={{ background: `${rb.color}18`, color: rb.color, fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 6, flexShrink: 0 }}>{rb.label}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            )}
 
-            {/* CA & Marge */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-              {[
-                { label: "CA Année en cours",   value: `€${kpis.caYear.toLocaleString()}`,   color: "#fff" },
-                { label: "CA Mois en cours",    value: `€${kpis.caMonth.toLocaleString()}`,  color: "#fff" },
-                { label: "Marge brute Année",   value: `${kpis.margeYear}%`,                 color: "#22c55e" },
-                { label: "Marge brute Mois",    value: `${kpis.margeMonth}%`,                color: "#22c55e" },
-              ].map((s, i) => (
-                <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 8px 32px rgba(0,0,0,0.5)" }}>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 28, fontWeight: 900, color: s.color }}>{s.value}</div>
-                </div>
-              ))}
-            </div>
+              {/* D + E — ACTIVITÉ RÉCENTE / ACTIONS RAPIDES */}
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.5fr 1fr", gap: 16, alignItems: "start" }}>
 
-            {/* Pipeline stats */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
-              {[
-                { label: "Total Traders",      value: kpis.totalTraders  },
-                { label: "Traders actifs",     value: kpis.activeTraders },
-                { label: "Phase 1 (2-Step)",   value: kpis.phase1        },
-                { label: "1-Step actifs",      value: kpis.oneStep       },
-                { label: "Phase 2 (2-Step)",   value: kpis.phase2        },
-                { label: "Reward",             value: kpis.certified     },
-                { label: "Failed",             value: kpis.failed        },
-                { label: "Total Challenges",   value: kpis.total         },
-              ].map((s, i) => (
-                <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: "#fff" }}>{s.value}</div>
+                {/* D — ACTIVITÉ RÉCENTE */}
+                <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.5 }}>Activité récente</span>
+                  </div>
+                  {events.length === 0 ? (
+                    <div style={{ padding: "24px 20px", color: "rgba(255,255,255,0.25)", fontSize: 13, textAlign: "center" }}>Aucune activité</div>
+                  ) : events.map((ev, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 14, padding: "11px 20px", borderBottom: i < events.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+                      <div style={{ width: 3, height: 30, borderRadius: 2, background: ev.color, flexShrink: 0 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", marginBottom: 1 }}>{ev.label}</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ev.sub}</div>
+                      </div>
+                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", flexShrink: 0, fontVariantNumeric: "tabular-nums" }}>{fmtTime(ev.at)}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* Indicateurs business */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
-              {[
-                { label: "Taux conversion P1→P2",    value: `${kpis.convP1P2}%`,                 sub: "des challenges achetés"    },
-                { label: "Taux conversion P2→Funded", value: `${kpis.convP2Fund}%`,               sub: "des traders en phase 2"    },
-                { label: "LTV moyen / trader",        value: `€${Math.round(kpis.ltv)}`,          sub: "dépense totale moyenne"    },
-                { label: "Récompenses en attente",    value: kpis.pendingPayouts,                  sub: `€${kpis.pendingAmt.toLocaleString()} à valider` },
-              ].map((s, i) => (
-                <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "18px 22px", boxShadow: "0 4px 16px rgba(0,0,0,0.4)" }}>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{s.label}</div>
-                  <div style={{ fontSize: 26, fontWeight: 900, color: "#fff", marginBottom: 4 }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{s.sub}</div>
+                {/* E — ACTIONS RAPIDES */}
+                <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.5 }}>Actions rapides</span>
+                  </div>
+                  <div>
+                    {([
+                      { label: "+ Nouveau challenge",  action: () => setTab("create"),   accent: true  },
+                      { label: "Traiter les Rewards",  action: () => setTab("payouts"),  accent: false },
+                      { label: "Voir les KYC",         action: () => setTab("kyc"),      accent: false },
+                      { label: "Voir les Challenges",  action: () => setTab("pipeline"), accent: false },
+                      { label: "Ajouter un Produit",   action: () => { window.location.href = "/x8k3pz/products"; }, accent: false },
+                      { label: "Créer un Code Promo",  action: () => setTab("promos"),   accent: false },
+                    ] as { label: string; action: () => void; accent: boolean }[]).map((a, i) => (
+                      <button key={i} onClick={a.action} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "13px 20px", background: a.accent ? "rgba(59,130,246,0.07)" : "none", border: "none", borderBottom: i < 5 ? "1px solid rgba(255,255,255,0.04)" : "none", color: a.accent ? "#60a5fa" : "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: a.accent ? 700 : 500, cursor: "pointer", textAlign: "left" }}>
+                        {a.label}
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>→</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              ))}
+              </div>
+
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* ══ PIPELINE CHALLENGES ══ */}
         {tab === "pipeline" && (
