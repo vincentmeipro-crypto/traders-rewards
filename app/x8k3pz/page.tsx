@@ -1,5 +1,6 @@
 ﻿"use client";
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState, useMemo, useRef, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Clé admin statique — accès sans connexion Supabase
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
@@ -127,21 +128,21 @@ const STATUS_COLORS: Record<string, string> = {
 
 // Labels pour le header (titre de page)
 const TAB_LABELS: Record<Tab, string> = {
-  overview:      "🏠 Overview",
-  pipeline:      "📋 Challenges",
-  algo:          "⚡ Algo",
-  crm:           "👥 Clients",
+  overview:      "Overview",
+  pipeline:      "Challenges",
+  algo:          "Algo",
+  crm:           "Clients",
   kyc:           "KYC",
-  payouts:       "💰 Rewards",
+  payouts:       "Rewards",
   financier:     "Transactions",
   financier_algo:"Financier Algo",
   compta:        "Comptabilité",
   payouts_algo:  "Rewards Algo",
   promos:        "Codes promo",
   affilies:      "Affiliés",
-  stats:         "📊 Analytics",
-  securite:      "🔐 Sécurité",
-  create:        "➕ Nouveau Challenge",
+  stats:         "Analytics",
+  securite:      "Sécurité",
+  create:        "Nouveau Challenge",
   settings:      "Plateforme",
   maintenance:   "Maintenance",
 };
@@ -201,11 +202,11 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
-  <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
+  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
 );
 
 const badge = (label: string, color: string) => (
-  <span style={{ backgroundColor: `${color}20`, color, padding: "3px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{label}</span>
+  <span style={{ backgroundColor: `${color}20`, color, padding: "3px 10px", borderRadius: 100, fontSize: 10, fontWeight: 700 }}>{label}</span>
 );
 
 function CustomSelect({ value, onChange, options, small }: {
@@ -246,9 +247,19 @@ function CustomSelect({ value, onChange, options, small }: {
   );
 }
 
-export default function AdminPage() {
+function AdminPageInner() {
   const token = true; // accès sans connexion — toujours autorisé
-  const [tab, setTab] = useState<Tab>("overview");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [tab, setTab] = useState<Tab>(() => (searchParams.get("t") as Tab) ?? "overview");
+
+  // Sync tab state quand l'URL change (ex: clic sidebar)
+  useEffect(() => {
+    const t = searchParams.get("t") as Tab | null;
+    const next: Tab = t ?? "overview";
+    if (next !== tab) setTab(next);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [payouts, setPayouts] = useState<Payout[]>([]);
   const [promos, setPromos] = useState<PromoCode[]>([]);
@@ -807,74 +818,18 @@ export default function AdminPage() {
 
   // Formulaire login supprimé — accès direct sans connexion
 
-  if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#000000", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Chargement...</div>;
-  if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#000000", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#0a0a0a", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
+  if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#050505", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Chargement...</div>;
+  if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#050505", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#0c0c0c", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
   const p = isMobile ? "16px" : "32px";
 
   return (
     <>
-    <div style={{ display: "flex", minHeight: "100vh", fontFamily: "system-ui, sans-serif", color: "#fff", background: "#000000", flexDirection: isMobile ? "column" : "row" }}>
-
-      {/* ── SIDEBAR desktop ── */}
-      {!isMobile && (
-        <div style={{ width: 220, backgroundColor: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", flexShrink: 0, position: "sticky", top: 0, height: "100vh", overflowY: "auto" }}>
-          {/* Logo */}
-          <div style={{ padding: "18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
-            <img src="/logo-nom-noir.png" style={{ width: 34, height: 34, objectFit: "contain" }} />
-            <div>
-              <div style={{ color: "#fff", fontWeight: 900, fontSize: 13, letterSpacing: 0.5 }}>Traders Rewards</div>
-              <div style={{ color: "rgba(255,255,255,0.35)", fontWeight: 600, fontSize: 9, letterSpacing: 2, textTransform: "uppercase" }}>Admin Panel</div>
-            </div>
-          </div>
-
-          {/* Nav groupée */}
-          <nav style={{ padding: "10px 8px", flex: 1 }}>
-            {NAV.map((group, gi) => {
-              if ("separator" in group) return (
-                <div key={gi} style={{ height: 1, backgroundColor: "rgba(255,255,255,0.07)", margin: "8px 8px" }} />
-              );
-              if ("cta" in group) return (
-                <button key={gi} onClick={() => setTab(group.cta)} style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", padding: "9px 14px", background: tab === group.cta ? "#2563eb" : "rgba(59,130,246,0.18)", border: "1px solid rgba(59,130,246,0.4)", borderRadius: 8, color: "#60a5fa", fontWeight: 700, fontSize: 12, cursor: "pointer", margin: "4px 0", letterSpacing: 0.3 }}>
-                  {group.label}
-                </button>
-              );
-              const kycBadge = kycSubmissions.filter(k => k.kyc_status === "pending").length;
-              const secBadge = (securityData?.shared_ips?.length ?? 0) > 0;
-              return (
-                <div key={gi} style={{ marginBottom: 4 }}>
-                  {"section" in group && group.section && (
-                    <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, textTransform: "uppercase", padding: "10px 14px 4px" }}>{group.section}</div>
-                  )}
-                  {group.items.map((item: NavItem) => item.href ? (
-                    <a key={item.id} href={item.href} style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: "7px 14px 7px 22px", background: "none", borderLeft: "3px solid transparent", color: "rgba(255,255,255,0.35)", fontWeight: 400, fontSize: 12, cursor: "pointer", textAlign: "left", borderRadius: "0 8px 8px 0", marginBottom: 1, textDecoration: "none" }}>
-                      {item.label}
-                    </a>
-                  ) : (
-                    <button key={item.id} onClick={() => setTab(item.id as Tab)} style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: item.sub ? "7px 14px 7px 22px" : "9px 14px", background: tab === item.id ? "rgba(59,130,246,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === item.id ? "#3B82F6" : "transparent"}`, color: tab === item.id ? "#fff" : item.sub ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.6)", fontWeight: tab === item.id ? 700 : 400, fontSize: item.sub ? 12 : 13, cursor: "pointer", textAlign: "left", borderRadius: "0 8px 8px 0", marginBottom: 1 }}>
-                      {item.label}
-                      {item.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
-                      {item.id === "kyc" && kycBadge > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycBadge}</span>}
-                      {item.id === "securite" && secBadge && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>!</span>}
-                    </button>
-                  ))}
-                </div>
-              );
-            })}
-          </nav>
-
-          <div style={{ padding: "12px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-            <a href="/dashboard" style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, textDecoration: "none", textAlign: "center", display: "block" }}>← Dashboard</a>
-          </div>
-        </div>
-      )}
-
       {/* ── MAIN ── */}
-      <div style={{ flex: 1, backgroundColor: "transparent", overflowY: "auto", color: "#fff", paddingBottom: isMobile ? 70 : 0 }}>
+      <div style={{ flex: 1, backgroundColor: "#050505", color: "#fff", paddingBottom: isMobile ? 70 : 0 }}>
         {/* Header */}
-        <div style={{ backgroundColor: "#0a0a0a", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
+        <div style={{ backgroundColor: "#0c0c0c", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
           <div>
-            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 1 }}>Admin</div>
             <div style={{ fontSize: isMobile ? 16 : 20, fontWeight: 800, color: "#fff" }}>{TAB_LABELS[tab] ?? tab}</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -3139,7 +3094,14 @@ export default function AdminPage() {
 
         </div>
       </div>
-    </div>
     </>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", backgroundColor: "#050505", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Chargement...</div>}>
+      <AdminPageInner />
+    </Suspense>
   );
 }
