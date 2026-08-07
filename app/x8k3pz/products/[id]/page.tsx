@@ -443,7 +443,7 @@ export default function ProductEditorPage() {
               background: product.active ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.06)",
               border: `1px solid ${product.active ? "rgba(34,197,94,0.22)" : "rgba(255,255,255,0.1)"}`,
               color: product.active ? "#4ade80" : "rgba(255,255,255,0.38)",
-              borderRadius: 20, padding: "3px 10px 3px 8px", fontSize: 11, fontWeight: 700,
+              borderRadius: 20, padding: "3px 10px 3px 8px", fontSize: 10, fontWeight: 700,
               display: "inline-flex", alignItems: "center", gap: 6, letterSpacing: "0.5px",
               userSelect: "none",
             }}>
@@ -750,7 +750,7 @@ export default function ProductEditorPage() {
                                 });
                               }}
                               style={{
-                                fontSize: 11, fontWeight: 600,
+                                fontSize: 12, fontWeight: 600,
                                 color: isEditing ? accent : "rgba(255,255,255,0.32)",
                                 background: isEditing ? `${accent}14` : "rgba(255,255,255,0.05)",
                                 border: `1px solid ${isEditing ? accent + "38" : "rgba(255,255,255,0.1)"}`,
@@ -779,7 +779,8 @@ export default function ProductEditorPage() {
                               <Label>Label de la phase</Label>
                               <Input value={phaseForm.phase_label ?? ""} onChange={v => setPhaseForm(p => ({ ...p, phase_label: v }))} />
                             </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
+                            {/* P4: grids accordéon responsive isMobile */}
+                            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
                               <div>
                                 <Label>Objectif profit</Label>
                                 <Input value={phaseForm.profit_target ?? ""} onChange={v => setPhaseForm(p => ({ ...p, profit_target: v === "" ? null : Number(v) }))} type="number" suffix="%" />
@@ -793,7 +794,7 @@ export default function ProductEditorPage() {
                                 <Input value={phaseForm.total_drawdown ?? ""} onChange={v => setPhaseForm(p => ({ ...p, total_drawdown: Number(v) }))} type="number" suffix="%" />
                               </div>
                             </div>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
+                            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
                               <div>
                                 <Label>Jours min</Label>
                                 <Input value={phaseForm.min_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, min_trading_days: Number(v) }))} type="number" suffix="j" />
@@ -801,7 +802,7 @@ export default function ProductEditorPage() {
                               <div>
                                 <Label>Jours max</Label>
                                 <Input value={phaseForm.max_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, max_trading_days: v === "" ? null : Number(v) }))} type="number" />
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>Vide = illimité</div>
+                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>Vide = illimité</div>
                               </div>
                               <div>
                                 <Label>Partage profits</Label>
@@ -863,7 +864,7 @@ export default function ProductEditorPage() {
                             setEditingRule(rule.rule_key);
                             setRuleForm({ rule_value: displayValue });
                           }}
-                          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.32)", borderRadius: 6, padding: "5px 12px", fontSize: 11, cursor: "pointer" }}
+                          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.32)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}
                         >
                           {isEditing ? "Annuler" : "Modifier"}
                         </button>
@@ -1013,7 +1014,7 @@ export default function ProductEditorPage() {
                     rel="noopener noreferrer"
                     style={{
                       display: "flex", alignItems: "center", gap: 5,
-                      fontSize: 11, color: "rgba(59,130,246,0.65)", textDecoration: "none",
+                      fontSize: 12, color: "rgba(59,130,246,0.65)", textDecoration: "none",
                       fontWeight: 600, letterSpacing: "0.3px",
                       transition: "color 0.15s",
                     }}

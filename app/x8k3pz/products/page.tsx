@@ -257,7 +257,30 @@ export default function ProductsPage() {
       {/* Content */}
       <div style={{ padding: "0 32px 64px", overflowX: "hidden" }}>
         {loading ? (
-          <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>Chargement…</div>
+          /* P4: skeleton liste — imite 2 groupes + 3 lignes produit */
+          <div style={{ paddingTop: 40 }}>
+            <style>{`@keyframes sk-fade { 0%,100%{opacity:.18} 50%{opacity:.07} }`}</style>
+            {[1, 2].map(g => (
+              <div key={g} style={{ marginBottom: 40 }}>
+                {/* header de groupe */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+                  <div style={{ width: 120, height: 13, borderRadius: 4, background: "rgba(255,255,255,0.18)", animation: "sk-fade 1.6s ease-in-out infinite" }} />
+                  <div style={{ width: 48, height: 18, borderRadius: 4, background: "rgba(255,255,255,0.1)", animation: "sk-fade 1.6s ease-in-out infinite", animationDelay: "0.05s" }} />
+                </div>
+                {/* lignes produit */}
+                {[80, 60, 100].map((w, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, padding: "13px 16px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                    <div style={{ width: 52, height: 20, borderRadius: 4, background: "rgba(255,255,255,0.1)", animation: "sk-fade 1.6s ease-in-out infinite", animationDelay: `${i * 0.1}s`, flexShrink: 0 }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ width: `${w}%`, height: 13, borderRadius: 4, background: "rgba(255,255,255,0.14)", animation: "sk-fade 1.6s ease-in-out infinite", animationDelay: `${i * 0.1 + 0.05}s`, marginBottom: 6 }} />
+                      <div style={{ width: "30%", height: 10, borderRadius: 4, background: "rgba(255,255,255,0.08)", animation: "sk-fade 1.6s ease-in-out infinite", animationDelay: `${i * 0.1 + 0.1}s` }} />
+                    </div>
+                    <div style={{ width: 48, height: 16, borderRadius: 4, background: "rgba(255,255,255,0.12)", animation: "sk-fade 1.6s ease-in-out infinite", animationDelay: `${i * 0.1 + 0.08}s`, flexShrink: 0 }} />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
             Aucun produit{!showInactive ? " actif" : ""}
@@ -276,7 +299,7 @@ export default function ProductsPage() {
                   {GROUP_LABELS[group.model]}
                 </span>
                 <ModelBadge model={group.model} />
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.22)" }}>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.22)" }}>
                   {group.items.length} produit{group.items.length > 1 ? "s" : ""}
                 </span>
               </div>
@@ -339,7 +362,7 @@ export default function ProductsPage() {
                       <div style={{ fontSize: 12, color: "rgba(255,255,255,0.42)", marginBottom: 1 }}>
                         {product.account_size}
                       </div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", fontFamily: "monospace" }}>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", fontFamily: "ui-monospace, 'Cascadia Code', 'Fira Code', monospace" }}>
                         {product.slug}
                       </div>
                     </div>
@@ -368,7 +391,7 @@ export default function ProductsPage() {
 
                     {/* Modifié — masqué en narrow */}
                     {!isNarrow && (
-                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)" }}>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)" }}>
                         {product.updated_at ? formatRelativeDate(product.updated_at) : "—"}
                       </div>
                     )}
