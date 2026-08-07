@@ -161,13 +161,14 @@ const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   </button>
 );
 
-// P1#3: SectionTitle — border bottom plus contrastée
+// P2#15: SectionTitle — 12px + barre d'accent gauche
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <div style={{
-    fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.22)",
-    letterSpacing: "2px", textTransform: "uppercase",
+    fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.35)",
+    letterSpacing: "1.5px", textTransform: "uppercase",
     marginBottom: 18, paddingBottom: 10,
     borderBottom: "1px solid rgba(255,255,255,0.08)",
+    paddingLeft: 10, borderLeft: "3px solid rgba(59,130,246,0.3)",
   }}>
     {children}
   </div>
@@ -443,14 +444,15 @@ export default function ProductEditorPage() {
 
         {/* Actions header */}
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          {/* P2#13: Désactiver = rouge quand actif, distinct de Dupliquer */}
           {!isNew && product && (
             <button
               onClick={toggleActive}
               disabled={saving}
               style={{
-                background: "transparent",
-                border: `1px solid ${product.active ? "rgba(255,255,255,0.12)" : "rgba(34,197,94,0.25)"}`,
-                color: product.active ? "rgba(255,255,255,0.45)" : "#4ade80",
+                background: product.active ? "rgba(239,68,68,0.05)" : "transparent",
+                border: `1px solid ${product.active ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`,
+                color: product.active ? "rgba(239,68,68,0.85)" : "#4ade80",
                 borderRadius: 6, padding: "8px 14px", fontSize: 12, fontWeight: 600,
                 cursor: "pointer", opacity: saving ? 0.6 : 1, whiteSpace: "nowrap",
               }}
@@ -652,13 +654,14 @@ export default function ProductEditorPage() {
 
                   return (
                     <div key={phase.phase_order}>
-                      {/* P1#3: Phase card — surface #0c0c0c, border rgba(255,255,255,0.1) */}
+                      {/* P2#8: Phase card — box-shadow pour l'état ouvert */}
                       <div style={{
                         border: `1px solid ${isEditing ? accent + "55" : "rgba(255,255,255,0.1)"}`,
                         borderLeft: `3px solid ${accent}`,
                         borderRadius: 8, overflow: "hidden",
                         background: isEditing ? "#111" : "#0c0c0c",
                         transition: "all 0.2s",
+                        boxShadow: isEditing ? `0 0 0 1px ${accent}20, inset 0 1px 0 ${accent}18` : "none",
                       }}>
                         {/* Résumé */}
                         <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
@@ -703,6 +706,8 @@ export default function ProductEditorPage() {
                                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Split</div>
                               </div>
                             )}
+                            {/* P2#10: séparateur vertical avant le bouton Modifier */}
+                            <div style={{ width: 1, height: 32, background: "rgba(255,255,255,0.1)", flexShrink: 0, alignSelf: "center" }} />
                             <button
                               onClick={() => {
                                 if (isEditing) { setEditingPhase(null); return; }
@@ -725,7 +730,6 @@ export default function ProductEditorPage() {
                                 border: `1px solid ${isEditing ? accent + "38" : "rgba(255,255,255,0.1)"}`,
                                 borderRadius: 5, padding: "6px 14px",
                                 cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s",
-                                marginLeft: "auto",
                               }}
                             >
                               {isEditing ? "Fermer" : "Modifier"}
@@ -851,7 +855,7 @@ export default function ProductEditorPage() {
           {/* ── DANGER ZONE — P1#2: uniquement sur l'onglet Général ── */}
           {!isNew && activeTab === "general" && (
             <div style={{ marginTop: 64, paddingTop: 32, borderTop: "1px solid rgba(239,68,68,0.1)" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(239,68,68,0.38)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 16 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(239,68,68,0.6)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 16 }}>
                 Zone dangereuse
               </div>
 
@@ -876,7 +880,7 @@ export default function ProductEditorPage() {
                   {confirmDelete ? (
                     <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
                       <button onClick={() => setConfirmDelete(false)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.38)", borderRadius: 6, padding: "9px 14px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
-                      <button onClick={deleteProduct} disabled={saving} style={{ background: "rgba(239,68,68,0.14)", border: "1px solid rgba(239,68,68,0.3)", color: "#f87171", borderRadius: 6, padding: "9px 18px", fontSize: 12, fontWeight: 700, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
+                      <button onClick={deleteProduct} disabled={saving} style={{ background: "rgba(239,68,68,0.2)", border: "1px solid rgba(239,68,68,0.5)", color: "#ef4444", borderRadius: 6, padding: "9px 18px", fontSize: 12, fontWeight: 700, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
                         {saving ? "…" : "Confirmer la suppression"}
                       </button>
                     </div>
@@ -903,11 +907,12 @@ export default function ProductEditorPage() {
             maxHeight: isCompact ? "none" : "calc(100vh - 56px)",
             overflowY: isCompact ? "visible" : "auto",
           }}>
-            {/* P1#3: sidebar card → #0c0c0c + border rgba(255,255,255,0.1) */}
+            {/* P1#3: sidebar card → #0c0c0c + border rgba(255,255,255,0.1) | P2#12: inset shadow */}
             <div style={{
               background: "#0c0c0c",
               border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 10, padding: "20px",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
             }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 16 }}>
                 Aperçu client
