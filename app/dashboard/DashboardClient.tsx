@@ -763,7 +763,10 @@ export default function DashboardClient({ user }: { user: User }) {
                   const finalBalance = c.status === "failed"
                     ? (c.breach_equity ?? c.balance)
                     : c.balance;
-                  const profit = finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
+                  // Pour breach daily_drawdown : afficher -daily_drawdown_limit% exactement
+                  const profit = (c.status === "failed" && c.breach_reason === "daily_drawdown" && c.daily_drawdown_limit != null)
+                    ? (-c.daily_drawdown_limit).toFixed(1)
+                    : (finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null);
                   const phaseReached = c.phase === "funded" ? (isFr ? "🏆 Compte Reward" : "🏆 Reward Account") : c.phase === "phase2" ? "Phase 2" : "Phase 1";
                   const isLast = idx === allChallenges.length - 1;
                   const dotColor = c.status === "funded" ? "#60A5FA" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#3B82F6" : "#3B82F6";

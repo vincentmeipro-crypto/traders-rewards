@@ -1105,7 +1105,9 @@ export default function AdminPage() {
 
                               // Pour comptes failed : afficher info breach uniquement
                               if (c.status === "failed") {
-                                const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
+                                const gain = (c.breach_reason === "daily_drawdown" && c.breach_value != null)
+                                  ? -c.breach_value
+                                  : ((c.balance - c.start_balance) / c.start_balance * 100);
                                 const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
                                 return (
                                   <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
