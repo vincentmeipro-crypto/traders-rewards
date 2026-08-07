@@ -52,7 +52,7 @@ const StatusBadge = ({ active }: { active: boolean }) => (
     padding: "3px 8px", borderRadius: 4, whiteSpace: "nowrap" as const,
     background: active ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.06)",
     color:      active ? "#4ade80"             : "rgba(255,255,255,0.35)",
-    border: `1px solid ${active ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.08)"}`,
+    border: `1px solid ${active ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.1)"}`,
   }}>
     {active ? "ACTIF" : "INACTIF"}
   </span>
@@ -83,7 +83,6 @@ export default function ProductsPage() {
   const [menuOpenId, setMenuOpenId]     = useState<string | null>(null);
   const [togglingId, setTogglingId]     = useState<string | null>(null);
   const [notification, setNotification] = useState<{ msg: string; ok: boolean } | null>(null);
-  // P9 — responsive
   const [windowWidth, setWindowWidth]   = useState(1400);
 
   useEffect(() => {
@@ -164,7 +163,8 @@ export default function ProductsPage() {
     }
   };
 
-  const filtered = products.filter(p => showInactive || p.active);
+  const filtered  = products.filter(p => showInactive || p.active);
+  const nbInactifs = products.filter(p => !p.active).length;
 
   const groups: { model: string; items: Product[] }[] = [
     { model: "2step", items: filtered.filter(p => p.model === "2step") },
@@ -172,15 +172,21 @@ export default function ProductsPage() {
     { model: "vip",   items: filtered.filter(p => p.model === "vip")   },
   ].filter(g => g.items.length > 0);
 
-  // P9 — colonnes selon largeur écran
-  // Normal  : Statut | Produit | Prix | Règles P1 | Modifié | Challenges | Actions
-  // Étroit  : Statut | Produit | Prix | Challenges | Actions
+  // P1#6: Actions 132px → 52px (bouton Éditer supprimé, uniquement ⋯)
   const COLS = isNarrow
-    ? "88px 1fr 72px 88px 132px"
-    : "88px 1fr 72px 1fr 88px 88px 132px";
+    ? "88px 1fr 72px 88px 52px"
+    : "88px 1fr 72px 1fr 88px 88px 52px";
+
+  // P1#7: Labels de groupes complets
+  const GROUP_LABELS: Record<string, string> = {
+    "2step": "2-Step Challenge",
+    "1step": "1-Step Challenge",
+    "vip":   "VIP / Algo",
+  };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    // P1#3: surface page → #050505
+    <div style={{ minHeight: "100vh", background: "#050505", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
 
       {/* Toast */}
       {notification && (
@@ -196,25 +202,53 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {/* Header */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+      {/* ── Header — P1#5: breadcrumb "Back Office / Produits" à gauche */}
+      <div style={{
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        padding: "20px 32px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        gap: 16, flexWrap: "wrap",
+        background: "#050505",
+      }}>
+        {/* Gauche: breadcrumb + titre */}
         <div>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>
-            Back Office · Traders Rewards
+          {/* P1#5: breadcrumb cliquable */}
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
+            <a href="/x8k3pz" style={{ fontSize: 12, color: "rgba(255,255,255,0.28)", textDecoration: "none", transition: "color 0.15s" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
+            >
+              Back Office
+            </a>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.15)" }}>/</span>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>Produits</span>
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>
             Produits Challenge
           </h1>
         </div>
+
+        {/* Droite: filtre + CTA uniquement (← Dashboard supprimé) */}
         <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <label style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, userSelect: "none" }}>
-            <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} style={{ accentColor: "#3B82F6", width: 14, height: 14 }} />
+          <label style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", cursor: "pointer", display: "flex", alignItems: "center", gap: 7, userSelect: "none" as const }}>
+            <input
+              type="checkbox"
+              checked={showInactive}
+              onChange={e => setShowInactive(e.target.checked)}
+              style={{ accentColor: "#3B82F6", width: 14, height: 14 }}
+            />
             Inactifs
+            {/* Hint: nombre masqués quand le filtre est actif */}
+            {!showInactive && nbInactifs > 0 && (
+              <span style={{ color: "rgba(255,255,255,0.22)", fontWeight: 400 }}>
+                ({nbInactifs} masqué{nbInactifs > 1 ? "s" : ""})
+              </span>
+            )}
           </label>
-          <a href="/x8k3pz" style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", textDecoration: "none", padding: "8px 14px", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, whiteSpace: "nowrap" }}>
-            ← Dashboard
-          </a>
-          <a href="/x8k3pz/products/new" style={{ background: "#3B82F6", color: "#fff", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}>
+          <a
+            href="/x8k3pz/products/new"
+            style={{ background: "#3B82F6", color: "#fff", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}
+          >
             + Nouveau produit
           </a>
         </div>
@@ -230,18 +264,32 @@ export default function ProductsPage() {
           </div>
         ) : (
           groups.map(group => (
-            <div key={group.model} style={{ marginTop: 36 }}>
+            <div key={group.model} style={{ marginTop: 40 }}>
 
-              {/* Section header */}
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+              {/* P1#7: Section group header renforcé */}
+              <div style={{
+                display: "flex", alignItems: "center", gap: 10,
+                marginBottom: 12, paddingBottom: 12,
+                borderBottom: "1px solid rgba(255,255,255,0.07)",
+              }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>
+                  {GROUP_LABELS[group.model]}
+                </span>
                 <ModelBadge model={group.model} />
-                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>
+                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.22)" }}>
                   {group.items.length} produit{group.items.length > 1 ? "s" : ""}
                 </span>
               </div>
 
               {/* En-têtes colonnes */}
-              <div style={{ display: "grid", gridTemplateColumns: COLS, gap: "0 12px", padding: "8px 16px", fontSize: 10, fontWeight: 600, letterSpacing: "1.2px", textTransform: "uppercase", color: "rgba(255,255,255,0.2)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+              <div style={{
+                display: "grid", gridTemplateColumns: COLS,
+                gap: "0 12px", padding: "8px 16px",
+                fontSize: 10, fontWeight: 600, letterSpacing: "1.2px",
+                textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
+                // P1#3: border plus contrastée
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+              }}>
                 <div>Statut</div>
                 <div>Produit</div>
                 <div>Prix</div>
@@ -261,7 +309,6 @@ export default function ProductsPage() {
                 const isToggling = togglingId === product.id;
 
                 return (
-                  /* P2 — ligne entière cliquable */
                   <div
                     key={product.id}
                     onClick={() => router.push(`/x8k3pz/products/${product.id}`)}
@@ -270,9 +317,11 @@ export default function ProductsPage() {
                     style={{
                       display: "grid", gridTemplateColumns: COLS,
                       gap: "0 12px", padding: "13px 16px",
-                      borderBottom: "1px solid rgba(255,255,255,0.04)",
+                      // P1#3: row border plus visible
+                      borderBottom: "1px solid rgba(255,255,255,0.06)",
                       alignItems: "center", borderRadius: 6,
-                      background: isHovered ? "rgba(255,255,255,0.025)" : "transparent",
+                      // P1#3: hover plus perceptible sur #050505
+                      background: isHovered ? "rgba(255,255,255,0.04)" : "transparent",
                       transition: "background 0.1s",
                       cursor: "pointer",
                     }}
@@ -282,7 +331,7 @@ export default function ProductsPage() {
                       <StatusBadge active={product.active} />
                     </div>
 
-                    {/* P1 — Produit : nom + taille + slug */}
+                    {/* Produit : nom + taille + slug */}
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: product.active ? "#fff" : "rgba(255,255,255,0.38)", lineHeight: 1.2, marginBottom: 1 }}>
                         {product.name}
@@ -337,28 +386,18 @@ export default function ProductsPage() {
                       )}
                     </div>
 
-                    {/* Actions — stopPropagation sur toute la zone */}
-                    <div onClick={e => e.stopPropagation()} style={{ display: "flex", gap: 6, justifyContent: "flex-end", alignItems: "center" }}>
-                      {/* P2 — bouton Éditer conservé mais stopPropagation géré par le parent */}
-                      <a
-                        href={`/x8k3pz/products/${product.id}`}
-                        onClick={e => e.stopPropagation()}
-                        style={{
-                          background:  isHovered ? "rgba(59,130,246,0.14)" : "rgba(255,255,255,0.05)",
-                          color:       isHovered ? "#60a5fa"                : "rgba(255,255,255,0.45)",
-                          border:      `1px solid ${isHovered ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.08)"}`,
-                          borderRadius: 6, padding: "6px 14px", fontSize: 12, fontWeight: 600,
-                          textDecoration: "none", transition: "all 0.15s", whiteSpace: "nowrap",
-                        }}
-                      >
-                        Éditer
-                      </a>
-
-                      {/* Menu ⋯ */}
+                    {/* P1#6: Actions — bouton Éditer supprimé, uniquement ⋯ */}
+                    <div onClick={e => e.stopPropagation()} style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
                       <div style={{ position: "relative" }}>
                         <button
                           onClick={e => { e.stopPropagation(); setMenuOpenId(isMenuOpen ? null : product.id); }}
-                          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, width: 30, height: 30, cursor: "pointer", color: "rgba(255,255,255,0.4)", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}
+                          style={{
+                            background: "transparent",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                            borderRadius: 6, width: 30, height: 30,
+                            cursor: "pointer", color: "rgba(255,255,255,0.4)",
+                            fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center",
+                          }}
                         >
                           ⋯
                         </button>
@@ -366,7 +405,13 @@ export default function ProductsPage() {
                         {isMenuOpen && (
                           <div
                             onClick={e => e.stopPropagation()}
-                            style={{ position: "absolute", right: 0, top: "calc(100% + 6px)", zIndex: 100, background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: 6, minWidth: 180, boxShadow: "0 8px 32px rgba(0,0,0,0.6)" }}
+                            style={{
+                              position: "absolute", right: 0, top: "calc(100% + 6px)",
+                              zIndex: 100, background: "#111",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                              borderRadius: 8, padding: 6, minWidth: 180,
+                              boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+                            }}
                           >
                             <button
                               onClick={e => duplicate(product, e)}

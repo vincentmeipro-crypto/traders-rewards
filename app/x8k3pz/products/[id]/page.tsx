@@ -51,14 +51,18 @@ type Product = {
 
 // ── Atomic UI ────────────────────────────────────────────────────
 const Label = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "1.5px", textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6 }}>
+  <div style={{
+    fontSize: 10, fontWeight: 600, letterSpacing: "1.5px",
+    textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6,
+  }}>
     {children}
   </div>
 );
 
+// P1#3: input border rgba(255,255,255,0.1) (from 0.08), bg légèrement plus visible
 const inputBaseStyle: React.CSSProperties = {
-  background: "rgba(255,255,255,0.06)",
-  border: "1px solid rgba(255,255,255,0.08)",
+  background: "rgba(255,255,255,0.07)",
+  border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 6, padding: "9px 12px",
   color: "#fff", fontSize: 13, fontWeight: 500,
   width: "100%", outline: "none", fontFamily: "inherit",
@@ -66,7 +70,7 @@ const inputBaseStyle: React.CSSProperties = {
 
 const readOnlyStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.03)",
-  border: "1px solid rgba(255,255,255,0.08)",
+  border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 6, padding: "9px 12px",
   color: "rgba(255,255,255,0.35)", fontSize: 13, fontWeight: 400,
   width: "100%", outline: "none", fontFamily: "inherit",
@@ -89,13 +93,12 @@ const Input = ({
       onChange={e => onChange?.(e.target.value)}
       style={readOnly ? readOnlyStyle : inputBaseStyle}
       onFocus={e => { if (!readOnly) e.target.style.borderColor = "rgba(59,130,246,0.5)"; }}
-      onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.08)"; }}
+      onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
     />
     {suffix && <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>{suffix}</span>}
   </div>
 );
 
-// P7 — Textarea pour les champs texte long
 const Textarea = ({
   value, onChange, placeholder,
 }: {
@@ -109,18 +112,19 @@ const Textarea = ({
     placeholder={placeholder}
     rows={3}
     style={{
-      background: "rgba(255,255,255,0.06)",
-      border: "1px solid rgba(255,255,255,0.08)",
+      background: "rgba(255,255,255,0.07)",
+      border: "1px solid rgba(255,255,255,0.1)",
       borderRadius: 6, padding: "9px 12px",
       color: "#fff", fontSize: 13, fontWeight: 500,
       width: "100%", outline: "none", fontFamily: "inherit",
       resize: "vertical", minHeight: 72, boxSizing: "border-box",
     }}
     onFocus={e => { e.target.style.borderColor = "rgba(59,130,246,0.5)"; }}
-    onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.08)"; }}
+    onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
   />
 );
 
+// P1#3: Select border → rgba(255,255,255,0.1)
 const Select = ({ value, onChange, options }: {
   value: string;
   onChange: (v: string) => void;
@@ -129,7 +133,13 @@ const Select = ({ value, onChange, options }: {
   <select
     value={value}
     onChange={e => onChange(e.target.value)}
-    style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "9px 12px", color: "#fff", fontSize: 13, fontWeight: 500, width: "100%", outline: "none", fontFamily: "inherit", cursor: "pointer" }}
+    style={{
+      background: "rgba(255,255,255,0.07)",
+      border: "1px solid rgba(255,255,255,0.1)",
+      borderRadius: 6, padding: "9px 12px",
+      color: "#fff", fontSize: 13, fontWeight: 500,
+      width: "100%", outline: "none", fontFamily: "inherit", cursor: "pointer",
+    }}
   >
     {options.map(o => <option key={o.value} value={o.value} style={{ background: "#111" }}>{o.label}</option>)}
   </select>
@@ -138,14 +148,27 @@ const Select = ({ value, onChange, options }: {
 const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
   <button
     onClick={() => onChange(!checked)}
-    style={{ width: 36, height: 20, borderRadius: 10, border: "none", cursor: "pointer", background: checked ? "#22c55e" : "rgba(255,255,255,0.15)", position: "relative", transition: "background 0.2s", flexShrink: 0 }}
+    style={{
+      width: 36, height: 20, borderRadius: 10, border: "none",
+      cursor: "pointer", background: checked ? "#22c55e" : "rgba(255,255,255,0.15)",
+      position: "relative", transition: "background 0.2s", flexShrink: 0,
+    }}
   >
-    <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#fff", position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s" }} />
+    <div style={{
+      width: 14, height: 14, borderRadius: "50%", background: "#fff",
+      position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s",
+    }} />
   </button>
 );
 
+// P1#3: SectionTitle — border bottom plus contrastée
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 18, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+  <div style={{
+    fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.22)",
+    letterSpacing: "2px", textTransform: "uppercase",
+    marginBottom: 18, paddingBottom: 10,
+    borderBottom: "1px solid rgba(255,255,255,0.08)",
+  }}>
     {children}
   </div>
 );
@@ -157,14 +180,13 @@ export default function ProductEditorPage() {
   const productId = params.id as string;
   const isNew     = productId === "new";
 
-  const [product, setProduct]           = useState<Product | null>(null);
-  const [loading, setLoading]           = useState(!isNew);
-  const [saving, setSaving]             = useState(false);
-  const [activeTab, setActiveTab]       = useState<"general" | "phases" | "rules">("general");
-  const [notification, setNotification] = useState<{ msg: string; ok: boolean } | null>(null);
+  const [product, setProduct]             = useState<Product | null>(null);
+  const [loading, setLoading]             = useState(!isNew);
+  const [saving, setSaving]               = useState(false);
+  const [activeTab, setActiveTab]         = useState<"general" | "phases" | "rules">("general");
+  const [notification, setNotification]   = useState<{ msg: string; ok: boolean } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
-  // P9 — responsive
-  const [windowWidth, setWindowWidth]   = useState(1400);
+  const [windowWidth, setWindowWidth]     = useState(1400);
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -175,12 +197,11 @@ export default function ProductEditorPage() {
 
   const isCompact = windowWidth < 1100;
 
-  // P8 — Formulaire avec prix en euros (pas en centimes)
   const [form, setForm] = useState({
     name: "", description: "", model: "2step", account_size: "$25,000",
     balance_usd: "25000",
-    price_eur: "",          // euros (ex: "299")
-    price_crypto: "",       // euros (ex: "269"), vide = identique carte
+    price_eur: "",
+    price_crypto: "",
     leverage: "100", max_cumul_usd: "", display_order: "0",
     mt5_group_challenge: "", mt5_group_funded: "", slug: "",
   });
@@ -200,7 +221,6 @@ export default function ProductEditorPage() {
   const pf = (field: keyof typeof form) => (v: string) =>
     setForm(prev => ({ ...prev, [field]: v }));
 
-  // P8 — initialiser avec les prix en euros
   const syncFormFromProduct = (p: Product) => {
     setForm({
       name:                p.name,
@@ -241,12 +261,11 @@ export default function ProductEditorPage() {
 
   useEffect(() => { fetchProduct(); }, [fetchProduct]);
 
-  // ── Actions ────────────────────────────────────────────────────
+  // ── Actions (logique métier inchangée) ────────────────────────
 
   const saveGeneral = async () => {
     setSaving(true);
     try {
-      // P8 — convertir euros → centimes au moment du submit
       const payload: Record<string, unknown> = {
         name:                form.name,
         description:         form.description || null,
@@ -277,7 +296,6 @@ export default function ProductEditorPage() {
     finally { setSaving(false); }
   };
 
-  // P3 — toggle séparé du badge
   const toggleActive = async () => {
     if (!product) return;
     setSaving(true);
@@ -358,33 +376,56 @@ export default function ProductEditorPage() {
   const title  = isNew ? "Nouveau produit" : (product?.name ?? "—");
   const fieldRow = { marginBottom: 20 };
 
+  // P1#3: Loading state sur surface #050505
   if (loading) {
     return (
-      <div style={{ minHeight: "100vh", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 14 }}>
+      <div style={{ minHeight: "100vh", background: "#050505", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 14 }}>
         Chargement…
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+    // P1#3: surface page → #050505
+    <div style={{ minHeight: "100vh", background: "#050505", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
 
       {/* Toast */}
       {notification && (
-        <div style={{ position: "fixed", top: 24, right: 24, zIndex: 1000, background: notification.ok ? "#0a1a0e" : "#1a0a0a", border: `1px solid ${notification.ok ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`, color: notification.ok ? "#86efac" : "#fca5a5", padding: "12px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500, boxShadow: "0 4px 24px rgba(0,0,0,0.5)" }}>
+        <div style={{
+          position: "fixed", top: 24, right: 24, zIndex: 1000,
+          background: notification.ok ? "#0a1a0e" : "#1a0a0a",
+          border: `1px solid ${notification.ok ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
+          color: notification.ok ? "#86efac" : "#fca5a5",
+          padding: "12px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500,
+          boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
+        }}>
           {notification.msg}
         </div>
       )}
 
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "14px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, background: "#000", zIndex: 50, gap: 12, flexWrap: "wrap" }}>
+      <div style={{
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
+        padding: "16px 32px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        position: "sticky", top: 0,
+        // P1#3: header sticky sur surface #050505
+        background: "#050505",
+        zIndex: 50, gap: 12, flexWrap: "wrap",
+      }}>
         {/* Breadcrumb + titre + badge */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-          <a href="/x8k3pz/products" style={{ color: "rgba(255,255,255,0.28)", textDecoration: "none", fontSize: 13 }}>Produits</a>
-          <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 13 }}>/</span>
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{title}</span>
+          {/* P1#4: "Produits /" en 12px muted, nom du produit en 20px/800 */}
+          <a href="/x8k3pz/products" style={{ color: "rgba(255,255,255,0.28)", textDecoration: "none", fontSize: 12 }}
+            onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.28)")}
+          >
+            Produits
+          </a>
+          <span style={{ color: "rgba(255,255,255,0.15)", fontSize: 12 }}>/</span>
+          <span style={{ fontSize: 20, fontWeight: 800, color: "#fff", letterSpacing: "-0.5px" }}>{title}</span>
 
-          {/* P3 — badge indicateur pur, non cliquable */}
+          {/* Badge statut — indicateur pur, non cliquable */}
           {!isNew && product && (
             <span style={{
               background: product.active ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.06)",
@@ -400,7 +441,7 @@ export default function ProductEditorPage() {
           )}
         </div>
 
-        {/* P3 — actions avec bouton Activer/Désactiver explicite */}
+        {/* Actions header */}
         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
           {!isNew && product && (
             <button
@@ -421,30 +462,42 @@ export default function ProductEditorPage() {
             <button
               onClick={duplicate}
               disabled={saving}
-              style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.48)", borderRadius: 6, padding: "8px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}
+              style={{
+                background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
+                color: "rgba(255,255,255,0.48)", borderRadius: 6, padding: "8px 14px",
+                fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
+              }}
             >
               Dupliquer
             </button>
           )}
-          <button
-            onClick={saveGeneral}
-            disabled={saving || activeTab !== "general"}
-            style={{
-              background: activeTab === "general" ? "#3B82F6" : "rgba(59,130,246,0.12)",
-              border: "none", color: activeTab === "general" ? "#fff" : "rgba(255,255,255,0.25)",
-              borderRadius: 8, padding: "8px 22px", fontSize: 13, fontWeight: 700,
-              cursor: activeTab === "general" ? "pointer" : "default",
-              opacity: saving ? 0.6 : 1, transition: "all 0.15s", whiteSpace: "nowrap",
-            }}
-          >
-            {saving ? "…" : isNew ? "Créer le produit" : "Sauvegarder"}
-          </button>
+          {/* P1#1: Sauvegarder uniquement visible sur l'onglet Général */}
+          {activeTab === "general" && (
+            <button
+              onClick={saveGeneral}
+              disabled={saving}
+              style={{
+                background: "#3B82F6", border: "none", color: "#fff",
+                borderRadius: 8, padding: "8px 22px", fontSize: 13, fontWeight: 700,
+                cursor: "pointer", opacity: saving ? 0.6 : 1,
+                transition: "opacity 0.15s", whiteSpace: "nowrap",
+              }}
+            >
+              {saving ? "…" : isNew ? "Créer le produit" : "Sauvegarder"}
+            </button>
+          )}
         </div>
       </div>
 
-      {/* ── Bannière sécurité ─────────────────────────────────────── */}
+      {/* ── Bannière sécurité ────────────────────────────────────── */}
       {!isNew && hasAny && (
-        <div style={{ background: "rgba(245,158,11,0.05)", borderBottom: "1px solid rgba(245,158,11,0.12)", padding: "9px 32px", display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "rgba(245,158,11,0.75)" }}>
+        <div style={{
+          background: "rgba(245,158,11,0.05)",
+          borderBottom: "1px solid rgba(245,158,11,0.12)",
+          padding: "9px 32px",
+          display: "flex", alignItems: "center", gap: 8,
+          fontSize: 12, color: "rgba(245,158,11,0.75)",
+        }}>
           <span>⚠</span>
           <span>
             Ce produit est utilisé par{" "}
@@ -456,8 +509,9 @@ export default function ProductEditorPage() {
         </div>
       )}
 
-      {/* ── Tabs ──────────────────────────────────────────────────── */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "0 32px", display: "flex" }}>
+      {/* ── Tabs ─────────────────────────────────────────────────── */}
+      {/* P1#3: border bottom plus contrastée */}
+      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "0 32px", display: "flex" }}>
         <button style={tabStyle("general")} onClick={() => setActiveTab("general")}>Général</button>
         {!isNew && (
           <>
@@ -471,22 +525,32 @@ export default function ProductEditorPage() {
         )}
       </div>
 
-      {/* ── Layout (form + sidebar) ───────────────────────────────── */}
-      {/* P9 — flex-direction column sous 1100px */}
-      <div style={{ display: "flex", flexDirection: isCompact ? "column" : "row", alignItems: "flex-start", maxWidth: 1120, margin: "0 auto", padding: "0 32px" }}>
+      {/* ── Layout (form + sidebar) ──────────────────────────────── */}
+      <div style={{
+        display: "flex", flexDirection: isCompact ? "column" : "row",
+        alignItems: "flex-start", maxWidth: 1120, margin: "0 auto", padding: "0 32px",
+      }}>
 
-        {/* ── Zone de formulaire ─────────────────────────────────── */}
-        <div style={{ flex: 1, minWidth: 0, padding: "32px 0", paddingRight: !isNew && !isCompact ? 40 : 0 }}>
+        {/* ── Zone de formulaire ───────────────────────────────── */}
+        <div style={{
+          flex: 1, minWidth: 0, padding: "32px 0",
+          paddingRight: !isNew && !isCompact ? 40 : 0,
+        }}>
 
           {/* P10 — Guide création */}
           {isNew && (
-            <div style={{ marginBottom: 24, padding: "10px 16px", background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 8, fontSize: 12, color: "rgba(255,255,255,0.45)", display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{
+              marginBottom: 24, padding: "10px 16px",
+              background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)",
+              borderRadius: 8, fontSize: 12, color: "rgba(255,255,255,0.45)",
+              display: "flex", alignItems: "center", gap: 8,
+            }}>
               <span style={{ color: "#60a5fa", fontWeight: 700 }}>Étape 1/3</span>
               <span>— Après création, vous configurerez les phases et les règles.</span>
             </div>
           )}
 
-          {/* ── TAB GÉNÉRAL ───────────────────────────────────────── */}
+          {/* ── TAB GÉNÉRAL ─────────────────────────────────────── */}
           {activeTab === "general" && (
             <div>
               {/* Informations commerciales */}
@@ -510,7 +574,6 @@ export default function ProductEditorPage() {
                     ]} />
                   </div>
                 </div>
-                {/* P7 — Textarea pour description */}
                 <div style={fieldRow}>
                   <Label>Description (optionnel)</Label>
                   <Textarea value={form.description} onChange={pf("description")} placeholder="Description visible par les clients…" />
@@ -529,25 +592,18 @@ export default function ProductEditorPage() {
                     <Input value={form.max_cumul_usd} onChange={pf("max_cumul_usd")} type="number" suffix="USD" />
                   </div>
                 </div>
-                {/* P8 — Prix en euros */}
+                {/* Prix en euros — labels sans "(€)" redondant, suffix sur le champ */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
-                    <Label>Prix carte (€)</Label>
-                    <Input
-                      value={form.price_eur}
-                      onChange={pf("price_eur")}
-                      type="number"
-                      suffix="€"
-                    />
+                    <Label>Prix carte</Label>
+                    <Input value={form.price_eur} onChange={pf("price_eur")} type="number" suffix="€" />
                   </div>
                   <div>
-                    <Label>Prix crypto (€ — vide = identique à carte)</Label>
-                    <Input
-                      value={form.price_crypto}
-                      onChange={pf("price_crypto")}
-                      type="number"
-                      suffix={form.price_crypto ? "€" : "identique"}
-                    />
+                    <Label>Prix crypto</Label>
+                    <Input value={form.price_crypto} onChange={pf("price_crypto")} type="number" suffix={form.price_crypto ? "€" : "identique"} />
+                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>
+                      Vide = identique au prix carte
+                    </div>
                   </div>
                 </div>
               </div>
@@ -557,7 +613,7 @@ export default function ProductEditorPage() {
                 <SectionTitle>Paramètres techniques</SectionTitle>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
-                    <Label>Balance simulée (USD)</Label>
+                    <Label>Balance simulée</Label>
                     <Input value={form.balance_usd} onChange={pf("balance_usd")} type="number" suffix="USD" />
                   </div>
                   <div>
@@ -583,7 +639,7 @@ export default function ProductEditorPage() {
             </div>
           )}
 
-          {/* ── TAB PHASES ────────────────────────────────────────── */}
+          {/* ── TAB PHASES ──────────────────────────────────────── */}
           {activeTab === "phases" && (
             <div>
               {phases.length === 0 ? (
@@ -596,9 +652,14 @@ export default function ProductEditorPage() {
 
                   return (
                     <div key={phase.phase_order}>
-                      {/* Phase card */}
-                      <div style={{ border: `1px solid ${isEditing ? accent + "55" : "rgba(255,255,255,0.08)"}`, borderLeft: `3px solid ${accent}`, borderRadius: 8, overflow: "hidden", background: isEditing ? `${accent}08` : "rgba(255,255,255,0.02)", transition: "all 0.2s" }}>
-
+                      {/* P1#3: Phase card — surface #0c0c0c, border rgba(255,255,255,0.1) */}
+                      <div style={{
+                        border: `1px solid ${isEditing ? accent + "55" : "rgba(255,255,255,0.1)"}`,
+                        borderLeft: `3px solid ${accent}`,
+                        borderRadius: 8, overflow: "hidden",
+                        background: isEditing ? "#111" : "#0c0c0c",
+                        transition: "all 0.2s",
+                      }}>
                         {/* Résumé */}
                         <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -607,44 +668,45 @@ export default function ProductEditorPage() {
                             </div>
                             <div>
                               <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{phase.phase_label}</div>
-                              <div style={{ fontSize: 11, color: accent, marginTop: 4, fontWeight: 600 }}>{isFunded ? "Compte Certifié" : `Phase ${phase.phase_order}`}</div>
+                              {/* Sous-titre uniquement pour funded */}
+                              {isFunded && (
+                                <div style={{ fontSize: 11, color: accent, marginTop: 4, fontWeight: 600 }}>Compte Certifié</div>
+                              )}
                             </div>
                           </div>
 
-                          {/* P5 — métriques avec min_trading_days */}
+                          {/* Métriques */}
                           <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
                             {phase.profit_target !== null && (
                               <div style={{ textAlign: "right" }}>
                                 <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_target}%</div>
-                                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Objectif</div>
+                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Objectif</div>
                               </div>
                             )}
                             <div style={{ textAlign: "right" }}>
                               <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.daily_drawdown}%</div>
-                              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>DD/jour</div>
+                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>DD/jour</div>
                             </div>
                             <div style={{ textAlign: "right" }}>
                               <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.total_drawdown}%</div>
-                              <div style={{ fontSize: 9, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>DD total</div>
+                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>DD total</div>
                             </div>
-                            {/* P5 — jours min */}
                             {phase.min_trading_days > 0 && (
                               <div style={{ textAlign: "right" }}>
                                 <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.min_trading_days}</div>
-                                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>j. min</div>
+                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>j. min</div>
                               </div>
                             )}
                             {phase.profit_split !== null && (
                               <div style={{ textAlign: "right" }}>
                                 <div style={{ fontSize: 16, fontWeight: 800, color: "#4ade80", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_split}%</div>
-                                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Split</div>
+                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Split</div>
                               </div>
                             )}
                             <button
                               onClick={() => {
                                 if (isEditing) { setEditingPhase(null); return; }
                                 setEditingPhase(phase.phase_order);
-                                // P6 — inclure phase_label dans phaseForm
                                 setPhaseForm({
                                   phase_label:      phase.phase_label,
                                   profit_target:    phase.profit_target,
@@ -656,35 +718,40 @@ export default function ProductEditorPage() {
                                   mt5_group:        phase.mt5_group,
                                 });
                               }}
-                              style={{ fontSize: 11, fontWeight: 600, color: isEditing ? accent : "rgba(255,255,255,0.32)", background: isEditing ? `${accent}14` : "rgba(255,255,255,0.05)", border: `1px solid ${isEditing ? accent + "38" : "rgba(255,255,255,0.08)"}`, borderRadius: 5, padding: "6px 14px", cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s" }}
+                              style={{
+                                fontSize: 11, fontWeight: 600,
+                                color: isEditing ? accent : "rgba(255,255,255,0.32)",
+                                background: isEditing ? `${accent}14` : "rgba(255,255,255,0.05)",
+                                border: `1px solid ${isEditing ? accent + "38" : "rgba(255,255,255,0.1)"}`,
+                                borderRadius: 5, padding: "6px 14px",
+                                cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s",
+                                marginLeft: "auto",
+                              }}
                             >
-                              {isEditing ? "▲ Fermer" : "✎ Modifier"}
+                              {isEditing ? "Fermer" : "Modifier"}
                             </button>
                           </div>
                         </div>
 
                         {/* Accordéon */}
                         {isEditing && (
-                          <div style={{ padding: "20px", borderTop: "1px solid rgba(255,255,255,0.06)", background: "#050505" }}>
-                            {/* P6 — champ Label */}
+                          // P1#3: accordéon sur surface #111
+                          <div style={{ padding: "20px", borderTop: "1px solid rgba(255,255,255,0.1)", background: "#111" }}>
                             <div style={{ marginBottom: 16 }}>
                               <Label>Label de la phase</Label>
-                              <Input
-                                value={phaseForm.phase_label ?? ""}
-                                onChange={v => setPhaseForm(p => ({ ...p, phase_label: v }))}
-                              />
+                              <Input value={phaseForm.phase_label ?? ""} onChange={v => setPhaseForm(p => ({ ...p, phase_label: v }))} />
                             </div>
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
                               <div>
-                                <Label>Objectif profit (%)</Label>
+                                <Label>Objectif profit</Label>
                                 <Input value={phaseForm.profit_target ?? ""} onChange={v => setPhaseForm(p => ({ ...p, profit_target: v === "" ? null : Number(v) }))} type="number" suffix="%" />
                               </div>
                               <div>
-                                <Label>Drawdown journalier (%)</Label>
+                                <Label>Drawdown journalier</Label>
                                 <Input value={phaseForm.daily_drawdown ?? ""} onChange={v => setPhaseForm(p => ({ ...p, daily_drawdown: Number(v) }))} type="number" suffix="%" />
                               </div>
                               <div>
-                                <Label>Drawdown total (%)</Label>
+                                <Label>Drawdown total</Label>
                                 <Input value={phaseForm.total_drawdown ?? ""} onChange={v => setPhaseForm(p => ({ ...p, total_drawdown: Number(v) }))} type="number" suffix="%" />
                               </div>
                             </div>
@@ -694,11 +761,12 @@ export default function ProductEditorPage() {
                                 <Input value={phaseForm.min_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, min_trading_days: Number(v) }))} type="number" suffix="j" />
                               </div>
                               <div>
-                                <Label>Jours max (vide = illimité)</Label>
+                                <Label>Jours max</Label>
                                 <Input value={phaseForm.max_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, max_trading_days: v === "" ? null : Number(v) }))} type="number" />
+                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>Vide = illimité</div>
                               </div>
                               <div>
-                                <Label>Partage profits (%)</Label>
+                                <Label>Partage profits</Label>
                                 <Input value={phaseForm.profit_split ?? ""} onChange={v => setPhaseForm(p => ({ ...p, profit_split: v === "" ? null : Number(v) }))} type="number" suffix="%" />
                               </div>
                             </div>
@@ -712,11 +780,11 @@ export default function ProductEditorPage() {
                         )}
                       </div>
 
-                      {/* Connecteur */}
+                      {/* Connecteur entre phases */}
                       {idx < phases.length - 1 && (
-                        <div style={{ padding: "0 0 0 16px", margin: "6px 0", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-                          <div style={{ width: 1, height: 18, background: "rgba(255,255,255,0.08)" }} />
-                          <div style={{ marginTop: -2, fontSize: 10, color: "rgba(255,255,255,0.18)", lineHeight: 1 }}>▼</div>
+                        <div style={{ margin: "6px 0 6px 37px", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                          <div style={{ width: 2, height: 20, background: "rgba(255,255,255,0.1)" }} />
+                          <div style={{ marginTop: -2, fontSize: 10, color: "rgba(255,255,255,0.2)", lineHeight: 1 }}>▼</div>
                         </div>
                       )}
                     </div>
@@ -726,29 +794,38 @@ export default function ProductEditorPage() {
             </div>
           )}
 
-          {/* ── TAB RÈGLES ────────────────────────────────────────── */}
+          {/* ── TAB RÈGLES ──────────────────────────────────────── */}
           {activeTab === "rules" && (
             <div>
               {rules.length === 0 ? (
                 <div style={{ padding: "40px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>Aucune règle définie</div>
               ) : (
                 rules.map(rule => {
-                  const isEditing = editingRule === rule.rule_key;
+                  const isEditing    = editingRule === rule.rule_key;
                   const displayValue = typeof rule.rule_value === "object" ? JSON.stringify(rule.rule_value) : String(rule.rule_value);
                   return (
-                    <div key={rule.rule_key} style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)", display: "flex", flexDirection: "column", gap: isEditing ? 12 : 0 }}>
+                    <div key={rule.rule_key} style={{
+                      padding: "14px 20px",
+                      // P1#3: rule rows border plus contrastée
+                      borderBottom: "1px solid rgba(255,255,255,0.07)",
+                      display: "flex", flexDirection: "column", gap: isEditing ? 12 : 0,
+                    }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                         <Toggle checked={rule.enabled} onChange={() => toggleRule(rule)} />
                         <div style={{ flex: 1 }}>
                           <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-                            <span style={{ fontSize: 13, fontWeight: 600, color: rule.enabled ? "#fff" : "rgba(255,255,255,0.28)", fontFamily: "monospace" }}>{rule.rule_key}</span>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: rule.enabled ? "#fff" : "rgba(255,255,255,0.28)", fontFamily: "ui-monospace, 'Cascadia Code', monospace" }}>{rule.rule_key}</span>
                             <span style={{ fontSize: 12, fontWeight: 700, color: rule.enabled ? "#60a5fa" : "rgba(255,255,255,0.18)", fontVariantNumeric: "tabular-nums" }}>{displayValue}</span>
                           </div>
                           {rule.description && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)", marginTop: 2 }}>{rule.description}</div>}
                         </div>
                         <button
-                          onClick={() => { if (isEditing) { setEditingRule(null); return; } setEditingRule(rule.rule_key); setRuleForm({ rule_value: displayValue }); }}
-                          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.32)", borderRadius: 6, padding: "5px 12px", fontSize: 11, cursor: "pointer" }}
+                          onClick={() => {
+                            if (isEditing) { setEditingRule(null); return; }
+                            setEditingRule(rule.rule_key);
+                            setRuleForm({ rule_value: displayValue });
+                          }}
+                          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.32)", borderRadius: 6, padding: "5px 12px", fontSize: 11, cursor: "pointer" }}
                         >
                           {isEditing ? "Annuler" : "Modifier"}
                         </button>
@@ -756,11 +833,11 @@ export default function ProductEditorPage() {
                       {isEditing && (
                         <div style={{ display: "flex", gap: 8, alignItems: "flex-end", paddingLeft: 48 }}>
                           <div style={{ flex: 1 }}>
-                            <Label>Valeur (JSON ou string)</Label>
+                            <Label>Nouvelle valeur</Label>
                             <Input value={ruleForm.rule_value} onChange={v => setRuleForm({ rule_value: v })} />
                           </div>
                           <button onClick={() => saveRule(rule.rule_key)} disabled={saving} style={{ background: "#3B82F6", border: "none", color: "#fff", borderRadius: 6, padding: "9px 20px", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
-                            {saving ? "…" : "OK"}
+                            {saving ? "…" : "Enregistrer"}
                           </button>
                         </div>
                       )}
@@ -771,16 +848,14 @@ export default function ProductEditorPage() {
             </div>
           )}
 
-          {/* ── DANGER ZONE ───────────────────────────────────────── */}
-          {!isNew && (
+          {/* ── DANGER ZONE — P1#2: uniquement sur l'onglet Général ── */}
+          {!isNew && activeTab === "general" && (
             <div style={{ marginTop: 64, paddingTop: 32, borderTop: "1px solid rgba(239,68,68,0.1)" }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(239,68,68,0.38)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 16 }}>
                 Zone dangereuse
               </div>
 
-              {/* P4 — suppression uniquement, pas d'action Activer ici */}
               {hasAny ? (
-                /* Challenges existants — suppression désactivée, explication pure */
                 <div style={{ background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.1)", borderRadius: 8, padding: "20px 24px" }}>
                   <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.55)", marginBottom: 8 }}>
                     Supprimer ce produit
@@ -793,7 +868,6 @@ export default function ProductEditorPage() {
                   </div>
                 </div>
               ) : (
-                /* Aucun challenge — suppression autorisée */
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 20, background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.1)", borderRadius: 8, padding: "20px 24px" }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.55)", marginBottom: 6 }}>Supprimer ce produit</div>
@@ -818,8 +892,7 @@ export default function ProductEditorPage() {
 
         </div>{/* /form */}
 
-        {/* ── Sidebar Aperçu client ─────────────────────────────── */}
-        {/* P9 — full width sous 1100px, sticky à droite au-dessus */}
+        {/* ── Sidebar Aperçu client ────────────────────────────── */}
         {!isNew && (
           <div style={{
             width: isCompact ? "100%" : 256,
@@ -830,7 +903,12 @@ export default function ProductEditorPage() {
             maxHeight: isCompact ? "none" : "calc(100vh - 56px)",
             overflowY: isCompact ? "visible" : "auto",
           }}>
-            <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10, padding: "20px" }}>
+            {/* P1#3: sidebar card → #0c0c0c + border rgba(255,255,255,0.1) */}
+            <div style={{
+              background: "#0c0c0c",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 10, padding: "20px",
+            }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 16 }}>
                 Aperçu client
               </div>
@@ -840,7 +918,6 @@ export default function ProductEditorPage() {
                 {form.account_size} · {form.model === "2step" ? "2-Step" : form.model === "1step" ? "1-Step" : "VIP"}
               </div>
 
-              {/* P8 — prix en euros dans la sidebar */}
               <div style={{ fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-1px", lineHeight: 1, marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>
                 {form.price_eur ? `€${form.price_eur}` : "—"}
               </div>
@@ -850,7 +927,7 @@ export default function ProductEditorPage() {
                 </div>
               )}
 
-              <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "16px 0" }} />
+              <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "16px 0" }} />
 
               {phases.length > 0 ? (
                 <div>
@@ -874,11 +951,11 @@ export default function ProductEditorPage() {
 
               {rules.filter(r => r.enabled).length > 0 && (
                 <>
-                  <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "16px 0" }} />
+                  <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "16px 0" }} />
                   <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 10 }}>Règles actives</div>
                   {rules.filter(r => r.enabled).map(r => (
                     <div key={r.rule_key} style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", marginBottom: 5, display: "flex", justifyContent: "space-between", gap: 8 }}>
-                      <span style={{ fontFamily: "monospace", color: "rgba(255,255,255,0.3)", wordBreak: "break-all" }}>{r.rule_key}</span>
+                      <span style={{ fontFamily: "ui-monospace, 'Cascadia Code', monospace", color: "rgba(255,255,255,0.3)", wordBreak: "break-all" }}>{r.rule_key}</span>
                       <span style={{ color: "#60a5fa", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
                         {typeof r.rule_value === "object" ? JSON.stringify(r.rule_value) : String(r.rule_value)}
                       </span>
