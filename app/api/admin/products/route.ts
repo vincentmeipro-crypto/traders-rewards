@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
   const productIds = products.map((p) => p.id);
 
-  const [phasesResult, rulesResult] = await Promise.all([
+  const [phasesResult, rulesResult, countsResult] = await Promise.all([
     admin
       .from("challenge_product_phases")
       .select("*")
@@ -33,6 +33,11 @@ export async function GET(req: NextRequest) {
       .select("*")
       .in("product_id", productIds)
       .order("rule_key", { ascending: true }),
+    // Nombre de challenges par produit (product_id non-null uniquement)
+    admin
+      .from("challenges")
+      .select("product_id, status")
+      .not("product_id", "is", null),
   ]);
 
   if (phasesResult.error)
@@ -43,10 +48,22 @@ export async function GET(req: NextRequest) {
   const allPhases = phasesResult.data ?? [];
   const allRules  = rulesResult.data  ?? [];
 
+  // Agréger les counts par product_id
+  type CountEntry = { active: number; funded: number; total: number };
+  const countMap: Record<string, CountEntry> = {};
+  for (const c of countsResult.data ?? []) {
+    if (!c.product_id) continue;
+    if (!countMap[c.product_id]) countMap[c.product_id] = { active: 0, funded: 0, total: 0 };
+    countMap[c.product_id].total++;
+    if (c.status === "active")  countMap[c.product_id].active++;
+    if (c.status === "funded")  countMap[c.product_id].funded++;
+  }
+
   const result = products.map((product) => ({
     ...product,
-    phases: allPhases.filter((ph) => ph.product_id === product.id),
-    rules:  allRules.filter((r)  => r.product_id  === product.id),
+    phases:          allPhases.filter((ph) => ph.product_id === product.id),
+    rules:           allRules.filter((r)  => r.product_id  === product.id),
+    challenge_count: countMap[product.id] ?? { active: 0, funded: 0, total: 0 },
   }));
 
   return NextResponse.json(result);
