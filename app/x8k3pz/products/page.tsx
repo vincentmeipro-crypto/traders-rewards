@@ -38,9 +38,9 @@ function phase1(phases: Phase[]): Phase | undefined {
 
 function formatRelativeDate(dateStr: string): string {
   const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
-  if (diff < 60)      return "À l'instant";
-  if (diff < 3600)    return `${Math.floor(diff / 60)}min`;
-  if (diff < 86400)   return `${Math.floor(diff / 3600)}h`;
+  if (diff < 60)        return "À l'instant";
+  if (diff < 3600)      return `${Math.floor(diff / 60)}min`;
+  if (diff < 86400)     return `${Math.floor(diff / 3600)}h`;
   if (diff < 86400 * 7) return `${Math.floor(diff / 86400)}j`;
   return new Date(dateStr).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
@@ -76,13 +76,24 @@ const ModelBadge = ({ model }: { model: string }) => {
 // ── Composant principal ──────────────────────────────────────────
 export default function ProductsPage() {
   const router = useRouter();
-  const [products, setProducts]       = useState<Product[]>([]);
-  const [loading, setLoading]         = useState(true);
+  const [products, setProducts]         = useState<Product[]>([]);
+  const [loading, setLoading]           = useState(true);
   const [showInactive, setShowInactive] = useState(true);
-  const [hoveredId, setHoveredId]     = useState<string | null>(null);
-  const [menuOpenId, setMenuOpenId]   = useState<string | null>(null);
-  const [togglingId, setTogglingId]   = useState<string | null>(null);
+  const [hoveredId, setHoveredId]       = useState<string | null>(null);
+  const [menuOpenId, setMenuOpenId]     = useState<string | null>(null);
+  const [togglingId, setTogglingId]     = useState<string | null>(null);
   const [notification, setNotification] = useState<{ msg: string; ok: boolean } | null>(null);
+  // P9 — responsive
+  const [windowWidth, setWindowWidth]   = useState(1400);
+
+  useEffect(() => {
+    setWindowWidth(window.innerWidth);
+    const handle = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handle);
+    return () => window.removeEventListener("resize", handle);
+  }, []);
+
+  const isNarrow = windowWidth < 900;
 
   const notify = (msg: string, ok = true) => {
     setNotification({ msg, ok });
@@ -98,9 +109,7 @@ export default function ProductsPage() {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/products", {
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+      const res  = await fetch("/api/admin/products", { headers: { "x-admin-key": ADMIN_KEY } });
       const data = await res.json();
       setProducts(Array.isArray(data) ? data : []);
     } catch {
@@ -139,7 +148,7 @@ export default function ProductsPage() {
     e.stopPropagation();
     setMenuOpenId(null);
     try {
-      const res = await fetch(`/api/admin/products/${product.id}/duplicate`, {
+      const res  = await fetch(`/api/admin/products/${product.id}/duplicate`, {
         method: "POST",
         headers: { "x-admin-key": ADMIN_KEY },
       });
@@ -163,8 +172,12 @@ export default function ProductsPage() {
     { model: "vip",   items: filtered.filter(p => p.model === "vip")   },
   ].filter(g => g.items.length > 0);
 
-  // Colonnes : statut | produit | prix | règles P1 | mis à jour | challenges | actions
-  const COLS = "90px 210px 76px 1fr 90px 96px 144px";
+  // P9 — colonnes selon largeur écran
+  // Normal  : Statut | Produit | Prix | Règles P1 | Modifié | Challenges | Actions
+  // Étroit  : Statut | Produit | Prix | Challenges | Actions
+  const COLS = isNarrow
+    ? "88px 1fr 72px 88px 132px"
+    : "88px 1fr 72px 1fr 88px 88px 132px";
 
   return (
     <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
@@ -184,7 +197,7 @@ export default function ProductsPage() {
       )}
 
       {/* Header */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "20px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
         <div>
           <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>
             Back Office · Traders Rewards
@@ -193,35 +206,24 @@ export default function ProductsPage() {
             Produits Challenge
           </h1>
         </div>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
           <label style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, userSelect: "none" }}>
-            <input
-              type="checkbox"
-              checked={showInactive}
-              onChange={e => setShowInactive(e.target.checked)}
-              style={{ accentColor: "#3B82F6", width: 14, height: 14 }}
-            />
+            <input type="checkbox" checked={showInactive} onChange={e => setShowInactive(e.target.checked)} style={{ accentColor: "#3B82F6", width: 14, height: 14 }} />
             Inactifs
           </label>
-          <a href="/x8k3pz" style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", textDecoration: "none", padding: "8px 14px", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6 }}>
+          <a href="/x8k3pz" style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", textDecoration: "none", padding: "8px 14px", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, whiteSpace: "nowrap" }}>
             ← Dashboard
           </a>
-          <a href="/x8k3pz/products/new" style={{
-            background: "#3B82F6", color: "#fff", borderRadius: 8,
-            padding: "9px 18px", fontSize: 13, fontWeight: 700,
-            textDecoration: "none", display: "inline-block", letterSpacing: "0.2px",
-          }}>
+          <a href="/x8k3pz/products/new" style={{ background: "#3B82F6", color: "#fff", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}>
             + Nouveau produit
           </a>
         </div>
       </div>
 
       {/* Content */}
-      <div style={{ padding: "0 32px 64px" }}>
+      <div style={{ padding: "0 32px 64px", overflowX: "hidden" }}>
         {loading ? (
-          <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
-            Chargement…
-          </div>
+          <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>Chargement…</div>
         ) : filtered.length === 0 ? (
           <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
             Aucun produit{!showInactive ? " actif" : ""}
@@ -238,24 +240,18 @@ export default function ProductsPage() {
                 </span>
               </div>
 
-              {/* Column headers */}
-              <div style={{
-                display: "grid", gridTemplateColumns: COLS,
-                gap: "0 12px", padding: "8px 16px",
-                fontSize: 10, fontWeight: 600, letterSpacing: "1.2px",
-                textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
-                borderBottom: "1px solid rgba(255,255,255,0.05)",
-              }}>
+              {/* En-têtes colonnes */}
+              <div style={{ display: "grid", gridTemplateColumns: COLS, gap: "0 12px", padding: "8px 16px", fontSize: 10, fontWeight: 600, letterSpacing: "1.2px", textTransform: "uppercase", color: "rgba(255,255,255,0.2)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
                 <div>Statut</div>
                 <div>Produit</div>
                 <div>Prix</div>
-                <div>Règles Phase 1</div>
-                <div>Modifié</div>
+                {!isNarrow && <div>Règles Phase 1</div>}
+                {!isNarrow && <div>Modifié</div>}
                 <div>Challenges</div>
                 <div />
               </div>
 
-              {/* Product rows */}
+              {/* Lignes produits */}
               {group.items.map(product => {
                 const p1         = phase1(product.phases);
                 const priceEur   = Math.round(product.price_eur_cents / 100);
@@ -265,8 +261,10 @@ export default function ProductsPage() {
                 const isToggling = togglingId === product.id;
 
                 return (
+                  /* P2 — ligne entière cliquable */
                   <div
                     key={product.id}
+                    onClick={() => router.push(`/x8k3pz/products/${product.id}`)}
                     onMouseEnter={() => setHoveredId(product.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     style={{
@@ -274,66 +272,77 @@ export default function ProductsPage() {
                       gap: "0 12px", padding: "13px 16px",
                       borderBottom: "1px solid rgba(255,255,255,0.04)",
                       alignItems: "center", borderRadius: 6,
-                      background: isHovered ? "rgba(255,255,255,0.022)" : "transparent",
+                      background: isHovered ? "rgba(255,255,255,0.025)" : "transparent",
                       transition: "background 0.1s",
+                      cursor: "pointer",
                     }}
                   >
                     {/* Statut */}
-                    <div><StatusBadge active={product.active} /></div>
+                    <div onClick={e => e.stopPropagation()}>
+                      <StatusBadge active={product.active} />
+                    </div>
 
-                    {/* Produit */}
+                    {/* P1 — Produit : nom + taille + slug */}
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700, color: product.active ? "#fff" : "rgba(255,255,255,0.38)", lineHeight: 1.2, marginBottom: 2 }}>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: product.active ? "#fff" : "rgba(255,255,255,0.38)", lineHeight: 1.2, marginBottom: 1 }}>
+                        {product.name}
+                      </div>
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.42)", marginBottom: 1 }}>
                         {product.account_size}
                       </div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", fontFamily: "monospace" }}>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", fontFamily: "monospace" }}>
                         {product.slug}
                       </div>
                     </div>
 
                     {/* Prix */}
-                    <div style={{
-                      fontSize: 16, fontWeight: 800,
-                      color: product.active ? "#fff" : "rgba(255,255,255,0.28)",
-                      fontVariantNumeric: "tabular-nums", letterSpacing: "-0.3px",
-                    }}>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: product.active ? "#fff" : "rgba(255,255,255,0.28)", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.3px" }}>
                       €{priceEur}
                     </div>
 
-                    {/* Règles Phase 1 */}
-                    <div>
-                      {p1 ? (
-                        <div style={{ display: "flex", gap: 14, fontSize: 12, color: "rgba(255,255,255,0.42)" }}>
-                          {p1.profit_target !== null && (
-                            <span>Obj. <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.profit_target}%</strong></span>
-                          )}
-                          <span>DD/j <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.daily_drawdown}%</strong></span>
-                          <span>DD <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.total_drawdown}%</strong></span>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.18)" }}>—</span>
-                      )}
-                    </div>
+                    {/* Règles Phase 1 — masqué en narrow */}
+                    {!isNarrow && (
+                      <div>
+                        {p1 ? (
+                          <div style={{ display: "flex", gap: 12, fontSize: 12, color: "rgba(255,255,255,0.42)", flexWrap: "wrap" }}>
+                            {p1.profit_target !== null && (
+                              <span>Obj. <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.profit_target}%</strong></span>
+                            )}
+                            <span>DD/j <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.daily_drawdown}%</strong></span>
+                            <span>DD <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.total_drawdown}%</strong></span>
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: 12, color: "rgba(255,255,255,0.18)" }}>—</span>
+                        )}
+                      </div>
+                    )}
 
-                    {/* Modifié */}
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)" }}>
-                      {product.updated_at ? formatRelativeDate(product.updated_at) : "—"}
-                    </div>
+                    {/* Modifié — masqué en narrow */}
+                    {!isNarrow && (
+                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)" }}>
+                        {product.updated_at ? formatRelativeDate(product.updated_at) : "—"}
+                      </div>
+                    )}
 
                     {/* Challenges */}
                     <div>
                       <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", fontVariantNumeric: "tabular-nums" }}>
                         {cnt.total}
                       </div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 1 }}>
-                        {cnt.active} actif{cnt.funded > 0 ? ` · ${cnt.funded} cert.` : ""}
-                      </div>
+                      {(cnt.active > 0 || cnt.funded > 0) && (
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 1 }}>
+                          {cnt.active > 0 ? `${cnt.active} actif` : ""}
+                          {cnt.funded > 0 ? `${cnt.active > 0 ? " · " : ""}${cnt.funded} cert.` : ""}
+                        </div>
+                      )}
                     </div>
 
-                    {/* Actions */}
-                    <div style={{ display: "flex", gap: 6, justifyContent: "flex-end", alignItems: "center" }}>
+                    {/* Actions — stopPropagation sur toute la zone */}
+                    <div onClick={e => e.stopPropagation()} style={{ display: "flex", gap: 6, justifyContent: "flex-end", alignItems: "center" }}>
+                      {/* P2 — bouton Éditer conservé mais stopPropagation géré par le parent */}
                       <a
                         href={`/x8k3pz/products/${product.id}`}
+                        onClick={e => e.stopPropagation()}
                         style={{
                           background:  isHovered ? "rgba(59,130,246,0.14)" : "rgba(255,255,255,0.05)",
                           color:       isHovered ? "#60a5fa"                : "rgba(255,255,255,0.45)",
@@ -345,16 +354,11 @@ export default function ProductsPage() {
                         Éditer
                       </a>
 
-                      {/* Overflow menu */}
+                      {/* Menu ⋯ */}
                       <div style={{ position: "relative" }}>
                         <button
                           onClick={e => { e.stopPropagation(); setMenuOpenId(isMenuOpen ? null : product.id); }}
-                          style={{
-                            background: "transparent", border: "1px solid rgba(255,255,255,0.08)",
-                            borderRadius: 6, width: 30, height: 30, cursor: "pointer",
-                            color: "rgba(255,255,255,0.4)", fontSize: 16,
-                            display: "flex", alignItems: "center", justifyContent: "center",
-                          }}
+                          style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, width: 30, height: 30, cursor: "pointer", color: "rgba(255,255,255,0.4)", fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center" }}
                         >
                           ⋯
                         </button>
@@ -362,12 +366,7 @@ export default function ProductsPage() {
                         {isMenuOpen && (
                           <div
                             onClick={e => e.stopPropagation()}
-                            style={{
-                              position: "absolute", right: 0, top: "calc(100% + 6px)", zIndex: 100,
-                              background: "#111", border: "1px solid rgba(255,255,255,0.1)",
-                              borderRadius: 8, padding: 6, minWidth: 180,
-                              boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
-                            }}
+                            style={{ position: "absolute", right: 0, top: "calc(100% + 6px)", zIndex: 100, background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: 6, minWidth: 180, boxShadow: "0 8px 32px rgba(0,0,0,0.6)" }}
                           >
                             <button
                               onClick={e => duplicate(product, e)}
@@ -381,13 +380,7 @@ export default function ProductsPage() {
                             <button
                               onClick={e => toggleActive(product, e)}
                               disabled={isToggling}
-                              style={{
-                                width: "100%", background: "transparent", border: "none",
-                                color: product.active ? "#fca5a5" : "#86efac",
-                                fontSize: 13, fontWeight: 500, padding: "8px 12px",
-                                textAlign: "left", cursor: "pointer", borderRadius: 6,
-                                opacity: isToggling ? 0.5 : 1,
-                              }}
+                              style={{ width: "100%", background: "transparent", border: "none", color: product.active ? "#fca5a5" : "#86efac", fontSize: 13, fontWeight: 500, padding: "8px 12px", textAlign: "left", cursor: "pointer", borderRadius: 6, opacity: isToggling ? 0.5 : 1 }}
                               onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
                               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                             >
