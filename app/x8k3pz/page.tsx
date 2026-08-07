@@ -272,6 +272,11 @@ function AdminPageInner() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
+  // Pipeline 2D-C state
+  const [expandedChallenge, setExpandedChallenge] = useState<string | null>(null);
+  const [revealedPasswords, setRevealedPasswords] = useState<Set<string>>(new Set());
+  const [pipelineFilter, setPipelineFilter] = useState("all");
+
   // Pipeline Algo state
   const [algoSearch, setAlgoSearch] = useState("");
   const [algoFilterStatus, setAlgoFilterStatus] = useState("all");
@@ -1098,247 +1103,388 @@ function AdminPageInner() {
         })()}
 
         {/* ══ PIPELINE CHALLENGES ══ */}
-        {tab === "pipeline" && (
-          <>
-            {/* Entonnoir */}
-            <div style={{ display: "flex", gap: 8, marginBottom: 24, alignItems: "stretch" }}>
-              {[
-                { label: "Phase 1 (2-Step)", value: kpis.phase1,    fs: "active"  },
-                { label: "1-Step actifs",    value: kpis.oneStep,   fs: "active"  },
-                { label: "Phase 2 (2-Step)", value: kpis.phase2,    fs: "active"  },
-                { label: "Passés",           value: kpis.passed,    fs: "passed"  },
-                { label: "Reward",           value: kpis.certified, fs: "funded"  },
-                { label: "Failed",           value: kpis.failed,    fs: "failed"  },
-              ].map((s, i) => (
-                <div key={i} onClick={() => setFilterStatus(s.fs)}
-                  style={{ flex: 1, backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: "14px 16px", textAlign: "center", cursor: "pointer" }}>
-                  <div style={{ color: "#fff", fontSize: 22, fontWeight: 900 }}>{s.value}</div>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, marginTop: 4 }}>{s.label}</div>
+        {tab === "pipeline" && (() => {
+          // Helper : est-ce un modèle 1-Step ?
+          const is1StepM = (m: string) => m?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+          // IDs en alerte (Risk Watch)
+          const riskIds = new Set(kpis.alerts.map((a: Challenge) => a.id));
+
+          // Challenges filtrés selon filtre rapide + recherche
+          const pipelineChallenges = challenges.filter(c => {
+            if (c.model === "vip") return false;
+            const s = search.toLowerCase();
+            const matchSearch = !s ||
+              c.user_email?.toLowerCase().includes(s) ||
+              (c.client_first_name || "").toLowerCase().includes(s) ||
+              (c.client_last_name  || "").toLowerCase().includes(s) ||
+              String(c.mt5_login   || "").includes(s);
+            if (!matchSearch) return false;
+            switch (pipelineFilter) {
+              case "active":    return c.status === "active";
+              case "risk":      return riskIds.has(c.id);
+              case "phase1":    return c.phase === "phase1" && !is1StepM(c.model) && c.status !== "failed";
+              case "phase2":    return c.phase === "phase2" && c.status !== "failed";
+              case "certified": return c.status === "funded";
+              case "failed":    return c.status === "failed";
+              case "1step":     return is1StepM(c.model);
+              default:          return true;
+            }
+          });
+
+          // Calcul risk compact (même logique que Risk Watch dans Overview)
+          const calcRisk = (c: Challenge) => {
+            if (c.status !== "active" || !c.start_balance || !c.balance) return null;
+            const maxTotal = c.total_drawdown_limit || 10;
+            const maxDaily = c.daily_drawdown_limit || 5;
+            const _dS = c.daily_start_balance ?? null;
+            const _dL = c.daily_low_equity ?? c.balance;
+            const _st1 = _dS !== null && Math.abs(_dS - c.start_balance) < 1;
+            const pStart = (_dS !== null && !_st1) ? _dS : c.balance;
+            const pLow   = _st1 ? c.balance : (_dL >= c.balance - c.start_balance * 0.015 ? _dL : c.balance);
+            const dailyUsed = Math.max(0, (pStart - pLow) / pStart * 100);
+            const totalUsed = Math.max(0, (c.start_balance - c.balance) / c.start_balance * 100);
+            const dCol = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "rgba(255,255,255,0.4)";
+            const tCol = totalUsed >= maxTotal ? "#ef4444" : totalUsed >= maxTotal * 0.7 ? "#f59e0b" : "rgba(255,255,255,0.4)";
+            return { dailyUsed, totalUsed, maxDaily, maxTotal, dCol, tCol };
+          };
+
+          // Filtres rapides
+          const pills = [
+            { id: "all",       label: "Tous",      cnt: challenges.filter(c => c.model !== "vip").length },
+            { id: "active",    label: "Actifs",    cnt: kpis.phase1 + kpis.oneStep + kpis.phase2 },
+            { id: "risk",      label: "À risque",  cnt: kpis.alerts.length },
+            { id: "phase1",    label: "Phase 1",   cnt: kpis.phase1 },
+            { id: "phase2",    label: "Phase 2",   cnt: kpis.phase2 },
+            { id: "certified", label: "Certifiés", cnt: kpis.certified },
+            { id: "failed",    label: "Échoués",   cnt: kpis.failed },
+            { id: "1step",     label: "1-Step",    cnt: kpis.oneStep },
+          ];
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+              {/* En-tête */}
+              <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
+                <div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>Challenges</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>Gestion et surveillance des comptes</div>
                 </div>
-              ))}
-            </div>
-
-            {/* Filters */}
-            <div style={{ display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" }}>
-              <input placeholder="Recherche email / nom..." value={search} onChange={e => setSearch(e.target.value)}
-                style={{ backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "10px 16px", color: "#fff", fontSize: 13, outline: "none", minWidth: 220 }} />
-              <CustomSelect value={filterStatus} onChange={setFilterStatus} options={[
-                { value: "all", label: "Tous les statuts" },
-                { value: "active", label: "Active" },
-                { value: "passed", label: "Passed" },
-                { value: "funded", label: "Reward" },
-                { value: "failed", label: "Failed" },
-              ]} />
-              <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, alignSelf: "center" }}>{filteredChallenges.length} résultat(s)</span>
-            </div>
-
-            {/* Table */}
-            <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-                  <thead>
-                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                      {["Trader", "Compte", "Type", "Statut", "Balance", "Gain", "Payé", "J", "MT5", "Actions"].map(h => (
-                        <th key={h} style={{ padding: "9px 8px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, whiteSpace: "nowrap" }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredChallenges.map(c => (
-                      <>
-                        {(c.client_first_name || c.client_last_name) && (
-                          <tr key={`${c.id}-icm`} style={{ backgroundColor: "rgba(201,168,76,0.03)" }}>
-                            <td colSpan={10} style={{ padding: "6px 8px" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                {[
-                                  { label: "Prénom", value: c.client_first_name },
-                                  { label: "Nom", value: c.client_last_name },
-                                  { label: "Email", value: c.user_email },
-                                  { label: "Mobile", value: c.client_phone || "+33" },
-                                  { label: "Balance", value: c.account_size.replace("$","").replace(",","") },
-                                ].map((f, i) => (
-                                  <button key={i} onClick={() => copyToClipboard(f.value)}
-                                    style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid #ddd", borderRadius: 6, padding: "3px 8px", color: "rgba(255,255,255,0.45)", fontSize: 11, cursor: "pointer" }}>
-                                    <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 10 }}>{f.label}: </span>
-                                    <span style={{ color: "#fff", fontWeight: 600 }}>{f.value}</span>
-                                    <span style={{ color: "#999", fontSize: 10 }}> ⎘</span>
-                                  </button>
-                                ))}
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                        <tr key={c.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                          <td style={{ padding: "9px 8px", color: "rgba(255,255,255,0.7)", maxWidth: 130, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: 11 }}>{c.user_email}</td>
-                          <td style={{ padding: "9px 8px", fontWeight: 800, color: "#fff", fontSize: 12, whiteSpace: "nowrap" }}>{c.account_size}</td>
-                          <td style={{ padding: "9px 8px" }}>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                              <span style={{ background: c.model === "vip" ? "rgba(139,92,246,0.15)" : "rgba(255,255,255,0.06)", color: c.model === "vip" ? "#a78bfa" : "rgba(255,255,255,0.75)", fontWeight: 700, fontSize: 10, padding: "2px 5px", borderRadius: 4, textTransform: "uppercase", letterSpacing: "0.5px", alignSelf: "flex-start" }}>{c.model === "vip" ? "ALGO" : c.model}</span>
-                              {editing === c.id
-                                ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
-                                : <span style={{ color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "#8a96aa", fontWeight: 600, fontSize: 11 }}>{c.phase === "funded" ? "reward" : c.phase}</span>}
-                            </div>
-                          </td>
-                          <td style={{ padding: "9px 8px" }}>
-                            {editing === c.id
-                              ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
-                              : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
-                          </td>
-                          <td style={{ padding: "9px 8px", fontWeight: 700 }}>
-                            {editing === c.id
-                              ? <input type="number" value={editData.balance ?? c.balance} onChange={e => {
-                                  const nb = Number(e.target.value);
-                                  setEditData(d => {
-                                    const curLow = d.daily_low_equity ?? c.daily_low_equity ?? c.balance;
-                                    return { ...d, balance: nb, daily_low_equity: Math.min(curLow, nb) };
-                                  });
-                                }} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
-                              : c.status === "failed" && c.breach_equity
-                                ? <div>
-                                    <div style={{ color: "#ef4444", fontSize: 13 }}>${Math.round(c.breach_equity).toLocaleString()}</div>
-                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>cramé à -{c.breach_value?.toFixed(2)}%</div>
-                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>{c.breach_reason === "daily_drawdown" ? "DD jour" : "DD max"}</div>
-                                  </div>
-                                : `$${c.balance?.toLocaleString()}`}
-                          </td>
-                          <td style={{ padding: "6px 8px", minWidth: 130 }}>
-                            {(() => {
-                              if (!c.start_balance || !c.balance) return <span style={{ color: "#ccc" }}>—</span>;
-                              const is1Step = c.model === "1step";
-                              const maxTotal = c.total_drawdown_limit ?? 10;
-                              const maxDaily = c.daily_drawdown_limit ?? (is1Step ? 3 : 5);
-                              const highestBal = c.highest_balance ?? c.start_balance;
-                              const totalRef = c.start_balance;
-
-                              // Pour comptes failed : afficher info breach uniquement
-                              if (c.status === "failed") {
-                                const gain = (c.breach_reason === "daily_drawdown" && c.breach_value != null)
-                                  ? -c.breach_value
-                                  : ((c.balance - c.start_balance) / c.start_balance * 100);
-                                const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
-                                return (
-                                  <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                                    <span style={{ fontWeight: 800, fontSize: 13, color: gainColor }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</span>
-                                    {c.breach_value != null && (
-                                      <div style={{ backgroundColor: "rgba(239,68,68,0.08)", borderRadius: 6, padding: "4px 7px", border: "1px solid rgba(239,68,68,0.25)" }}>
-                                        <div style={{ fontSize: 9, color: "#ef4444", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.5px", marginBottom: 2 }}>
-                                          {c.breach_reason === "daily_drawdown" ? "DD Jour" : "DD Max"} — BREACH
-                                        </div>
-                                        <div style={{ fontSize: 11, fontWeight: 800, color: "#ef4444" }}>
-                                          -{c.breach_value.toFixed(2)}%
-                                        </div>
-                                        {c.breach_equity != null && (
-                                          <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
-                                            equity crash: ${Math.round(c.breach_equity).toLocaleString()}
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              }
-
-                              // Pour comptes actifs : calcul DD live
-                              const gain = ((c.balance - c.start_balance) / c.start_balance * 100);
-                              const gainColor = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "#9ca3af";
-
-                              // DD Jour — recalcule depuis daily_start_balance / daily_low_equity
-                              // Si daily_start_balance ≈ start_balance (ancien code EOD), on prend balance actuelle
-                              const _dS2 = c.daily_start_balance ?? null;
-                              const _dL2 = c.daily_low_equity ?? c.balance;
-                              const _st1 = _dS2 !== null && Math.abs(_dS2 - c.start_balance) < 1;
-                              const _pStart = (_dS2 !== null && !_st1) ? _dS2 : c.balance;
-                              const _pLow   = _st1 ? c.balance : (_dL2 >= c.balance - c.start_balance * 0.015 ? _dL2 : c.balance);
-                              // Pour un breach daily_drawdown confirmé, afficher breach_value directement
-                              const dailyUsed = (c.status === "failed" && c.breach_reason === "daily_drawdown" && c.breach_value != null)
-                                ? c.breach_value
-                                : (_pStart > 0 ? Math.max(0, (_pStart - _pLow) / _pStart * 100) : 0);
-                              const dailyFloor = Math.round(_pStart * (1 - maxDaily / 100));
-                              const ddPct = Math.min(dailyUsed / maxDaily * 100, 100);
-                              const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";
-
-                              // DD Max — divise par totalRef (pas start_balance) pour trailing correct
-                              const totalUsed = Math.max(0, (totalRef - c.balance) / totalRef * 100);
-                              const totalFloor = Math.round(c.start_balance * (1 - maxTotal / 100));
-                              const totalPct = Math.min(totalUsed / maxTotal * 100, 100);
-                              const totalColor = totalUsed >= maxTotal ? "#ef4444" : totalUsed >= maxTotal * 0.7 ? "#f59e0b" : "#a78bfa";
-
-                              return (
-                                <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-                                  <span style={{ fontWeight: 800, fontSize: 13, color: gainColor }}>{gain > 0 ? "+" : ""}{gain.toFixed(2)}%</span>
-                                  <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${ddColor}33` }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Jour</span>
-                                      <span style={{ fontSize: 11, fontWeight: 700, color: ddColor }}>-{dailyUsed.toFixed(2)}% / {maxDaily}%</span>
-                                    </div>
-                                    <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
-                                      <div style={{ width: `${ddPct}%`, height: "100%", backgroundColor: ddColor, borderRadius: 99 }} />
-                                    </div>
-                                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>Plancher : <span style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>${dailyFloor.toLocaleString()}</span></div>
-                                  </div>
-                                  <div style={{ backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "4px 7px", border: `1px solid ${totalColor}33` }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 3 }}>
-                                      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.5px" }}>DD Max</span>
-                                      <span style={{ fontSize: 11, fontWeight: 700, color: totalColor }}>-{totalUsed.toFixed(2)}% / {maxTotal}%</span>
-                                    </div>
-                                    <div style={{ height: 3, backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 99, overflow: "hidden" }}>
-                                      <div style={{ width: `${totalPct}%`, height: "100%", backgroundColor: totalColor, borderRadius: 99 }} />
-                                    </div>
-                                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)", marginTop: 3 }}>Plancher : <span style={{ color: "rgba(255,255,255,0.6)", fontWeight: 600 }}>${totalFloor.toLocaleString()}</span></div>
-                                  </div>
-                                </div>
-                              );
-                            })()}
-                          </td>
-                          <td style={{ padding: "9px 8px", color: "#22c55e", fontSize: 12, whiteSpace: "nowrap" }}>€{c.amount_paid}</td>
-                          <td style={{ padding: "9px 8px", textAlign: "center" }}>
-                            {editing === c.id
-                              ? <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "3px 5px", color: "#fff", fontSize: 12, width: 45 }} />
-                              : <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "#888", fontWeight: 700 }}>{c.trading_days}</span>}
-                          </td>
-                          <td style={{ padding: "9px 8px" }}>
-                            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                              {editing === c.id
-                                ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#60A5FA", fontSize: 11, width: 108, fontFamily: "monospace" }} />
-                                : <span onClick={() => c.mt5_login && copyToClipboard(String(c.mt5_login))} style={{ color: c.mt5_login ? "#60A5FA" : "rgba(255,255,255,0.25)", fontSize: 11, cursor: c.mt5_login ? "pointer" : "default", fontFamily: "monospace" }} title="Copier ID">{c.mt5_login || "—"}</span>}
-                              {editing === c.id
-                                ? <input type="text" value={editData.mt5_password ?? c.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#fff", fontSize: 11, width: 88, fontFamily: "monospace" }} />
-                                : <span onClick={() => c.mt5_password && copyToClipboard(c.mt5_password)} style={{ color: c.mt5_password ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.2)", fontSize: 10, cursor: c.mt5_password ? "pointer" : "default", fontFamily: "monospace" }} title="Copier MDP">{c.mt5_password || "—"}</span>}
-                              {editing === c.id
-                                ? <input type="text" value={editData.mt5_server ?? c.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#fff", fontSize: 10, width: 108, fontFamily: "monospace" }} />
-                                : <span onClick={() => c.mt5_server && copyToClipboard(c.mt5_server)} style={{ color: c.mt5_server ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.15)", fontSize: 9, cursor: c.mt5_server ? "pointer" : "default", fontFamily: "monospace" }} title="Copier Serveur">{c.mt5_server || "—"}</span>}
-                            </div>
-                          </td>
-                          <td style={{ padding: "9px 8px" }}>
-                            {editing === c.id
-                              ? <div style={{ display: "flex", gap: 6 }}>
-                                  <button onClick={() => saveChallenge(c.id)} style={{ backgroundColor: "#22c55e", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
-                                  <button onClick={() => { setEditing(null); setEditData({}); }} style={{ backgroundColor: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
-                                </div>
-                              : <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                                  <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ backgroundColor: "rgba(255,255,255,0.08)", color: "#fff", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
-                                  {!c.mt5_login && (
-                                    provisionMsg[c.id]
-                                      ? <span style={{ fontSize: 11, color: provisionMsg[c.id].startsWith("✓") ? "#22c55e" : "#ef4444", fontWeight: 700 }}>{provisionMsg[c.id]}</span>
-                                      : <button onClick={() => provisionMT5(c)} disabled={provisioningId === c.id} style={{ backgroundColor: "rgba(249,115,22,0.12)", color: "#f97316", border: "1px solid rgba(249,115,22,0.35)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: provisioningId === c.id ? "not-allowed" : "pointer", opacity: provisioningId === c.id ? 0.5 : 1, fontWeight: 700 }}>
-                                        {provisioningId === c.id ? "..." : "MT5"}
-                                      </button>
-                                  )}
-                                  {c.mt5_login && <button onClick={() => addMT5Custom(c)} style={{ backgroundColor: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid #22c55e33", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>+$</button>}
-                                  {c.mt5_login && <button onClick={() => withdrawMT5Custom(c)} style={{ backgroundColor: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>−$</button>}
-                                  <button onClick={() => deleteChallenge(c.id)} style={{ backgroundColor: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
-                                </div>}
-                          </td>
-                        </tr>
-                      </>
-                    ))}
-                    {filteredChallenges.length === 0 && <tr><td colSpan={10} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun challenge</td></tr>}
-                  </tbody>
-                </table>
+                <button onClick={() => setTab("create")} style={{ padding: "9px 18px", background: "#3b82f6", border: "none", borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                  + Nouveau Challenge
+                </button>
               </div>
+
+              {/* KPI pills — 4 indicateurs */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                {([
+                  { label: "Actifs",   value: kpis.phase1 + kpis.oneStep + kpis.phase2, color: "#22c55e" },
+                  { label: "À risque", value: kpis.alerts.length, color: kpis.alerts.length > 0 ? "#ef4444" : "rgba(255,255,255,0.3)" },
+                  { label: "Passés",   value: kpis.passed,  color: "#f59e0b" },
+                  { label: "Échoués",  value: kpis.failed,  color: kpis.failed > 0 ? "#ef4444" : "rgba(255,255,255,0.3)" },
+                ] as { label: string; value: number; color: string }[]).map((k, i) => (
+                  <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: isMobile ? "12px 14px" : "14px 18px", display: "flex", flexDirection: "column", gap: 4 }}>
+                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.2, fontWeight: 700 }}>{k.label}</span>
+                    <span style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Recherche + filtres rapides */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                  <input
+                    placeholder="Email, nom, login MT5..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    style={{ flex: 1, maxWidth: 300, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "9px 14px", color: "#fff", fontSize: 13, outline: "none" }}
+                  />
+                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
+                    {pipelineChallenges.length} résultat{pipelineChallenges.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {pills.map(p => (
+                    <button key={p.id} onClick={() => setPipelineFilter(p.id)} style={{
+                      padding: "5px 12px", borderRadius: 100, cursor: "pointer", whiteSpace: "nowrap",
+                      border: `1px solid ${pipelineFilter === p.id ? "#3b82f6" : "rgba(255,255,255,0.1)"}`,
+                      background: pipelineFilter === p.id ? "rgba(59,130,246,0.12)" : "transparent",
+                      color: pipelineFilter === p.id ? "#60a5fa" : "rgba(255,255,255,0.5)",
+                      fontSize: 12, fontWeight: pipelineFilter === p.id ? 700 : 400,
+                    }}>
+                      {p.label}{p.cnt > 0 && p.id !== "all" ? ` · ${p.cnt}` : ""}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Table */}
+              <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                        {["Trader", "Compte", "Phase", "Statut", "Balance", "Risk", "MT5", ""].map((h, i) => (
+                          <th key={i} style={{ padding: "10px 12px", textAlign: "left", color: "rgba(255,255,255,0.35)", fontWeight: 700, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, whiteSpace: "nowrap" }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    {pipelineChallenges.length === 0
+                      ? <tbody><tr><td colSpan={8} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>
+                          {search || pipelineFilter !== "all" ? "Aucun résultat pour ces filtres" : "Aucun challenge"}
+                        </td></tr></tbody>
+                      : pipelineChallenges.map(c => {
+                          const isExpanded = expandedChallenge === c.id;
+                          const isEditing  = editing === c.id;
+                          const name       = [c.client_first_name, c.client_last_name].filter(Boolean).join(" ");
+                          const risk       = calcRisk(c);
+                          const gainPct    = c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100) : 0;
+                          const gainColor  = gainPct > 0 ? "#22c55e" : gainPct < 0 ? "#ef4444" : "rgba(255,255,255,0.4)";
+
+                          return (
+                            <tbody key={c.id}>
+                              {/* Ligne principale */}
+                              <tr
+                                style={{ borderBottom: isExpanded ? "none" : "1px solid rgba(255,255,255,0.05)", background: isExpanded ? "rgba(59,130,246,0.04)" : isEditing ? "rgba(59,130,246,0.02)" : "transparent", cursor: isEditing ? "default" : "pointer" }}
+                                onClick={isEditing ? undefined : () => setExpandedChallenge(isExpanded ? null : c.id)}
+                              >
+                                {/* Trader */}
+                                <td style={{ padding: "11px 12px", maxWidth: 180, minWidth: 140 }}>
+                                  <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                    {name || c.user_email}
+                                  </div>
+                                  {name && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</div>}
+                                </td>
+
+                                {/* Compte */}
+                                <td style={{ padding: "11px 12px", whiteSpace: "nowrap" }}>
+                                  <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{c.account_size}</div>
+                                  <span style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", fontSize: 10, padding: "1px 5px", borderRadius: 4, fontWeight: 700, textTransform: "uppercase" }}>
+                                    {c.model === "instant" ? "INSTANT" : c.model?.toUpperCase() || "—"}
+                                  </span>
+                                </td>
+
+                                {/* Phase */}
+                                <td style={{ padding: "11px 12px" }}>
+                                  {isEditing
+                                    ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
+                                    : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                        {c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Phase 2" : c.model === "instant" ? "Instant" : "Phase 1"}
+                                      </span>
+                                  }
+                                </td>
+
+                                {/* Statut */}
+                                <td style={{ padding: "11px 12px" }}>
+                                  {isEditing
+                                    ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
+                                    : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
+                                </td>
+
+                                {/* Balance */}
+                                <td style={{ padding: "11px 12px", minWidth: 90 }}>
+                                  {isEditing
+                                    ? <input type="number" value={editData.balance ?? c.balance} onChange={e => { const nb = Number(e.target.value); setEditData(d => ({ ...d, balance: nb, daily_low_equity: Math.min(d.daily_low_equity ?? c.daily_low_equity ?? c.balance, nb) })); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
+                                    : <div>
+                                        <div style={{ fontSize: 13, fontWeight: 700, color: c.status === "failed" ? "#ef4444" : "#fff", fontVariantNumeric: "tabular-nums" }}>
+                                          ${(c.status === "failed" && c.breach_equity ? Math.round(c.breach_equity) : c.balance)?.toLocaleString() ?? "—"}
+                                        </div>
+                                        {c.status !== "failed" && c.start_balance
+                                          ? <div style={{ fontSize: 11, color: gainColor, fontVariantNumeric: "tabular-nums" }}>{gainPct >= 0 ? "+" : ""}{gainPct.toFixed(1)}%</div>
+                                          : c.status === "failed" && c.breach_value != null
+                                            ? <div style={{ fontSize: 10, color: "#ef4444" }}>-{c.breach_value.toFixed(2)}%</div>
+                                            : null
+                                        }
+                                      </div>
+                                  }
+                                </td>
+
+                                {/* Risk */}
+                                <td style={{ padding: "11px 12px", minWidth: 110 }}>
+                                  {risk ? (
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 2, fontVariantNumeric: "tabular-nums" }}>
+                                      <div style={{ fontSize: 11, color: risk.dCol }}>
+                                        <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 10 }}>J </span>{risk.dailyUsed.toFixed(1)}% / {risk.maxDaily}%
+                                      </div>
+                                      <div style={{ fontSize: 11, color: risk.tCol }}>
+                                        <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 10 }}>M </span>{risk.totalUsed.toFixed(1)}% / {risk.maxTotal}%
+                                      </div>
+                                    </div>
+                                  ) : c.status === "failed" && c.breach_value != null ? (
+                                    <div style={{ fontSize: 11, color: "#ef4444", fontVariantNumeric: "tabular-nums" }}>
+                                      -{c.breach_value.toFixed(2)}%
+                                      <div style={{ fontSize: 10, color: "rgba(239,68,68,0.65)" }}>{c.breach_reason === "daily_drawdown" ? "DD Jour" : "DD Max"}</div>
+                                    </div>
+                                  ) : <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 12 }}>—</span>}
+                                </td>
+
+                                {/* MT5 login */}
+                                <td style={{ padding: "11px 12px" }} onClick={e => e.stopPropagation()}>
+                                  {isEditing
+                                    ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#60A5FA", fontSize: 11, width: 90, fontFamily: "monospace" }} />
+                                    : c.mt5_login
+                                      ? <button onClick={() => copyToClipboard(String(c.mt5_login))} title="Copier login" style={{ background: "none", border: "none", color: "#60A5FA", fontSize: 11, fontFamily: "monospace", cursor: "pointer", padding: 0 }}>{c.mt5_login} ⎘</button>
+                                      : <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 11 }}>—</span>
+                                  }
+                                </td>
+
+                                {/* Actions */}
+                                <td style={{ padding: "11px 12px" }} onClick={e => e.stopPropagation()}>
+                                  {isEditing
+                                    ? <div style={{ display: "flex", gap: 6 }}>
+                                        <button onClick={() => saveChallenge(c.id)} style={{ background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
+                                        <button onClick={() => { setEditing(null); setEditData({}); }} style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                      </div>
+                                    : <button
+                                        onClick={() => { setEditing(c.id); setEditData({}); setExpandedChallenge(c.id); }}
+                                        style={{ background: "rgba(255,255,255,0.07)", color: "#fff", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}
+                                      >
+                                        Éditer
+                                      </button>
+                                  }
+                                </td>
+                              </tr>
+
+                              {/* Ligne de détail expandable */}
+                              {isExpanded && (
+                                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                  <td colSpan={8} style={{ padding: 0 }}>
+                                    <div style={{ background: "rgba(0,0,0,0.22)", borderTop: "1px solid rgba(59,130,246,0.12)", padding: "20px 24px" }}>
+                                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 24 }}>
+
+                                        {/* Identité */}
+                                        <div>
+                                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12 }}>Identité</div>
+                                          {([
+                                            { label: "Prénom",    value: c.client_first_name },
+                                            { label: "Nom",       value: c.client_last_name  },
+                                            { label: "Email",     value: c.user_email         },
+                                            { label: "Téléphone", value: c.client_phone       },
+                                          ] as { label: string; value?: string | null }[]).filter(f => f.value).map((f, i) => (
+                                            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 8 }}>
+                                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>{f.label}</span>
+                                              <button onClick={() => copyToClipboard(f.value!)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", color: "rgba(255,255,255,0.8)", fontSize: 11, cursor: "pointer", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200 }}>
+                                                {f.value} ⎘
+                                              </button>
+                                            </div>
+                                          ))}
+                                          {isEditing && (
+                                            <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 4 }}>
+                                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1 }}>Jours tradés</div>
+                                              <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 80 }} />
+                                            </div>
+                                          )}
+                                          <div style={{ marginTop: 10, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                            Créé le {new Date(c.created_at).toLocaleDateString("fr-FR")} · {c.trading_days} j. tradé{c.trading_days !== 1 ? "s" : ""}
+                                          </div>
+                                        </div>
+
+                                        {/* Données challenge */}
+                                        <div>
+                                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12 }}>Challenge</div>
+                                          {([
+                                            { label: "Balance départ",   value: `$${c.start_balance?.toLocaleString() ?? "—"}` },
+                                            { label: "Balance actuelle",  value: `$${c.balance?.toLocaleString() ?? "—"}` },
+                                            { label: "Variation",         value: c.start_balance ? `${gainPct >= 0 ? "+" : ""}${gainPct.toFixed(2)}%` : "—" },
+                                            { label: "DD Jour max",       value: `${c.daily_drawdown_limit || 5}%` },
+                                            { label: "DD Max",            value: `${c.total_drawdown_limit || 10}%` },
+                                            { label: "Montant payé",      value: `€${c.amount_paid}` },
+                                            ...(c.status === "failed" && c.breach_at ? [
+                                              { label: "Breach le",       value: new Date(c.breach_at).toLocaleDateString("fr-FR") },
+                                              { label: "Breach raison",   value: c.breach_reason === "daily_drawdown" ? "DD Jour" : "DD Max" },
+                                              { label: "Breach valeur",   value: `-${c.breach_value?.toFixed(2) ?? "?"}%` },
+                                              ...(c.breach_equity ? [{ label: "Equity breach", value: `$${Math.round(c.breach_equity).toLocaleString()}` }] : []),
+                                            ] : []),
+                                          ] as { label: string; value: string }[]).map((f, i) => (
+                                            <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 7, gap: 8 }}>
+                                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
+                                              <span style={{ fontSize: 11, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{f.value}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+
+                                        {/* MT5 + Actions */}
+                                        <div>
+                                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12 }}>MT5 & Actions</div>
+
+                                          {c.mt5_login ? (<>
+                                            {/* Login & serveur copiables */}
+                                            {([
+                                              { label: "Login",   value: String(c.mt5_login) },
+                                              { label: "Serveur", value: c.mt5_server || "—" },
+                                            ] as { label: string; value: string }[]).map((f, i) => (
+                                              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 8 }}>
+                                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
+                                                <button onClick={() => copyToClipboard(f.value)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace", cursor: "pointer" }}>{f.value} ⎘</button>
+                                              </div>
+                                            ))}
+                                            {/* Passwords masqués avec révélation */}
+                                            {([
+                                              { label: "Password",  value: c.mt5_password,          key: `${c.id}_pw`  },
+                                              { label: "Investor",  value: c.mt5_password_investor,  key: `${c.id}_inv` },
+                                            ] as { label: string; value: string; key: string }[]).filter(f => f.value).map(f => (
+                                              <div key={f.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 8 }}>
+                                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
+                                                <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+                                                  {revealedPasswords.has(f.key)
+                                                    ? <button onClick={() => copyToClipboard(f.value)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace", cursor: "pointer" }}>{f.value} ⎘</button>
+                                                    : <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", fontFamily: "monospace" }}>••••••••</span>
+                                                  }
+                                                  <button onClick={() => setRevealedPasswords(s => { const n = new Set(s); n.has(f.key) ? n.delete(f.key) : n.add(f.key); return n; })} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 7px", color: "rgba(255,255,255,0.4)", fontSize: 10, cursor: "pointer" }}>
+                                                    {revealedPasswords.has(f.key) ? "Masquer" : "Révéler"}
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            ))}
+                                            {/* Edit MT5 password/server en mode édition */}
+                                            {isEditing && (
+                                              <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 4 }}>
+                                                <input type="text" placeholder="Modifier password" value={editData.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
+                                                <input type="text" placeholder="Modifier serveur" value={editData.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
+                                              </div>
+                                            )}
+                                          </>) : (
+                                            provisionMsg[c.id]
+                                              ? <div style={{ fontSize: 11, marginBottom: 8, color: provisionMsg[c.id].startsWith("✓") ? "#22c55e" : "#ef4444" }}>{provisionMsg[c.id]}</div>
+                                              : <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", marginBottom: 8 }}>Compte MT5 non provisionné</div>
+                                          )}
+
+                                          {/* Boutons d'action */}
+                                          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 5 }}>
+                                            {!c.mt5_login && !provisionMsg[c.id] && (
+                                              <button onClick={() => provisionMT5(c)} disabled={provisioningId === c.id} style={{ padding: "7px 12px", background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)", borderRadius: 7, color: "#f97316", fontSize: 12, fontWeight: 700, cursor: provisioningId === c.id ? "not-allowed" : "pointer", textAlign: "left", opacity: provisioningId === c.id ? 0.5 : 1 }}>
+                                                {provisioningId === c.id ? "Provisionnement..." : "Provisionner MT5"}
+                                              </button>
+                                            )}
+                                            {c.mt5_login && <>
+                                              <button onClick={() => addMT5Custom(c)} style={{ padding: "7px 12px", background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 7, color: "#22c55e", fontSize: 12, cursor: "pointer", textAlign: "left" }}>+ Ajouter balance</button>
+                                              <button onClick={() => withdrawMT5Custom(c)} style={{ padding: "7px 12px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, color: "rgba(255,255,255,0.55)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>− Retirer balance</button>
+                                              <button onClick={() => withdrawMT5Profit(c)} style={{ padding: "7px 12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 7, color: "rgba(255,255,255,0.4)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>Retrait profit MT5</button>
+                                            </>}
+                                            <button onClick={() => sendAccessEmail(c.user_email)} style={{ padding: "7px 12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 7, color: "rgba(255,255,255,0.4)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>
+                                              {accessEmailMsg[c.user_email] || "Renvoyer accès email"}
+                                            </button>
+                                            <button onClick={() => deleteChallenge(c.id)} style={{ padding: "7px 12px", background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 7, color: "#ef4444", fontSize: 12, cursor: "pointer", textAlign: "left" }}>
+                                              Supprimer
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              )}
+                            </tbody>
+                          );
+                        })
+                    }
+                  </table>
+                </div>
+              </div>
+
             </div>
-          </>
-        )}
+          );
+        })()}
 
         {/* ══ PIPELINE ALGO ══ */}
         {tab === "algo" && (() => {
