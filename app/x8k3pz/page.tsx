@@ -321,6 +321,9 @@ function AdminPageInner() {
   const [rateEditId, setRateEditId] = useState<string | null>(null);
   const [rateEditValue, setRateEditValue] = useState("");
 
+  // Analytics Hub state
+  const [analyticsView, setAnalyticsView] = useState("overview");
+
   // Create challenge state
   const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true, type: "challenge" as "challenge" | "reward" });
   const [createLoading, setCreateLoading] = useState(false);
@@ -3327,132 +3330,597 @@ function AdminPageInner() {
 
 
         {/* ══ STATISTIQUES ══ */}
+        {/* ══ ANALYTICS HUB ══ */}
         {tab === "stats" && (() => {
-          const is1 = (m: string) => m?.toLowerCase().replace(/[\s-]/g,"").includes("1step");
-          const total = challenges.length;
+          const now   = new Date();
+          const yr    = now.getFullYear();
+          const mo    = now.getMonth();
+          const isPurchase = (c: Challenge) => c.phase === "phase1" || c.model === "instant";
+          const is1Step    = (m: string) => m?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+          const inMonth    = (d: string) => { const dt = new Date(d); return dt.getFullYear() === yr && dt.getMonth() === mo; };
+          const inYear     = (d: string) => new Date(d).getFullYear() === yr;
+
+          // ── Business
+          const salesThisMonth = challenges.filter(c => inMonth(c.created_at) && isPurchase(c)).length;
+          const salesThisYear  = challenges.filter(c => inYear(c.created_at)  && isPurchase(c)).length;
+          const avgBasket      = salesThisMonth > 0 ? Math.round(kpis.caMonth / salesThisMonth) : 0;
+          const totalCAPurch   = challenges.filter(isPurchase).reduce((s, c) => s + (c.amount_paid || 0), 0);
+          const caByCrypto     = challenges.filter(c => c.payment_method === "crypto").reduce((s, c) => s + (c.amount_paid || 0), 0);
+          const caByCard       = totalCAPurch - caByCrypto;
+          const countByCrypto  = challenges.filter(c => c.payment_method === "crypto").length;
+          const countByCard    = challenges.filter(c => !c.payment_method || c.payment_method === "card").length;
+          const cryptoPct      = totalCAPurch > 0 ? Math.round(caByCrypto / totalCAPurch * 100) : 0;
+
+          // ── Previous month comparison
+          const prevDate  = new Date(yr, mo - 1, 1);
+          const prevKey   = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
+          const prevMonth = monthlyRevenue.find(m => m.month === prevKey);
+          const caGrowth  = prevMonth && prevMonth.ca > 0 ? Math.round((kpis.caMonth - prevMonth.ca) / prevMonth.ca * 100) : null;
+
+          // ── Challenges
+          const total       = challenges.length;
+          const totalActive = challenges.filter(c => c.status === "active").length;
+          const totalCert   = challenges.filter(c => c.status === "funded").length;
+          const totalFailed = challenges.filter(c => c.status === "failed").length;
+          const t1Count     = challenges.filter(c => is1Step(c.model)).length;
+          const t2Count     = challenges.filter(c => !is1Step(c.model)).length;
           const pct = (n: number, d = total) => d > 0 ? Math.round(n / d * 100) : 0;
 
-          const sizes = ["$10,000","$25,000","$50,000","$100,000","$200,000"];
+          // ── Traders
+          const countryMap = new Map<string, number>();
+          profiles.forEach(p => { if (p.country) countryMap.set(p.country, (countryMap.get(p.country) || 0) + 1); });
+          const topCountries = Array.from(countryMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 10);
+          const certifiedTraders = new Set(challenges.filter(c => c.status === "funded").map(c => c.user_email)).size;
+          const avgChallenges = traderCRM.length > 0 ? (challenges.length / traderCRM.length).toFixed(1) : "0";
 
-          const t2 = challenges.filter(c => !is1(c.model));
-          const t2tot = t2.length;
-          const t2p1Active  = t2.filter(c => c.phase==="phase1" && c.status==="active").length;
-          const t2p1Failed  = t2.filter(c => c.phase==="phase1" && c.status==="failed").length;
-          const t2p1Passed  = t2.filter(c => c.phase==="phase1" && c.status==="passed").length;
-          const t2p2Active  = t2.filter(c => c.phase==="phase2" && c.status==="active").length;
-          const t2p2Failed  = t2.filter(c => c.phase==="phase2" && c.status==="failed").length;
-          const t2p2Passed  = t2.filter(c => c.phase==="phase2" && c.status==="passed").length;
-          const t2cert      = t2.filter(c => c.phase==="funded" && c.status==="funded").length;
-          const t2certFail  = t2.filter(c => c.phase==="funded" && c.status==="failed").length;
+          // ── Marketing
+          const activePromos = promos.filter(p => {
+            const isExp = p.expires_at && new Date(p.expires_at) < now;
+            const isExh = p.max_uses !== null && p.used_count >= p.max_uses;
+            return p.active && !isExp && !isExh;
+          });
+          const totalConversions = affiliates.reduce((s, a) => s + a.referrals.length, 0);
+          const affiliateCA      = affiliates.reduce((s, a) => s + a.referrals.reduce((ss, r) => ss + (r.purchase_amount || 0), 0), 0) / 100;
+          const topAffiliates    = [...affiliates].sort((a, b) => b.referrals.length - a.referrals.length).slice(0, 5);
+          const topPromos        = [...promos].sort((a, b) => b.used_count - a.used_count).slice(0, 5);
+          const directCount      = Math.max(0, salesThisYear - totalConversions);
 
-          const t1 = challenges.filter(c => is1(c.model));
-          const t1tot = t1.length;
-          const t1p1Active  = t1.filter(c => c.phase==="phase1" && c.status==="active").length;
-          const t1p1Failed  = t1.filter(c => c.phase==="phase1" && c.status==="failed").length;
-          const t1cert      = t1.filter(c => c.phase==="funded" && c.status==="funded").length;
-          const t1certFail  = t1.filter(c => c.phase==="funded" && c.status==="failed").length;
+          // ── Risques
+          const riskAccounts = challenges.filter(c => {
+            if (c.status !== "active" || !c.start_balance || !c.balance) return false;
+            return (c.start_balance - c.balance) / c.start_balance * 100 >= (c.total_drawdown_limit || 10) * 0.75;
+          }).sort((a, b) => {
+            const ddA = a.start_balance > 0 ? (a.start_balance - a.balance) / a.start_balance * 100 : 0;
+            const ddB = b.start_balance > 0 ? (b.start_balance - b.balance) / b.start_balance * 100 : 0;
+            return ddB - ddA;
+          });
+          const kycPending  = kycSubmissions.filter(k => k.kyc_status === "pending").length;
+          const pendingRw   = payouts.filter(p => p.status === "pending").length;
+          const breached    = challenges.filter(c => c.status === "failed" && !!c.breach_reason).length;
+          const totalAlert  = riskAccounts.length + kycPending + pendingRw;
 
-          const totalActive  = challenges.filter(c => c.status==="active").length;
-          const totalFailed  = challenges.filter(c => c.status==="failed").length;
-          const totalCert    = challenges.filter(c => c.status==="funded").length;
-          const totalPassed  = challenges.filter(c => c.status==="passed").length;
-          const totalCA      = challenges.reduce((s,c) => s+(c.amount_paid||0), 0);
-          const byCard       = challenges.filter(c => !c.payment_method||c.payment_method==="card").length;
-          const byCrypto     = challenges.filter(c => c.payment_method==="crypto").length;
-          const caCard       = challenges.filter(c => !c.payment_method||c.payment_method==="card").reduce((s,c)=>s+(c.amount_paid||0),0);
-          const caCrypto     = challenges.filter(c => c.payment_method==="crypto").reduce((s,c)=>s+(c.amount_paid||0),0);
+          // ── Insights
+          const insights = [
+            caGrowth !== null
+              ? { text: caGrowth >= 0 ? `Le CA progresse de +${caGrowth}% par rapport au mois précédent.` : `Le CA recule de ${Math.abs(caGrowth)}% par rapport au mois précédent.`, ok: caGrowth >= 0 }
+              : null,
+            cryptoPct > 0
+              ? { text: `Les ventes Crypto représentent ${cryptoPct}% du CA total.`, ok: true }
+              : null,
+            byAccountSize.length > 0
+              ? { text: `Le produit le plus vendu : ${[...byAccountSize].sort((a, b) => b.count - a.count)[0]?.size} (${[...byAccountSize].sort((a, b) => b.count - a.count)[0]?.count} ventes).`, ok: true }
+              : null,
+            totalConversions > 0
+              ? { text: `Les affiliés ont généré ${totalConversions} conversion${totalConversions > 1 ? "s" : ""} au total.`, ok: true }
+              : null,
+            kpis.pendingPayouts > 0
+              ? { text: `${kpis.pendingPayouts} reward${kpis.pendingPayouts > 1 ? "s" : ""} en attente — €${Math.round(kpis.pendingAmt).toLocaleString()} à valider.`, ok: false }
+              : null,
+          ].filter((x): x is { text: string; ok: boolean } => x !== null);
 
-          const StatRow = ({ label, n, d = total, color = "#60A5FA" }: { label: string; n: number; d?: number; color?: string }) => (
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"9px 0", borderBottom:"1px solid rgba(255,255,255,0.06)" }}>
-              <span style={{ fontSize:13, color:"rgba(255,255,255,0.6)" }}>{label}</span>
-              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                <span style={{ fontSize:20, fontWeight:900, color, minWidth:36, textAlign:"right" }}>{n}</span>
-                <span style={{ fontSize:11, color:"rgba(255,255,255,0.45)", minWidth:40, textAlign:"right", background:"rgba(255,255,255,0.07)", borderRadius:6, padding:"2px 6px" }}>{pct(n,d)}%</span>
-              </div>
+          // ── Helpers
+          const PBar = ({ value, max, color = "#3b82f6" }: { value: number; max: number; color?: string }) => (
+            <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 4, height: 6, overflow: "hidden" }}>
+              <div style={{ width: `${max > 0 ? Math.min(100, Math.round(value / max * 100)) : 0}%`, background: color, borderRadius: 4, height: 6 }} />
             </div>
           );
 
-          const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
-            <div style={{ background:"#111111", border:"1px solid rgba(255,255,255,0.1)", borderRadius:12, padding:"20px 24px" }}>
-              <div style={{ fontWeight:800, fontSize:14, color:"#fff", marginBottom:12, paddingBottom:8, borderBottom:"2px solid rgba(255,255,255,0.1)" }}>{title}</div>
-              {children}
-            </div>
-          );
+          const analyticsViews = [
+            { id: "overview",   label: "Overview"   },
+            { id: "business",   label: "Business"   },
+            { id: "challenges", label: "Challenges" },
+            { id: "traders",    label: "Traders"    },
+            { id: "marketing",  label: "Marketing"  },
+            { id: "risques",    label: "Risques",   alert: totalAlert },
+          ];
 
           return (
-            <div style={{ display:"flex", flexDirection:"column", gap:18 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
-              {/* Résumé global */}
-              <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12 }}>
-                {[
-                  { label:"Total achetés",  value:String(total),              color:"#fff" },
-                  { label:"CA total",       value:`€${Math.round(totalCA)}`,  color:"#fff" },
-                  { label:"Actifs",         value:String(totalActive),         color:"#22c55e" },
-                  { label:"Reward",          value:String(totalCert),           color:"#3b82f6" },
-                  { label:"Failed",         value:String(totalFailed),         color:"#ef4444" },
-                  { label:"Passed",         value:String(totalPassed),         color:"#f59e0b" },
-                ].map((s,i) => (
-                  <div key={i} style={{ background:"#111111", border:"1px solid rgba(255,255,255,0.1)", borderRadius:12, padding:"16px 18px" }}>
-                    <div style={{ color:"rgba(255,255,255,0.45)", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
-                    <div style={{ fontSize:26, fontWeight:900, color:s.color }}>{s.value}</div>
-                  </div>
+              {/* En-tête */}
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>Analytics</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 3 }}>Centre de pilotage — Traders Rewards</div>
+              </div>
+
+              {/* Sous-navigation */}
+              <div style={{ display: "flex", gap: 2, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: 4, overflowX: "auto" }}>
+                {analyticsViews.map(v => (
+                  <button key={v.id} onClick={() => setAnalyticsView(v.id)}
+                    style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", background: analyticsView === v.id ? "#111" : "transparent", border: `1px solid ${analyticsView === v.id ? "rgba(255,255,255,0.1)" : "transparent"}`, borderRadius: 7, color: analyticsView === v.id ? "#fff" : "rgba(255,255,255,0.38)", fontSize: 12, fontWeight: analyticsView === v.id ? 700 : 400, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {v.label}
+                    {v.alert && v.alert > 0 && <span style={{ background: "#ef4444", color: "#fff", fontSize: 9, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{v.alert}</span>}
+                  </button>
                 ))}
               </div>
 
-              <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:18 }}>
-                <Section title="💳 Par moyen de paiement">
-                  <StatRow label="Carte bancaire" n={byCard} />
-                  <StatRow label="Crypto" n={byCrypto} />
-                  <div style={{ display:"flex", justifyContent:"space-between", paddingTop:10, fontSize:12, color:"rgba(255,255,255,0.45)" }}>
-                    <span>CA carte : <strong style={{color:"#fff"}}>€{Math.round(caCard)}</strong></span>
-                    <span>CA crypto : <strong style={{color:"#fff"}}>€{Math.round(caCrypto)}</strong></span>
+              {/* ─── OVERVIEW ─── */}
+              {analyticsView === "overview" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+                    {([
+                      { label: "CA du mois",        value: `€${Math.round(kpis.caMonth).toLocaleString()}`,  color: "#fff"    },
+                      { label: "Marge du mois",     value: `${kpis.margeMonth}%`,                            color: kpis.margeMonth >= 60 ? "#22c55e" : "#f59e0b" },
+                      { label: "Challenges actifs", value: String(totalActive),                               color: "#22c55e" },
+                      { label: "Rewards en attente",value: String(kpis.pendingPayouts),                      color: kpis.pendingPayouts > 0 ? "#f59e0b" : "#6b7280" },
+                    ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                      <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 22px" }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{k.label}</div>
+                        <div style={{ fontSize: 28, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                      </div>
+                    ))}
                   </div>
-                </Section>
 
-                <Section title="📦 Par taille de compte">
-                  {sizes.map(s => <StatRow key={s} label={s} n={challenges.filter(c=>c.account_size===s).length} />)}
-                </Section>
-              </div>
+                  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Insights</div>
+                    {insights.length === 0 ? (
+                      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)" }}>Données insuffisantes pour générer des insights.</div>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        {insights.map((ins, i) => (
+                          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "11px 16px", background: "#111", borderRadius: 8, border: `1px solid ${ins.ok ? "rgba(34,197,94,0.1)" : "rgba(245,158,11,0.15)"}` }}>
+                            <div style={{ width: 6, height: 6, borderRadius: 3, background: ins.ok ? "#22c55e" : "#f59e0b", flexShrink: 0, marginTop: 5 }} />
+                            <div style={{ fontSize: 13, color: "#fff", lineHeight: 1.5 }}>{ins.text}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
-              <div style={{ display:"grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap:18 }}>
-                <Section title={`🔵 2-Step — ${t2tot} comptes au total`}>
-                  <StatRow label="Phase 1 — Actifs"            n={t2p1Active}  d={t2tot} />
-                  <StatRow label="Phase 1 — Passed (→Phase 2)" n={t2p1Passed}  d={t2tot} color="#f59e0b" />
-                  <StatRow label="Phase 1 — Failed"            n={t2p1Failed}  d={t2tot} color="#ef4444" />
-                  <StatRow label="Phase 2 — Actifs"            n={t2p2Active}  d={t2tot} />
-                  <StatRow label="Phase 2 — Passed (→Reward)" n={t2p2Passed} d={t2tot} color="#f59e0b" />
-                  <StatRow label="Phase 2 — Failed"            n={t2p2Failed}  d={t2tot} color="#ef4444" />
-                  <StatRow label="Reward — Actifs"          n={t2cert}      d={t2tot} color="#3b82f6" />
-                  <StatRow label="Reward — Failed"          n={t2certFail}  d={t2tot} color="#ef4444" />
-                </Section>
-
-                <Section title={`🟣 1-Step — ${t1tot} comptes au total`}>
-                  <StatRow label="Phase 1 — Actifs"   n={t1p1Active}  d={t1tot} />
-                  <StatRow label="Phase 1 — Failed"   n={t1p1Failed}  d={t1tot} color="#ef4444" />
-                  <StatRow label="Reward — Actifs" n={t1cert}      d={t1tot} color="#3b82f6" />
-                  <StatRow label="Reward — Failed" n={t1certFail}  d={t1tot} color="#ef4444" />
-                </Section>
-              </div>
-
-              <Section title="📈 Taux de conversion & d'échec">
-                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:14, paddingTop:8 }}>
-                  {[
-                    { label:"Taux failed global",        value:`${pct(totalFailed)}%`,                                                                                           color:"#ef4444" },
-                    { label:"Taux failed Phase 1",       value:`${pct(t2p1Failed+t1p1Failed, t2tot+t1tot)}%`,                                                                    color:"#ef4444" },
-                    { label:"Taux failed Phase 2 (2S)",  value:`${pct(t2p2Failed, t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail)}%`,                                       color:"#ef4444" },
-                    { label:"Taux failed Reward",        value:`${pct(t2certFail+t1certFail, t2cert+t1cert+t2certFail+t1certFail||1)}%`,                                        color:"#ef4444" },
-                    { label:"Conv. P1→P2 (2-Step)",      value:`${pct(t2p1Passed+t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail, t2tot)}%`,                                color:"#22c55e" },
-                    { label:"Conv. P2→Reward (2S)",      value:`${pct(t2cert+t2certFail, t2p2Active+t2p2Failed+t2p2Passed+t2cert+t2certFail||1)}%`,                            color:"#22c55e" },
-                    { label:"Conv. Reward (1-Step)",     value:`${pct(t1cert+t1certFail, t1tot)}%`,                                                                             color:"#22c55e" },
-                    { label:"Taux reward global",        value:`${pct(totalCert)}%`,                                                                                            color:"#3b82f6" },
-                  ].map((s,i) => (
-                    <div key={i} style={{ background:"rgba(255,255,255,0.05)", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, padding:"14px 16px" }}>
-                      <div style={{ color:"rgba(255,255,255,0.45)", fontSize:10, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>{s.label}</div>
-                      <div style={{ fontSize:26, fontWeight:900, color:s.color }}>{s.value}</div>
-                    </div>
-                  ))}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12 }}>
+                    {([
+                      { label: "CA annuel",         value: `€${Math.round(kpis.caYear).toLocaleString()}`,  color: "#fff"    },
+                      { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#3b82f6" },
+                      { label: "Certifiés",         value: String(totalCert),                                 color: "#60a5fa" },
+                      { label: "Échoués",           value: String(totalFailed),                               color: "#ef4444" },
+                      { label: "LTV moyenne",       value: `€${Math.round(kpis.ltv).toLocaleString()}`,      color: "#f59e0b" },
+                      { label: "KYC en attente",    value: String(kycPending),                                color: kycPending > 0 ? "#f59e0b" : "#6b7280" },
+                    ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                      <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "14px 18px" }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </Section>
+              )}
+
+              {/* ─── BUSINESS ─── */}
+              {analyticsView === "business" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+                    {([
+                      { label: "CA du mois",     value: `€${Math.round(kpis.caMonth).toLocaleString()}`,  color: "#fff"    },
+                      { label: "CA de l'année",  value: `€${Math.round(kpis.caYear).toLocaleString()}`,   color: "#fff"    },
+                      { label: "Marge du mois",  value: `${kpis.margeMonth}%`,                            color: kpis.margeMonth >= 60 ? "#22c55e" : "#f59e0b" },
+                      { label: "Marge annuelle", value: `${kpis.margeYear}%`,                             color: kpis.margeYear >= 60 ? "#22c55e" : "#f59e0b" },
+                      { label: "Panier moyen",   value: avgBasket > 0 ? `€${avgBasket}` : "—",           color: "#3b82f6" },
+                      { label: "Ventes ce mois", value: String(salesThisMonth),                            color: "#3b82f6" },
+                    ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                      <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 22px" }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{k.label}</div>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {monthlyRevenue.length > 0 && (() => {
+                    const last12 = monthlyRevenue.slice(-12);
+                    const maxCA  = Math.max(...last12.map(m => m.ca), 1);
+                    const curKey = `${yr}-${String(mo + 1).padStart(2, "0")}`;
+                    return (
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 20 }}>Chiffre d'affaires mensuel</div>
+                        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 120 }}>
+                          {last12.map(m => {
+                            const h = Math.max(2, Math.round(m.ca / maxCA * 100));
+                            const isCur = m.month === curKey;
+                            return (
+                              <div key={m.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontVariantNumeric: "tabular-nums" }}>
+                                  {m.ca >= 1000 ? `€${Math.round(m.ca / 1000)}k` : `€${Math.round(m.ca)}`}
+                                </div>
+                                <div style={{ width: "100%", flex: `0 0 ${h}%`, background: isCur ? "#3b82f6" : "rgba(59,130,246,0.35)", borderRadius: "3px 3px 0 0" }} />
+                                <div style={{ fontSize: 9, color: isCur ? "#fff" : "rgba(255,255,255,0.3)", fontWeight: isCur ? 700 : 400 }}>
+                                  {m.month.slice(5, 7)}/{m.month.slice(2, 4)}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {monthlyRevenue.length > 0 && (() => {
+                    const last12 = monthlyRevenue.slice(-12);
+                    const curKey = `${yr}-${String(mo + 1).padStart(2, "0")}`;
+                    return (
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 20 }}>Marge mensuelle (%)</div>
+                        <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 100 }}>
+                          {last12.map(m => {
+                            const h = Math.max(2, Math.min(100, m.marge));
+                            const isCur = m.month === curKey;
+                            const col = m.marge >= 60 ? "#22c55e" : m.marge >= 30 ? "#f59e0b" : "#ef4444";
+                            return (
+                              <div key={m.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)" }}>{m.marge}%</div>
+                                <div style={{ width: "100%", flex: `0 0 ${h}%`, background: isCur ? col : `${col}55`, borderRadius: "3px 3px 0 0" }} />
+                                <div style={{ fontSize: 9, color: isCur ? "#fff" : "rgba(255,255,255,0.3)", fontWeight: isCur ? 700 : 400 }}>
+                                  {m.month.slice(5, 7)}/{m.month.slice(2, 4)}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Méthodes de paiement</div>
+                    {([
+                      { label: "Stripe / Carte", amount: caByCard,   count: countByCard,   color: "#3b82f6" },
+                      { label: "Crypto",          amount: caByCrypto, count: countByCrypto, color: "#f59e0b" },
+                    ] as { label: string; amount: number; count: number; color: string }[]).map(row => (
+                      <div key={row.label} style={{ marginBottom: 14 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{row.label}</span>
+                          <div>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: row.color }}>€{Math.round(row.amount).toLocaleString()}</span>
+                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginLeft: 8 }}>{row.count} ventes</span>
+                          </div>
+                        </div>
+                        <PBar value={row.amount} max={totalCAPurch} color={row.color} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ─── CHALLENGES ─── */}
+              {analyticsView === "challenges" && (() => {
+                const maxBySizeCount = Math.max(...byAccountSize.map(b => b.count), 1);
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12 }}>
+                      {([
+                        { label: "Total",      value: String(total),        color: "#fff"    },
+                        { label: "Actifs",     value: String(totalActive),   color: "#22c55e" },
+                        { label: "Certifiés",  value: String(totalCert),     color: "#3b82f6" },
+                        { label: "Échoués",    value: String(totalFailed),   color: "#ef4444" },
+                        { label: "1-Step",     value: String(t1Count),       color: "#a78bfa" },
+                        { label: "2-Step",     value: String(t2Count),       color: "#60a5fa" },
+                      ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                        <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 18px" }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
+                          <div style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Par taille de compte</div>
+                        {byAccountSize.map(b => (
+                          <div key={b.size} style={{ marginBottom: 14 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{b.size}</span>
+                              <div style={{ display: "flex", gap: 8, fontSize: 11 }}>
+                                <span style={{ color: "#22c55e" }}>{b.active} act.</span>
+                                <span style={{ color: "#3b82f6" }}>{b.certified} cert.</span>
+                                <span style={{ color: "#ef4444" }}>{b.failed} éch.</span>
+                              </div>
+                            </div>
+                            <PBar value={b.count} max={maxBySizeCount} color="#3b82f6" />
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>{b.count} challenge{b.count > 1 ? "s" : ""} · €{Math.round(b.revenue).toLocaleString()} CA</div>
+                          </div>
+                        ))}
+                        {byAccountSize.length === 0 && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)", textAlign: "center", padding: 20 }}>Aucune donnée</div>}
+                      </div>
+
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Modèle de challenge</div>
+                        {([
+                          { label: "1-Step", count: t1Count, color: "#a78bfa" },
+                          { label: "2-Step", count: t2Count, color: "#60a5fa" },
+                        ] as { label: string; count: number; color: string }[]).map(m => (
+                          <div key={m.label} style={{ marginBottom: 16 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{m.label}</span>
+                              <span style={{ fontSize: 13, fontWeight: 800, color: m.color }}>{m.count} · {pct(m.count)}%</span>
+                            </div>
+                            <PBar value={m.count} max={total} color={m.color} />
+                          </div>
+                        ))}
+
+                        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 8 }}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>Taux clés</div>
+                          {([
+                            { label: "P1 → P2 (2-Step)",   value: `${kpis.convP1P2}%`,     color: "#22c55e" },
+                            { label: "P2 → Reward",          value: `${kpis.convP2Fund}%`,   color: "#22c55e" },
+                            { label: "Taux reward global",   value: `${pct(totalCert)}%`,    color: "#3b82f6" },
+                            { label: "Taux échec global",    value: `${pct(totalFailed)}%`,  color: "#ef4444" },
+                          ] as { label: string; value: string; color: string }[]).map((r, i) => (
+                            <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{r.label}</span>
+                              <span style={{ fontSize: 13, fontWeight: 800, color: r.color }}>{r.value}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ─── TRADERS ─── */}
+              {analyticsView === "traders" && (() => {
+                const top10 = traderCRM.slice(0, 10);
+                const maxSpent = traderCRM[0]?.totalSpent || 1;
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12 }}>
+                      {([
+                        { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#fff"    },
+                        { label: "Traders actifs",    value: String(kpis.activeTraders),                       color: "#22c55e" },
+                        { label: "Certifiés",         value: String(certifiedTraders),                          color: "#3b82f6" },
+                        { label: "LTV moyenne",       value: `€${Math.round(kpis.ltv).toLocaleString()}`,      color: "#f59e0b" },
+                        { label: "Moy. challenges",   value: avgChallenges,                                     color: "#a78bfa" },
+                        { label: "Paiement Crypto",   value: `${cryptoPct}%`,                                   color: "#f59e0b" },
+                      ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                        <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 18px" }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
+                          <div style={{ fontSize: 20, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                        <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 700, color: "#fff" }}>Top clients — Lifetime Value</div>
+                        {top10.length === 0
+                          ? <div style={{ padding: 28, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Aucun trader</div>
+                          : top10.map((t) => {
+                              const certCount = t.challenges.filter(c => c.status === "funded").length;
+                              return (
+                                <div key={t.email} style={{ padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 5 }}>
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                      <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.name || t.email}</div>
+                                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
+                                        {t.challenges.length} challenge{t.challenges.length > 1 ? "s" : ""} · {certCount > 0 ? `${certCount} certifié${certCount > 1 ? "s" : ""}` : "Aucun certifié"}
+                                      </div>
+                                    </div>
+                                    <div style={{ fontWeight: 900, fontSize: 13, color: "#f59e0b", flexShrink: 0, marginLeft: 12 }}>€{Math.round(t.totalSpent).toLocaleString()}</div>
+                                  </div>
+                                  <PBar value={t.totalSpent} max={maxSpent} color="#f59e0b" />
+                                </div>
+                              );
+                            })}
+                      </div>
+
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                        <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 700, color: "#fff" }}>Répartition par pays</div>
+                        {topCountries.length === 0 ? (
+                          <div style={{ padding: 28, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Donnée indisponible</div>
+                        ) : (() => {
+                          const maxC = topCountries[0]?.[1] || 1;
+                          return (
+                            <div>
+                              {topCountries.map(([country, count]) => (
+                                <div key={country} style={{ padding: "10px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
+                                    <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{country}</span>
+                                    <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.5)" }}>{count}</span>
+                                  </div>
+                                  <PBar value={count} max={maxC} color="#3b82f6" />
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ─── MARKETING ─── */}
+              {analyticsView === "marketing" && (() => {
+                const maxConv  = topAffiliates[0]?.referrals.length || 1;
+                const maxUsed  = topPromos[0]?.used_count || 1;
+                const totalPurch = Math.max(1, salesThisYear);
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+                      {([
+                        { label: "Codes actifs",          value: String(activePromos.length),                                                color: "#22c55e" },
+                        { label: "Conversions affiliées", value: String(totalConversions),                                                   color: "#3b82f6" },
+                        { label: "CA affilié (estimé)",  value: `€${Math.round(affiliateCA).toLocaleString()}`,                             color: "#f59e0b" },
+                        { label: "Affiliés actifs",       value: String(affiliates.filter(a => a.referrals.length > 0).length),              color: "#60a5fa" },
+                      ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                        <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 22px" }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{k.label}</div>
+                          <div style={{ fontSize: 24, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Répartition acquisition</div>
+                      {([
+                        { label: "Ventes directes", count: directCount, color: "#3b82f6" },
+                        { label: "Via affilié",      count: totalConversions, color: "#f59e0b" },
+                      ] as { label: string; count: number; color: string }[]).map(row => (
+                        <div key={row.label} style={{ marginBottom: 14 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                            <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{row.label}</span>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: row.color }}>{row.count} · {Math.round(row.count / totalPurch * 100)}%</span>
+                          </div>
+                          <PBar value={row.count} max={totalPurch} color={row.color} />
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                        <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 700, color: "#fff" }}>Top affiliés</div>
+                        {topAffiliates.length === 0
+                          ? <div style={{ padding: 28, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Aucun affilié</div>
+                          : topAffiliates.map(a => (
+                              <div key={a.id} style={{ padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                      {a.first_name || a.last_name ? `${a.first_name || ""} ${a.last_name || ""}`.trim() : a.email || a.code}
+                                    </div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontFamily: "monospace" }}>{a.code}</div>
+                                  </div>
+                                  <span style={{ fontWeight: 800, fontSize: 13, color: "#3b82f6", flexShrink: 0, marginLeft: 12 }}>{a.referrals.length} conv.</span>
+                                </div>
+                                <PBar value={a.referrals.length} max={maxConv} color="#3b82f6" />
+                              </div>
+                            ))}
+                      </div>
+
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                        <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 700, color: "#fff" }}>Top promotions utilisées</div>
+                        {topPromos.length === 0
+                          ? <div style={{ padding: 28, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Aucun code promo</div>
+                          : topPromos.map(p => (
+                              <div key={p.id} style={{ padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
+                                  <div>
+                                    <div style={{ fontSize: 12, fontWeight: 800, fontFamily: "monospace", color: "#fff" }}>{p.code}</div>
+                                    <div style={{ fontSize: 10, color: "#22c55e" }}>-{p.discount_percent}%</div>
+                                  </div>
+                                  <span style={{ fontWeight: 800, fontSize: 13, color: "#22c55e" }}>{p.used_count} util.</span>
+                                </div>
+                                <PBar value={p.used_count} max={maxUsed} color="#22c55e" />
+                              </div>
+                            ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ─── RISQUES ─── */}
+              {analyticsView === "risques" && (() => {
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12 }}>
+                      {([
+                        { label: "Drawdown critique", value: String(riskAccounts.length), color: riskAccounts.length > 0 ? "#ef4444" : "#22c55e" },
+                        { label: "KYC en attente",    value: String(kycPending),          color: kycPending > 0 ? "#f59e0b" : "#22c55e"          },
+                        { label: "Rewards en attente",value: String(pendingRw),           color: pendingRw > 0 ? "#f59e0b" : "#22c55e"            },
+                        { label: "Comptes breachés",  value: String(breached),            color: breached > 0 ? "#ef4444" : "#22c55e"             },
+                      ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                        <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 18px" }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
+                          <div style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                      <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 700, color: "#fff" }}>Comptes en zone critique — Drawdown</div>
+                      {riskAccounts.length === 0 ? (
+                        <div style={{ padding: "28px 20px", textAlign: "center", color: "#22c55e", fontSize: 13, fontWeight: 700 }}>Aucun compte en zone critique</div>
+                      ) : (
+                        <div style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 480 }}>
+                            <thead>
+                              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                {["Trader","Compte","Drawdown","Limite","Alerte"].map(h => (
+                                  <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {riskAccounts.slice(0, 10).map(c => {
+                                const dd    = c.start_balance > 0 ? (c.start_balance - c.balance) / c.start_balance * 100 : 0;
+                                const limit = c.total_drawdown_limit || 10;
+                                const ratio = Math.min(100, Math.round(dd / limit * 100));
+                                const col   = ratio >= 90 ? "#ef4444" : "#f59e0b";
+                                return (
+                                  <tr key={c.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                    <td style={{ padding: "10px 16px", fontSize: 12, fontWeight: 700, color: "#fff", maxWidth: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</td>
+                                    <td style={{ padding: "10px 16px", fontSize: 12, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>{c.account_size} · {c.model}</td>
+                                    <td style={{ padding: "10px 16px" }}>
+                                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                        <div style={{ width: 60, background: "rgba(255,255,255,0.06)", borderRadius: 3, height: 5, flexShrink: 0 }}>
+                                          <div style={{ width: `${ratio}%`, background: col, borderRadius: 3, height: 5 }} />
+                                        </div>
+                                        <span style={{ fontSize: 12, fontWeight: 800, color: col }}>{dd.toFixed(1)}%</span>
+                                      </div>
+                                    </td>
+                                    <td style={{ padding: "10px 16px", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>{limit}%</td>
+                                    <td style={{ padding: "10px 16px" }}>
+                                      <span style={{ fontSize: 11, fontWeight: 700, color: col, background: `${col}15`, padding: "2px 8px", borderRadius: 100 }}>
+                                        {ratio >= 90 ? "Critique" : "Attention"}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+
+                    {kycPending > 0 && (
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 16 }}>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: "#f59e0b", flexShrink: 0 }}>{kycPending}</div>
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 2 }}>KYC en attente de validation</div>
+                          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>Accéder à l'onglet KYC pour traiter les dossiers en cours</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {pendingRw > 0 && (
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 12, padding: "16px 20px", display: "flex", alignItems: "center", gap: 16 }}>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: "#f59e0b", flexShrink: 0 }}>{pendingRw}</div>
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 2 }}>Rewards en attente — €{Math.round(kpis.pendingAmt).toLocaleString()} à valider</div>
+                          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>Accéder à la section Finance pour traiter les demandes</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {riskAccounts.length === 0 && kycPending === 0 && pendingRw === 0 && (
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 12, padding: "20px 24px", textAlign: "center" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#22c55e", marginBottom: 4 }}>Aucun risque identifié</div>
+                        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Tous les comptes sont dans les limites. Aucun KYC ni reward en attente.</div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
             </div>
           );
