@@ -197,6 +197,7 @@ export default function ProductEditorPage() {
   }, []);
 
   const isCompact = windowWidth < 1100;
+  const isMobile  = windowWidth < 600; // P3#28: grids single-column sous 600px
 
   const [form, setForm] = useState({
     name: "", description: "", model: "2step", account_size: "$25,000",
@@ -377,11 +378,19 @@ export default function ProductEditorPage() {
   const title  = isNew ? "Nouveau produit" : (product?.name ?? "—");
   const fieldRow = { marginBottom: 20 };
 
-  // P1#3: Loading state sur surface #050505
+  // P3#25: Loading skeleton animé
   if (loading) {
     return (
-      <div style={{ minHeight: "100vh", background: "#050505", display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,0.3)", fontSize: 14 }}>
-        Chargement…
+      <div style={{ minHeight: "100vh", background: "#050505", padding: "80px 48px" }}>
+        <style>{`@keyframes sk-fade { 0%,100%{opacity:.18} 50%{opacity:.07} }`}</style>
+        {[260, 160, 340, 100, 220, 180].map((w, i) => (
+          <div key={i} style={{
+            height: 14, borderRadius: 5, marginBottom: i === 1 ? 32 : 18,
+            background: "rgba(255,255,255,0.18)", maxWidth: w,
+            animation: "sk-fade 1.6s ease-in-out infinite",
+            animationDelay: `${i * 0.1}s`,
+          }} />
+        ))}
       </div>
     );
   }
@@ -389,6 +398,8 @@ export default function ProductEditorPage() {
   return (
     // P1#3: surface page → #050505
     <div style={{ minHeight: "100vh", background: "#050505", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      {/* P3#26: animation pulsing dot ACTIF */}
+      <style>{`@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.75)} }`}</style>
 
       {/* Toast */}
       {notification && (
@@ -436,7 +447,7 @@ export default function ProductEditorPage() {
               display: "inline-flex", alignItems: "center", gap: 6, letterSpacing: "0.5px",
               userSelect: "none",
             }}>
-              <div style={{ width: 6, height: 6, borderRadius: "50%", background: product.active ? "#22c55e" : "rgba(255,255,255,0.25)" }} />
+              <div style={{ width: 6, height: 6, borderRadius: "50%", background: product.active ? "#22c55e" : "rgba(255,255,255,0.25)", animation: product.active ? "pulse-dot 2.4s ease-in-out infinite" : undefined }} />
               {product.active ? "ACTIF" : "INACTIF"}
             </span>
           )}
@@ -518,10 +529,14 @@ export default function ProductEditorPage() {
         {!isNew && (
           <>
             <button style={tabStyle("phases")} onClick={() => setActiveTab("phases")}>
-              Phases{phases.length > 0 && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.28)", marginLeft: 5 }}>{phases.length}</span>}
+              Phases{phases.length > 0 && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginLeft: 6 }}>{phases.length}</span>}
             </button>
             <button style={tabStyle("rules")} onClick={() => setActiveTab("rules")}>
-              Règles{rules.length > 0 && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.28)", marginLeft: 5 }}>{rules.length}</span>}
+              Règles{rules.length > 0 && (
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginLeft: 6 }}>
+                  {rules.filter(r => r.enabled).length}/{rules.length} actives
+                </span>
+              )}
             </button>
           </>
         )}
@@ -537,6 +552,10 @@ export default function ProductEditorPage() {
         <div style={{
           flex: 1, minWidth: 0, padding: "32px 0",
           paddingRight: !isNew && !isCompact ? 40 : 0,
+          // P3#23: formulaire /new centré et limité en largeur
+          maxWidth: isNew ? 720 : undefined,
+          // P3#29: espace sous la bannière fixe en mode compact
+          paddingBottom: isCompact && !isNew ? 80 : undefined,
         }}>
 
           {/* P10 — Guide création */}
@@ -562,7 +581,7 @@ export default function ProductEditorPage() {
                   <Label>Nom du produit</Label>
                   <Input value={form.name} onChange={pf("name")} />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, ...fieldRow }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
                     <Label>Slug (identifiant URL)</Label>
                     <Input value={form.slug} onChange={isNew ? pf("slug") : undefined} readOnly={!isNew} />
@@ -580,7 +599,7 @@ export default function ProductEditorPage() {
                   <Label>Description (optionnel)</Label>
                   <Textarea value={form.description} onChange={pf("description")} placeholder="Description visible par les clients…" />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, ...fieldRow }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
                     <Label>Taille du compte</Label>
                     <Select
@@ -594,8 +613,8 @@ export default function ProductEditorPage() {
                     <Input value={form.max_cumul_usd} onChange={pf("max_cumul_usd")} type="number" suffix="USD" />
                   </div>
                 </div>
-                {/* Prix en euros — labels sans "(€)" redondant, suffix sur le champ */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, ...fieldRow }}>
+                {/* Prix + ordre — P3#31: Ordre d'affichage déplacé ici depuis Paramètres techniques */}
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
                     <Label>Prix carte</Label>
                     <Input value={form.price_eur} onChange={pf("price_eur")} type="number" suffix="€" />
@@ -603,8 +622,15 @@ export default function ProductEditorPage() {
                   <div>
                     <Label>Prix crypto</Label>
                     <Input value={form.price_crypto} onChange={pf("price_crypto")} type="number" suffix={form.price_crypto ? "€" : "identique"} />
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>
                       Vide = identique au prix carte
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Ordre d&apos;affichage</Label>
+                    <Input value={form.display_order} onChange={pf("display_order")} type="number" />
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>
+                      Position dans la liste
                     </div>
                   </div>
                 </div>
@@ -613,21 +639,21 @@ export default function ProductEditorPage() {
               {/* Paramètres techniques */}
               <div style={{ marginBottom: 36 }}>
                 <SectionTitle>Paramètres techniques</SectionTitle>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, ...fieldRow }}>
+                {/* P3#27: balance_usd readOnly (calculé depuis account_size) | P3#31: display_order déplacé dans Infos commerciales */}
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
                     <Label>Balance simulée</Label>
-                    <Input value={form.balance_usd} onChange={pf("balance_usd")} type="number" suffix="USD" />
+                    <Input value={form.balance_usd} readOnly type="number" suffix="USD" />
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>
+                      Calculé automatiquement depuis la taille du compte
+                    </div>
                   </div>
                   <div>
                     <Label>Levier</Label>
                     <Input value={form.leverage} onChange={pf("leverage")} type="number" suffix=":1" />
                   </div>
-                  <div>
-                    <Label>Ordre d&apos;affichage</Label>
-                    <Input value={form.display_order} onChange={pf("display_order")} type="number" />
-                  </div>
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, ...fieldRow }}>
+                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
                     <Label>Groupe MT5 (challenge)</Label>
                     <Input value={form.mt5_group_challenge} onChange={pf("mt5_group_challenge")} />
@@ -670,10 +696,10 @@ export default function ProductEditorPage() {
                               {isFunded ? "✓" : phase.phase_order}
                             </div>
                             <div>
-                              <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{phase.phase_label}</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{phase.phase_label}</div>
                               {/* Sous-titre uniquement pour funded */}
                               {isFunded && (
-                                <div style={{ fontSize: 11, color: accent, marginTop: 4, fontWeight: 600 }}>Compte Certifié</div>
+                                <div style={{ fontSize: 10, color: accent, marginTop: 4, fontWeight: 600 }}>Compte Certifié</div>
                               )}
                             </div>
                           </div>
@@ -732,7 +758,15 @@ export default function ProductEditorPage() {
                                 cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s",
                               }}
                             >
-                              {isEditing ? "Fermer" : "Modifier"}
+                              {isEditing ? (
+                                <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                                  {/* P3#30: chevron CSS, pas d'emoji */}
+                                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                                    <path d="M1.5 6L5 2L8.5 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                  Fermer
+                                </span>
+                              ) : "Modifier"}
                             </button>
                           </div>
                         </div>
@@ -821,7 +855,7 @@ export default function ProductEditorPage() {
                             <span style={{ fontSize: 13, fontWeight: 600, color: rule.enabled ? "#fff" : "rgba(255,255,255,0.28)", fontFamily: "ui-monospace, 'Cascadia Code', monospace" }}>{rule.rule_key}</span>
                             <span style={{ fontSize: 12, fontWeight: 700, color: rule.enabled ? "#60a5fa" : "rgba(255,255,255,0.18)", fontVariantNumeric: "tabular-nums" }}>{displayValue}</span>
                           </div>
-                          {rule.description && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)", marginTop: 2 }}>{rule.description}</div>}
+                          {rule.description && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 2 }}>{rule.description}</div>}
                         </div>
                         <button
                           onClick={() => {
@@ -896,16 +930,16 @@ export default function ProductEditorPage() {
 
         </div>{/* /form */}
 
-        {/* ── Sidebar Aperçu client ────────────────────────────── */}
-        {!isNew && (
+        {/* ── Sidebar Aperçu client (desktop uniquement) — P3#29: bannière fixe en mode compact ── */}
+        {!isNew && !isCompact && (
           <div style={{
-            width: isCompact ? "100%" : 256,
+            width: 256,
             flexShrink: 0,
-            padding: isCompact ? "0 0 40px" : "32px 0",
-            position: isCompact ? "static" : "sticky",
+            padding: "32px 0",
+            position: "sticky",
             top: 56,
-            maxHeight: isCompact ? "none" : "calc(100vh - 56px)",
-            overflowY: isCompact ? "visible" : "auto",
+            maxHeight: "calc(100vh - 56px)",
+            overflowY: "auto",
           }}>
             {/* P1#3: sidebar card → #0c0c0c + border rgba(255,255,255,0.1) | P2#12: inset shadow */}
             <div style={{
@@ -918,7 +952,7 @@ export default function ProductEditorPage() {
                 Aperçu client
               </div>
 
-              <div style={{ fontSize: 15, fontWeight: 800, color: "#fff", marginBottom: 3 }}>{form.name || "—"}</div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 3 }}>{form.name || "—"}</div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.38)", marginBottom: 16 }}>
                 {form.account_size} · {form.model === "2step" ? "2-Step" : form.model === "1step" ? "1-Step" : "VIP"}
               </div>
@@ -927,7 +961,7 @@ export default function ProductEditorPage() {
                 {form.price_eur ? `€${form.price_eur}` : "—"}
               </div>
               {form.price_crypto && (
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.28)", marginBottom: 4 }}>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginBottom: 4 }}>
                   Crypto : €{form.price_crypto}
                 </div>
               )}
@@ -939,8 +973,8 @@ export default function ProductEditorPage() {
                   <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Parcours</div>
                   {phases.map((ph, idx) => (
                     <div key={ph.phase_order} style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: ph.phase_type === "funded" ? "#4ade80" : "#60a5fa", marginBottom: 5 }}>{ph.phase_label}</div>
-                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", lineHeight: 1.7 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: ph.phase_type === "funded" ? "#4ade80" : "#60a5fa", marginBottom: 5 }}>{ph.phase_label}</div>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", lineHeight: 1.7 }}>
                         {ph.profit_target !== null && <div>Objectif {ph.profit_target}%</div>}
                         <div>DD {ph.daily_drawdown}% / {ph.total_drawdown}%</div>
                         {ph.min_trading_days > 0 && <div>{ph.min_trading_days} jours min</div>}
@@ -951,7 +985,7 @@ export default function ProductEditorPage() {
                   ))}
                 </div>
               ) : (
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.18)" }}>Aucune phase</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)" }}>Aucune phase</div>
               )}
 
               {rules.filter(r => r.enabled).length > 0 && (
@@ -959,7 +993,7 @@ export default function ProductEditorPage() {
                   <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "16px 0" }} />
                   <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 10 }}>Règles actives</div>
                   {rules.filter(r => r.enabled).map(r => (
-                    <div key={r.rule_key} style={{ fontSize: 11, color: "rgba(255,255,255,0.38)", marginBottom: 5, display: "flex", justifyContent: "space-between", gap: 8 }}>
+                    <div key={r.rule_key} style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginBottom: 5, display: "flex", justifyContent: "space-between", gap: 8 }}>
                       <span style={{ fontFamily: "ui-monospace, 'Cascadia Code', monospace", color: "rgba(255,255,255,0.3)", wordBreak: "break-all" }}>{r.rule_key}</span>
                       <span style={{ color: "#60a5fa", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
                         {typeof r.rule_value === "object" ? JSON.stringify(r.rule_value) : String(r.rule_value)}
@@ -968,11 +1002,70 @@ export default function ProductEditorPage() {
                   ))}
                 </>
               )}
+
+              {/* P3#35: Lien "Voir sur le site →" */}
+              {product?.slug && (
+                <>
+                  <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "16px 0" }} />
+                  <a
+                    href={`/checkout?product=${product.slug}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: "flex", alignItems: "center", gap: 5,
+                      fontSize: 11, color: "rgba(59,130,246,0.65)", textDecoration: "none",
+                      fontWeight: 600, letterSpacing: "0.3px",
+                      transition: "color 0.15s",
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(96,165,250,0.9)")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(59,130,246,0.65)")}
+                  >
+                    Voir sur le site
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                      <path d="M2 8L8 2M5 2h3v3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </a>
+                </>
+              )}
             </div>
           </div>
         )}
 
       </div>{/* /layout */}
+
+      {/* P3#29: bannière récapitulative fixe en bas — mode compact uniquement */}
+      {!isNew && isCompact && product && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 40,
+          background: "#0c0c0c",
+          borderTop: "1px solid rgba(255,255,255,0.1)",
+          boxShadow: "0 -4px 24px rgba(0,0,0,0.5)",
+          padding: "10px 20px",
+          display: "flex", alignItems: "center", gap: 14,
+        }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              {form.name || "—"}
+            </div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>
+              {form.account_size} · {form.model === "2step" ? "2-Step" : form.model === "1step" ? "1-Step" : "VIP"}
+            </div>
+          </div>
+          <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
+            {form.price_eur ? `€${form.price_eur}` : "—"}
+          </div>
+          <span style={{
+            background: product.active ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.06)",
+            border: `1px solid ${product.active ? "rgba(34,197,94,0.22)" : "rgba(255,255,255,0.1)"}`,
+            color: product.active ? "#4ade80" : "rgba(255,255,255,0.38)",
+            borderRadius: 20, padding: "3px 10px", fontSize: 10, fontWeight: 700,
+            display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0,
+          }}>
+            <div style={{ width: 5, height: 5, borderRadius: "50%", background: product.active ? "#22c55e" : "rgba(255,255,255,0.25)", animation: product.active ? "pulse-dot 2.4s ease-in-out infinite" : undefined }} />
+            {product.active ? "ACTIF" : "INACTIF"}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
