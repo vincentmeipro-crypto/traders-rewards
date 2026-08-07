@@ -123,9 +123,14 @@ export interface FullProduct {
 // ── Chargement individuel ──────────────────────────────────────
 
 /**
- * Charge un produit par UUID.
- * Vérifie que le produit existe et est actif.
- * Lève une erreur explicite pour les webhooks.
+ * Charge un produit par UUID — SANS vérification active.
+ *
+ * Utilisé par les webhooks (Stripe, Crypto) où le produit était actif
+ * au moment de l'achat mais peut avoir été désactivé depuis.
+ * Les webhooks crypto peuvent arriver des heures après l'achat :
+ * filtrer active=true ferait rater le challenge d'un client ayant payé.
+ *
+ * La vérification active=true appartient UNIQUEMENT au checkout (loadProductBySlug).
  */
 export async function loadProduct(productId: string): Promise<ChallengeProduct> {
   const admin = createAdminClient();
@@ -133,12 +138,11 @@ export async function loadProduct(productId: string): Promise<ChallengeProduct> 
     .from("challenge_products")
     .select("*")
     .eq("id", productId)
-    .eq("active", true)
     .single();
 
   if (error || !data) {
     throw new Error(
-      `[ProductEngine] Produit introuvable ou inactif (id: ${productId})`
+      `[ProductEngine] Produit introuvable (id: ${productId})`
     );
   }
   return data as ChallengeProduct;
