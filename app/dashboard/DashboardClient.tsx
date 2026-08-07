@@ -583,10 +583,8 @@ export default function DashboardClient({ user }: { user: User }) {
   const _dL  = challenge?.daily_low_equity ?? _b;
   // Stale 1: ancien code EOD (daily_start ≈ start_balance) → utiliser balance
   const _stale1 = _dS !== null && Math.abs(_dS - _sb) < 1;
-  // Stale 2: daily_start > start_balance mais balance < start_balance → reset 22h manqué
-  const _stale2 = _dS !== null && _dS > _sb + 1 && _b < _sb - 1;
-  const _periodStart = (_dS !== null && !_stale1 && !_stale2) ? _dS : _b;
-  const _periodLow   = (_stale1 || _stale2) ? _b : (_dL >= _b - _sb * 0.015 ? _dL : _b);
+  const _periodStart = (_dS !== null && !_stale1) ? _dS : _b;
+  const _periodLow   = _stale1 ? _b : (_dL >= _b - _sb * 0.015 ? _dL : _b);
   const dailyDrawdownPct = _periodStart > 0 ? Math.max(0, (_periodStart - _periodLow) / _periodStart * 100) : 0;
   const is1StepChallenge = challenge?.model?.toLowerCase().replace(/[\s-]/g,"").includes("1step") ?? false;
   const highestBalance = challenge?.highest_balance ?? challenge?.start_balance ?? 0;
