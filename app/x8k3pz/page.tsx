@@ -303,6 +303,7 @@ function AdminPageInner() {
 
   // CRM state
   const [crmExpanded, setCrmExpanded] = useState<string | null>(null);
+  const [crmSearch, setCrmSearch] = useState("");
 
   // Create challenge state
   const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true, type: "challenge" as "challenge" | "reward" });
@@ -1722,300 +1723,396 @@ function AdminPageInner() {
           );
         })()}
 
-        {/* ══ CRM TRADERS ══ */}
-        {tab === "crm" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginBottom: 8 }}>{traderCRM.length} traders — triés par dépense totale</div>
-            {traderCRM.map(trader => {
-              const activeC   = trader.challenges.filter(c => c.status === "active").length;
-              const certC     = trader.challenges.filter(c => c.status === "funded").length;
-              const failedC   = trader.challenges.filter(c => c.status === "failed").length;
-              const isOpen    = crmExpanded === trader.email;
-              return (
-                <div key={trader.email} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, overflow: "hidden" }}>
-                  <div onClick={() => setCrmExpanded(isOpen ? null : trader.email)}
-                    style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
-                    <div style={{ flex: 1, minWidth: 200 }}>
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>{trader.name || trader.email}</div>
-                      {trader.name && <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{trader.email}</div>}
+        {/* ══ TRADER HUB CRM 360° ══ */}
+        {tab === "crm" && (() => {
+          const crmFiltered = crmSearch.trim()
+            ? traderCRM.filter(t => {
+                const s = crmSearch.toLowerCase();
+                return t.email.toLowerCase().includes(s) || t.name.toLowerCase().includes(s);
+              })
+            : traderCRM;
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+
+              {/* Barre de recherche */}
+              <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                <input
+                  placeholder="Rechercher un trader (nom ou email)..."
+                  value={crmSearch}
+                  onChange={e => setCrmSearch(e.target.value)}
+                  style={{ flex: 1, maxWidth: 340, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "9px 14px", color: "#fff", fontSize: 13, outline: "none" }}
+                />
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
+                  {crmFiltered.length} trader{crmFiltered.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+
+              {crmFiltered.length === 0 && (
+                <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>
+                  {crmSearch ? "Aucun résultat" : "Aucun trader"}
+                </div>
+              )}
+
+              {crmFiltered.map(trader => {
+                const isOpen           = crmExpanded === trader.email;
+                const profile          = profiles.find(p => p.email === trader.email);
+                const traderPayouts    = payouts.filter(p => p.user_email === trader.email);
+                const kyc              = kycSubmissions.find(k => k.user_email === trader.email);
+                const activeC          = trader.challenges.filter(c => c.status === "active").length;
+                const certC            = trader.challenges.filter(c => c.status === "funded").length;
+                const failedC          = trader.challenges.filter(c => c.status === "failed").length;
+                const totalRewardsPaid = traderPayouts.filter(p => p.status === "paid").reduce((s, p) => s + p.amount, 0);
+                const country          = profile?.country || null;
+                const kycBg    = !kyc ? "rgba(255,255,255,0.06)" : kyc.kyc_status === "approved" ? "rgba(34,197,94,0.12)" : kyc.kyc_status === "rejected" ? "rgba(239,68,68,0.12)" : "rgba(245,158,11,0.12)";
+                const kycClr   = !kyc ? "rgba(255,255,255,0.3)" : kyc.kyc_status === "approved" ? "#22c55e" : kyc.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
+                const kycLbl   = !kyc ? "Non soumis" : kyc.kyc_status === "approved" ? "KYC" : kyc.kyc_status === "rejected" ? "Refusé" : "En attente";
+
+                return (
+                  <div key={trader.email} style={{ background: "#0c0c0c", border: `1px solid ${isOpen ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.08)"}`, borderRadius: 12, overflow: "hidden" }}>
+
+                    {/* Ligne — fermée */}
+                    <div
+                      onClick={() => setCrmExpanded(isOpen ? null : trader.email)}
+                      style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}
+                    >
+                      <div style={{ flex: 1, minWidth: 160 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{trader.name || trader.email}</div>
+                        {trader.name && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{trader.email}</div>}
+                        {country && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 1 }}>{country}</div>}
+                      </div>
+                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                        <span style={{ background: kycBg, color: kycClr, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>{kycLbl}</span>
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
+                          {trader.challenges.length} challenge{trader.challenges.length !== 1 ? "s" : ""}
+                          {activeC > 0 && <span style={{ color: "#22c55e", fontWeight: 700 }}> · {activeC} actif{activeC !== 1 ? "s" : ""}</span>}
+                        </span>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: "#22c55e", fontVariantNumeric: "tabular-nums" }}>€{trader.totalSpent.toLocaleString()}</span>
+                      </div>
+                      <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, flexShrink: 0 }}>{isOpen ? "▲" : "▼"}</div>
                     </div>
-                    <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 13 }}>
-                      <div><span style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>LTV </span><span style={{ color: "#22c55e", fontWeight: 800 }}>€{trader.totalSpent}</span></div>
-                      <div><span style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>Challenges </span><span style={{ fontWeight: 700 }}>{trader.challenges.length}</span></div>
-                      <div><span style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>Actifs </span><span style={{ color: "#22c55e", fontWeight: 700 }}>{activeC}</span></div>
-                      {certC > 0   && <div><span style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>Reward </span><span style={{ color: "#3b82f6", fontWeight: 700 }}>{certC}</span></div>}
-                      {failedC > 0 && <div><span style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>Failed </span><span style={{ color: "#ef4444", fontWeight: 700 }}>{failedC}</span></div>}
-                      <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>depuis {new Date(trader.firstDate).toLocaleDateString()}</div>
-                    </div>
-                    <span style={{ color: "rgba(255,255,255,0.5)", fontSize: 16 }}>{isOpen ? "▲" : "▼"}</span>
-                  </div>
-                  {isOpen && (() => {
-                    const traderPayouts = payouts.filter(p => p.user_email === trader.email);
-                    const totalPaid = traderPayouts.filter(p => p.status === "paid").reduce((s, p) => s + p.amount, 0);
-                    const firstChallenge = trader.challenges[trader.challenges.length - 1];
 
-                    // Timeline : challenges + payouts mélangés, triés par date
-                    type TLItem =
-                      | { kind: "challenge"; date: string; data: Challenge }
-                      | { kind: "payout";    date: string; data: Payout };
-                    const timeline: TLItem[] = [
-                      ...trader.challenges.map(c => ({ kind: "challenge" as const, date: c.created_at, data: c })),
-                      ...traderPayouts.map(p  => ({ kind: "payout"    as const, date: p.created_at, data: p })),
-                    ].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+                    {/* HUB 360° */}
+                    {isOpen && (() => {
+                      const pendingPayouts = traderPayouts.filter(p => p.status === "pending");
+                      const paidPayouts    = traderPayouts.filter(p => p.status === "paid");
+                      const margeBrute     = trader.totalSpent - totalRewardsPaid;
+                      const traderId       = profile?.user_id;
+                      const traderAffil    = affiliatesLoaded ? affiliates.find(a => a.email === trader.email) : null;
+                      const traderReferrer = (affiliatesLoaded && traderId != null)
+                        ? affiliates.find(a => a.referrals.some(r => r.referred_user_id === traderId))
+                        : null;
+                      const docFields: Array<{ field: keyof KycSubmission["doc_urls"]; label: string }> = [
+                        { field: "id_front",  label: "ID recto" },
+                        { field: "id_back",   label: "ID verso" },
+                        { field: "residence", label: "Domicile" },
+                        { field: "selfie",    label: "Selfie"   },
+                      ];
+                      const statusOrd: Record<string, number> = { active: 0, passed: 1, funded: 2, failed: 3 };
 
-                    return (
-                      <div style={{ borderTop: "1px solid #1a1a1a" }}>
+                      return (
+                        <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
 
-                        {/* Fiche client */}
-                        {(() => {
-                          const profile = profiles.find(p => p.email === trader.email);
-                          return (
-                        <div style={{ padding: "16px 20px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                          <div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Contact</div>
-                            <div style={{ fontWeight: 700 }}>{trader.name || "—"}</div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{trader.email}</div>
-                            {(profile?.phone || firstChallenge?.client_phone) && <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{profile?.phone || firstChallenge?.client_phone}</div>}
-                            {profile?.address && <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, marginTop: 4 }}>{profile.address}{profile.postal_code ? `, ${profile.postal_code}` : ""} {profile.city || ""}{profile.country ? ` — ${profile.country}` : ""}</div>}
-                            <button onClick={() => sendAccessEmail(trader.email)} style={{ marginTop: 8, backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.3)", borderRadius: 6, color: "#60A5FA", fontSize: 11, padding: "4px 10px", cursor: "pointer" }}>
-                              {accessEmailMsg[trader.email] || "✉ Envoyer email d'accès"}
-                            </button>
-                          </div>
-                          <div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Client depuis</div>
-                            <div style={{ fontWeight: 700 }}>{new Date(trader.firstDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
-                          </div>
-                          <div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Total dépensé (LTV)</div>
-                            <div style={{ fontWeight: 900, fontSize: 18, color: "#22c55e" }}>€{trader.totalSpent}</div>
-                          </div>
-                          <div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Récompenses reçues</div>
-                            <div style={{ fontWeight: 900, fontSize: 18, color: totalPaid > 0 ? "#3b82f6" : "rgba(255,255,255,0.35)" }}>€{totalPaid.toLocaleString()}</div>
-                          </div>
-                          <div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Challenges</div>
-                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
-                              {[
-                                { label: "Total",    value: trader.challenges.length,                                color: "#fff"    },
-                                { label: "Actifs",   value: activeC,                                                 color: "#22c55e" },
-                                { label: "Reward",   value: certC,                                                   color: "#3b82f6" },
-                                { label: "Failed",   value: failedC,                                                 color: "#ef4444" },
-                              ].map(s => s.value > 0 && (
-                                <span key={s.label} style={{ fontSize: 11 }}>
-                                  <span style={{ color: "rgba(255,255,255,0.45)" }}>{s.label} </span>
-                                  <span style={{ color: s.color, fontWeight: 800 }}>{s.value}</span>
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                          );
-                        })()}
-
-                        {/* Comptes MT5 */}
-                        {(() => {
-                          const traderChallenges = trader.challenges.filter(c => c.model !== "vip");
-                          const algoChallenges   = trader.challenges.filter(c => c.model === "vip");
-                          const hasTrader = traderChallenges.length > 0;
-                          const hasAlgo   = algoChallenges.length > 0;
-                          if (!hasTrader && !hasAlgo) return null;
-                          return (
-                            <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>Comptes MT5</div>
-                              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-
-                                {/* Challenges Trader */}
-                                {hasTrader && (
-                                  <div>
-                                    <div style={{ color: "#60A5FA", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                                      <span style={{ background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 4, padding: "1px 8px" }}>TRADER</span>
-                                      <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400, fontSize: 10, textTransform: "none" }}>{traderChallenges.length} compte(s)</span>
-                                    </div>
-                                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                                      {traderChallenges.map(c => (
-                                        <div key={c.id} style={{ background: "rgba(59,130,246,0.05)", border: "1px solid rgba(59,130,246,0.1)", borderRadius: 8, padding: "8px 12px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
-                                          <span style={{ fontWeight: 800, color: "#fff", fontSize: 13 }}>{c.account_size}</span>
-                                          <span style={{ background: "rgba(255,255,255,0.06)", borderRadius: 4, padding: "1px 7px", fontSize: 10, color: "rgba(255,255,255,0.55)", textTransform: "uppercase" }}>{c.model}</span>
-                                          {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
-                                          {c.mt5_login && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
-                                              Login : <span onClick={() => copyToClipboard(String(c.mt5_login))} style={{ color: "#60A5FA", fontFamily: "monospace", cursor: "pointer" }} title="Copier">{c.mt5_login}</span>
-                                            </span>
-                                          )}
-                                          {c.mt5_password && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
-                                              MDP : <span onClick={() => copyToClipboard(c.mt5_password)} style={{ color: "#60A5FA", fontFamily: "monospace", cursor: "pointer" }} title="Copier">{c.mt5_password}</span>
-                                            </span>
-                                          )}
-                                          {c.mt5_server && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                              Serveur : <span style={{ color: "rgba(255,255,255,0.55)" }}>{c.mt5_server}</span>
-                                            </span>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* Challenges Algo */}
-                                {hasAlgo && (
-                                  <div style={{ marginTop: hasTrader ? 8 : 0 }}>
-                                    <div style={{ color: "#a78bfa", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 6, display: "flex", alignItems: "center", gap: 6 }}>
-                                      <span style={{ background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 4, padding: "1px 8px" }}>⚡ ALGO</span>
-                                      <span style={{ color: "rgba(255,255,255,0.3)", fontWeight: 400, fontSize: 10, textTransform: "none" }}>{algoChallenges.length} compte(s)</span>
-                                    </div>
-                                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                                      {algoChallenges.map(c => (
-                                        <div key={c.id} style={{ background: "rgba(139,92,246,0.05)", border: "1px solid rgba(139,92,246,0.15)", borderRadius: 8, padding: "8px 12px", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
-                                          <span style={{ fontWeight: 800, color: "#fff", fontSize: 13 }}>{c.account_size}</span>
-                                          {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
-                                          {c.mt5_login && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
-                                              Login : <span onClick={() => copyToClipboard(String(c.mt5_login))} style={{ color: "#a78bfa", fontFamily: "monospace", cursor: "pointer" }} title="Copier">{c.mt5_login}</span>
-                                            </span>
-                                          )}
-                                          {c.mt5_password_investor && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", display: "flex", alignItems: "center", gap: 4 }}>
-                                              <span style={{ background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 3, padding: "1px 5px", fontSize: 9, color: "#22c55e", fontWeight: 700 }}>CLIENT</span>
-                                              <span onClick={() => copyToClipboard(c.mt5_password_investor)} style={{ color: "#a78bfa", fontFamily: "monospace", cursor: "pointer" }} title="Copier MDP investisseur">{c.mt5_password_investor}</span>
-                                            </span>
-                                          )}
-                                          {c.mt5_password && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", display: "flex", alignItems: "center", gap: 4 }}>
-                                              <span style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 3, padding: "1px 5px", fontSize: 9, color: "#ef4444", fontWeight: 700 }}>MASTER</span>
-                                              <span onClick={() => copyToClipboard(c.mt5_password)} style={{ color: "#f87171", fontFamily: "monospace", cursor: "pointer" }} title="Copier MDP master">{c.mt5_password}</span>
-                                            </span>
-                                          )}
-                                          {c.mt5_server && (
-                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                              Serveur : <span style={{ color: "rgba(255,255,255,0.55)" }}>{c.mt5_server}</span>
-                                            </span>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-
+                          {/* HEADER */}
+                          <div style={{ padding: "20px 24px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                            {/* Identité + actions */}
+                            <div style={{ display: "flex", alignItems: "flex-start", gap: 20, flexWrap: "wrap", justifyContent: "space-between", marginBottom: 16 }}>
+                              <div>
+                                <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", lineHeight: "1.2" }}>{trader.name || trader.email}</div>
+                                {trader.name && <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>{trader.email}</div>}
+                                <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap", alignItems: "center" }}>
+                                  {country && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{country}</span>}
+                                  {country && <span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>}
+                                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>Depuis {new Date(trader.firstDate).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</span>
+                                  <span style={{ color: "rgba(255,255,255,0.2)" }}>·</span>
+                                  <span style={{ background: kycBg, color: kycClr, fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4, textTransform: "uppercase", letterSpacing: 0.5 }}>{kycLbl}</span>
+                                </div>
+                              </div>
+                              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                <button onClick={() => sendAccessEmail(trader.email)}
+                                  style={{ padding: "8px 16px", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 8, color: "#60a5fa", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                                  {accessEmailMsg[trader.email] || "Renvoyer accès"}
+                                </button>
+                                <button onClick={() => { setTab("pipeline"); setSearch(trader.email); }}
+                                  style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "rgba(255,255,255,0.65)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                                  Voir Pipeline
+                                </button>
+                                <button onClick={() => setTab("create")}
+                                  style={{ padding: "8px 16px", background: "#3b82f6", border: "none", borderRadius: 8, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                  + Challenge
+                                </button>
                               </div>
                             </div>
-                          );
-                        })()}
 
-                        {/* KYC */}
-                        {(() => {
-                          const kyc = kycSubmissions.find(k => k.user_email === trader.email);
-                          const kycColor = !kyc ? "#555" : kyc.kyc_status === "approved" ? "#22c55e" : kyc.kyc_status === "rejected" ? "#ef4444" : "#f59e0b";
-                          const kycLabel = !kyc ? "Non soumis" : kyc.kyc_status;
-                          const docFields: Array<[keyof KycSubmission["doc_urls"], string]> = [["id_front","ID recto"],["id_back","ID verso"],["residence","Domicile"],["selfie","Selfie"]];
-                          return (
-                            <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
-                              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginRight: 4 }}>KYC</div>
-                              <span style={{ backgroundColor: `${kycColor}20`, color: kycColor, padding: "2px 10px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{kycLabel}</span>
-                              {kyc?.kyc_submitted_at && <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>soumis le {new Date(kyc.kyc_submitted_at).toLocaleDateString("fr-FR")}</span>}
-
-                              {kyc && docFields.map(([field, label]) => (
-                                kyc.doc_urls[field] ? (
-                                  <a key={field} href={kyc.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
-                                    style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 7, padding: "4px 10px", color: "#38bdf8", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
-                                    📄 {label}
-                                  </a>
-                                ) : null
+                            {/* KPI strip */}
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 8 }}>
+                              {([
+                                { label: "LTV",         value: `€${trader.totalSpent.toLocaleString()}`,   color: "#22c55e" },
+                                { label: "Challenges",  value: String(trader.challenges.length),            color: "#fff"    },
+                                { label: "Actifs",      value: String(activeC),                             color: activeC > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
+                                { label: "Certifiés",   value: String(certC),                               color: certC > 0  ? "#3b82f6"  : "rgba(255,255,255,0.25)" },
+                                { label: "Rewards",     value: `€${totalRewardsPaid.toLocaleString()}`,     color: totalRewardsPaid > 0 ? "#3b82f6" : "rgba(255,255,255,0.25)" },
+                                { label: "Marge brute", value: `€${margeBrute.toLocaleString()}`,           color: margeBrute >= 0 ? "#22c55e" : "#ef4444" },
+                              ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                                <div key={i} style={{ background: "#111", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "10px 14px" }}>
+                                  <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 4 }}>{k.label}</div>
+                                  <div style={{ fontSize: 16, fontWeight: 800, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                                </div>
                               ))}
-
-                              {kyc?.kyc_status === "rejected" && kyc.kyc_rejection_reason && (
-                                <span style={{ color: "#ef4444", fontSize: 11 }}>Motif : {kyc.kyc_rejection_reason}</span>
-                              )}
-
-                              {kyc?.kyc_status === "pending" && (
-                                <>
-                                  <button onClick={() => updateKyc(kyc.id, "approved")}
-                                    style={{ backgroundColor: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40", borderRadius: 7, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-                                    ✓ Approuver
-                                  </button>
-                                  <input value={kycRejectReason[kyc.id] || ""} onChange={e => setKycRejectReason(r => ({ ...r, [kyc.id]: e.target.value }))}
-                                    placeholder="Motif de refus..." style={{ backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 7, padding: "4px 10px", color: "#fff", fontSize: 11, outline: "none", width: 150 }} />
-                                  <button onClick={() => updateKyc(kyc.id, "rejected", kycRejectReason[kyc.id])}
-                                    style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 7, padding: "4px 12px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-                                    ✕ Refuser
-                                  </button>
-                                </>
-                              )}
                             </div>
-                          );
-                        })()}
-
-                        {/* Timeline */}
-                        <div style={{ padding: "16px 20px" }}>
-                          <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 14 }}>Historique complet</div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                            {timeline.map((item, idx) => {
-                              const isLast = idx === timeline.length - 1;
-                              if (item.kind === "challenge") {
-                                const c = item.data;
-                                const profit = c.balance && c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100).toFixed(1) : null;
-                                return (
-                                  <div key={c.id} style={{ display: "flex", gap: 12 }}>
-                                    {/* Ligne verticale */}
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
-                                      <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[c.status] || "#444", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "rgba(255,255,255,0.1)", minHeight: 24 }} />}
-                                    </div>
-                                    {/* Contenu */}
-                                    <div style={{ flex: 1, paddingBottom: 16 }}>
-                                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
-                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
-                                        <span style={{ fontWeight: 700, fontSize: 13 }}>Challenge {c.account_size}</span>
-                                        <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{c.model}</span>
-                                        {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
-                                        <span style={{ color: "#22c55e", fontSize: 12, fontWeight: 700 }}>€{c.amount_paid} payé</span>
-                                        {c.payment_method && <span style={{ backgroundColor: c.payment_method === "crypto" ? "rgba(245,158,11,0.1)" : "rgba(59,130,246,0.12)", color: c.payment_method === "crypto" ? "#f59e0b" : "#60A5FA", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{c.payment_method === "crypto" ? "🔶 Crypto" : "🏦 Carte"}</span>}
-                                      </div>
-                                      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
-                                        <span>Phase : <span style={{ color: "rgba(255,255,255,0.45)" }}>{c.phase}</span></span>
-                                        <span>Jours tradés : <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "#888" }}>{c.trading_days}</span></span>
-                                        {c.balance && <span>Balance : <span style={{ color: "#fff" }}>${c.balance?.toLocaleString()}</span></span>}
-                                        {profit && <span>P&L : <span style={{ color: Number(profit) >= 0 ? "#22c55e" : "#ef4444" }}>{profit}%</span></span>}
-                                        {c.mt5_login    && <span>MT5 Login : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_login}</span></span>}
-                                        {c.mt5_password && <span>Password : <span style={{ color: "#38bdf8", fontFamily: "monospace" }}>{c.mt5_password}</span></span>}
-                                        {c.mt5_server   && <span>Serveur : <span style={{ color: "#38bdf8" }}>{c.mt5_server}</span></span>}
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              } else {
-                                const p = item.data;
-                                return (
-                                  <div key={p.id} style={{ display: "flex", gap: 12 }}>
-                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 20, flexShrink: 0 }}>
-                                      <div style={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: STATUS_COLORS[p.status] || "#3b82f6", marginTop: 4, flexShrink: 0 }} />
-                                      {!isLast && <div style={{ width: 1, flex: 1, backgroundColor: "rgba(255,255,255,0.1)", minHeight: 24 }} />}
-                                    </div>
-                                    <div style={{ flex: 1, paddingBottom: 16 }}>
-                                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
-                                        <span style={{ fontWeight: 700, fontSize: 13, color: "#3b82f6" }}>Demande de récompense</span>
-                                        <span style={{ fontWeight: 900, fontSize: 14, color: "#22c55e" }}>€{p.amount?.toLocaleString()}</span>
-                                        {badge(STATUS_LABELS[p.status] || p.status, STATUS_COLORS[p.status] || "#888")}
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              }
-                            })}
                           </div>
+
+                          {/* BODY 2 colonnes */}
+                          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.5fr 1fr" }}>
+
+                            {/* COL GAUCHE — Challenges · Rewards · Finance */}
+                            <div style={{ padding: "20px 24px", borderRight: isMobile ? "none" : "1px solid rgba(255,255,255,0.06)", display: "flex", flexDirection: "column", gap: 24 }}>
+
+                              {/* S1 Challenges */}
+                              <div>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>Challenges</div>
+                                {trader.challenges.length === 0
+                                  ? <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Aucun challenge</div>
+                                  : <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                                      {[...trader.challenges]
+                                        .sort((a, b) => (statusOrd[a.status] ?? 4) - (statusOrd[b.status] ?? 4))
+                                        .map(c => {
+                                          const gain   = c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100) : 0;
+                                          const gainClr = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "rgba(255,255,255,0.3)";
+                                          const totDD  = (c.status === "active" && c.start_balance && c.balance)
+                                            ? Math.max(0, (c.start_balance - c.balance) / c.start_balance * 100) : null;
+                                          const maxDD  = c.total_drawdown_limit || 10;
+                                          const ddClr  = totDD !== null ? (totDD >= maxDD ? "#ef4444" : totDD >= maxDD * 0.7 ? "#f59e0b" : "rgba(255,255,255,0.35)") : "rgba(255,255,255,0.2)";
+                                          return (
+                                            <div key={c.id} style={{ background: "#111", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "10px 14px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                                              <div style={{ flex: 1, minWidth: 80 }}>
+                                                <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                                                  <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{c.account_size}</span>
+                                                  <span style={{ fontSize: 10, background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.4)", padding: "1px 5px", borderRadius: 3, fontWeight: 700, textTransform: "uppercase" }}>{c.model === "instant" ? "INST" : (c.model || "").toUpperCase()}</span>
+                                                  <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: 700, padding: "1px 6px", borderRadius: 4 }}>
+                                                    {c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Ph2" : "Ph1"}
+                                                  </span>
+                                                  {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
+                                                </div>
+                                              </div>
+                                              <div style={{ textAlign: "right", flexShrink: 0 }}>
+                                                <div style={{ fontSize: 12, fontWeight: 700, color: c.status === "failed" ? "#ef4444" : "#fff", fontVariantNumeric: "tabular-nums" }}>
+                                                  ${c.balance?.toLocaleString() ?? "—"}
+                                                </div>
+                                                {c.status === "active" && c.start_balance ? (
+                                                  <div style={{ fontSize: 10, color: gainClr, fontVariantNumeric: "tabular-nums" }}>
+                                                    {gain >= 0 ? "+" : ""}{gain.toFixed(1)}%
+                                                    {totDD !== null && <span style={{ color: ddClr, marginLeft: 4 }}>DD {totDD.toFixed(1)}%</span>}
+                                                  </div>
+                                                ) : c.status === "failed" && c.breach_value != null ? (
+                                                  <div style={{ fontSize: 10, color: "#ef4444" }}>-{c.breach_value.toFixed(2)}%</div>
+                                                ) : null}
+                                              </div>
+                                              <button onClick={e => { e.stopPropagation(); setTab("pipeline"); setSearch(trader.email); }}
+                                                style={{ padding: "4px 10px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.18)", borderRadius: 5, color: "#60a5fa", fontSize: 10, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>
+                                                Pipeline
+                                              </button>
+                                            </div>
+                                          );
+                                        })}
+                                    </div>
+                                }
+                              </div>
+
+                              {/* S2 Rewards */}
+                              <div>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>Rewards</div>
+                                {traderPayouts.length === 0
+                                  ? <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Aucune demande</div>
+                                  : <>
+                                      <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                                        {[...traderPayouts]
+                                          .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                                          .map(p => (
+                                            <div key={p.id} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", background: "#111", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 7 }}>
+                                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
+                                              <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: "#fff", fontVariantNumeric: "tabular-nums" }}>€{p.amount?.toLocaleString()}</span>
+                                              {badge(STATUS_LABELS[p.status] || p.status, STATUS_COLORS[p.status] || "#888")}
+                                              {p.payment_method && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{p.payment_method}</span>}
+                                            </div>
+                                          ))}
+                                      </div>
+                                      {paidPayouts.length > 0 && (
+                                        <div style={{ marginTop: 8, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                          Total reçu : <span style={{ color: "#22c55e", fontWeight: 700, fontVariantNumeric: "tabular-nums" }}>€{totalRewardsPaid.toLocaleString()}</span>
+                                          {pendingPayouts.length > 0 && <span style={{ marginLeft: 12 }}>En attente : <span style={{ color: "#f59e0b", fontVariantNumeric: "tabular-nums" }}>€{pendingPayouts.reduce((s, p) => s + p.amount, 0).toLocaleString()}</span></span>}
+                                        </div>
+                                      )}
+                                    </>
+                                }
+                              </div>
+
+                              {/* S4 Finance */}
+                              <div>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>Finance</div>
+                                <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                                  {([
+                                    { label: "Total dépensé", value: `€${trader.totalSpent.toLocaleString()}`,  color: "#fff" },
+                                    { label: "Rewards reçus", value: `€${totalRewardsPaid.toLocaleString()}`,   color: totalRewardsPaid > 0 ? "#3b82f6" : "rgba(255,255,255,0.25)" },
+                                    { label: "Marge brute",   value: `€${margeBrute.toLocaleString()}`,         color: margeBrute >= 0 ? "#22c55e" : "#ef4444" },
+                                    ...(failedC > 0 ? [{ label: "Échecs", value: String(failedC), color: "#ef4444" }] : []),
+                                  ] as { label: string; value: string; color: string }[]).map((f, i) => (
+                                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
+                                      <span style={{ fontSize: 12, fontWeight: 700, color: f.color, fontVariantNumeric: "tabular-nums" }}>{f.value}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+
+                            </div>
+
+                            {/* COL DROITE — KYC · Sécurité · Affiliation */}
+                            <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 }}>
+
+                              {/* S3 KYC */}
+                              <div>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>KYC</div>
+                                {!kyc
+                                  ? <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Non soumis</div>
+                                  : <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                        <span style={{ background: kycBg, color: kycClr, fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20 }}>{kycLbl}</span>
+                                        {kyc.kyc_submitted_at && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Soumis {new Date(kyc.kyc_submitted_at).toLocaleDateString("fr-FR")}</span>}
+                                        {kyc.kyc_reviewed_at  && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Revu {new Date(kyc.kyc_reviewed_at).toLocaleDateString("fr-FR")}</span>}
+                                      </div>
+                                      {kyc.kyc_rejection_reason && (
+                                        <div style={{ fontSize: 11, color: "#ef4444", background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 6, padding: "8px 12px" }}>
+                                          Motif : {kyc.kyc_rejection_reason}
+                                        </div>
+                                      )}
+                                      {kyc.doc_urls && (
+                                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                                          {docFields.map(({ field, label }) =>
+                                            kyc.doc_urls[field] ? (
+                                              <a key={field} href={kyc.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
+                                                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "4px 10px", color: "#60a5fa", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
+                                                {label}
+                                              </a>
+                                            ) : null
+                                          )}
+                                        </div>
+                                      )}
+                                      {kyc.kyc_status === "pending" && (
+                                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                                          <button onClick={() => updateKyc(kyc.id, "approved")}
+                                            style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                            Approuver
+                                          </button>
+                                          <input value={kycRejectReason[kyc.id] || ""} onChange={e => setKycRejectReason(r => ({ ...r, [kyc.id]: e.target.value }))}
+                                            placeholder="Motif de refus..."
+                                            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "6px 10px", color: "#fff", fontSize: 11, outline: "none", flex: 1, minWidth: 80 }} />
+                                          <button onClick={() => updateKyc(kyc.id, "rejected", kycRejectReason[kyc.id])}
+                                            style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 7, padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                            Refuser
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
+                                }
+                              </div>
+
+                              {/* S5 Sécurité & Identité */}
+                              {profile && (profile.registration_ip || profile.registration_country || profile.phone || profile.address) && (
+                                <div>
+                                  <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>Sécurité & Identité</div>
+                                  <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                                    {profile.registration_ip && (
+                                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>IP inscription</span>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", fontFamily: "monospace" }}>{profile.registration_ip}</span>
+                                      </div>
+                                    )}
+                                    {profile.registration_country && (
+                                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>Pays inscription</span>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }}>{profile.registration_country}</span>
+                                      </div>
+                                    )}
+                                    {profile.registration_ip != null && (
+                                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>VPN</span>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: profile.registration_is_vpn ? "#f59e0b" : "#22c55e" }}>
+                                          {profile.registration_is_vpn ? "Détecté" : "Non"}
+                                        </span>
+                                      </div>
+                                    )}
+                                    {profile.phone && (
+                                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>Téléphone</span>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", fontFamily: "monospace" }}>{profile.phone}</span>
+                                      </div>
+                                    )}
+                                    {profile.address && (
+                                      <div style={{ display: "flex", justifyContent: "space-between", gap: 8, alignItems: "flex-start" }}>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>Adresse</span>
+                                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", textAlign: "right" }}>
+                                          {profile.address}{profile.postal_code ? ` ${profile.postal_code}` : ""}{profile.city ? ` ${profile.city}` : ""}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* S6 Affiliation (si onglet affiliés visité) */}
+                              {affiliatesLoaded && (traderAffil || traderReferrer) && (
+                                <div>
+                                  <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>Affiliation</div>
+                                  <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                                    {traderAffil && (
+                                      <div style={{ background: "#111", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "12px 14px" }}>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Affilié</div>
+                                        {([
+                                          { label: "Code",       value: traderAffil.code,                                       mono: true  },
+                                          { label: "Commission", value: `${traderAffil.commission_rate}%`,                      mono: false },
+                                          { label: "Referrals",  value: String(traderAffil.referrals?.length ?? 0),             mono: false },
+                                          { label: "Gagné",      value: `€${(traderAffil.total_earned || 0).toLocaleString()}`, mono: false },
+                                          { label: "Payé",       value: `€${(traderAffil.total_paid   || 0).toLocaleString()}`, mono: false },
+                                        ] as { label: string; value: string; mono: boolean }[]).map((f, i) => (
+                                          <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: i < 4 ? 5 : 0 }}>
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", fontFamily: f.mono ? "monospace" : "inherit", fontVariantNumeric: "tabular-nums" }}>{f.value}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {traderReferrer && (
+                                      <div style={{ background: "#111", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "12px 14px" }}>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Parrain</div>
+                                        {([
+                                          { label: "Code",       value: traderReferrer.code,                  mono: true  },
+                                          { label: "Commission", value: `${traderReferrer.commission_rate}%`, mono: false },
+                                        ] as { label: string; value: string; mono: boolean }[]).map((f, i) => (
+                                          <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: i === 0 ? 5 : 0 }}>
+                                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: "#fff", fontFamily: f.mono ? "monospace" : "inherit" }}>{f.value}</span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                            </div>
+                          </div>
+
                         </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              );
-            })}
-            {traderCRM.length === 0 && <div style={{ color: "rgba(255,255,255,0.45)", textAlign: "center", padding: 40 }}>Aucun trader</div>}
-          </div>
-        )}
+                      );
+                    })()}
+
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {/* ══ FINANCIER ══ */}
         {tab === "financier" && (
