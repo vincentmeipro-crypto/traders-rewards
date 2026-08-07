@@ -50,6 +50,7 @@ type PromoCode = {
   expires_at: string | null;
   active: boolean;
   created_at: string;
+  affiliate_user_id?: string | null;
 };
 
 type Payout = {
@@ -311,6 +312,15 @@ function AdminPageInner() {
   const [financeSearch, setFinanceSearch] = useState("");
   const [rewardsFilter, setRewardsFilter] = useState("all");
 
+  // Marketing Hub state
+  const [marketingView, setMarketingView] = useState("overview");
+  const [marketingSearch, setMarketingSearch] = useState("");
+  const [promoSearch, setPromoSearch] = useState("");
+  const [promoStatusFilter, setPromoStatusFilter] = useState("all");
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [rateEditId, setRateEditId] = useState<string | null>(null);
+  const [rateEditValue, setRateEditValue] = useState("");
+
   // Create challenge state
   const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true, type: "challenge" as "challenge" | "reward" });
   const [createLoading, setCreateLoading] = useState(false);
@@ -438,7 +448,7 @@ function AdminPageInner() {
   }, []);
 
   useEffect(() => {
-    if (tab === "promos" && promos.length === 0) loadPromos();
+    if ((tab === "promos" || tab === "affilies") && promos.length === 0) loadPromos();
   }, [tab, token]);
 
   useEffect(() => {
@@ -474,7 +484,7 @@ function AdminPageInner() {
   }, [tab, token]);
 
   useEffect(() => {
-    if (tab === "affilies" && !affiliatesLoaded) {
+    if ((tab === "affilies" || tab === "promos") && !affiliatesLoaded) {
       fetch("/api/admin/affiliates", { headers: { "x-admin-key": ADMIN_KEY } })
         .then(r => r.json()).then(data => { if (Array.isArray(data)) { setAffiliates(data); setAffiliatesLoaded(true); } });
     }
@@ -484,6 +494,8 @@ function AdminPageInner() {
     if (tab === "payouts" || tab === "payouts_algo") setFinanceView("rewards");
     else if (tab === "financier" || tab === "financier_algo") setFinanceView("transactions");
     else if (tab === "compta") setFinanceView("historique");
+    if (tab === "affilies") setMarketingView("affilies");
+    else if (tab === "promos") setMarketingView("promotions");
   }, [tab]);
 
   const createAffiliatePromo = async () => {
@@ -497,6 +509,34 @@ function AdminPageInner() {
     if (res.ok) { setAffiliateMsg(`✓ Code ${data.code} créé`); setAffiliatePromoForm(null); setAffiliatePromoData({ code: "", discount: "10", maxUses: "" }); }
     else setAffiliateMsg(`Erreur : ${data.error}`);
     setTimeout(() => setAffiliateMsg(""), 4000);
+  };
+
+  const updateCommissionRate = async (affiliateId: string, rate: number) => {
+    const res = await fetch("/api/admin/affiliates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
+      body: JSON.stringify({ action: "set_rate", affiliate_id: affiliateId, commission_rate: rate }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setAffiliates(prev => prev.map(a => a.id === affiliateId ? { ...a, commission_rate: data.commission_rate } : a));
+      setRateEditId(null);
+    }
+  };
+
+  const payCommission = async (referralId: string) => {
+    const res = await fetch("/api/admin/affiliates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
+      body: JSON.stringify({ action: "pay_commission", referral_id: referralId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setAffiliates(prev => prev.map(a => ({
+        ...a,
+        referrals: a.referrals.map(r => r.id === referralId ? { ...r, status: data.status } : r),
+      })));
+    }
   };
 
   /* ── KPIs ── */
@@ -2507,81 +2547,639 @@ function AdminPageInner() {
         })()}
 
 
-        {/* ══ PROMO CODES ══ */}
-        {tab === "promos" && (
-          <>
-            <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", marginBottom: 18 }}>Créer un code promo</div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12, marginBottom: 16 }}>
-                {[
-                  { label: "CODE *", key: "code", placeholder: "SUMMER25", transform: (v: string) => v.toUpperCase() },
-                  { label: "REMISE % *", key: "discount_percent", placeholder: "50", type: "number" },
-                  { label: "MAX UTILISATIONS", key: "max_uses", placeholder: "Illimité", type: "number" },
-                  { label: "EXPIRE LE", key: "expires_at", type: "datetime-local" },
-                ].map(f => (
-                  <div key={f.key}>
-                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, marginBottom: 6 }}>{f.label}</div>
-                    <input type={f.type || "text"} value={(newCode as Record<string,string>)[f.key]} placeholder={f.placeholder}
-                      onChange={e => setNewCode(n => ({ ...n, [f.key]: f.transform ? f.transform(e.target.value) : e.target.value }))}
-                      style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 12px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
-                  </div>
+        {/* ══ MARKETING HUB ══ */}
+        {(tab === "promos" || tab === "affilies") && (() => {
+          const now = new Date();
+          const activePromos = promos.filter(p => {
+            const isExp = p.expires_at && new Date(p.expires_at) < now;
+            const isExh = p.max_uses !== null && p.used_count >= p.max_uses;
+            return p.active && !isExp && !isExh;
+          });
+          const activeAffiliates = affiliates.filter(a => a.referrals.length > 0);
+          const totalConversions = affiliates.reduce((s, a) => s + a.referrals.length, 0);
+          const totalCommissions = affiliates.reduce((s, a) => s + a.referrals.reduce((ss, r) => ss + (r.commission_amount || 0), 0), 0);
+          const topAffiliates = [...affiliates].sort((a, b) => b.referrals.length - a.referrals.length).slice(0, 5);
+
+          const promoFiltered = promos.filter(p => {
+            const isExp = p.expires_at && new Date(p.expires_at) < now;
+            const isExh = p.max_uses !== null && p.used_count >= p.max_uses;
+            const ok =
+              promoStatusFilter === "all"      ? true
+              : promoStatusFilter === "active"   ? (p.active && !isExp && !isExh)
+              : promoStatusFilter === "expired"  ? !!isExp
+              : promoStatusFilter === "revoked"  ? (!p.active && !isExp && !isExh)
+              : promoStatusFilter === "exhausted"? !!isExh
+              : true;
+            const q = promoSearch.trim().toLowerCase();
+            return ok && (q ? p.code.toLowerCase().includes(q) : true);
+          });
+
+          const affiliatesFiltered = affiliates.filter(a => {
+            const q = marketingSearch.trim().toLowerCase();
+            if (!q) return true;
+            return (a.email || "").toLowerCase().includes(q)
+              || `${a.first_name || ""} ${a.last_name || ""}`.toLowerCase().includes(q)
+              || a.code.toLowerCase().includes(q);
+          });
+
+          const hubViews = [
+            { id: "overview",    label: "Vue d'ensemble" },
+            { id: "promotions",  label: "Promotions"     },
+            { id: "affilies",    label: "Affiliés"       },
+            { id: "campagnes",   label: "Campagnes"      },
+            { id: "emails",      label: "Emails"         },
+            { id: "segments",    label: "Segments"       },
+            { id: "acquisition", label: "Acquisition"    },
+          ];
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+              {/* En-tête */}
+              <div>
+                <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>Marketing</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginTop: 3 }}>Affiliation, promotions et acquisition</div>
+              </div>
+
+              {/* Sous-navigation */}
+              <div style={{ display: "flex", gap: 2, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: 4, overflowX: "auto" }}>
+                {hubViews.map(v => (
+                  <button key={v.id} onClick={() => setMarketingView(v.id)}
+                    style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", background: marketingView === v.id ? "#111" : "transparent", border: `1px solid ${marketingView === v.id ? "rgba(255,255,255,0.1)" : "transparent"}`, borderRadius: 7, color: marketingView === v.id ? "#fff" : "rgba(255,255,255,0.38)", fontSize: 12, fontWeight: marketingView === v.id ? 700 : 400, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                    {v.label}
+                    {v.id === "promotions" && activePromos.length > 0 && <span style={{ background: "#22c55e", color: "#000", fontSize: 9, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activePromos.length}</span>}
+                    {v.id === "affilies"   && activeAffiliates.length > 0 && <span style={{ background: "#3b82f6", color: "#fff", fontSize: 9, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activeAffiliates.length}</span>}
+                  </button>
                 ))}
               </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <button onClick={createPromo} disabled={!newCode.code || !newCode.discount_percent}
-                  style={{ backgroundColor: "#3B82F6", color: "#fff", border: "none", borderRadius: 10, padding: "11px 24px", fontSize: 14, fontWeight: 800, cursor: "pointer", opacity: (!newCode.code || !newCode.discount_percent) ? 0.4 : 1 }}>
-                  Créer
-                </button>
-                {promoMsg   && <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>{promoMsg}</span>}
-                {promoError && <span style={{ color: "#ef4444", fontSize: 13 }}>{promoError}</span>}
-              </div>
-            </div>
 
-            <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-              {promosLoading ? <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.45)" }}>Chargement...</div> : (
-                <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-                    <thead>
-                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                        {["Code", "Remise", "Utilisé", "Max", "Expire", "Statut", "Créé", "Actions"].map(h => (
-                          <th key={h} style={{ padding: "13px 16px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 12, whiteSpace: "nowrap" }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {promos.map(p => {
-                        const isExpired = p.expires_at && new Date(p.expires_at) < new Date();
-                        const isExhausted = p.max_uses !== null && p.used_count >= p.max_uses;
-                        return (
-                          <tr key={p.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", opacity: (!p.active || isExpired || isExhausted) ? 0.5 : 1 }}>
-                            <td style={{ padding: "13px 16px" }}><button onClick={() => { navigator.clipboard.writeText(p.code); }} title="Copier" style={{ fontWeight: 800, fontFamily: "monospace", letterSpacing: 1, background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 13, padding: 0 }}>{p.code} ⎘</button></td>
-                            <td style={{ padding: "13px 16px", fontWeight: 700, color: "#22c55e" }}>{p.discount_percent === 100 ? "100% (GRATUIT)" : `${p.discount_percent}%`}</td>
-                            <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>{p.used_count}</td>
-                            <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>{p.max_uses ?? "∞"}</td>
-                            <td style={{ padding: "13px 16px", color: isExpired ? "#ef4444" : "#555", fontSize: 12 }}>{p.expires_at ? new Date(p.expires_at).toLocaleDateString() : "Jamais"}</td>
-                            <td style={{ padding: "13px 16px" }}>
-                              {isExpired ? badge("expiré", "#ef4444") : isExhausted ? badge("épuisé", "#f59e0b") : p.active ? badge("actif", "#22c55e") : badge("révoqué", "#555")}
-                            </td>
-                            <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{new Date(p.created_at).toLocaleDateString()}</td>
-                            <td style={{ padding: "13px 16px" }}>
-                              <div style={{ display: "flex", gap: 8 }}>
-                                <button onClick={() => togglePromo(p)} style={{ backgroundColor: "rgba(255,255,255,0.05)", color: p.active ? "#ef4444" : "#22c55e", border: `1px solid ${p.active ? "#ef444433" : "#22c55e33"}`, borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>
-                                  {p.active ? "Révoquer" : "Restaurer"}
-                                </button>
-                                <button onClick={() => deletePromo(p.id)} style={{ backgroundColor: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Suppr.</button>
+              {/* ─── VUE D'ENSEMBLE ─── */}
+              {marketingView === "overview" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+                    {([
+                      { label: "Affiliés actifs",      value: String(activeAffiliates.length),                        color: "#fff"    },
+                      { label: "Codes actifs",          value: String(activePromos.length),                            color: "#22c55e" },
+                      { label: "Conversions totales",   value: String(totalConversions),                               color: "#3b82f6" },
+                      { label: "Commissions générées",  value: `€${totalCommissions.toLocaleString()}`,                color: "#f59e0b" },
+                    ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                      <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 22px" }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{k.label}</div>
+                        <div style={{ fontSize: 28, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                      <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Top affiliés</div>
+                        <button onClick={() => setMarketingView("affilies")} style={{ background: "none", border: "none", color: "#60a5fa", fontSize: 12, cursor: "pointer", padding: 0 }}>Voir tous</button>
+                      </div>
+                      {!affiliatesLoaded
+                        ? <div style={{ padding: "28px 20px", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 12 }}>Chargement...</div>
+                        : topAffiliates.length === 0
+                          ? <div style={{ padding: "28px 20px", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Aucun affilié actif</div>
+                          : topAffiliates.map((a, i) => {
+                              const comm = a.referrals.reduce((s, r) => s + (r.commission_amount || 0), 0);
+                              return (
+                                <div key={a.id} style={{ padding: "12px 20px", borderBottom: i < topAffiliates.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", display: "flex", alignItems: "center", gap: 12 }}>
+                                  <div style={{ width: 22, height: 22, background: "rgba(255,255,255,0.06)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.4)", flexShrink: 0 }}>{i + 1}</div>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                      {a.first_name || a.last_name ? `${a.first_name || ""} ${a.last_name || ""}`.trim() : a.email || a.user_id.slice(0, 12) + "…"}
+                                    </div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontFamily: "monospace" }}>{a.code}</div>
+                                  </div>
+                                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                                    <div style={{ fontSize: 12, fontWeight: 800, color: "#3b82f6" }}>{a.referrals.length} conv.</div>
+                                    <div style={{ fontSize: 10, color: "#f59e0b" }}>€{comm.toLocaleString()}</div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                    </div>
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                      <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Promotions actives</div>
+                        <button onClick={() => setMarketingView("promotions")} style={{ background: "none", border: "none", color: "#60a5fa", fontSize: 12, cursor: "pointer", padding: 0 }}>Voir toutes</button>
+                      </div>
+                      {promosLoading
+                        ? <div style={{ padding: "28px 20px", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 12 }}>Chargement...</div>
+                        : activePromos.length === 0
+                          ? <div style={{ padding: "28px 20px", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Aucune promotion active</div>
+                          : activePromos.slice(0, 5).map((p, i) => (
+                              <div key={p.id} style={{ padding: "12px 20px", borderBottom: i < Math.min(5, activePromos.length) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", display: "flex", alignItems: "center", gap: 12 }}>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "monospace" }}>{p.code}</div>
+                                  <div style={{ fontSize: 10, color: "#22c55e", marginTop: 1 }}>-{p.discount_percent}%</div>
+                                </div>
+                                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                                  <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{p.used_count} util.</div>
+                                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{p.max_uses ? `max ${p.max_uses}` : "illimité"}</div>
+                                </div>
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                      {promos.length === 0 && <tr><td colSpan={8} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun code promo</td></tr>}
-                    </tbody>
-                  </table>
+                            ))}
+                    </div>
+                  </div>
                 </div>
               )}
+
+              {/* ─── PROMOTIONS ─── */}
+              {marketingView === "promotions" && (() => {
+                const statusDefs = [
+                  { id: "all",       label: "Tous"      },
+                  { id: "active",    label: "Actives"   },
+                  { id: "expired",   label: "Expirées"  },
+                  { id: "revoked",   label: "Révoquées" },
+                  { id: "exhausted", label: "Épuisées"  },
+                ];
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Créer un code promo</div>
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 14 }}>
+                        {([
+                          { label: "CODE *",           key: "code",             placeholder: "SUMMER25",  transform: (v: string) => v.toUpperCase() },
+                          { label: "REMISE % *",       key: "discount_percent", placeholder: "50",         type: "number" },
+                          { label: "MAX UTILISATIONS", key: "max_uses",         placeholder: "Illimité",   type: "number" },
+                          { label: "EXPIRE LE",        key: "expires_at",                                   type: "datetime-local" },
+                        ] as { label: string; key: string; placeholder?: string; type?: string; transform?: (v: string) => string }[]).map(f => (
+                          <div key={f.key}>
+                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{f.label}</div>
+                            <input type={f.type || "text"} value={(newCode as Record<string,string>)[f.key]} placeholder={f.placeholder}
+                              onChange={e => setNewCode(n => ({ ...n, [f.key]: f.transform ? f.transform(e.target.value) : e.target.value }))}
+                              style={{ width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                        <button onClick={createPromo} disabled={!newCode.code || !newCode.discount_percent}
+                          style={{ padding: "9px 22px", background: "#3b82f6", border: "none", borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", opacity: (!newCode.code || !newCode.discount_percent) ? 0.4 : 1 }}>Créer</button>
+                        {promoMsg   && <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>{promoMsg}</span>}
+                        {promoError && <span style={{ color: "#ef4444", fontSize: 13 }}>{promoError}</span>}
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                      <input placeholder="Recherche code..." value={promoSearch} onChange={e => setPromoSearch(e.target.value)}
+                        style={{ flex: 1, maxWidth: 260, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, padding: "7px 12px", color: "#fff", fontSize: 12, outline: "none" }} />
+                      <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+                        {statusDefs.map(s => (
+                          <button key={s.id} onClick={() => setPromoStatusFilter(s.id)}
+                            style={{ padding: "6px 12px", background: promoStatusFilter === s.id ? "#111" : "transparent", border: `1px solid ${promoStatusFilter === s.id ? "rgba(255,255,255,0.12)" : "transparent"}`, borderRadius: 7, color: promoStatusFilter === s.id ? "#fff" : "rgba(255,255,255,0.35)", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                      {promosLoading ? (
+                        <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Chargement...</div>
+                      ) : (
+                        <div style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 600 }}>
+                            <thead>
+                              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                {["Code","Remise","Affilié lié","Utilisé","Max","Expiration","Statut","Actions"].map(h => (
+                                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8, whiteSpace: "nowrap" }}>{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {promoFiltered.map(p => {
+                                const isExp = p.expires_at && new Date(p.expires_at) < now;
+                                const isExh = p.max_uses !== null && p.used_count >= p.max_uses;
+                                const statusLabel = isExp ? "expiré" : isExh ? "épuisé" : p.active ? "actif" : "révoqué";
+                                const statusColor = isExp ? "#ef4444" : isExh ? "#f59e0b" : p.active ? "#22c55e" : "#6b7280";
+                                const linked = p.affiliate_user_id ? affiliates.find(a => a.user_id === p.affiliate_user_id) : null;
+                                return (
+                                  <tr key={p.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", opacity: (!p.active || isExp || isExh) ? 0.6 : 1 }}>
+                                    <td style={{ padding: "12px 16px" }}>
+                                      <button onClick={() => navigator.clipboard.writeText(p.code)} title="Copier"
+                                        style={{ fontWeight: 800, fontFamily: "monospace", letterSpacing: 1, background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 13, padding: 0 }}>{p.code}</button>
+                                    </td>
+                                    <td style={{ padding: "12px 16px", fontWeight: 700, color: "#22c55e" }}>{p.discount_percent === 100 ? "100% (GRATUIT)" : `${p.discount_percent}%`}</td>
+                                    <td style={{ padding: "12px 16px", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
+                                      {linked ? (linked.email || `${linked.first_name || ""} ${linked.last_name || ""}`.trim() || linked.code) : "—"}
+                                    </td>
+                                    <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.45)" }}>{p.used_count}</td>
+                                    <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.45)" }}>{p.max_uses ?? "∞"}</td>
+                                    <td style={{ padding: "12px 16px", fontSize: 12, color: isExp ? "#ef4444" : "rgba(255,255,255,0.35)" }}>
+                                      {p.expires_at ? new Date(p.expires_at).toLocaleDateString("fr-FR") : "—"}
+                                    </td>
+                                    <td style={{ padding: "12px 16px" }}>{badge(statusLabel, statusColor)}</td>
+                                    <td style={{ padding: "12px 16px", minWidth: 190 }}>
+                                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                                        <button onClick={() => togglePromo(p)}
+                                          style={{ padding: "5px 12px", background: "rgba(255,255,255,0.04)", color: p.active ? "#ef4444" : "#22c55e", border: `1px solid ${p.active ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.2)"}`, borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+                                          {p.active ? "Révoquer" : "Restaurer"}
+                                        </button>
+                                        {deleteConfirmId === p.id ? (
+                                          <>
+                                            <button onClick={() => { deletePromo(p.id); setDeleteConfirmId(null); }}
+                                              style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 6, color: "#ef4444", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Confirmer</button>
+                                            <button onClick={() => setDeleteConfirmId(null)}
+                                              style={{ padding: "5px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, color: "rgba(255,255,255,0.4)", fontSize: 11, cursor: "pointer" }}>Annuler</button>
+                                          </>
+                                        ) : (
+                                          <button onClick={() => setDeleteConfirmId(p.id)}
+                                            style={{ padding: "5px 10px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, color: "rgba(255,255,255,0.35)", fontSize: 11, cursor: "pointer" }}>Supprimer</button>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                              {promoFiltered.length === 0 && (
+                                <tr><td colSpan={8} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
+                                  {promoSearch || promoStatusFilter !== "all" ? "Aucun résultat" : "Aucun code promo"}
+                                </td></tr>
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ─── AFFILIÉS ─── */}
+              {marketingView === "affilies" && (() => {
+                const pendingTotal = affiliates.reduce((s, a) => s + a.referrals.filter(r => r.status === "pending").reduce((ss, r) => ss + (r.commission_amount || 0), 0), 0);
+                const paidTotal    = affiliates.reduce((s, a) => s + (a.total_paid || 0), 0);
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
+                      {([
+                        { label: "Total affiliés",         value: String(affiliates.length),          color: "#fff"    },
+                        { label: "Total conversions",      value: String(totalConversions),            color: "#3b82f6" },
+                        { label: "Commissions en attente", value: `€${pendingTotal.toLocaleString()}`, color: "#f59e0b" },
+                        { label: "Commissions payées",     value: `€${paidTotal.toLocaleString()}`,   color: "#22c55e" },
+                      ] as { label: string; value: string; color: string }[]).map((k, i) => (
+                        <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 20px" }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
+                          <div style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
+                      <input placeholder="Recherche email, nom ou code..." value={marketingSearch} onChange={e => setMarketingSearch(e.target.value)}
+                        style={{ flex: 1, maxWidth: 340, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, padding: "8px 13px", color: "#fff", fontSize: 13, outline: "none" }} />
+                      <a href="/partenariat" target="_blank" style={{ fontSize: 12, color: "#60a5fa", textDecoration: "none", flexShrink: 0 }}>Page partenariat</a>
+                    </div>
+
+                    {affiliateMsg && (
+                      <div style={{ color: affiliateMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700, padding: "10px 16px", background: affiliateMsg.startsWith("✓") ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", borderRadius: 8, border: `1px solid ${affiliateMsg.startsWith("✓") ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)"}` }}>
+                        {affiliateMsg}
+                      </div>
+                    )}
+
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                      {!affiliatesLoaded ? (
+                        <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Chargement...</div>
+                      ) : affiliatesFiltered.length === 0 ? (
+                        <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>
+                          {marketingSearch ? "Aucun résultat" : "Aucun affilié"}
+                        </div>
+                      ) : (
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                          {affiliatesFiltered.map(a => {
+                            const isOpen       = affiliateExpanded === a.id;
+                            const pending      = a.referrals.filter(r => r.status === "pending").reduce((s, r) => s + (r.commission_amount || 0), 0);
+                            const earned       = a.referrals.reduce((s, r) => s + (r.commission_amount || 0), 0);
+                            const tierLabel    = a.commission_rate >= 20 ? "Elite" : a.commission_rate >= 15 ? "Partenaire" : "Débutant";
+                            const tierColor    = a.commission_rate >= 20 ? "#60a5fa" : a.commission_rate >= 15 ? "#60a5fa" : "#6b7280";
+                            const linkedPromos = promos.filter(p => p.affiliate_user_id === a.user_id);
+                            return (
+                              <div key={a.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                <div onClick={() => setAffiliateExpanded(isOpen ? null : a.id)}
+                                  style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
+                                  <div style={{ flex: 1, minWidth: 200 }}>
+                                    <div style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 2 }}>
+                                      {a.first_name || a.last_name ? `${a.first_name || ""} ${a.last_name || ""}`.trim() : a.email || a.user_id.slice(0, 12) + "…"}
+                                    </div>
+                                    {a.email && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 4 }}>{a.email}</div>}
+                                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                                      <code style={{ fontSize: 12, background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 6, color: "#fff", fontWeight: 700 }}>{a.code}</code>
+                                      <span style={{ fontSize: 11, fontWeight: 700, color: tierColor, background: `${tierColor}18`, padding: "2px 8px", borderRadius: 100 }}>{tierLabel}</span>
+                                    </div>
+                                  </div>
+                                  <div style={{ display: "flex", gap: 20, flexWrap: "wrap", fontSize: 13 }}>
+                                    {([
+                                      { label: "Taux",        val: `${a.commission_rate}%`,           color: tierColor },
+                                      { label: "Conversions", val: String(a.referrals.length),         color: "#fff"    },
+                                      { label: "En attente",  val: `€${pending.toLocaleString()}`,     color: "#f59e0b" },
+                                      { label: "Total gagné", val: `€${earned.toLocaleString()}`,      color: "#22c55e" },
+                                    ] as { label: string; val: string; color: string }[]).map(m => (
+                                      <div key={m.label} style={{ textAlign: "center" }}>
+                                        <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>{m.label}</div>
+                                        <div style={{ fontWeight: 800, color: m.color }}>{m.val}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
+                                    <button onClick={e => { e.stopPropagation(); setAffiliatePromoForm({ affiliateId: a.id, userId: a.user_id }); setAffiliatePromoData({ code: `${a.code}10`, discount: "10", maxUses: "" }); }}
+                                      style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "#60a5fa", borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>+ Promo</button>
+                                    <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 14 }}>{isOpen ? "▲" : "▼"}</span>
+                                  </div>
+                                </div>
+
+                                {affiliatePromoForm?.affiliateId === a.id && (
+                                  <div style={{ margin: "0 20px 16px", background: "rgba(59,130,246,0.04)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 10, padding: "16px 20px" }}>
+                                    <div style={{ fontWeight: 700, fontSize: 13, color: "#fff", marginBottom: 12 }}>Créer un code promo pour cet affilié</div>
+                                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
+                                      <div>
+                                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>Code</div>
+                                        <input value={affiliatePromoData.code} onChange={e => setAffiliatePromoData(d => ({ ...d, code: e.target.value.toUpperCase() }))} placeholder="PARTENAIRE10"
+                                          style={{ background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#fff", outline: "none", width: 140 }} />
+                                      </div>
+                                      <div>
+                                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>Remise %</div>
+                                        <input type="number" value={affiliatePromoData.discount} onChange={e => setAffiliatePromoData(d => ({ ...d, discount: e.target.value }))} min={1} max={100}
+                                          style={{ background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#fff", outline: "none", width: 80 }} />
+                                      </div>
+                                      <div>
+                                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>Max utilisations</div>
+                                        <input type="number" value={affiliatePromoData.maxUses} onChange={e => setAffiliatePromoData(d => ({ ...d, maxUses: e.target.value }))} placeholder="illimité"
+                                          style={{ background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#fff", outline: "none", width: 100 }} />
+                                      </div>
+                                      <button onClick={createAffiliatePromo}
+                                        style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Créer</button>
+                                      <button onClick={() => setAffiliatePromoForm(null)}
+                                        style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.4)", borderRadius: 6, padding: "8px 12px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {isOpen && (
+                                  <div style={{ margin: "0 20px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+                                    <div style={{ background: "#111", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "14px 18px" }}>
+                                      <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>Taux de commission</div>
+                                      {rateEditId === a.id ? (
+                                        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                                          <input type="number" value={rateEditValue} onChange={e => setRateEditValue(e.target.value)} min={5} max={50} step={5}
+                                            style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "6px 10px", color: "#fff", fontSize: 14, fontWeight: 800, outline: "none", width: 80 }} />
+                                          <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>%</span>
+                                          <button onClick={() => updateCommissionRate(a.id, Number(rateEditValue))}
+                                            style={{ padding: "6px 14px", background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 6, color: "#22c55e", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Sauvegarder</button>
+                                          <button onClick={() => setRateEditId(null)}
+                                            style={{ padding: "6px 12px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, color: "rgba(255,255,255,0.4)", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                                        </div>
+                                      ) : (
+                                        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                          <span style={{ fontSize: 20, fontWeight: 900, color: tierColor }}>{a.commission_rate}%</span>
+                                          <span style={{ fontSize: 11, fontWeight: 700, color: tierColor, background: `${tierColor}18`, padding: "2px 8px", borderRadius: 100 }}>{tierLabel}</span>
+                                          <button onClick={() => { setRateEditId(a.id); setRateEditValue(String(a.commission_rate)); }}
+                                            style={{ padding: "4px 10px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, color: "rgba(255,255,255,0.45)", fontSize: 11, cursor: "pointer" }}>Modifier</button>
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    {linkedPromos.length > 0 && (
+                                      <div style={{ background: "#111", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "14px 18px" }}>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Codes promo liés ({linkedPromos.length})</div>
+                                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                          {linkedPromos.map(lp => {
+                                            const expLp = lp.expires_at && new Date(lp.expires_at) < now;
+                                            const exhLp = lp.max_uses !== null && lp.used_count >= lp.max_uses;
+                                            return (
+                                              <div key={lp.id} style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "6px 12px" }}>
+                                                <div style={{ fontSize: 12, fontWeight: 800, fontFamily: "monospace", color: "#fff" }}>{lp.code}</div>
+                                                <div style={{ fontSize: 10, color: "#22c55e", marginTop: 2 }}>-{lp.discount_percent}% · {lp.used_count} util.{lp.max_uses ? ` / ${lp.max_uses}` : ""}</div>
+                                                {(expLp || exhLp || !lp.active) && <div style={{ fontSize: 9, color: "#ef4444", marginTop: 2 }}>Inactif</div>}
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    <div style={{ background: "#111", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, overflow: "hidden" }}>
+                                      <div style={{ padding: "12px 18px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 12, fontWeight: 700, color: "#fff" }}>
+                                        Referrals <span style={{ fontWeight: 400, color: "rgba(255,255,255,0.3)" }}>({a.referrals.length})</span>
+                                      </div>
+                                      {a.referrals.length === 0 ? (
+                                        <div style={{ padding: 20, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Aucune conversion</div>
+                                      ) : (
+                                        <div style={{ overflowX: "auto" }}>
+                                          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12, minWidth: 440 }}>
+                                            <thead>
+                                              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                                {["Trader","Achat","Commission","Statut","Date","Action"].map(h => (
+                                                  <th key={h} style={{ padding: "9px 14px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                                                ))}
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {a.referrals.map(r => {
+                                                const rProfile = profiles.find(p => p.user_id === r.referred_user_id);
+                                                const rEmail   = rProfile?.email || r.referred_user_id.slice(0, 14) + "…";
+                                                return (
+                                                  <tr key={r.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                                    <td style={{ padding: "9px 14px", fontSize: 12, color: "#fff" }}>{rEmail}</td>
+                                                    <td style={{ padding: "9px 14px", fontWeight: 700, color: "#fff", fontVariantNumeric: "tabular-nums" }}>€{((r.purchase_amount || 0) / 100).toLocaleString()}</td>
+                                                    <td style={{ padding: "9px 14px", fontWeight: 800, color: "#60a5fa", fontVariantNumeric: "tabular-nums" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
+                                                    <td style={{ padding: "9px 14px" }}>
+                                                      <span style={{ background: r.status === "paid" ? "rgba(34,197,94,0.1)" : "rgba(245,158,11,0.1)", color: r.status === "paid" ? "#22c55e" : "#f59e0b", padding: "2px 8px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>
+                                                        {r.status === "paid" ? "Payé" : "En attente"}
+                                                      </span>
+                                                    </td>
+                                                    <td style={{ padding: "9px 14px", color: "rgba(255,255,255,0.3)", fontSize: 11 }}>{new Date(r.created_at).toLocaleDateString("fr-FR")}</td>
+                                                    <td style={{ padding: "9px 14px" }}>
+                                                      {r.status === "pending" && (
+                                                        <button onClick={() => payCommission(r.id)}
+                                                          style={{ padding: "4px 10px", background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 6, color: "#22c55e", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Marquer payé</button>
+                                                      )}
+                                                    </td>
+                                                  </tr>
+                                                );
+                                              })}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ─── CAMPAGNES ─── */}
+              {marketingView === "campagnes" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>Campagnes Marketing</div>
+                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", lineHeight: 1.7, maxWidth: 580 }}>
+                      Disponible en Phase 3. Les campagnes permettront de piloter promotions, emails, notifications, landing pages et automatisations depuis un cockpit unifié.
+                    </div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                    {["Promotions ciblées","Emails","Notifications","Landing Pages","Automatisations"].map(item => (
+                      <div key={item} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "22px 22px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 10 }}>{item}</div>
+                        <div style={{ display: "inline-block", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1.2, border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>Phase 3</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ─── EMAILS ─── */}
+              {marketingView === "emails" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>Email Marketing</div>
+                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Infrastructure en cours de déploiement — disponible en Phase 3.</div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                    {["Templates","Séquences","Emails automatiques","Emails manuels","Historique"].map(item => (
+                      <div key={item} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "22px 22px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 10 }}>{item}</div>
+                        <div style={{ display: "inline-block", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1.2, border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>Disponible en Phase 3</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ─── SEGMENTS ─── */}
+              {marketingView === "segments" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>Segments</div>
+                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Segmentation dynamique de votre base trader — disponible en Phase 3.</div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                    {["Tous les traders","Challenges actifs","Comptes certifiés","Challenges échoués","Clients VIP","Paiement Stripe","Paiement Crypto","France","Belgique","Jamais acheté"].map(seg => (
+                      <div key={seg} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 22px" }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{seg}</div>
+                        <div style={{ display: "inline-block", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1.2, border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>Coming Soon</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ─── ACQUISITION ─── */}
+              {marketingView === "acquisition" && (() => {
+                const refCount    = affiliates.reduce((s, a) => s + a.referrals.length, 0);
+                const directCount = Math.max(0, challenges.filter(c => c.amount_paid && c.amount_paid > 0).length - refCount);
+                const refCA       = affiliates.reduce((s, a) => s + a.referrals.reduce((ss, r) => ss + (r.purchase_amount || 0), 0), 0) / 100;
+                const stripeCount = challenges.filter(c => c.payment_method === "stripe" || c.payment_method === "card").length;
+                const cryptoCount = challenges.filter(c => c.payment_method === "crypto").length;
+                const totalPurch  = Math.max(1, challenges.filter(c => c.amount_paid && c.amount_paid > 0).length);
+                const topByCA     = [...affiliates].sort((a, b) => {
+                  const caA = a.referrals.reduce((s, r) => s + (r.purchase_amount || 0), 0);
+                  const caB = b.referrals.reduce((s, r) => s + (r.purchase_amount || 0), 0);
+                  return caB - caA;
+                }).slice(0, 8);
+                return (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 8 }}>Acquisition</div>
+                      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Données réelles — basées sur les achats et conversions affiliées enregistrées.</div>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Répartition des ventes</div>
+                        {([
+                          { label: "Directes",    count: directCount, color: "#3b82f6", pct: Math.round(directCount / totalPurch * 100) },
+                          { label: "Via affilié", count: refCount,    color: "#f59e0b", pct: Math.round(refCount    / totalPurch * 100) },
+                        ] as { label: string; count: number; color: string; pct: number }[]).map(row => (
+                          <div key={row.label} style={{ marginBottom: 14 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{row.label}</span>
+                              <span style={{ fontSize: 13, fontWeight: 800, color: row.color }}>{row.count} ventes</span>
+                            </div>
+                            <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 4, height: 6 }}>
+                              <div style={{ width: `${row.pct}%`, background: row.color, borderRadius: 4, height: 6 }} />
+                            </div>
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>{row.pct}% du total</div>
+                          </div>
+                        ))}
+                        {refCA > 0 && <div style={{ fontSize: 12, color: "#f59e0b", marginTop: 8 }}>CA référé : €{refCA.toLocaleString()}</div>}
+                      </div>
+
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Méthodes de paiement</div>
+                        {([
+                          { label: "Stripe / Carte", count: stripeCount, color: "#3b82f6" },
+                          { label: "Crypto",          count: cryptoCount, color: "#f59e0b" },
+                          ...(totalPurch - stripeCount - cryptoCount > 0 ? [{ label: "Autre", count: totalPurch - stripeCount - cryptoCount, color: "#6b7280" }] : []),
+                        ] as { label: string; count: number; color: string }[]).map(row => (
+                          <div key={row.label} style={{ marginBottom: 14 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                              <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{row.label}</span>
+                              <span style={{ fontSize: 13, fontWeight: 800, color: row.color }}>{row.count} ventes</span>
+                            </div>
+                            <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 4, height: 6 }}>
+                              <div style={{ width: `${Math.round(row.count / totalPurch * 100)}%`, background: row.color, borderRadius: 4, height: 6 }} />
+                            </div>
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>{Math.round(row.count / totalPurch * 100)}% du total</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {topByCA.length > 0 && (
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                        <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 13, fontWeight: 700, color: "#fff" }}>Top affiliés par CA référé</div>
+                        <div style={{ overflowX: "auto" }}>
+                          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 400 }}>
+                            <thead>
+                              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                                {["Affilié","Code","Conversions","CA référé","Commissions"].map(h => (
+                                  <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {topByCA.map(a => {
+                                const ca   = a.referrals.reduce((s, r) => s + (r.purchase_amount   || 0), 0) / 100;
+                                const comm = a.referrals.reduce((s, r) => s + (r.commission_amount || 0), 0) / 100;
+                                return (
+                                  <tr key={a.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                    <td style={{ padding: "10px 16px", fontSize: 12, fontWeight: 700, color: "#fff" }}>
+                                      {a.first_name || a.last_name ? `${a.first_name || ""} ${a.last_name || ""}`.trim() : a.email || a.user_id.slice(0, 12) + "…"}
+                                    </td>
+                                    <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{a.code}</td>
+                                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "#3b82f6" }}>{a.referrals.length}</td>
+                                    <td style={{ padding: "10px 16px", fontWeight: 800, color: "#22c55e", fontVariantNumeric: "tabular-nums" }}>€{ca.toLocaleString()}</td>
+                                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "#f59e0b", fontVariantNumeric: "tabular-nums" }}>€{comm.toLocaleString()}</td>
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "14px 18px" }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.35)", marginBottom: 4 }}>Données non disponibles</div>
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.22)", lineHeight: 1.7 }}>
+                        UTM source / medium / campaign · Codes promo par challenge · Attribution first-touch · Entonnoir multi-étapes<br />
+                        <span style={{ color: "rgba(255,255,255,0.15)" }}>Disponible lors de la Phase Analytics.</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
             </div>
-          </>
-        )}
+          );
+        })()}
         {/* ══ KYC ══ */}
         {tab === "kyc" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2859,148 +3457,6 @@ function AdminPageInner() {
             </div>
           );
         })()}
-
-        {/* ══ AFFILIÉS ══ */}
-        {tab === "affilies" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-
-            {/* KPIs */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
-              {[
-                { label: "Total affiliés", value: affiliates.length, color: "#fff" },
-                { label: "Total conversions", value: affiliates.reduce((s, a) => s + a.referrals.length, 0), color: "#3b82f6" },
-                { label: "Commissions en attente", value: `€${affiliates.reduce((s, a) => s + a.referrals.filter(r => r.status === "pending").reduce((ss, r) => ss + (r.commission_amount || 0), 0), 0).toLocaleString()}`, color: "#f59e0b" },
-                { label: "Commissions payées", value: `€${affiliates.reduce((s, a) => s + (a.total_paid || 0), 0).toLocaleString()}`, color: "#22c55e" },
-              ].map((s, i) => (
-                <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px" }}>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
-                </div>
-              ))}
-            </div>
-
-            {affiliateMsg && <div style={{ color: affiliateMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700, padding: "10px 16px", background: affiliateMsg.startsWith("✓") ? "#22c55e10" : "#ef444410", borderRadius: 8 }}>{affiliateMsg}</div>}
-
-            {/* Table affiliés */}
-            <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-              <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Tous les affiliés</span>
-                <a href="/partenariat" target="_blank" style={{ fontSize: 12, color: "#60A5FA", textDecoration: "none" }}>Voir la page partenariat →</a>
-              </div>
-              {affiliates.length === 0 ? (
-                <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Aucun affilié pour le moment</div>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  {affiliates.map(a => {
-                    const pending = a.referrals.filter(r => r.status === "pending").reduce((s, r) => s + (r.commission_amount || 0), 0);
-                    const paid = a.referrals.filter(r => r.status === "paid").reduce((s, r) => s + (r.commission_amount || 0), 0);
-                    const isOpen = affiliateExpanded === a.id;
-                    const tierLabel = a.commission_rate >= 20 ? "Elite" : a.commission_rate >= 15 ? "Partenaire" : "Débutant";
-                    const tierColor = a.commission_rate >= 20 ? "#60A5FA" : a.commission_rate >= 15 ? "#60A5FA" : "#6b7280";
-                    return (
-                      <div key={a.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                        {/* Ligne principale */}
-                        <div onClick={() => setAffiliateExpanded(isOpen ? null : a.id)} style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 16, cursor: "pointer", flexWrap: "wrap" }}>
-                          <div style={{ flex: 1, minWidth: 200 }}>
-                            <div style={{ fontWeight: 700, fontSize: 14, color: "#fff", marginBottom: 2 }}>
-                              {a.first_name || a.last_name ? `${a.first_name} ${a.last_name}`.trim() : a.user_id.slice(0, 8) + "…"}
-                            </div>
-                            {a.email && <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>{a.email}</div>}
-                            <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                              <code style={{ fontSize: 12, background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 6, color: "#fff", fontWeight: 700 }}>?ref={a.code}</code>
-                              <span style={{ fontSize: 11, fontWeight: 700, color: tierColor, background: `${tierColor}15`, padding: "2px 8px", borderRadius: 100 }}>{tierLabel}</span>
-                            </div>
-                          </div>
-                          <div style={{ display: "flex", gap: 24, flexWrap: "wrap", fontSize: 13 }}>
-                            <div style={{ textAlign: "center" }}>
-                              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Taux</div>
-                              <div style={{ fontWeight: 800, color: tierColor }}>{a.commission_rate}%</div>
-                            </div>
-                            <div style={{ textAlign: "center" }}>
-                              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Conversions</div>
-                              <div style={{ fontWeight: 800, color: "#fff" }}>{a.referrals.length}</div>
-                            </div>
-                            <div style={{ textAlign: "center" }}>
-                              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>En attente</div>
-                              <div style={{ fontWeight: 800, color: "#f59e0b" }}>€{pending.toLocaleString()}</div>
-                            </div>
-                            <div style={{ textAlign: "center" }}>
-                              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>Payé</div>
-                              <div style={{ fontWeight: 800, color: "#22c55e" }}>€{paid.toLocaleString()}</div>
-                            </div>
-                          </div>
-                          <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-                            <button onClick={e => { e.stopPropagation(); setAffiliatePromoForm({ affiliateId: a.id, userId: a.user_id }); setAffiliatePromoData({ code: `${a.code}10`, discount: "10", maxUses: "" }); }} style={{ background: "rgba(201,168,76,0.1)", border: "1px solid rgba(201,168,76,0.3)", color: "#60A5FA", borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-                              + Code promo
-                            </button>
-                            <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 16 }}>{isOpen ? "▲" : "▼"}</span>
-                          </div>
-                        </div>
-
-                        {/* Formulaire code promo */}
-                        {affiliatePromoForm?.affiliateId === a.id && (
-                          <div style={{ margin: "0 20px 16px", background: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 10, padding: "16px 20px" }}>
-                            <div style={{ fontWeight: 700, fontSize: 13, color: "#fff", marginBottom: 12 }}>Créer un code promo pour cet affilié</div>
-                            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
-                              <div>
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Code</div>
-                                <input value={affiliatePromoData.code} onChange={e => setAffiliatePromoData(d => ({ ...d, code: e.target.value.toUpperCase() }))} placeholder="PARTENAIRE10" style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#fff", outline: "none", width: 140 }} />
-                              </div>
-                              <div>
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Remise %</div>
-                                <input type="number" value={affiliatePromoData.discount} onChange={e => setAffiliatePromoData(d => ({ ...d, discount: e.target.value }))} min={1} max={100} style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#fff", outline: "none", width: 80 }} />
-                              </div>
-                              <div>
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 4 }}>Max utilisations</div>
-                                <input type="number" value={affiliatePromoData.maxUses} onChange={e => setAffiliatePromoData(d => ({ ...d, maxUses: e.target.value }))} placeholder="illimité" style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#fff", outline: "none", width: 100 }} />
-                              </div>
-                              <button onClick={createAffiliatePromo} style={{ background: "#3B82F6", color: "#fff", border: "none", borderRadius: 6, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Créer</button>
-                              <button onClick={() => setAffiliatePromoForm(null)} style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.45)", borderRadius: 6, padding: "8px 12px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Détail referrals */}
-                        {isOpen && (
-                          <div style={{ margin: "0 20px 16px", background: "rgba(255,255,255,0.04)", borderRadius: 10, overflow: "hidden", border: "1px solid rgba(255,255,255,0.1)" }}>
-                            {a.referrals.length === 0 ? (
-                              <div style={{ padding: "20px", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucune conversion pour le moment</div>
-                            ) : (
-                              <div style={{ overflowX: "auto" }}>
-                                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-                                  <thead>
-                                    <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.04)" }}>
-                                      {["Referred User", "Achat", "Commission", "Statut", "Date"].map(h => (
-                                        <th key={h} style={{ padding: "8px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
-                                      ))}
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    {a.referrals.map(r => (
-                                      <tr key={r.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                                        <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.45)", fontFamily: "monospace", fontSize: 11 }}>{r.referred_user_id?.slice(0, 16)}…</td>
-                                        <td style={{ padding: "10px 14px", fontWeight: 700, color: "#fff" }}>€{((r.purchase_amount || 0) / 100).toLocaleString()}</td>
-                                        <td style={{ padding: "10px 14px", fontWeight: 800, color: "#60A5FA" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
-                                        <td style={{ padding: "10px 14px" }}>
-                                          <span style={{ background: r.status === "paid" ? "#22c55e15" : "#f59e0b15", color: r.status === "paid" ? "#22c55e" : "#f59e0b", padding: "2px 8px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>{r.status === "paid" ? "Payé" : "En attente"}</span>
-                                        </td>
-                                        <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.3)", fontSize: 11 }}>{new Date(r.created_at).toLocaleDateString("fr-FR")}</td>
-                                      </tr>
-                                    ))}
-                                  </tbody>
-                                </table>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
         {tab === "securite" && (
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
