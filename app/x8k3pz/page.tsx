@@ -1140,7 +1140,10 @@ export default function AdminPage() {
                               const _st1 = _dS2 !== null && Math.abs(_dS2 - c.start_balance) < 1;
                               const _pStart = (_dS2 !== null && !_st1) ? _dS2 : c.balance;
                               const _pLow   = _st1 ? c.balance : (_dL2 >= c.balance - c.start_balance * 0.015 ? _dL2 : c.balance);
-                              const dailyUsed = _pStart > 0 ? Math.max(0, (_pStart - _pLow) / _pStart * 100) : 0;
+                              // Pour un breach daily_drawdown confirmé, afficher breach_value directement
+                              const dailyUsed = (c.status === "failed" && c.breach_reason === "daily_drawdown" && c.breach_value != null)
+                                ? c.breach_value
+                                : (_pStart > 0 ? Math.max(0, (_pStart - _pLow) / _pStart * 100) : 0);
                               const dailyFloor = Math.round(_pStart * (1 - maxDaily / 100));
                               const ddPct = Math.min(dailyUsed / maxDaily * 100, 100);
                               const ddColor = dailyUsed >= maxDaily ? "#ef4444" : dailyUsed >= maxDaily * 0.7 ? "#f59e0b" : "#60a5fa";

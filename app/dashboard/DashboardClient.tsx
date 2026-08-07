@@ -585,7 +585,10 @@ export default function DashboardClient({ user }: { user: User }) {
   const _stale1 = _dS !== null && Math.abs(_dS - _sb) < 1;
   const _periodStart = (_dS !== null && !_stale1) ? _dS : _b;
   const _periodLow   = _stale1 ? _b : (_dL >= _b - _sb * 0.015 ? _dL : _b);
-  const dailyDrawdownPct = _periodStart > 0 ? Math.max(0, (_periodStart - _periodLow) / _periodStart * 100) : 0;
+  // Pour un breach daily_drawdown confirmé, afficher breach_value directement (évite les écarts de calcul)
+  const dailyDrawdownPct = (challenge?.status === "failed" && challenge?.breach_reason === "daily_drawdown" && challenge?.breach_value != null)
+    ? challenge.breach_value
+    : (_periodStart > 0 ? Math.max(0, (_periodStart - _periodLow) / _periodStart * 100) : 0);
   const is1StepChallenge = challenge?.model?.toLowerCase().replace(/[\s-]/g,"").includes("1step") ?? false;
   const highestBalance = challenge?.highest_balance ?? challenge?.start_balance ?? 0;
   const totalDrawdownRaw = challenge
