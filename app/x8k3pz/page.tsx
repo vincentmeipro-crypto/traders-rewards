@@ -1344,132 +1344,204 @@ function AdminPageInner() {
                                 </td>
                               </tr>
 
-                              {/* Ligne de détail expandable */}
+                              {/* ── Panneau de détail expandable P1-P9 ── */}
                               {isExpanded && (
                                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                                   <td colSpan={8} style={{ padding: 0 }}>
-                                    <div style={{ background: "rgba(0,0,0,0.22)", borderTop: "1px solid rgba(59,130,246,0.12)", padding: "20px 24px" }}>
-                                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 24 }}>
+                                    <div style={{ background: "rgba(0,0,0,0.22)", borderTop: "1px solid rgba(59,130,246,0.1)", padding: isMobile ? "16px" : "20px 28px", display: "flex", flexDirection: "column", gap: 20 }}>
 
-                                        {/* Identité */}
-                                        <div>
-                                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12 }}>Identité</div>
+                                      {/* P7 — Challenge card dominante (pleine largeur) */}
+                                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "18px 20px" }}>
+                                        {/* En-tête : taille · modèle · phase · statut · date */}
+                                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
+                                          <span style={{ fontSize: 16, fontWeight: 900, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{c.account_size}</span>
+                                          <span style={{ fontSize: 10, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.4)", padding: "2px 7px", borderRadius: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                                            {c.model === "instant" ? "INSTANT" : c.model?.toUpperCase() || "—"}
+                                          </span>
+                                          <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                            {c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Phase 2" : c.model === "instant" ? "Instant" : "Phase 1"}
+                                          </span>
+                                          {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
+                                          <div style={{ flex: 1 }} />
+                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.28)" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
+                                        </div>
+
+                                        {/* DD bars — comptes actifs uniquement */}
+                                        {c.status === "active" && risk && (
+                                          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                                            {([
+                                              { label: "DD Jour", used: risk.dailyUsed, max: risk.maxDaily, col: risk.dCol },
+                                              { label: "DD Max",  used: risk.totalUsed, max: risk.maxTotal, col: risk.tCol },
+                                            ] as { label: string; used: number; max: number; col: string }[]).map((d, i) => (
+                                              <div key={i}>
+                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+                                                  <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1 }}>{d.label}</span>
+                                                  <span style={{ fontSize: 13, fontWeight: 800, color: d.col, fontVariantNumeric: "tabular-nums" }}>{d.used.toFixed(1)}<span style={{ fontSize: 11, fontWeight: 400 }}>% / {d.max}%</span></span>
+                                                </div>
+                                                <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99, overflow: "hidden" }}>
+                                                  <div style={{ width: `${Math.min(d.used / d.max * 100, 100)}%`, height: "100%", background: d.col, borderRadius: 99 }} />
+                                                </div>
+                                              </div>
+                                            ))}
+                                          </div>
+                                        )}
+
+                                        {/* Breach banner — comptes failed */}
+                                        {c.status === "failed" && c.breach_at && (
+                                          <div style={{ background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.18)", borderRadius: 8, padding: "12px 16px", marginBottom: 16 }}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(239,68,68,0.8)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>
+                                              BREACH · {c.breach_reason === "daily_drawdown" ? "DD Jour" : "DD Max"}
+                                            </div>
+                                            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "baseline" }}>
+                                              <span style={{ fontSize: 15, fontWeight: 800, color: "#ef4444", fontVariantNumeric: "tabular-nums" }}>-{c.breach_value?.toFixed(2) ?? "?"}%</span>
+                                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{new Date(c.breach_at).toLocaleDateString("fr-FR")}</span>
+                                              {c.breach_equity && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontVariantNumeric: "tabular-nums" }}>Equity : ${Math.round(c.breach_equity).toLocaleString()}</span>}
+                                            </div>
+                                          </div>
+                                        )}
+
+                                        {/* Métadonnées secondaires */}
+                                        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                            <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>{c.trading_days}</span> j. tradés
+                                          </span>
+                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                            Départ <span style={{ color: "rgba(255,255,255,0.6)", fontVariantNumeric: "tabular-nums" }}>${c.start_balance?.toLocaleString()}</span>
+                                          </span>
+                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                            Payé <span style={{ color: "rgba(255,255,255,0.6)", fontVariantNumeric: "tabular-nums" }}>€{c.amount_paid}</span>
+                                          </span>
+                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                                            Limites <span style={{ color: "rgba(255,255,255,0.45)" }}>{c.daily_drawdown_limit || 5}% J / {c.total_drawdown_limit || 10}% max</span>
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      {/* P3/P4 — Identité | MT5 & Actions (2 cols desktop/tablette, 1 col mobile) */}
+                                      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 20 }}>
+
+                                        {/* Colonne Identité */}
+                                        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 6 }}>Identité</div>
                                           {([
                                             { label: "Prénom",    value: c.client_first_name },
                                             { label: "Nom",       value: c.client_last_name  },
                                             { label: "Email",     value: c.user_email         },
                                             { label: "Téléphone", value: c.client_phone       },
                                           ] as { label: string; value?: string | null }[]).filter(f => f.value).map((f, i) => (
-                                            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 8 }}>
-                                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>{f.label}</span>
-                                              <button onClick={() => copyToClipboard(f.value!)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", color: "rgba(255,255,255,0.8)", fontSize: 11, cursor: "pointer", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 200 }}>
-                                                {f.value} ⎘
+                                            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                              <span style={{ width: 68, flexShrink: 0, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{f.label}</span>
+                                              <button onClick={() => copyToClipboard(f.value!)} style={{ flex: 1, background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 5, padding: "5px 10px", color: "rgba(255,255,255,0.7)", fontSize: 11, cursor: "pointer", textAlign: "left", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                {f.value} <span style={{ color: "rgba(255,255,255,0.25)" }}>⎘</span>
                                               </button>
                                             </div>
                                           ))}
                                           {isEditing && (
-                                            <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 4 }}>
-                                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1 }}>Jours tradés</div>
-                                              <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 80 }} />
+                                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                                              <span style={{ width: 68, flexShrink: 0, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>J. tradés</span>
+                                              <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "5px 8px", color: "#fff", fontSize: 12, width: 70 }} />
                                             </div>
                                           )}
-                                          <div style={{ marginTop: 10, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                            Créé le {new Date(c.created_at).toLocaleDateString("fr-FR")} · {c.trading_days} j. tradé{c.trading_days !== 1 ? "s" : ""}
-                                          </div>
                                         </div>
 
-                                        {/* Données challenge */}
-                                        <div>
-                                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12 }}>Challenge</div>
-                                          {([
-                                            { label: "Balance départ",   value: `$${c.start_balance?.toLocaleString() ?? "—"}` },
-                                            { label: "Balance actuelle",  value: `$${c.balance?.toLocaleString() ?? "—"}` },
-                                            { label: "Variation",         value: c.start_balance ? `${gainPct >= 0 ? "+" : ""}${gainPct.toFixed(2)}%` : "—" },
-                                            { label: "DD Jour max",       value: `${c.daily_drawdown_limit || 5}%` },
-                                            { label: "DD Max",            value: `${c.total_drawdown_limit || 10}%` },
-                                            { label: "Montant payé",      value: `€${c.amount_paid}` },
-                                            ...(c.status === "failed" && c.breach_at ? [
-                                              { label: "Breach le",       value: new Date(c.breach_at).toLocaleDateString("fr-FR") },
-                                              { label: "Breach raison",   value: c.breach_reason === "daily_drawdown" ? "DD Jour" : "DD Max" },
-                                              { label: "Breach valeur",   value: `-${c.breach_value?.toFixed(2) ?? "?"}%` },
-                                              ...(c.breach_equity ? [{ label: "Equity breach", value: `$${Math.round(c.breach_equity).toLocaleString()}` }] : []),
-                                            ] : []),
-                                          ] as { label: string; value: string }[]).map((f, i) => (
-                                            <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 7, gap: 8 }}>
-                                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
-                                              <span style={{ fontSize: 11, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{f.value}</span>
-                                            </div>
-                                          ))}
-                                        </div>
+                                        {/* Colonne MT5 + Actions */}
+                                        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
 
-                                        {/* MT5 + Actions */}
-                                        <div>
-                                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 12 }}>MT5 & Actions</div>
-
-                                          {c.mt5_login ? (<>
-                                            {/* Login & serveur copiables */}
-                                            {([
-                                              { label: "Login",   value: String(c.mt5_login) },
-                                              { label: "Serveur", value: c.mt5_server || "—" },
-                                            ] as { label: string; value: string }[]).map((f, i) => (
-                                              <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 8 }}>
-                                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
-                                                <button onClick={() => copyToClipboard(f.value)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace", cursor: "pointer" }}>{f.value} ⎘</button>
+                                          {/* P6 — Fiche MT5 */}
+                                          <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "14px 16px" }}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 10 }}>MT5</div>
+                                            {c.mt5_login ? (
+                                              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                                                {/* Login + Serveur */}
+                                                {([
+                                                  { label: "Login",   value: String(c.mt5_login) },
+                                                  { label: "Serveur", value: c.mt5_server || "—"  },
+                                                ] as { label: string; value: string }[]).map((f, i) => (
+                                                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                                    <span style={{ width: 56, flexShrink: 0, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{f.label}</span>
+                                                    <span style={{ flex: 1, fontSize: 12, fontFamily: "monospace", color: "rgba(255,255,255,0.75)", fontVariantNumeric: "tabular-nums", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.value}</span>
+                                                    <button onClick={() => copyToClipboard(f.value)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4, padding: "3px 9px", color: "rgba(255,255,255,0.35)", fontSize: 10, cursor: "pointer", flexShrink: 0 }}>⎘</button>
+                                                  </div>
+                                                ))}
+                                                {/* Passwords masqués — P6 alignement uniforme */}
+                                                {([
+                                                  { label: "Password", value: c.mt5_password,          key: `${c.id}_pw`  },
+                                                  { label: "Investor", value: c.mt5_password_investor,  key: `${c.id}_inv` },
+                                                ] as { label: string; value: string; key: string }[]).filter(f => f.value).map(f => (
+                                                  <div key={f.key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                                    <span style={{ width: 56, flexShrink: 0, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{f.label}</span>
+                                                    <span style={{ flex: 1, fontSize: 12, fontFamily: "monospace", letterSpacing: revealedPasswords.has(f.key) ? 0 : 2 }}>
+                                                      {revealedPasswords.has(f.key)
+                                                        ? <span style={{ color: "rgba(255,255,255,0.75)" }}>{f.value}</span>
+                                                        : <span style={{ color: "rgba(255,255,255,0.2)" }}>••••••••</span>
+                                                      }
+                                                    </span>
+                                                    <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                                                      {revealedPasswords.has(f.key) && (
+                                                        <button onClick={() => copyToClipboard(f.value)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4, padding: "3px 9px", color: "rgba(255,255,255,0.35)", fontSize: 10, cursor: "pointer" }}>⎘</button>
+                                                      )}
+                                                      <button onClick={() => setRevealedPasswords(s => { const n = new Set(s); n.has(f.key) ? n.delete(f.key) : n.add(f.key); return n; })} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 4, padding: "3px 9px", color: "rgba(255,255,255,0.35)", fontSize: 10, cursor: "pointer" }}>
+                                                        {revealedPasswords.has(f.key) ? "Masquer" : "Révéler"}
+                                                      </button>
+                                                    </div>
+                                                  </div>
+                                                ))}
+                                                {/* Inputs edit en mode édition */}
+                                                {isEditing && (
+                                                  <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 4, paddingTop: 10, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                                                    <input type="text" placeholder="Modifier password" value={editData.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "5px 10px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
+                                                    <input type="text" placeholder="Modifier serveur" value={editData.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "5px 10px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
+                                                  </div>
+                                                )}
                                               </div>
-                                            ))}
-                                            {/* Passwords masqués avec révélation */}
-                                            {([
-                                              { label: "Password",  value: c.mt5_password,          key: `${c.id}_pw`  },
-                                              { label: "Investor",  value: c.mt5_password_investor,  key: `${c.id}_inv` },
-                                            ] as { label: string; value: string; key: string }[]).filter(f => f.value).map(f => (
-                                              <div key={f.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8, gap: 8 }}>
-                                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{f.label}</span>
-                                                <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
-                                                  {revealedPasswords.has(f.key)
-                                                    ? <button onClick={() => copyToClipboard(f.value)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace", cursor: "pointer" }}>{f.value} ⎘</button>
-                                                    : <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", fontFamily: "monospace" }}>••••••••</span>
-                                                  }
-                                                  <button onClick={() => setRevealedPasswords(s => { const n = new Set(s); n.has(f.key) ? n.delete(f.key) : n.add(f.key); return n; })} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 7px", color: "rgba(255,255,255,0.4)", fontSize: 10, cursor: "pointer" }}>
-                                                    {revealedPasswords.has(f.key) ? "Masquer" : "Révéler"}
-                                                  </button>
-                                                </div>
-                                              </div>
-                                            ))}
-                                            {/* Edit MT5 password/server en mode édition */}
-                                            {isEditing && (
-                                              <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 4 }}>
-                                                <input type="text" placeholder="Modifier password" value={editData.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
-                                                <input type="text" placeholder="Modifier serveur" value={editData.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 8px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
-                                              </div>
+                                            ) : (
+                                              provisionMsg[c.id]
+                                                ? <div style={{ fontSize: 11, color: provisionMsg[c.id].startsWith("✓") ? "#22c55e" : "#ef4444" }}>{provisionMsg[c.id]}</div>
+                                                : <div style={{ fontSize: 11, color: "rgba(255,255,255,0.22)" }}>Non provisionné</div>
                                             )}
-                                          </>) : (
-                                            provisionMsg[c.id]
-                                              ? <div style={{ fontSize: 11, marginBottom: 8, color: provisionMsg[c.id].startsWith("✓") ? "#22c55e" : "#ef4444" }}>{provisionMsg[c.id]}</div>
-                                              : <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", marginBottom: 8 }}>Compte MT5 non provisionné</div>
-                                          )}
+                                          </div>
 
-                                          {/* Boutons d'action */}
-                                          <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 5 }}>
+                                          {/* P5 — Actions rapides */}
+                                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 2 }}>Actions rapides</div>
+                                            <button onClick={() => sendAccessEmail(c.user_email)} style={{ padding: "9px 14px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 7, color: "#60a5fa", fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "left" }}>
+                                              {accessEmailMsg[c.user_email] || "Renvoyer accès email"}
+                                            </button>
                                             {!c.mt5_login && !provisionMsg[c.id] && (
-                                              <button onClick={() => provisionMT5(c)} disabled={provisioningId === c.id} style={{ padding: "7px 12px", background: "rgba(249,115,22,0.1)", border: "1px solid rgba(249,115,22,0.25)", borderRadius: 7, color: "#f97316", fontSize: 12, fontWeight: 700, cursor: provisioningId === c.id ? "not-allowed" : "pointer", textAlign: "left", opacity: provisioningId === c.id ? 0.5 : 1 }}>
+                                              <button onClick={() => provisionMT5(c)} disabled={provisioningId === c.id} style={{ padding: "9px 14px", background: "rgba(249,115,22,0.08)", border: "1px solid rgba(249,115,22,0.22)", borderRadius: 7, color: "#f97316", fontSize: 12, fontWeight: 600, cursor: provisioningId === c.id ? "not-allowed" : "pointer", textAlign: "left", opacity: provisioningId === c.id ? 0.5 : 1 }}>
                                                 {provisioningId === c.id ? "Provisionnement..." : "Provisionner MT5"}
                                               </button>
                                             )}
-                                            {c.mt5_login && <>
-                                              <button onClick={() => addMT5Custom(c)} style={{ padding: "7px 12px", background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 7, color: "#22c55e", fontSize: 12, cursor: "pointer", textAlign: "left" }}>+ Ajouter balance</button>
-                                              <button onClick={() => withdrawMT5Custom(c)} style={{ padding: "7px 12px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, color: "rgba(255,255,255,0.55)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>− Retirer balance</button>
-                                              <button onClick={() => withdrawMT5Profit(c)} style={{ padding: "7px 12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 7, color: "rgba(255,255,255,0.4)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>Retrait profit MT5</button>
-                                            </>}
-                                            <button onClick={() => sendAccessEmail(c.user_email)} style={{ padding: "7px 12px", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 7, color: "rgba(255,255,255,0.4)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>
-                                              {accessEmailMsg[c.user_email] || "Renvoyer accès email"}
-                                            </button>
-                                            <button onClick={() => deleteChallenge(c.id)} style={{ padding: "7px 12px", background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 7, color: "#ef4444", fontSize: 12, cursor: "pointer", textAlign: "left" }}>
-                                              Supprimer
-                                            </button>
+                                            {c.mt5_login && (
+                                              <button onClick={() => addMT5Custom(c)} style={{ padding: "9px 14px", background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.18)", borderRadius: 7, color: "#22c55e", fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "left" }}>+ Ajouter balance</button>
+                                            )}
                                           </div>
-                                        </div>
 
+                                          {/* P5 — Actions techniques */}
+                                          {c.mt5_login && (
+                                            <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                                              <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.18)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 2 }}>Techniques</div>
+                                              <button onClick={() => withdrawMT5Custom(c)} style={{ padding: "7px 12px", background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 7, color: "rgba(255,255,255,0.35)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>− Retirer balance</button>
+                                              <button onClick={() => withdrawMT5Profit(c)} style={{ padding: "7px 12px", background: "transparent", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 7, color: "rgba(255,255,255,0.35)", fontSize: 12, cursor: "pointer", textAlign: "left" }}>Retrait profit MT5</button>
+                                            </div>
+                                          )}
+
+                                        </div>
                                       </div>
+
+                                      {/* P1 — Zone dangereuse (isolée en bas, pleine largeur) */}
+                                      <div style={{ borderTop: "1px solid rgba(239,68,68,0.1)", paddingTop: 16 }}>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.14)", borderRadius: 8, padding: "14px 18px", flexWrap: "wrap" }}>
+                                          <div>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(239,68,68,0.65)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 4 }}>Zone dangereuse</div>
+                                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>Supprimer définitivement ce challenge. Action irréversible.</div>
+                                          </div>
+                                          <button onClick={() => deleteChallenge(c.id)} style={{ padding: "8px 20px", background: "transparent", border: "1px solid rgba(239,68,68,0.45)", borderRadius: 7, color: "#ef4444", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
+                                            Supprimer
+                                          </button>
+                                        </div>
+                                      </div>
+
                                     </div>
                                   </td>
                                 </tr>
