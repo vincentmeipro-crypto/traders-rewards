@@ -147,13 +147,14 @@ const TAB_LABELS: Record<Tab, string> = {
 };
 
 // Structure de navigation groupée
-type NavItem = { id: Tab; label: string; sub?: boolean };
+type NavItem = { id: Tab | "products"; label: string; sub?: boolean; href?: string };
 type NavGroup = { section?: string; items: NavItem[] } | { separator: true } | { cta: Tab; label: string };
 
 const NAV: (NavGroup)[] = [
   { items: [{ id: "overview", label: "🏠 Overview" }] },
   { section: "CHALLENGES", items: [
     { id: "pipeline", label: "Tous les challenges" },
+    { id: "products", label: "Produits", sub: true, href: "/x8k3pz/products" },
   ]},
   { section: "TRADERS", items: [
     { id: "crm",  label: "Clients" },
@@ -845,8 +846,12 @@ export default function AdminPage() {
                   {"section" in group && group.section && (
                     <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, textTransform: "uppercase", padding: "10px 14px 4px" }}>{group.section}</div>
                   )}
-                  {group.items.map((item: NavItem) => (
-                    <button key={item.id} onClick={() => setTab(item.id)} style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: item.sub ? "7px 14px 7px 22px" : "9px 14px", background: tab === item.id ? "rgba(59,130,246,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === item.id ? "#3B82F6" : "transparent"}`, color: tab === item.id ? "#fff" : item.sub ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.6)", fontWeight: tab === item.id ? 700 : 400, fontSize: item.sub ? 12 : 13, cursor: "pointer", textAlign: "left", borderRadius: "0 8px 8px 0", marginBottom: 1 }}>
+                  {group.items.map((item: NavItem) => item.href ? (
+                    <a key={item.id} href={item.href} style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: "7px 14px 7px 22px", background: "none", borderLeft: "3px solid transparent", color: "rgba(255,255,255,0.35)", fontWeight: 400, fontSize: 12, cursor: "pointer", textAlign: "left", borderRadius: "0 8px 8px 0", marginBottom: 1, textDecoration: "none" }}>
+                      {item.label}
+                    </a>
+                  ) : (
+                    <button key={item.id} onClick={() => setTab(item.id as Tab)} style={{ display: "flex", alignItems: "center", gap: 6, width: "100%", padding: item.sub ? "7px 14px 7px 22px" : "9px 14px", background: tab === item.id ? "rgba(59,130,246,0.15)" : "none", border: "none", borderLeft: `3px solid ${tab === item.id ? "#3B82F6" : "transparent"}`, color: tab === item.id ? "#fff" : item.sub ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.6)", fontWeight: tab === item.id ? 700 : 400, fontSize: item.sub ? 12 : 13, cursor: "pointer", textAlign: "left", borderRadius: "0 8px 8px 0", marginBottom: 1 }}>
                       {item.label}
                       {item.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kpis.pendingPayouts}</span>}
                       {item.id === "kyc" && kycBadge > 0 && <span style={{ marginLeft: "auto", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 6px", fontSize: 10 }}>{kycBadge}</span>}
