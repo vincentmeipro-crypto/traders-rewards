@@ -6,6 +6,7 @@ import {
   buildRulesSnapshot,
   getPhase1Defaults,
 } from "@/lib/product-engine";
+import { consumePromoCode } from "@/lib/promo";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,9 @@ export async function POST(req: NextRequest) {
     if (!productId || !userId || !promoCode) {
       return NextResponse.json({ error: "Missing params" }, { status: 400 });
     }
+
+    // Normaliser le code AVANT de construire la référence (idempotence)
+    const normalizedCode = (promoCode as string).toUpperCase().trim();
 
     // Charger le produit depuis la DB — lève une erreur si inactif ou introuvable
     const { product, phases, rules } = await loadProductFullBySlug(productId);
@@ -37,19 +41,61 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Re-valider le code promo côté serveur (actif, non expiré, non épuisé, 100% discount)
-    const { data: promo, error: promoErr } = await admin
-      .from("promo_codes").select("*")
-      .eq("code", promoCode.toUpperCase().trim()).single();
+    // ── Référence idempotente deterministe ────────────────────────────
+    // Format : "free:{userId}:{normalizedCode}:{productId}"
+    // Garantit qu'un double-clic ne crée pas deux challenges.
+    // Un même utilisateur peut utiliser la même promo sur des produits différents.
+    const freeRef = `free:${userId}:${normalizedCode}:${product.id}`;
 
-    if (promoErr || !promo) return NextResponse.json({ error: "Invalid promo code" }, { status: 400 });
-    if (!promo.active) return NextResponse.json({ error: "Code revoked" }, { status: 400 });
-    if (promo.expires_at && new Date(promo.expires_at) < new Date())
-      return NextResponse.json({ error: "Code expired" }, { status: 400 });
-    if (promo.max_uses !== null && promo.used_count >= promo.max_uses)
-      return NextResponse.json({ error: "Code limit reached" }, { status: 400 });
-    if (promo.discount_percent !== 100)
+    // ── Consommation atomique promo code ──────────────────────────────
+    // consumePromoCode valide + incrémente + insère promo_code_usages atomiquement.
+    // Remplace la validation manuelle + UPDATE non-atomique de l'ancien code.
+    //
+    // Defense-in-depth : si le code n'est pas à 100%, on l'intercepte après le consume.
+    const cr = await consumePromoCode({
+      code:             normalizedCode,
+      userId,
+      provider:         "free",
+      paymentReference: freeRef,
+      discountApplied:  100,
+    });
+
+    if (cr.alreadyConsumed) {
+      // Idempotence : la référence a déjà été traitée (double-clic ou webhook retry)
+      // Si le challenge existe déjà → retourner ok: true directement
+      if (cr.usageId) {
+        const { data: existingUsage } = await admin
+          .from("promo_code_usages")
+          .select("challenge_id")
+          .eq("id", cr.usageId)
+          .single();
+        if (existingUsage?.challenge_id) {
+          return NextResponse.json({ ok: true });
+        }
+        // challenge_id null : le challenge n'a pas encore été créé (crash entre consume et insert)
+        // → on continue pour créer le challenge et rattacher l'usage
+      }
+    }
+
+    if (!cr.success && !cr.alreadyConsumed) {
+      // Code invalide / révoqué / expiré / épuisé
+      const errorMessages: Record<string, string> = {
+        not_found:        "Code promo introuvable",
+        revoked:          "Code révoqué",
+        expired:          "Code expiré",
+        exhausted:        "Limite d'utilisation atteinte",
+        invalid_provider: "Fournisseur invalide",
+      };
+      return NextResponse.json(
+        { error: errorMessages[cr.errorCode ?? ""] || "Code promo invalide" },
+        { status: 400 }
+      );
+    }
+
+    // Defense-in-depth : le chemin free ne doit traiter que les codes 100%
+    if (cr.discountPct !== 100) {
       return NextResponse.json({ error: "Not a 100% code" }, { status: 400 });
+    }
 
     // User info pour MT5 et email
     const { data: { user } } = await admin.auth.admin.getUserById(userId);
@@ -62,7 +108,7 @@ export async function POST(req: NextRequest) {
     const phase1   = getPhase1Defaults(phases);
     const snapshot = buildRulesSnapshot(product, phases, rules, 0);  // 0 cents — challenge gratuit
 
-    // Créer le challenge
+    // ── Création du challenge ─────────────────────────────────────────
     const { data: challenge } = await admin.from("challenges").insert({
       user_id:              userId,
       account_size:         product.account_size,
@@ -83,16 +129,23 @@ export async function POST(req: NextRequest) {
       rules_snapshot:       snapshot,
     }).select("id").single();
 
-    // Incrémenter le compteur du code promo
-    await admin.from("promo_codes")
-      .update({ used_count: promo.used_count + 1 })
-      .eq("id", promo.id);
-
     const challengeId = challenge?.id as string | undefined;
+
+    // Attacher le challenge à l'usage promo (best-effort, non bloquant)
+    if (cr.usageId && challengeId) {
+      try {
+        await admin.from("promo_code_usages")
+          .update({ challenge_id: challengeId })
+          .eq("id", cr.usageId);
+      } catch (e) {
+        console.error("[promo/free] usage challenge_id update error:", e);
+      }
+    }
+
     const mt5Url    = process.env.MT5_API_URL;
     const mt5Secret = process.env.MT5_API_SECRET;
 
-    // Provision MT5
+    // ── Provision MT5 ─────────────────────────────────────────────────
     if (mt5Url && mt5Secret && challengeId) {
       try {
         const userEmail = user?.email || "";

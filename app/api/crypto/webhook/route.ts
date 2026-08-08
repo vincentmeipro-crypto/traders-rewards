@@ -7,7 +7,9 @@ import {
   loadProductFull,
   buildRulesSnapshot,
   getPhase1Defaults,
+  getEffectivePrice,
 } from "@/lib/product-engine";
+import { consumePromoCode } from "@/lib/promo";
 
 // Anciens slugs (VIP + legacy) — fallback si parts[2] n'est pas un UUID
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
@@ -105,11 +107,17 @@ export async function POST(req: NextRequest) {
     // NOUVEAU PATH (UUID) : charge depuis la DB → snapshot immuable.
     // ANCIEN PATH (slug)  : fallback PRODUCTS + getChallengeDefaults — rétrocompat.
     // Dans tous les cas les colonnes que metaapi/sync lit directement sont peuplées.
+    //
+    // discountApplied : calculé dans le path UUID (baseAmount connu),
+    //   NULL dans le path slug legacy (baseAmount non disponible sans produit).
+    //   getEffectivePrice retourne des centimes ; amountPaid est en EUR float
+    //   → on compare amountPaid * 100 (centimes) à baseAmount (centimes).
 
     let challengeInsert: Record<string, unknown>;
     let challengeModel: string;
     let challengeAccountSize: string;
     let challengeBalance: number;
+    let discountApplied: number | null = null;
 
     if (isUUID(productId)) {
       // ── Nouveau chemin : Product Engine ───────────────────────────────
@@ -119,6 +127,13 @@ export async function POST(req: NextRequest) {
       const { product, phases, rules } = await loadProductFull(productId);
       const phase1   = getPhase1Defaults(phases);
       const snapshot = buildRulesSnapshot(product, phases, rules, Math.round(amountPaid * 100));
+
+      // Discount effectif calculé depuis le montant réellement facturé vs prix DB
+      // getEffectivePrice("crypto") → centimes ; amountPaid → EUR → * 100 = centimes
+      const baseAmount = getEffectivePrice(product, "crypto");
+      if (baseAmount > 0) {
+        discountApplied = Math.max(0, Math.round((1 - (amountPaid * 100) / baseAmount) * 100));
+      }
 
       challengeModel       = product.model;
       challengeAccountSize = product.account_size;
@@ -157,6 +172,7 @@ export async function POST(req: NextRequest) {
       challengeModel       = model;
       challengeAccountSize = accountSize;
       challengeBalance     = size;
+      // discountApplied reste null : path legacy, baseAmount non disponible
 
       challengeInsert = {
         user_id:              userId,
@@ -176,6 +192,33 @@ export async function POST(req: NextRequest) {
       };
     }
 
+    // ── Consommation atomique promo code ──────────────────────────────
+    // Exécuté AVANT l'INSERT challenge :
+    //   - Si succès        → promo_code_usages créé, promoUsageId renseigné
+    //   - Si already_consumed → idempotence webhook retry, on continue sans ré-incrémenter
+    //   - Si exhausted/revoked/expired → client a payé, on logue et on continue
+    //   - Si erreur DB     → on logue, on continue (ne pas bloquer un achat légitime)
+    let promoUsageId: string | null = null;
+    if (promoCode) {
+      try {
+        const cr = await consumePromoCode({
+          code:             promoCode,
+          userId,
+          provider:         "crypto",
+          paymentReference: nowpaymentsId || null,
+          discountApplied,
+        });
+        promoUsageId = cr.usageId;
+        if (!cr.success && !cr.alreadyConsumed) {
+          console.warn(`[crypto/webhook] promo consume non-bloquant: ${cr.errorCode} — code=${promoCode} payment=${nowpaymentsId}`);
+        }
+      } catch (e) {
+        // Erreur DB : ne pas bloquer la création du challenge
+        console.error("[crypto/webhook] consumePromoCode error:", e);
+      }
+    }
+
+    // ── Création du challenge ─────────────────────────────────────────
     const { data: inserted, error: insertError } = await admin.from("challenges")
       .insert(challengeInsert)
       .select("id")
@@ -186,6 +229,17 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "DB insert failed" }, { status: 500 });
     }
     const challengeId = inserted?.id as string;
+
+    // Attacher le challenge à l'usage promo (best-effort, non bloquant)
+    if (promoUsageId && challengeId) {
+      try {
+        await admin.from("promo_code_usages")
+          .update({ challenge_id: challengeId })
+          .eq("id", promoUsageId);
+      } catch (e) {
+        console.error("[crypto/webhook] usage challenge_id update error:", e);
+      }
+    }
 
     // ── Affiliation ───────────────────────────────────────────────────
     if (refCode) {
@@ -209,18 +263,6 @@ export async function POST(req: NextRequest) {
             .eq("user_id", affiliate.user_id);
         }
       } catch (e) { console.error("[crypto/webhook] Affiliate error:", e); }
-    }
-
-    // ── Incrément promo code ──────────────────────────────────────────
-    if (promoCode) {
-      const { data: promo } = await admin
-        .from("promo_codes").select("id, used_count")
-        .eq("code", promoCode).single();
-      if (promo) {
-        await admin.from("promo_codes")
-          .update({ used_count: promo.used_count + 1 })
-          .eq("id", promo.id);
-      }
     }
 
     // ── User info pour MT5 ────────────────────────────────────────────

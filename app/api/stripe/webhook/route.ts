@@ -7,7 +7,9 @@ import {
   loadProductFull,
   buildRulesSnapshot,
   getPhase1Defaults,
+  getEffectivePrice,
 } from "@/lib/product-engine";
+import { consumePromoCode } from "@/lib/promo";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -62,9 +64,11 @@ export async function POST(req: NextRequest) {
     // ANCIENNE SESSION  (productId = slug) : fallback getChallengeDefaults() — rétrocompat
     //   pour les sessions Stripe ouvertes avant le déploiement de Phase 2B.
     //
-    // Dans tous les cas les colonnes que metaapi/sync lit directement sont peuplées.
+    // discountApplied : calculé dans le path UUID (baseAmount connu),
+    //   NULL dans le path slug legacy (baseAmount non disponible sans produit).
 
     let challengeInsert: Record<string, unknown>;
+    let discountApplied: number | null = null;
 
     if (isUUID(productId)) {
       // ── Nouveau chemin : Product Engine ───────────────────────────────
@@ -72,6 +76,12 @@ export async function POST(req: NextRequest) {
         const { product, phases, rules } = await loadProductFull(productId);
         const phase1    = getPhase1Defaults(phases);
         const snapshot  = buildRulesSnapshot(product, phases, rules, amountPaidCents);
+
+        // Discount effectif calculé depuis le montant réellement facturé vs prix DB
+        const baseAmount = getEffectivePrice(product, "card");
+        if (baseAmount > 0) {
+          discountApplied = Math.max(0, Math.round((1 - amountPaidCents / baseAmount) * 100));
+        }
 
         challengeInsert = {
           user_id:              userId,
@@ -81,7 +91,6 @@ export async function POST(req: NextRequest) {
           phase:                "phase1",
           balance:              product.balance_usd,
           start_balance:        product.balance_usd,
-          // Colonnes lues par metaapi/sync — JAMAIS nulles
           profit_target:        phase1.profit_target,
           daily_drawdown_limit: phase1.daily_drawdown_limit,
           total_drawdown_limit: phase1.total_drawdown_limit,
@@ -89,13 +98,10 @@ export async function POST(req: NextRequest) {
           stripe_session_id:    session.id,
           amount_paid:          amountPaidCents / 100,
           payment_method:       "card",
-          // Nouvelles colonnes Phase 2B
           product_id:           product.id,
           rules_snapshot:       snapshot,
         };
       } catch (engineErr) {
-        // Si le Product Engine échoue (produit supprimé entre checkout et paiement),
-        // on log l'erreur et on retombe sur le fallback plutôt que de perdre la vente.
         console.error("[stripe/webhook] Product Engine error, fallback to defaults:", engineErr);
         const challengeDefaults = await getChallengeDefaults();
         challengeInsert = {
@@ -114,6 +120,7 @@ export async function POST(req: NextRequest) {
           amount_paid:          amountPaidCents / 100,
           payment_method:       "card",
         };
+        // discountApplied reste null : produit non chargé, baseAmount inconnu
       }
     } else {
       // ── Ancien chemin : session ouverte avant Phase 2B (slug dans metadata) ──
@@ -134,8 +141,36 @@ export async function POST(req: NextRequest) {
         amount_paid:          amountPaidCents / 100,
         payment_method:       "card",
       };
+      // discountApplied reste null : path legacy, baseAmount non disponible
     }
 
+    // ── Consommation atomique promo code ──────────────────────────────
+    // Exécuté AVANT l'INSERT challenge :
+    //   - Si succès       → promo_code_usages créé, promoUsageId renseigné
+    //   - Si already_consumed → idempotence webhook, on continue sans ré-incrémenter
+    //   - Si exhausted/revoked/expired → le client a payé, on logue et on continue
+    //   - Si erreur DB    → on logue, on continue (ne pas bloquer un achat légitime)
+    let promoUsageId: string | null = null;
+    if (promoCode) {
+      try {
+        const cr = await consumePromoCode({
+          code:             promoCode,
+          userId,
+          provider:         "stripe",
+          paymentReference: session.id,
+          discountApplied,
+        });
+        promoUsageId = cr.usageId;
+        if (!cr.success && !cr.alreadyConsumed) {
+          console.warn(`[stripe/webhook] promo consume non-bloquant: ${cr.errorCode} — code=${promoCode} session=${session.id}`);
+        }
+      } catch (e) {
+        // Erreur DB : ne pas bloquer la création du challenge
+        console.error("[stripe/webhook] consumePromoCode error:", e);
+      }
+    }
+
+    // ── Création du challenge ─────────────────────────────────────────
     const { data: inserted } = await admin
       .from("challenges")
       .insert(challengeInsert)
@@ -143,6 +178,17 @@ export async function POST(req: NextRequest) {
       .single();
 
     const challengeId = inserted?.id as string | undefined;
+
+    // Attacher le challenge à l'usage promo (best-effort, non bloquant)
+    if (promoUsageId && challengeId) {
+      try {
+        await admin.from("promo_code_usages")
+          .update({ challenge_id: challengeId })
+          .eq("id", promoUsageId);
+      } catch (e) {
+        console.error("[stripe/webhook] usage challenge_id update error:", e);
+      }
+    }
 
     // ── Provision MT5 ─────────────────────────────────────────────────
     if (challengeId) {
@@ -210,20 +256,6 @@ export async function POST(req: NextRequest) {
             .eq("user_id", affiliate.user_id);
         }
       } catch (e) { console.error("Affiliate referral error:", e); }
-    }
-
-    // ── Incrément promo code ──────────────────────────────────────────
-    if (promoCode) {
-      const { data: promo } = await admin
-        .from("promo_codes")
-        .select("id, used_count")
-        .eq("code", promoCode)
-        .single();
-      if (promo) {
-        await admin.from("promo_codes")
-          .update({ used_count: promo.used_count + 1 })
-          .eq("id", promo.id);
-      }
     }
   }
 
