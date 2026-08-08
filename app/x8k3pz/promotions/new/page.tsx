@@ -5,19 +5,20 @@ import { useRouter } from "next/navigation";
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────
-type Product = { id: string; name: string; account_size: string; model: string; active: boolean };
+type Product   = { id: string; name: string; account_size: string; model: string; active: boolean };
 type Affiliate = { id: string; user_id: string; code: string; first_name?: string; last_name?: string; email?: string };
 
 // ── Atomic UI ────────────────────────────────────────────────────
-const Label = ({ children, required }: { children: React.ReactNode; required?: boolean }) => (
-  <div style={{
+const Label = ({ children, required, htmlFor }: { children: React.ReactNode; required?: boolean; htmlFor?: string }) => (
+  <label htmlFor={htmlFor} style={{
+    display: "flex", gap: 4, alignItems: "center",
     fontSize: 10, fontWeight: 600, letterSpacing: "1.5px",
     textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6,
-    display: "flex", gap: 4, alignItems: "center",
+    cursor: htmlFor ? "pointer" : "default",
   }}>
     {children}
     {required && <span style={{ color: "rgba(239,68,68,0.7)", fontSize: 10 }}>*</span>}
-  </div>
+  </label>
 );
 
 const inputStyle: React.CSSProperties = {
@@ -26,11 +27,12 @@ const inputStyle: React.CSSProperties = {
   width: "100%", outline: "none", fontFamily: "inherit", boxSizing: "border-box",
 };
 
-const Input = ({ value, onChange, type = "text", placeholder }: {
-  value: string; onChange: (v: string) => void;
+const Input = ({ id, value, onChange, type = "text", placeholder }: {
+  id?: string; value: string; onChange: (v: string) => void;
   type?: string; placeholder?: string;
 }) => (
   <input
+    id={id}
     type={type}
     value={value}
     placeholder={placeholder}
@@ -41,10 +43,11 @@ const Input = ({ value, onChange, type = "text", placeholder }: {
   />
 );
 
-const Select = ({ value, onChange, children }: {
-  value: string; onChange: (v: string) => void; children: React.ReactNode;
+const Select = ({ id, value, onChange, children }: {
+  id?: string; value: string; onChange: (v: string) => void; children: React.ReactNode;
 }) => (
   <select
+    id={id}
     value={value}
     onChange={e => onChange(e.target.value)}
     style={{ ...inputStyle, cursor: "pointer" }}
@@ -53,10 +56,16 @@ const Select = ({ value, onChange, children }: {
   </select>
 );
 
-const Toggle = ({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label?: string }) => (
+const Toggle = ({ checked, onChange, label, id }: {
+  checked: boolean; onChange: (v: boolean) => void; label?: string; id?: string;
+}) => (
   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
     <button
       type="button"
+      id={id}
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
       onClick={() => onChange(!checked)}
       style={{
         width: 36, height: 20, borderRadius: 10, border: "none",
@@ -115,10 +124,10 @@ export default function NewPromoPage() {
     setTimeout(() => setNotif(null), 4000);
   };
 
-  // Load products + affiliates
+  // Load products (active only) + affiliates
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/products", { headers: { "x-admin-key": ADMIN_KEY } }).then(r => r.json()),
+      fetch("/api/admin/products",  { headers: { "x-admin-key": ADMIN_KEY } }).then(r => r.json()),
       fetch("/api/admin/affiliates", { headers: { "x-admin-key": ADMIN_KEY } }).then(r => r.json()),
     ]).then(([prod, aff]) => {
       if (Array.isArray(prod)) setProducts(prod.filter((p: Product) => p.active));
@@ -137,9 +146,10 @@ export default function NewPromoPage() {
     }));
   };
 
+  // ── Submit — convert datetime-local to UTC ISO before send ───────
   const submit = async () => {
-    if (!form.code.trim()) { notify("Le code est requis", false); return; }
-    if (!form.discount_percent) { notify("La remise est requise", false); return; }
+    if (!form.code.trim())       { notify("Le code est requis", false); return; }
+    if (!form.discount_percent)  { notify("La remise est requise", false); return; }
 
     setSaving(true);
     try {
@@ -147,8 +157,9 @@ export default function NewPromoPage() {
         code:                form.code.trim().toUpperCase(),
         name:                form.name.trim() || null,
         discount_percent:    Number(form.discount_percent),
-        starts_at:           form.starts_at  || null,
-        expires_at:          form.expires_at || null,
+        // Convert local datetime to UTC ISO to avoid timezone offset
+        starts_at:           form.starts_at  ? new Date(form.starts_at).toISOString()  : null,
+        expires_at:          form.expires_at ? new Date(form.expires_at).toISOString() : null,
         max_uses:            form.max_uses   ? Number(form.max_uses) : null,
         single_use_per_user: form.single_use_per_user,
         targeting_mode:      form.targeting_mode,
@@ -178,6 +189,14 @@ export default function NewPromoPage() {
       <style>{`
         select option { background: #111; }
         input[type="datetime-local"] { color-scheme: dark; }
+        input:focus-visible, select:focus-visible, button:focus-visible {
+          outline: 2px solid rgba(59,130,246,0.5); outline-offset: 2px;
+        }
+        @media (max-width: 640px) {
+          .form-grid-2 { grid-template-columns: 1fr !important; }
+          .promo-body  { padding: 20px !important; }
+          .promo-header-pad { padding: 12px 16px !important; }
+        }
       `}</style>
 
       {/* Toast */}
@@ -195,7 +214,7 @@ export default function NewPromoPage() {
       )}
 
       {/* ── Header ──────────────────────────────────────────────── */}
-      <div style={{
+      <div className="promo-header-pad" style={{
         borderBottom: "1px solid rgba(255,255,255,0.08)",
         padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -226,7 +245,8 @@ export default function NewPromoPage() {
             style={{
               background: "#3B82F6", border: "none", color: "#fff",
               borderRadius: 8, padding: "8px 22px", fontSize: 13, fontWeight: 700,
-              cursor: "pointer", opacity: saving ? 0.6 : 1, transition: "opacity 0.15s",
+              cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1,
+              transition: "opacity 0.15s",
             }}
           >
             {saving ? "Création…" : "Créer le code"}
@@ -235,15 +255,16 @@ export default function NewPromoPage() {
       </div>
 
       {/* ── Body ────────────────────────────────────────────────── */}
-      <div style={{ padding: "32px", maxWidth: 760, margin: "0 auto" }}>
+      <div className="promo-body" style={{ padding: "32px", maxWidth: 760, margin: "0 auto" }}>
 
         {/* ─ Informations générales ─ */}
         <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "24px 28px", marginBottom: 16 }}>
           <SectionTitle>Informations générales</SectionTitle>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             <div style={fieldRow}>
-              <Label required>Code</Label>
+              <Label htmlFor="new-code" required>Code</Label>
               <Input
+                id="new-code"
                 value={form.code}
                 onChange={v => setForm(prev => ({ ...prev, code: v.toUpperCase() }))}
                 placeholder="EX: SUMMER25"
@@ -253,17 +274,17 @@ export default function NewPromoPage() {
               </div>
             </div>
             <div style={fieldRow}>
-              <Label required>Remise</Label>
+              <Label htmlFor="new-remise" required>Remise</Label>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <Input value={form.discount_percent} onChange={pf("discount_percent")} type="number" placeholder="25" />
+                <Input id="new-remise" value={form.discount_percent} onChange={pf("discount_percent")} type="number" placeholder="25" />
                 <span style={{ fontSize: 20, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>%</span>
               </div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 5 }}>Entier entre 1 et 100</div>
             </div>
           </div>
           <div style={fieldRow}>
-            <Label>Nom interne</Label>
-            <Input value={form.name} onChange={pf("name")} placeholder="Ex: Campagne été 2026" />
+            <Label htmlFor="new-name">Nom interne</Label>
+            <Input id="new-name" value={form.name} onChange={pf("name")} placeholder="Ex: Campagne été 2026" />
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 5 }}>Optionnel · max 120 caractères</div>
           </div>
         </div>
@@ -271,15 +292,15 @@ export default function NewPromoPage() {
         {/* ─ Période ─ */}
         <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "24px 28px", marginBottom: 16 }}>
           <SectionTitle>Période</SectionTitle>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div className="form-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
             <div style={fieldRow}>
-              <Label>Démarre le</Label>
-              <Input value={form.starts_at} onChange={pf("starts_at")} type="datetime-local" />
+              <Label htmlFor="new-starts">Démarre le</Label>
+              <Input id="new-starts" value={form.starts_at} onChange={pf("starts_at")} type="datetime-local" />
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 5 }}>Vide = disponible immédiatement</div>
             </div>
             <div style={fieldRow}>
-              <Label>Expire le</Label>
-              <Input value={form.expires_at} onChange={pf("expires_at")} type="datetime-local" />
+              <Label htmlFor="new-expires">Expire le</Label>
+              <Input id="new-expires" value={form.expires_at} onChange={pf("expires_at")} type="datetime-local" />
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 5 }}>Vide = pas d'expiration</div>
             </div>
           </div>
@@ -289,20 +310,21 @@ export default function NewPromoPage() {
         <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "24px 28px", marginBottom: 16 }}>
           <SectionTitle>Limites</SectionTitle>
           <div style={fieldRow}>
-            <Label>Max utilisations</Label>
-            <Input value={form.max_uses} onChange={pf("max_uses")} type="number" placeholder="Illimité si vide" />
+            <Label htmlFor="new-maxuses">Nombre maximum d'utilisations</Label>
+            <Input id="new-maxuses" value={form.max_uses} onChange={pf("max_uses")} type="number" placeholder="Illimité si vide" />
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 5 }}>
-              null = illimité · entier {">"}0 pour limiter
+              Laissez vide pour un nombre d'utilisations illimité.
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0" }}>
             <Toggle
+              id="new-single-use"
               checked={form.single_use_per_user}
               onChange={v => setForm(prev => ({ ...prev, single_use_per_user: v }))}
-              label="Usage unique par utilisateur"
+              label="Usage unique par trader"
             />
           </div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", marginTop: 4 }}>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 4 }}>
             Empêche le même compte d'utiliser ce code plus d'une fois.
           </div>
         </div>
@@ -331,9 +353,9 @@ export default function NewPromoPage() {
 
           {form.targeting_mode === "specific" && (
             <>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", marginBottom: 14 }}>
-                Seuls les produits sélectionnés ci-dessous accepteront ce code.
-                Si aucun produit n'est sélectionné, le code sera refusé à l'utilisation.
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginBottom: 14 }}>
+                Seuls les produits sélectionnés accepteront ce code.
+                Si aucun n'est sélectionné, le code sera refusé à l'utilisation.
               </div>
               {products.length === 0 ? (
                 <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 12, padding: "16px 0" }}>Chargement des produits…</div>
@@ -342,9 +364,9 @@ export default function NewPromoPage() {
                   {products.map(prod => {
                     const selected = form.product_ids.includes(prod.id);
                     return (
-                      <div
+                      <label
                         key={prod.id}
-                        onClick={() => toggleProduct(prod.id)}
+                        htmlFor={`prod-${prod.id}`}
                         style={{
                           display: "flex", alignItems: "center", gap: 12,
                           padding: "10px 14px", borderRadius: 8, cursor: "pointer",
@@ -353,6 +375,14 @@ export default function NewPromoPage() {
                           transition: "all 0.1s",
                         }}
                       >
+                        <input
+                          type="checkbox"
+                          id={`prod-${prod.id}`}
+                          checked={selected}
+                          onChange={() => toggleProduct(prod.id)}
+                          style={{ position: "absolute", opacity: 0, width: 1, height: 1, overflow: "hidden" }}
+                        />
+                        {/* Custom checkbox visual */}
                         <div style={{
                           width: 16, height: 16, borderRadius: 4, flexShrink: 0,
                           background: selected ? "#3B82F6" : "transparent",
@@ -363,17 +393,22 @@ export default function NewPromoPage() {
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{prod.name}</div>
-                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 1 }}>
+                          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 1 }}>
                             {prod.account_size} · {prod.model.toUpperCase()}
                           </div>
                         </div>
-                      </div>
+                      </label>
                     );
                   })}
                 </div>
               )}
+              {form.targeting_mode === "specific" && form.product_ids.length === 0 && (
+                <div style={{ fontSize: 10, color: "rgba(239,68,68,0.7)", marginTop: 10 }}>
+                  Aucun produit sélectionné — le code sera refusé à l'utilisation.
+                </div>
+              )}
               {form.product_ids.length > 0 && (
-                <div style={{ marginTop: 10, fontSize: 11, color: "#60a5fa" }}>
+                <div style={{ marginTop: 10, fontSize: 10, color: "#60a5fa" }}>
                   {form.product_ids.length} produit{form.product_ids.length !== 1 ? "s" : ""} sélectionné{form.product_ids.length !== 1 ? "s" : ""}
                 </div>
               )}
@@ -381,7 +416,7 @@ export default function NewPromoPage() {
           )}
 
           {form.targeting_mode === "all" && (
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>
               Le code sera accepté sur tous les produits du catalogue.
             </div>
           )}
@@ -391,8 +426,8 @@ export default function NewPromoPage() {
         <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "24px 28px", marginBottom: 16 }}>
           <SectionTitle>Affiliation</SectionTitle>
           <div style={fieldRow}>
-            <Label>Affilié lié</Label>
-            <Select value={form.affiliate_user_id} onChange={pf("affiliate_user_id")}>
+            <Label htmlFor="new-affiliate">Affilié lié</Label>
+            <Select id="new-affiliate" value={form.affiliate_user_id} onChange={pf("affiliate_user_id")}>
               <option value="">Aucun</option>
               {affiliates.map(a => (
                 <option key={a.user_id} value={a.user_id}>
@@ -401,7 +436,7 @@ export default function NewPromoPage() {
               ))}
             </Select>
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 5 }}>
-              Optionnel — associe ce code à un affilié pour le tracking
+              Lier un affilié permet d'identifier le propriétaire du code. Cela ne crée pas automatiquement une commission.
             </div>
           </div>
         </div>
@@ -410,17 +445,18 @@ export default function NewPromoPage() {
         <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "24px 28px", marginBottom: 24 }}>
           <SectionTitle>Activation</SectionTitle>
           <Toggle
+            id="new-active"
             checked={form.active}
             onChange={v => setForm(prev => ({ ...prev, active: v }))}
-            label={form.active ? "Code actif dès la création" : "Code inactif (révoqué)"}
+            label={form.active ? "Code actif dès la création" : "Code inactif"}
           />
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.2)", marginTop: 10 }}>
+          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", marginTop: 10 }}>
             Un code inactif est créé mais refusé à l'utilisation. Peut être activé ultérieurement.
           </div>
         </div>
 
-        {/* Bottom CTA */}
-        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+        {/* Bottom Annuler only — Créer is in the header */}
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <a href="/x8k3pz/promotions" style={{
             padding: "10px 20px", borderRadius: 7, fontSize: 13, fontWeight: 600,
             background: "transparent", border: "1px solid rgba(255,255,255,0.12)",
@@ -428,17 +464,6 @@ export default function NewPromoPage() {
           }}>
             Annuler
           </a>
-          <button
-            onClick={submit}
-            disabled={saving}
-            style={{
-              background: "#3B82F6", border: "none", color: "#fff",
-              borderRadius: 8, padding: "10px 28px", fontSize: 13, fontWeight: 700,
-              cursor: "pointer", opacity: saving ? 0.6 : 1,
-            }}
-          >
-            {saving ? "Création…" : "Créer le code"}
-          </button>
         </div>
       </div>
     </div>

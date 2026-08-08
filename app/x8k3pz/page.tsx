@@ -284,9 +284,7 @@ function AdminPageInner() {
 
   // Promo state
   const [promosLoading, setPromosLoading] = useState(false);
-  const [newCode, setNewCode] = useState({ code: "", discount_percent: "", max_uses: "", expires_at: "" });
-  const [promoMsg, setPromoMsg] = useState("");
-  const [promoError, setPromoError] = useState("");
+
 
   // KYC state
   const [kycSubmissions, setKycSubmissions] = useState<KycSubmission[]>([]);
@@ -315,9 +313,7 @@ function AdminPageInner() {
   // Marketing Hub state
   const [marketingView, setMarketingView] = useState("overview");
   const [marketingSearch, setMarketingSearch] = useState("");
-  const [promoSearch, setPromoSearch] = useState("");
-  const [promoStatusFilter, setPromoStatusFilter] = useState("all");
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+
   const [rateEditId, setRateEditId] = useState<string | null>(null);
   const [rateEditValue, setRateEditValue] = useState("");
 
@@ -835,21 +831,6 @@ function AdminPageInner() {
     } else setCreateError(data.error || "Erreur");
   };
 
-  const createPromo = async () => {
-    if (!token || !newCode.code || !newCode.discount_percent) return;
-    setPromoError("");
-    const res = await fetch("/api/admin/promo-codes", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ code: newCode.code, discount_percent: Number(newCode.discount_percent), max_uses: newCode.max_uses ? Number(newCode.max_uses) : null, expires_at: newCode.expires_at || null }) });
-    const data = await res.json();
-    if (res.ok) { setPromos(p => [data, ...p]); setNewCode({ code: "", discount_percent: "", max_uses: "", expires_at: "" }); setPromoMsg("Code créé !"); setTimeout(() => setPromoMsg(""), 3000); }
-    else setPromoError(data.error || "Erreur");
-  };
-
-  const togglePromo = async (promo: PromoCode) => {
-    const res = await fetch("/api/admin/promo-codes", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id: promo.id, active: !promo.active }) });
-    const data = await res.json();
-    if (res.ok) setPromos(p => p.map(x => x.id === promo.id ? data : x));
-  };
-
   const [accessEmailMsg, setAccessEmailMsg] = useState<Record<string, string>>({});
   const sendAccessEmail = async (email: string) => {
     const res = await fetch("/api/admin/send-access-email", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ email }) });
@@ -864,13 +845,6 @@ function AdminPageInner() {
       setKycMsg(status === "approved" ? "✓ KYC approuvé" : "KYC refusé");
       setTimeout(() => setKycMsg(""), 3000);
     }
-  };
-
-  const deletePromo = async (id: string) => {
-    if (!token) return;
-    await fetch("/api/admin/promo-codes", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
-    setPromos(p => p.filter(x => x.id !== id));
-    setDeleteConfirmId(null);
   };
 
   const runSync = async () => {
@@ -2685,20 +2659,6 @@ function AdminPageInner() {
           const totalConversions = affiliates.reduce((s, a) => s + a.referrals.length, 0);
           const totalCommissions = affiliates.reduce((s, a) => s + a.referrals.reduce((ss, r) => ss + (r.commission_amount || 0), 0), 0);
           const topAffiliates = [...affiliates].sort((a, b) => b.referrals.length - a.referrals.length).slice(0, 5);
-
-          const promoFiltered = promos.filter(p => {
-            const isExp = p.expires_at && new Date(p.expires_at) < now;
-            const isExh = p.max_uses !== null && p.used_count >= p.max_uses;
-            const ok =
-              promoStatusFilter === "all"      ? true
-              : promoStatusFilter === "active"   ? (p.active && !isExp && !isExh)
-              : promoStatusFilter === "expired"  ? !!isExp
-              : promoStatusFilter === "revoked"  ? (!p.active && !isExp && !isExh)
-              : promoStatusFilter === "exhausted"? !!isExh
-              : true;
-            const q = promoSearch.trim().toLowerCase();
-            return ok && (q ? p.code.toLowerCase().includes(q) : true);
-          });
 
           const affiliatesFiltered = affiliates.filter(a => {
             const q = marketingSearch.trim().toLowerCase();

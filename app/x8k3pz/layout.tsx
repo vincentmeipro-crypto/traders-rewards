@@ -25,9 +25,8 @@ const NAV: NavGroup[] = [
     { id: "compta",    label: "Comptabilité",  sub: true, href: "/x8k3pz?t=compta"    },
   ]},
   { section: "MARKETING", items: [
-    { id: "affilies",    label: "Affiliés",    href: "/x8k3pz?t=affilies"   },
-    { id: "promos",      label: "Codes promo", sub: true, href: "/x8k3pz?t=promos"       },
-    { id: "promotions",  label: "Promotions",  sub: true, href: "/x8k3pz/promotions"      },
+    { id: "affilies",   label: "Affiliés",    href: "/x8k3pz?t=affilies"  },
+    { id: "promotions", label: "Promotions",  sub: true, href: "/x8k3pz/promotions"   },
   ]},
   { separator: true },
   { items: [
