@@ -366,6 +366,12 @@ function AdminPageInner() {
   const [settingsSaving, setSettingsSaving] = useState<string | null>(null); // key en cours de sauvegarde
   const [settingsMsg, setSettingsMsg] = useState<Record<string, { ok: boolean; msg: string }>>({});
 
+  // Settings & Maintenance Hub state
+  const [settingsLegacyOpen, setSettingsLegacyOpen] = useState(false);
+  const [maintenanceDangerOpen, setMaintenanceDangerOpen] = useState(false);
+  const [restoreConfirm1, setRestoreConfirm1] = useState(false);
+  const [restoreConfirm2, setRestoreConfirm2] = useState(false);
+
   const loadAdminData = async () => {
     const headers = { "x-admin-key": ADMIN_KEY };
     const [cRes, pRes, kRes, prRes] = await Promise.all([
@@ -898,12 +904,7 @@ function AdminPageInner() {
           <div>
             <div style={{ fontSize: isMobile ? 16 : 20, fontWeight: 800, color: "#fff" }}>{TAB_LABELS[tab] ?? tab}</div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {!isMobile && syncMsg && <span style={{ color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444", fontSize: 12, fontWeight: 600 }}>{syncMsg}</span>}
-            <button onClick={runSync} disabled={syncing} style={{ backgroundColor: syncing ? "rgba(255,255,255,0.08)" : "#3B82F6", color: syncing ? "rgba(255,255,255,0.35)" : "#fff", border: "none", borderRadius: 8, padding: isMobile ? "7px 12px" : "8px 18px", fontSize: isMobile ? 12 : 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer", whiteSpace: "nowrap" }}>
-              {syncing ? "Sync..." : "Sync MT5"}
-            </button>
-          </div>
+          <div />
         </div>
 
         {/* Mobile bottom nav — 6 onglets principaux uniquement */}
@@ -928,15 +929,6 @@ function AdminPageInner() {
             </div>
           );
         })()}
-        {syncDetail && (
-          <div style={{ margin: "16px 32px 0", background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: 16 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-              <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, fontWeight: 700, textTransform: "uppercase" }}>Résultat sync</span>
-              <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.45)", cursor: "pointer" }}>✕</button>
-            </div>
-            <pre style={{ color: "#fff", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap" }}>{syncDetail}</pre>
-          </div>
-        )}
         <div style={{ padding: isMobile ? "16px 12px" : "28px 32px" }}>
 
         {/* ══ COCKPIT OVERVIEW ══ */}
@@ -4298,52 +4290,191 @@ function AdminPageInner() {
         })()}
 
         {/* ── MAINTENANCE ── */}
-        {tab === "maintenance" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginBottom: 4 }}>Outils de maintenance — actions ponctuelles et réparations.</div>
-            <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 12, padding: "20px 24px" }}>
-              <div style={{ color: "#60a5fa", fontWeight: 700, fontSize: 13, marginBottom: 6 }}>Restauration clients (action unique)</div>
-              <div style={{ color: "rgba(255,255,255,0.5)", fontSize: 13, marginBottom: 16 }}>Bruno Penard · Aurélien Roussel · Régis Allidé (x2) · Samir KHELIF</div>
-              {restoreMsg && <div style={{ color: restoreMsg.startsWith("✅") ? "#22c55e" : "#f59e0b", fontSize: 13, marginBottom: 12, fontWeight: 600 }}>{restoreMsg}</div>}
-              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <button onClick={async () => {
-                  await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
-                  setRestoreMsg("📧 Email de prévisualisation envoyé à vincentmeipro@gmail.com");
-                }} style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(59,130,246,0.4)", borderRadius: 8, padding: "10px 16px", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
-                  Recevoir une copie email
-                </button>
-                <button onClick={handleRestoreChallenges} disabled={restoreLoading} style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", fontWeight: 700, fontSize: 13, cursor: restoreLoading ? "not-allowed" : "pointer", opacity: restoreLoading ? 0.6 : 1 }}>
-                  {restoreLoading ? "En cours..." : "Restaurer les dashboards"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {tab === "maintenance" && (() => {
+          const activeCount = challenges.filter(c => c.status === "active" || c.status === "funded").length;
+          const platformVersion = settingsData.find(r => r.key === "general.platform_version")?.value as string | undefined;
 
-        {/* ── SETTINGS ── V2 Phase 1 ──────────────────────────── */}
+          const integrations = [
+            { name: "Supabase",          note: "Base de donnees principale — utilisee par toutes les routes" },
+            { name: "MT5 / VPS",         note: "51.254.204.198:5000 — etat temps reel non verifie ici" },
+            { name: "Stripe",            note: "Paiements carte — configure dans Vercel Env" },
+            { name: "NOWPayments",       note: "Paiements crypto — configure dans Vercel Env" },
+            { name: "Resend",            note: "Emails transactionnels — configure dans Vercel Env" },
+            { name: "Vercel Cron",       note: "Synchronisation automatique MT5 — configure" },
+            { name: "Fingerprint / IP",  note: "Collecte des login events — actif (voir Security Center)" },
+          ];
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+              {/* 1 — Etat technique */}
+              <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Etat technique</div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
+                  {([
+                    { label: "Version",           value: platformVersion ?? "2.0" },
+                    { label: "Challenges actifs", value: String(activeCount) },
+                    { label: "Total challenges",  value: String(challenges.length) },
+                  ] as { label: string; value: string }[]).map((kpi, i) => (
+                    <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "14px 16px" }}>
+                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{kpi.label}</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{kpi.value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 4 }}>Integrations configurees</div>
+                  {integrations.map(int => (
+                    <div key={int.name} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "10px 14px", background: "#111111", borderRadius: 8, border: "1px solid rgba(255,255,255,0.05)" }}>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>{int.name}</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>{int.note}</div>
+                      </div>
+                      <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 100, whiteSpace: "nowrap", flexShrink: 0 }}>Configure</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 2 — Operations */}
+              <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Operations</div>
+
+                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 10, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Sync MT5</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>Synchronise toutes les challenges actives depuis le serveur MT5. Peut declencher des transitions de phase et des emails automatiques.</div>
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
+                    {syncMsg && <span style={{ fontSize: 12, fontWeight: 600, color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444" }}>{syncMsg}</span>}
+                    <button onClick={runSync} disabled={syncing} style={{ background: syncing ? "rgba(255,255,255,0.06)" : "#3b82f6", color: syncing ? "rgba(255,255,255,0.35)" : "#fff", border: "none", borderRadius: 8, padding: "9px 20px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
+                      {syncing ? "Synchronisation en cours..." : "Lancer la sync"}
+                    </button>
+                  </div>
+                  {syncDetail && (
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "12px 16px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, alignItems: "center" }}>
+                        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>Resultat</span>
+                        <button onClick={() => setSyncDetail("")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.35)", cursor: "pointer", fontSize: 12 }}>Fermer</button>
+                      </div>
+                      <pre style={{ color: "#fff", fontSize: 11, margin: 0, overflowX: "auto", whiteSpace: "pre-wrap", maxHeight: 360 }}>{syncDetail}</pre>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 3 — Zone dangereuse */}
+              <div style={{ background: "#0c0c0c", border: "1px solid rgba(239,68,68,0.12)", borderRadius: 12, overflow: "hidden" }}>
+                <button
+                  onClick={() => setMaintenanceDangerOpen(o => !o)}
+                  style={{ width: "100%", padding: "14px 20px", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between" }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#ef4444" }}>Zone dangereuse</span>
+                    <span style={{ fontSize: 10, color: "rgba(239,68,68,0.55)", background: "rgba(239,68,68,0.08)", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>Legacy</span>
+                  </div>
+                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>{maintenanceDangerOpen ? "Fermer" : "Afficher"}</span>
+                </button>
+
+                {maintenanceDangerOpen && (
+                  <div style={{ borderTop: "1px solid rgba(239,68,68,0.1)", padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Restauration clients</div>
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 6 }}>Operation legacy — Bruno Penard, Aurelien Roussel, Regis Allide (x2), Samir KHELIF</div>
+                      <div style={{ fontSize: 11, color: "rgba(239,68,68,0.6)" }}>Action irreversible — cree des challenges Supabase et envoie des emails automatiques aux traders.</div>
+                    </div>
+
+                    {restoreMsg && (
+                      <div style={{ fontSize: 13, fontWeight: 600, color: "#22c55e" }}>{restoreMsg}</div>
+                    )}
+
+                    {!restoreConfirm1 && !restoreConfirm2 && (
+                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                        <button
+                          onClick={async () => {
+                            await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
+                            setRestoreMsg("Email de previsualisation envoye a vincentmeipro@gmail.com");
+                          }}
+                          style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                        >
+                          Recevoir copie email
+                        </button>
+                        <button
+                          onClick={() => setRestoreConfirm1(true)}
+                          style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                        >
+                          Restaurer les dashboards
+                        </button>
+                      </div>
+                    )}
+
+                    {restoreConfirm1 && !restoreConfirm2 && (
+                      <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 10, padding: "14px 18px", display: "flex", flexDirection: "column", gap: 12 }}>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Confirmer la restauration ? (1/2)</div>
+                        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>5 challenges seront crees dans Supabase. Des emails seront envoyes a chaque trader.</div>
+                        <div style={{ display: "flex", gap: 10 }}>
+                          <button onClick={() => setRestoreConfirm1(false)} style={{ background: "transparent", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "7px 14px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                          <button onClick={() => setRestoreConfirm2(true)} style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer — etape 2/2</button>
+                        </div>
+                      </div>
+                    )}
+
+                    {restoreConfirm1 && restoreConfirm2 && (
+                      <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "14px 18px", display: "flex", flexDirection: "column", gap: 12 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444" }}>Derniere confirmation — action irreversible</div>
+                        <div style={{ display: "flex", gap: 10 }}>
+                          <button onClick={() => { setRestoreConfirm1(false); setRestoreConfirm2(false); }} style={{ background: "transparent", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "7px 14px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                          <button
+                            onClick={async () => { setRestoreConfirm1(false); setRestoreConfirm2(false); await handleRestoreChallenges(); }}
+                            disabled={restoreLoading}
+                            style={{ background: restoreLoading ? "rgba(239,68,68,0.3)" : "#ef4444", color: "#fff", border: "none", borderRadius: 8, padding: "7px 16px", fontSize: 12, fontWeight: 700, cursor: restoreLoading ? "not-allowed" : "pointer" }}
+                          >
+                            {restoreLoading ? "En cours..." : "Executer la restauration"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+            </div>
+          );
+        })()}
+
+        {/* ── SETTINGS ── V2 Phase 2D-H ─────────────────────────── */}
         {tab === "settings" && (() => {
-          const CATEGORY_LABELS: Record<string, string> = {
-            branding:   "🎨 Branding",
-            trading:    "📈 Trading / MT5 Groups",
-            challenges: "🎯 Challenges (defaults globaux)",
-            payouts:    "💰 Payouts",
-            emails:     "✉️ Emails",
-            general:    "⚙️ Général",
+          const pendingEditCount = Object.keys(settingsEdit).length;
+
+          const KEY_LABELS: Record<string, string> = {
+            "branding.brand_name":           "Nom de la plateforme",
+            "branding.site_url":             "URL du site",
+            "branding.logo_url":             "URL du logo",
+            "branding.support_email":        "Email de support",
+            "branding.sender_name":          "Nom expediteur",
+            "branding.sender_email":         "Email expediteur",
+            "general.platform_version":      "Version plateforme",
+            "trading.mt5_group_2step":       "Groupe 2-Step — Challenge",
+            "trading.mt5_group_1step":       "Groupe 1-Step — Challenge",
+            "trading.mt5_group_funded_2step":"Groupe 2-Step — Funded",
+            "trading.mt5_group_funded_1step":"Groupe 1-Step — Funded",
+            "trading.mt5_group_disabled":    "Groupe desactive",
+            "payouts.profit_split_1step":    "Profit split 1-Step (%)",
+            "payouts.profit_split_2step":    "Profit split 2-Step (%)",
+            "challenges.profit_target":      "Objectif de profit (%)",
+            "challenges.daily_dd_1step":     "Drawdown journalier 1-Step (%)",
+            "challenges.daily_dd_2step":     "Drawdown journalier 2-Step (%)",
+            "challenges.total_dd_default":   "Drawdown total (%)",
           };
-          const grouped = settingsData.reduce((acc: Record<string, SettingRow[]>, row) => {
-            if (!acc[row.category]) acc[row.category] = [];
-            acc[row.category].push(row);
-            return acc;
-          }, {});
 
           const saveSetting = async (key: string) => {
-                    const rawVal = settingsEdit[key];
+            const rawVal = settingsEdit[key];
             if (rawVal === undefined) return;
-            // Tenter de parser en nombre si possible
             let value: unknown = rawVal;
             const num = Number(rawVal);
             if (rawVal.trim() !== "" && !isNaN(num)) value = num;
-
             setSettingsSaving(key);
             try {
               const res = await fetch("/api/admin/settings", {
@@ -4353,33 +4484,93 @@ function AdminPageInner() {
               });
               const data = await res.json();
               if (data.success) {
-                setSettingsMsg(p => ({ ...p, [key]: { ok: true, msg: "✓ Sauvegardé" } }));
-                // Mettre à jour la liste locale
+                setSettingsMsg(p => ({ ...p, [key]: { ok: true, msg: "Sauvegarde" } }));
                 setSettingsData(prev => prev.map(r => r.key === key ? { ...r, value } : r));
                 setSettingsEdit(p => { const n = { ...p }; delete n[key]; return n; });
               } else {
                 setSettingsMsg(p => ({ ...p, [key]: { ok: false, msg: data.error || "Erreur" } }));
               }
             } catch {
-              setSettingsMsg(p => ({ ...p, [key]: { ok: false, msg: "Erreur réseau" } }));
+              setSettingsMsg(p => ({ ...p, [key]: { ok: false, msg: "Erreur reseau" } }));
             } finally {
               setSettingsSaving(null);
               setTimeout(() => setSettingsMsg(p => { const n = { ...p }; delete n[key]; return n; }), 3000);
             }
           };
 
+          const renderEditable = (row: SettingRow) => {
+            const currentEdit = settingsEdit[row.key];
+            const displayVal = typeof row.value === "string" ? row.value : JSON.stringify(row.value);
+            const editVal = currentEdit !== undefined ? currentEdit : displayVal;
+            const isDirty = currentEdit !== undefined;
+            const msg = settingsMsg[row.key];
+            const saving = settingsSaving === row.key;
+            return (
+              <div key={row.key} style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.04)", flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 180 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", marginBottom: 2 }}>{KEY_LABELS[row.key] || row.key}</div>
+                  {row.description && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 3 }}>{row.description}</div>}
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)", fontFamily: "monospace" }}>{row.key}</div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0, flexWrap: "wrap" }}>
+                  <input
+                    value={editVal}
+                    onChange={e => setSettingsEdit(p => ({ ...p, [row.key]: e.target.value }))}
+                    style={{ background: isDirty ? "rgba(96,165,250,0.08)" : "#111111", border: `1px solid ${isDirty ? "#60a5fa" : "rgba(255,255,255,0.08)"}`, borderRadius: 8, padding: "7px 12px", color: "#fff", fontSize: 12, fontFamily: "monospace", width: 240, outline: "none" }}
+                  />
+                  {isDirty && (
+                    <button onClick={() => saveSetting(row.key)} disabled={saving} style={{ background: saving ? "#374151" : "#60a5fa", border: "none", borderRadius: 8, color: saving ? "rgba(255,255,255,0.4)" : "#000", padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
+                      {saving ? "..." : "Enregistrer"}
+                    </button>
+                  )}
+                  {isDirty && !saving && (
+                    <button onClick={() => setSettingsEdit(p => { const n = { ...p }; delete n[row.key]; return n; })} style={{ background: "none", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, color: "rgba(255,255,255,0.35)", padding: "7px 10px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                  )}
+                  {msg && <span style={{ fontSize: 11, fontWeight: 700, color: msg.ok ? "#22c55e" : "#ef4444" }}>{msg.msg}</span>}
+                </div>
+              </div>
+            );
+          };
+
+          const renderReadOnly = (row: SettingRow, hint?: string) => {
+            const displayVal = typeof row.value === "string" ? row.value : JSON.stringify(row.value);
+            return (
+              <div key={row.key} style={{ display: "flex", alignItems: "flex-start", gap: 16, padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.04)", flexWrap: "wrap" }}>
+                <div style={{ flex: 1, minWidth: 180 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.6)", marginBottom: 2 }}>{KEY_LABELS[row.key] || row.key}</div>
+                  {(hint || row.description) && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginBottom: 3 }}>{hint || row.description}</div>}
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.15)", fontFamily: "monospace" }}>{row.key}</div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
+                  <span style={{ fontFamily: "monospace", fontSize: 12, color: "rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.04)", padding: "7px 12px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.06)" }}>{displayVal}</span>
+                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.04)", padding: "3px 8px", borderRadius: 100, whiteSpace: "nowrap" }}>Lecture seule</span>
+                </div>
+              </div>
+            );
+          };
+
+          const brandingRows   = settingsData.filter(r => r.category === "branding");
+          const tradingRows    = settingsData.filter(r => r.category === "trading");
+          const payoutsRows    = settingsData.filter(r => r.category === "payouts");
+          const challengesRows = settingsData.filter(r => r.category === "challenges");
+          const generalRows    = settingsData.filter(r => r.category === "general");
+
           return (
-            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
               {/* Header */}
-              <div style={{ background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "20px 24px" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-                  <div>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 4 }}>⚙️ Paramètres de la plateforme</div>
-                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>
-                      V2 Phase 1 — Les modifications prennent effet dans les 5 minutes (cache TTL).<br/>
-                      <span style={{ color: "#f59e0b" }}>⚠ Ne jamais stocker des secrets ici (Stripe keys, API keys, passwords)</span>
-                    </div>
-                  </div>
+              <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Parametres</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Les modifications prennent effet sous 5 minutes (cache serveur). Ne jamais stocker de secrets ici.</div>
+                </div>
+                <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                  {pendingEditCount > 0 && (
+                    <>
+                      <span style={{ fontSize: 12, color: "#f59e0b", fontWeight: 600 }}>{pendingEditCount} modification{pendingEditCount > 1 ? "s" : ""} non sauvegardee{pendingEditCount > 1 ? "s" : ""}</span>
+                      <button onClick={() => setSettingsEdit({})} style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "5px 12px", cursor: "pointer" }}>Annuler tout</button>
+                    </>
+                  )}
                   <button
                     onClick={() => {
                       setSettingsData([]); setSettingsLoading(true);
@@ -4387,97 +4578,79 @@ function AdminPageInner() {
                         .then(r => r.json()).then(d => { if (d.settings) setSettingsData(d.settings); })
                         .finally(() => setSettingsLoading(false));
                     }}
-                    style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.3)", borderRadius: 8, color: "#60A5FA", padding: "8px 16px", fontSize: 12, cursor: "pointer", fontWeight: 600 }}
+                    style={{ fontSize: 12, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600 }}
                   >
-                    ↻ Rafraîchir
+                    Rafraichir
                   </button>
                 </div>
               </div>
 
-              {settingsLoading && (
-                <div style={{ textAlign: "center", padding: 60, color: "rgba(255,255,255,0.3)" }}>Chargement des settings…</div>
-              )}
+              {settingsLoading && <div style={{ padding: 60, textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Chargement des parametres...</div>}
 
               {!settingsLoading && settingsData.length === 0 && (
-                <div style={{ textAlign: "center", padding: 40, color: "#ef4444", background: "#ef444410", borderRadius: 8, border: "1px solid #ef444430" }}>
-                  <div style={{ fontWeight: 700, marginBottom: 8 }}>⚠ Settings non chargés</div>
-                  <div style={{ fontSize: 13, opacity: 0.8 }}>{settingsApiError || "Erreur inconnue"}</div>
-                  <div style={{ fontSize: 11, marginTop: 12, color: "rgba(255,255,255,0.3)" }}>Détails dans la console navigateur (F12)</div>
+                <div style={{ padding: "24px", background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 10, textAlign: "center" }}>
+                  <div style={{ fontWeight: 700, color: "#ef4444", marginBottom: 6, fontSize: 13 }}>Parametres non charges</div>
+                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{settingsApiError || "Erreur inconnue — verifier la console navigateur"}</div>
                 </div>
               )}
 
-              {/* Settings par catégorie */}
-              {Object.entries(CATEGORY_LABELS).map(([cat, catLabel]) => {
-                const rows = grouped[cat] || [];
-                if (rows.length === 0) return null;
-                const isCritical = cat === "trading" || cat === "challenges" || cat === "payouts";
-                return (
-                  <div key={cat} style={{ background: "#111", border: `1px solid ${isCritical ? "rgba(239,68,68,0.2)" : "rgba(255,255,255,0.1)"}`, borderRadius: 12, overflow: "hidden" }}>
-                    <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>{catLabel}</span>
-                      {isCritical && <span style={{ fontSize: 10, background: "#ef444415", color: "#ef4444", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>CRITIQUE — fallback logué</span>}
-                      {cat === "challenges" && <span style={{ fontSize: 10, background: "#f59e0b15", color: "#f59e0b", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>DEFAULTS GLOBAUX Phase 1</span>}
-                    </div>
-                    <div style={{ padding: "8px 0" }}>
-                      {rows.map(row => {
-                        const currentEdit = settingsEdit[row.key];
-                        const displayVal = typeof row.value === "string" ? row.value : JSON.stringify(row.value);
-                        const editVal = currentEdit !== undefined ? currentEdit : displayVal;
-                        const isDirty = currentEdit !== undefined;
-                        const msg = settingsMsg[row.key];
-                        const saving = settingsSaving === row.key;
-                        return (
-                          <div key={row.key} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", marginBottom: 2, fontFamily: "monospace" }}>{row.key}</div>
-                              {row.description && <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 6 }}>{row.description}</div>}
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>
-                                Modifié le {new Date(row.updated_at).toLocaleString("fr-FR")}
-                              </div>
-                            </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                              <input
-                                value={editVal}
-                                onChange={e => setSettingsEdit(p => ({ ...p, [row.key]: e.target.value }))}
-                                style={{
-                                  background: isDirty ? "rgba(96,165,250,0.08)" : "rgba(255,255,255,0.05)",
-                                  border: `1px solid ${isDirty ? "#60A5FA" : "rgba(255,255,255,0.1)"}`,
-                                  borderRadius: 6, padding: "6px 10px", color: "#fff",
-                                  fontSize: 12, fontFamily: "monospace", width: 260, outline: "none",
-                                }}
-                              />
-                              {isDirty && (
-                                <button
-                                  onClick={() => saveSetting(row.key)}
-                                  disabled={saving}
-                                  style={{
-                                    background: saving ? "#374151" : "#60A5FA",
-                                    border: "none", borderRadius: 6, color: saving ? "rgba(255,255,255,0.4)" : "#000",
-                                    padding: "6px 14px", fontSize: 12, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer",
-                                  }}
-                                >
-                                  {saving ? "…" : "Sauvegarder"}
-                                </button>
-                              )}
-                              {isDirty && !saving && (
-                                <button
-                                  onClick={() => setSettingsEdit(p => { const n = { ...p }; delete n[row.key]; return n; })}
-                                  style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, color: "rgba(255,255,255,0.35)", padding: "6px 10px", fontSize: 12, cursor: "pointer" }}
-                                >
-                                  ✕
-                                </button>
-                              )}
-                              {msg && (
-                                <span style={{ fontSize: 11, fontWeight: 700, color: msg.ok ? "#22c55e" : "#ef4444" }}>{msg.msg}</span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+              {/* Section 1 — Plateforme */}
+              {(brandingRows.length > 0 || generalRows.length > 0) && (
+                <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700, marginBottom: 16 }}>Plateforme</div>
+                  {brandingRows.map(row => renderEditable(row))}
+                  {generalRows.map(row => renderReadOnly(row, "Valeur indicative — aucun impact fonctionnel"))}
+                </div>
+              )}
+
+              {/* Section 2 — MT5 Groups */}
+              {tradingRows.length > 0 && (
+                <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>MT5 Groups</div>
+                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", background: "rgba(255,255,255,0.04)", padding: "2px 8px", borderRadius: 100 }}>Lecture seule</span>
                   </div>
-                );
-              })}
+                  <div style={{ fontSize: 12, color: "rgba(245,158,11,0.8)", background: "rgba(245,158,11,0.05)", border: "1px solid rgba(245,158,11,0.12)", borderRadius: 8, padding: "10px 14px", marginBottom: 12 }}>
+                    Les groupes effectifs sont definis dans le moteur MT5. Ces valeurs sont affichees a titre de reference uniquement.
+                  </div>
+                  {tradingRows.map(row => renderReadOnly(row))}
+                </div>
+              )}
+
+              {/* Section 3 — Rewards & Emails */}
+              {(payoutsRows.length > 0 || challengesRows.length > 0) && (
+                <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1, fontWeight: 700, marginBottom: 12 }}>Rewards et Emails</div>
+                  {payoutsRows.length > 0 && (
+                    <>
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "10px 14px", marginBottom: 12 }}>
+                        Ces valeurs sont affichees dans les emails automatiques (funded, mise a jour quotidienne). Verifier la coherence avec Product Builder.
+                      </div>
+                      {payoutsRows.map(row => renderEditable(row))}
+                    </>
+                  )}
+                  {challengesRows.length > 0 && (
+                    <div style={{ marginTop: payoutsRows.length > 0 ? 16 : 0 }}>
+                      <button
+                        onClick={() => setSettingsLegacyOpen(o => !o)}
+                        style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "10px 14px", cursor: "pointer", color: "rgba(255,255,255,0.45)", fontSize: 12 }}
+                      >
+                        <span style={{ fontWeight: 600 }}>Valeurs legacy ({challengesRows.length})</span>
+                        <span>{settingsLegacyOpen ? "Masquer" : "Afficher"}</span>
+                      </button>
+                      {settingsLegacyOpen && (
+                        <div style={{ paddingTop: 12 }}>
+                          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 10 }}>
+                            Ces valeurs servent uniquement de fallback pour les anciens flux. Product Builder est la source de verite pour les nouveaux produits.
+                          </div>
+                          {challengesRows.map(row => renderReadOnly(row))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
             </div>
           );
         })()}
