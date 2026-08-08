@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkAdmin } from "@/lib/admin-auth";
+import {
+  normalizeCode,
+  validateCode,
+  validateName,
+  validateDiscount,
+  validateMaxUses,
+  parseDate,
+} from "@/lib/promo-admin";
 
 // GET: all affiliates with their referrals
 export async function GET(req: NextRequest) {
@@ -43,20 +51,61 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  // Create promo code for affiliate
+  // ── create_promo ──────────────────────────────────────────────────────────
+  //
+  // Utilise les mêmes helpers de validation que /api/admin/promo-codes (POST).
+  // Defaults sûrs pour les promos affilié :
+  //   targeting_mode      = 'all'   (toujours)
+  //   single_use_per_user = false   (toujours)
+  //   starts_at           = null    (toujours)
+  //
+  // Pas de product targeting pour les promos affilié.
+  // Code UNIQUE vérifié par la contrainte DB (→ 409 propre si doublon).
+
   if (body.action === "create_promo") {
-    const { code, discount_percent, max_uses, expires_at, affiliate_user_id } = body;
-    if (!code || !discount_percent) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    const { code, discount_percent, max_uses, expires_at, affiliate_user_id, name } = body;
+
+    // Validation code
+    const codeRaw = normalizeCode(code);
+    if (!codeRaw) return NextResponse.json({ error: "code requis" }, { status: 400 });
+    const codeErr = validateCode(codeRaw);
+    if (codeErr) return NextResponse.json({ error: codeErr }, { status: 400 });
+
+    // Validation name (optionnel)
+    const nameRes = validateName(name);
+    if (nameRes.error) return NextResponse.json({ error: nameRes.error }, { status: 400 });
+
+    // Validation discount
+    const discountRes = validateDiscount(discount_percent);
+    if (discountRes.error) return NextResponse.json({ error: discountRes.error }, { status: 400 });
+
+    // Validation max_uses
+    const maxUsesRes = validateMaxUses(max_uses);
+    if (maxUsesRes.error) return NextResponse.json({ error: maxUsesRes.error }, { status: 400 });
+
+    // Validation expires_at
+    const expiresRes = parseDate(expires_at);
+    if (expiresRes.error) return NextResponse.json({ error: `expires_at: ${expiresRes.error}` }, { status: 400 });
+
     const { data, error } = await admin.from("promo_codes").insert({
-      code: code.toUpperCase().trim(),
-      discount_percent: Number(discount_percent),
-      max_uses: max_uses ? Number(max_uses) : null,
-      expires_at: expires_at || null,
-      active: true,
-      affiliate_user_id: affiliate_user_id || null,
+      code:                codeRaw,
+      name:                nameRes.value,
+      discount_percent:    discountRes.value,
+      max_uses:            maxUsesRes.value,
+      expires_at:          expiresRes.value,
+      starts_at:           null,   // toujours null pour les promos affilié
+      active:              true,
+      targeting_mode:      "all",  // toujours 'all' pour les promos affilié
+      single_use_per_user: false,  // toujours false pour les promos affilié
+      affiliate_user_id:   affiliate_user_id || null,
     }).select().single();
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json(data);
+
+    if (error) {
+      if (error.code === "23505") return NextResponse.json({ error: "Code déjà existant" }, { status: 409 });
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    // product_ids toujours [] pour les promos affilié (targeting_mode='all')
+    return NextResponse.json({ ...data, product_ids: [] });
   }
 
   // Update commission rate
