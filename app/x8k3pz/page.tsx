@@ -324,6 +324,11 @@ function AdminPageInner() {
   // Analytics Hub state
   const [analyticsView, setAnalyticsView] = useState("overview");
 
+  // Security Center state
+  const [securityView, setSecurityView] = useState("overview");
+  const [securitySearch, setSecuritySearch] = useState("");
+  const [ipMismatchShowAll, setIpMismatchShowAll] = useState(false);
+
   // Create challenge state
   const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true, type: "challenge" as "challenge" | "reward" });
   const [createLoading, setCreateLoading] = useState(false);
@@ -3926,258 +3931,371 @@ function AdminPageInner() {
           );
         })()}
 
-        {tab === "securite" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        {tab === "securite" && (() => {
+          // ── Helpers ──────────────────────────────────────────────────────
+          const parseUA = (ua: string): string => {
+            if (!ua) return "—";
+            const chromeM = ua.match(/Chrome\/(\d+)/);
+            const firefoxM = ua.match(/Firefox\/(\d+)/);
+            const edgeM = ua.match(/Edg\/(\d+)/);
+            let browser = "Navigateur";
+            if (edgeM) browser = `Edge ${edgeM[1]}`;
+            else if (chromeM && !ua.includes("Edg")) browser = `Chrome ${chromeM[1]}`;
+            else if (firefoxM) browser = `Firefox ${firefoxM[1]}`;
+            else if (ua.includes("Safari") && !ua.includes("Chrome")) browser = "Safari";
+            let os = "Systeme";
+            if (ua.includes("Windows NT")) os = "Windows";
+            else if (ua.includes("Android")) os = "Android";
+            else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+            else if (ua.includes("Mac OS X")) os = "macOS";
+            else if (ua.includes("Linux")) os = "Linux";
+            return `${browser} · ${os}`;
+          };
 
-            {/* KPIs sécurité */}
-            {securityData && (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
-                {[
-                  { label: "Connexions totales", value: securityData.events.length, color: "#fff" },
-                  { label: "IPs partagées", value: securityData.shared_ips.length, color: securityData.shared_ips.length > 0 ? "#ef4444" : "#22c55e" },
-                  { label: "Appareils partagés", value: securityData.shared_fingerprints.length, color: securityData.shared_fingerprints.length > 0 ? "#ef4444" : "#22c55e" },
-                  { label: "Connexions VPN", value: securityData.vpn_users.length, color: securityData.vpn_users.length > 0 ? "#f59e0b" : "#22c55e" },
-                ].map((s, i) => (
-                  <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "16px 20px" }}>
-                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{s.label}</div>
-                    <div style={{ fontSize: 26, fontWeight: 900, color: s.color }}>{s.value}</div>
-                  </div>
+          const copyText = (text: string) => { navigator.clipboard.writeText(text); };
+          const goToCRM = (email: string) => { setCrmSearch(email); setCrmExpanded(email); setTab("crm"); };
+
+          // ── VPN deduplication (traders uniques) ──────────────────────────
+          const vpnTraderMap = new Map<string, { last: LoginEvent; first: LoginEvent }>();
+          if (securityData) {
+            for (const e of securityData.vpn_users) {
+              const ex = vpnTraderMap.get(e.user_email);
+              if (!ex) vpnTraderMap.set(e.user_email, { last: e, first: e });
+              else vpnTraderMap.set(e.user_email, { last: ex.last, first: e });
+            }
+          }
+          const uniqueVpnTraders = Array.from(vpnTraderMap.entries()).map(([email, d]) => ({ email, ...d }));
+
+          // ── IP mismatch table ─────────────────────────────────────────────
+          const lastLoginByEmail = new Map<string, string>();
+          if (securityData) {
+            for (const e of securityData.events) {
+              if (!lastLoginByEmail.has(e.user_email)) lastLoginByEmail.set(e.user_email, e.ip);
+            }
+          }
+          const mt5ByEmail = new Map<string, MT5Session[]>();
+          for (const s of mt5Sessions) {
+            if (!mt5ByEmail.has(s.user_email)) mt5ByEmail.set(s.user_email, []);
+            mt5ByEmail.get(s.user_email)!.push(s);
+          }
+          const ipEmails = Array.from(new Set([...Array.from(lastLoginByEmail.keys()), ...Array.from(mt5ByEmail.keys())]));
+          const ipRows = ipEmails.map(email => {
+            const loginIP = lastLoginByEmail.get(email) || null;
+            const sessions = mt5ByEmail.get(email) || [];
+            const mt5IPs = [...new Set(sessions.map(s => s.last_ip).filter((ip): ip is string => !!ip))];
+            const regIP = profiles.find(p => p.email === email)?.registration_ip || null;
+            const mismatch = !!(regIP && loginIP && regIP !== loginIP);
+            const mt5Mismatch = !!(loginIP && mt5IPs.length > 0 && !mt5IPs.includes(loginIP));
+            return { email, loginIP, mt5IPs, regIP, mismatch, mt5Mismatch, hasAlert: mismatch || mt5Mismatch };
+          });
+          const mismatchRows = ipRows.filter(r => r.hasAlert);
+          const displayedRows = ipMismatchShowAll ? ipRows : mismatchRows;
+
+          // ── À investiguer ─────────────────────────────────────────────────
+          const investigations: { type: "SIGNAL" | "ATTENTION"; label: string; emails: string[] }[] = [];
+          if (securityData) {
+            for (const fp of securityData.shared_fingerprints.filter(f => f.count >= 3))
+              investigations.push({ type: "ATTENTION", label: `Fingerprint partage — ${fp.count} comptes`, emails: fp.emails });
+            for (const ip of securityData.shared_ips.filter(i => i.count >= 5))
+              investigations.push({ type: "ATTENTION", label: `IP partagee ${ip.ip} — ${ip.count} comptes`, emails: ip.emails });
+            for (const fp of securityData.shared_fingerprints.filter(f => f.count === 2))
+              investigations.push({ type: "SIGNAL", label: `Fingerprint partage — 2 comptes`, emails: fp.emails });
+            for (const ip of securityData.shared_ips.filter(i => i.count >= 2 && i.count < 5))
+              investigations.push({ type: "SIGNAL", label: `IP partagee ${ip.ip} — ${ip.count} comptes`, emails: ip.emails });
+            for (const p of profiles.filter(p => p.registration_is_vpn && p.email))
+              investigations.push({ type: "SIGNAL", label: `Inscription via VPN`, emails: [p.email!] });
+          }
+          const topInvestigations = investigations.slice(0, 8);
+
+          // ── Activity search filter ─────────────────────────────────────────
+          const filteredEvents = (securityData?.events || [])
+            .filter(e => !securitySearch || e.user_email.toLowerCase().includes(securitySearch.toLowerCase()))
+            .slice(0, 100);
+
+          // ── Sub-nav ───────────────────────────────────────────────────────
+          const secViews = [
+            { id: "overview", label: "Vue d'ensemble" },
+            { id: "ips",      label: "IP partagees" },
+            { id: "devices",  label: "Appareils" },
+            { id: "activity", label: "Activite" },
+          ];
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+              {/* Sub-navigation */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                {secViews.map(v => (
+                  <button key={v.id} onClick={() => setSecurityView(v.id)} style={{
+                    padding: "8px 16px", borderRadius: 8, fontSize: 13, cursor: "pointer", fontWeight: securityView === v.id ? 700 : 400,
+                    backgroundColor: securityView === v.id ? "rgba(255,255,255,0.1)" : "transparent",
+                    border: `1px solid ${securityView === v.id ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)"}`,
+                    color: securityView === v.id ? "#fff" : "rgba(255,255,255,0.45)",
+                  }}>{v.label}</button>
                 ))}
+                <button onClick={() => loadSecurity()} style={{ marginLeft: "auto", padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "transparent", color: "rgba(255,255,255,0.45)", fontSize: 12, cursor: "pointer" }}>Rafraichir</button>
               </div>
-            )}
 
-            {securityLoading && <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.3)" }}>Chargement…</div>}
+              {securityLoading && (
+                <div style={{ padding: 60, textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Chargement…</div>
+              )}
 
-            {securityData && (
-              <>
-                {/* IPs partagées entre comptes */}
-                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 18 }}>🚨</span>
-                    <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>IPs partagées entre plusieurs comptes</span>
-                    {securityData.shared_ips.length === 0 && <span style={{ marginLeft: "auto", color: "#22c55e", fontSize: 12, fontWeight: 700 }}>✓ Aucune détection</span>}
+              {!securityLoading && !securityData && (
+                <div style={{ padding: 60, textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucune donnee. Cliquez sur Rafraichir.</div>
+              )}
+
+              {/* ── OVERVIEW ──────────────────────────────────────────────── */}
+              {securityData && securityView === "overview" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 16 }}>
+                    {[
+                      { label: "Signaux IP",        value: securityData.shared_ips.length,          sub: "IPs partagees entre 2+ comptes" },
+                      { label: "Signaux Appareil",   value: securityData.shared_fingerprints.length, sub: "Fingerprints partages" },
+                      { label: "Traders VPN",        value: uniqueVpnTraders.length,                 sub: "Traders uniques (dedupliques)" },
+                      { label: "Connexions tracees", value: securityData.events.length,              sub: "500 derniers events" },
+                    ].map((kpi, i) => (
+                      <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 20px" }}>
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8 }}>{kpi.label}</div>
+                        <div style={{ fontSize: 28, fontWeight: 900, color: "#fff", marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>{kpi.value}</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{kpi.sub}</div>
+                      </div>
+                    ))}
                   </div>
-                  {securityData.shared_ips.length === 0 ? (
-                    <div style={{ padding: 32, textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucune IP partagée détectée</div>
-                  ) : (
-                    <div style={{ overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
-                          {["IP", "Pays", "Comptes concernés", "Nb comptes", "Dernière connexion"].map(h => (
-                            <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
-                          ))}
-                        </tr></thead>
-                        <tbody>
-                          {securityData.shared_ips.map((item, i) => (
-                            <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: item.count >= 3 ? "#ef444412" : "transparent" }}>
-                              <td style={{ padding: "12px 14px", fontFamily: "monospace", fontWeight: 700, color: "#fff" }}>{item.ip}</td>
-                              <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{item.events[0]?.country || "—"}</td>
-                              <td style={{ padding: "12px 14px" }}>
-                                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                  {item.emails.map((email, j) => (
-                                    <span key={j} style={{ fontSize: 12, color: "#60A5FA", background: "rgba(96,165,250,0.1)", padding: "2px 8px", borderRadius: 6, display: "inline-block", width: "fit-content" }}>{email}</span>
-                                  ))}
-                                </div>
-                              </td>
-                              <td style={{ padding: "12px 14px" }}>
-                                <span style={{ background: item.count >= 3 ? "#ef444415" : "#f59e0b15", color: item.count >= 3 ? "#ef4444" : "#f59e0b", padding: "3px 10px", borderRadius: 100, fontSize: 12, fontWeight: 800 }}>{item.count} comptes</span>
-                              </td>
-                              <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.3)", fontSize: 11 }}>{new Date(item.events[0]?.created_at).toLocaleString("fr-FR")}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
 
-                {/* Appareils partagés */}
-                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 18 }}>💻</span>
-                    <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Appareils partagés entre plusieurs comptes</span>
-                    {securityData.shared_fingerprints.length === 0 && <span style={{ marginLeft: "auto", color: "#22c55e", fontSize: 12, fontWeight: 700 }}>✓ Aucune détection</span>}
-                  </div>
-                  {securityData.shared_fingerprints.length === 0 ? (
-                    <div style={{ padding: 32, textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucun appareil partagé détecté</div>
-                  ) : (
-                    <div style={{ overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
-                          {["Fingerprint", "Comptes concernés", "Nb comptes", "OS / Navigateur", "Dernière connexion"].map(h => (
-                            <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
-                          ))}
-                        </tr></thead>
-                        <tbody>
-                          {securityData.shared_fingerprints.map((item, i) => (
-                            <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.05)", background: "#ef444412" }}>
-                              <td style={{ padding: "12px 14px", fontFamily: "monospace", fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{item.fingerprint.slice(0, 16)}…</td>
-                              <td style={{ padding: "12px 14px" }}>
-                                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                                  {item.emails.map((email, j) => (
-                                    <span key={j} style={{ fontSize: 12, color: "#ef4444", background: "#ef444410", padding: "2px 8px", borderRadius: 6, display: "inline-block", width: "fit-content" }}>{email}</span>
-                                  ))}
-                                </div>
-                              </td>
-                              <td style={{ padding: "12px 14px" }}>
-                                <span style={{ background: "#ef444415", color: "#ef4444", padding: "3px 10px", borderRadius: 100, fontSize: 12, fontWeight: 800 }}>{item.count} comptes</span>
-                              </td>
-                              <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.45)", fontSize: 11 }}>{item.events[0]?.user_agent?.slice(0, 60) || "—"}</td>
-                              <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.3)", fontSize: 11 }}>{new Date(item.events[0]?.created_at).toLocaleString("fr-FR")}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-
-                {/* Connexions VPN */}
-                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 18 }}>🛡️</span>
-                    <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Connexions via VPN / Proxy détectées</span>
-                    {securityData.vpn_users.length === 0 && <span style={{ marginLeft: "auto", color: "#22c55e", fontSize: 12, fontWeight: 700 }}>✓ Aucune détection</span>}
-                  </div>
-                  {securityData.vpn_users.length === 0 ? (
-                    <div style={{ padding: 32, textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucune connexion VPN détectée</div>
-                  ) : (
-                    <div style={{ overflowX: "auto" }}>
-                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
-                          {["Trader", "IP", "Pays", "Date"].map(h => (
-                            <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
-                          ))}
-                        </tr></thead>
-                        <tbody>
-                          {securityData.vpn_users.map((e, i) => (
-                            <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                              <td style={{ padding: "12px 14px", color: "#60A5FA", fontSize: 13 }}>{e.user_email}</td>
-                              <td style={{ padding: "12px 14px", fontFamily: "monospace", fontSize: 12, color: "#fff" }}>{e.ip}</td>
-                              <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{e.country}</td>
-                              <td style={{ padding: "12px 14px", color: "rgba(255,255,255,0.3)", fontSize: 11 }}>{new Date(e.created_at).toLocaleString("fr-FR")}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </div>
-
-                {/* ── Comparaison IP Inscription vs Login vs MT5 ── */}
-                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 18 }}>🔍</span>
-                    <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Comparaison IP : Inscription vs Login vs MT5</span>
-                    {mt5Loading && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Chargement MT5…</span>}
-                  </div>
-                  <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                      <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
-                        {["Trader", "IP Inscription", "IP Dernière Connexion Site", "IP Trading MT5", "Statut"].map(h => (
-                          <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>A investiguer</div>
+                    {topInvestigations.length === 0 ? (
+                      <div style={{ padding: "24px 0", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucun signal a investiguer</div>
+                    ) : (
+                      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                        {topInvestigations.map((item, i) => (
+                          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 16px", background: "#111111", borderRadius: 10, border: `1px solid ${item.type === "ATTENTION" ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.06)"}` }}>
+                            <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 100, flexShrink: 0, marginTop: 1, backgroundColor: item.type === "ATTENTION" ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.07)", color: item.type === "ATTENTION" ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{item.type}</span>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: 13, color: "#fff", marginBottom: 6 }}>{item.label}</div>
+                              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                                {item.emails.filter(Boolean).map((email, j) => (
+                                  <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 11, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.15)", borderRadius: 6, padding: "2px 8px", cursor: "pointer" }}>{email}</button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
                         ))}
-                      </tr></thead>
-                      <tbody>
-                        {(() => {
-                          // Grouper les events par email pour avoir la dernière IP de login
-                          const lastLoginByEmail = new Map<string, string>();
-                          if (securityData) {
-                            for (const e of securityData.events) {
-                              if (!lastLoginByEmail.has(e.user_email)) lastLoginByEmail.set(e.user_email, e.ip);
-                            }
-                          }
-                          // Grouper les MT5 sessions par email
-                          const mt5ByEmail = new Map<string, MT5Session[]>();
-                          for (const s of mt5Sessions) {
-                            if (!mt5ByEmail.has(s.user_email)) mt5ByEmail.set(s.user_email, []);
-                            mt5ByEmail.get(s.user_email)!.push(s);
-                          }
-                          // Construire la liste unique des traders depuis challenges
-                          const emails = Array.from(new Set([
-                            ...Array.from(lastLoginByEmail.keys()),
-                            ...Array.from(mt5ByEmail.keys()),
-                          ]));
-                          if (emails.length === 0) return (
-                            <tr><td colSpan={5} style={{ padding: 24, textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucune donnée disponible</td></tr>
-                          );
-                          return emails.map((email, i) => {
-                            const loginIP = lastLoginByEmail.get(email) || null;
-                            const sessions = mt5ByEmail.get(email) || [];
-                            const mt5IPs = [...new Set(sessions.map(s => s.last_ip).filter(Boolean))];
-                            const regIP = profiles.find(p => p.email === email)?.registration_ip || null;
-                            const mismatch = regIP && loginIP && regIP !== loginIP;
-                            const mt5Mismatch = loginIP && mt5IPs.length > 0 && !mt5IPs.includes(loginIP);
-                            const alert = mismatch || mt5Mismatch;
-                            return (
-                              <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: alert ? "#ef444412" : "transparent" }}>
-                                <td style={{ padding: "10px 14px", color: "#60A5FA", fontSize: 12, fontWeight: 600 }}>{email}</td>
-                                <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
-                                  {regIP ? <span style={{ color: "rgba(255,255,255,0.7)" }}>{regIP}</span> : <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ── IP PARTAGEES ──────────────────────────────────────────── */}
+              {securityData && securityView === "ips" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>IPs partagees entre plusieurs comptes</div>
+                    {securityData.shared_ips.length === 0 ? (
+                      <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "32px 24px", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucune IP partagee detectee</div>
+                    ) : (
+                      securityData.shared_ips.map((item, i) => {
+                        const level = item.count >= 3 ? "ATTENTION" : "SIGNAL";
+                        return (
+                          <div key={i} style={{ background: "#0c0c0c", border: `1px solid ${level === "ATTENTION" ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.08)"}`, borderRadius: 12, padding: "16px 20px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+                              <span style={{ fontFamily: "monospace", fontSize: 14, fontWeight: 700, color: "#fff" }}>{item.ip}</span>
+                              <button onClick={() => copyText(item.ip)} style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>Copier</button>
+                              <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 100, backgroundColor: level === "ATTENTION" ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.07)", color: level === "ATTENTION" ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{level}</span>
+                              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{item.count} comptes</span>
+                              {item.events[0]?.country && <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{item.events[0].country}</span>}
+                              {item.events[0]?.is_vpn && <span style={{ fontSize: 10, background: "rgba(245,158,11,0.12)", color: "#f59e0b", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>VPN</span>}
+                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", marginLeft: "auto" }}>{new Date(item.events[0]?.created_at).toLocaleDateString("fr-FR")}</span>
+                            </div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                              {item.emails.map((email, j) => (
+                                <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 12, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.15)", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{email}</button>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* Comparaison IP */}
+                  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                    <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                      <span style={{ fontWeight: 700, fontSize: 13, color: "#fff" }}>Comparaison IP — Inscription / Login / MT5</span>
+                      {mt5Loading && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Chargement MT5…</span>}
+                      <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{ipMismatchShowAll ? `${ipRows.length} traders` : `${mismatchRows.length} mismatch`}</span>
+                        <button onClick={() => setIpMismatchShowAll(v => !v)} style={{ fontSize: 11, color: "#60a5fa", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "3px 10px", cursor: "pointer" }}>{ipMismatchShowAll ? "Mismatches seulement" : "Voir tous"}</button>
+                      </div>
+                    </div>
+                    {displayedRows.length === 0 ? (
+                      <div style={{ padding: "32px 24px", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>{ipMismatchShowAll ? "Aucune donnee disponible" : "Aucun mismatch detecte"}</div>
+                    ) : (
+                      <div style={{ overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                          <thead><tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                            {["Trader", "IP Inscription", "Dernier Login", "IP MT5", ""].map(h => (
+                              <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                            ))}
+                          </tr></thead>
+                          <tbody>
+                            {displayedRows.map((row, i) => (
+                              <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                <td style={{ padding: "10px 16px" }}>
+                                  <button onClick={() => goToCRM(row.email)} style={{ fontSize: 12, color: "#60a5fa", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>{row.email}</button>
                                 </td>
-                                <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
-                                  {loginIP
-                                    ? <span style={{ color: mismatch ? "#ef4444" : "#22c55e" }}>{loginIP}</span>
-                                    : <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}
-                                </td>
-                                <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11 }}>
-                                  {mt5IPs.length > 0
-                                    ? mt5IPs.map((ip, j) => <div key={j} style={{ color: mt5Mismatch ? "#ef4444" : "#374151" }}>{ip}</div>)
+                                <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 11, color: row.mismatch ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{row.regIP || <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}</td>
+                                <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 11, color: row.mismatch ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{row.loginIP || <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}</td>
+                                <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 11 }}>
+                                  {row.mt5IPs.length > 0
+                                    ? <span style={{ color: row.mt5Mismatch ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{row.mt5IPs.join(", ")}</span>
                                     : <span style={{ color: "rgba(255,255,255,0.2)" }}>{mt5Loading ? "…" : "—"}</span>}
                                 </td>
-                                <td style={{ padding: "10px 14px" }}>
-                                  {alert
-                                    ? <span style={{ background: "#ef444415", color: "#ef4444", padding: "3px 8px", borderRadius: 100, fontSize: 10, fontWeight: 800 }}>⚠ IP DIFFÉRENTE</span>
-                                    : <span style={{ color: "#22c55e", fontSize: 11, fontWeight: 700 }}>✓ OK</span>}
+                                <td style={{ padding: "10px 16px" }}>
+                                  {row.hasAlert
+                                    ? <span style={{ fontSize: 10, fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.1)", padding: "2px 8px", borderRadius: 100 }}>Mismatch</span>
+                                    : <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600 }}>OK</span>}
                                 </td>
                               </tr>
-                            );
-                          });
-                        })()}
-                      </tbody>
-                    </table>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 </div>
+              )}
 
-                {/* Historique complet des connexions */}
-                <div style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
-                  <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                      <span style={{ fontSize: 18 }}>📋</span>
-                      <span style={{ fontWeight: 700, fontSize: 14, color: "#fff" }}>Historique des connexions</span>
-                    </div>
-                    <button onClick={() => token && loadSecurity()} style={{ fontSize: 12, color: "#60A5FA", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "4px 12px", cursor: "pointer" }}>↻ Rafraîchir</button>
-                  </div>
-                  <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                      <thead><tr style={{ background: "rgba(255,255,255,0.04)" }}>
-                        {["Trader", "IP", "Pays", "VPN", "Fingerprint", "Date"].map(h => (
-                          <th key={h} style={{ padding: "10px 14px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase" }}>{h}</th>
-                        ))}
-                      </tr></thead>
-                      <tbody>
-                        {securityData.events.slice(0, 100).map((e, i) => (
-                          <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: e.is_vpn ? "#f59e0b12" : "transparent" }}>
-                            <td style={{ padding: "10px 14px", color: "#60A5FA", fontSize: 12 }}>{e.user_email}</td>
-                            <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 11, color: "#fff" }}>{e.ip}</td>
-                            <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.45)", fontSize: 11 }}>{e.country}</td>
-                            <td style={{ padding: "10px 14px" }}>
-                              {e.is_vpn
-                                ? <span style={{ background: "#f59e0b15", color: "#f59e0b", padding: "2px 8px", borderRadius: 100, fontSize: 10, fontWeight: 700 }}>VPN</span>
-                                : <span style={{ color: "#22c55e", fontSize: 11 }}>✓</span>}
-                            </td>
-                            <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{e.fingerprint?.slice(0, 12)}…</td>
-                            <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.3)", fontSize: 11, whiteSpace: "nowrap" }}>{new Date(e.created_at).toLocaleString("fr-FR")}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+              {/* ── APPAREILS ─────────────────────────────────────────────── */}
+              {securityData && securityView === "devices" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Appareils partages entre plusieurs comptes</div>
+                  {securityData.shared_fingerprints.length === 0 ? (
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "32px 24px", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucun appareil partage detecte</div>
+                  ) : (
+                    securityData.shared_fingerprints.map((item, i) => {
+                      const level = item.count >= 3 ? "ATTENTION" : "SIGNAL";
+                      const uaDisplay = parseUA(item.events[0]?.user_agent || "");
+                      return (
+                        <div key={i} style={{ background: "#0c0c0c", border: `1px solid ${level === "ATTENTION" ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.08)"}`, borderRadius: 12, padding: "16px 20px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
+                            <span style={{ fontFamily: "monospace", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>{item.fingerprint.slice(0, 16)}…</span>
+                            <button onClick={() => copyText(item.fingerprint)} style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 4, padding: "2px 8px", cursor: "pointer" }}>Copier</button>
+                            <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 8px", borderRadius: 100, backgroundColor: level === "ATTENTION" ? "rgba(245,158,11,0.15)" : "rgba(255,255,255,0.07)", color: level === "ATTENTION" ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{level}</span>
+                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{item.count} comptes</span>
+                            {uaDisplay !== "—" && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{uaDisplay}</span>}
+                            {item.events[0]?.country && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{item.events[0].country}</span>}
+                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", marginLeft: "auto" }}>{new Date(item.events[0]?.created_at).toLocaleDateString("fr-FR")}</span>
+                          </div>
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                            {item.emails.map((email, j) => (
+                              <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 12, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.15)", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{email}</button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
-              </>
-            )}
-          </div>
-        )}
+              )}
+
+              {/* ── ACTIVITE ──────────────────────────────────────────────── */}
+              {securityData && securityView === "activity" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+                  {/* Traders VPN dedupliques */}
+                  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                    <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 12 }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Traders VPN</span>
+                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>{uniqueVpnTraders.length} trader{uniqueVpnTraders.length !== 1 ? "s" : ""} unique{uniqueVpnTraders.length !== 1 ? "s" : ""}</span>
+                    </div>
+                    {uniqueVpnTraders.length === 0 ? (
+                      <div style={{ padding: "32px 24px", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucun trader VPN detecte</div>
+                    ) : (
+                      <div style={{ overflowX: "auto" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                          <thead><tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                            {["Trader", "Pays", "VPN Inscription", "Premiere VPN", "Derniere VPN", ""].map(h => (
+                              <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
+                            ))}
+                          </tr></thead>
+                          <tbody>
+                            {uniqueVpnTraders.map((trader, i) => {
+                              const regIsVpn = profiles.find(p => p.email === trader.email)?.registration_is_vpn;
+                              return (
+                                <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                                  <td style={{ padding: "10px 16px", fontSize: 12, color: "#60a5fa" }}>{trader.email}</td>
+                                  <td style={{ padding: "10px 16px", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>{trader.last.country || "—"}</td>
+                                  <td style={{ padding: "10px 16px" }}>
+                                    {regIsVpn
+                                      ? <span style={{ fontSize: 10, fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.1)", padding: "2px 8px", borderRadius: 100 }}>Oui</span>
+                                      : <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)" }}>Non</span>}
+                                  </td>
+                                  <td style={{ padding: "10px 16px", fontSize: 11, color: "rgba(255,255,255,0.4)", whiteSpace: "nowrap" }}>{new Date(trader.first.created_at).toLocaleDateString("fr-FR")}</td>
+                                  <td style={{ padding: "10px 16px", fontSize: 11, color: "rgba(255,255,255,0.4)", whiteSpace: "nowrap" }}>{new Date(trader.last.created_at).toLocaleDateString("fr-FR")}</td>
+                                  <td style={{ padding: "10px 16px" }}>
+                                    <button onClick={() => goToCRM(trader.email)} style={{ fontSize: 11, color: "#60a5fa", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "3px 10px", cursor: "pointer", whiteSpace: "nowrap" }}>Voir CRM</button>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Historique connexions avec recherche */}
+                  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                    <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Historique connexions</span>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{filteredEvents.length} evenement{filteredEvents.length !== 1 ? "s" : ""}</span>
+                      <input type="text" value={securitySearch} onChange={e => setSecuritySearch(e.target.value)} placeholder="Rechercher un trader…"
+                        style={{ marginLeft: "auto", background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "6px 12px", color: "#fff", fontSize: 12, outline: "none", width: 220 }} />
+                    </div>
+                    <div style={{ overflowX: "auto" }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                        <thead><tr style={{ background: "rgba(255,255,255,0.03)" }}>
+                          {["Trader", "IP", "Pays", "VPN", "Appareil", "Date"].map(h => (
+                            <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase" }}>{h}</th>
+                          ))}
+                        </tr></thead>
+                        <tbody>
+                          {filteredEvents.length === 0 ? (
+                            <tr><td colSpan={6} style={{ padding: "32px 16px", textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 13 }}>Aucun evenement</td></tr>
+                          ) : filteredEvents.map((e, i) => (
+                            <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                              <td style={{ padding: "10px 16px" }}>
+                                <button onClick={() => goToCRM(e.user_email)} style={{ fontSize: 12, color: "#60a5fa", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>{e.user_email}</button>
+                              </td>
+                              <td style={{ padding: "10px 16px" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                  <span style={{ fontFamily: "monospace", fontSize: 11, color: "#fff" }}>{e.ip}</span>
+                                  <button onClick={() => copyText(e.ip)} style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", background: "none", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 3, padding: "1px 5px", cursor: "pointer" }}>CP</button>
+                                </div>
+                              </td>
+                              <td style={{ padding: "10px 16px", fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{e.country || "—"}</td>
+                              <td style={{ padding: "10px 16px" }}>
+                                {e.is_vpn
+                                  ? <span style={{ fontSize: 10, fontWeight: 700, color: "#f59e0b", background: "rgba(245,158,11,0.1)", padding: "2px 6px", borderRadius: 100 }}>VPN</span>
+                                  : <span style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>—</span>}
+                              </td>
+                              <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 10, color: "rgba(255,255,255,0.25)" }}>{e.fingerprint?.slice(0, 12) || "—"}</td>
+                              <td style={{ padding: "10px 16px", fontSize: 11, color: "rgba(255,255,255,0.3)", whiteSpace: "nowrap" }}>{new Date(e.created_at).toLocaleString("fr-FR")}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+
+            </div>
+          );
+        })()}
 
         {/* ── MAINTENANCE ── */}
         {tab === "maintenance" && (
