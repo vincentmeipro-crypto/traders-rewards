@@ -25,8 +25,9 @@ const NAV: NavGroup[] = [
     { id: "compta",    label: "Comptabilité",  sub: true, href: "/x8k3pz?t=compta"    },
   ]},
   { section: "MARKETING", items: [
-    { id: "affilies", label: "Affiliés",    href: "/x8k3pz?t=affilies" },
-    { id: "promos",   label: "Codes promo", sub: true, href: "/x8k3pz?t=promos" },
+    { id: "affilies",    label: "Affiliés",    href: "/x8k3pz?t=affilies"   },
+    { id: "promos",      label: "Codes promo", sub: true, href: "/x8k3pz?t=promos"       },
+    { id: "promotions",  label: "Promotions",  sub: true, href: "/x8k3pz/promotions"      },
   ]},
   { separator: true },
   { items: [
@@ -45,10 +46,12 @@ function SidebarInner() {
   const pathname     = usePathname();
   const searchParams = useSearchParams();
   const activeTab    = searchParams.get("t") ?? "overview";
-  const isProducts   = pathname.startsWith("/x8k3pz/products");
+  const isProducts    = pathname.startsWith("/x8k3pz/products");
+  const isPromotions  = pathname.startsWith("/x8k3pz/promotions");
 
   const isActive = (id: string) => {
-    if (isProducts) return id === "products";
+    if (isProducts)   return id === "products";
+    if (isPromotions) return id === "promotions";
     return id === activeTab;
   };
 

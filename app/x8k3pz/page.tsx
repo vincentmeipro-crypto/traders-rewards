@@ -2810,126 +2810,79 @@ function AdminPageInner() {
                 </div>
               )}
 
-              {/* ─── PROMOTIONS ─── */}
-              {marketingView === "promotions" && (() => {
-                const statusDefs = [
-                  { id: "all",       label: "Tous"      },
-                  { id: "active",    label: "Actives"   },
-                  { id: "expired",   label: "Expirées"  },
-                  { id: "revoked",   label: "Révoquées" },
-                  { id: "exhausted", label: "Épuisées"  },
-                ];
-                return (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
-                      <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Créer un code promo</div>
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 14 }}>
-                        {([
-                          { label: "CODE *",           key: "code",             placeholder: "SUMMER25",  transform: (v: string) => v.toUpperCase() },
-                          { label: "REMISE % *",       key: "discount_percent", placeholder: "50",         type: "number" },
-                          { label: "MAX UTILISATIONS", key: "max_uses",         placeholder: "Illimité",   type: "number" },
-                          { label: "EXPIRE LE",        key: "expires_at",                                   type: "datetime-local" },
-                        ] as { label: string; key: string; placeholder?: string; type?: string; transform?: (v: string) => string }[]).map(f => (
-                          <div key={f.key}>
-                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 6 }}>{f.label}</div>
-                            <input type={f.type || "text"} value={(newCode as Record<string,string>)[f.key]} placeholder={f.placeholder}
-                              onChange={e => setNewCode(n => ({ ...n, [f.key]: f.transform ? f.transform(e.target.value) : e.target.value }))}
-                              style={{ width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, padding: "9px 12px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box", colorScheme: "dark" }} />
-                          </div>
-                        ))}
+              {/* ─── PROMOTIONS — cockpit vers le Promotion Builder ─── */}
+              {marketingView === "promotions" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {/* Cockpit card */}
+                  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "28px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 6 }}>Promotion Builder</div>
+                      <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", maxWidth: 420, lineHeight: 1.6 }}>
+                        Créez, éditez et gérez les codes promo depuis le Builder dédié.
+                        Ciblage produits, affiliation, planification et historique d'usage inclus.
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                        <button onClick={createPromo} disabled={!newCode.code || !newCode.discount_percent}
-                          style={{ padding: "9px 22px", background: "#3b82f6", border: "none", borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", opacity: (!newCode.code || !newCode.discount_percent) ? 0.4 : 1 }}>Créer</button>
-                        {promoMsg   && <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>{promoMsg}</span>}
-                        {promoError && <span style={{ color: "#ef4444", fontSize: 13 }}>{promoError}</span>}
-                      </div>
-                    </div>
-
-                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-                      <input placeholder="Recherche code..." value={promoSearch} onChange={e => setPromoSearch(e.target.value)}
-                        style={{ flex: 1, maxWidth: 260, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, padding: "7px 12px", color: "#fff", fontSize: 12, outline: "none" }} />
-                      <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-                        {statusDefs.map(s => (
-                          <button key={s.id} onClick={() => setPromoStatusFilter(s.id)}
-                            style={{ padding: "6px 12px", background: promoStatusFilter === s.id ? "#111" : "transparent", border: `1px solid ${promoStatusFilter === s.id ? "rgba(255,255,255,0.12)" : "transparent"}`, borderRadius: 7, color: promoStatusFilter === s.id ? "#fff" : "rgba(255,255,255,0.35)", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                            {s.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
-                      {promosLoading ? (
-                        <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>Chargement...</div>
-                      ) : (
-                        <div style={{ overflowX: "auto" }}>
-                          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 600 }}>
-                            <thead>
-                              <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                                {["Code","Remise","Affilié lié","Utilisé","Max","Expiration","Statut","Actions"].map(h => (
-                                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8, whiteSpace: "nowrap" }}>{h}</th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {promoFiltered.map(p => {
-                                const isExp = p.expires_at && new Date(p.expires_at) < now;
-                                const isExh = p.max_uses !== null && p.used_count >= p.max_uses;
-                                const statusLabel = isExp ? "expiré" : isExh ? "épuisé" : p.active ? "actif" : "révoqué";
-                                const statusColor = isExp ? "#ef4444" : isExh ? "#f59e0b" : p.active ? "#22c55e" : "#6b7280";
-                                const linked = p.affiliate_user_id ? affiliates.find(a => a.user_id === p.affiliate_user_id) : null;
-                                return (
-                                  <tr key={p.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", opacity: (!p.active || isExp || isExh) ? 0.6 : 1 }}>
-                                    <td style={{ padding: "12px 16px" }}>
-                                      <button onClick={() => navigator.clipboard.writeText(p.code)} title="Copier"
-                                        style={{ fontWeight: 800, fontFamily: "monospace", letterSpacing: 1, background: "none", border: "none", cursor: "pointer", color: "#fff", fontSize: 13, padding: 0 }}>{p.code}</button>
-                                    </td>
-                                    <td style={{ padding: "12px 16px", fontWeight: 700, color: "#22c55e" }}>{p.discount_percent === 100 ? "100% (GRATUIT)" : `${p.discount_percent}%`}</td>
-                                    <td style={{ padding: "12px 16px", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>
-                                      {linked ? (linked.email || `${linked.first_name || ""} ${linked.last_name || ""}`.trim() || linked.code) : "—"}
-                                    </td>
-                                    <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.45)" }}>{p.used_count}</td>
-                                    <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.45)" }}>{p.max_uses ?? "∞"}</td>
-                                    <td style={{ padding: "12px 16px", fontSize: 12, color: isExp ? "#ef4444" : "rgba(255,255,255,0.35)" }}>
-                                      {p.expires_at ? new Date(p.expires_at).toLocaleDateString("fr-FR") : "—"}
-                                    </td>
-                                    <td style={{ padding: "12px 16px" }}>{badge(statusLabel, statusColor)}</td>
-                                    <td style={{ padding: "12px 16px", minWidth: 190 }}>
-                                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
-                                        <button onClick={() => togglePromo(p)}
-                                          style={{ padding: "5px 12px", background: "rgba(255,255,255,0.04)", color: p.active ? "#ef4444" : "#22c55e", border: `1px solid ${p.active ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.2)"}`, borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-                                          {p.active ? "Révoquer" : "Restaurer"}
-                                        </button>
-                                        {deleteConfirmId === p.id ? (
-                                          <>
-                                            <button onClick={() => { deletePromo(p.id); setDeleteConfirmId(null); }}
-                                              style={{ padding: "5px 10px", background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 6, color: "#ef4444", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Confirmer</button>
-                                            <button onClick={() => setDeleteConfirmId(null)}
-                                              style={{ padding: "5px 10px", background: "none", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, color: "rgba(255,255,255,0.4)", fontSize: 11, cursor: "pointer" }}>Annuler</button>
-                                          </>
-                                        ) : (
-                                          <button onClick={() => setDeleteConfirmId(p.id)}
-                                            style={{ padding: "5px 10px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, color: "rgba(255,255,255,0.35)", fontSize: 11, cursor: "pointer" }}>Supprimer</button>
-                                        )}
-                                      </div>
-                                    </td>
-                                  </tr>
-                                );
-                              })}
-                              {promoFiltered.length === 0 && (
-                                <tr><td colSpan={8} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
-                                  {promoSearch || promoStatusFilter !== "all" ? "Aucun résultat" : "Aucun code promo"}
-                                </td></tr>
-                              )}
-                            </tbody>
-                          </table>
+                      <div style={{ marginTop: 16, display: "flex", gap: 24, flexWrap: "wrap" }}>
+                        <div>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 4 }}>Codes actifs</div>
+                          <div style={{ fontSize: 22, fontWeight: 900, color: "#4ade80", fontVariantNumeric: "tabular-nums" }}>{activePromos.length}</div>
                         </div>
-                      )}
+                        <div>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 4 }}>Total codes</div>
+                          <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{promos.length}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 }}>
+                      <a href="/x8k3pz/promotions" style={{
+                        display: "inline-flex", alignItems: "center", gap: 8,
+                        padding: "10px 22px", background: "#3B82F6", border: "none",
+                        borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700,
+                        textDecoration: "none", whiteSpace: "nowrap",
+                      }}>
+                        Ouvrir le Builder
+                      </a>
+                      <a href="/x8k3pz/promotions/new" style={{
+                        display: "inline-flex", alignItems: "center", justifyContent: "center",
+                        padding: "9px 22px", background: "transparent",
+                        border: "1px solid rgba(59,130,246,0.3)",
+                        borderRadius: 8, color: "#60a5fa", fontSize: 12, fontWeight: 600,
+                        textDecoration: "none", whiteSpace: "nowrap",
+                      }}>
+                        + Nouveau code
+                      </a>
                     </div>
                   </div>
-                );
-              })()}
+
+                  {/* Quick list — 5 codes actifs */}
+                  {activePromos.length > 0 && (
+                    <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
+                      <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.45)" }}>Codes actifs récents</div>
+                        <a href="/x8k3pz/promotions" style={{ background: "none", border: "none", color: "#60a5fa", fontSize: 12, cursor: "pointer", textDecoration: "none" }}>Voir tous</a>
+                      </div>
+                      {activePromos.slice(0, 5).map((p, i) => (
+                        <a key={p.id} href={`/x8k3pz/promotions/${p.id}`} style={{
+                          display: "flex", alignItems: "center", gap: 12, padding: "12px 20px",
+                          borderBottom: i < Math.min(5, activePromos.length) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                          textDecoration: "none",
+                        }}
+                          onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+                        >
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", fontFamily: "monospace" }}>{p.code}</div>
+                            <div style={{ fontSize: 10, color: "#22c55e", marginTop: 1 }}>-{p.discount_percent}%</div>
+                          </div>
+                          <div style={{ textAlign: "right", flexShrink: 0 }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{p.used_count} util.</div>
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{p.max_uses ? `max ${p.max_uses}` : "illimité"}</div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* ─── AFFILIÉS ─── */}
               {marketingView === "affilies" && (() => {
