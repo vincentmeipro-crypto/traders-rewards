@@ -21,11 +21,10 @@ const LOYALTY_PCT = 20;
 export async function POST(req: NextRequest) {
   try {
     // `discount` n'est intentionnellement PAS destructuré : jamais trusté depuis le frontend.
-    // La valeur réelle est recalculée exclusivement côté serveur ci-dessous.
     const { productId, userId, promoCode, refCode } = await req.json();
 
-    const admin    = createAdminClient();
-    const siteUrl  = await getStringConfig("branding.site_url");
+    const admin   = createAdminClient();
+    const siteUrl = await getStringConfig("branding.site_url");
 
     // ── Loyalty — calculé côté serveur avant toute décision de prix ──────────
     const { count: challengeCount } = await admin
@@ -34,10 +33,40 @@ export async function POST(req: NextRequest) {
       .eq("user_id", userId);
     const loyaltyDiscount = (challengeCount ?? 0) >= 1 ? LOYALTY_PCT : 0;
 
+    // ── Charger le produit depuis la DB (new path) ────────────────────────────
+    //
+    // Tenté en premier pour obtenir le UUID réel du produit.
+    // Si le produit n'est pas en DB (VIP legacy) → productFromDB = null.
+    // Le slug reste disponible dans productId pour le fallback VIP ci-dessous.
+    type DbProduct = Awaited<ReturnType<typeof loadProductBySlug>>;
+    let productFromDB: DbProduct | null = null;
+    try {
+      productFromDB = await loadProductBySlug(productId);
+    } catch {
+      // Produit non trouvé en DB → chemin VIP legacy
+    }
+
     // ── Validation promo code côté serveur ────────────────────────────────────
+    //
+    // productId transmis = UUID réel si produit en DB, null sinon.
+    //
+    // Comportement pour produits legacy sans UUID :
+    //   targeting_mode = 'all'
+    //     → pas de restriction produit → OK
+    //   targeting_mode = 'specific'
+    //     → validatePromoCode retourne product_required (fail closed)
+    //     → Le client doit utiliser une promo universelle pour les produits VIP legacy.
+    //
+    // Race checkout/webhook : ces checks sont non-atomiques.
+    // L'enforcement final atomique reste consumePromoCode (RPC webhook).
+    //
     let promoDiscount = 0;
     if (promoCode) {
-      const promoResult = await validatePromoCode(promoCode);
+      const promoResult = await validatePromoCode({
+        code:      promoCode,
+        userId,
+        productId: productFromDB?.id ?? null,
+      });
       if (!promoResult.valid) {
         return NextResponse.json(
           { error: `Code promo invalide : ${promoResult.message}` },
@@ -65,12 +94,11 @@ export async function POST(req: NextRequest) {
     let finalAmount: number;
     let productName: string;
 
-    try {
-      // ── Nouveau chemin : produit dans la DB ───────────────────────────────
-      const product = await loadProductBySlug(productId);
+    if (productFromDB) {
+      // ── Nouveau chemin : produit en DB ────────────────────────────────────
 
       // Vérifier le plafond de cumul (max_cumul_usd depuis la DB)
-      if (product.max_cumul_usd) {
+      if (productFromDB.max_cumul_usd) {
         const { data: activeChallenges } = await admin
           .from("challenges")
           .select("start_balance")
@@ -80,26 +108,29 @@ export async function POST(req: NextRequest) {
           (sum, c) => sum + (c.start_balance || 0),
           0
         );
-        if (currentTotal + product.balance_usd > product.max_cumul_usd) {
+        if (currentTotal + productFromDB.balance_usd > productFromDB.max_cumul_usd) {
           return NextResponse.json(
             {
-              error: `Plafond de cumul atteint (max ${product.max_cumul_usd.toLocaleString()} USD)`,
+              error: `Plafond de cumul atteint (max ${productFromDB.max_cumul_usd.toLocaleString()} USD)`,
             },
             { status: 400 }
           );
         }
       }
 
-      const baseAmount = getEffectivePrice(product, "crypto");
-      finalAmount  = discountPct > 0
+      const baseAmount = getEffectivePrice(productFromDB, "crypto");
+      finalAmount = discountPct > 0
         ? Math.round(baseAmount * (100 - discountPct) / 100)
         : baseAmount;
-      productName  = product.name;
+      productName = productFromDB.name;
 
       // Encode UUID dans l'orderId → webhook détecte new path via isUUID()
-      orderId = `elysium~${userId}~${product.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}`;
-    } catch {
+      orderId = `elysium~${userId}~${productFromDB.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}`;
+    } else {
       // ── Fallback : produit VIP / legacy non en DB ─────────────────────────
+      //
+      // Note : les promos targeting_mode='specific' ont été rejetées ci-dessus
+      // par validatePromoCode (product_required) — seules les promos 'all' arrivent ici.
       const legacy = VIP_PRODUCTS[productId as keyof typeof VIP_PRODUCTS];
       if (!legacy) {
         return NextResponse.json(

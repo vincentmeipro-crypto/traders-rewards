@@ -117,7 +117,13 @@ export async function POST(req: NextRequest) {
     let challengeModel: string;
     let challengeAccountSize: string;
     let challengeBalance: number;
-    let discountApplied: number | null = null;
+    let discountApplied:    number | null = null;
+    // UUID du produit — disponible dans le new path (Product Engine).
+    // Null dans le legacy path (slug sans UUID DB).
+    // Transmis à consumePromoCode pour l'enforcement product targeting.
+    // Pour le legacy : promos targeting_mode='specific' → RPC retourne product_required
+    //   → log non-bloquant ; le client ayant payé reçoit quand même son challenge.
+    let challengeProductId: string | null = null;
 
     if (isUUID(productId)) {
       // ── Nouveau chemin : Product Engine ───────────────────────────────
@@ -135,6 +141,7 @@ export async function POST(req: NextRequest) {
         discountApplied = Math.max(0, Math.round((1 - (amountPaid * 100) / baseAmount) * 100));
       }
 
+      challengeProductId   = product.id;
       challengeModel       = product.model;
       challengeAccountSize = product.account_size;
       challengeBalance     = product.balance_usd;
@@ -207,6 +214,7 @@ export async function POST(req: NextRequest) {
           provider:         "crypto",
           paymentReference: nowpaymentsId || null,
           discountApplied,
+          productId:        challengeProductId,
         });
         promoUsageId = cr.usageId;
         if (!cr.success && !cr.alreadyConsumed) {

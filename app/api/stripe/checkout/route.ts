@@ -55,7 +55,12 @@ export async function POST(req: NextRequest) {
     // ── Validation promo code côté serveur ────────────────────────────────────
     let promoDiscount = 0;
     if (promoCode) {
-      const promoResult = await validatePromoCode(promoCode);
+      // product.id (UUID) transmis → targeting et single_use vérifiés côté serveur
+      const promoResult = await validatePromoCode({
+        code:      promoCode,
+        userId,
+        productId: product.id,
+      });
       if (!promoResult.valid) {
         return NextResponse.json(
           { error: `Code promo invalide : ${promoResult.message}` },

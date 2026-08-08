@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
       provider:         "free",
       paymentReference: freeRef,
       discountApplied:  100,
+      productId:        product.id,
     });
 
     if (cr.alreadyConsumed) {

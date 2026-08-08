@@ -68,7 +68,11 @@ export async function POST(req: NextRequest) {
     //   NULL dans le path slug legacy (baseAmount non disponible sans produit).
 
     let challengeInsert: Record<string, unknown>;
-    let discountApplied: number | null = null;
+    let discountApplied:    number | null = null;
+    // UUID du produit — disponible dans le new path (Product Engine).
+    // Null dans le legacy path (slug) et dans le fallback Engine error.
+    // Transmis à consumePromoCode pour l'enforcement product targeting.
+    let challengeProductId: string | null = null;
 
     if (isUUID(productId)) {
       // ── Nouveau chemin : Product Engine ───────────────────────────────
@@ -82,6 +86,8 @@ export async function POST(req: NextRequest) {
         if (baseAmount > 0) {
           discountApplied = Math.max(0, Math.round((1 - amountPaidCents / baseAmount) * 100));
         }
+
+        challengeProductId = product.id;
 
         challengeInsert = {
           user_id:              userId,
@@ -159,6 +165,7 @@ export async function POST(req: NextRequest) {
           provider:         "stripe",
           paymentReference: session.id,
           discountApplied,
+          productId:        challengeProductId,
         });
         promoUsageId = cr.usageId;
         if (!cr.success && !cr.alreadyConsumed) {
