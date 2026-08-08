@@ -8,10 +8,16 @@
  *
  * Pour modifier ces valeurs : Admin → Settings (interface admin).
  * Ne plus éditer les URLs ou emails directement dans ce fichier.
+ *
+ * Phase 3B-0 : sendEmail() retourne un résultat structuré et ne
+ * throw plus jamais. _loggedSend() journalise chaque tentative
+ * d'envoi dans public.email_logs (service_role). Aucun HTML ni
+ * credential n'est stocké dans les logs.
  * ============================================================
  */
 
 import { getBrandingConfig, getPayoutSplits } from "@/lib/config";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // ── Sender résolution ─────────────────────────────────────────
 
@@ -25,20 +31,79 @@ async function resolveSender(): Promise<string> {
 }
 
 // ── Transport email ───────────────────────────────────────────
+//
+// Phase 3B-0 : ne throw plus jamais.
+// Retourne { success, resendId, error? } dans tous les cas.
+// La réponse Resend est parsée sur succès pour capturer data.id.
+// Les erreurs sont sanitisées et tronquées à 500 chars.
 
-async function sendEmail(to: string, subject: string, html: string) {
-  const from = await resolveSender();
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ from, to: [to], subject, html }),
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Resend error: ${err}`);
+async function sendEmail(
+  to: string,
+  subject: string,
+  html: string,
+): Promise<{ success: boolean; resendId: string | null; error?: string }> {
+  try {
+    const from = await resolveSender();
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from, to: [to], subject, html }),
+    });
+    if (!res.ok) {
+      const errText = await res.text().catch(() => "unknown error");
+      const error = `Resend ${res.status}: ${errText}`.slice(0, 500);
+      return { success: false, resendId: null, error };
+    }
+    const data = await res.json().catch(() => ({}));
+    return { success: true, resendId: (data as { id?: string }).id ?? null };
+  } catch (err) {
+    const error = (err instanceof Error ? err.message : String(err)).slice(0, 500);
+    return { success: false, resendId: null, error };
+  }
+}
+
+// ── Logging interne ───────────────────────────────────────────
+//
+// Phase 3B-0 : primitive centrale non exportée.
+// Appelle sendEmail() puis insère une ligne dans public.email_logs.
+// Ne throw jamais — si l'INSERT échoue, console.error sanitisé.
+// Aucun HTML ni credential n'est stocké dans email_logs.
+
+async function _loggedSend(params: {
+  type: string;
+  to: string;
+  subject: string;
+  html: string;
+  userId?: string;
+  challengeId?: string;
+  eventKey?: string;
+}): Promise<void> {
+  const { type, to, subject, html, userId, challengeId, eventKey } = params;
+
+  const result = await sendEmail(to, subject, html);
+
+  try {
+    const admin = createAdminClient();
+    await admin.from("email_logs").insert({
+      type,
+      to_email:     to,
+      user_id:      userId      ?? null,
+      challenge_id: challengeId ?? null,
+      subject,
+      resend_id:    result.resendId ?? null,
+      status:       result.success ? "sent" : "failed",
+      error:        result.success ? null : (result.error ?? null),
+      event_key:    eventKey ?? null,
+    });
+  } catch (logErr) {
+    const errMsg = logErr instanceof Error ? logErr.message : String(logErr);
+    console.error(
+      `[email_logs] INSERT failed — type=${type} to=${to} sent=${result.success} :`,
+      errMsg.slice(0, 200),
+    );
   }
 }
 
@@ -98,7 +163,8 @@ export async function sendWelcomeEmail(
   accountSize: string,
   model: string,
   mt5?: { login: number; password: string; server: string },
-  setupLink?: string
+  setupLink?: string,
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const branding = await getBrandingConfig();
   const { siteUrl, logoUrl } = branding;
@@ -134,23 +200,33 @@ export async function sendWelcomeEmail(
     : `Bienvenue dans l'élite. Votre ${modelLabel} ${accountSize} a été créé. Connectez-vous à MT5 avec les identifiants ci-dessous et commencez à trader.`;
   const subject = isAlgo ? "🤖 Votre Challenge ALGO est prêt !" : "🎯 Votre Challenge Traders Rewards est prêt !";
   const title = isAlgo ? "✔ Votre Challenge ALGO est actif" : "✔ Votre compte Traders Rewards est actif";
-  await sendEmail(to, subject, buildEmail({
+  const html = buildEmail({
     title,
     titleColor: isAlgo ? "#3B82F6" : "#1565C0",
     body: bodyText,
     details,
     cta: { text: ctaText, href: ctaHref },
     logoUrl,
-  }));
+  });
+  await _loggedSend({
+    type: "welcome",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
 
 export async function sendPhase2Email(
   to: string,
   accountSize: string,
-  mt5?: { login: number; password: string; server: string }
+  mt5?: { login: number; password: string; server: string },
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
-  await sendEmail(to, "🏆 Phase 1 réussie — Bienvenue en Phase 2 !", buildEmail({
+  const subject = "🏆 Phase 1 réussie — Bienvenue en Phase 2 !";
+  const html = buildEmail({
     title: "🏆 Phase 1 réussie !",
     titleColor: "#60A5FA",
     body: `Félicitations ! Vous avez complété avec succès la Phase 1 de votre challenge ${accountSize}. Un nouveau compte de trading a été créé pour votre Phase 2.`,
@@ -166,21 +242,31 @@ export async function sendPhase2Email(
     ],
     cta: { text: "Voir mon Dashboard →", href: `${siteUrl}/dashboard` },
     logoUrl,
-  }));
+  });
+  await _loggedSend({
+    type: "phase2",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
 
 export async function sendFailedEmail(
   to: string,
   accountSize: string,
   reason: "daily_drawdown" | "total_drawdown",
-  mt5Login?: number
+  mt5Login?: number,
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
   const reasonLabel = reason === "daily_drawdown" ? "Drawdown journalier dépassé" : "Drawdown total dépassé";
   const reasonDetail = reason === "daily_drawdown"
     ? "Votre limite de perte journalière a été atteinte. C'est une règle automatique de protection du capital."
     : "Votre limite de perte totale maximale a été atteinte.";
-  await sendEmail(to, "❌ Votre Challenge Traders Rewards a été arrêté", buildEmail({
+  const subject = "❌ Votre Challenge Traders Rewards a été arrêté";
+  const html = buildEmail({
     title: "❌ Challenge échoué",
     titleColor: "#ef4444",
     body: `Nous vous informons que votre challenge ${accountSize} a été automatiquement arrêté. ${reasonDetail}`,
@@ -192,7 +278,15 @@ export async function sendFailedEmail(
     ],
     cta: { text: "Commencer un nouveau challenge →", href: `${siteUrl}/#pricing` },
     logoUrl,
-  }));
+  });
+  await _loggedSend({
+    type: "failed",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
 
 export async function sendFundedEmail(
@@ -200,7 +294,8 @@ export async function sendFundedEmail(
   accountSize: string,
   mt5?: { login: number; password: string; server: string },
   setupLink?: string,
-  model?: string
+  model?: string,
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const [branding, splits] = await Promise.all([
     getBrandingConfig(),
@@ -212,7 +307,8 @@ export async function sendFundedEmail(
   const is1Step = model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
   const splitPct = is1Step ? splits.split1step : splits.split2step;
   const profitSplit = `${splitPct}% pour vous`;
-  await sendEmail(to, "🎉 Vous êtes Trader Reward ! Bienvenue chez Traders Rewards", buildEmail({
+  const subject = "🎉 Vous êtes Trader Reward ! Bienvenue chez Traders Rewards";
+  const html = buildEmail({
     title: "🎉 Félicitations — Vous êtes Trader Reward !",
     titleColor: "#3b82f6",
     body: `Performance exceptionnelle ! Vous êtes maintenant un Trader Reward sur votre compte ${accountSize}. Voici vos identifiants de compte Reward.`,
@@ -228,7 +324,15 @@ export async function sendFundedEmail(
     ],
     cta: { text: ctaText, href: ctaHref },
     logoUrl,
-  }));
+  });
+  await _loggedSend({
+    type: "funded",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
 
 export async function sendDailyUpdateEmail(
@@ -238,7 +342,8 @@ export async function sendDailyUpdateEmail(
   balance: number,
   profitPct: number,
   tradingDays: number,
-  opts?: { model?: string; highestBalance?: number; totalLimit?: number; startBalance?: number }
+  opts?: { model?: string; highestBalance?: number; totalLimit?: number; startBalance?: number },
+  log?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
   const phaseLabel = phase === "phase1" ? "Phase 1" : phase === "phase2" ? "Phase 2" : "Reward";
@@ -263,23 +368,34 @@ export async function sendDailyUpdateEmail(
     );
   }
 
-  await sendEmail(to, `📊 Récap journalier — Challenge ${accountSize}`, buildEmail({
+  const subject = `📊 Récap journalier — Challenge ${accountSize}`;
+  const html = buildEmail({
     title: "📊 Récapitulatif journalier",
     titleColor: "#60A5FA",
     body: `Voici votre résumé de performance du jour pour votre challenge ${accountSize}.`,
     details,
     cta: { text: "Voir mon Dashboard →", href: `${siteUrl}/dashboard` },
     logoUrl,
-  }));
+  });
+  await _loggedSend({
+    type: "daily_update",
+    to,
+    subject,
+    html,
+    userId:      log?.userId,
+    challengeId: log?.challengeId,
+  });
 }
 
 export async function sendPhase1CertificateEmail(
-  to: string, firstName: string, lastName: string, accountSize: string, date: string
+  to: string, firstName: string, lastName: string, accountSize: string, date: string,
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
   const name = `${firstName} ${lastName}`.trim();
   const certUrl = `${siteUrl}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
-  await sendEmail(to, `🏆 Félicitations ${firstName} — Certificat Phase 1 obtenu !`, `
+  const subject = `🏆 Félicitations ${firstName} — Certificat Phase 1 obtenu !`;
+  const html = `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
@@ -311,16 +427,26 @@ export async function sendPhase1CertificateEmail(
         </div>
       </div>
     </div>
-  `);
+  `;
+  await _loggedSend({
+    type: "phase1_certificate",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
 
 export async function sendChallengeCertificateEmail(
-  to: string, firstName: string, lastName: string, accountSize: string, date: string
+  to: string, firstName: string, lastName: string, accountSize: string, date: string,
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
   const name = `${firstName} ${lastName}`.trim();
   const certUrl = `${siteUrl}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
-  await sendEmail(to, `🎉 ${firstName} — Vous êtes Trader Reward !`, `
+  const subject = `🎉 ${firstName} — Vous êtes Trader Reward !`;
+  const html = `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
@@ -352,12 +478,21 @@ export async function sendChallengeCertificateEmail(
         </div>
       </div>
     </div>
-  `);
+  `;
+  await _loggedSend({
+    type: "challenge_certificate",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
 
 export async function sendRewardCertificateEmail(
   to: string, firstName: string, lastName: string, accountSize: string,
-  grossAmount: number, model: string, date: string, netAmountEur?: number
+  grossAmount: number, model: string, date: string, netAmountEur?: number,
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const [branding, splits] = await Promise.all([
     getBrandingConfig(),
@@ -373,7 +508,8 @@ export async function sendRewardCertificateEmail(
     ? `<tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Équivalent EUR :</td><td style="color:#3b82f6;font-size:15px;font-weight:800;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td></tr>`
     : "";
   const subjectSuffix = netAmountEur != null ? ` (≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €)` : "";
-  await sendEmail(to, `💰 ${firstName} — Votre récompense de $${netAmount.toLocaleString()}${subjectSuffix} est en cours !`, `
+  const subject = `💰 ${firstName} — Votre récompense de $${netAmount.toLocaleString()}${subjectSuffix} est en cours !`;
+  const html = `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
       <div style="max-width:580px;margin:0 auto;">
         <div style="text-align:center;padding:28px 0 24px;border-bottom:2px solid #e8f0fe;margin-bottom:28px;">
@@ -407,7 +543,15 @@ export async function sendRewardCertificateEmail(
         </div>
       </div>
     </div>
-  `);
+  `;
+  await _loggedSend({
+    type: "reward_certificate",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
 
 export async function sendApologyEmail(
@@ -415,12 +559,14 @@ export async function sendApologyEmail(
   firstName: string,
   accountSize: string,
   phase: string,
-  mt5: { login: number; password: string; server: string }
+  mt5: { login: number; password: string; server: string },
+  opts?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
   const phaseLabel = phase === "funded" ? "Trader Reward" : phase === "phase2" ? "Phase 2" : "Phase 1";
   const titleColor = phase === "funded" ? "#3b82f6" : "#1565C0";
-  await sendEmail(to, "✅ Votre compte Traders Rewards est rétabli", buildEmail({
+  const subject = "✅ Votre compte Traders Rewards est rétabli";
+  const html = buildEmail({
     title: `✅ Compte rétabli — ${phaseLabel}`,
     titleColor,
     body: `Bonjour ${firstName},\n\nNous nous excusons pour la gêne occasionnée suite à une erreur technique survenue récemment sur notre plateforme. Votre compte ${accountSize} a été entièrement restauré et est de nouveau actif. Toutes vos positions et votre historique de trading sont intacts.`,
@@ -434,5 +580,13 @@ export async function sendApologyEmail(
     ],
     cta: { text: "Accéder à mon Dashboard →", href: `${siteUrl}/dashboard` },
     logoUrl,
-  }));
+  });
+  await _loggedSend({
+    type: "apology",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
 }
