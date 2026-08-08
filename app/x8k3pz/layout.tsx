@@ -27,6 +27,7 @@ const NAV: NavGroup[] = [
   { section: "MARKETING", items: [
     { id: "affilies",   label: "Affiliés",    href: "/x8k3pz?t=affilies"  },
     { id: "promotions", label: "Promotions",  sub: true, href: "/x8k3pz/promotions"   },
+    { id: "emails",     label: "Emails",      sub: true, href: "/x8k3pz/emails"        },
   ]},
   { separator: true },
   { items: [
@@ -47,10 +48,12 @@ function SidebarInner() {
   const activeTab    = searchParams.get("t") ?? "overview";
   const isProducts    = pathname.startsWith("/x8k3pz/products");
   const isPromotions  = pathname.startsWith("/x8k3pz/promotions");
+  const isEmails      = pathname.startsWith("/x8k3pz/emails");
 
   const isActive = (id: string) => {
     if (isProducts)   return id === "products";
     if (isPromotions) return id === "promotions";
+    if (isEmails)     return id === "emails";
     return id === activeTab;
   };
 
