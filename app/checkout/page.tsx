@@ -193,10 +193,12 @@ function CheckoutContent() {
     if (!u) { u = await createAccountAndGetUser(); if (!u) return; setUser(u); }
     setLoadingStripe(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, discount, refCode }) });
+    // `discount` intentionnellement absent : le serveur recalcule le montant réel.
+    const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, refCode }) });
     const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else { setPayError(data.error || "Erreur paiement."); setLoadingStripe(false); }
+    if (data.url) { window.location.href = data.url; return; }
+    if (data.code === "USE_FREE_PATH") { setLoadingStripe(false); await handleFree(); return; }
+    setPayError(data.error || "Erreur paiement."); setLoadingStripe(false);
   };
 
   const handleCrypto = async () => {
@@ -204,10 +206,12 @@ function CheckoutContent() {
     if (!u) { u = await createAccountAndGetUser(); if (!u) return; setUser(u); }
     setLoadingCrypto(true);
     await saveProfile(u.token);
-    const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, discount, refCode }) });
+    // `discount` intentionnellement absent : le serveur recalcule le montant réel.
+    const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode }) });
     const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else { setPayError(data.error || "Erreur paiement."); setLoadingCrypto(false); }
+    if (data.url) { window.location.href = data.url; return; }
+    if (data.code === "USE_FREE_PATH") { setLoadingCrypto(false); await handleFree(); return; }
+    setPayError(data.error || "Erreur paiement."); setLoadingCrypto(false);
   };
 
   const handleFree = async () => {
