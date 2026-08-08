@@ -421,8 +421,8 @@ export default function ProductEditorPage() {
         padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         position: "sticky", top: 0,
-        // P1#3: header sticky sur surface #050505
-        background: "#050505",
+        // header sticky sur surface card
+        background: "#0c0c0c",
         zIndex: 50, gap: 12, flexWrap: "wrap",
       }}>
         {/* Breadcrumb + titre + badge */}

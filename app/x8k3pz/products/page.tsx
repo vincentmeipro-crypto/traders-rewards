@@ -205,10 +205,10 @@ export default function ProductsPage() {
       {/* ── Header — P1#5: breadcrumb "Back Office / Produits" à gauche */}
       <div style={{
         borderBottom: "1px solid rgba(255,255,255,0.08)",
-        padding: "20px 32px",
+        padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         gap: 16, flexWrap: "wrap",
-        background: "#050505",
+        background: "#0c0c0c",
       }}>
         {/* Gauche: breadcrumb + titre */}
         <div>

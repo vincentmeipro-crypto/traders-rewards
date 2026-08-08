@@ -108,13 +108,13 @@ type MT5Session = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  funded: "Active",
-  active: "Active",
-  failed: "Failed",
-  passed: "Passed",
-  pending: "Pending",
-  paid: "Paid",
-  rejected: "Rejected",
+  funded:   "Certifié",
+  active:   "Actif",
+  failed:   "Échoué",
+  passed:   "Validé",
+  pending:  "En attente",
+  paid:     "Versé",
+  rejected: "Refusé",
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -153,7 +153,7 @@ type NavItem = { id: Tab | "products"; label: string; sub?: boolean; href?: stri
 type NavGroup = { section?: string; items: NavItem[] } | { separator: true } | { cta: Tab; label: string };
 
 const NAV: (NavGroup)[] = [
-  { items: [{ id: "overview", label: "🏠 Overview" }] },
+  { items: [{ id: "overview", label: "Overview" }] },
   { section: "CHALLENGES", items: [
     { id: "pipeline", label: "Tous les challenges" },
     { id: "products", label: "Produits", sub: true, href: "/x8k3pz/products" },
@@ -172,11 +172,11 @@ const NAV: (NavGroup)[] = [
     { id: "promos",   label: "Codes promo", sub: true },
   ]},
   { items: [
-    { id: "stats",    label: "📊 Analytics" },
-    { id: "securite", label: "🔐 Sécurité" },
+    { id: "stats",    label: "Analytics" },
+    { id: "securite", label: "Sécurité" },
   ]},
   { separator: true },
-  { cta: "create", label: "➕ Nouveau Challenge" },
+  { cta: "create", label: "Nouveau Challenge" },
   { separator: true },
   { section: "SETTINGS", items: [
     { id: "settings",     label: "Plateforme" },
@@ -184,21 +184,21 @@ const NAV: (NavGroup)[] = [
   ]},
 ];
 
-// TABS conservé pour compatibilité (mobile nav)
+// TABS — référence pour compatibilité interne
 const TABS: { id: Tab; label: string }[] = [
-  { id: "overview",     label: "🏠 Overview" },
-  { id: "pipeline",     label: "📋 Challenges" },
-  { id: "crm",          label: "👥 Clients" },
+  { id: "overview",     label: "Cockpit" },
+  { id: "pipeline",     label: "Challenges" },
+  { id: "crm",          label: "Clients" },
   { id: "kyc",          label: "KYC" },
-  { id: "payouts",      label: "💰 Rewards" },
+  { id: "payouts",      label: "Rewards" },
   { id: "financier",    label: "Transactions" },
   { id: "compta",       label: "Comptabilité" },
   { id: "promos",       label: "Codes promo" },
   { id: "affilies",     label: "Affiliés" },
   { id: "stats",        label: "Analytics" },
-  { id: "securite",     label: "🔐 Sécurité" },
-  { id: "create",       label: "➕ Nouveau" },
-  { id: "settings",     label: "⚙️ Settings" },
+  { id: "securite",     label: "Sécurité" },
+  { id: "create",       label: "Nouveau" },
+  { id: "settings",     label: "Paramètres" },
   { id: "maintenance",  label: "Maintenance" },
 ];
 
@@ -341,6 +341,16 @@ function AdminPageInner() {
 
   const [isMobile, setIsMobile] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // MT5 custom inline form (remplace prompt())
+  const [mt5CustomModal, setMt5CustomModal] = useState<{ id: string; type: "add" | "withdraw"; mt5Login: number; mt5Balance: number } | null>(null);
+  const [mt5CustomAmount, setMt5CustomAmount] = useState("");
+  const [mt5CustomLoading, setMt5CustomLoading] = useState(false);
+  const [mt5CustomMsg, setMt5CustomMsg] = useState("");
+
+  // Inline delete confirm for challenges
+  const [challengeDeleteConfirmId, setChallengeDeleteConfirmId] = useState<string | null>(null);
 
   // Sécurité state
   const [securityData, setSecurityData] = useState<SecurityData | null>(null);
@@ -413,7 +423,7 @@ function AdminPageInner() {
       const results = data.results as { login: number; status: string; email?: string; error?: string }[];
       const ok = results.filter(r => r.status === "restored" || r.status === "already_exists").length;
       const fail = results.filter(r => r.status !== "restored" && r.status !== "already_exists").length;
-      setRestoreMsg(`✅ ${ok} compte(s) restauré(s)${fail ? ` — ⚠ ${fail} erreur(s): ${results.filter(r => r.status !== "restored" && r.status !== "already_exists").map(r => `${r.login}:${r.status}`).join(", ")}` : ""}`);
+      setRestoreMsg(`${ok} compte(s) restauré(s)${fail ? ` — ${fail} erreur(s): ${results.filter(r => r.status !== "restored" && r.status !== "already_exists").map(r => `${r.login}:${r.status}`).join(", ")}` : ""}`);
     } catch (e) {
       setRestoreMsg(`Erreur: ${e}`);
     } finally {
@@ -455,7 +465,7 @@ function AdminPageInner() {
   };
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => setIsMobile(window.innerWidth < 640);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
@@ -520,7 +530,7 @@ function AdminPageInner() {
       body: JSON.stringify({ action: "create_promo", code: affiliatePromoData.code, discount_percent: affiliatePromoData.discount, max_uses: affiliatePromoData.maxUses || null, affiliate_user_id: affiliatePromoForm.userId }),
     });
     const data = await res.json();
-    if (res.ok) { setAffiliateMsg(`✓ Code ${data.code} créé`); setAffiliatePromoForm(null); setAffiliatePromoData({ code: "", discount: "10", maxUses: "" }); }
+    if (res.ok) { setAffiliateMsg(`Code ${data.code} créé`); setAffiliatePromoForm(null); setAffiliatePromoData({ code: "", discount: "10", maxUses: "" }); }
     else setAffiliateMsg(`Erreur : ${data.error}`);
     setTimeout(() => setAffiliateMsg(""), 4000);
   };
@@ -677,11 +687,9 @@ function AdminPageInner() {
   };
 
   const deleteChallenge = async (id: string) => {
-    const c = challenges.find(x => x.id === id);
-    const label = c ? `${c.client_first_name} ${c.client_last_name} — ${c.account_size} ${c.model} (${c.phase})` : id;
-    if (!confirm(`Supprimer définitivement ce challenge ?\n\n${label}\n\nCette action est irréversible.`)) return;
     await fetch("/api/admin/challenges", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
     setChallenges(cs => cs.filter(x => x.id !== id));
+    setChallengeDeleteConfirmId(null);
   };
 
   const fixMT5Balance = async (c: Challenge) => {
@@ -720,18 +728,9 @@ function AdminPageInner() {
     const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
-    const input = prompt(`MT5 #${c.mt5_login} — Balance actuelle : $${mt5Balance.toLocaleString()}\n\nMontant à ajouter ($) :`);
-    if (!input) return;
-    const amount = parseFloat(input.replace(",", "."));
-    if (isNaN(amount) || amount <= 0) { alert("Montant invalide"); return; }
-    if (!confirm(`Ajouter $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance + amount).toLocaleString()}`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: false, comment: "Ajout manuel admin" }) });
-    const data = await res.json();
-    if (res.ok) {
-      const newBalance = mt5Balance + amount;
-      setChallenges(cs => cs.map(x => x.id === c.id ? { ...x, balance: newBalance } : x));
-      alert(`✅ +$${amount.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
-    } else alert(`Erreur : ${data.error}`);
+    setMt5CustomModal({ id: c.id, type: "add", mt5Login: c.mt5_login, mt5Balance });
+    setMt5CustomAmount("");
+    setMt5CustomMsg("");
   };
 
   const withdrawMT5Custom = async (c: Challenge) => {
@@ -739,19 +738,34 @@ function AdminPageInner() {
     const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
-    const input = prompt(`MT5 #${c.mt5_login} — Balance actuelle : $${mt5Balance.toLocaleString()}\n\nMontant à retirer ($) :`);
-    if (!input) return;
-    const amount = parseFloat(input.replace(",", "."));
-    if (isNaN(amount) || amount <= 0) { alert("Montant invalide"); return; }
-    if (amount > mt5Balance) { alert(`Impossible : $${amount.toLocaleString()} > balance ($${mt5Balance.toLocaleString()})`); return; }
-    if (!confirm(`Retirer $${amount.toLocaleString()} sur MT5 ${c.mt5_login} ?\nBalance : $${mt5Balance.toLocaleString()} → $${(mt5Balance - amount).toLocaleString()}`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount, withdraw: true, comment: "Retrait manuel admin" }) });
+    setMt5CustomModal({ id: c.id, type: "withdraw", mt5Login: c.mt5_login, mt5Balance });
+    setMt5CustomAmount("");
+    setMt5CustomMsg("");
+  };
+
+  const executeMT5Custom = async () => {
+    if (!mt5CustomModal) return;
+    const amount = parseFloat(mt5CustomAmount.replace(",", "."));
+    if (isNaN(amount) || amount <= 0) { setMt5CustomMsg("Montant invalide"); return; }
+    const { type, mt5Login, mt5Balance, id } = mt5CustomModal;
+    if (type === "withdraw" && amount > mt5Balance) { setMt5CustomMsg(`Impossible : $${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} > balance`); return; }
+    setMt5CustomLoading(true);
+    setMt5CustomMsg("");
+    const res = await fetch("/api/admin/mt5-fix-balance", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
+      body: JSON.stringify({ login: mt5Login, amount, withdraw: type === "withdraw", comment: type === "add" ? "Ajout manuel admin" : "Retrait manuel admin" }),
+    });
     const data = await res.json();
     if (res.ok) {
-      const newBalance = mt5Balance - amount;
-      setChallenges(cs => cs.map(x => x.id === c.id ? { ...x, balance: newBalance } : x));
-      alert(`✅ Retrait de $${amount.toLocaleString()} effectué sur MT5 ${c.mt5_login}`);
-    } else alert(`Erreur : ${data.error}`);
+      const newBalance = type === "add" ? mt5Balance + amount : mt5Balance - amount;
+      setChallenges(cs => cs.map(x => x.id === id ? { ...x, balance: newBalance } : x));
+      setMt5CustomMsg(type === "add" ? `+$${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} ajoutés` : `$${amount.toLocaleString(undefined, { maximumFractionDigits: 2 })} retirés`);
+      setTimeout(() => { setMt5CustomModal(null); setMt5CustomMsg(""); }, 2000);
+    } else {
+      setMt5CustomMsg(`Erreur : ${data.error}`);
+    }
+    setMt5CustomLoading(false);
   };
 
   const updatePayout = async (id: string, status: string) => {
@@ -813,7 +827,7 @@ function AdminPageInner() {
     const data = await res.json();
     setCreateLoading(false);
     if (res.ok) {
-      setCreateMsg("✅ Challenge créé ! Email envoyé au trader.");
+      setCreateMsg("Challenge créé — email envoyé au trader.");
       setCreateForm(f => ({ ...f, userEmail: "", firstName: "", lastName: "", amountPaid: "" }));
       const r = await fetch("/api/admin/challenges", { headers: { "x-admin-key": ADMIN_KEY } });
       const d = await r.json();
@@ -853,9 +867,10 @@ function AdminPageInner() {
   };
 
   const deletePromo = async (id: string) => {
-    if (!token || !confirm("Supprimer ce code ?")) return;
+    if (!token) return;
     await fetch("/api/admin/promo-codes", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
     setPromos(p => p.filter(x => x.id !== id));
+    setDeleteConfirmId(null);
   };
 
   const runSync = async () => {
@@ -872,25 +887,58 @@ function AdminPageInner() {
 
   const copyToClipboard = (text: string) => navigator.clipboard.writeText(text);
 
-  const filteredChallenges = challenges.filter(c => {
+  const filteredChallenges = useMemo(() => challenges.filter(c => {
     if (c.model === "vip") return false;
-    const matchSearch = c.user_email?.toLowerCase().includes(search.toLowerCase()) || c.client_first_name?.toLowerCase().includes(search.toLowerCase()) || c.client_last_name?.toLowerCase().includes(search.toLowerCase());
+    const q = search.toLowerCase();
+    const matchSearch = !q || c.user_email?.toLowerCase().includes(q) || c.client_first_name?.toLowerCase().includes(q) || c.client_last_name?.toLowerCase().includes(q);
     const matchStatus = filterStatus === "all" || c.status === filterStatus;
     return matchSearch && matchStatus;
-  });
+  }), [challenges, search, filterStatus]);
 
-  const filteredAlgoChallenges = challenges.filter(c => {
+  const filteredAlgoChallenges = useMemo(() => challenges.filter(c => {
     if (c.model !== "vip") return false;
-    const matchSearch = c.user_email?.toLowerCase().includes(algoSearch.toLowerCase()) || c.client_first_name?.toLowerCase().includes(algoSearch.toLowerCase()) || c.client_last_name?.toLowerCase().includes(algoSearch.toLowerCase());
+    const q = algoSearch.toLowerCase();
+    const matchSearch = !q || c.user_email?.toLowerCase().includes(q) || c.client_first_name?.toLowerCase().includes(q) || c.client_last_name?.toLowerCase().includes(q);
     const matchStatus = algoFilterStatus === "all" || c.status === algoFilterStatus;
     return matchSearch && matchStatus;
-  });
+  }), [challenges, algoSearch, algoFilterStatus]);
 
-  const maxCA = monthlyRevenue.length > 0 ? Math.max(...monthlyRevenue.map(m => m.ca)) : 1;
+  const maxCA = useMemo(() => monthlyRevenue.length > 0 ? Math.max(...monthlyRevenue.map(m => m.ca)) : 1, [monthlyRevenue]);
+
+  const kycPendingCount = useMemo(() => kycSubmissions.filter(k => k.kyc_status === "pending").length, [kycSubmissions]);
 
   // Formulaire login supprimé — accès direct sans connexion
 
-  if (loading) return <div style={{ minHeight: "100vh", backgroundColor: "#050505", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff" }}>Chargement...</div>;
+  if (loading) return (
+    <div style={{ minHeight: "100vh", backgroundColor: "#050505", color: "#fff", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
+      <style>{`@keyframes sk-fade { 0%,100%{opacity:.18} 50%{opacity:.07} }`}</style>
+      {/* Skeleton header */}
+      <div style={{ backgroundColor: "#0c0c0c", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "16px 32px", height: 56, display: "flex", alignItems: "center" }}>
+        <div style={{ width: 120, height: 18, borderRadius: 6, background: "rgba(255,255,255,0.18)", animation: "sk-fade 1.6s ease-in-out infinite" }} />
+      </div>
+      <div style={{ padding: "28px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
+        {/* Skeleton KPI row */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+          {[...Array(4)].map((_, i) => (
+            <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "18px 20px" }}>
+              <div style={{ width: "60%", height: 10, borderRadius: 4, background: "rgba(255,255,255,0.12)", marginBottom: 12, animation: "sk-fade 1.6s ease-in-out infinite" }} />
+              <div style={{ width: "40%", height: 28, borderRadius: 6, background: "rgba(255,255,255,0.18)", animation: "sk-fade 1.6s ease-in-out infinite" }} />
+            </div>
+          ))}
+        </div>
+        {/* Skeleton card */}
+        <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 12, padding: "20px 24px" }}>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 16, padding: "12px 0", borderBottom: i < 4 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
+              <div style={{ width: 180, height: 13, borderRadius: 4, background: "rgba(255,255,255,0.12)", animation: "sk-fade 1.6s ease-in-out infinite" }} />
+              <div style={{ width: 80, height: 13, borderRadius: 4, background: "rgba(255,255,255,0.08)", animation: "sk-fade 1.6s ease-in-out infinite" }} />
+              <div style={{ width: 60, height: 20, borderRadius: 100, background: "rgba(255,255,255,0.08)", marginLeft: "auto", animation: "sk-fade 1.6s ease-in-out infinite" }} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
   if (error) return <div style={{ minHeight: "100vh", backgroundColor: "#050505", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}><div style={{ backgroundColor: "#0c0c0c", border: "1px solid #fca5a5", borderRadius: 12, padding: 32 }}><div style={{ color: "#ef4444", fontWeight: 700, marginBottom: 12 }}>Erreur admin</div><div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, fontFamily: "monospace" }}>{error}</div></div></div>;
 
   const p = isMobile ? "16px" : "32px";
@@ -907,26 +955,90 @@ function AdminPageInner() {
           <div />
         </div>
 
-        {/* Mobile bottom nav — 6 onglets principaux uniquement */}
+        {/* Mobile bottom nav + drawer — tous modules accessibles */}
         {isMobile && (() => {
-          const mobileNav: { id: Tab; label: string }[] = [
-            { id: "overview",  label: "🏠" },
-            { id: "pipeline",  label: "📋" },
-            { id: "payouts",   label: "💰" },
-            { id: "kyc",       label: "KYC" },
-            { id: "create",    label: "➕" },
-            { id: "settings",  label: "⚙️" },
+          const primaryNav = [
+            { id: "overview" as Tab, label: "Cockpit" },
+            { id: "pipeline" as Tab, label: "Challenges" },
+            { id: "crm"      as Tab, label: "Clients" },
+            { id: "payouts"  as Tab, label: "Finance" },
+            { id: "create"   as Tab, label: "Créer" },
+          ];
+          const drawerNav: { id: Tab | null; label: string; href?: string }[] = [
+            { id: "affilies"    as Tab, label: "Marketing" },
+            { id: "stats"       as Tab, label: "Analytics" },
+            { id: "securite"    as Tab, label: "Sécurité" },
+            { id: "settings"    as Tab, label: "Paramètres" },
+            { id: "maintenance" as Tab, label: "Maintenance" },
+            { id: null, label: "Produits", href: "/x8k3pz/products" },
           ];
           return (
-            <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, backgroundColor: "#0a0a0a", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", padding: "4px 0" }}>
-              {mobileNav.map(t => (
-                <button key={t.id} onClick={() => setTab(t.id)} style={{ position: "relative", flex: 1, padding: "10px 4px", background: "none", border: "none", borderTop: `2px solid ${tab === t.id ? "#3B82F6" : "transparent"}`, color: tab === t.id ? "#fff" : "rgba(255,255,255,0.3)", fontWeight: tab === t.id ? 700 : 400, fontSize: 13, cursor: "pointer" }}>
-                  {t.label}
-                  {t.id === "payouts" && kpis.pendingPayouts > 0 && <span style={{ position: "absolute", top: 4, right: "20%", backgroundColor: "#ef4444", color: "#fff", borderRadius: 100, padding: "1px 4px", fontSize: 8 }}>{kpis.pendingPayouts}</span>}
-                  {t.id === "kyc" && kycSubmissions.filter(k => k.kyc_status === "pending").length > 0 && <span style={{ position: "absolute", top: 4, right: "20%", backgroundColor: "#f59e0b", color: "#000", borderRadius: 100, padding: "1px 4px", fontSize: 8 }}>{kycSubmissions.filter(k => k.kyc_status === "pending").length}</span>}
+            <>
+              {/* Drawer overlay */}
+              {drawerOpen && (
+                <div
+                  onClick={() => setDrawerOpen(false)}
+                  style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 45 }}
+                />
+              )}
+
+              {/* Drawer panel */}
+              <div style={{
+                position: "fixed", bottom: 56, left: 0, right: 0,
+                background: "#0c0c0c", borderTop: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: "12px 12px 0 0", zIndex: 46,
+                transform: drawerOpen ? "translateY(0)" : "translateY(100%)",
+                transition: "transform 0.22s cubic-bezier(.4,0,.2,1)",
+                paddingTop: 8, paddingBottom: 4,
+              }}>
+                <div style={{ width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.15)", margin: "4px auto 12px" }} />
+                <div style={{ padding: "0 16px 8px", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", letterSpacing: 1.5, textTransform: "uppercase" }}>Modules</div>
+                {drawerNav.map(item => item.href ? (
+                  <a key={item.label} href={item.href}
+                    style={{ display: "block", padding: "12px 20px", color: "rgba(255,255,255,0.65)", fontSize: 13, fontWeight: 400, textDecoration: "none", borderLeft: "3px solid transparent" }}
+                    onClick={() => setDrawerOpen(false)}>
+                    {item.label}
+                  </a>
+                ) : (
+                  <button key={item.id} onClick={() => { if (item.id) setTab(item.id); setDrawerOpen(false); }}
+                    aria-label={item.label}
+                    style={{
+                      width: "100%", textAlign: "left", padding: "12px 20px",
+                      background: tab === item.id ? "rgba(59,130,246,0.06)" : "transparent",
+                      border: "none",
+                      borderLeft: `3px solid ${tab === item.id ? "#3b82f6" : "transparent"}`,
+                      color: tab === item.id ? "#fff" : "rgba(255,255,255,0.65)",
+                      fontSize: 13, fontWeight: tab === item.id ? 700 : 400, cursor: "pointer",
+                    }}>
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Bottom bar */}
+              <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 50, background: "#0c0c0c", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", height: 56 }}>
+                {primaryNav.map(t => {
+                  const isActive = tab === t.id && !drawerOpen;
+                  const badgeCount = t.id === "payouts" ? kpis.pendingPayouts : t.id === "crm" ? kycPendingCount : 0;
+                  return (
+                    <button key={t.id} onClick={() => { setTab(t.id); setDrawerOpen(false); }}
+                      aria-label={t.label}
+                      style={{ flex: 1, padding: "4px 2px 6px", background: "none", border: "none", borderTop: `2px solid ${isActive ? "#3b82f6" : "transparent"}`, color: isActive ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: isActive ? 700 : 400, cursor: "pointer", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", gap: 2, letterSpacing: "0.2px" }}>
+                      {badgeCount > 0 && <span style={{ position: "absolute", top: 6, right: "15%", background: t.id === "crm" ? "#f59e0b" : "#ef4444", color: t.id === "crm" ? "#000" : "#fff", borderRadius: 100, padding: "1px 4px", fontSize: 8, fontWeight: 900, lineHeight: 1.4 }}>{badgeCount}</span>}
+                      {t.label}
+                    </button>
+                  );
+                })}
+                {/* Menu button */}
+                <button onClick={() => setDrawerOpen(o => !o)}
+                  aria-label="Menu secondaire"
+                  aria-expanded={drawerOpen}
+                  style={{ flex: 1, padding: "4px 2px 6px", background: "none", border: "none", borderTop: `2px solid ${drawerOpen ? "#3b82f6" : "transparent"}`, color: drawerOpen ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: drawerOpen ? 700 : 400, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", gap: 2 }}>
+                  <span style={{ fontSize: 15, lineHeight: 1 }}>≡</span>
+                  Menu
                 </button>
-              ))}
-            </div>
+              </div>
+            </>
           );
         })()}
         <div style={{ padding: isMobile ? "16px 12px" : "28px 32px" }}>
@@ -1228,7 +1340,7 @@ function AdminPageInner() {
               </div>
 
               {/* KPI pills — 4 indicateurs */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+              <div style={{ display: "grid", gridTemplateColumns: `repeat(${isMobile ? 2 : 4}, 1fr)`, gap: 8 }}>
                 {([
                   { label: "Actifs",   value: kpis.phase1 + kpis.oneStep + kpis.phase2, color: "#22c55e" },
                   { label: "À risque", value: kpis.alerts.length, color: kpis.alerts.length > 0 ? "#ef4444" : "rgba(255,255,255,0.3)" },
@@ -1237,7 +1349,7 @@ function AdminPageInner() {
                 ] as { label: string; value: number; color: string }[]).map((k, i) => (
                   <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: isMobile ? "12px 14px" : "14px 18px", display: "flex", flexDirection: "column", gap: 4 }}>
                     <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: 1.2, fontWeight: 700 }}>{k.label}</span>
-                    <span style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</span>
+                    <span style={{ fontSize: 20, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</span>
                   </div>
                 ))}
               </div>
@@ -1384,8 +1496,8 @@ function AdminPageInner() {
                                 <td style={{ padding: "11px 12px" }} onClick={e => e.stopPropagation()}>
                                   {isEditing
                                     ? <div style={{ display: "flex", gap: 6 }}>
-                                        <button onClick={() => saveChallenge(c.id)} style={{ background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
-                                        <button onClick={() => { setEditing(null); setEditData({}); }} style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                        <button onClick={() => saveChallenge(c.id)} aria-label="Sauvegarder" style={{ background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
+                                        <button onClick={() => { setEditing(null); setEditData({}); }} aria-label="Annuler" style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                       </div>
                                     : <button
                                         onClick={() => { setEditing(c.id); setEditData({}); setExpandedChallenge(c.id); }}
@@ -1446,7 +1558,7 @@ function AdminPageInner() {
                                               BREACH · {c.breach_reason === "daily_drawdown" ? "DD Jour" : "DD Max"}
                                             </div>
                                             <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "baseline" }}>
-                                              <span style={{ fontSize: 15, fontWeight: 800, color: "#ef4444", fontVariantNumeric: "tabular-nums" }}>-{c.breach_value?.toFixed(2) ?? "?"}%</span>
+                                              <span style={{ fontSize: 16, fontWeight: 800, color: "#ef4444", fontVariantNumeric: "tabular-nums" }}>-{c.breach_value?.toFixed(2) ?? "?"}%</span>
                                               <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{new Date(c.breach_at).toLocaleDateString("fr-FR")}</span>
                                               {c.breach_equity && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontVariantNumeric: "tabular-nums" }}>Equity : ${Math.round(c.breach_equity).toLocaleString()}</span>}
                                             </div>
@@ -1582,17 +1694,28 @@ function AdminPageInner() {
                                         </div>
                                       </div>
 
-                                      {/* P1 — Zone dangereuse (isolée en bas, pleine largeur) */}
+                                      {/* Zone dangereuse — double confirm inline */}
                                       <div style={{ borderTop: "1px solid rgba(239,68,68,0.1)", paddingTop: 16 }}>
-                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.14)", borderRadius: 8, padding: "14px 18px", flexWrap: "wrap" }}>
-                                          <div>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(239,68,68,0.65)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 4 }}>Zone dangereuse</div>
-                                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>Supprimer définitivement ce challenge. Action irréversible.</div>
+                                        {challengeDeleteConfirmId !== c.id ? (
+                                          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.12)", borderRadius: 8, padding: "14px 18px", flexWrap: "wrap" }}>
+                                            <div>
+                                              <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(239,68,68,0.6)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 4 }}>Zone dangereuse</div>
+                                              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>Supprimer définitivement ce challenge. Action irréversible.</div>
+                                            </div>
+                                            <button onClick={() => setChallengeDeleteConfirmId(c.id)} style={{ padding: "8px 18px", background: "transparent", border: "1px solid rgba(239,68,68,0.4)", borderRadius: 7, color: "#ef4444", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
+                                              Supprimer
+                                            </button>
                                           </div>
-                                          <button onClick={() => deleteChallenge(c.id)} style={{ padding: "8px 20px", background: "transparent", border: "1px solid rgba(239,68,68,0.45)", borderRadius: 7, color: "#ef4444", fontSize: 12, fontWeight: 700, cursor: "pointer", flexShrink: 0 }}>
-                                            Supprimer
-                                          </button>
-                                        </div>
+                                        ) : (
+                                          <div style={{ background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "14px 18px" }}>
+                                            <div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444", marginBottom: 6 }}>Confirmer la suppression ?</div>
+                                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 12 }}>Cette action est irréversible. Le challenge sera supprimé de la base de données.</div>
+                                            <div style={{ display: "flex", gap: 10 }}>
+                                              <button onClick={() => setChallengeDeleteConfirmId(null)} style={{ padding: "7px 14px", background: "transparent", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, color: "rgba(255,255,255,0.5)", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                                              <button onClick={() => deleteChallenge(c.id)} style={{ padding: "7px 16px", background: "#ef4444", border: "none", borderRadius: 7, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer la suppression</button>
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
 
                                     </div>
@@ -1751,14 +1874,17 @@ function AdminPageInner() {
                             <td style={{ padding: "13px 14px" }}>
                               {editing === c.id
                                 ? <div style={{ display: "flex", gap: 6 }}>
-                                    <button onClick={() => saveChallenge(c.id)} style={{ background: "#a78bfa", color: "#000", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
-                                    <button onClick={() => { setEditing(null); setEditData({}); }} style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                    <button onClick={() => saveChallenge(c.id)} aria-label="Sauvegarder" style={{ background: "#a78bfa", color: "#000", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
+                                    <button onClick={() => { setEditing(null); setEditData({}); }} aria-label="Annuler" style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                   </div>
                                 : <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                                     <button onClick={() => { setEditing(c.id); setEditData({}); }} style={{ background: "rgba(139,92,246,0.12)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.25)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}>Edit</button>
                                     {c.mt5_login && <button onClick={() => addMT5Custom(c)} style={{ background: "rgba(34,197,94,0.08)", color: "#22c55e", border: "1px solid #22c55e33", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>+$</button>}
                                     {c.mt5_login && <button onClick={() => withdrawMT5Custom(c)} style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid #ef444433", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>−$</button>}
-                                    <button onClick={() => deleteChallenge(c.id)} style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                    {challengeDeleteConfirmId === c.id
+                                      ? <><button onClick={() => deleteChallenge(c.id)} style={{ background: "rgba(239,68,68,0.12)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 6, padding: "5px 10px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer</button><button onClick={() => setChallengeDeleteConfirmId(null)} style={{ background: "transparent", color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "5px 8px", fontSize: 12, cursor: "pointer" }}>✕</button></>
+                                      : <button onClick={() => setChallengeDeleteConfirmId(c.id)} aria-label="Supprimer ce challenge" style={{ background: "rgba(255,255,255,0.04)", color: "rgba(255,255,255,0.3)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
+                                    }
                                   </div>}
                             </td>
                           </tr>
@@ -2327,7 +2453,7 @@ function AdminPageInner() {
                           <thead>
                             <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                               {["Trader","Montant","Méthode","Statut","Date","Actions"].map(h => (
-                                <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8, whiteSpace: "nowrap" }}>{h}</th>
+                                <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8, whiteSpace: "nowrap" }}>{h}</th>
                               ))}
                             </tr>
                           </thead>
@@ -2416,7 +2542,7 @@ function AdminPageInner() {
                           <thead>
                             <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                               {["Date","Trader","Produit","Montant","Méthode","Statut"].map(h => (
-                                <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                                <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
                               ))}
                             </tr>
                           </thead>
@@ -2475,7 +2601,7 @@ function AdminPageInner() {
                         <thead>
                           <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                             {["Référence","Date","Trader","Montant","Méthode","IBAN / Wallet","Justificatif"].map(h => (
-                              <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                              <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
                             ))}
                           </tr>
                         </thead>
@@ -2520,7 +2646,7 @@ function AdminPageInner() {
                         <thead>
                           <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                             {["Mois","CA","Rewards versés","Ventes","Marge brute"].map(h => (
-                              <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                              <th key={h} style={{ padding: "11px 14px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
                             ))}
                           </tr>
                         </thead>
@@ -2607,8 +2733,8 @@ function AdminPageInner() {
                   <button key={v.id} onClick={() => setMarketingView(v.id)}
                     style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", background: marketingView === v.id ? "#111" : "transparent", border: `1px solid ${marketingView === v.id ? "rgba(255,255,255,0.1)" : "transparent"}`, borderRadius: 7, color: marketingView === v.id ? "#fff" : "rgba(255,255,255,0.38)", fontSize: 12, fontWeight: marketingView === v.id ? 700 : 400, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
                     {v.label}
-                    {v.id === "promotions" && activePromos.length > 0 && <span style={{ background: "#22c55e", color: "#000", fontSize: 9, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activePromos.length}</span>}
-                    {v.id === "affilies"   && activeAffiliates.length > 0 && <span style={{ background: "#3b82f6", color: "#fff", fontSize: 9, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activeAffiliates.length}</span>}
+                    {v.id === "promotions" && activePromos.length > 0 && <span style={{ background: "#22c55e", color: "#000", fontSize: 10, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activePromos.length}</span>}
+                    {v.id === "affilies"   && activeAffiliates.length > 0 && <span style={{ background: "#3b82f6", color: "#fff", fontSize: 10, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activeAffiliates.length}</span>}
                   </button>
                 ))}
               </div>
@@ -2696,7 +2822,7 @@ function AdminPageInner() {
                 return (
                   <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                     <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Créer un code promo</div>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Créer un code promo</div>
                       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12, marginBottom: 14 }}>
                         {([
                           { label: "CODE *",           key: "code",             placeholder: "SUMMER25",  transform: (v: string) => v.toUpperCase() },
@@ -2742,7 +2868,7 @@ function AdminPageInner() {
                             <thead>
                               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                                 {["Code","Remise","Affilié lié","Utilisé","Max","Expiration","Statut","Actions"].map(h => (
-                                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8, whiteSpace: "nowrap" }}>{h}</th>
+                                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8, whiteSpace: "nowrap" }}>{h}</th>
                                 ))}
                               </tr>
                             </thead>
@@ -2820,7 +2946,7 @@ function AdminPageInner() {
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
                         <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 20px" }}>
                           <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
-                          <div style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                          <div style={{ fontSize: 20, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
                         </div>
                       ))}
                     </div>
@@ -2969,7 +3095,7 @@ function AdminPageInner() {
                                             <thead>
                                               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                                                 {["Trader","Achat","Commission","Statut","Date","Action"].map(h => (
-                                                  <th key={h} style={{ padding: "9px 14px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                                                  <th key={h} style={{ padding: "9px 14px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
                                                 ))}
                                               </tr>
                                             </thead>
@@ -3092,7 +3218,7 @@ function AdminPageInner() {
 
                     <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
                       <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Répartition des ventes</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Répartition des ventes</div>
                         {([
                           { label: "Directes",    count: directCount, color: "#3b82f6", pct: Math.round(directCount / totalPurch * 100) },
                           { label: "Via affilié", count: refCount,    color: "#f59e0b", pct: Math.round(refCount    / totalPurch * 100) },
@@ -3112,7 +3238,7 @@ function AdminPageInner() {
                       </div>
 
                       <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Méthodes de paiement</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Méthodes de paiement</div>
                         {([
                           { label: "Stripe / Carte", count: stripeCount, color: "#3b82f6" },
                           { label: "Crypto",          count: cryptoCount, color: "#f59e0b" },
@@ -3140,7 +3266,7 @@ function AdminPageInner() {
                             <thead>
                               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                                 {["Affilié","Code","Conversions","CA référé","Commissions"].map(h => (
-                                  <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                                  <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
                                 ))}
                               </tr>
                             </thead>
@@ -3192,7 +3318,7 @@ function AdminPageInner() {
                 ].map((s, i) => (
                   <div key={i} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, padding: "12px 20px" }}>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{s.label}</div>
-                    <div style={{ fontSize: 22, fontWeight: 900, color: s.color }}>{s.value}</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: s.color }}>{s.value}</div>
                   </div>
                 ))}
               </div>
@@ -3446,7 +3572,7 @@ function AdminPageInner() {
                   <button key={v.id} onClick={() => setAnalyticsView(v.id)}
                     style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", background: analyticsView === v.id ? "#111" : "transparent", border: `1px solid ${analyticsView === v.id ? "rgba(255,255,255,0.1)" : "transparent"}`, borderRadius: 7, color: analyticsView === v.id ? "#fff" : "rgba(255,255,255,0.38)", fontSize: 12, fontWeight: analyticsView === v.id ? 700 : 400, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
                     {v.label}
-                    {v.alert && v.alert > 0 && <span style={{ background: "#ef4444", color: "#fff", fontSize: 9, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{v.alert}</span>}
+                    {v.alert && v.alert > 0 && <span style={{ background: "#ef4444", color: "#fff", fontSize: 10, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{v.alert}</span>}
                   </button>
                 ))}
               </div>
@@ -3469,7 +3595,7 @@ function AdminPageInner() {
                   </div>
 
                   <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Insights</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Insights</div>
                     {insights.length === 0 ? (
                       <div style={{ fontSize: 13, color: "rgba(255,255,255,0.25)" }}>Données insuffisantes pour générer des insights.</div>
                     ) : (
@@ -3612,7 +3738,7 @@ function AdminPageInner() {
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
                         <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 18px" }}>
                           <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
-                          <div style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                          <div style={{ fontSize: 20, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
                         </div>
                       ))}
                     </div>
@@ -3837,7 +3963,7 @@ function AdminPageInner() {
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
                         <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 18px" }}>
                           <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
-                          <div style={{ fontSize: 22, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+                          <div style={{ fontSize: 20, fontWeight: 900, color: k.color, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
                         </div>
                       ))}
                     </div>
@@ -3852,7 +3978,7 @@ function AdminPageInner() {
                             <thead>
                               <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                                 {["Trader","Compte","Drawdown","Limite","Alerte"].map(h => (
-                                  <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
+                                  <th key={h} style={{ padding: "10px 16px", textAlign: "left", color: "rgba(255,255,255,0.3)", fontWeight: 600, fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8 }}>{h}</th>
                                 ))}
                               </tr>
                             </thead>
@@ -4015,17 +4141,17 @@ function AdminPageInner() {
           return (
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
-              {/* Sub-navigation */}
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                {secViews.map(v => (
-                  <button key={v.id} onClick={() => setSecurityView(v.id)} style={{
-                    padding: "8px 16px", borderRadius: 8, fontSize: 13, cursor: "pointer", fontWeight: securityView === v.id ? 700 : 400,
-                    backgroundColor: securityView === v.id ? "rgba(255,255,255,0.1)" : "transparent",
-                    border: `1px solid ${securityView === v.id ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.08)"}`,
-                    color: securityView === v.id ? "#fff" : "rgba(255,255,255,0.45)",
-                  }}>{v.label}</button>
-                ))}
-                <button onClick={() => loadSecurity()} style={{ marginLeft: "auto", padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "transparent", color: "rgba(255,255,255,0.45)", fontSize: 12, cursor: "pointer" }}>Rafraichir</button>
+              {/* Sub-navigation — pattern unifié */}
+              <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: 2, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: 4, overflowX: "auto", flex: 1 }}>
+                  {secViews.map(v => (
+                    <button key={v.id} onClick={() => setSecurityView(v.id)}
+                      style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", background: securityView === v.id ? "#111" : "transparent", border: `1px solid ${securityView === v.id ? "rgba(255,255,255,0.1)" : "transparent"}`, borderRadius: 7, color: securityView === v.id ? "#fff" : "rgba(255,255,255,0.38)", fontSize: 12, fontWeight: securityView === v.id ? 700 : 400, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                      {v.label}
+                    </button>
+                  ))}
+                </div>
+                <button onClick={() => loadSecurity()} style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.08)", background: "transparent", color: "rgba(255,255,255,0.45)", fontSize: 12, cursor: "pointer", flexShrink: 0 }}>Rafraichir</button>
               </div>
 
               {securityLoading && (
@@ -4516,7 +4642,7 @@ function AdminPageInner() {
                   <input
                     value={editVal}
                     onChange={e => setSettingsEdit(p => ({ ...p, [row.key]: e.target.value }))}
-                    style={{ background: isDirty ? "rgba(96,165,250,0.08)" : "#111111", border: `1px solid ${isDirty ? "#60a5fa" : "rgba(255,255,255,0.08)"}`, borderRadius: 8, padding: "7px 12px", color: "#fff", fontSize: 12, fontFamily: "monospace", width: 240, outline: "none" }}
+                    style={{ background: isDirty ? "rgba(96,165,250,0.08)" : "#111111", border: `1px solid ${isDirty ? "#60a5fa" : "rgba(255,255,255,0.08)"}`, borderRadius: 8, padding: "7px 12px", color: "#fff", fontSize: 12, fontFamily: "monospace", width: "100%", maxWidth: 240, outline: "none" }}
                   />
                   {isDirty && (
                     <button onClick={() => saveSetting(row.key)} disabled={saving} style={{ background: saving ? "#374151" : "#60a5fa", border: "none", borderRadius: 8, color: saving ? "rgba(255,255,255,0.4)" : "#000", padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
@@ -4657,6 +4783,60 @@ function AdminPageInner() {
 
         </div>
       </div>
+
+      {/* ── MT5 Custom Balance Modal ── (remplace prompt()) */}
+      {mt5CustomModal && (
+        <>
+          <div onClick={() => { if (!mt5CustomLoading) { setMt5CustomModal(null); setMt5CustomMsg(""); } }} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 100 }} />
+          <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%,-50%)", background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: "24px 28px", zIndex: 101, width: "min(420px, 90vw)" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
+              {mt5CustomModal.type === "add" ? "Ajouter balance" : "Retirer balance"}
+            </div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 20 }}>
+              MT5 #{mt5CustomModal.mt5Login} — Balance actuelle : <strong style={{ color: "#fff" }}>${mt5CustomModal.mt5Balance.toLocaleString(undefined, { maximumFractionDigits: 2 })}</strong>
+            </div>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", display: "block", marginBottom: 6 }}>
+                Montant ($) à {mt5CustomModal.type === "add" ? "ajouter" : "retirer"}
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="Ex: 500"
+                value={mt5CustomAmount}
+                onChange={e => setMt5CustomAmount(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && executeMT5Custom()}
+                autoFocus
+                style={{ width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, padding: "10px 14px", color: "#fff", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+              />
+            </div>
+            {mt5CustomAmount && !isNaN(parseFloat(mt5CustomAmount)) && parseFloat(mt5CustomAmount) > 0 && (
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 16, padding: "8px 12px", background: "rgba(255,255,255,0.04)", borderRadius: 6 }}>
+                Balance après : <strong style={{ color: "#fff" }}>
+                  ${(mt5CustomModal.type === "add"
+                    ? mt5CustomModal.mt5Balance + parseFloat(mt5CustomAmount)
+                    : mt5CustomModal.mt5Balance - parseFloat(mt5CustomAmount)
+                  ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                </strong>
+              </div>
+            )}
+            {mt5CustomMsg && (
+              <div style={{ fontSize: 12, color: mt5CustomMsg.includes("Erreur") || mt5CustomMsg.includes("Impossible") ? "#ef4444" : "#22c55e", marginBottom: 12, fontWeight: 600 }}>{mt5CustomMsg}</div>
+            )}
+            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+              <button onClick={() => { setMt5CustomModal(null); setMt5CustomMsg(""); }} disabled={mt5CustomLoading}
+                style={{ padding: "9px 18px", background: "transparent", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "rgba(255,255,255,0.5)", fontSize: 13, cursor: "pointer" }}>
+                Annuler
+              </button>
+              <button onClick={executeMT5Custom} disabled={mt5CustomLoading || !mt5CustomAmount}
+                style={{ padding: "9px 18px", background: mt5CustomModal.type === "add" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)", border: `1px solid ${mt5CustomModal.type === "add" ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`, borderRadius: 8, color: mt5CustomModal.type === "add" ? "#22c55e" : "#ef4444", fontSize: 13, fontWeight: 700, cursor: mt5CustomLoading ? "not-allowed" : "pointer", opacity: mt5CustomLoading ? 0.6 : 1 }}>
+                {mt5CustomLoading ? "En cours..." : (mt5CustomModal.type === "add" ? "Confirmer l'ajout" : "Confirmer le retrait")}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

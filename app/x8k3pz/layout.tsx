@@ -139,7 +139,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }}>
       <style>{`
         .admin-sidebar { display: flex; flex-direction: column; }
-        @media (max-width: 767px) { .admin-sidebar { display: none !important; } }
+        @media (max-width: 639px) { .admin-sidebar { display: none !important; } }
       `}</style>
 
       {/* Sidebar — desktop only */}
