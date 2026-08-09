@@ -1,3 +1,9 @@
+// DEPRECATED — historical one-shot script.
+// Sanitized: do not re-run in production.
+// Script exécuté en 2025 pour la migration vers XyloMarkets-Server.
+// Les logins ci-dessous ont été sanitisés (3B-1b1) — le script
+// ne trouverait aucun challenge correspondant s'il était relancé.
+// Pour bloquer toute exécution accidentelle, une garde est ajoutée ci-dessous.
 /**
  * Envoie les emails de migration aux 3 clients avec leurs nouveaux identifiants
  */
@@ -27,14 +33,19 @@ async function sendViaResend(to: string, subject: string, html: string) {
 
 const NEW_SERVER = "XyloMarkets-Server";
 
-// Les 3 comptes migrés (logins créés pendant la migration)
+// Les 3 comptes migrés (logins sanitisés — 3B-1b1)
 const MIGRATED = [
-  { userId: null, login: 9009094831596, accountSize: "$100,000" },
-  { userId: null, login: 9009094831597, accountSize: "$100,000" },
-  { userId: null, login: 9009094831598, accountSize: "$100,000" },
+  { userId: null, login: 12345671, accountSize: "$100,000" },
+  { userId: null, login: 12345672, accountSize: "$100,000" },
+  { userId: null, login: 12345673, accountSize: "$100,000" },
 ];
 
 async function main() {
+  // Guard — empêche toute exécution accidentelle en production
+  if (process.env.ALLOW_DEPRECATED_MIGRATION_SCRIPT !== "true") {
+    console.error("DEPRECATED script. Set ALLOW_DEPRECATED_MIGRATION_SCRIPT=true to run.");
+    process.exit(1);
+  }
   // Récupère les challenges avec le nouveau serveur et les logins migrés
   const logins = MIGRATED.map(m => m.login);
   const { data: challenges } = await supabase

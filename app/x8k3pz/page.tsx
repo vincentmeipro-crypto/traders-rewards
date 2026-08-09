@@ -331,10 +331,6 @@ function AdminPageInner() {
   const [createMsg, setCreateMsg] = useState("");
   const [createError, setCreateError] = useState("");
 
-  // Restore challenges state
-  const [restoreLoading, setRestoreLoading] = useState(false);
-  const [restoreMsg, setRestoreMsg] = useState("");
-
   const [isMobile, setIsMobile] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -375,8 +371,6 @@ function AdminPageInner() {
   // Settings & Maintenance Hub state
   const [settingsLegacyOpen, setSettingsLegacyOpen] = useState(false);
   const [maintenanceDangerOpen, setMaintenanceDangerOpen] = useState(false);
-  const [restoreConfirm1, setRestoreConfirm1] = useState(false);
-  const [restoreConfirm2, setRestoreConfirm2] = useState(false);
 
   const loadAdminData = async () => {
     const headers = { "x-admin-key": ADMIN_KEY };
@@ -395,37 +389,6 @@ function AdminPageInner() {
   };
 
   useEffect(() => { loadAdminData(); }, []);
-
-  const handleRestoreChallenges = async () => {
-    setRestoreLoading(true);
-    setRestoreMsg("Restauration en cours...");
-    try {
-      const res = await fetch("/api/admin/restore-challenges", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({
-          masterPassword: "M@SeSh2u",
-          server: "XyloMarkets-Server",
-          accounts: [
-            { login: 9009094831596, firstName: "Bruno",    lastName: "Penard",  email: "bpenard@yahoo.fr",             model: "2step", phase: "phase1" },
-            { login: 9009094831597, firstName: "Aurélien", lastName: "Roussel", email: "aurelien.rou@gmail.com",        model: "2step", phase: "phase1" },
-            { login: 9009094831598, firstName: "Régis",    lastName: "Allidé",  email: "regis.allide-codjo@orange.fr", model: "2step", phase: "phase1" },
-            { login: 9009094832394, firstName: "Régis",    lastName: "Allidé",  email: "regis.allide-codjo@orange.fr", model: "1step", phase: "funded"  },
-            { login: 9009094835395, firstName: "Samir",    lastName: "KHELIF",  email: "samir.khelif@yahoo.fr",        model: "1step", phase: "phase1" },
-          ],
-        }),
-      });
-      const data = await res.json();
-      const results = data.results as { login: number; status: string; email?: string; error?: string }[];
-      const ok = results.filter(r => r.status === "restored" || r.status === "already_exists").length;
-      const fail = results.filter(r => r.status !== "restored" && r.status !== "already_exists").length;
-      setRestoreMsg(`${ok} compte(s) restauré(s)${fail ? ` — ${fail} erreur(s): ${results.filter(r => r.status !== "restored" && r.status !== "already_exists").map(r => `${r.login}:${r.status}`).join(", ")}` : ""}`);
-    } catch (e) {
-      setRestoreMsg(`Erreur: ${e}`);
-    } finally {
-      setRestoreLoading(false);
-    }
-  };
 
   // handleAdminLogin supprimé — accès sans connexion
 
@@ -4425,56 +4388,23 @@ function AdminPageInner() {
                       <div style={{ fontSize: 11, color: "rgba(239,68,68,0.6)" }}>Action irreversible — cree des challenges Supabase et envoie des emails automatiques aux traders.</div>
                     </div>
 
-                    {restoreMsg && (
-                      <div style={{ fontSize: 13, fontWeight: 600, color: "#22c55e" }}>{restoreMsg}</div>
-                    )}
-
-                    {!restoreConfirm1 && !restoreConfirm2 && (
-                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                        <button
-                          onClick={async () => {
-                            await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
-                            setRestoreMsg("Email de previsualisation envoye a vincentmeipro@gmail.com");
-                          }}
-                          style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
-                        >
-                          Recevoir copie email
-                        </button>
-                        <button
-                          onClick={() => setRestoreConfirm1(true)}
-                          style={{ background: "rgba(239,68,68,0.08)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
-                        >
-                          Restaurer les dashboards
-                        </button>
-                      </div>
-                    )}
-
-                    {restoreConfirm1 && !restoreConfirm2 && (
-                      <div style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 10, padding: "14px 18px", display: "flex", flexDirection: "column", gap: 12 }}>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: "#fff" }}>Confirmer la restauration ? (1/2)</div>
-                        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)" }}>5 challenges seront crees dans Supabase. Des emails seront envoyes a chaque trader.</div>
-                        <div style={{ display: "flex", gap: 10 }}>
-                          <button onClick={() => setRestoreConfirm1(false)} style={{ background: "transparent", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "7px 14px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
-                          <button onClick={() => setRestoreConfirm2(true)} style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.25)", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Confirmer — etape 2/2</button>
-                        </div>
-                      </div>
-                    )}
-
-                    {restoreConfirm1 && restoreConfirm2 && (
-                      <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 10, padding: "14px 18px", display: "flex", flexDirection: "column", gap: 12 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#ef4444" }}>Derniere confirmation — action irreversible</div>
-                        <div style={{ display: "flex", gap: 10 }}>
-                          <button onClick={() => { setRestoreConfirm1(false); setRestoreConfirm2(false); }} style={{ background: "transparent", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "7px 14px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
-                          <button
-                            onClick={async () => { setRestoreConfirm1(false); setRestoreConfirm2(false); await handleRestoreChallenges(); }}
-                            disabled={restoreLoading}
-                            style={{ background: restoreLoading ? "rgba(239,68,68,0.3)" : "#ef4444", color: "#fff", border: "none", borderRadius: 8, padding: "7px 16px", fontSize: 12, fontWeight: 700, cursor: restoreLoading ? "not-allowed" : "pointer" }}
-                          >
-                            {restoreLoading ? "En cours..." : "Executer la restauration"}
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                      <button
+                        onClick={async () => {
+                          await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
+                        }}
+                        style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                      >
+                        Recevoir copie email
+                      </button>
+                      <button
+                        disabled
+                        style={{ background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "not-allowed" }}
+                      >
+                        Restaurer les dashboards
+                      </button>
+                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Opération de migration terminée</span>
+                    </div>
                   </div>
                 )}
               </div>

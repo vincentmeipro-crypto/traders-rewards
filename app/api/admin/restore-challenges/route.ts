@@ -19,7 +19,7 @@ function balanceToAccountSize(balance: number): { label: string; value: number }
 // POST body:
 // {
 //   server: string,           // MT5 server name (e.g. "HAR-Server")
-//   masterPassword: string,   // M@SeSh2u
+//   masterPassword: string,
 //   accounts: Array<{
 //     login: number,
 //     firstName: string,
