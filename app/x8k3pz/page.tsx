@@ -1952,6 +1952,12 @@ function AdminPageInner() {
                                   style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "rgba(255,255,255,0.65)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                                   Voir Pipeline
                                 </button>
+                                {traderId && (
+                                  <a href={`/x8k3pz/traders/${traderId}`}
+                                    style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "rgba(255,255,255,0.65)", fontSize: 12, fontWeight: 600, cursor: "pointer", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                                    Fiche trader
+                                  </a>
+                                )}
                                 <button onClick={() => setTab("create")}
                                   style={{ padding: "8px 16px", background: "#3b82f6", border: "none", borderRadius: 8, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                                   + Challenge
