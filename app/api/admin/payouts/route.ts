@@ -88,7 +88,7 @@ export async function PATCH(req: NextRequest) {
 
         // Email certificat récompense (grossAmount = profit brut soumis par le trader)
         const certDate = new Date().toLocaleDateString("fr-FR");
-        await sendRewardCertificateEmail(userEmail, firstName, lastName, challenge.account_size, grossAmount, challenge.model, certDate, netAmountEur)
+        await sendRewardCertificateEmail(userEmail, firstName, lastName, challenge.account_size, grossAmount, challenge.model, certDate, netAmountEur, { userId: data.user_id as string, challengeId: challenge.id as string })
           .catch((e) => console.error("Reward cert email error:", e));
       }
     } catch (e) {

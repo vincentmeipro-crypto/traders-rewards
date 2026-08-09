@@ -9,7 +9,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export const ADMIN_EMAIL = "vincentmeipro@gmail.com";
+export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "vincentmeipro@gmail.com";
 export const ADMIN_KEY   = process.env.ADMIN_KEY || "tr2026-admin-k9x";
 
 export async function checkAdmin(

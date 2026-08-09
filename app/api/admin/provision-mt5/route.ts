@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
           login: mt5Account.login,
           password: mt5Account.password,
           server: mt5Account.server,
-        });
+        }, undefined, { userId: challenge.user_id as string, challengeId });
       } catch (emailErr) {
         console.error("Welcome email failed:", emailErr);
       }

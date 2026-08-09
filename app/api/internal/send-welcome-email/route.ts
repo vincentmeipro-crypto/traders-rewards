@@ -28,6 +28,8 @@ export async function POST(req: NextRequest) {
     challenge.mt5_login && clientPassword && challenge.mt5_server
       ? { login: challenge.mt5_login, password: clientPassword, server: challenge.mt5_server }
       : undefined,
+    undefined,
+    { userId: challenge.user_id as string, challengeId: challenge_id as string },
   );
 
   return NextResponse.json({ ok: true });

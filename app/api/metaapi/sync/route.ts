@@ -50,7 +50,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     const newAcc = await makeMT5(group);
     if (!newAcc) return { status: "mt5_creation_failed" };
     await admin.from("challenges").update({ mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor, mt5_server: newAcc.server }).eq("id", id);
-    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }, undefined, { userId, challengeId: id }).catch(() => {});
     return { status: "mt5_created", login: newAcc.login };
   }
 
@@ -148,7 +148,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "best_day_rule", breach_value: parseFloat((dayProfit / startBalance * 100).toFixed(2)), breach_equity: newEquity }),
     }).eq("id", id);
     if (!alreadyFailed) {
-      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login); } catch {}
+      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login, { userId, challengeId: id }); } catch {}
     }
     return { status: "failed", reason: "best_day_rule", profit_pct: (dayProfit / startBalance * 100).toFixed(2) };
   }
@@ -178,7 +178,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: dailyLowEquity }),
     }).eq("id", id);
     if (!alreadyFailed) {
-      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login); }
+      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login, { userId, challengeId: id }); }
       catch (e) { console.error("sendFailedEmail daily_drawdown error:", e); }
     }
     return { status: "failed", reason: "daily_drawdown", pct: dailyDD.toFixed(2) };
@@ -211,7 +211,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }),
     }).eq("id", id);
     if (!alreadyFailed) {
-      try { await sendFailedEmail(userEmail, accountSize, "total_drawdown", login); }
+      try { await sendFailedEmail(userEmail, accountSize, "total_drawdown", login, { userId, challengeId: id }); }
       catch (e) { console.error("sendFailedEmail total_drawdown error:", e); }
     }
     return { status: "failed", reason: "total_drawdown", pct: totalDD.toFixed(2) };
@@ -239,9 +239,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       balance: startBalance, highest_balance: startBalance,
       mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor,
     }).eq("id", id);
-    await sendFundedEmail(userEmail, accountSize).catch(() => {});
-    await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    await sendFundedEmail(userEmail, accountSize, undefined, undefined, model, { userId, challengeId: id }).catch(() => {});
+    await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate, { userId, challengeId: id }).catch(() => {});
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }, undefined, { userId, challengeId: id }).catch(() => {});
     return { status: "synced", transition: "phase1->certified (1-step)", newLogin: newAcc.login };
   }
 
@@ -255,9 +255,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       balance: startBalance, highest_balance: startBalance,
       mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor,
     }).eq("id", id);
-    await sendPhase2Email(userEmail, accountSize).catch(() => {});
-    await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    await sendPhase2Email(userEmail, accountSize, undefined, { userId, challengeId: id }).catch(() => {});
+    await sendPhase1CertificateEmail(userEmail, firstName, lastName, accountSize, certDate, { userId, challengeId: id }).catch(() => {});
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }, undefined, { userId, challengeId: id }).catch(() => {});
     return { status: "synced", transition: "phase1->phase2", newLogin: newAcc.login };
   }
 
@@ -271,9 +271,9 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       balance: startBalance, highest_balance: startBalance,
       mt5_login: newAcc.login, mt5_password: newAcc.password, mt5_password_investor: newAcc.password_investor,
     }).eq("id", id);
-    await sendFundedEmail(userEmail, accountSize).catch(() => {});
-    await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate).catch(() => {});
-    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }).catch(() => {});
+    await sendFundedEmail(userEmail, accountSize, undefined, undefined, model, { userId, challengeId: id }).catch(() => {});
+    await sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate, { userId, challengeId: id }).catch(() => {});
+    await sendWelcomeEmail(userEmail, accountSize, model, { login: newAcc.login, password: newAcc.password, server: newAcc.server }, undefined, { userId, challengeId: id }).catch(() => {});
     return { status: "synced", transition: "phase2->certified", newLogin: newAcc.login };
   }
 
@@ -283,7 +283,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const alreadySentToday = lastSyncedAt ? new Date(lastSyncedAt) >= tradingDayStart : false;
   const purchasedToday   = createdAt ? new Date(createdAt) >= tradingDayStart : false;
   if (!alreadySentToday && !purchasedToday) {
-    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, { model, highestBalance: newHighest, totalLimit, startBalance }).catch(() => {});
+    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, { model, highestBalance: newHighest, totalLimit, startBalance }, { userId, challengeId: id }).catch(() => {});
   }
 
   return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2), rawBalance: info.balance, rawEquity: newEquity, rawProfit: info.profit, prevBalance };

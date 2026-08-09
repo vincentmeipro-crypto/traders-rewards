@@ -27,12 +27,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Body JSON invalide." }, { status: 400 });
   }
 
-  const type = (body as Record<string, unknown>)?.type;
+  const type         = (body as Record<string, unknown>)?.type;
+  const previewModel = (body as Record<string, unknown>)?.model;
   if (typeof type !== "string" || !isValidEmailType(type)) {
     return NextResponse.json({ error: "Type inconnu." }, { status: 400 });
   }
 
-  const { subject, html } = buildPreviewFor(type);
+  const { subject, html } = buildPreviewFor(type, typeof previewModel === "string" ? previewModel : undefined);
   const entry = getCatalogEntry(type);
 
   return NextResponse.json({

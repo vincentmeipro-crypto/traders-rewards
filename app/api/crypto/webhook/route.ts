@@ -313,7 +313,7 @@ export async function POST(req: NextRequest) {
                 login:    mt5Data.login,
                 password: mt5Data.password,
                 server:   mt5Data.server,
-              });
+              }, undefined, { userId: userId as string, challengeId });
             } catch (e) { console.error("[crypto/webhook] Welcome email failed:", e); }
           }
         }

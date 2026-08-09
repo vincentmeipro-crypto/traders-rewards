@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
       // 5. Send apology email
       if (email) {
         try {
-          await sendApologyEmail(email, firstName, accountSize, phase, { login, password: masterPassword, server });
+          await sendApologyEmail(email, firstName, accountSize, phase, { login, password: masterPassword, server }, { userId, challengeId: inserted?.id });
           results.push({ login, status: "restored", email, challengeId: inserted?.id, accountSize, model, phase });
         } catch (e) {
           results.push({ login, status: "restored_no_email", email, challengeId: inserted?.id, emailError: String(e) });

@@ -12,7 +12,7 @@ type NavGroup =
 const NAV: NavGroup[] = [
   { items: [{ id: "overview", label: "Overview", href: "/x8k3pz" }] },
   { section: "CHALLENGES", items: [
-    { id: "pipeline", label: "Challenges",  href: "/x8k3pz?t=pipeline" },
+    { id: "pipeline", label: "Pipeline",     href: "/x8k3pz?t=pipeline" },
     { id: "products", label: "Produits", sub: true, href: "/x8k3pz/products" },
   ]},
   { section: "TRADERS", items: [

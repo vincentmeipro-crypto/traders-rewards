@@ -53,7 +53,11 @@ export async function GET(req: NextRequest) {
         );
 
         if (status !== "all") q = q.eq("status", status);
-        if (type   !== "all") q = q.eq("type",   type);
+        if (type === "tests") {
+          q = q.like("type", "test:%");
+        } else if (type !== "all") {
+          q = q.eq("type", type);
+        }
 
         if (search) {
           // case-insensitive search on to_email and subject

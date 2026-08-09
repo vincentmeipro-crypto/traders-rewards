@@ -285,7 +285,7 @@ export async function PATCH(req: NextRequest) {
 
     if (totalDrawdownPct >= data.total_drawdown_limit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
-      try { await sendFailedEmail(userEmail, data.account_size, "total_drawdown"); } catch {}
+      try { await sendFailedEmail(userEmail, data.account_size, "total_drawdown", undefined, { userId: data.user_id as string, challengeId: id }); } catch {}
       if (data.mt5_login) {
         try { await changeMT5Group(data.mt5_login, "HAR/MAN32/demoG5"); } catch (e) { console.error("changeMT5Group total_drawdown failed:", e); }
         try { await disableMT5Account(data.mt5_login); } catch (e) { console.error("disableMT5Account total_drawdown failed:", e); }
@@ -296,7 +296,7 @@ export async function PATCH(req: NextRequest) {
 
     if (dailyDrawdownPct >= data.daily_drawdown_limit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);
-      try { await sendFailedEmail(userEmail, data.account_size, "daily_drawdown"); } catch {}
+      try { await sendFailedEmail(userEmail, data.account_size, "daily_drawdown", undefined, { userId: data.user_id as string, challengeId: id }); } catch {}
       if (data.mt5_login) {
         try { await changeMT5Group(data.mt5_login, "HAR/MAN32/demoG5"); } catch (e) { console.error("changeMT5Group daily_drawdown failed:", e); }
         try { await disableMT5Account(data.mt5_login); } catch (e) { console.error("disableMT5Account daily_drawdown failed:", e); }
@@ -310,11 +310,11 @@ export async function PATCH(req: NextRequest) {
   if (isPhaseTransition && userEmail) {
     const certDate = new Date().toLocaleDateString("fr-FR");
     if (data.phase === "phase2") {
-      try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, data.account_size, certDate); } catch (e) { console.error("sendPhase1CertificateEmail error:", e); }
-      try { await sendPhase2Email(userEmail, data.account_size); } catch (e) { console.error("sendPhase2Email error:", e); }
+      try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, data.account_size, certDate, { userId: data.user_id as string, challengeId: id }); } catch (e) { console.error("sendPhase1CertificateEmail error:", e); }
+      try { await sendPhase2Email(userEmail, data.account_size, undefined, { userId: data.user_id as string, challengeId: id }); } catch (e) { console.error("sendPhase2Email error:", e); }
     } else if (data.phase === "funded") {
-      try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, data.account_size, certDate); } catch (e) { console.error("sendChallengeCertificateEmail error:", e); }
-      try { await sendFundedEmail(userEmail, data.account_size, undefined, undefined, data.model); } catch (e) { console.error("sendFundedEmail error:", e); }
+      try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, data.account_size, certDate, { userId: data.user_id as string, challengeId: id }); } catch (e) { console.error("sendChallengeCertificateEmail error:", e); }
+      try { await sendFundedEmail(userEmail, data.account_size, undefined, undefined, data.model, { userId: data.user_id as string, challengeId: id }); } catch (e) { console.error("sendFundedEmail error:", e); }
     }
   }
 

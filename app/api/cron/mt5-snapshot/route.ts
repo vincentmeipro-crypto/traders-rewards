@@ -206,7 +206,7 @@ export async function GET(req: NextRequest) {
         try { await disableMT5Account(challenge.mt5_login); }                   catch (e) { console.error("disableMT5Account failed:", e); }
 
         const userEmail = userEmailMap[challenge.user_id] ?? "";
-        if (userEmail) try { await sendFailedEmail(userEmail, challenge.account_size, breachReason as "daily_drawdown" | "total_drawdown"); } catch {}
+        if (userEmail) try { await sendFailedEmail(userEmail, challenge.account_size, breachReason as "daily_drawdown" | "total_drawdown", undefined, { userId: challenge.user_id as string, challengeId: challenge.id as string }); } catch {}
 
         breaches++;
         continue;

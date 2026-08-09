@@ -508,14 +508,14 @@ export function buildApologyEmail(p: {
 // Utilisé par preview et test send.
 // Aucun client réel, aucun credential réel.
 
-export function buildPreviewFor(type: TransactionalEmailType): { subject: string; html: string } {
+export function buildPreviewFor(type: TransactionalEmailType, previewModel?: string): { subject: string; html: string } {
   const { siteUrl, logoUrl } = FAKE_BRANDING;
   const { firstName, lastName } = FAKE_PERSON;
   const accountSize = "$100,000";
 
   switch (type) {
     case "welcome":
-      return buildWelcomeEmail({ accountSize, model: "2step", mt5: FAKE_MT5, siteUrl, logoUrl });
+      return buildWelcomeEmail({ accountSize, model: previewModel ?? "2step", mt5: FAKE_MT5, siteUrl, logoUrl });
     case "phase2":
       return buildPhase2Email({ accountSize, mt5: FAKE_MT5, siteUrl, logoUrl });
     case "failed":

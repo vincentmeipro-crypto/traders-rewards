@@ -48,6 +48,16 @@ const TYPE_LABELS: Record<string, string> = {
   challenge_certificate: "Certificat Challenge",
   reward_certificate:    "Certificat Reward",
   apology:               "Compte rétabli",
+  // Tests
+  "test:welcome":               "Test — Accès Challenge",
+  "test:phase2":                "Test — Passage Phase 2",
+  "test:failed":                "Test — Challenge échoué",
+  "test:funded":                "Test — Compte certifié",
+  "test:daily_update":          "Test — Récap journalier",
+  "test:phase1_certificate":    "Test — Certificat Phase 1",
+  "test:challenge_certificate": "Test — Certificat Challenge",
+  "test:reward_certificate":    "Test — Certificat Reward",
+  "test:apology":               "Test — Compte rétabli",
 };
 
 const TYPE_OPTIONS = [
@@ -61,6 +71,7 @@ const TYPE_OPTIONS = [
   { value: "challenge_certificate", label: "Certificat Challenge" },
   { value: "reward_certificate",    label: "Certificat Reward" },
   { value: "apology",               label: "Compte rétabli" },
+  { value: "tests",                 label: "— Tests —" },
 ];
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -427,7 +438,7 @@ function PreviewPanel({
         {/* iframe area */}
         <div style={{
           flex: 1, padding: "20px 24px", display: "flex", justifyContent: "center",
-          background: "#111", overflowY: "auto",
+          alignItems: "flex-start", background: "#111", overflowY: "auto",
         }}>
           <iframe
             title={`Prévisualisation email : ${data.label}`}
@@ -435,7 +446,7 @@ function PreviewPanel({
             sandbox="allow-same-origin"
             style={{
               width: iframeWidth,
-              minHeight: 480,
+              height: 600,
               border: "none",
               borderRadius: 8,
               background: "#fff",
@@ -483,6 +494,7 @@ export default function EmailCenterPage() {
 
   // ── Transactional states
   const [previewLoading, setPreviewLoading] = useState<Record<string, boolean>>({});
+  const [previewModel,   setPreviewModel]   = useState<Record<string, string>>({});
   const [previewData,    setPreviewData]    = useState<PreviewData | null>(null);
   const [previewMode,    setPreviewMode]    = useState<"desktop" | "mobile">("desktop");
   const [testConfirm,    setTestConfirm]    = useState<string | null>(null);
@@ -571,10 +583,11 @@ export default function EmailCenterPage() {
   const handlePreview = async (type: string) => {
     setPreviewLoading(p => ({ ...p, [type]: true }));
     try {
+      const model = type === "welcome" ? (previewModel["welcome"] ?? "2step") : undefined;
       const res = await fetch("/api/admin/emails/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ type }),
+        body: JSON.stringify({ type, ...(model ? { model } : {}) }),
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
@@ -981,6 +994,34 @@ export default function EmailCenterPage() {
                           {"{{"}{v.name}{"}}"}
                         </span>
                       ))}
+                    </div>
+                  )}
+
+                  {/* Model picker — welcome preview only */}
+                  {entry.type === "welcome" && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1px", color: "rgba(255,255,255,0.25)", textTransform: "uppercase" as const }}>
+                        Modèle
+                      </span>
+                      {(["2step", "1step", "algo"] as const).map(m => {
+                        const active = (previewModel["welcome"] ?? "2step") === m;
+                        return (
+                          <button
+                            key={m}
+                            onClick={() => setPreviewModel(pm => ({ ...pm, welcome: m }))}
+                            style={{
+                              fontSize: 11, fontWeight: active ? 700 : 400,
+                              padding: "3px 10px", borderRadius: 4, cursor: "pointer",
+                              background: active ? "rgba(59,130,246,0.12)" : "transparent",
+                              border: `1px solid ${active ? "rgba(59,130,246,0.35)" : "rgba(255,255,255,0.1)"}`,
+                              color: active ? "#60a5fa" : "rgba(255,255,255,0.4)",
+                              transition: "all 0.15s",
+                            }}
+                          >
+                            {m === "2step" ? "2-Step" : m === "1step" ? "1-Step" : "ALGO"}
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
 
