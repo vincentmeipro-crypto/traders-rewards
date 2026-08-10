@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   if (!target_type || !target_id)
     return NextResponse.json({ error: "target_type et target_id requis" }, { status: 400 });
 
-  if (!["trader", "challenge", "payout", "support_ticket"].includes(target_type))
+  if (!["trader", "challenge", "payout", "support_ticket", "chat_conversation"].includes(target_type))
     return NextResponse.json({ error: "target_type invalide" }, { status: 400 });
 
   const admin = createAdminClient();
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   if (!target_type || !target_id || !content)
     return NextResponse.json({ error: "target_type, target_id et content requis" }, { status: 400 });
 
-  if (!["trader", "challenge", "payout", "support_ticket"].includes(target_type))
+  if (!["trader", "challenge", "payout", "support_ticket", "chat_conversation"].includes(target_type))
     return NextResponse.json({ error: "target_type invalide" }, { status: 400 });
 
   const trimmed = (content ?? "").trim();
