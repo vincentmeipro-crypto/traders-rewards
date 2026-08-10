@@ -29,6 +29,9 @@ const NAV: NavGroup[] = [
     { id: "promotions", label: "Promotions",  sub: true, href: "/x8k3pz/promotions"   },
     { id: "emails",     label: "Emails",      sub: true, href: "/x8k3pz/emails"        },
   ]},
+  { section: "SUPPORT", items: [
+    { id: "support", label: "Tickets", href: "/x8k3pz/support" },
+  ]},
   { separator: true },
   { items: [
     { id: "stats",    label: "Analytics", href: "/x8k3pz?t=stats"    },
@@ -50,12 +53,14 @@ function SidebarInner() {
   const isPromotions  = pathname.startsWith("/x8k3pz/promotions");
   const isEmails      = pathname.startsWith("/x8k3pz/emails");
   const isTraders     = pathname.startsWith("/x8k3pz/traders");
+  const isSupport     = pathname.startsWith("/x8k3pz/support");
 
   const isActive = (id: string) => {
     if (isProducts)   return id === "products";
     if (isPromotions) return id === "promotions";
     if (isEmails)     return id === "emails";
     if (isTraders)    return id === "crm";
+    if (isSupport)    return id === "support";
     return id === activeTab;
   };
 
