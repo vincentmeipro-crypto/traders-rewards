@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendNewSupportTicketAdminNotification } from "@/lib/mailer";
@@ -117,27 +117,55 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Impossible d'enregistrer votre demande. Réessayez." }, { status: 500 });
   }
 
-  // ── Notification admin — fire-and-forget ─────────────────────────────────
-  //
-  // Phase 3B-3e : 1 notification par création de ticket.
-  // Idempotence garantie dans sendNewSupportTicketAdminNotification via email_logs.event_key.
-  //
-  // L'échec de la notification ne supprime pas le ticket et ne retourne
-  // pas d'erreur au client — le ticket est déjà créé avec succès.
-  //
-  // TODO Phase 3B-3e (après migration SQL) :
-  //   Ajouter ici INSERT support_ticket_messages (sender_type='client', channel='dashboard')
-  //   avant l'appel notification. Table inexistante jusqu'au GO SUPABASE.
-  sendNewSupportTicketAdminNotification({
-    ticketId:  ticket.id,
-    firstName,
-    lastName,
-    email,
-    subject,
-    category,
-    userId:    user_id ?? undefined,
-  }).catch(err => {
-    console.error("[support] Admin notification failed:", String(err).slice(0, 200));
+  // ── Réponse client immédiate ─────────────────────────────────────────────
+  // Le ticket est créé. On répond au client sans attendre la notification admin.
+  // after() est l'API Next.js stable pour exécuter du travail post-response
+  // sur Vercel serverless : la fonction est garantie d'être exécutée même
+  // après l'envoi de la réponse HTTP (pas de race avec la fin de l'invocation).
+
+  after(async () => {
+    // ── INSERT support_ticket_messages — premier message du fil ─────────────
+    // Migration support_ticket_messages + reply_token exécutée dans Supabase.
+    // Le message initial du client est inséré ici comme premier élément du fil.
+    // sender_type='client', channel='dashboard'
+    // provider_message_id='init:<ticketId>' — clé d'idempotence (UNIQUE ON CONFLICT).
+    const adminDb = createAdminClient();
+    const { error: msgError } = await adminDb
+      .from("support_ticket_messages")
+      .insert({
+        ticket_id:           ticket.id,
+        sender_type:         "client",
+        content:             message,
+        channel:             "dashboard",
+        provider_message_id: `init:${ticket.id}`,
+      })
+      .select("id")
+      .single();
+
+    if (msgError) {
+      // Idempotence : UNIQUE violation = déjà inséré → pas une erreur réelle
+      if (!msgError.code?.includes("23505")) {
+        console.error("[support] INSERT support_ticket_messages failed:", msgError.message);
+      }
+    }
+
+    // ── Notification admin ──────────────────────────────────────────────────
+    // Phase 3B-3e : 1 notification par création de ticket.
+    // Idempotence garantie dans sendNewSupportTicketAdminNotification via email_logs.event_key.
+    // L'échec de la notification ne remet pas en cause le ticket déjà créé.
+    try {
+      await sendNewSupportTicketAdminNotification({
+        ticketId:  ticket.id,
+        firstName,
+        lastName,
+        email,
+        subject,
+        category,
+        userId:    user_id ?? undefined,
+      });
+    } catch (err) {
+      console.error("[support] Admin notification failed:", String(err).slice(0, 200));
+    }
   });
 
   return NextResponse.json({ ok: true });
