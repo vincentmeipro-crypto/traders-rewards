@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import OverviewCockpit from "@/components/admin/OverviewCockpit";
 
 // Clé admin statique — accès sans connexion Supabase
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
@@ -981,7 +982,10 @@ function AdminPageInner() {
         <div style={{ padding: isMobile ? "16px 12px" : "28px 32px" }}>
 
         {/* ══ COCKPIT OVERVIEW ══ */}
-        {tab === "overview" && (() => {
+        {tab === "overview" && <OverviewCockpit />}
+
+        {/* ══ COCKPIT OVERVIEW INLINE — REMPLACÉ (laissé pour référence, supprimé) ══ */}
+        {false && (() => {
           const kycPending  = kycSubmissions.filter(k => k.kyc_status === "pending").length;
           const activeCount = kpis.phase1 + kpis.oneStep + kpis.phase2;
 
