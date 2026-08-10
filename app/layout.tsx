@@ -4,6 +4,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import PWARegister from "@/components/PWARegister";
 import RefTracker from "@/components/RefTracker";
+import ChatWidgetGate from "@/components/chat/ChatWidgetGate";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -285,6 +286,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </LanguageProvider>
         <PWARegister />
         <RefTracker />
+        <ChatWidgetGate />
       </body>
     </html>
   );

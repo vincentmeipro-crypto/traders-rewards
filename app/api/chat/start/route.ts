@@ -120,21 +120,35 @@ export async function POST(req: NextRequest) {
   // ════════════════════════════════════════════════════════════
 
   if (isTrader) {
-    // ── 1a. Conversation existante ouverte du trader ───────────────────────
+    // ── 1a. Conversation du trader (UNIQUE INDEX : une seule possible) ────────
+    // Note : on ne filtre PAS sur le statut.
+    //   - UNIQUE INDEX chat_conversations_user_id_uidx empêche un second INSERT.
+    //   - Si la conversation existe mais est fermée → on la rouvre (waiting_support).
+    //   - Cette approche garantit qu'un trader a toujours UNE conversation persistante.
     const { data: existing } = await admin
       .from("chat_conversations")
       .select("id, status")
       .eq("user_id", traderId)
-      .neq("status", "closed")
       .order("last_message_at", { ascending: false, nullsFirst: false })
       .limit(1)
       .maybeSingle();
 
     if (existing) {
+      let finalStatus = existing.status;
+
+      // Rouvrir si fermée (V1 : conversation persistante)
+      if (existing.status === "closed") {
+        await admin
+          .from("chat_conversations")
+          .update({ status: "waiting_support" })
+          .eq("id", existing.id);
+        finalStatus = "waiting_support";
+      }
+
       return NextResponse.json({
         conversationId: existing.id,
         isNew:          false,
-        status:         existing.status,
+        status:         finalStatus,
       });
     }
 

@@ -148,15 +148,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Conversation introuvable" }, { status: 404 });
   }
 
-  // Interdire l'envoi dans une conversation fermée
-  if (conv.status === "closed") {
-    return NextResponse.json(
-      { error: "Cette conversation est fermée. Démarrez une nouvelle conversation." },
-      { status: 403 },
-    );
-  }
-
   // ── INSERT message ─────────────────────────────────────────────────────────
+  // Note : une conversation fermée peut recevoir un nouveau message (V1 : conversation persistante).
+  // L'UPDATE de statut ci-dessous la fait repasser à 'waiting_support' automatiquement.
   // sender_type = 'client' (seul type autorisé depuis cette API publique)
   // sender_user_id = user_id si trader connecté, null si visiteur
   const senderUserId =
