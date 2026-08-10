@@ -1,12 +1,13 @@
 "use client";
 // ── Support Center — /x8k3pz/support ─────────────────────────────────────────
-// Interface admin de traitement des tickets de support.
-// Tickets créés via /api/support (formulaire public).
-// Notes internes via admin_notes (target_type = 'support_ticket').
+// Interface admin de traitement des tickets de support + chat live.
+// ?tab=tickets (défaut) | chat
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import ChatCRM from "./ChatCRM";
 
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
@@ -446,7 +447,19 @@ function TicketRow({
 
 // ── Page principale ──────────────────────────────────────────────────────────
 
-export default function SupportPage() {
+function SupportPageInner() {
+  // ── Onglets ─────────────────────────────────────────────────────────────
+  const searchParams = useSearchParams();
+  const router       = useRouter();
+  const tab          = searchParams.get("tab") === "chat" ? "chat" : "tickets";
+
+  const switchTab = (t: "tickets" | "chat") => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", t);
+    router.push(`?${params.toString()}`);
+  };
+
+  // ── État tickets ─────────────────────────────────────────────────────────
   const [tickets, setTickets]     = useState<SupportTicket[]>([]);
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState<string | null>(null);
@@ -455,16 +468,15 @@ export default function SupportPage() {
   const [page, setPage]           = useState(1);
   const [totalNew, setTotalNew]   = useState(0);
 
-  // Filtres
+  // Filtres tickets
   const [statusFilter, setStatusFilter]     = useState<"all" | "new" | "open" | "resolved">("all");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [search, setSearch]                 = useState("");
   const [searchInput, setSearchInput]       = useState("");
   const searchTimer                         = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // UI
+  // UI tickets
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  // Stocke le message complet quand un ticket est étendu
   const [fullTickets, setFullTickets] = useState<Record<string, string>>({});
 
   const LIMIT = 25;
@@ -499,8 +511,10 @@ export default function SupportPage() {
   }, []);
 
   useEffect(() => {
-    loadTickets(statusFilter, categoryFilter, search, page);
-  }, [statusFilter, categoryFilter, search, page, loadTickets]);
+    if (tab === "tickets") {
+      loadTickets(statusFilter, categoryFilter, search, page);
+    }
+  }, [tab, statusFilter, categoryFilter, search, page, loadTickets]);
 
   // Debounce search
   const handleSearchChange = (val: string) => {
@@ -525,7 +539,6 @@ export default function SupportPage() {
     if (expandedId === ticketId) { setExpandedId(null); return; }
     setExpandedId(ticketId);
 
-    // Charger le message complet si pas déjà en cache
     if (!fullTickets[ticketId]) {
       try {
         const res = await fetch(`/api/admin/support/${ticketId}`, {
@@ -555,9 +568,6 @@ export default function SupportPage() {
     const d = await res.json();
     const updated = d.ticket as SupportTicket;
     setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, ...updated } : t));
-    // Mettre à jour le compteur new
-    if (newStatus !== "new") setTotalNew(prev => Math.max(0, prev - (updated.status === "new" ? 0 : 0)));
-    // Recharger proprement pour que les compteurs soient à jour
     await loadTickets(statusFilter, categoryFilter, search, page);
   }, [statusFilter, categoryFilter, search, page, loadTickets]);
 
@@ -577,7 +587,6 @@ export default function SupportPage() {
     setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, ...updated } : t));
   }, []);
 
-  // Enrichir les tickets avec le message complet depuis le cache
   const enrichedTickets = tickets.map(t => ({
     ...t,
     message: fullTickets[t.id] ?? t.message,
@@ -585,133 +594,188 @@ export default function SupportPage() {
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <main style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 20, maxWidth: 1100 }}>
+    <main style={{ padding: "24px 28px", display: "flex", flexDirection: "column", gap: 20, maxWidth: tab === "chat" ? "none" : 1100 }}>
 
-      {/* Header */}
+      {/* ── Header ────────────────────────────────────────────────────────── */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: 12 }}>
         <div>
           <h1 style={{ fontSize: 20, fontWeight: 900, color: "#fff", margin: 0 }}>Support Center</h1>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", margin: "4px 0 0" }}>
-            {loading ? "Chargement…" : `${total} ticket${total !== 1 ? "s" : ""}${totalNew > 0 ? ` · ${totalNew} nouveau${totalNew !== 1 ? "x" : ""}` : ""}`}
+            {tab === "tickets"
+              ? (loading ? "Chargement…" : `${total} ticket${total !== 1 ? "s" : ""}${totalNew > 0 ? ` · ${totalNew} nouveau${totalNew !== 1 ? "x" : ""}` : ""}`)
+              : "Live Chat — conversations en temps réel"
+            }
           </p>
         </div>
+
+        {/* ── Sub-navigation Tickets / Chat ─────────────────────────────── */}
+        <div style={{ display: "flex", gap: 4 }}>
+          {([
+            { key: "tickets" as const, label: "Tickets",    badge: totalNew  },
+            { key: "chat"    as const, label: "💬 Chat",    badge: null       },
+          ]).map(t => {
+            const active = tab === t.key;
+            return (
+              <button
+                key={t.key}
+                onClick={() => switchTab(t.key)}
+                style={{
+                  padding: "8px 18px", borderRadius: 9, fontSize: 13, fontWeight: active ? 700 : 500, cursor: "pointer",
+                  background: active ? "rgba(59,130,246,0.15)" : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${active ? "rgba(59,130,246,0.4)" : "rgba(255,255,255,0.09)"}`,
+                  color: active ? "#60a5fa" : "rgba(255,255,255,0.5)",
+                  display: "flex", alignItems: "center", gap: 7, transition: "all 0.15s",
+                }}
+              >
+                {t.label}
+                {t.badge !== null && t.badge > 0 && (
+                  <span style={{ fontSize: 10, fontWeight: 800, background: active ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.1)", color: active ? "#93c5fd" : "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 10 }}>
+                    {t.badge}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Filtres statut (tabs) */}
-      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" as const }}>
-        {([
-          { key: "all",      label: "Tous",     count: total          },
-          { key: "new",      label: "Nouveaux", count: totalNew       },
-          { key: "open",     label: "En cours", count: null           },
-          { key: "resolved", label: "Résolus",  count: null           },
-        ] as { key: "all" | "new" | "open" | "resolved"; label: string; count: number | null }[]).map(tab => {
-          const active = statusFilter === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => changeStatus(tab.key)}
-              style={{
-                padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: active ? 700 : 500, cursor: "pointer",
-                background: active ? "rgba(59,130,246,0.15)" : "rgba(255,255,255,0.04)",
-                border: `1px solid ${active ? "rgba(59,130,246,0.35)" : "rgba(255,255,255,0.08)"}`,
-                color: active ? "#60a5fa" : "rgba(255,255,255,0.55)",
-                display: "flex", alignItems: "center", gap: 6,
-              }}
-            >
-              {tab.label}
-              {tab.count !== null && tab.count > 0 && (
-                <span style={{ fontSize: 10, fontWeight: 800, background: active ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.1)", color: active ? "#93c5fd" : "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 10 }}>
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+      {/* ── Onglet Chat ────────────────────────────────────────────────────── */}
+      {tab === "chat" && <ChatCRM />}
 
-      {/* Recherche + filtre catégorie */}
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const, alignItems: "center" }}>
-        <input
-          value={searchInput}
-          onChange={e => handleSearchChange(e.target.value)}
-          placeholder="Rechercher (email, nom, objet)…"
-          style={{ flex: 1, minWidth: 220, maxWidth: 360, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "8px 13px", color: "#fff", fontSize: 13, outline: "none" }}
-        />
-        <select
-          value={categoryFilter}
-          onChange={e => changeCategory(e.target.value)}
-          style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "8px 13px", color: categoryFilter ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 13, cursor: "pointer", outline: "none" }}
-        >
-          <option value="">Toutes catégories</option>
-          {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
-        </select>
-      </div>
+      {/* ── Onglet Tickets ─────────────────────────────────────────────────── */}
+      {tab === "tickets" && (
+        <>
+          {/* Filtres statut (tabs) */}
+          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" as const }}>
+            {([
+              { key: "all",      label: "Tous",     count: total          },
+              { key: "new",      label: "Nouveaux", count: totalNew       },
+              { key: "open",     label: "En cours", count: null           },
+              { key: "resolved", label: "Résolus",  count: null           },
+            ] as { key: "all" | "new" | "open" | "resolved"; label: string; count: number | null }[]).map(tab => {
+              const active = statusFilter === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => changeStatus(tab.key)}
+                  style={{
+                    padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: active ? 700 : 500, cursor: "pointer",
+                    background: active ? "rgba(59,130,246,0.15)" : "rgba(255,255,255,0.04)",
+                    border: `1px solid ${active ? "rgba(59,130,246,0.35)" : "rgba(255,255,255,0.08)"}`,
+                    color: active ? "#60a5fa" : "rgba(255,255,255,0.55)",
+                    display: "flex", alignItems: "center", gap: 6,
+                  }}
+                >
+                  {tab.label}
+                  {tab.count !== null && tab.count > 0 && (
+                    <span style={{ fontSize: 10, fontWeight: 800, background: active ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.1)", color: active ? "#93c5fd" : "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 10 }}>
+                      {tab.count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-      {/* Error state */}
-      {error && (
-        <div style={{ padding: "14px 18px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, color: "#ef4444", fontSize: 13 }}>
-          Erreur : {error}
-          <button onClick={() => loadTickets(statusFilter, categoryFilter, search, page)} style={{ marginLeft: 12, background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 12, textDecoration: "underline" }}>
-            Réessayer
-          </button>
-        </div>
-      )}
-
-      {/* Loading state */}
-      {loading && (
-        <div style={{ padding: 40, textAlign: "center" as const, color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
-          Chargement…
-        </div>
-      )}
-
-      {/* Empty state */}
-      {!loading && !error && tickets.length === 0 && (
-        <div style={{ padding: "48px 24px", textAlign: "center" as const, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
-          {search || categoryFilter || statusFilter !== "all"
-            ? "Aucun ticket ne correspond aux filtres."
-            : "Aucun ticket support."}
-        </div>
-      )}
-
-      {/* Liste */}
-      {!loading && tickets.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {enrichedTickets.map(ticket => (
-            <TicketRow
-              key={ticket.id}
-              ticket={ticket}
-              isOpen={expandedId === ticket.id}
-              onToggle={() => toggleExpand(ticket.id)}
-              onStatusChange={handleStatusChange}
-              onCategoryChange={handleCategoryChange}
+          {/* Recherche + filtre catégorie */}
+          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const, alignItems: "center" }}>
+            <input
+              value={searchInput}
+              onChange={e => handleSearchChange(e.target.value)}
+              placeholder="Rechercher (email, nom, objet)…"
+              style={{ flex: 1, minWidth: 220, maxWidth: 360, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "8px 13px", color: "#fff", fontSize: 13, outline: "none" }}
             />
-          ))}
-        </div>
-      )}
+            <select
+              value={categoryFilter}
+              onChange={e => changeCategory(e.target.value)}
+              style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "8px 13px", color: categoryFilter ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 13, cursor: "pointer", outline: "none" }}
+            >
+              <option value="">Toutes catégories</option>
+              {CATEGORIES.map(c => <option key={c} value={c}>{CATEGORY_LABELS[c]}</option>)}
+            </select>
+          </div>
 
-      {/* Pagination */}
-      {!loading && totalPages > 1 && (
-        <div style={{ display: "flex", justifyContent: "center" as const, gap: 8, paddingTop: 8 }}>
-          <button
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page <= 1}
-            style={{ padding: "7px 14px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: page <= 1 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.6)", fontSize: 12, cursor: page <= 1 ? "not-allowed" : "pointer" }}
-          >
-            ← Précédent
-          </button>
-          <span style={{ padding: "7px 14px", fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
-            {page} / {totalPages}
-          </span>
-          <button
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page >= totalPages}
-            style={{ padding: "7px 14px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: page >= totalPages ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.6)", fontSize: 12, cursor: page >= totalPages ? "not-allowed" : "pointer" }}
-          >
-            Suivant →
-          </button>
-        </div>
+          {/* Error state */}
+          {error && (
+            <div style={{ padding: "14px 18px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, color: "#ef4444", fontSize: 13 }}>
+              Erreur : {error}
+              <button onClick={() => loadTickets(statusFilter, categoryFilter, search, page)} style={{ marginLeft: 12, background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 12, textDecoration: "underline" }}>
+                Réessayer
+              </button>
+            </div>
+          )}
+
+          {/* Loading state */}
+          {loading && (
+            <div style={{ padding: 40, textAlign: "center" as const, color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
+              Chargement…
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!loading && !error && tickets.length === 0 && (
+            <div style={{ padding: "48px 24px", textAlign: "center" as const, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
+              {search || categoryFilter || statusFilter !== "all"
+                ? "Aucun ticket ne correspond aux filtres."
+                : "Aucun ticket support."}
+            </div>
+          )}
+
+          {/* Liste */}
+          {!loading && tickets.length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {enrichedTickets.map(ticket => (
+                <TicketRow
+                  key={ticket.id}
+                  ticket={ticket}
+                  isOpen={expandedId === ticket.id}
+                  onToggle={() => toggleExpand(ticket.id)}
+                  onStatusChange={handleStatusChange}
+                  onCategoryChange={handleCategoryChange}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div style={{ display: "flex", justifyContent: "center" as const, gap: 8, paddingTop: 8 }}>
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                style={{ padding: "7px 14px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: page <= 1 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.6)", fontSize: 12, cursor: page <= 1 ? "not-allowed" : "pointer" }}
+              >
+                ← Précédent
+              </button>
+              <span style={{ padding: "7px 14px", fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
+                {page} / {totalPages}
+              </span>
+              <button
+                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                style={{ padding: "7px 14px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: page >= totalPages ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.6)", fontSize: 12, cursor: page >= totalPages ? "not-allowed" : "pointer" }}
+              >
+                Suivant →
+              </button>
+            </div>
+          )}
+        </>
       )}
 
     </main>
+  );
+}
+
+// ── Wrapper Suspense (requis pour useSearchParams en App Router) ──────────────
+
+export default function SupportPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ padding: 48, textAlign: "center" as const, color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
+        Chargement…
+      </div>
+    }>
+      <SupportPageInner />
+    </Suspense>
   );
 }
