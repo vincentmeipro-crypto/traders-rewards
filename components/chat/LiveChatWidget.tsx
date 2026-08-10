@@ -314,6 +314,17 @@ export default function LiveChatWidget() {
     }
   }, [buildHeaders, fetchMessages, startPolling, subscribeRealtime, realtimeOk]);
 
+  // ── External trigger via CustomEvent "open-chat-widget" ───────────────────
+  // Dispatché depuis SupportTab (dashboard) via :
+  //   window.dispatchEvent(new CustomEvent("open-chat-widget"))
+  useEffect(() => {
+    const handler = () => {
+      if (!isOpenRef.current) openWidget();
+    };
+    window.addEventListener("open-chat-widget", handler);
+    return () => window.removeEventListener("open-chat-widget", handler);
+  }, [openWidget]);
+
   // ── Close widget ───────────────────────────────────────────────────────────
   const closeWidget = useCallback(() => {
     setIsOpen(false);

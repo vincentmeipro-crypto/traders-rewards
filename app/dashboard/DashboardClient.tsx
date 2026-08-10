@@ -7,7 +7,8 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, AlertTriangle, Users, MessageCircle } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, AlertTriangle, Users, MessageCircle, HelpCircle } from "lucide-react";
+import SupportTab from "./SupportTab";
 
 type Challenge = {
   id: string;
@@ -213,7 +214,7 @@ const STATUS_COLORS: Record<string, string> = {
   failed: "#ef4444",
 };
 
-type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings" | "profile" | "affiliate";
+type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings" | "profile" | "affiliate" | "support";
 
 type AffiliateData = {
   code: string;
@@ -617,6 +618,7 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <FileText size={16} />, label: T.dash.invoices, tab: "invoices" },
               { icon: <BookOpen size={16} />, label: T.dash.rules, tab: "rules" },
               { icon: <Users size={16} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
+              { icon: <HelpCircle size={16} />, label: isFr ? "Support" : "Support", tab: "support" },
               { icon: <UserIcon size={16} />, label: T.dash.profile, tab: "profile" },
               { icon: <Settings size={16} />, label: T.dash.settings, tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -650,15 +652,17 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginBottom: 3 }}>{T.dash.loggedInAs}</div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{user.email}</div>
             </div>
-            <a href="mailto:contact@traders-rewards.eu?subject=Support%20Traders%20Rewards" style={{ display: "flex", flexDirection: "column", gap: 3, width: "100%", padding: "10px 16px", textDecoration: "none", borderRadius: 10, color: "#3B82F6", marginBottom: 4, backgroundColor: "rgba(59, 130, 246,0.08)", border: "1px solid rgba(255,255,255,0.1)" }}
+            <div
+              onClick={() => setActiveTab("support")}
+              style={{ display: "flex", flexDirection: "column", gap: 3, width: "100%", padding: "10px 16px", borderRadius: 10, color: "#3B82F6", marginBottom: 4, backgroundColor: "rgba(59, 130, 246,0.08)", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)"; }}
               onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(59, 130, 246,0.08)"; }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <MessageCircle size={16} />
-                <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Contacter le support" : "Contact support"}</span>
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
               </div>
               <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", paddingLeft: 26 }}>contact@traders-rewards.eu</span>
-            </a>
+            </div>
             <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "12px 16px", background: "none", border: "none", cursor: "pointer", borderRadius: 10, color: "rgba(255,255,255,0.45)" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(239,68,68,0.08)"; e.currentTarget.style.color = "#ef4444"; }}
               onMouseOut={e => { e.currentTarget.style.backgroundColor = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.45)"; }}>
@@ -685,8 +689,9 @@ export default function DashboardClient({ user }: { user: User }) {
                 { tab: "invoices", label: T.dash.invoices },
                 { tab: "rules", label: T.dash.rules },
                 { tab: "affiliate", label: isFr ? "Affiliation" : "Affiliate" },
-                { tab: "profile", label: T.dash.profile },
-                { tab: "settings", label: T.dash.settings },
+                { tab: "support",   label: isFr ? "Support" : "Support" },
+                { tab: "profile",   label: T.dash.profile },
+                { tab: "settings",  label: T.dash.settings },
               ] as { tab: Tab; label: string }[]).find(i => i.tab === activeTab)?.label}
             </div>
             <button onClick={() => setMenuOpen(o => !o)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: 5, padding: 4 }}>
@@ -715,6 +720,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 { icon: <FileText size={20} />, label: T.dash.invoices, tab: "invoices" },
                 { icon: <BookOpen size={20} />, label: T.dash.rules, tab: "rules" },
                 { icon: <Users size={20} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
+                { icon: <HelpCircle size={20} />, label: isFr ? "Support" : "Support", tab: "support" },
                 { icon: <UserIcon size={20} />, label: T.dash.profile, tab: "profile" },
                 { icon: <Settings size={20} />, label: T.dash.settings, tab: "settings" },
               ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -731,10 +737,10 @@ export default function DashboardClient({ user }: { user: User }) {
                 </button>
               ))}
               <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: 8 }}>
-                <a href="mailto:contact@traders-rewards.eu?subject=Support%20Traders%20Rewards" style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", textDecoration: "none", color: "#3B82F6", marginBottom: 12 }}>
+                <div onClick={() => { setActiveTab("support"); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", color: "#3B82F6", marginBottom: 12, cursor: "pointer" }}>
                   <MessageCircle size={20} />
-                  <span style={{ fontSize: 15, fontWeight: 600 }}>{isFr ? "Contacter le support" : "Contact support"}</span>
-                </a>
+                  <span style={{ fontSize: 15, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
+                </div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>{user.email}</div>
                 <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 15, fontWeight: 600, padding: 0 }}>
                   <LogOut size={18} /> {T.dash.logOut}
@@ -1666,6 +1672,18 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* ══ AFFILIATION ══ */}
         {activeTab === "affiliate" && (
           <AffiliateTab isFr={isFr} isMobile={isMobile} token={token} />
+        )}
+
+        {/* ══ SUPPORT ══ */}
+        {activeTab === "support" && (
+          <SupportTab
+            token={token}
+            isFr={isFr}
+            isMobile={isMobile}
+            firstName={profileFirstName}
+            lastName={profileLastName}
+            email={user.email ?? ""}
+          />
         )}
 
         {/* Dashboard Tab */}
