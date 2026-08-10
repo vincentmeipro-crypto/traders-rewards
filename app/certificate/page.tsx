@@ -1,6 +1,28 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useRef, useEffect, useState } from "react";
+import { Suspense, useRef, useEffect, useState, type ReactNode } from "react";
+
+// ── BodySegments ──────────────────────────────────────────────────────────────
+// Parse <b>…</b> en éléments React — aucun dangerouslySetInnerHTML.
+// Le résultat visuel est identique à l'ancien innerHTML.
+import QRCode from "qrcode";
+
+function BodySegments({ html }: { html: string }): ReactNode {
+  const parts = html.split(/(<b>[^<]*<\/b>)/g);
+  return (
+    <>
+      {parts.map((part, i) =>
+        part.startsWith("<b>") && part.endsWith("</b>") ? (
+          <strong key={i} style={{ color: "#ccc", fontWeight: 600 }}>
+            {part.slice(3, -4)}
+          </strong>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+}
 
 const BODY: Record<string, string> = {
   phase1: `Le trader a réussi la <b>Phase 1 du Challenge Traders Rewards</b> en atteignant les objectifs requis. En maintenant une gestion rigoureuse du risque et en générant les performances attendues, le trader a validé ses compétences et sa discipline. Ce certificat confirme l'accès à la <b>Phase 2</b> du programme.`,
@@ -16,38 +38,6 @@ const TITLE: Record<string, { top: string; main: string }> = {
   reward:    { top: "Traders Rewards — Versement",     main: "REWARD"  },
 };
 
-function drawQR(canvas: HTMLCanvasElement, seed: string) {
-  const SIZE = 21;
-  const cs = canvas.width / SIZE;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#000";
-  let h = 0;
-  for (let i = 0; i < seed.length; i++) h = (Math.imul(31, h) + seed.charCodeAt(i)) | 0;
-  const rng = () => { h ^= h << 13; h ^= h >> 17; h ^= h << 5; return (h >>> 0) / 4294967296; };
-  const m: boolean[][] = Array.from({ length: SIZE }, () => Array(SIZE).fill(false));
-  const finder = (r: number, c: number) => {
-    for (let i = 0; i < 7; i++) for (let j = 0; j < 7; j++) {
-      if (i === 0 || i === 6 || j === 0 || j === 6 || (i >= 2 && i <= 4 && j >= 2 && j <= 4)) m[r + i][c + j] = true;
-    }
-  };
-  finder(0, 0); finder(0, 14); finder(14, 0);
-  const reserved = new Set<string>();
-  for (let i = 0; i < 7; i++) for (let j = 0; j < 8; j++) {
-    reserved.add(`${i},${j}`); reserved.add(`${j},${i}`);
-    reserved.add(`${i},${SIZE - 1 - j}`); reserved.add(`${j},${SIZE - 1 - i}`);
-    reserved.add(`${SIZE - 1 - i},${j}`); reserved.add(`${SIZE - 1 - j},${i}`);
-  }
-  for (let i = 0; i < SIZE; i++) for (let j = 0; j < SIZE; j++) {
-    if (!reserved.has(`${i},${j}`)) m[i][j] = rng() > 0.5;
-  }
-  for (let i = 0; i < SIZE; i++) for (let j = 0; j < SIZE; j++) {
-    if (m[i][j]) ctx.fillRect(j * cs, i * cs, cs, cs);
-  }
-}
-
 function CertContent() {
   const params = useSearchParams();
   const type = params.get("type") || "phase1";
@@ -56,14 +46,23 @@ function CertContent() {
   const name = firstname || lastname ? `${firstname} ${lastname}`.trim() : (params.get("name") || "Trader");
   const amount = params.get("amount") || "";
   const date = params.get("date") || new Date().toLocaleDateString("fr-FR");
-  const id = params.get("id") || name + date;
+  const token = params.get("token") || "";
 
   const certRef = useRef<HTMLDivElement>(null);
   const qrRef = useRef<HTMLCanvasElement>(null);
   const [logoDataUrl, setLogoDataUrl] = useState<string>("/logo-blanc-transparent.png");
   const [downloading, setDownloading] = useState(false);
 
-  useEffect(() => { if (qrRef.current) drawQR(qrRef.current, id); }, [id]);
+  useEffect(() => {
+    if (!qrRef.current || !/^[0-9a-f]{32}$/.test(token)) return;
+    const verificationUrl = `${window.location.origin}/verify/${token}?source=qr`;
+    QRCode.toCanvas(qrRef.current, verificationUrl, {
+      width: 82,
+      margin: 1,
+      errorCorrectionLevel: "M",
+      color: { dark: "#000000", light: "#ffffff" },
+    }).catch((error) => console.error("QR generation error:", error));
+  }, [token]);
 
   useEffect(() => {
     fetch("/logo-blanc-transparent.png")
@@ -239,7 +238,9 @@ function CertContent() {
         {/* BODY */}
         <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 30, fontWeight: 700, color: "#3b82f6", letterSpacing: "0.01em", marginBottom: 14, lineHeight: 1 }}>{name}</div>
-          <div style={{ fontSize: 13, lineHeight: 1.72, color: "#999", maxWidth: 500 }} dangerouslySetInnerHTML={{ __html: body.replace(/<b>/g, '<strong style="color:#ccc;font-weight:600">').replace(/<\/b>/g, "</strong>") }} />
+          <div style={{ fontSize: 13, lineHeight: 1.72, color: "#999", maxWidth: 500 }}>
+            <BodySegments html={body} />
+          </div>
           {(type === "reward") && amount && (
             <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginTop: 18, flexShrink: 0 }}>
               <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#555", whiteSpace: "nowrap" }}>Montant versé</div>

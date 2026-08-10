@@ -48,6 +48,17 @@ export async function PATCH(req: NextRequest) {
         const netAmount = parseFloat((grossAmount * splitPct).toFixed(2));
         await admin.from("payouts").update({ amount: netAmount }).eq("id", id);
 
+        // Create the opaque, publicly verifiable certificate for this payout.
+        await admin.from("reward_certificates").upsert({
+          source_key: `payout:${data.id}`,
+          payout_id: data.id,
+          challenge_id: challenge.id,
+          trader_display_name: `${firstName} ${lastName}`.trim() || "Trader",
+          account_size: challenge.account_size,
+          amount: `${netAmount.toLocaleString("fr-FR")} ${previous?.payment_method === "bank" ? "EUR" : "USD"}`,
+          issued_at: new Date().toISOString().slice(0, 10),
+        }, { onConflict: "source_key" });
+
         // 1. Reset DB en premier (avant withdrawal) pour éviter que le sync restore l'ancien high
         const resetNow = new Date().toISOString();
         await admin.from("challenges").update({

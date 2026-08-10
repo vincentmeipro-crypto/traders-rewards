@@ -2,109 +2,224 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
-const BANNER_TRADERS = [
-  { name: "Karim B.",       payout: "3 187 EUR", size: "$100K", date: "14/03/2026" },
-  { name: "Marco V.",       payout: "3 094 EUR", size: "$100K", date: "02/04/2026" },
-  { name: "Thomas D.",      payout: "1 847 EUR", size: "$50K",  date: "19/04/2026" },
-  { name: "Antoine M.",     payout: "4 213 EUR", size: "$100K", date: "05/05/2026" },
-  { name: "Mathieu R.",     payout: "3 731 EUR", size: "$100K", date: "21/05/2026" },
-  { name: "Alexandre P.",   payout: "3 847 EUR", size: "$100K", date: "08/06/2026" },
-  { name: "Sarah L.",       payout: "2 196 EUR", size: "$50K",  date: "17/06/2026" },
-  { name: "Carlos G.",      payout: "1 438 EUR", size: "$50K",  date: "29/06/2026" },
-  { name: "Camille F.",     payout: "2 941 EUR", size: "$100K", date: "07/07/2026" },
-  { name: "Nicolas B.",     payout: "4 638 EUR", size: "$100K", date: "12/07/2026" },
-  { name: "Jean-Pierre D.", payout: "4 612 EUR", size: "$100K", date: "15/07/2026" },
-  { name: "Lukas W.",       payout: "3 574 EUR", size: "$100K", date: "18/07/2026" },
-  { name: "Julien M.",      payout: "2 578 EUR", size: "$100K", date: "20/07/2026" },
-  { name: "Lena H.",        payout: "1 163 EUR", size: "$25K",  date: "22/07/2026" },
-  { name: "Lucas M.",       payout: "1 046 EUR", size: "$25K",  date: "24/07/2026" },
-];
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-function certUrl(name: string, amount: string, date: string) {
+type CertScan = {
+  scanned_at: string;
+  source: string;
+};
+
+type Cert = {
+  id: string;
+  public_token: string;
+  trader_display_name: string;
+  account_size: string | null;
+  amount: string | null;
+  issued_at: string;
+  reward_certificate_scans: CertScan[];
+};
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function certPreviewUrl(token: string, name: string, amount: string, date: string): string {
   const parts = name.trim().split(" ");
-  const firstname = parts[0] || "";
-  const lastname = parts.slice(1).join(" ");
-  return `/certificate?type=reward`
-    + `&firstname=${encodeURIComponent(firstname)}`
-    + `&lastname=${encodeURIComponent(lastname)}`
-    + `&amount=${encodeURIComponent(amount)}`
-    + `&date=${encodeURIComponent(date)}`;
+  const firstname = encodeURIComponent(parts[0] || "");
+  const lastname  = encodeURIComponent(parts.slice(1).join(" "));
+  return (
+    `/certificate?type=reward&token=${encodeURIComponent(token)}` +
+    `&firstname=${firstname}&lastname=${lastname}` +
+    `&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`
+  );
 }
 
-function Row({ name, sub, url }: { name: string; sub: string; url: string }) {
+function fmtDate(iso: string): string {
+  return new Date(`${iso}T00:00:00`).toLocaleDateString("fr-FR");
+}
+
+function fmtDatetime(iso: string): string {
+  return new Date(iso).toLocaleString("fr-FR", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+    hour: "2-digit", minute: "2-digit",
+  });
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function Stat({ label, value, color }: { label: string; value: string; color: string }) {
   return (
-    <div style={{
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      background: "#0e0e0e", border: "1px solid #1a1a1a", borderRadius: 8,
-      padding: "14px 20px", gap: 16,
-    }}>
-      <div style={{ flex: 1 }}>
-        <div style={{ fontWeight: 700, color: "#3b82f6", fontSize: 15 }}>{name}</div>
-        <div style={{ fontSize: 11, color: "#555", marginTop: 2 }}>{sub}</div>
-      </div>
-      <a href={url} target="_blank" rel="noopener noreferrer" style={{
-        background: "#3b82f6", color: "#fff", textDecoration: "none",
-        padding: "8px 16px", borderRadius: 6, fontSize: 12, fontWeight: 700,
-        whiteSpace: "nowrap", flexShrink: 0,
+    <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+      <span style={{
+        fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+        textTransform: "uppercase", color: "#444",
       }}>
-        Ouvrir →
-      </a>
+        {label}
+      </span>
+      <span style={{
+        fontSize: 18, fontWeight: 800, color, lineHeight: 1,
+        fontVariantNumeric: "tabular-nums",
+      }}>
+        {value}
+      </span>
     </div>
   );
 }
 
-export default async function CertificatsPage() {
-  const admin = createAdminClient();
-  const { data: challenges } = await admin
-    .from("challenges")
-    .select("id, client_first_name, client_last_name, account_size, model, created_at, amount_paid")
-    .eq("status", "funded")
-    .order("created_at", { ascending: false });
+function Row({ cert }: { cert: Cert }) {
+  const scans = cert.reward_certificate_scans ?? [];
+  const qr    = scans.filter(s => s.source === "qr").length;
+  const lien  = scans.filter(s => s.source === "link").length;
+  const total = scans.length;
 
-  const funded = challenges || [];
+  // MAX(scanned_at) — comparaison de chaînes ISO : correct car format fixe
+  const last = scans.length > 0
+    ? scans.reduce((a, b) => (a.scanned_at > b.scanned_at ? a : b))
+    : null;
+
+  const issuedStr  = fmtDate(cert.issued_at);
+  const amountStr  = cert.amount || cert.account_size || "—";
+  const previewUrl = certPreviewUrl(cert.public_token, cert.trader_display_name, amountStr, issuedStr);
+  // "Vérifier →" ouvert par l'admin = source='link', distingué des scans QR physiques
+  const verifyUrl  = `/verify/${cert.public_token}?source=link`;
 
   return (
-    <main style={{ minHeight: "100vh", background: "#050505", fontFamily: "'Segoe UI', system-ui, sans-serif", padding: "40px 32px" }}>
-      <div style={{ maxWidth: 860, margin: "0 auto" }}>
+    <div style={{
+      background: "#0e0e0e", border: "1px solid #1a1a1a", borderRadius: 8, padding: "16px 20px",
+    }}>
 
-        <div style={{ marginBottom: 36 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 6 }}>Admin — Traders Rewards</div>
-          <h1 style={{ fontSize: 26, fontWeight: 900, color: "#fff", margin: 0 }}>Certificats Reward</h1>
+      {/* ── Ligne du haut : identité + boutons ── */}
+      <div style={{
+        display: "flex", justifyContent: "space-between",
+        alignItems: "flex-start", gap: 16, flexWrap: "wrap",
+      }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, color: "#3b82f6", fontSize: 15 }}>
+            {cert.trader_display_name}
+          </div>
+          <div style={{ fontSize: 11, color: "#555", marginTop: 3 }}>
+            {cert.account_size || "—"} · {amountStr} · {issuedStr}
+          </div>
         </div>
 
-        {/* Traders réels en base */}
-        {funded.length > 0 && (
+        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+          <a
+            href={previewUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: "#1a1a1a", color: "#aaa", border: "1px solid #2a2a2a",
+              textDecoration: "none", padding: "7px 14px", borderRadius: 6,
+              fontSize: 12, fontWeight: 700, whiteSpace: "nowrap",
+            }}
+          >
+            Ouvrir →
+          </a>
+          <a
+            href={verifyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: "#3b82f6", color: "#fff",
+              textDecoration: "none", padding: "7px 14px", borderRadius: 6,
+              fontSize: 12, fontWeight: 700, whiteSpace: "nowrap",
+            }}
+          >
+            Vérifier →
+          </a>
+        </div>
+      </div>
+
+      {/* ── Ligne du bas : stats scans ── */}
+      <div style={{
+        marginTop: 14, paddingTop: 12, borderTop: "1px solid #161616",
+        display: "flex", gap: 28, flexWrap: "wrap", alignItems: "center",
+      }}>
+        <Stat label="Total"     value={String(total)} color={total > 0 ? "#22c55e" : "#444"} />
+        <Stat label="Scans QR"  value={String(qr)}    color={qr > 0   ? "#60a5fa" : "#444"} />
+        <Stat label="Ouv. lien" value={String(lien)}  color={lien > 0 ? "#a78bfa" : "#444"} />
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <span style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: "0.12em",
+            textTransform: "uppercase", color: "#444",
+          }}>
+            Dernière vérification
+          </span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: last ? "#d1d5db" : "#444" }}>
+            {last ? fmtDatetime(last.scanned_at) : "Jamais vérifié"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+
+export default async function CertificatsPage() {
+  const admin = createAdminClient();
+
+  const { data, error } = await admin
+    .from("reward_certificates")
+    .select(
+      "id, public_token, trader_display_name, account_size, amount, issued_at," +
+      " reward_certificate_scans(scanned_at, source)"
+    )
+    .is("revoked_at", null)
+    .order("issued_at", { ascending: false });
+
+  const certificates = (data ?? []) as unknown as Cert[];
+
+  return (
+    <main style={{
+      minHeight: "100vh", background: "#050505",
+      fontFamily: "'Segoe UI', system-ui, sans-serif", padding: "40px 32px",
+    }}>
+      <div style={{ maxWidth: 920, margin: "0 auto" }}>
+
+        {/* ── Header ── */}
+        <div style={{ marginBottom: 36 }}>
+          <div style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
+            textTransform: "uppercase", color: "#3b82f6", marginBottom: 6,
+          }}>
+            Admin — Traders Rewards
+          </div>
+          <h1 style={{ fontSize: 26, fontWeight: 900, color: "#fff", margin: 0 }}>
+            Certificats Reward
+          </h1>
+          <p style={{ color: "#555", fontSize: 12, marginTop: 8, marginBottom: 0, lineHeight: 1.6 }}>
+            <span style={{ color: "#666", fontWeight: 700 }}>Ouvrir →</span> prévisualise le certificat imprimable.{" "}
+            <span style={{ color: "#666", fontWeight: 700 }}>Vérifier →</span> ouvre la page publique
+            <span style={{ color: "#3a3a3a" }}> (enregistré comme source=link, distinct des scans QR physiques)</span>.
+          </p>
+        </div>
+
+        {/* ── Contenu ── */}
+        {error ? (
+          <div style={{
+            color: "#fca5a5", background: "#450a0a55",
+            border: "1px solid #7f1d1d", padding: 16, borderRadius: 6,
+          }}>
+            Erreur de chargement des certificats. Vérifiez que la migration a bien été exécutée.
+          </div>
+        ) : (
           <>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#22c55e", marginBottom: 12 }}>
-              Traders réels ({funded.length})
+            <div style={{
+              fontSize: 11, fontWeight: 700, letterSpacing: "0.15em",
+              textTransform: "uppercase", color: "#22c55e", marginBottom: 14,
+            }}>
+              Certificats actifs — {certificates.length}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 36 }}>
-              {funded.map((c) => {
-                const name = `${c.client_first_name || ""} ${c.client_last_name || ""}`.trim() || "Trader";
-                const date = new Date(c.created_at).toLocaleDateString("fr-FR");
-                const amount = c.amount_paid ? `${c.amount_paid.toLocaleString("fr-FR")} EUR` : c.account_size;
-                return (
-                  <Row key={c.id} name={name} sub={`${c.account_size} · ${date}`}
-                    url={certUrl(name, amount, date)} />
-                );
-              })}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {certificates.map(cert => (
+                <Row key={cert.id} cert={cert} />
+              ))}
             </div>
           </>
         )}
 
-        {/* Traders bannière */}
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 12 }}>
-          Traders bannière ({BANNER_TRADERS.length})
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {BANNER_TRADERS.map((t) => (
-            <Row key={t.name} name={t.name} sub={`${t.size} · ${t.payout} · ${t.date}`}
-              url={certUrl(t.name, t.payout, t.date)} />
-          ))}
-        </div>
-
         <div style={{ marginTop: 28, fontSize: 11 }}>
-          <a href="/x8k3pz" style={{ color: "#333", textDecoration: "none" }}>← Retour admin</a>
+          <a href="/x8k3pz" style={{ color: "#555", textDecoration: "none" }}>← Retour admin</a>
         </div>
       </div>
     </main>
