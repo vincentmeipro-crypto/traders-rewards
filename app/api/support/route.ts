@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendNewSupportTicketAdminNotification } from "@/lib/mailer";
 
 // ── Phase 3B-3e hotfix ────────────────────────────────────────────────────────
 //
@@ -116,7 +117,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Impossible d'enregistrer votre demande. Réessayez." }, { status: 500 });
   }
 
-  // Ticket créé en base. CRM = source de vérité.
-  // Aucune notification email admin n'est envoyée.
+  // ── Notification admin — fire-and-forget ─────────────────────────────────
+  //
+  // Phase 3B-3e : 1 notification par création de ticket.
+  // Idempotence garantie dans sendNewSupportTicketAdminNotification via email_logs.event_key.
+  //
+  // L'échec de la notification ne supprime pas le ticket et ne retourne
+  // pas d'erreur au client — le ticket est déjà créé avec succès.
+  //
+  // TODO Phase 3B-3e (après migration SQL) :
+  //   Ajouter ici INSERT support_ticket_messages (sender_type='client', channel='dashboard')
+  //   avant l'appel notification. Table inexistante jusqu'au GO SUPABASE.
+  sendNewSupportTicketAdminNotification({
+    ticketId:  ticket.id,
+    firstName,
+    lastName,
+    email,
+    subject,
+    category,
+    userId:    user_id ?? undefined,
+  }).catch(err => {
+    console.error("[support] Admin notification failed:", String(err).slice(0, 200));
+  });
+
   return NextResponse.json({ ok: true });
 }

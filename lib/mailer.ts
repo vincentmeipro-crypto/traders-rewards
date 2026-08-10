@@ -331,6 +331,127 @@ export async function sendApologyEmail(
   });
 }
 
+// ── sendNewSupportTicketAdminNotification ─────────────────────
+//
+// Phase 3B-3e : notification interne lors de la création d'un nouveau ticket Support.
+// Envoyée UNE SEULE FOIS par ticket (idempotence via email_logs.event_key).
+//
+// Destination : ADMIN_EMAIL (résolu côté serveur — jamais exposé client)
+// From        : Traders Rewards <contact@traders-rewards.eu> (via resolveSender)
+// Content     : métadonnées ticket uniquement — JAMAIS le message du client
+// Fire-and-forget : l'échec n'empêche pas la création du ticket
+//
+// NE PAS appeler pour :
+//   - réponses client à un ticket existant
+//   - réponses admin
+//   - changements de statut
+//   - Live Chat
+
+export async function sendNewSupportTicketAdminNotification(params: {
+  ticketId:  string;
+  firstName: string;
+  lastName:  string;
+  email:     string;
+  subject:   string;
+  category:  string | null;
+  userId?:   string;
+}): Promise<void> {
+  const { ticketId, firstName, lastName, email, subject, category, userId } = params;
+
+  if (!ADMIN_EMAIL || !ADMIN_EMAIL.includes("@")) {
+    console.error("[mailer] sendNewSupportTicketAdminNotification: ADMIN_EMAIL non configuré");
+    return;
+  }
+
+  const eventKey = `support_new_ticket:${ticketId}`;
+
+  // ── Idempotence ─────────────────────────────────────────────
+  // Vérifie si la notification a déjà été envoyée pour ce ticket.
+  // En cas d'échec du check, on envoie quand même (pire cas = double email unique — acceptable).
+  try {
+    const adminDb = createAdminClient();
+    const { data: existing } = await adminDb
+      .from("email_logs")
+      .select("id")
+      .eq("event_key", eventKey)
+      .maybeSingle();
+    if (existing) return; // Déjà envoyé — idempotent
+  } catch (checkErr) {
+    console.warn(
+      "[mailer] Idempotence check support_new_ticket failed, sending anyway:",
+      String(checkErr).slice(0, 200),
+    );
+  }
+
+  // ── Branding ────────────────────────────────────────────────
+  // siteUrl uniquement — logo non nécessaire pour une notification interne courte.
+  let siteUrl = "https://www.traders-rewards.eu";
+  try {
+    const b = await getBrandingConfig();
+    siteUrl = b.siteUrl;
+  } catch { /* fallback hardcodé */ }
+
+  const crmUrl = `${siteUrl}/x8k3pz/support`;
+
+  // ── HTML ────────────────────────────────────────────────────
+  // Simple, court, sans message client.
+  // Aucun dangerouslySetInnerHTML — template string statique avec valeurs échappées.
+  const esc = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  const categoryRow = category
+    ? `<tr>
+        <td style="color:#888;font-size:13px;padding:10px 0;border-bottom:1px solid #f0f0f0;width:40%;">Catégorie&nbsp;:</td>
+        <td style="color:#111;font-size:13px;font-weight:700;padding:10px 0;border-bottom:1px solid #f0f0f0;text-align:right;">${esc(category)}</td>
+      </tr>`
+    : "";
+
+  const html = `
+<div style="background:#f4f4f4;font-family:Helvetica,Arial,sans-serif;padding:32px 16px;">
+  <div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:10px;padding:32px 28px;box-shadow:0 2px 8px rgba(0,0,0,0.07);">
+
+    <h2 style="color:#1a1a1a;font-size:19px;font-weight:800;margin:0 0 8px 0;">🔔 Nouveau ticket Support</h2>
+    <p style="color:#555;font-size:14px;line-height:1.6;margin:0 0 22px 0;">
+      Nouvelle demande de support reçue. Connecte-toi au CRM pour consulter le message complet et y répondre.
+    </p>
+
+    <table width="100%" cellPadding="0" cellSpacing="0" style="border-top:1px solid #ebebeb;margin-bottom:24px;">
+      <tr>
+        <td style="color:#888;font-size:13px;padding:10px 0;border-bottom:1px solid #f0f0f0;width:40%;">Client&nbsp;:</td>
+        <td style="color:#111;font-size:13px;font-weight:700;padding:10px 0;border-bottom:1px solid #f0f0f0;text-align:right;">${esc(firstName)} ${esc(lastName)}</td>
+      </tr>
+      <tr>
+        <td style="color:#888;font-size:13px;padding:10px 0;border-bottom:1px solid #f0f0f0;">Email&nbsp;:</td>
+        <td style="color:#111;font-size:13px;font-weight:700;padding:10px 0;border-bottom:1px solid #f0f0f0;text-align:right;">${esc(email)}</td>
+      </tr>
+      <tr>
+        <td style="color:#888;font-size:13px;padding:10px 0;border-bottom:1px solid #f0f0f0;">Objet&nbsp;:</td>
+        <td style="color:#111;font-size:13px;font-weight:700;padding:10px 0;border-bottom:1px solid #f0f0f0;text-align:right;">${esc(subject)}</td>
+      </tr>
+      ${categoryRow}
+    </table>
+
+    <a href="${crmUrl}" style="display:inline-block;background:#3b82f6;color:#ffffff;text-decoration:none;padding:11px 24px;border-radius:8px;font-weight:700;font-size:14px;">Consulter dans le CRM →</a>
+
+    <p style="color:#c0c0c0;font-size:11px;margin:28px 0 0 0;padding-top:16px;border-top:1px solid #f0f0f0;line-height:1.5;">
+      Notification interne Traders Rewards — ne pas répondre directement à cet email.<br/>
+      Ticket ID&nbsp;: ${esc(ticketId)}
+    </p>
+  </div>
+</div>`;
+
+  const emailSubject = `🔔 Nouveau ticket Support — ${subject}`;
+
+  await _loggedSend({
+    type:     "support_notification",
+    to:       ADMIN_EMAIL,
+    subject:  emailSubject,
+    html,
+    userId,
+    eventKey,
+  });
+}
+
 // ── sendTestEmail ─────────────────────────────────────────────
 //
 // Phase 3B-1b : envoi de test sécurisé vers ADMIN_EMAIL uniquement.
