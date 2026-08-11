@@ -466,7 +466,7 @@ export default function Pricing() {
           marginBottom: isMobile ? 28 : isShortScreen ? 6 : 8,
         }}>
           <div style={{
-            fontSize: 10, fontWeight: 800, color: "#69C5FD",
+            fontSize: isMobile ? 12 : 12.5, fontWeight: 800, color: "#69C5FD",
             letterSpacing: "3.5px", textTransform: "uppercase",
             marginBottom: isMobile ? 12 : isShortScreen ? 6 : 6,
           }}>
@@ -474,10 +474,10 @@ export default function Pricing() {
           </div>
           <h2 style={{
             fontSize: isMobile
-              ? "clamp(2rem,8vw,3rem)"
+              ? "clamp(2.4rem,9.6vw,3.6rem)"
               : isShortScreen
-                ? "clamp(2.2rem,3.5vw,3.2rem)"
-                : "clamp(3rem,5vw,5.5rem)",
+                ? "clamp(3.2rem,5.1vw,4.65rem)"
+                : "clamp(4.35rem,7.25vw,8rem)",
             fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1.5px",
             lineHeight: 1.05, margin: "0 0 4px",
           }}>
@@ -487,7 +487,7 @@ export default function Pricing() {
             </span>
           </h2>
           <p style={{
-            fontSize: isMobile ? 12 : isShortScreen ? 11 : 13,
+            fontSize: isMobile ? 14.4 : isShortScreen ? 14.3 : 16.9,
             color: "rgba(255,255,255,0.38)", fontWeight: 500, margin: 0,
           }}>
             {L(
