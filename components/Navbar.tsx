@@ -1,5 +1,6 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { languages, Lang } from "@/lib/translations";
@@ -12,7 +13,14 @@ const FlagImg = ({ code }: { code: string }) => (
     width={20} height={15} alt={code}
     style={{ borderRadius: 2, objectFit: "cover", display: "inline-block" }} />
 );
-
+function TraderLink() {
+  return (
+    <Link href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 10px" }}>
+      <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.85)" }}>Challenge</span>
+      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "#69C5FD", color: "#000", padding: "2px 8px", borderRadius: 4 }}>TRADER</span>
+    </Link>
+  );
+}
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -42,16 +50,6 @@ export default function Navbar() {
     ["Support", "/support"],
     ["Partenariat", "/partenariat"],
   ];
-
-  const TraderLink = () => (
-    <a href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 10px" }}>
-      <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.85)" }}>Challenge</span>
-      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "#69C5FD", color: "#000", padding: "2px 8px", borderRadius: 4 }}>TRADER</span>
-    </a>
-  );
-
-  // VipLink masqué — Challenge ALGO temporairement désactivé
-  const VipLink = ({ mobile }: { mobile?: boolean }) => null;
 
   return (
     <>
@@ -116,10 +114,12 @@ export default function Navbar() {
         .nav-cta:hover { opacity: 0.85; }
       `}</style>
 
-      <nav style={{
+      <nav className={`home-navbar${scrolled ? " is-scrolled" : ""}`} style={{
         position: "fixed", top: "var(--promo-banner-height, 0px)", left: 0, right: 0, zIndex: 100,
-        backgroundColor: "#000000",
-        borderBottom: "1px solid rgba(255,255,255,0.75)",
+        backgroundColor: scrolled ? "rgba(0,0,0,0.9)" : "#000000",
+        borderBottom: scrolled ? "1px solid rgba(105,197,253,0.2)" : "1px solid rgba(255,255,255,0.18)",
+        backdropFilter: scrolled ? "blur(18px)" : "none",
+        boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42), 0 1px 0 rgba(105,197,253,0.04)" : "none",
         transition: "all 0.3s ease",
       }}>
         <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: isMobile ? "space-between" : "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: isMobile ? "hidden" : "visible" }}>
@@ -130,15 +130,15 @@ export default function Navbar() {
               {/* Spacer gauche pour centrer le logo */}
               <div style={{ width: 36 }} />
               {/* Logo centré */}
-              <a href="/" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", textDecoration: "none" }}>
+              <Link href="/" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", textDecoration: "none" }}>
                 <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ height: 134, width: "auto", objectFit: "contain", transform: "translateY(4px)" }} />
-              </a>
+              </Link>
             </>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <a href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+              <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
                 <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ height: 146, width: "auto", objectFit: "contain", marginLeft: -10, transform: "translateY(6px)" }} />
-              </a>
+              </Link>
             </div>
           )}
 
@@ -149,7 +149,6 @@ export default function Navbar() {
               {navLinks.map(([label, href]) => (
                 <a key={href} href={href} className="nav-link">{label}</a>
               ))}
-              <VipLink />
             </div>
           )}
 
@@ -208,13 +207,12 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {open && (
-          <div style={{ backgroundColor: "#000000", borderTop: "1px solid rgba(255,255,255,0.75)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ backgroundColor: "rgba(3,5,7,0.98)", borderTop: "1px solid rgba(105,197,253,0.16)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
             <div onClick={() => setOpen(false)}><TraderLink /></div>
             {navLinks.map(([label, href]) => (
               <a key={href} href={href} onClick={() => setOpen(false)}
                 style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, fontWeight: 500, textDecoration: "none" }}>{label}</a>
             ))}
-            <div onClick={() => setOpen(false)}><VipLink mobile /></div>
             <hr style={{ borderColor: "rgba(255,255,255,0.12)", margin: "4px 0" }} />
             <a href="/login" onClick={() => setOpen(false)}
               style={{ color: "#FFFFFF", fontSize: 15, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>

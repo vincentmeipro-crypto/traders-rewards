@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -8,7 +8,7 @@ const steps = {
   fr: [
     { label: "Ouvre le site dans\nton navigateur mobile", sub: "Safari (iOS) ou Chrome (Android)" },
     { label: "Appuie sur le bouton\nPartager / Menu", sub: "En bas (iOS) ou en haut à droite (Android)" },
-    { label: "Sélectionne\n\"Ajouter à l'écran d'accueil\"", sub: "Puis confirme" },
+    { label: "Sélectionne\n\"Ajouter à l’écran d’accueil\"", sub: "Puis confirme" },
     { label: "L'app est installée ✓", sub: "Lance-la depuis ton écran d'accueil" },
   ],
   es: [
@@ -95,7 +95,7 @@ function PhoneScreen({ step }: { step: number }) {
                 <div style={{ width: 24, height: 24, borderRadius: 6, background: "#1565C0", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <span style={{ color: "#fff", fontSize: 13 }}>+</span>
                 </div>
-                <span style={{ fontSize: 9, fontWeight: 700, color: "#1565C0" }}>Ajouter à l'écran d'accueil</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#1565C0" }}>Ajouter à l’écran d’accueil</span>
               </div>
               <div style={{ padding: "8px 12px", display: "flex", alignItems: "center", gap: 8 }}>
                 <div style={{ width: 24, height: 24, borderRadius: 6, background: "#e0e0e0", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -193,7 +193,7 @@ export default function InstallPWA() {
   const sub = L("Accédez à Traders Rewards depuis votre écran d'accueil — sans passer par les stores.","Accede a Traders Rewards desde tu pantalla de inicio — sin pasar por las tiendas.","Access Traders Rewards from your home screen — no app store needed.");
 
   return (
-    <section style={{ background: "#000000", padding: "80px 24px", textAlign: "center" }}>
+    <section id="mobile-app" className="home-app" style={{ background: "#000000", padding: "80px 24px", textAlign: "center" }}>
       <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#69C5FD", marginBottom: 16 }}>
         {L("Application Mobile","Aplicación Móvil","Mobile App")}
       </div>
@@ -202,9 +202,9 @@ export default function InstallPWA() {
       </h2>
       <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, maxWidth: 700, margin: "0 auto 48px" }}>{sub}</p>
 
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 32, maxWidth: 420, margin: "0 auto" }}>
+      <div className="pwa-stage" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 32, maxWidth: 420, margin: "0 auto" }}>
         {/* Phone mockup */}
-        <div style={{ position: "relative", width: 200, height: 400 }}>
+        <div className="pwa-phone" style={{ position: "relative", width: 200, height: 400 }}>
           {/* Phone outer frame */}
           <div style={{
             position: "absolute", inset: 0,

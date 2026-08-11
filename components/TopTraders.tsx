@@ -1,5 +1,5 @@
-﻿"use client";
-import { useState, useEffect, useRef } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const TRADERS = [
@@ -26,47 +26,20 @@ function fmt(n: number) {
   return "€" + Math.floor(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-const ENTER_MS = 600, HOLD_MS = 2800, EXIT_MS = 500;
-const TOTAL_MS = ENTER_MS + HOLD_MS + EXIT_MS;
+const FEATURED_TRADER = TRADERS.find((trader) => trader.name === "Mathieu R.")!;
 
 function SpotlightCard({ lang }: { lang: string }) {
-  const [idx, setIdx] = useState(0);
-  const [amt, setAmt] = useState(0);
-  const rafRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    const trader = TRADERS[idx];
-    const t1 = setTimeout(() => {
-      if (cancelled) return;
-      const start = performance.now();
-      const tick = (now: number) => {
-        if (cancelled) return;
-        const p = Math.min((now - start) / 750, 1);
-        const ease = 1 - Math.pow(1 - p, 3);
-        setAmt(Math.round(ease * trader.payout));
-        if (p < 1) rafRef.current = requestAnimationFrame(tick);
-        else setAmt(trader.payout);
-      };
-      rafRef.current = requestAnimationFrame(tick);
-    }, ENTER_MS);
-    const t2 = setTimeout(() => {
-      if (!cancelled) { setAmt(0); setIdx(i => (i + 1) % TRADERS.length); }
-    }, TOTAL_MS + 80);
-    return () => { cancelled = true; clearTimeout(t1); clearTimeout(t2); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, [idx]);
-
-  const t = TRADERS[idx];
+  const t = FEATURED_TRADER;
   return (
-    <div key={idx} style={{
-      background: "#111111",
-      border: "1px solid rgba(255,255,255,0.12)",
+    <div style={{
+      background: "linear-gradient(145deg, rgba(105,197,253,0.08) 0%, #111111 32%, #0B0B0B 100%)",
+      border: "1px solid rgba(105,197,253,0.24)",
       borderRadius: 24,
       padding: "28px 28px 24px",
       textAlign: "center",
       position: "relative",
       overflow: "hidden",
-      animation: `spotCycle ${TOTAL_MS}ms linear forwards`,
+      boxShadow: "0 24px 60px rgba(0,0,0,0.42), 0 8px 28px rgba(105,197,253,0.09), inset 0 1px 0 rgba(255,255,255,0.08)",
     }}>
 
       <div style={{ position: "absolute", top: 0, left: "15%", right: "15%", height: 2, background: "linear-gradient(to right, transparent, #69C5FD, transparent)", borderRadius: "0 0 4px 4px" }} />
@@ -78,7 +51,7 @@ function SpotlightCard({ lang }: { lang: string }) {
         </span>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 24, padding: "14px 20px", background: "rgba(255,255,255,0.04)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.08)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 24, padding: "14px 20px", background: "linear-gradient(135deg, rgba(255,255,255,0.055), rgba(105,197,253,0.025))", borderRadius: 10, border: "1px solid rgba(105,197,253,0.13)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05), 0 10px 24px rgba(0,0,0,0.18)" }}>
         <div style={{ position: "relative", flexShrink: 0 }}>
           <div style={{ width: 48, height: 48, borderRadius: "50%", background: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "#FFFFFF" }}>{t.initials}</div>
           <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -3, right: -7, width: 18, height: 14, borderRadius: 3, objectFit: "cover" }} />
@@ -92,7 +65,7 @@ function SpotlightCard({ lang }: { lang: string }) {
 
       <div style={{ marginBottom: 6 }}>
         <div style={{ fontSize: "clamp(2.8rem, 10vw, 4rem)", fontWeight: 900, color: "#FFFFFF", lineHeight: 1, letterSpacing: "-2px", fontVariantNumeric: "tabular-nums" }}>
-          {fmt(amt)}
+          {fmt(t.payout)}
         </div>
       </div>
       <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: "3px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", marginBottom: 20 }}>
@@ -105,14 +78,6 @@ function SpotlightCard({ lang }: { lang: string }) {
         <span style={{ fontSize: 11, color: "#69C5FD", fontWeight: 700 }}>✓ {lang === "fr" ? "Trader Reward" : "Reward Trader"}</span>
       </div>
 
-      <style>{`
-        @keyframes spotCycle {
-          0% { opacity: 0; transform: translateY(40px) scale(0.9); animation-timing-function: cubic-bezier(0.34,1.56,0.64,1); }
-          ${((ENTER_MS / TOTAL_MS) * 100).toFixed(1)}% { opacity: 1; transform: translateY(0) scale(1); animation-timing-function: linear; }
-          ${(((ENTER_MS + HOLD_MS) / TOTAL_MS) * 100).toFixed(1)}% { opacity: 1; transform: translateY(0) scale(1); animation-timing-function: ease-in; }
-          100% { opacity: 0; transform: translateY(-16px) scale(0.97); }
-        }
-      `}</style>
     </div>
   );
 }
@@ -133,10 +98,11 @@ export default function TopTraders() {
     { size: "$25K",  profit: "€1,500",  reward: "~€1,200" },
     { size: "$50K",  profit: "€3,000",  reward: "~€2,400" },
     { size: "$100K", profit: "€6,000",  reward: "~€4,800" },
+    { size: "$200K", profit: "€12,000", reward: "~€9,600" },
   ];
 
   return (
-    <section style={{ padding: "72px 0 0", overflow: "hidden", background: "#000000", position: "relative" }}>
+    <section id="rewards" style={{ padding: "72px 0 0", overflow: "hidden", background: "#000000", position: "relative" }}>
 
       <div style={{ textAlign: "center", marginBottom: 56, padding: "0 24px" }}>
         <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#69C5FD", marginBottom: 16 }}>

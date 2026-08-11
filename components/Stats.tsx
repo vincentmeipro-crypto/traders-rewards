@@ -20,9 +20,9 @@ export default function Stats() {
   ];
 
   return (
-    <section style={{ padding: "40px 24px 60px", backgroundColor: "#000000" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{
+    <section id="results" className="home-stats" style={{ padding: "40px 24px 60px", backgroundColor: "#000000" }}>
+      <div className="home-stats-shell" style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div className="home-stats-grid" style={{
           display: "grid",
           gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
           background: "#111111",
@@ -31,13 +31,13 @@ export default function Stats() {
           overflow: "hidden",
         }}>
           {stats.map((stat, i) => (
-            <div key={i} style={{
+            <div key={i} className="home-stat" style={{
               textAlign: "center",
               padding: isMobile ? "24px 16px" : "36px 24px",
               borderRight: !isMobile && i < stats.length - 1 ? "1px solid rgba(255,255,255,0.08)" : "none",
               borderBottom: isMobile && i < 2 ? "1px solid rgba(255,255,255,0.08)" : "none",
             }}>
-              <div style={{
+              <div className="home-stat-value" style={{
                 fontSize: isMobile ? "1.6rem" : "clamp(1.8rem, 3.5vw, 2.4rem)",
                 fontWeight: 900,
                 color: "#FFFFFF",
@@ -46,7 +46,7 @@ export default function Stats() {
               }}>
                 {stat.value}
               </div>
-              <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", fontWeight: 600 }}>
+              <div className="home-stat-label" style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", fontWeight: 600 }}>
                 {stat.label}
               </div>
             </div>

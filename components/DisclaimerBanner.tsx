@@ -38,8 +38,11 @@ export default function DisclaimerBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem("disclaimer_dismissed");
-    if (!dismissed) setVisible(true);
+    const timer = window.setTimeout(() => {
+      const dismissed = sessionStorage.getItem("disclaimer_dismissed");
+      if (!dismissed) setVisible(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   if (!visible) return null;
@@ -47,7 +50,7 @@ export default function DisclaimerBanner() {
   const t = text[lang] || text.en;
 
   return (
-    <div style={{
+    <div className="disclaimer-banner" role="status" style={{
       position: "fixed",
       bottom: 0, left: 0, right: 0,
       zIndex: 999,

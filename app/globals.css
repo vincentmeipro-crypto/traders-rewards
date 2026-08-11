@@ -334,3 +334,343 @@ body {
     @apply font-sans;
   }
 }
+
+/* HOME PREMIUM CONSISTENCY PASS */
+.home-navbar {
+  isolation: isolate;
+}
+
+.home-stats {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 22%, rgba(105, 197, 253, 0.055), transparent 62%), #000 !important;
+}
+
+.home-stats-grid {
+  position: relative;
+  border-color: rgba(105, 197, 253, 0.18) !important;
+  border-radius: 20px !important;
+  background: linear-gradient(145deg, rgba(105, 197, 253, 0.065), #121314 34%, #0b0c0d 100%) !important;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.62), 0 8px 30px rgba(105, 197, 253, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.home-stats-grid::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(105, 197, 253, 0.78), transparent);
+}
+
+.home-stat {
+  position: relative;
+  transition: background 200ms ease;
+}
+
+.home-stat:hover {
+  background: rgba(105, 197, 253, 0.035);
+}
+
+.home-stat-value {
+  text-shadow: 0 0 30px rgba(105, 197, 253, 0.11);
+}
+
+.home-stat-label {
+  color: rgba(255, 255, 255, 0.48) !important;
+}
+
+.trader-marquee-shell {
+  position: relative;
+  padding: 20px 0 !important;
+  border-color: rgba(105, 197, 253, 0.14) !important;
+  background: linear-gradient(180deg, #030405, #080a0b 50%, #030405) !important;
+  box-shadow: inset 0 16px 38px rgba(0, 0, 0, 0.48), inset 0 -16px 38px rgba(0, 0, 0, 0.48);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+.trader-chip {
+  border-color: rgba(105, 197, 253, 0.15) !important;
+  background: linear-gradient(145deg, rgba(105, 197, 253, 0.075), #121314 38%, #0c0d0e) !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.home-mt5-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: 18px 0 58px;
+  background: radial-gradient(ellipse at 50% 52%, rgba(105, 197, 253, 0.1), transparent 58%), #000 !important;
+}
+
+.home-mt5-section::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 18% 25%;
+  border-radius: 50%;
+  background: rgba(105, 197, 253, 0.07);
+  filter: blur(70px);
+}
+
+.home-rules {
+  background: radial-gradient(ellipse at 50% 12%, rgba(105, 197, 253, 0.055), transparent 44%), #000 !important;
+}
+
+.rules-tabs {
+  padding: 4px;
+  width: fit-content;
+  margin-right: auto;
+  margin-left: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 13px;
+  background: #0b0c0d;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 12px 30px rgba(0, 0, 0, 0.34);
+}
+
+.rules-tab {
+  border-radius: 9px !important;
+}
+
+.rules-tab.is-active {
+  color: #041017 !important;
+  box-shadow: 0 8px 22px rgba(105, 197, 253, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.38);
+}
+
+.rules-surface {
+  border-color: rgba(105, 197, 253, 0.14) !important;
+  background: linear-gradient(150deg, rgba(105, 197, 253, 0.055), #131415 30%, #0c0d0e 100%) !important;
+  box-shadow: 0 24px 62px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(105, 197, 253, 0.045), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.rules-risk {
+  border-left-color: rgba(105, 197, 253, 0.48) !important;
+}
+
+.rules-list-card {
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.rules-list-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(105, 197, 253, 0.28) !important;
+  box-shadow: 0 30px 72px rgba(0, 0, 0, 0.56), 0 0 26px rgba(105, 197, 253, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.rules-list-card:last-child {
+  border-color: rgba(239, 68, 68, 0.14) !important;
+  background: linear-gradient(150deg, rgba(239, 68, 68, 0.035), #131415 30%, #0c0d0e 100%) !important;
+}
+
+.rules-cta {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(105, 197, 253, 0.22) !important;
+  background: radial-gradient(circle at 50% 0%, rgba(105, 197, 253, 0.16), transparent 57%), linear-gradient(145deg, #151719, #0b0c0d) !important;
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.62), 0 0 34px rgba(105, 197, 253, 0.075), inset 0 1px 0 rgba(255, 255, 255, 0.065);
+}
+
+.rules-cta a {
+  box-shadow: 0 12px 30px rgba(105, 197, 253, 0.24);
+}
+
+.home-faq {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 10%, rgba(105, 197, 253, 0.05), transparent 48%), #000 !important;
+}
+
+.home-faq-shell {
+  max-width: 860px !important;
+}
+
+.faq-list {
+  gap: 11px;
+}
+
+.faq-item {
+  padding: 0 22px;
+  border: 1px solid rgba(255, 255, 255, 0.085) !important;
+  border-radius: 15px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.036), #0d0e0f 72%);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.025);
+  transition: border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+}
+
+.faq-item:hover,
+.faq-item.is-open {
+  border-color: rgba(105, 197, 253, 0.25) !important;
+  background: linear-gradient(145deg, rgba(105, 197, 253, 0.065), #101214 72%);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38), 0 0 22px rgba(105, 197, 253, 0.055), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.faq-trigger {
+  padding: 20px 0 !important;
+}
+
+.faq-answer {
+  padding-right: 42px !important;
+}
+
+.home-app {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 38%, rgba(105, 197, 253, 0.09), transparent 50%), #000 !important;
+}
+
+.pwa-stage {
+  width: min(100%, 520px);
+  max-width: 520px !important;
+  padding: 40px 46px 34px;
+  border: 1px solid rgba(105, 197, 253, 0.16);
+  border-radius: 30px;
+  background: linear-gradient(150deg, rgba(105, 197, 253, 0.07), #111315 34%, #090a0b 100%);
+  box-shadow: 0 34px 84px rgba(0, 0, 0, 0.62), 0 0 38px rgba(105, 197, 253, 0.075), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+}
+
+.pwa-phone {
+  filter: drop-shadow(0 22px 32px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 22px rgba(105, 197, 253, 0.1));
+}
+
+.home-footer {
+  position: relative;
+  border-top-color: rgba(105, 197, 253, 0.14) !important;
+  background: radial-gradient(ellipse at 50% 0%, rgba(105, 197, 253, 0.055), transparent 48%), #050607 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.home-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(105, 197, 253, 0.48), transparent);
+}
+
+.disclaimer-banner {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px !important;
+  padding: 11px 92px 11px 22px !important;
+  border-top-color: rgba(105, 197, 253, 0.24) !important;
+  background: rgba(4, 7, 11, 0.94) !important;
+  box-shadow: 0 -18px 46px rgba(0, 0, 0, 0.52), 0 -1px 0 rgba(105, 197, 253, 0.035);
+  backdrop-filter: blur(18px);
+}
+
+.disclaimer-banner p {
+  justify-self: end;
+  color: rgba(255, 255, 255, 0.48) !important;
+  font-size: 12px !important;
+}
+
+.disclaimer-banner button {
+  justify-self: start;
+  background: #69c5fd !important;
+  color: #031019 !important;
+  border-radius: 9px !important;
+  box-shadow: 0 8px 24px rgba(105, 197, 253, 0.2);
+}
+
+@media (max-width: 767px) {
+  .home-stats {
+    padding: 24px 16px 44px !important;
+  }
+
+  .home-stats-grid {
+    border-radius: 17px !important;
+  }
+
+  .trader-marquee-shell {
+    padding: 16px 0 !important;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent);
+  }
+
+  .home-mt5-section {
+    padding-bottom: 34px;
+  }
+
+  .home-rules,
+  .home-faq,
+  .home-app {
+    padding-right: 16px !important;
+    padding-left: 16px !important;
+  }
+
+  .rules-tabs {
+    width: 100%;
+  }
+
+  .rules-tab {
+    flex: 1;
+    padding: 10px 12px !important;
+  }
+
+  .rules-surface {
+    border-radius: 18px !important;
+  }
+
+  .rules-list-card:hover {
+    transform: none;
+  }
+
+  .rules-cta {
+    padding: 36px 22px !important;
+  }
+
+  .faq-list {
+    gap: 9px;
+  }
+
+  .faq-item {
+    padding: 0 17px;
+    border-radius: 14px;
+  }
+
+  .faq-trigger {
+    padding: 18px 0 !important;
+  }
+
+  .faq-answer {
+    padding-right: 30px !important;
+    padding-bottom: 19px !important;
+  }
+
+  .pwa-stage {
+    padding: 30px 18px 26px;
+    border-radius: 24px;
+  }
+
+  .home-footer {
+    padding: 54px 20px 32px !important;
+  }
+
+  .disclaimer-banner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px !important;
+    padding: 9px 76px 9px 12px !important;
+  }
+
+  .disclaimer-banner p {
+    color: rgba(255, 255, 255, 0.52) !important;
+    font-size: 10px !important;
+    line-height: 1.42 !important;
+    text-align: left !important;
+  }
+
+  .disclaimer-banner button {
+    padding: 9px 76px 9px 12px !important;
+    font-size: 11px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-stat,
+  .rules-list-card,
+  .faq-item {
+    transition: none;
+  }
+}

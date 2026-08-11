@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 const TRADERS = [
   { name: "Karim B.",       flag: "fr", payout: 3187.54,  size: "$100K", initials: "KB" },
@@ -26,10 +26,10 @@ const doubled = [...TRADERS, ...TRADERS];
 
 export default function TraderMarquee() {
   return (
-    <div style={{ overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "18px 0", background: "#000000" }}>
+    <div id="trader-ticker" className="trader-marquee-shell" aria-label="Recent trader rewards" style={{ overflow: "hidden", borderTop: "1px solid rgba(255,255,255,0.08)", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "18px 0", background: "#000000" }}>
       <div className="marquee-track">
         {doubled.map((t, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 20, flexShrink: 0, padding: "5px 14px 5px 5px", background: "#111111", borderRadius: 100, border: "1px solid rgba(255,255,255,0.1)" }}>
+          <div key={i} className="trader-chip" style={{ display: "flex", alignItems: "center", gap: 10, marginRight: 20, flexShrink: 0, padding: "5px 14px 5px 5px", background: "#111111", borderRadius: 100, border: "1px solid rgba(255,255,255,0.1)" }}>
             <div style={{ position: "relative", flexShrink: 0 }}>
               <div style={{ width: 32, height: 32, borderRadius: "50%", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 800, color: "#FFFFFF" }}>{t.initials}</div>
               <img src={`https://flagcdn.com/24x18/${t.flag}.png`} alt="" style={{ position: "absolute", bottom: -2, right: -6, width: 14, height: 11, borderRadius: 2, objectFit: "cover" }} />

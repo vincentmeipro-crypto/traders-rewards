@@ -20,7 +20,7 @@ export default function Home() {
       <TopTraders />
       <Stats />
       <TraderMarquee />
-      <section style={{ width: "100%", lineHeight: 0, backgroundColor: "#000000" }}>
+      <section className="home-mt5-section" style={{ width: "100%", lineHeight: 0, backgroundColor: "#000000" }}>
         <img src="/image-section-mt5-new.png" alt="MT5" className="mt5-section-img" />
       </section>
       <Pricing />

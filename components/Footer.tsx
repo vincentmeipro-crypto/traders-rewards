@@ -38,8 +38,8 @@ export default function Footer() {
   ];
 
   return (
-    <footer style={{ backgroundColor: "#050505", padding: "64px 24px 40px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-      <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <footer className="home-footer" style={{ backgroundColor: "#050505", padding: "64px 24px 40px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      <div className="home-footer-shell" style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "1.6fr 1fr 1fr 1fr", gap: isMobile ? 32 : 48, marginBottom: 56, alignItems: "start" }}>
 
           <div style={{ gridColumn: isMobile ? "1 / -1" : "auto" }}>

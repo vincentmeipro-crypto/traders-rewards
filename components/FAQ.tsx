@@ -1,7 +1,17 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+
+const faqTitles: Record<string, string> = {
+  en: "Frequently Asked Questions",
+  fr: "Questions fréquentes",
+  es: "Preguntas frecuentes",
+  pt: "Perguntas frequentes",
+  de: "Häufig gestellte Fragen",
+  tr: "Sık Sorulan Sorular",
+  ar: "الأسئلة الشائعة",
+};
 
 const faqData = {
   en: [
@@ -92,28 +102,30 @@ const faqData = {
 
 export default function FAQ() {
   const [open, setOpen] = useState<number | null>(null);
-  const { T, lang } = useLanguage();
+  const { lang } = useLanguage();
   const items = faqData[lang as keyof typeof faqData] || faqData.en;
 
   return (
-    <section id="faq" style={{ padding: "80px 24px", backgroundColor: "#000000" }}>
-      <div style={{ maxWidth: 780, margin: "0 auto" }}>
+    <section id="faq" className="home-faq" style={{ padding: "80px 24px", backgroundColor: "#000000" }}>
+      <div className="home-faq-shell" style={{ maxWidth: 780, margin: "0 auto" }}>
 
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#69C5FD", marginBottom: 16 }}>FAQ</div>
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px" }}>
-            {lang === "fr" ? "Questions fréquentes" : "Frequently Asked Questions"}
+            {faqTitles[lang] || faqTitles.en}
           </h2>
         </div>
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div className="faq-list" style={{ display: "flex", flexDirection: "column" }}>
           {items.map((item, i) => (
-            <div key={i} style={{
+            <div key={i} className={`faq-item${open === i ? " is-open" : ""}`} style={{
               borderBottom: "1px solid rgba(255,255,255,0.08)",
               overflow: "hidden",
             }}>
               <button
                 onClick={() => setOpen(open === i ? null : i)}
+                className="faq-trigger"
+                aria-expanded={open === i}
                 style={{
                   width: "100%", textAlign: "left",
                   background: "none", border: "none", cursor: "pointer",
@@ -134,7 +146,7 @@ export default function FAQ() {
                 </div>
               </button>
               {open === i && (
-                <div style={{ paddingBottom: 22, paddingRight: 44 }}>
+                <div className="faq-answer" style={{ paddingBottom: 22, paddingRight: 44 }}>
                   <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 14, lineHeight: 1.75, margin: 0 }}>{item.a}</p>
                 </div>
               )}
