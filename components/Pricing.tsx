@@ -9,6 +9,7 @@ const PROMO_PCT    = 33;
 
 // ─── Produits — source de vérité frontend (fallback DB) ───────────
 const ACCOUNTS = [
+  { size: 10000,  id: "10k",  label: "10K",  display: "$10,000",  price2: "€89",  price1: "€79",  promo2: "€60",  promo1: "€53",  reward: "~€480",   badge: "DÉCOUVERTE" },
   { size: 25000,  id: "25k",  label: "25K",  display: "$25,000",  price2: "€199", price1: "€169", promo2: "€133", promo1: "€113", reward: "~€1,200", badge: "ÉVOLUTION" },
   { size: 50000,  id: "50k",  label: "50K",  display: "$50,000",  price2: "€299", price1: "€249", promo2: "€200", promo1: "€167", reward: "~€2,400", badge: "CONFIRMÉ"  },
   { size: 100000, id: "100k", label: "100K", display: "$100,000", price2: "€439", price1: "€429", promo2: "€294", promo1: "€287", reward: "~€4,800", badge: "EXPERT"    },
@@ -17,6 +18,13 @@ const ACCOUNTS = [
 
 type Acc = typeof ACCOUNTS[0];
 type Row = { label: string; value: string; pct?: number; isPhaseHeader?: boolean };
+type PublicProduct = {
+  slug: string;
+  model: "2step" | "1step";
+  balance_usd: number;
+  effective_price_cents: number;
+};
+type ProductCardData = { slug: string; priceCents: number };
 
 function fmtAmt(pct: number, size: number): string {
   return "$" + Math.round(Math.abs(pct) * size).toLocaleString("en-US");
@@ -29,13 +37,14 @@ export default function Pricing() {
   const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   const [model,        setModel]        = useState<"2step" | "1step">("2step");
-  const [selIdx,       setSelIdx]       = useState(2);           // 100k par défaut
+  const defaultAccountIdx = ACCOUNTS.findIndex(acc => acc.size === 100000);
+  const [selIdx,       setSelIdx]       = useState(defaultAccountIdx); // 100k par défaut
   const [showPct,      setShowPct]      = useState(true);
   const [showSteps,    setShowSteps]    = useState(false);
   const [isMobile,     setIsMobile]     = useState(false);
-  const [isShortScreen,setIsShortScreen]= useState(false);       // ≥900px & viewport-height < 820px
+  const [isShortScreen,setIsShortScreen]= useState(false);       // ≥1100px & viewport-height < 820px
   const [hovIdx,       setHovIdx]       = useState<number | null>(null);
-  const [dbPrices,     setDbPrices]     = useState<Record<string, number>>({});
+  const [dbProducts,   setDbProducts]   = useState<Record<string, ProductCardData>>({});
   const [slideDir,     setSlideDir]     = useState<"left" | "right" | null>(null);
   const [animKey,      setAnimKey]      = useState(0);
   const swipeRef  = useRef<HTMLDivElement>(null);
@@ -45,8 +54,8 @@ export default function Pricing() {
     const check = () => {
       const w = window.innerWidth;
       const h = window.innerHeight;
-      setIsMobile(w < 900);
-      setIsShortScreen(w >= 900 && h < 820);   // 1366×768, 1280×800, etc.
+      setIsMobile(w < 1100);
+      setIsShortScreen(w >= 1100 && h < 820);   // 1366×768, 1280×800, etc.
     };
     check();
     window.addEventListener("resize", check);
@@ -56,11 +65,14 @@ export default function Pricing() {
   useEffect(() => {
     fetch("/api/products")
       .then(r => r.json())
-      .then((data: Array<{ slug: string; effective_price_cents: number }>) => {
+      .then((data: PublicProduct[]) => {
         if (!Array.isArray(data)) return;
-        const map: Record<string, number> = {};
-        for (const p of data) if (p.slug && p.effective_price_cents) map[p.slug] = p.effective_price_cents;
-        setDbPrices(map);
+        const map: Record<string, ProductCardData> = {};
+        for (const p of data) {
+          if (!p.slug || !p.balance_usd || !p.model || !p.effective_price_cents) continue;
+          map[`${p.balance_usd}-${p.model}`] = { slug: p.slug, priceCents: p.effective_price_cents };
+        }
+        setDbProducts(map);
       })
       .catch(() => {});
   }, []);
@@ -101,13 +113,16 @@ export default function Pricing() {
   }, [isMobile]);
 
   // ─── Prix (DB first, fallback hardcodé) — AUCUNE MODIFICATION ────
+  const getProduct = (acc: Acc): ProductCardData | undefined =>
+    dbProducts[`${acc.size}-${model}`];
+
   const getPrice = (acc: Acc): string => {
-    const c = dbPrices[`${acc.id}-${model}`];
+    const c = getProduct(acc)?.priceCents;
     if (c) return `€${Math.round(c / 100)}`;
     return model === "2step" ? acc.price2 : acc.price1;
   };
   const getPromoPrice = (acc: Acc): string => {
-    const c = dbPrices[`${acc.id}-${model}`];
+    const c = getProduct(acc)?.priceCents;
     if (c) return `€${Math.round(c * (100 - PROMO_PCT) / 100 / 100)}`;
     return model === "2step" ? acc.promo2 : acc.promo1;
   };
@@ -170,7 +185,7 @@ export default function Pricing() {
     const isHovered = hovIdx === i && !isActive;
     const price      = getPrice(acc);
     const promoPrice = getPromoPrice(acc);
-    const slug       = `${acc.id}-${model}`;
+    const slug       = getProduct(acc)?.slug ?? `${acc.id}-${model}`;
 
     // Helper: pick value by display context
     // c = compact/mobile | s = desktop short | n = desktop normal
@@ -423,7 +438,7 @@ export default function Pricing() {
           border-color: rgba(255,255,255,0.50) !important;
           color: #fff !important;
         }
-        @media (max-width: 899px) {
+        @media (max-width: 1099px) {
           .ch-tog {
             font-size: 13px;
             padding: 12px 20px;
@@ -443,7 +458,7 @@ export default function Pricing() {
         .ch-enter-from-left  { animation: ch-from-left  270ms ease-out both; }
       `}</style>
 
-      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1420, margin: "0 auto" }}>
 
         {/* ── Titre ── */}
         <div style={{
@@ -545,7 +560,7 @@ export default function Pricing() {
                   key={tab.id}
                   role="tab"
                   aria-selected={on}
-                  onClick={() => { setModel(tab.id); setSelIdx(2); setShowSteps(false); }}
+                  onClick={() => { setModel(tab.id); setSelIdx(defaultAccountIdx); setShowSteps(false); }}
                   style={{
                     background:   on ? "#69C5FD" : "transparent",
                     color:        on ? "#000000" : "rgba(255,255,255,0.46)",
@@ -687,18 +702,18 @@ export default function Pricing() {
         )}
 
         {/* ══════════════════════════════
-            DESKTOP : 4 cartes flottantes
+            DESKTOP : 5 cartes flottantes
         ══════════════════════════════ */}
         {!isMobile && (
           <div style={{
             display: "flex",
-            gap: isShortScreen ? 12 : 14,
+            gap: isShortScreen ? 10 : 12,
             justifyContent: "center",
             alignItems: "flex-start",
             padding: isShortScreen ? "8px 0 14px" : "10px 0 18px",
           }}>
             {ACCOUNTS.map((acc, i) => (
-              <div key={acc.id} style={{ flex: "1 1 0", minWidth: 0, maxWidth: 295 }}>
+              <div key={acc.id} style={{ flex: "1 1 0", minWidth: 0, maxWidth: 260 }}>
                 {renderCard(acc, i, false)}
               </div>
             ))}

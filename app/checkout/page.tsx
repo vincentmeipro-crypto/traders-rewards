@@ -4,11 +4,23 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ChevronRight, X, ShieldCheck } from "lucide-react";
 
-const CHALLENGES: Record<string, { label: string; model: "2-Step" | "1-Step"; price: string; amount: number }> = {
+type ModelKey = "2step" | "1step";
+type Challenge = { label: string; model: "2-Step" | "1-Step"; price: string; amount: number };
+type CheckoutProduct = Challenge & { slug: string; sizeKey: string; modelKey: ModelKey };
+type PublicProduct = {
+  slug: string;
+  model: ModelKey;
+  balance_usd: number;
+  price_eur_cents: number;
+};
+
+const CHALLENGES: Record<string, Challenge> = {
+  "10k-2step":  { label: "$10,000",  model: "2-Step", price: "€89",  amount: 8900   },
   "25k-2step":  { label: "$25,000",  model: "2-Step", price: "€199", amount: 19900  },
   "50k-2step":  { label: "$50,000",  model: "2-Step", price: "€299", amount: 29900  },
   "100k-2step": { label: "$100,000", model: "2-Step", price: "€439", amount: 43900  },
   "200k-2step": { label: "$200,000", model: "2-Step", price: "€799", amount: 79900  },
+  "10k-1step":  { label: "$10,000",  model: "1-Step", price: "€79",  amount: 7900   },
   "25k-1step":  { label: "$25,000",  model: "1-Step", price: "€169", amount: 16900  },
   "50k-1step":  { label: "$50,000",  model: "1-Step", price: "€249", amount: 24900  },
   "100k-1step": { label: "$100,000", model: "1-Step", price: "€429", amount: 42900  },
@@ -46,8 +58,15 @@ const DIAL_CODES = [
   { code: "+55", flag: "🇧🇷" }, { code: "+91", flag: "🇮🇳" }, { code: "+61", flag: "🇦🇺" },
 ];
 
-const SIZES = ["25k", "50k", "100k", "200k"];
-const SIZE_LABELS: Record<string, string> = { "25k": "$25K", "50k": "$50K", "100k": "$100K", "200k": "$200K" };
+const FALLBACK_PRODUCTS: CheckoutProduct[] = Object.entries(CHALLENGES).map(([slug, challenge]) => ({
+  ...challenge,
+  slug,
+  sizeKey: slug.split("-")[0],
+  modelKey: slug.endsWith("2step") ? "2step" : "1step",
+}));
+
+const SIZES = ["10k", "25k", "50k", "100k", "200k"];
+const SIZE_LABELS: Record<string, string> = { "10k": "$10K", "25k": "$25K", "50k": "$50K", "100k": "$100K", "200k": "$200K" };
 const LOYALTY_PCT = 20;
 
 function formatPrice(cents: number) {
@@ -58,18 +77,21 @@ function CheckoutContent() {
   const params = useSearchParams();
   const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState(params.get("product") || "50k-2step");
-  const challenge = CHALLENGES[selectedProduct] || CHALLENGES["50k-2step"];
-  const selectedModel = selectedProduct.endsWith("2step") ? "2step" : "1step";
-  const selectedSize  = selectedProduct.split("-")[0];
+  const [availableProducts, setAvailableProducts] = useState<CheckoutProduct[]>(FALLBACK_PRODUCTS);
+  const challenge = availableProducts.find(product => product.slug === selectedProduct)
+    ?? FALLBACK_PRODUCTS.find(product => product.slug === selectedProduct)
+    ?? FALLBACK_PRODUCTS.find(product => product.slug === "50k-2step")!;
+  const selectedModel = challenge.modelKey;
+  const selectedSize  = challenge.sizeKey;
   const rules = challenge.model === "2-Step" ? RULES_2STEP : RULES_1STEP;
 
-  const changeModel = (model: string) => {
-    const pid = `${selectedSize}-${model}`;
-    if (CHALLENGES[pid]) setSelectedProduct(pid);
+  const changeModel = (model: ModelKey) => {
+    const product = availableProducts.find(item => item.sizeKey === selectedSize && item.modelKey === model);
+    if (product) setSelectedProduct(product.slug);
   };
   const changeSize = (size: string) => {
-    const pid = `${size}-${selectedModel}`;
-    if (CHALLENGES[pid]) setSelectedProduct(pid);
+    const product = availableProducts.find(item => item.sizeKey === size && item.modelKey === selectedModel);
+    if (product) setSelectedProduct(product.slug);
   };
 
   const [isMobile, setIsMobile] = useState(false);
@@ -116,6 +138,37 @@ function CheckoutContent() {
     window.addEventListener("resize", check);
     setRefCode(localStorage.getItem("elysium_ref") || "");
     return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then(response => response.json())
+      .then((data: PublicProduct[]) => {
+        if (!Array.isArray(data)) return;
+        const products = data
+          .filter(product => product.slug && product.balance_usd && product.price_eur_cents)
+          .map<CheckoutProduct>(product => ({
+            slug: product.slug,
+            sizeKey: `${Math.round(product.balance_usd / 1000)}k`,
+            modelKey: product.model,
+            label: `$${product.balance_usd.toLocaleString("en-US")}`,
+            model: product.model === "2step" ? "2-Step" : "1-Step",
+            price: formatPrice(product.price_eur_cents),
+            amount: product.price_eur_cents,
+          }));
+
+        if (!products.length) return;
+        setAvailableProducts(products);
+        setSelectedProduct(current => {
+          if (products.some(product => product.slug === current)) return current;
+          const fallback = FALLBACK_PRODUCTS.find(product => product.slug === current);
+          const matchingProduct = fallback
+            ? products.find(product => product.sizeKey === fallback.sizeKey && product.modelKey === fallback.modelKey)
+            : undefined;
+          return matchingProduct?.slug ?? current;
+        });
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -293,7 +346,7 @@ function CheckoutContent() {
           <div style={card}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Challenge</div>
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-              {[{ key: "2step", label: "2-Step" }, { key: "1step", label: "1-Step" }].map(m => (
+              {([{ key: "2step", label: "2-Step" }, { key: "1step", label: "1-Step" }] as const).map(m => (
                 <button key={m.key} onClick={() => changeModel(m.key)} style={{
                   flex: 1, padding: "9px 6px", fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
                   border: selectedModel === m.key ? "1.5px solid #69C5FD" : "1.5px solid rgba(255,255,255,0.1)",

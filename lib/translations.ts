@@ -31,7 +31,7 @@ export const t = {
       label: 'The Process', title: 'From Zero to', titleGold: 'Trader Reward',
       sub: "Three steps. That's all it takes to join the elite.",
       steps: [
-        { title: 'Choose Your Challenge', desc: 'Select your account size from $25K to $100K. Choose between our 2-Step or 1-Step challenge.' },
+        { title: 'Choose Your Challenge', desc: 'Select your account size from $10K to $200K. Choose between our 2-Step or 1-Step challenge.' },
         { title: 'Pass the Evaluation', desc: 'Trade with discipline. Hit your profit target while respecting the drawdown rules. No time pressure — trade at your own pace with no expiry date.' },
         { title: 'Become a Trader Reward', desc: 'Receive your Reward account instantly. Keep up to 90% of your simulated profits. Scale up to $200,000 through our scaling program.' },
       ],
@@ -150,7 +150,7 @@ export const t = {
       label: 'Le Processus', title: 'De Zéro à', titleGold: 'Trader Reward',
       sub: 'Trois étapes. C\'est tout ce qu\'il faut pour rejoindre l\'élite.',
       steps: [
-        { title: 'Choisissez votre Challenge Trader', desc: 'Sélectionnez votre taille de compte de 25K$ à 100K$. Choisissez entre notre challenge 2 étapes ou 1 étape.' },
+        { title: 'Choisissez votre Challenge Trader', desc: 'Sélectionnez votre taille de compte de 10K$ à 200K$. Choisissez entre notre challenge 2 étapes ou 1 étape.' },
         { title: 'Réussissez l\'Évaluation', desc: 'Tradez avec discipline. Atteignez votre objectif de profit tout en respectant les règles de drawdown. Aucune pression de temps, pas de date d\'expiration.' },
         { title: 'Devenez Trader Reward', desc: 'Recevez votre compte Reward instantanément. Gardez jusqu\'à 90% de vos profits simulés. Évoluez jusqu\'à 200 000$.' },
       ],
@@ -269,7 +269,7 @@ export const t = {
       label: 'El Proceso', title: 'De Cero a', titleGold: 'Trader Reward',
       sub: 'Tres pasos. Eso es todo lo que necesitas para unirte a la élite.',
       steps: [
-        { title: 'Elige tu Desafío', desc: 'Selecciona el tamaño de tu cuenta de $25K a $100K. Elige entre nuestro desafío de 2 pasos o 1 paso.' },
+        { title: 'Elige tu Desafío', desc: 'Selecciona el tamaño de tu cuenta de $10K a $200K. Elige entre nuestro desafío de 2 pasos o 1 paso.' },
         { title: 'Supera la Evaluación', desc: 'Opera con disciplina. Alcanza tu objetivo de ganancia respetando las reglas de drawdown. Sin presión de tiempo, sin fecha de vencimiento.' },
         { title: 'Conviértete en Trader Reward y Cobra', desc: 'Recibe tu cuenta Reward al instante. Opera con capital real y conserva hasta el 90% de tus ganancias. Escala hasta $200,000.' },
       ],

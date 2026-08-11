@@ -95,6 +95,7 @@ export default function TopTraders() {
   }, []);
 
   const tableRows = [
+    { size: "$10K",  profit: "€600",    reward: "~€480" },
     { size: "$25K",  profit: "€1,500",  reward: "~€1,200" },
     { size: "$50K",  profit: "€3,000",  reward: "~€2,400" },
     { size: "$100K", profit: "€6,000",  reward: "~€4,800" },
