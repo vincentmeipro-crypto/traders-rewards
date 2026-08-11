@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 
 const TIERS = [
   { label: "Débutant", sales: "1 – 10 ventes", rate: "10%", color: "rgba(255,255,255,0.5)", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.1)" },
-  { label: "Partenaire", sales: "11 – 29 ventes", rate: "15%", color: "#60A5FA", bg: "rgba(96,165,250,0.07)", border: "rgba(96,165,250,0.25)" },
-  { label: "Elite", sales: "30+ ventes", rate: "20%", color: "#60A5FA", bg: "rgba(96,165,250,0.12)", border: "rgba(96,165,250,0.4)" },
+  { label: "Partenaire", sales: "11 – 29 ventes", rate: "15%", color: "#69C5FD", bg: "rgba(96,165,250,0.07)", border: "rgba(96,165,250,0.25)" },
+  { label: "Elite", sales: "30+ ventes", rate: "20%", color: "#69C5FD", bg: "rgba(96,165,250,0.12)", border: "rgba(96,165,250,0.4)" },
 ];
 
 const STEPS = [
@@ -71,18 +71,18 @@ export default function PartenariatPage() {
 
       {/* Hero */}
       <section className="part-hero" style={{ background: "#000000" }}>
-        <div style={{ display: "inline-block", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.25)", borderRadius: 100, padding: "6px 18px", fontSize: 11, fontWeight: 700, color: "#60A5FA", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>
+        <div style={{ display: "inline-block", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.25)", borderRadius: 100, padding: "6px 18px", fontSize: 11, fontWeight: 700, color: "#69C5FD", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>
           Programme Partenariat
         </div>
         <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.1, letterSpacing: "-1.5px", marginBottom: 20 }}>
           Gagnez de l'argent en<br />
-          <span style={{ color: "#60A5FA" }}>recommandant Traders Rewards</span>
+          <span style={{ color: "#69C5FD" }}>recommandant Traders Rewards</span>
         </h1>
         <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 17, maxWidth: 560, margin: "0 auto 36px", lineHeight: 1.7 }}>
           Rejoignez notre programme d'affiliation et touchez jusqu'à <strong style={{ color: "#ffffff" }}>20% de commission</strong> sur chaque vente générée par votre lien.
         </p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/dashboard" style={{ background: "#3B82F6", color: "#fff", padding: "14px 32px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", letterSpacing: "0.5px" }}>
+          <a href="/dashboard" style={{ background: "#69C5FD", color: "#000", padding: "14px 32px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", letterSpacing: "0.5px" }}>
             Accéder à mon dashboard →
           </a>
           <a href="#contact" style={{ background: "transparent", color: "#fff", padding: "14px 32px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", letterSpacing: "0.5px" }}>
@@ -162,7 +162,7 @@ export default function PartenariatPage() {
               ].map((ex) => (
                 <div key={ex.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
                   <span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{ex.label}</span>
-                  <span style={{ fontWeight: 800, fontSize: 16, color: "#60A5FA" }}>{ex.earn}</span>
+                  <span style={{ fontWeight: 800, fontSize: 16, color: "#69C5FD" }}>{ex.earn}</span>
                 </div>
               ))}
               <p style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 16 }}>*Estimations basées sur un panier moyen de €250, avec tiers 10% à 20%.</p>
@@ -184,7 +184,7 @@ export default function PartenariatPage() {
               <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
               <div style={{ fontWeight: 800, fontSize: 20, color: "#ffffff", marginBottom: 8 }}>Demande envoyée !</div>
               <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 15 }}>Notre équipe vous contactera sous 24h à l'adresse <strong style={{ color: "#fff" }}>{form.email}</strong>.<br />En attendant, vous pouvez déjà vous connecter pour obtenir votre lien.</p>
-              <a href="/dashboard" style={{ display: "inline-block", marginTop: 24, background: "#3B82F6", color: "#fff", padding: "12px 28px", borderRadius: 8, fontWeight: 700, textDecoration: "none" }}>Mon dashboard →</a>
+              <a href="/dashboard" style={{ display: "inline-block", marginTop: 24, background: "#69C5FD", color: "#000", padding: "12px 28px", borderRadius: 8, fontWeight: 700, textDecoration: "none" }}>Mon dashboard →</a>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "40px 32px", display: "flex", flexDirection: "column", gap: 16 }}>
@@ -207,11 +207,11 @@ export default function PartenariatPage() {
                 <textarea value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} rows={4} placeholder="Présentez-vous, votre méthode de promotion..." style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }} />
               </div>
               {err && <div style={{ color: "#ef4444", fontSize: 13 }}>{err}</div>}
-              <button type="submit" disabled={sending} style={{ background: "#3B82F6", color: "#fff", border: "none", borderRadius: 8, padding: "14px", fontSize: 15, fontWeight: 700, cursor: sending ? "not-allowed" : "pointer", opacity: sending ? 0.7 : 1 }}>
+              <button type="submit" disabled={sending} style={{ background: "#69C5FD", color: "#000", border: "none", borderRadius: 8, padding: "14px", fontSize: 15, fontWeight: 700, cursor: sending ? "not-allowed" : "pointer", opacity: sending ? 0.7 : 1 }}>
                 {sending ? "Envoi en cours..." : "Envoyer ma demande →"}
               </button>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textAlign: "center" }}>
-                Déjà inscrit ? <a href="/dashboard" style={{ color: "#60A5FA", fontWeight: 600 }}>Accédez à votre lien de parrainage ici</a>
+                Déjà inscrit ? <a href="/dashboard" style={{ color: "#69C5FD", fontWeight: 600 }}>Accédez à votre lien de parrainage ici</a>
               </p>
             </form>
           )}

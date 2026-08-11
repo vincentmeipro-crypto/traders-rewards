@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useRef, useEffect, useState, type ReactNode } from "react";
 
@@ -97,17 +97,17 @@ function CertContent() {
         pts.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
         ctx.closePath(); ctx.fill();
       };
-      tri([[W,0],[W,160],[W-160,0]], "rgba(59,130,246,0.03)");
-      tri([[W,0],[W,100],[W-100,0]], "rgba(59,130,246,0.09)");
-      tri([[W,0],[W, 55],[W- 55,0]], "rgba(59,130,246,0.18)");
+      tri([[W,0],[W,160],[W-160,0]], "rgba(105,197,253,0.03)");
+      tri([[W,0],[W,100],[W-100,0]], "rgba(105,197,253,0.09)");
+      tri([[W,0],[W, 55],[W- 55,0]], "rgba(105,197,253,0.18)");
       // Diagonal line top-right
-      ctx.strokeStyle = "rgba(59,130,246,0.3)"; ctx.lineWidth = 0.5;
+      ctx.strokeStyle = "rgba(105,197,253,0.3)"; ctx.lineWidth = 0.5;
       ctx.beginPath(); ctx.moveTo(W,0); ctx.lineTo(W-160,160); ctx.stroke();
       // Bottom-left triangle
-      tri([[0,H],[90,H],[0,H-90]], "rgba(59,130,246,0.07)");
+      tri([[0,H],[90,H],[0,H-90]], "rgba(105,197,253,0.07)");
 
       // Top label
-      ctx.fillStyle = "#3b82f6";
+      ctx.fillStyle = "#69C5FD";
       ctx.font = "700 11px 'Segoe UI',system-ui,sans-serif";
       ctx.fillText(cfg.top.toUpperCase(), 56, 54);
 
@@ -126,11 +126,11 @@ function CertContent() {
       // Divider (y = 40 + 141 logo + 28 gap = 209)
       const divY = 209;
       const grd = ctx.createLinearGradient(56, 0, W-56, 0);
-      grd.addColorStop(0, "rgba(59,130,246,0.25)"); grd.addColorStop(0.5, "#3b82f6"); grd.addColorStop(1, "rgba(59,130,246,0.25)");
+      grd.addColorStop(0, "rgba(105,197,253,0.25)"); grd.addColorStop(0.5, "#69C5FD"); grd.addColorStop(1, "rgba(105,197,253,0.25)");
       ctx.fillStyle = grd; ctx.fillRect(56, divY, W-112, 1);
 
       // Trader name
-      ctx.fillStyle = "#3b82f6";
+      ctx.fillStyle = "#69C5FD";
       ctx.font = "700 30px 'Segoe UI',system-ui,sans-serif";
       ctx.fillText(name, 56, divY + 40);
 
@@ -198,7 +198,7 @@ function CertContent() {
     <div style={{ minHeight: "100vh", background: "#050505", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
 
       <div className="no-print" style={{ position: "fixed", top: 20, right: 20, zIndex: 100, display: "flex", gap: 10 }}>
-        <button onClick={download} disabled={downloading} style={{ background: downloading ? "#1d4ed8" : "#3b82f6", color: "#fff", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 800, cursor: downloading ? "wait" : "pointer", opacity: downloading ? 0.8 : 1 }}>
+        <button onClick={download} disabled={downloading} style={{ background: downloading ? "#1d4ed8" : "#69C5FD", color: downloading ? "#fff" : "#000", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 800, cursor: downloading ? "wait" : "pointer", opacity: downloading ? 0.8 : 1 }}>
           {downloading ? "⏳ En cours…" : "↓ Télécharger JPEG"}
         </button>
         <button onClick={() => window.print()} style={{ background: "#1a1a1a", color: "#aaa", border: "1px solid #333", borderRadius: 8, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
@@ -210,22 +210,22 @@ function CertContent() {
 
         {/* Decorations — derrière tout le contenu */}
         <svg style={{ position: "absolute", top: 0, right: 0, width: 160, height: 160, pointerEvents: "none", zIndex: 0 }} viewBox="0 0 160 160" fill="none">
-          <polygon points="160,0 160,160 0,0" fill="#3b82f608"/>
-          <polygon points="160,0 160,100 60,0" fill="#3b82f618"/>
-          <polygon points="160,0 160,55 105,0" fill="#3b82f630"/>
-          <line x1="0" y1="0" x2="160" y2="160" stroke="#3b82f6" strokeWidth="0.5" opacity="0.3"/>
-          <line x1="55" y1="0" x2="160" y2="105" stroke="#3b82f6" strokeWidth="0.5" opacity="0.3"/>
-          <line x1="105" y1="0" x2="160" y2="55" stroke="#3b82f6" strokeWidth="0.5" opacity="0.3"/>
+          <polygon points="160,0 160,160 0,0" fill="#69C5FD08"/>
+          <polygon points="160,0 160,100 60,0" fill="#69C5FD18"/>
+          <polygon points="160,0 160,55 105,0" fill="#69C5FD30"/>
+          <line x1="0" y1="0" x2="160" y2="160" stroke="#69C5FD" strokeWidth="0.5" opacity="0.3"/>
+          <line x1="55" y1="0" x2="160" y2="105" stroke="#69C5FD" strokeWidth="0.5" opacity="0.3"/>
+          <line x1="105" y1="0" x2="160" y2="55" stroke="#69C5FD" strokeWidth="0.5" opacity="0.3"/>
         </svg>
         <svg style={{ position: "absolute", bottom: 0, left: 0, width: 90, height: 90, opacity: 0.3, pointerEvents: "none", zIndex: 0 }} viewBox="0 0 90 90" fill="none">
-          <polygon points="0,90 90,90 0,0" fill="#3b82f612"/>
-          <line x1="0" y1="0" x2="90" y2="90" stroke="#3b82f6" strokeWidth="0.5" opacity="0.5"/>
+          <polygon points="0,90 90,90 0,0" fill="#69C5FD12"/>
+          <line x1="0" y1="0" x2="90" y2="90" stroke="#69C5FD" strokeWidth="0.5" opacity="0.5"/>
         </svg>
 
         {/* TOP ROW */}
         <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28, flexShrink: 0 }}>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 6 }}>{cfg.top}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#69C5FD", marginBottom: 6 }}>{cfg.top}</div>
             <div style={{ fontSize: 50, fontWeight: 900, lineHeight: 1, letterSpacing: "-0.01em", textTransform: "uppercase", color: "#fff" }}>{cfg.main}</div>
           </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -233,11 +233,11 @@ function CertContent() {
         </div>
 
         {/* DIVIDER */}
-        <div style={{ position: "relative", zIndex: 1, height: 1, background: "linear-gradient(to right, #3b82f640, #3b82f6, #3b82f640)", marginBottom: 24, flexShrink: 0 }} />
+        <div style={{ position: "relative", zIndex: 1, height: 1, background: "linear-gradient(to right, #69C5FD40, #69C5FD, #69C5FD40)", marginBottom: 24, flexShrink: 0 }} />
 
         {/* BODY */}
         <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 30, fontWeight: 700, color: "#3b82f6", letterSpacing: "0.01em", marginBottom: 14, lineHeight: 1 }}>{name}</div>
+          <div style={{ fontSize: 30, fontWeight: 700, color: "#69C5FD", letterSpacing: "0.01em", marginBottom: 14, lineHeight: 1 }}>{name}</div>
           <div style={{ fontSize: 13, lineHeight: 1.72, color: "#999", maxWidth: 500 }}>
             <BodySegments html={body} />
           </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -243,13 +243,13 @@ function CheckoutContent() {
   return (
     <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "system-ui, -apple-system, sans-serif" }}>
       <style>{`
-        .co-input:focus { border-color: rgba(59,130,246,0.5) !important; }
+        .co-input:focus { border-color: rgba(105,197,253,0.5) !important; }
         .co-select option { background: #111; color: #fff; }
         @property --co-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
         @keyframes coSpin { to { --co-angle: 360deg; } }
         .co-border {
           padding: 1.5px; border-radius: 12px; display: block;
-          background: conic-gradient(from var(--co-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
+          background: conic-gradient(from var(--co-angle), #1d4ed8 0%, #69C5FD 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
           animation: coSpin 3s linear infinite;
         }
         .co-border-btn {
@@ -296,9 +296,9 @@ function CheckoutContent() {
               {[{ key: "2step", label: "2-Step" }, { key: "1step", label: "1-Step" }].map(m => (
                 <button key={m.key} onClick={() => changeModel(m.key)} style={{
                   flex: 1, padding: "9px 6px", fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border: selectedModel === m.key ? "1.5px solid #3B82F6" : "1.5px solid rgba(255,255,255,0.1)",
-                  background: selectedModel === m.key ? "rgba(59,130,246,0.1)" : "#111",
-                  color: selectedModel === m.key ? "#3B82F6" : "rgba(255,255,255,0.5)",
+                  border: selectedModel === m.key ? "1.5px solid #69C5FD" : "1.5px solid rgba(255,255,255,0.1)",
+                  background: selectedModel === m.key ? "rgba(105,197,253,0.1)" : "#111",
+                  color: selectedModel === m.key ? "#69C5FD" : "rgba(255,255,255,0.5)",
                 }}>{m.label}</button>
               ))}
             </div>
@@ -317,7 +317,7 @@ function CheckoutContent() {
                 <div style={{ fontWeight: 800, fontSize: 16 }}>Challenge {challenge.label}</div>
                 <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginTop: 2 }}>{challenge.model} — Traders Rewards · MetaTrader 5</div>
               </div>
-              <span style={{ background: "rgba(59,130,246,0.1)", color: "#3B82F6", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 6, border: "1px solid rgba(59,130,246,0.3)" }}>
+              <span style={{ background: "rgba(105,197,253,0.1)", color: "#69C5FD", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 6, border: "1px solid rgba(105,197,253,0.3)" }}>
                 {challenge.model}
               </span>
             </div>
@@ -382,7 +382,7 @@ function CheckoutContent() {
 
             {!user && (
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 16 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#3B82F6", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Créer votre compte</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#69C5FD", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Créer votre compte</div>
                 <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
                   <div>
                     <label style={lbl}>Mot de passe *</label>
@@ -513,10 +513,10 @@ function CheckoutContent() {
             </div>
             <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
               <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
-                style={{ marginTop: 2, accentColor: "#3B82F6", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
+                style={{ marginTop: 2, accentColor: "#69C5FD", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
               <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.5 }}>
                 J&apos;ai lu et j&apos;accepte les{" "}
-                <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#3B82F6", textDecoration: "underline", fontWeight: 700 }}>
+                <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#69C5FD", textDecoration: "underline", fontWeight: 700 }}>
                   Conditions Générales de Vente et d&apos;Utilisation
                 </a>
               </span>

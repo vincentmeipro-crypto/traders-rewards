@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -90,7 +90,7 @@ export default function Pricing() {
     return (
       <div className={`pricing-card${acc.popular ? " pricing-card-popular" : ""}`}>
         {/* Badge */}
-        <div style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: "#3B82F6", color: "#fff", fontSize: 8, fontWeight: 800, padding: "3px 12px", borderRadius: 100, letterSpacing: "1.5px", whiteSpace: "nowrap" }}>
+        <div style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: "#69C5FD", color: "#000", fontSize: 8, fontWeight: 800, padding: "3px 12px", borderRadius: 100, letterSpacing: "1.5px", whiteSpace: "nowrap" }}>
           {acc.badge}
         </div>
 
@@ -122,8 +122,8 @@ export default function Pricing() {
             borderRadius: 8,
             fontSize: 10, fontWeight: 800,
             textDecoration: "none", letterSpacing: "1px", textTransform: "uppercase",
-            background: acc.popular ? "#3B82F6" : "rgba(255,255,255,0.08)",
-            color: "#FFFFFF",
+            background: acc.popular ? "#69C5FD" : "rgba(255,255,255,0.08)",
+            color: acc.popular ? "#000000" : "#FFFFFF",
             border: acc.popular ? "none" : "1px solid rgba(255,255,255,0.12)",
             transition: "opacity 0.2s",
           }}>
@@ -151,8 +151,8 @@ export default function Pricing() {
         {/* Récompense moy. */}
         <div style={{
           margin: compact ? "0 16px 12px" : "0 12px 10px",
-          background: "rgba(59,130,246,0.06)",
-          border: "1px solid rgba(59,130,246,0.15)",
+          background: "rgba(105,197,253,0.06)",
+          border: "1px solid rgba(105,197,253,0.15)",
           borderRadius: 6, padding: "4px 8px",
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
@@ -175,15 +175,15 @@ export default function Pricing() {
           transition: border-color 0.2s, transform 0.2s;
         }
         .pricing-card:hover {
-          border-color: rgba(59,130,246,0.35);
+          border-color: rgba(105,197,253,0.35);
           transform: translateY(-3px);
         }
         .pricing-card-popular {
-          border-color: #3B82F6;
+          border-color: #69C5FD;
           background: linear-gradient(135deg, #0a0a0a 0%, #0d1829 100%);
         }
         .pricing-card-popular:hover {
-          border-color: #60a5fa;
+          border-color: #69C5FD;
         }
       `}</style>
       <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 1 }}>
@@ -191,7 +191,7 @@ export default function Pricing() {
         {/* Header */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 20 }}>
           <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)", fontWeight: 800, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1.1, marginBottom: 6 }}>
-            {L("Choisissez votre","Elige Tu","Choose your")} <span style={{ color: "#3B82F6" }}>{L("Challenge","Desafío","Challenge")}</span>
+            {L("Choisissez votre","Elige Tu","Choose your")} <span style={{ color: "#69C5FD" }}>{L("Challenge","Desafío","Challenge")}</span>
           </h2>
           <p style={{ fontSize: isMobile ? 12 : 13, color: "rgba(255,255,255,0.45)", fontWeight: 500, margin: 0 }}>
             {L("Tradez jusqu'à 200K en compte reward.","Opera hasta $200K en cuenta reward.","Trade up to $200K in reward account.")}
@@ -262,8 +262,8 @@ export default function Pricing() {
                   <button key={acc.id} onClick={() => setSelectedSize(i)} style={{
                     padding: "8px 14px", borderRadius: 20,
                     border: active ? "none" : "1px solid rgba(255,255,255,0.15)",
-                    background: active ? "#3B82F6" : "#111111",
-                    color: active ? "#FFFFFF" : "rgba(255,255,255,0.6)",
+                    background: active ? "#69C5FD" : "#111111",
+                    color: active ? "#000000" : "rgba(255,255,255,0.6)",
                     fontSize: 13, fontWeight: 700, cursor: "pointer", transition: "all 0.2s",
                   }}>
                     {acc.label}

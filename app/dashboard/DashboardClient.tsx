@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -46,9 +46,9 @@ type Challenge = {
   daily_start_balance?: number;
 };
 
-function ProgressBar({ value, max, color = "#3B82F6", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
+function ProgressBar({ value, max, color = "#69C5FD", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
   const pct = Math.min((value / max) * 100, 100);
-  const barColor = danger && pct > 70 ? "#ef4444" : danger && pct > 40 ? "#3B82F6" : color;
+  const barColor = danger && pct > 70 ? "#ef4444" : danger && pct > 40 ? "#69C5FD" : color;
   return (
     <div style={{ backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 100, height: 8, overflow: "hidden", marginTop: 8 }}>
       <div style={{ width: `${pct}%`, height: "100%", backgroundColor: barColor, borderRadius: 100, transition: "width 0.5s ease" }} />
@@ -103,19 +103,19 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", display: "block" }}>
         <defs>
           <linearGradient id="cgGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#3B82F6" stopOpacity="0" />
+            <stop offset="0%" stopColor="#69C5FD" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#69C5FD" stopOpacity="0" />
           </linearGradient>
           <linearGradient id="cgLine" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#3B82F6" />
+            <stop offset="0%" stopColor="#69C5FD" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#69C5FD" />
           </linearGradient>
         </defs>
 
         {/* Grid */}
         {[0, 0.25, 0.5, 0.75, 1].map(r => (
           <line key={r} x1={PAD.left} y1={PAD.top + r * chartH} x2={PAD.left + chartW} y2={PAD.top + r * chartH}
-            stroke="rgba(59, 130, 246,0.12)" strokeWidth={1} />
+            stroke="rgba(105, 197, 253,0.12)" strokeWidth={1} />
         ))}
 
         {/* Zone between floor and target: green tint */}
@@ -124,9 +124,9 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
 
         {/* Target line */}
         <line x1={PAD.left} y1={tY} x2={PAD.left + chartW} y2={tY}
-          stroke="#3B82F6" strokeWidth={1.5} strokeDasharray="5,4" />
-        <text x={PAD.left + chartW + 6} y={tY + 4} fill="#3B82F6" fontSize={9} fontWeight={800}>{fmt(targetBal)}</text>
-        <text x={PAD.left - 6} y={tY + 4} fill="#3B82F6" fontSize={8} textAnchor="end" fontWeight={700}>
+          stroke="#69C5FD" strokeWidth={1.5} strokeDasharray="5,4" />
+        <text x={PAD.left + chartW + 6} y={tY + 4} fill="#69C5FD" fontSize={9} fontWeight={800}>{fmt(targetBal)}</text>
+        <text x={PAD.left - 6} y={tY + 4} fill="#69C5FD" fontSize={8} textAnchor="end" fontWeight={700}>
           {isFr ? "OBJECTIF" : "TARGET"}
         </text>
 
@@ -151,16 +151,16 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
           strokeLinecap="round" strokeLinejoin="round" />
 
         {/* Pulse ring on current point */}
-        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#3B82F6" strokeOpacity={0}>
+        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#69C5FD" strokeOpacity={0}>
           <animate attributeName="r" values="8;18" dur="1.8s" repeatCount="indefinite" />
           <animate attributeName="stroke-opacity" values="0.5;0" dur="1.8s" repeatCount="indefinite" />
         </circle>
 
         {/* Current point dot */}
-        <circle cx={cX} cy={cY} r={5} fill="#3B82F6" stroke="#fff" strokeWidth={2} />
+        <circle cx={cX} cy={cY} r={5} fill="#69C5FD" stroke="#fff" strokeWidth={2} />
 
         {/* Current value label */}
-        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#3B82F6" />
+        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#69C5FD" />
         <text x={cX} y={cY - 13} fill="#fff" fontSize={9} textAnchor="middle" fontWeight={800}>
           {fmt(currentBal)}
         </text>
@@ -169,7 +169,7 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
         <text x={PAD.left} y={H - 6} fill="rgba(255,255,255,0.45)" fontSize={9} textAnchor="middle">
           {isFr ? "Jour 1" : "Day 1"}
         </text>
-        <text x={cX} y={H - 6} fill="#3B82F6" fontSize={9} textAnchor="middle" fontWeight={700}>
+        <text x={cX} y={H - 6} fill="#69C5FD" fontSize={9} textAnchor="middle" fontWeight={700}>
           {isFr ? `J.${challenge.trading_days}` : `D.${challenge.trading_days}`}
         </text>
       </svg>
@@ -177,8 +177,8 @@ function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boole
       {/* Legend */}
       <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 8 }}>
         {[
-          { color: "#3B82F6", label: isFr ? "Solde" : "Balance" },
-          { color: "#3B82F6", label: isFr ? "Objectif" : "Target", dashed: true },
+          { color: "#69C5FD", label: isFr ? "Solde" : "Balance" },
+          { color: "#69C5FD", label: isFr ? "Objectif" : "Target", dashed: true },
           { color: "#ef4444", label: isFr ? "Plancher" : "Floor", dashed: true },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 5 }}>
@@ -209,8 +209,8 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_COLORS: Record<string, string> = {
   active: "#22c55e",
-  passed: "#3B82F6",
-  funded: "#3B82F6",
+  passed: "#69C5FD",
+  funded: "#69C5FD",
   failed: "#ef4444",
 };
 
@@ -248,7 +248,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
   };
 
   const tiers = [
-    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "#3B82F6", bg: "rgba(59, 130, 246,0.12)" },
+    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "#69C5FD", bg: "rgba(105, 197, 253,0.12)" },
     { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 29 ventes" : "11 to 29 sales", pct: "15%", color: "#a855f7", bg: "rgba(168,85,247,0.08)" },
     { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ ventes" : "30+ sales", pct: "20%", color: "#d97706", bg: "rgba(217,119,6,0.08)" },
   ];
@@ -282,7 +282,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
 
       {/* Mon lien */}
       <div className="card" style={{ padding: 24, marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 14, color: "#3B82F6", marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#69C5FD", marginBottom: 14 }}>
           {isFr ? "Mon lien affilié" : "My affiliate link"}
         </div>
         {loading ? (
@@ -293,12 +293,12 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
               <div style={{ flex: 1, background: "rgba(255,255,255,0.06)", borderRadius: 8, padding: "10px 14px", fontFamily: "monospace", fontSize: 13, color: "rgba(255,255,255,0.85)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
                 {data?.link || "—"}
               </div>
-              <button onClick={copyLink} style={{ padding: "10px 18px", background: copied ? "#16a34a" : "#3B82F6", color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}>
+              <button onClick={copyLink} style={{ padding: "10px 18px", background: copied ? "#16a34a" : "#69C5FD", color: copied ? "#fff" : "#000", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}>
                 {copied ? (isFr ? "Copié !" : "Copied!") : (isFr ? "Copier" : "Copy")}
               </button>
             </div>
             <div style={{ marginTop: 10, color: "rgba(255,255,255,0.45)", fontSize: 12 }}>
-              {isFr ? "Code : " : "Code: "}<span style={{ fontFamily: "monospace", fontWeight: 700, color: "#3B82F6" }}>{data?.code}</span>
+              {isFr ? "Code : " : "Code: "}<span style={{ fontFamily: "monospace", fontWeight: 700, color: "#69C5FD" }}>{data?.code}</span>
             </div>
           </>
         )}
@@ -314,7 +314,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
         ].map((s, i) => (
           <div key={i} className="card" style={{ padding: "16px 14px", textAlign: "center" }}>
             <div style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</div>
-            <div style={{ fontWeight: 900, fontSize: 18, color: "#3B82F6", marginBottom: 4 }}>{s.value}</div>
+            <div style={{ fontWeight: 900, fontSize: 18, color: "#69C5FD", marginBottom: 4 }}>{s.value}</div>
             <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>{s.label}</div>
           </div>
         ))}
@@ -322,7 +322,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
 
       {/* Comment ça marche */}
       <div className="card" style={{ padding: 22, marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 14, color: "#3B82F6", marginBottom: 14 }}>{isFr ? "Comment ça fonctionne" : "How it works"}</div>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#69C5FD", marginBottom: 14 }}>{isFr ? "Comment ça fonctionne" : "How it works"}</div>
         {[
           { icon: "🔗", text: isFr ? "Partagez votre lien unique — il est valide à vie." : "Share your unique link — it never expires." },
           { icon: "💰", text: isFr ? "Gagnez une commission sur chaque challenge acheté via votre lien." : "Earn a commission on every challenge purchased via your link." },
@@ -343,7 +343,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
           {isFr ? "Minimum 100€ de commissions validées." : "Minimum €100 in validated commissions."}
         </div>
         <a href="mailto:contact@traders-rewards.eu?subject=Retrait%20commission%20affiliation"
-          style={{ display: "inline-block", backgroundColor: "#3B82F6", color: "#fff", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none" }}>
+          style={{ display: "inline-block", backgroundColor: "#69C5FD", color: "#000", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none" }}>
           contact@traders-rewards.eu
         </a>
       </div>
@@ -625,8 +625,8 @@ export default function DashboardClient({ user }: { user: User }) {
               <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
                 display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
                 borderRadius: 10, marginBottom: 4, cursor: "pointer",
-                backgroundColor: activeTab === item.tab ? "rgba(59, 130, 246,0.12)" : "transparent",
-                borderLeft: activeTab === item.tab ? "2px solid #3B82F6" : "2px solid transparent",
+                backgroundColor: activeTab === item.tab ? "rgba(105, 197, 253,0.12)" : "transparent",
+                borderLeft: activeTab === item.tab ? "2px solid #69C5FD" : "2px solid transparent",
                 transition: "all 0.15s",
               }}
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
@@ -643,7 +643,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <div style={{ padding: "10px 16px", marginBottom: 4, display: "flex", flexWrap: "wrap", gap: 6 }}>
               {languages.map(l => (
                 <button key={l.code} onClick={() => setLang(l.code)}
-                  style={{ background: "none", border: lang === l.code ? "1px solid #3B82F6" : "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
+                  style={{ background: "none", border: lang === l.code ? "1px solid #69C5FD" : "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
                   <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
                 </button>
               ))}
@@ -654,9 +654,9 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
             <div
               onClick={() => setActiveTab("support")}
-              style={{ display: "flex", flexDirection: "column", gap: 3, width: "100%", padding: "10px 16px", borderRadius: 10, color: "#3B82F6", marginBottom: 4, backgroundColor: "rgba(59, 130, 246,0.08)", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer" }}
+              style={{ display: "flex", flexDirection: "column", gap: 3, width: "100%", padding: "10px 16px", borderRadius: 10, color: "#69C5FD", marginBottom: 4, backgroundColor: "rgba(105, 197, 253,0.08)", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)"; }}
-              onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(59, 130, 246,0.08)"; }}>
+              onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(105, 197, 253,0.08)"; }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <MessageCircle size={16} />
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
@@ -678,7 +678,7 @@ export default function DashboardClient({ user }: { user: User }) {
         <>
           <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#050505", borderBottom: "1px solid rgba(255,255,255,0.08)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
             <a href="/"><img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 36, height: 36, objectFit: "contain" }} /></a>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#3B82F6" }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD" }}>
               {([
                 { tab: "dashboard", label: T.dash.dashboard },
                 { tab: "challenges", label: T.dash.challenges },
@@ -696,12 +696,12 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
             <button onClick={() => setMenuOpen(o => !o)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: 5, padding: 4 }}>
               {menuOpen ? (
-                <span style={{ color: "#3B82F6", fontSize: 22, lineHeight: 1 }}>✕</span>
+                <span style={{ color: "#69C5FD", fontSize: 22, lineHeight: 1 }}>✕</span>
               ) : (
                 <>
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#3B82F6", borderRadius: 2 }} />
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#3B82F6", borderRadius: 2 }} />
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#3B82F6", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#69C5FD", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#69C5FD", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#69C5FD", borderRadius: 2 }} />
                 </>
               )}
             </button>
@@ -727,9 +727,9 @@ export default function DashboardClient({ user }: { user: User }) {
                 <button key={item.tab} onClick={() => { setActiveTab(item.tab); setMenuOpen(false); }} style={{
                   display: "flex", alignItems: "center", gap: 16, width: "100%",
                   padding: "16px 24px", background: "none", border: "none", cursor: "pointer",
-                  borderBottom: "1px solid rgba(59, 130, 246,0.12)",
-                  backgroundColor: activeTab === item.tab ? "rgba(59, 130, 246,0.12)" : "transparent",
-                  borderLeft: activeTab === item.tab ? "3px solid #3B82F6" : "3px solid transparent",
+                  borderBottom: "1px solid rgba(105, 197, 253,0.12)",
+                  backgroundColor: activeTab === item.tab ? "rgba(105, 197, 253,0.12)" : "transparent",
+                  borderLeft: activeTab === item.tab ? "3px solid #69C5FD" : "3px solid transparent",
                 }}>
                   <span style={{ color: activeTab === item.tab ? "#FFFFFF" : "rgba(255,255,255,0.45)" }}>{item.icon}</span>
                   <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#FFFFFF" : "rgba(255,255,255,0.7)" }}>{item.label}</span>
@@ -737,7 +737,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </button>
               ))}
               <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: 8 }}>
-                <div onClick={() => { setActiveTab("support"); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", color: "#3B82F6", marginBottom: 12, cursor: "pointer" }}>
+                <div onClick={() => { setActiveTab("support"); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", color: "#69C5FD", marginBottom: 12, cursor: "pointer" }}>
                   <MessageCircle size={20} />
                   <span style={{ fontSize: 15, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
                 </div>
@@ -775,7 +775,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     : (finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null);
                   const phaseReached = c.phase === "funded" ? (isFr ? "🏆 Compte Reward" : "🏆 Reward Account") : c.phase === "phase2" ? "Phase 2" : "Phase 1";
                   const isLast = idx === allChallenges.length - 1;
-                  const dotColor = c.status === "funded" ? "#60A5FA" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#3B82F6" : "#3B82F6";
+                  const dotColor = c.status === "funded" ? "#69C5FD" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#69C5FD" : "#69C5FD";
                   const relatedPayouts = allPayouts.filter(p => {
                     const pd = new Date(p.created_at).getTime();
                     const cd = new Date(c.created_at).getTime();
@@ -795,14 +795,14 @@ export default function DashboardClient({ user }: { user: User }) {
 
                       {/* Card */}
                       <div style={{ flex: 1, marginBottom: 16 }}>
-                      <div onClick={() => loadHistTrades(c)} style={{ backgroundColor: "#111111", border: `1px solid ${isSelectedHist ? "#3B82F6" : "rgba(255,255,255,0.08)"}`, borderRadius: 14, padding: "20px 24px", cursor: c.mt5_login ? "pointer" : "default", transition: "border 0.15s" }}>
+                      <div onClick={() => loadHistTrades(c)} style={{ backgroundColor: "#111111", border: `1px solid ${isSelectedHist ? "#69C5FD" : "rgba(255,255,255,0.08)"}`, borderRadius: 14, padding: "20px 24px", cursor: c.mt5_login ? "pointer" : "default", transition: "border 0.15s" }}>
                         {/* Header */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                           <div>
                             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                               <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{STATUS_LABELS[c.status] || c.status}</span>
-                              <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(59, 130, 246,0.08)", color: c.phase === "funded" ? "#60A5FA" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
+                              <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(105, 197, 253,0.08)", color: c.phase === "funded" ? "#69C5FD" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
                             </div>
                           </div>
                           <div style={{ textAlign: "right" }}>
@@ -835,11 +835,11 @@ export default function DashboardClient({ user }: { user: User }) {
                             {relatedPayouts.map(p => (
                               <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 8, marginBottom: 6 }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                  <Trophy size={14} color="#3B82F6" />
-                                  <span style={{ fontSize: 13, fontWeight: 700, color: "#3B82F6" }}>€{p.amount?.toLocaleString()}</span>
+                                  <Trophy size={14} color="#69C5FD" />
+                                  <span style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD" }}>€{p.amount?.toLocaleString()}</span>
                                   <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
                                 </div>
-                                <span style={{ backgroundColor: p.status === "paid" ? "#3B82F620" : p.status === "pending" ? "#3B82F620" : "#ef444420", color: p.status === "paid" ? "#3B82F6" : p.status === "pending" ? "#3B82F6" : "#ef4444", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
+                                <span style={{ backgroundColor: p.status === "paid" ? "#69C5FD20" : p.status === "pending" ? "#69C5FD20" : "#ef444420", color: p.status === "paid" ? "#69C5FD" : p.status === "pending" ? "#69C5FD" : "#ef4444", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
                                   {p.status === "paid" ? T.dash.rewardPaid : p.status === "pending" ? T.dash.rewardPending : T.dash.rewardRejected}
                                 </span>
                               </div>
@@ -848,7 +848,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         )}
                         {/* Click hint */}
                         {c.mt5_login && (
-                          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6, color: "#3B82F6", fontSize: 12, fontWeight: 600 }}>
+                          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6, color: "#69C5FD", fontSize: 12, fontWeight: 600 }}>
                             <BarChart2 size={13} />
                             {isSelectedHist
                               ? (isFr ? "Masquer l'historique ▲" : "Hide trade history ▲")
@@ -860,7 +860,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         {/* Trade history expand */}
                         {isSelectedHist && (
                           <div style={{ marginTop: 8, backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "16px 20px" }}>
-                            <div style={{ fontWeight: 700, fontSize: 14, color: "#3B82F6", marginBottom: 12 }}>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: "#69C5FD", marginBottom: 12 }}>
                               {isFr ? "Historique des positions" : "Trade history"} — {c.account_size}
                             </div>
                             {histTradesLoading ? (
@@ -944,7 +944,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
                           <div style={{ backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "8px 14px" }}>
                             <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, marginBottom: 2 }}>N° FACTURE</div>
-                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#3B82F6" }}>{invoiceNum}</div>
+                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#69C5FD" }}>{invoiceNum}</div>
                           </div>
                           <div>
                             <div style={{ fontWeight: 700, fontSize: 15 }}>Challenge {c.account_size}</div>
@@ -953,8 +953,8 @@ export default function DashboardClient({ user }: { user: User }) {
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                           <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 20, fontWeight: 900, color: "#3B82F6" }}>€{c.amount_paid}</div>
-                            <span style={{ backgroundColor: "#3B82F620", color: "#3B82F6", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{T.dash.paidBadge}</span>
+                            <div style={{ fontSize: 20, fontWeight: 900, color: "#69C5FD" }}>€{c.amount_paid}</div>
+                            <span style={{ backgroundColor: "#69C5FD20", color: "#69C5FD", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{T.dash.paidBadge}</span>
                           </div>
                           <button onClick={() => {
                             const clientName = `${c.client_first_name || ""} ${c.client_last_name || ""}`.trim() || "—";
@@ -1014,7 +1014,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </body></html>`);
                             w.document.close();
                           }}
-                            style={{ backgroundColor: "#3B82F6", border: "none", borderRadius: 10, padding: "10px 18px", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                            style={{ backgroundColor: "#69C5FD", border: "none", borderRadius: 10, padding: "10px 18px", color: "#000", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
                             {T.dash.viewInvoice}
                           </button>
                         </div>
@@ -1034,16 +1034,16 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.tradingRulesSub}</p>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
               {[
-                { title: isFr ? "Objectif de profit" : "Profit Target", desc: isFr ? "Phase 1 : atteindre 10% de profit. Phase 2 : atteindre 5% de profit." : "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#3B82F6" /> },
-                { title: isFr ? "Jours de trading minimum" : "Minimum Trading Days", desc: isFr ? "Vous devez trader au moins 5 jours différents avant de valider une phase." : "You must trade at least 5 different days before passing a phase.", icon: <Calendar size={20} color="#3B82F6" /> },
-                { title: isFr ? "Drawdown journalier" : "Daily Drawdown", desc: isFr ? "Votre compte ne peut pas perdre plus de 5% de sa valeur en une journée (2 Étapes) ou 3% (1 Étape)." : "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#3B82F6" /> },
-                { title: isFr ? "Drawdown total" : "Total Drawdown", desc: isFr ? "Votre compte ne peut pas descendre de plus de 10% sous le solde de départ." : "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#3B82F6" /> },
-                { title: isFr ? "Sans limite de temps" : "No Time Limit", desc: isFr ? "Prenez le temps qu'il vous faut. Il n'y a pas de date d'expiration sur votre challenge." : "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#3B82F6" /> },
-                { title: isFr ? "Tous styles de trading" : "Any Trading Style", desc: isFr ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées." : "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#3B82F6" /> },
-                { title: isFr ? "Partage des profits" : "Reward Split", desc: isFr ? "Les traders Reward gardent 80% des profits. Récompenses traitées sous 24-48h." : "Reward traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#3B82F6" /> },
+                { title: isFr ? "Objectif de profit" : "Profit Target", desc: isFr ? "Phase 1 : atteindre 10% de profit. Phase 2 : atteindre 5% de profit." : "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#69C5FD" /> },
+                { title: isFr ? "Jours de trading minimum" : "Minimum Trading Days", desc: isFr ? "Vous devez trader au moins 5 jours différents avant de valider une phase." : "You must trade at least 5 different days before passing a phase.", icon: <Calendar size={20} color="#69C5FD" /> },
+                { title: isFr ? "Drawdown journalier" : "Daily Drawdown", desc: isFr ? "Votre compte ne peut pas perdre plus de 5% de sa valeur en une journée (2 Étapes) ou 3% (1 Étape)." : "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#69C5FD" /> },
+                { title: isFr ? "Drawdown total" : "Total Drawdown", desc: isFr ? "Votre compte ne peut pas descendre de plus de 10% sous le solde de départ." : "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#69C5FD" /> },
+                { title: isFr ? "Sans limite de temps" : "No Time Limit", desc: isFr ? "Prenez le temps qu'il vous faut. Il n'y a pas de date d'expiration sur votre challenge." : "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#69C5FD" /> },
+                { title: isFr ? "Tous styles de trading" : "Any Trading Style", desc: isFr ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées." : "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#69C5FD" /> },
+                { title: isFr ? "Partage des profits" : "Reward Split", desc: isFr ? "Les traders Reward gardent 80% des profits. Récompenses traitées sous 24-48h." : "Reward traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#69C5FD" /> },
               ].map((rule, i) => (
                 <div key={i} className="card" style={{ padding: 24 }}>
-                  <div style={{ backgroundColor: "rgba(59, 130, 246,0.12)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
+                  <div style={{ backgroundColor: "rgba(105, 197, 253,0.12)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
                   <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
                 </div>
@@ -1060,7 +1060,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {/* Personal info form */}
             <div className="card" style={{ padding: 28, marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#3B82F6" }}>{T.dash.personalInfo}</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#69C5FD" }}>{T.dash.personalInfo}</div>
               <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginBottom: 20 }}>{T.dash.kycLocked}</div>
 
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 14, marginBottom: 14 }}>
@@ -1093,7 +1093,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.phone}</label>
                 <input value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+33 6 12 34 56 78"
                   style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "#3B82F6")}
+                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
               </div>
 
@@ -1101,7 +1101,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.address}</label>
                 <input value={profileAddress} onChange={e => setProfileAddress(e.target.value)} placeholder="123 Rue de la Paix"
                   style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "#3B82F6")}
+                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
               </div>
 
@@ -1115,7 +1115,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
                     <input value={f.value} onChange={e => f.setter(e.target.value)} placeholder={f.placeholder}
                       style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                      onFocus={e => (e.target.style.borderColor = "#3B82F6")}
+                      onFocus={e => (e.target.style.borderColor = "#69C5FD")}
                       onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
                   </div>
                 ))}
@@ -1127,7 +1127,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
               )}
               {profileSaved && (
-                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 10, padding: "12px 14px", color: "#3B82F6", fontSize: 13, marginBottom: 14 }}>
+                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 10, padding: "12px 14px", color: "#69C5FD", fontSize: 13, marginBottom: 14 }}>
                   {T.dash.savedOk}
                 </div>
               )}
@@ -1140,20 +1140,20 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {/* Password change */}
             <div className="card" style={{ padding: 28 }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#3B82F6" }}>{T.dash.changePassword}</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#69C5FD" }}>{T.dash.changePassword}</div>
               <div style={{ marginBottom: 14 }}>
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.newPassword}</label>
                 <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 8"
                   style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "#3B82F6")}
+                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
               </div>
               <div style={{ marginBottom: 20 }}>
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.confirmPassword}</label>
                 <input type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} placeholder="..."
-                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#3B82F6" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = newPassword === confirmNewPassword && confirmNewPassword ? "#3B82F6" : "#3B82F6")}
-                  onBlur={e => (e.target.style.borderColor = confirmNewPassword && newPassword === confirmNewPassword ? "#3B82F6" : confirmNewPassword ? "#ef4444" : "#222")} />
+                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#69C5FD" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  onFocus={e => (e.target.style.borderColor = newPassword === confirmNewPassword && confirmNewPassword ? "#69C5FD" : "#69C5FD")}
+                  onBlur={e => (e.target.style.borderColor = confirmNewPassword && newPassword === confirmNewPassword ? "#69C5FD" : confirmNewPassword ? "#ef4444" : "#222")} />
               </div>
 
               {passwordError && (
@@ -1162,7 +1162,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
               )}
               {passwordSaved && (
-                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 10, padding: "12px 14px", color: "#3B82F6", fontSize: 13, marginBottom: 14 }}>
+                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 10, padding: "12px 14px", color: "#69C5FD", fontSize: 13, marginBottom: 14 }}>
                   {T.dash.passwordOk}
                 </div>
               )}
@@ -1212,7 +1212,7 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             ) : kycStatus !== "approved" ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><ShieldCheck size={40} color="#3B82F6" /></div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><ShieldCheck size={40} color="#69C5FD" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.kyc.gateTitle}</div>
                 <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 24 }}>
                   {kycStatus === "pending" ? T.kyc.gatePendingMsg : kycStatus === "rejected" ? T.kyc.gateRejectedMsg : T.kyc.gateMsg}
@@ -1235,17 +1235,17 @@ export default function DashboardClient({ user }: { user: User }) {
               <div className="card" style={{ padding: 32 }}>
                 {/* Montant auto = profit du compte */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#3B82F6", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
-                  <div style={{ width: "100%", backgroundColor: "#f0f4ff", border: "1.5px solid rgba(59, 130, 246,0.25)", borderRadius: 10, padding: "14px 16px", color: "#3B82F6", fontSize: 18, fontWeight: 900 }}>
+                  <label style={{ display: "block", color: "#69C5FD", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
+                  <div style={{ width: "100%", backgroundColor: "rgba(105,197,253,0.08)", border: "1.5px solid rgba(105,197,253,0.25)", borderRadius: 10, padding: "14px 16px", color: "#69C5FD", fontSize: 18, fontWeight: 900 }}>
                     ${Math.max(0, profitAmount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
 
                 {/* Méthode de paiement */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#3B82F6", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
+                  <label style={{ display: "block", color: "#69C5FD", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
                   <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value, wallet_address: "" }))}
-                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(59, 130, 246,0.25)", borderRadius: 10, padding: "14px 16px", color: "#3B82F6", fontSize: 14, fontWeight: 700, outline: "none" }}>
+                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(105, 197, 253,0.25)", borderRadius: 10, padding: "14px 16px", color: "#69C5FD", fontSize: 14, fontWeight: 700, outline: "none" }}>
                     <option value="bank">{isFr ? "Virement bancaire (RIB/IBAN)" : "Bank transfer (IBAN)"}</option>
                     <option value="crypto">Crypto — USDC réseau Solana</option>
                   </select>
@@ -1253,20 +1253,20 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Adresse selon méthode */}
                 <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#3B82F6", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
+                  <label style={{ display: "block", color: "#69C5FD", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
                     {payoutForm.payment_method === "crypto" ? (isFr ? "Adresse portefeuille USDC (Solana)" : "USDC wallet address (Solana)") : "IBAN"}
                   </label>
                   <input type="text"
                     placeholder={payoutForm.payment_method === "crypto" ? "Adresse Solana..." : "FR76..."}
                     value={payoutForm.wallet_address}
                     onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(59, 130, 246,0.25)", borderRadius: 10, padding: "14px 16px", color: "#3B82F6", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(105, 197, 253,0.25)", borderRadius: 10, padding: "14px 16px", color: "#69C5FD", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
                 </div>
 
                 {payoutSuccess ? (
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
-                    <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#3B82F6" /></div>
-                    <div style={{ fontWeight: 700, fontSize: 18, color: "#3B82F6" }}>{T.dash.requestSubmitted}</div>
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#69C5FD" /></div>
+                    <div style={{ fontWeight: 700, fontSize: 18, color: "#69C5FD" }}>{T.dash.requestSubmitted}</div>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
                   </div>
                 ) : (
@@ -1281,7 +1281,7 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Historique des récompenses */}
             {allPayouts.length > 0 && (
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#3B82F6" }}>
+                <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#69C5FD" }}>
                   {isFr ? "Historique des récompenses" : "Rewards history"}
                 </h2>
                 <div className="card" style={{ padding: 0, overflow: "hidden" }}>
@@ -1303,7 +1303,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         return (
                           <tr key={p.id} style={{ borderBottom: i < allPayouts.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
                             <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
-                            <td style={{ padding: "13px 16px", fontWeight: 800, color: "#3B82F6" }}>${p.amount?.toLocaleString()}</td>
+                            <td style={{ padding: "13px 16px", fontWeight: 800, color: "#69C5FD" }}>${p.amount?.toLocaleString()}</td>
                             <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>
                               {p.payment_method === "crypto" ? "🔶 Crypto" : p.payment_method === "bank" ? "🏦 Virement" : "—"}
                             </td>
@@ -1317,7 +1317,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </td>
                             <td style={{ padding: "13px 16px" }}>
                               {p.status === "paid" && (
-                                <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 5, backgroundColor: "rgba(59, 130, 246,0.12)", color: "#3B82F6", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(59, 130, 246,0.25)", textDecoration: "none" }}>
+                                <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 5, backgroundColor: "rgba(105, 197, 253,0.12)", color: "#69C5FD", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(105, 197, 253,0.25)", textDecoration: "none" }}>
                                   📄 PDF
                                 </a>
                               )}
@@ -1341,10 +1341,10 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.kyc.sub}</p>
 
             {kycStatus === "approved" && (
-              <div style={{ backgroundColor: "rgba(59, 130, 246,0.12)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
-                <CheckCircle size={20} color="#3B82F6" />
+              <div style={{ backgroundColor: "rgba(105, 197, 253,0.12)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
+                <CheckCircle size={20} color="#69C5FD" />
                 <div>
-                  <div style={{ color: "#3B82F6", fontWeight: 700, marginBottom: 4 }}>{T.kyc.approved}</div>
+                  <div style={{ color: "#69C5FD", fontWeight: 700, marginBottom: 4 }}>{T.kyc.approved}</div>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{T.kyc.approvedSub}</div>
                 </div>
               </div>
@@ -1352,9 +1352,9 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {kycStatus === "pending" && (
               <div style={{ backgroundColor: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
-                <Clock size={20} color="#3B82F6" />
+                <Clock size={20} color="#69C5FD" />
                 <div>
-                  <div style={{ color: "#3B82F6", fontWeight: 700, marginBottom: 4 }}>{T.kyc.pending}</div>
+                  <div style={{ color: "#69C5FD", fontWeight: 700, marginBottom: 4 }}>{T.kyc.pending}</div>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{T.kyc.pendingSub}</div>
                 </div>
               </div>
@@ -1377,7 +1377,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ display: "flex", gap: 10 }}>
                     {([["card", T.kyc.idCard], ["passport", T.kyc.passport]] as const).map(([val, label]) => (
                       <button key={val} onClick={() => { setKycIdType(val); if (val === "passport") setKycFiles(f => ({ ...f, id_back: null })); }}
-                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #3B82F6" : "1px solid rgba(255,255,255,0.1)", backgroundColor: kycIdType === val ? "rgba(59, 130, 246,0.12)" : "rgba(255,255,255,0.06)", color: kycIdType === val ? "#3B82F6" : "rgba(255,255,255,0.45)", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
+                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #69C5FD" : "1px solid rgba(255,255,255,0.1)", backgroundColor: kycIdType === val ? "rgba(105, 197, 253,0.12)" : "rgba(255,255,255,0.06)", color: kycIdType === val ? "#69C5FD" : "rgba(255,255,255,0.45)", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
                         {label}
                       </button>
                     ))}
@@ -1395,11 +1395,11 @@ export default function DashboardClient({ user }: { user: User }) {
                       {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
                     </div>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginBottom: 10 }}>{field.hint}</div>
-                    <label style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", backgroundColor: "rgba(255,255,255,0.06)", border: `1px dashed ${kycFiles[field.key] ? "#3B82F6" : "#2a2a2a"}`, borderRadius: 10, cursor: "pointer" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", backgroundColor: "rgba(255,255,255,0.06)", border: `1px dashed ${kycFiles[field.key] ? "#69C5FD" : "#2a2a2a"}`, borderRadius: 10, cursor: "pointer" }}>
                       <input type="file" accept="image/*,.pdf" style={{ display: "none" }}
                         onChange={e => setKycFiles(f => ({ ...f, [field.key]: e.target.files?.[0] || null }))} />
-                      <Upload size={16} color={kycFiles[field.key] ? "#3B82F6" : "#444"} />
-                      <span style={{ color: kycFiles[field.key] ? "#3B82F6" : "rgba(255,255,255,0.45)", fontSize: 13, flex: 1 }}>
+                      <Upload size={16} color={kycFiles[field.key] ? "#69C5FD" : "#444"} />
+                      <span style={{ color: kycFiles[field.key] ? "#69C5FD" : "rgba(255,255,255,0.45)", fontSize: 13, flex: 1 }}>
                         {kycFiles[field.key] ? (kycFiles[field.key] as File).name : T.kyc.selectFile}
                       </span>
                     </label>
@@ -1423,7 +1423,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {kycSubmitSuccess && (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={48} color="#3B82F6" /></div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={48} color="#69C5FD" /></div>
                 <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{T.kyc.successTitle}</div>
                 <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.kyc.successSub}</div>
               </div>
@@ -1454,7 +1454,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
               const baseCerts = [
                 {
-                  type: "phase1", label: "Phase 1", btnColor: "#3B82F6",
+                  type: "phase1", label: "Phase 1", btnColor: "#69C5FD",
                   title: "Phase 1", topLabel: "Traders Rewards — Certification",
                   unlocked: unlockedPhase1,
                   amount: challenge?.account_size || "$100,000",
@@ -1462,7 +1462,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   key: "phase1",
                 },
                 {
-                  type: "challenge", label: "Phase 2", btnColor: "#3B82F6",
+                  type: "challenge", label: "Phase 2", btnColor: "#69C5FD",
                   title: "Phase 2", topLabel: "Traders Rewards — Certification",
                   unlocked: unlockedChallenge,
                   amount: challenge?.account_size || "$100,000",
@@ -1470,7 +1470,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   key: "challenge",
                 },
                 ...(!unlockedReward ? [{
-                  type: "reward", label: "Reward", btnColor: "#3B82F6",
+                  type: "reward", label: "Reward", btnColor: "#69C5FD",
                   title: "REWARD", topLabel: "Traders Rewards — Versement",
                   unlocked: false,
                   amount: "$0",
@@ -1491,14 +1491,14 @@ export default function DashboardClient({ user }: { user: User }) {
                             {/* Mini preview new design */}
                             <div style={{ background: "#0e0e0e", border: "1px solid #222", padding: "16px 20px 14px", aspectRatio: "680/520", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
                               <svg style={{ position: "absolute", top: 0, right: 0, width: 70, height: 70 }} viewBox="0 0 160 160" fill="none">
-                                <polygon points="160,0 160,160 0,0" fill="#3b82f608"/>
-                                <polygon points="160,0 160,100 60,0" fill="#3b82f618"/>
-                                <polygon points="160,0 160,55 105,0" fill="#3b82f630"/>
+                                <polygon points="160,0 160,160 0,0" fill="#69C5FD08"/>
+                                <polygon points="160,0 160,100 60,0" fill="#69C5FD18"/>
+                                <polygon points="160,0 160,55 105,0" fill="#69C5FD30"/>
                               </svg>
-                              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 3 }}>{cert.topLabel}</div>
+                              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#69C5FD", marginBottom: 3 }}>{cert.topLabel}</div>
                               <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1, textTransform: "uppercase" }}>{cert.title}</div>
-                              <div style={{ height: 1, background: "linear-gradient(to right, #3b82f640, #3b82f6, #3b82f640)", margin: "10px 0 8px" }} />
-                              <div style={{ fontSize: 13, fontWeight: 700, color: "#3b82f6", marginBottom: 4 }}>{name}</div>
+                              <div style={{ height: 1, background: "linear-gradient(to right, #69C5FD40, #69C5FD, #69C5FD40)", margin: "10px 0 8px" }} />
+                              <div style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD", marginBottom: 4 }}>{name}</div>
                               <div style={{ fontSize: 8, color: "#555", lineHeight: 1.5, flex: 1 }}>
                                 {cert.type === "reward" ? "Certificat de versement de récompense de trading accordée par Traders Rewards." : "Certificat de validation de challenge de trading — Traders Rewards."}
                               </div>
@@ -1533,7 +1533,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {/* Certificats Récompense — un par payout approuvé */}
                   {paidPayouts.length > 0 && (
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#3B82F6" }}>
+                      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#69C5FD" }}>
                         {isFr ? "Mes Récompenses" : "My Rewards"}
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
@@ -1546,14 +1546,14 @@ export default function DashboardClient({ user }: { user: User }) {
                               <div style={{ borderRadius: 10, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
                                 <div style={{ background: "#0e0e0e", border: "1px solid #222", padding: "16px 20px 14px", aspectRatio: "680/520", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
                                   <svg style={{ position: "absolute", top: 0, right: 0, width: 70, height: 70 }} viewBox="0 0 160 160" fill="none">
-                                    <polygon points="160,0 160,160 0,0" fill="#3b82f608"/>
-                                    <polygon points="160,0 160,100 60,0" fill="#3b82f618"/>
-                                    <polygon points="160,0 160,55 105,0" fill="#3b82f630"/>
+                                    <polygon points="160,0 160,160 0,0" fill="#69C5FD08"/>
+                                    <polygon points="160,0 160,100 60,0" fill="#69C5FD18"/>
+                                    <polygon points="160,0 160,55 105,0" fill="#69C5FD30"/>
                                   </svg>
-                                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#3b82f6", marginBottom: 3 }}>Traders Rewards — Versement</div>
+                                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#69C5FD", marginBottom: 3 }}>Traders Rewards — Versement</div>
                                   <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>REWARD</div>
-                                  <div style={{ height: 1, background: "linear-gradient(to right, #3b82f640, #3b82f6, #3b82f640)", margin: "10px 0 8px" }} />
-                                  <div style={{ fontSize: 13, fontWeight: 700, color: "#3b82f6", marginBottom: 4 }}>{name}</div>
+                                  <div style={{ height: 1, background: "linear-gradient(to right, #69C5FD40, #69C5FD, #69C5FD40)", margin: "10px 0 8px" }} />
+                                  <div style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD", marginBottom: 4 }}>{name}</div>
                                   <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{amt}</div>
                                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto" }}>
                                     <div style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dt}</div>
@@ -1561,7 +1561,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   </div>
                                 </div>
                               </div>
-                              <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: "#3B82F6", color: "#fff" }}>
+                              <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: "#69C5FD", color: "#000" }}>
                                 {T.dash.openCert} Récompense →
                               </a>
                             </div>
@@ -1600,7 +1600,7 @@ export default function DashboardClient({ user }: { user: User }) {
               const traderTotal = traderChallenges.reduce((s, c) => s + (sizeMap[c.account_size] || 0), 0);
               const algoTotal   = algoChallenges.reduce((s, c)   => s + (sizeMap[c.account_size] || 0), 0);
               const pct = Math.min(100, (traderTotal / 200000) * 100);
-              const color = pct >= 100 ? "#ef4444" : pct >= 75 ? "#f59e0b" : "#3B82F6";
+              const color = pct >= 100 ? "#ef4444" : pct >= 75 ? "#f59e0b" : "#69C5FD";
               return (
                 <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
                   {traderChallenges.length > 0 && (
@@ -1619,7 +1619,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {algoChallenges.length > 0 && (
                     <div className="card" style={{ padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                       <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital ALGO actif" : "Active ALGO capital"}</span>
-                      <span style={{ fontWeight: 900, fontSize: 14, color: "#3B82F6" }}>${algoTotal.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>{isFr ? "/ Illimité" : "/ Unlimited"}</span></span>
+                      <span style={{ fontWeight: 900, fontSize: 14, color: "#69C5FD" }}>${algoTotal.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>{isFr ? "/ Illimité" : "/ Unlimited"}</span></span>
                     </div>
                   )}
                 </div>
@@ -1628,7 +1628,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {activeChallenges.length === 0 ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <Trophy size={48} color="#3B82F6" style={{ marginBottom: 16, opacity: 0.5 }} />
+                <Trophy size={48} color="#69C5FD" style={{ marginBottom: 16, opacity: 0.5 }} />
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.noChallenge}</div>
                 <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.dash.noChallengeSub}</div>
               </div>
@@ -1640,18 +1640,18 @@ export default function DashboardClient({ user }: { user: User }) {
                   const isSelected = challenge?.id === c.id;
                   return (
                     <div key={c.id} onClick={() => { setChallenge(c); setActiveTab("dashboard"); }}
-                      className="card" style={{ padding: 24, cursor: "pointer", border: isSelected ? "1.5px solid #3B82F6" : "1.5px solid rgba(255,255,255,0.07)", transition: "border 0.2s" }}>
+                      className="card" style={{ padding: 24, cursor: "pointer", border: isSelected ? "1.5px solid #69C5FD" : "1.5px solid rgba(255,255,255,0.07)", transition: "border 0.2s" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div>
                           <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "vip" ? "Challenge ALGO" : c.model === "2step" ? "Challenge Trader 2-Step" : "Challenge Trader 1-Step"}</div>
                           <div style={{ display: "flex", gap: 8 }}>
-                            <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(59, 130, 246,0.12)", color: c.phase === "funded" ? "#60A5FA" : "#3B82F6", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.phase === "funded" && <Trophy size={11} />}{PHASE_LABELS[c.phase] || c.phase}</span>
+                            <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(105, 197, 253,0.12)", color: c.phase === "funded" ? "#69C5FD" : "#69C5FD", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.phase === "funded" && <Trophy size={11} />}{PHASE_LABELS[c.phase] || c.phase}</span>
                             <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status === "funded" ? "Active" : STATUS_LABELS[c.status] || c.status}</span>
                           </div>
                         </div>
                         <div style={{ textAlign: "right" }}>
                           <div style={{ fontSize: 22, fontWeight: 800 }}>${c.balance.toLocaleString()}</div>
-                          <div style={{ color: Number(profitPct) >= 0 ? "#3B82F6" : "#ef4444", fontSize: 13, fontWeight: 700 }}>
+                          <div style={{ color: Number(profitPct) >= 0 ? "#69C5FD" : "#ef4444", fontSize: 13, fontWeight: 700 }}>
                             {Number(profitPct) >= 0 ? "+" : ""}{profitPct}%
                           </div>
                         </div>
@@ -1689,12 +1689,12 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Dashboard Tab */}
         {(activeTab === "dashboard") && loading ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-            <div style={{ color: "#3B82F6", fontSize: 16 }}>Loading...</div>
+            <div style={{ color: "#69C5FD", fontSize: 16 }}>Loading...</div>
           </div>
         ) : (activeTab === "dashboard") && !challenge ? (
           /* No challenge yet */
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", textAlign: "center" }}>
-            <Trophy size={64} color="#3B82F6" style={{ marginBottom: 24, opacity: 0.5 }} />
+            <Trophy size={64} color="#69C5FD" style={{ marginBottom: 24, opacity: 0.5 }} />
             <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{T.dash.noChallengeTitle}</h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
             <div className="dash-new-challenges">
@@ -1713,9 +1713,9 @@ export default function DashboardClient({ user }: { user: User }) {
                 {activeChallenges.map(c => (
                   <button key={c.id} onClick={() => setChallenge(c)} style={{
                     padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                    border: challenge.id === c.id ? "1.5px solid #3B82F6" : "1.5px solid #333",
-                    backgroundColor: challenge.id === c.id ? "rgba(59, 130, 246,0.12)" : "transparent",
-                    color: challenge.id === c.id ? "#3B82F6" : "rgba(255,255,255,0.45)",
+                    border: challenge.id === c.id ? "1.5px solid #69C5FD" : "1.5px solid #333",
+                    backgroundColor: challenge.id === c.id ? "rgba(105, 197, 253,0.12)" : "transparent",
+                    color: challenge.id === c.id ? "#69C5FD" : "rgba(255,255,255,0.45)",
                     transition: "all 0.15s",
                   }}>
                     {c.account_size} · {c.model === "vip" ? "ALGO" : c.model === "2step" ? "2-Step" : "1-Step"}
@@ -1726,7 +1726,7 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Loyalty banner */}
             {allChallenges.length >= 1 && (
               <>
-                <div style={{ backgroundColor: "rgba(59, 130, 246,0.08)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 12, padding: "10px 14px", marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ backgroundColor: "rgba(105, 197, 253,0.08)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 12, padding: "10px 14px", marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
                   <span style={{ fontSize: 18, flexShrink: 0 }}>🎖️</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ color: "#FFFFFF", fontWeight: 700, fontSize: 12 }}>
@@ -1747,7 +1747,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div>
                 <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{challenge.model === "vip" ? "Mon Challenge ALGO" : T.dash.myChallenge}</h1>
                 <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#3B82F6", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
+                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#69C5FD", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
                     {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}
                   </span>
                   <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 6 }}>
@@ -1768,18 +1768,18 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Phase Banner */}
             {challenge.phase === "phase2" && (
               <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={18} color="#3B82F6" style={{ flexShrink: 0 }} />
+                <Trophy size={18} color="#69C5FD" style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 14 }}>
-                  <span style={{ color: "#3B82F6", fontWeight: 700 }}>{T.dash.phase1PassedMsg} </span>
+                  <span style={{ color: "#69C5FD", fontWeight: 700 }}>{T.dash.phase1PassedMsg} </span>
                   <span style={{ color: "rgba(255,255,255,0.45)" }}>{T.dash.phase2Msg}</span>
                 </span>
               </div>
             )}
             {challenge.phase === "funded" && (
-              <div style={{ backgroundColor: "rgba(59, 130, 246,0.08)", border: "1px solid rgba(59, 130, 246,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={18} color="#3B82F6" style={{ flexShrink: 0 }} />
+              <div style={{ backgroundColor: "rgba(105, 197, 253,0.08)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
+                <Trophy size={18} color="#69C5FD" style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 14 }}>
-                  <span style={{ color: "#3B82F6", fontWeight: 700 }}>{T.dash.congratulations} </span>
+                  <span style={{ color: "#69C5FD", fontWeight: 700 }}>{T.dash.congratulations} </span>
                   <span style={{ color: "rgba(255,255,255,0.45)" }}>{T.dash.fundedMsg}</span>
                 </span>
               </div>
@@ -1836,7 +1836,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ fontSize: 38, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
                     ${effectiveBalance.toLocaleString()}
                   </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#3B82F6" : "#ef4444" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#69C5FD" : "#ef4444" }}>
                     {profitAmount >= 0 ? "+" : ""}${profitAmount.toLocaleString()} ({profitAmount >= 0 ? "+" : ""}{profitPct}%)
                   </div>
                 </div>
@@ -1845,14 +1845,14 @@ export default function DashboardClient({ user }: { user: User }) {
                 {!challenge.mt5_login ? (
                   <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "16px 20px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                      <Clock size={16} color="#3B82F6" />
+                      <Clock size={16} color="#69C5FD" />
                       <div style={{ fontWeight: 700, fontSize: 14 }}>{T.dash.accountPending}</div>
                     </div>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{T.dash.accountPendingMsg}</div>
                   </div>
                 ) : (
-                  <div style={{ backgroundColor: "rgba(59, 130, 246,0.06)", border: "1px solid rgba(59, 130, 246,0.25)", borderRadius: 14, padding: "16px 20px" }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: "#3B82F6", display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ backgroundColor: "rgba(105, 197, 253,0.06)", border: "1px solid rgba(105, 197, 253,0.25)", borderRadius: 14, padding: "16px 20px" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: "#69C5FD", display: "flex", alignItems: "center", gap: 8 }}>
                       <CheckCircle size={14} /> {T.dash.accountReady}
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -1911,7 +1911,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         label: T.dash.profitTarget,
                         pct: `${challenge.profit_target}%`,
                         usd: `+$${profitUSD.toLocaleString()}`,
-                        usdColor: "#3B82F6",
+                        usdColor: "#69C5FD",
                         ok: parseFloat(profitPct) >= challenge.profit_target,
                         status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%`,
                       }] : []),
@@ -1959,7 +1959,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             label: isFr ? "Règle meilleur jour" : "Best day rule",
                             pct: "≤ 50%",
                             usd: `≤ $${Math.round(maxBestDay).toLocaleString()}`,
-                            usdColor: "#3B82F6",
+                            usdColor: "#69C5FD",
                             ok: !violated,
                             violated,
                             isDrawdown: false,
@@ -1971,7 +1971,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     return rules.map((rule, i) => (
                       <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < rules.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.ok ? "#3B82F6" : "#3B82F6", flexShrink: 0 }} />
+                          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.ok ? "#69C5FD" : "#69C5FD", flexShrink: 0 }} />
                           <div>
                             <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{rule.label}</div>
                             <div style={{ fontSize: 11, marginTop: 2, display: "flex", gap: 6 }}>

@@ -4,44 +4,52 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ══════════════════════════════════════════════════════════════════
+   SOURCE DE VÉRITÉ COULEUR — BLEU DE MARQUE TRADERS REWARDS
+   Couleur officielle unique : #69C5FD
+   ══════════════════════════════════════════════════════════════════ */
 :root {
-  --bg-primary: #000000;
-  --bg-secondary: #111111;
-  --bg-card: #111111;
-  --bg-card-hover: #1a1a1a;
-  --accent: oklch(0.97 0 0);
-  --accent-light: #4F96FF;
-  --accent-dark: #3B82F6;
-  --accent-glow: rgba(59, 130, 246, 0.25);
-  --text-primary: #FFFFFF;
-  --text-secondary: rgba(255,255,255,0.7);
-  --text-muted: rgba(255,255,255,0.45);
-  --border: oklch(0.922 0 0);
-  --border-accent: rgba(255,255,255,0.15);
-  --gold: #3B82F6;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --brand:       #69C5FD;               /* ← bleu officiel Traders Rewards */
+  --brand-glow:  rgba(105,197,253,0.25);
+  --brand-subtle:rgba(105,197,253,0.10);
+
+  --bg-primary:  #000000;
+  --bg-secondary:#111111;
+  --bg-card:     #111111;
+  --bg-card-hover:#1a1a1a;
+  --accent:      oklch(0.97 0 0);
+  --accent-light:#69C5FD;               /* anciennement #4F96FF */
+  --accent-dark: #69C5FD;               /* anciennement #3B82F6 */
+  --accent-glow: rgba(105,197,253,0.25);/* anciennement rgba(59,130,246,0.25) */
+  --text-primary:#FFFFFF;
+  --text-secondary:rgba(255,255,255,0.7);
+  --text-muted:  rgba(255,255,255,0.45);
+  --border:      oklch(0.922 0 0);
+  --border-accent:rgba(255,255,255,0.15);
+  --gold:        #69C5FD;               /* anciennement #3B82F6 */
+  --background:  oklch(1 0 0);
+  --foreground:  oklch(0.145 0 0);
+  --card:        oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
+  --popover:     oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary:     oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary:   oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
+  --muted:       oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
+  --input:       oklch(0.922 0 0);
+  --ring:        oklch(0.708 0 0);
+  --chart-1:     oklch(0.87 0 0);
+  --chart-2:     oklch(0.556 0 0);
+  --chart-3:     oklch(0.439 0 0);
+  --chart-4:     oklch(0.371 0 0);
+  --chart-5:     oklch(0.269 0 0);
+  --radius:      0.625rem;
+  --sidebar:     oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -69,7 +77,7 @@ body {
 }
 
 .gold-gradient {
-  background: linear-gradient(135deg, #3B82F6 0%, #BFDBFE 100%);
+  background: linear-gradient(135deg, #69C5FD 0%, #C8EDFF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -83,8 +91,8 @@ body {
 }
 
 .btn-primary {
-  background: #3B82F6;
-  color: #FFFFFF;
+  background: #69C5FD;
+  color: #000000;          /* texte sombre sur bleu clair pour contraste */
   font-weight: 800;
   padding: 14px 32px;
   border-radius: 6px;
@@ -99,7 +107,7 @@ body {
 }
 
 .btn-primary:hover {
-  background: #4f96ff;
+  background: #89d1fd;
   transform: translateY(-1px);
 }
 
@@ -118,18 +126,19 @@ body {
 }
 .dash-trader-btn:hover { border-color: rgba(255,255,255,0.5); }
 .dash-trader-label { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(255,255,255,0.85); }
-.dash-trader-badge { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; background: #3B82F6; color: #fff; padding: 2px 8px; border-radius: 4px; }
+.dash-trader-badge { font-size: 10px; font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; background: #69C5FD; color: #000; padding: 2px 8px; border-radius: 4px; }
 
+/* VIP/ALGO border — gradient bleu+blanc+rouge (patriotique) — #1d4ed8 intentionnel */
 .dash-vip-border {
   padding: 1.5px; border-radius: 6px; display: inline-block;
-  background: conic-gradient(from var(--dash-vip-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
+  background: conic-gradient(from var(--dash-vip-angle), #1d4ed8 0%, #69C5FD 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
   animation: dashVipSpin 3s linear infinite;
-  box-shadow: 0 0 8px rgba(59,130,246,0.5), 0 0 16px rgba(239,68,68,0.2);
+  box-shadow: 0 0 8px rgba(105,197,253,0.5), 0 0 16px rgba(239,68,68,0.2);
   text-decoration: none;
 }
 .dash-vip-inner { background: #000; border-radius: 4px; padding: 6px 14px; display: flex; align-items: center; gap: 6px; }
 .dash-vip-text {
-  background: linear-gradient(90deg, #1d4ed8 0%, #3B82F6 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%);
+  background: linear-gradient(90deg, #1d4ed8 0%, #69C5FD 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%);
   background-size: 200% auto;
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   animation: dashVipFlow 3s linear infinite;
@@ -171,9 +180,9 @@ body {
 
 .card-featured {
   background: var(--accent-dark);
-  border: 1px solid rgba(27,79,216,0.3);
+  border: 1px solid rgba(105,197,253,0.3);
   border-radius: 16px;
-  box-shadow: 0 16px 50px rgba(27,111,255,0.25);
+  box-shadow: 0 16px 50px rgba(105,197,253,0.2);
   color: #fff;
 }
 

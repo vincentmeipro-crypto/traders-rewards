@@ -46,7 +46,7 @@ export default function Navbar() {
   const TraderLink = () => (
     <a href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 10px" }}>
       <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.85)" }}>Challenge</span>
-      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "#3B82F6", color: "#fff", padding: "2px 8px", borderRadius: 4 }}>TRADER</span>
+      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "#69C5FD", color: "#000", padding: "2px 8px", borderRadius: 4 }}>TRADER</span>
     </a>
   );
 
@@ -72,16 +72,16 @@ export default function Navbar() {
         }
         .vip-border {
           padding: 1.5px; border-radius: 6px; display: inline-block;
-          background: conic-gradient(from var(--vip-angle), #1d4ed8 0%, #3B82F6 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
+          background: conic-gradient(from var(--vip-angle), #1d4ed8 0%, #69C5FD 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
           animation: vipSpin 3s linear infinite;
-          box-shadow: 0 0 8px rgba(59,130,246,0.5), 0 0 16px rgba(239,68,68,0.2);
+          box-shadow: 0 0 8px rgba(105,197,253,0.5), 0 0 16px rgba(239,68,68,0.2);
         }
         .vip-inner {
           background: #000; border-radius: 4px; padding: 6px 14px;
           display: flex; align-items: center;
         }
         .vip-text {
-          background: linear-gradient(90deg, #1d4ed8 0%, #3B82F6 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%);
+          background: linear-gradient(90deg, #1d4ed8 0%, #69C5FD 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%);
           background-size: 200% auto;
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text;

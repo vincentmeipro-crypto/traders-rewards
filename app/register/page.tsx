@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 export const dynamic = "force-dynamic";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -148,7 +148,7 @@ export default function RegisterPage() {
                   </select>
                   <input type="tel" value={phone} onChange={e => setPhone(e.target.value)}
                     placeholder="6 12 34 56 78" style={{ ...inputStyle }}
-                    onFocus={e => (e.target.style.borderColor = "#60A5FA")}
+                    onFocus={e => (e.target.style.borderColor = "#69C5FD")}
                     onBlur={e => (e.target.style.borderColor = "#222")} />
                 </div>
               </div>
