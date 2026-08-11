@@ -16,7 +16,7 @@
  *   - service_role côté serveur uniquement
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -46,6 +46,14 @@ interface ConvSummary {
 interface LastMsg {
   sender_type: "client" | "admin" | "system";
   message:     string;
+  created_at:  string;
+}
+
+interface SupportMessage {
+  id:          string;
+  sender_type: "client" | "admin";
+  content:     string;
+  channel:     string;
   created_at:  string;
 }
 
@@ -123,6 +131,15 @@ export default function SupportTab({
   // undefined = not checked yet
   const [convChecked, setConvChecked] = useState(false);
 
+  // ── Thread state ──────────────────────────────────────────────────────────
+  const [messages, setMessages]           = useState<SupportMessage[]>([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [reply, setReply]                 = useState("");
+  const [replySending, setReplySending]   = useState(false);
+  const [replyError, setReplyError]       = useState<string | null>(null);
+  const threadContainerRef                = useRef<HTMLDivElement>(null);
+  const pollRef                           = useRef<ReturnType<typeof setInterval> | null>(null);
+
   // ── Auth headers ──────────────────────────────────────────────────────────
   const authHeaders = useCallback((): Record<string, string> => {
     const h: Record<string, string> = {};
@@ -170,6 +187,18 @@ export default function SupportTab({
     }
   }, [authHeaders]);
 
+  // ── Fetch messages d'un ticket ────────────────────────────────────────────
+  const fetchMessages = useCallback(async (id: string) => {
+    try {
+      const res = await fetch(`/api/support/my-tickets/${id}/messages`, {
+        headers: authHeaders(),
+      });
+      if (!res.ok) return;
+      const d = await res.json() as { messages: SupportMessage[] };
+      setMessages(d.messages ?? []);
+    } catch { /* silent */ }
+  }, [authHeaders]);
+
   // ── Fetch chat summary ────────────────────────────────────────────────────
   const fetchChat = useCallback(async () => {
     if (!token) return;
@@ -199,6 +228,30 @@ export default function SupportTab({
       setConvChecked(true);
     }
   }, [token, authHeaders, isFr]);
+
+  // ── Polling messages quand un ticket est sélectionné ─────────────────────
+  useEffect(() => {
+    if (!selectedTicket) {
+      if (pollRef.current) clearInterval(pollRef.current);
+      setMessages([]);
+      setReply("");
+      setReplyError(null);
+      return;
+    }
+    setMessagesLoading(true);
+    fetchMessages(selectedTicket.id).finally(() => setMessagesLoading(false));
+    pollRef.current = setInterval(() => fetchMessages(selectedTicket.id), 4000);
+    return () => {
+      if (pollRef.current) clearInterval(pollRef.current);
+    };
+  }, [selectedTicket?.id, fetchMessages]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Auto-scroll vers le bas à chaque nouveau message
+  useEffect(() => {
+    if (threadContainerRef.current) {
+      threadContainerRef.current.scrollTop = threadContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   // Préfill form si props changent après mount
   useEffect(() => {
@@ -281,6 +334,32 @@ export default function SupportTab({
       setFormSending(false);
     }
   }, [form, isFr, fetchTickets, token]);
+
+  // ── Envoyer une réponse client ────────────────────────────────────────────
+  const sendReply = useCallback(async () => {
+    if (!selectedTicket || !reply.trim() || replySending) return;
+    const content = reply.trim();
+    setReplySending(true);
+    setReplyError(null);
+    try {
+      const res = await fetch(`/api/support/my-tickets/${selectedTicket.id}/messages`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", ...authHeaders() },
+        body:    JSON.stringify({ message: content }),
+      });
+      const d = await res.json() as { error?: string };
+      if (!res.ok) {
+        setReplyError(d.error ?? (isFr ? "Envoi impossible." : "Send failed."));
+        return;
+      }
+      setReply("");
+      await fetchMessages(selectedTicket.id);
+    } catch {
+      setReplyError(isFr ? "Erreur réseau." : "Network error.");
+    } finally {
+      setReplySending(false);
+    }
+  }, [selectedTicket, reply, replySending, authHeaders, fetchMessages, isFr]);
 
   // ── Open LiveChatWidget via CustomEvent ───────────────────────────────────
   const openChatWidget = useCallback(() => {
@@ -664,32 +743,140 @@ export default function SupportTab({
                   {/* Divider */}
                   <div style={{ height: 1, backgroundColor: "rgba(255,255,255,0.07)", marginBottom: 16 }} />
 
-                  {/* Message */}
-                  <div style={{
-                    fontSize:   14,
-                    color:      "rgba(255,255,255,0.75)",
-                    lineHeight: 1.7,
-                    whiteSpace: "pre-wrap",
-                    wordBreak:  "break-word",
-                  }}>
-                    {selectedTicket.message}
-                  </div>
+                  {/* Fil de conversation */}
+                  {messagesLoading && messages.length === 0 ? (
+                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", paddingTop: 8 }}>
+                      {isFr ? "Chargement…" : "Loading…"}
+                    </div>
+                  ) : (
+                    <div
+                      ref={threadContainerRef}
+                      style={{
+                        maxHeight:     340,
+                        overflowY:     "auto",
+                        display:       "flex",
+                        flexDirection: "column",
+                        gap:           8,
+                        padding:       "4px 2px",
+                      }}
+                    >
+                      {messages.length === 0 && (
+                        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>
+                          {isFr ? "Aucun message." : "No messages."}
+                        </div>
+                      )}
+                      {messages.map(msg => {
+                        const isClient = msg.sender_type === "client";
+                        return (
+                          <div key={msg.id} style={{
+                            display:        "flex",
+                            justifyContent: isClient ? "flex-end" : "flex-start",
+                          }}>
+                            <div style={{
+                              maxWidth:     "78%",
+                              background:   isClient
+                                ? "rgba(59,130,246,0.18)"
+                                : "rgba(255,255,255,0.07)",
+                              border:       `1px solid ${isClient ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.09)"}`,
+                              borderRadius: isClient
+                                ? "12px 12px 2px 12px"
+                                : "12px 12px 12px 2px",
+                              padding:      "10px 14px",
+                            }}>
+                              <div style={{
+                                fontSize:     11,
+                                fontWeight:   600,
+                                color:        isClient
+                                  ? "rgba(147,197,253,0.7)"
+                                  : "rgba(255,255,255,0.35)",
+                                marginBottom: 4,
+                              }}>
+                                {isClient
+                                  ? (isFr ? "Vous" : "You")
+                                  : (isFr ? "Support" : "Support")}
+                                {" · "}
+                                {(() => {
+                                  const diff = Math.floor((Date.now() - new Date(msg.created_at).getTime()) / 1000);
+                                  if (diff < 60)        return isFr ? "À l'instant" : "Just now";
+                                  if (diff < 3600)      return `${Math.floor(diff / 60)}min`;
+                                  if (diff < 86400)     return `${Math.floor(diff / 3600)}h`;
+                                  if (diff < 86400 * 7) return `${Math.floor(diff / 86400)}j`;
+                                  return new Date(msg.created_at).toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "short" });
+                                })()}
+                              </div>
+                              <div style={{
+                                fontSize:   14,
+                                color:      isClient ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.78)",
+                                lineHeight: 1.65,
+                                whiteSpace: "pre-wrap",
+                                wordBreak:  "break-word",
+                              }}>
+                                {msg.content}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
 
-                  {/* Footer note */}
-                  <div style={{
-                    marginTop:   20,
-                    padding:     "12px 14px",
-                    backgroundColor: "rgba(59,130,246,0.06)",
-                    borderRadius: 9,
-                    border:       "1px solid rgba(59,130,246,0.12)",
-                    fontSize:     12,
-                    color:        "rgba(255,255,255,0.45)",
-                    lineHeight:   1.6,
-                  }}>
-                    {isFr
-                      ? "Notre équipe a bien reçu votre demande et vous répondra par email. Vous pouvez également utiliser le chat en direct pour un suivi instantané."
-                      : "Our team has received your request and will reply by email. You can also use live chat for instant follow-up."
-                    }
+                  {/* Formulaire de réponse */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 4 }}>
+                    <textarea
+                      value={reply}
+                      onChange={e => setReply(e.target.value.slice(0, 4000))}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          void sendReply();
+                        }
+                      }}
+                      placeholder={isFr
+                        ? "Votre réponse… (Entrée = envoyer · Maj+Entrée = saut de ligne)"
+                        : "Your reply… (Enter = send · Shift+Enter = new line)"}
+                      rows={3}
+                      style={{
+                        ...inputStyle,
+                        resize:    "vertical",
+                        minHeight: 72,
+                        maxHeight: 200,
+                        border:    `1px solid ${reply.trim() ? "rgba(59,130,246,0.4)" : "rgba(255,255,255,0.1)"}`,
+                        transition: "border-color 0.15s",
+                      }}
+                    />
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        {replyError && (
+                          <span style={{ fontSize: 12, color: "rgba(239,68,68,0.85)" }}>{replyError}</span>
+                        )}
+                        {reply.length > 3600 && (
+                          <span style={{ fontSize: 11, color: reply.length > 3900 ? "#ef4444" : "rgba(255,255,255,0.3)" }}>
+                            {reply.length} / 4000
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => void sendReply()}
+                        disabled={replySending || !reply.trim()}
+                        style={{
+                          padding:         "9px 22px",
+                          borderRadius:    9,
+                          border:          "none",
+                          backgroundColor: replySending || !reply.trim()
+                            ? "rgba(59,130,246,0.35)"
+                            : "#3B82F6",
+                          color:           "#ffffff",
+                          fontSize:        13,
+                          fontWeight:      700,
+                          cursor:          replySending || !reply.trim() ? "not-allowed" : "pointer",
+                          transition:      "background 0.15s",
+                        }}
+                      >
+                        {replySending
+                          ? (isFr ? "Envoi…" : "Sending…")
+                          : (isFr ? "Envoyer" : "Send")}
+                      </button>
+                    </div>
                   </div>
                 </>
               )}

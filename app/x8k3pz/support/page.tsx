@@ -36,6 +36,14 @@ type Note = {
   created_at:   string;
 };
 
+type SupportMessage = {
+  id:          string;
+  sender_type: "client" | "admin";
+  content:     string;
+  channel:     string;
+  created_at:  string;
+};
+
 // ── Constantes ───────────────────────────────────────────────────────────────
 
 const CATEGORIES = ["billing", "challenge", "mt5", "reward", "kyc", "technical", "other"] as const;
@@ -218,6 +226,190 @@ function TicketNotes({ ticketId }: { ticketId: string }) {
   );
 }
 
+// ── TicketThread — fil de conversation ──────────────────────────────────────
+
+function TicketThread({ ticketId }: { ticketId: string }) {
+  const [messages, setMessages]     = useState<SupportMessage[]>([]);
+  const [loaded, setLoaded]         = useState(false);
+  const [draft, setDraft]           = useState("");
+  const [sending, setSending]       = useState(false);
+  const [sendError, setSendError]   = useState<string | null>(null);
+  const containerRef                = useRef<HTMLDivElement>(null);
+
+  const fetchMessages = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/support/${ticketId}/messages`, {
+        headers: { "x-admin-key": ADMIN_KEY },
+      });
+      if (!res.ok) return;
+      const d = await res.json() as { messages: SupportMessage[] };
+      setMessages(d.messages ?? []);
+    } catch { /* silent */ }
+  }, [ticketId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchMessages().then(() => { if (!cancelled) setLoaded(true); });
+    const interval = setInterval(fetchMessages, 3000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [fetchMessages]);
+
+  // Auto-scroll vers le bas à chaque mise à jour
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const sendReply = async () => {
+    const trimmed = draft.trim();
+    if (!trimmed || sending) return;
+    setSending(true);
+    setSendError(null);
+    try {
+      const res = await fetch(`/api/admin/support/${ticketId}/reply`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
+        body:    JSON.stringify({ message: trimmed }),
+      });
+      const d = await res.json() as { error?: string };
+      if (!res.ok) { setSendError(d.error ?? "Erreur"); return; }
+      setDraft("");
+      await fetchMessages();
+    } catch { setSendError("Erreur réseau"); }
+    finally { setSending(false); }
+  };
+
+  if (!loaded) {
+    return (
+      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", padding: "8px 0" }}>
+        Chargement de la conversation…
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+      {/* Fil de messages */}
+      <div
+        ref={containerRef}
+        style={{
+          maxHeight:     400,
+          overflowY:     "auto",
+          display:       "flex",
+          flexDirection: "column",
+          gap:           8,
+          padding:       "4px 2px",
+        }}
+      >
+        {messages.length === 0 && (
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Aucun message.</div>
+        )}
+        {messages.map(msg => {
+          const isAdmin = msg.sender_type === "admin";
+          return (
+            <div key={msg.id} style={{
+              display:        "flex",
+              justifyContent: isAdmin ? "flex-end" : "flex-start",
+            }}>
+              <div style={{
+                maxWidth:     "76%",
+                background:   isAdmin ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.07)",
+                border:       `1px solid ${isAdmin ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.09)"}`,
+                borderRadius: isAdmin ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
+                padding:      "10px 14px",
+              }}>
+                <div style={{
+                  fontSize:    11,
+                  fontWeight:  600,
+                  color:       isAdmin ? "rgba(147,197,253,0.7)" : "rgba(255,255,255,0.35)",
+                  marginBottom: 5,
+                }}>
+                  {isAdmin ? "Support" : "Client"} · {fmtRelative(msg.created_at)}
+                </div>
+                <div style={{
+                  fontSize:   13,
+                  color:      isAdmin ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.8)",
+                  lineHeight: "1.6",
+                  whiteSpace: "pre-wrap" as const,
+                  wordBreak:  "break-word" as const,
+                }}>
+                  {msg.content}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Formulaire de réponse admin */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+        <textarea
+          value={draft}
+          onChange={e => setDraft(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              void sendReply();
+            }
+          }}
+          placeholder="Répondre au client… (Entrée = envoyer · Maj+Entrée = saut de ligne)"
+          rows={3}
+          style={{
+            width:        "100%",
+            boxSizing:    "border-box" as const,
+            background:   "#111",
+            border:       `1px solid ${draft.trim() ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.08)"}`,
+            borderRadius: 8,
+            padding:      "9px 13px",
+            color:        "#fff",
+            fontSize:     13,
+            resize:       "vertical" as const,
+            outline:      "none",
+            fontFamily:   "inherit",
+            transition:   "border-color 0.15s",
+          }}
+        />
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            onClick={() => void sendReply()}
+            disabled={sending || !draft.trim()}
+            style={{
+              padding:      "7px 18px",
+              background:   sending || !draft.trim() ? "rgba(59,130,246,0.2)" : "#3b82f6",
+              border:       "none",
+              borderRadius: 7,
+              color:        "#fff",
+              fontSize:     12,
+              fontWeight:   700,
+              cursor:       sending || !draft.trim() ? "not-allowed" : "pointer",
+              transition:   "background 0.15s",
+            }}
+          >
+            {sending ? "Envoi…" : "Envoyer"}
+          </button>
+          {draft.trim().length > 0 && (
+            <span style={{
+              fontSize: 11,
+              color:    draft.trim().length > 3800 ? "#ef4444" : "rgba(255,255,255,0.25)",
+            }}>
+              {draft.trim().length} / 4000
+            </span>
+          )}
+          {sendError && (
+            <span style={{ fontSize: 12, color: "#ef4444" }}>{sendError}</span>
+          )}
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
 // ── TicketDetail — contenu accordéon ─────────────────────────────────────────
 
 function TicketDetail({
@@ -347,22 +539,10 @@ function TicketDetail({
         </div>
       )}
 
-      {/* ── Message ──────────────────────────────────────────────────────────── */}
+      {/* ── Conversation ─────────────────────────────────────────────────────── */}
       <div>
-        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.28)", textTransform: "uppercase" as const, letterSpacing: 1, marginBottom: 8 }}>Message</div>
-        {ticket.message
-          ? (
-            <div style={{
-              fontSize: 13, color: "rgba(255,255,255,0.85)", lineHeight: "1.7",
-              background: "#0f1117", border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: 8, padding: "14px 16px",
-              whiteSpace: "pre-wrap" as const, wordBreak: "break-word" as const,
-            }}>
-              {ticket.message}
-            </div>
-          )
-          : <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Message non chargé.</div>
-        }
+        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.28)", textTransform: "uppercase" as const, letterSpacing: 1, marginBottom: 10 }}>Conversation</div>
+        <TicketThread ticketId={ticket.id} />
       </div>
 
       {/* ── Notes internes ───────────────────────────────────────────────────── */}
