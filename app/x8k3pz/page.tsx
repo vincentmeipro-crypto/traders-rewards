@@ -2,6 +2,8 @@
 import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import OverviewCockpit from "@/components/admin/OverviewCockpit";
+import RewardReviewPanel from "@/components/admin/RewardReviewPanel";
+import type { RewardReviewData } from "@/lib/reward-review";
 
 // Clé admin statique — accès sans connexion Supabase
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
@@ -40,6 +42,9 @@ type Challenge = {
   breach_reason?: string;
   breach_value?: number;
   breach_at?: string;
+  open_positions?: Record<string, unknown>[];
+  positions_synced_at?: string;
+  reward_review?: RewardReviewData;
 };
 
 type PromoCode = {
@@ -376,7 +381,7 @@ function AdminPageInner() {
   const loadAdminData = async () => {
     const headers = { "x-admin-key": ADMIN_KEY };
     const [cRes, pRes, kRes, prRes] = await Promise.all([
-      fetch("/api/admin/challenges", { headers }),
+      fetch("/api/admin/challenges?include=review", { headers }),
       fetch("/api/admin/payouts",    { headers }),
       fetch("/api/admin/kyc",        { headers }),
       fetch("/api/admin/profiles",   { headers }),
@@ -635,7 +640,7 @@ function AdminPageInner() {
 
   /* ── Actions ── */
   const saveChallenge = async (id: string) => {
-    const res = await fetch("/api/admin/challenges", {
+    const res = await fetch("/api/admin/challenges?include=review", {
       method: "PATCH",
       headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
       body: JSON.stringify({ id, ...editData }),
@@ -647,7 +652,7 @@ function AdminPageInner() {
   };
 
   const deleteChallenge = async (id: string) => {
-    await fetch("/api/admin/challenges", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
+    await fetch("/api/admin/challenges?include=review", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
     setChallenges(cs => cs.filter(x => x.id !== id));
     setChallengeDeleteConfirmId(null);
   };
@@ -735,7 +740,7 @@ function AdminPageInner() {
       setPayouts(ps => ps.map(p => p.id === id ? { ...p, ...data } : p));
       // Refresh challenges so trading_days + balance display the reset values
       if (status === "paid") {
-        fetch("/api/admin/challenges", { headers: { "x-admin-key": ADMIN_KEY } })
+        fetch("/api/admin/challenges?include=review", { headers: { "x-admin-key": ADMIN_KEY } })
           .then(r => r.json()).then(d => { if (Array.isArray(d)) setChallenges(d); }).catch(() => {});
       }
     }
@@ -783,13 +788,13 @@ function AdminPageInner() {
   const createChallenge = async () => {
     if (!token || !createForm.userEmail || !createForm.accountSize) return;
     setCreateLoading(true); setCreateError(""); setCreateMsg("");
-    const res = await fetch("/api/admin/challenges", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
+    const res = await fetch("/api/admin/challenges?include=review", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
     const data = await res.json();
     setCreateLoading(false);
     if (res.ok) {
       setCreateMsg("Challenge créé — email envoyé au trader.");
       setCreateForm(f => ({ ...f, userEmail: "", firstName: "", lastName: "", amountPaid: "" }));
-      const r = await fetch("/api/admin/challenges", { headers: { "x-admin-key": ADMIN_KEY } });
+      const r = await fetch("/api/admin/challenges?include=review", { headers: { "x-admin-key": ADMIN_KEY } });
       const d = await r.json();
       if (Array.isArray(d)) setChallenges(d);
     } else setCreateError(data.error || "Erreur");
@@ -818,7 +823,7 @@ function AdminPageInner() {
       const data = await res.json();
       setSyncMsg(`✓ ${data.synced ?? 0}/${data.total ?? 0} synchronisé(s)`);
       setSyncDetail(JSON.stringify(data.results ?? data, null, 2));
-      if (token) { const r = await fetch("/api/admin/challenges", { headers: { "x-admin-key": ADMIN_KEY } }); const d = await r.json(); if (Array.isArray(d)) setChallenges(d); }
+      if (token) { const r = await fetch("/api/admin/challenges?include=review", { headers: { "x-admin-key": ADMIN_KEY } }); const d = await r.json(); if (Array.isArray(d)) setChallenges(d); }
     } catch (e) { setSyncMsg("Erreur sync"); setSyncDetail(String(e)); }
     setSyncing(false);
   };
@@ -1471,6 +1476,8 @@ function AdminPageInner() {
                                           <div style={{ flex: 1 }} />
                                           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.28)" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
                                         </div>
+
+                                        <RewardReviewPanel data={c.reward_review} />
 
                                         {/* DD bars — comptes actifs uniquement */}
                                         {c.status === "active" && risk && (

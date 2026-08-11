@@ -1,3 +1,5 @@
+import type { MT5Position } from "./trade-risk";
+
 const MT5_URL    = process.env.MT5_API_URL!;
 const MT5_SECRET = process.env.MT5_API_SECRET!;
 
@@ -183,10 +185,7 @@ export async function updateMT5AccountNameWithRetry(
   }
 }
 
-export async function getMT5Positions(login: number): Promise<{
-  ticket: number; symbol: string; type: number; volume: number;
-  open_price: number; current_price: number; profit: number; swap: number; open_time: number;
-}[]> {
+export async function getMT5Positions(login: number): Promise<MT5Position[]> {
   const res = await fetch(`${MT5_URL}/accounts/${login}/positions`, { headers: MT5_HEADERS });
   if (!res.ok) throw new Error(`MT5 positions failed: ${await res.text()}`);
   const data = await res.json();

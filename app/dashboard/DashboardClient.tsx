@@ -2,13 +2,14 @@
 import React from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useLanguage } from "@/lib/LanguageContext";
 import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
-import Image from "next/image";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, AlertTriangle, Users, MessageCircle, HelpCircle } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle } from "lucide-react";
 import SupportTab from "./SupportTab";
+import TraderCockpit from "./TraderCockpit";
 
 type Challenge = {
   id: string;
@@ -45,154 +46,6 @@ type Challenge = {
   daily_low_equity?: number;
   daily_start_balance?: number;
 };
-
-function ProgressBar({ value, max, color = "#69C5FD", danger = false }: { value: number; max: number; color?: string; danger?: boolean }) {
-  const pct = Math.min((value / max) * 100, 100);
-  const barColor = danger && pct > 70 ? "#ef4444" : danger && pct > 40 ? "#69C5FD" : color;
-  return (
-    <div style={{ backgroundColor: "rgba(255,255,255,0.08)", borderRadius: 100, height: 8, overflow: "hidden", marginTop: 8 }}>
-      <div style={{ width: `${pct}%`, height: "100%", backgroundColor: barColor, borderRadius: 100, transition: "width 0.5s ease" }} />
-    </div>
-  );
-}
-
-function ChallengeChart({ challenge, isFr }: { challenge: Challenge; isFr: boolean }) {
-  const W = 400;
-  const H = 200;
-  const PAD = { top: 24, right: 56, bottom: 36, left: 56 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const startBal = challenge.start_balance;
-  const currentBal = (challenge.status === "failed" && challenge.breach_equity != null) ? challenge.breach_equity : challenge.balance;
-  const targetBal = startBal * (1 + challenge.profit_target / 100);
-  const floorBal = startBal * (1 - challenge.total_drawdown_limit / 100);
-
-  const N = 14;
-  const pts: { x: number; y: number }[] = [];
-  for (let i = 0; i <= N; i++) {
-    const t = i / N;
-    const noise = (Math.sin(i * 2.3) * 0.4 + Math.cos(i * 1.6) * 0.3) * 0.008 * startBal * t;
-    pts.push({ x: i, y: startBal + (currentBal - startBal) * t + noise });
-  }
-
-  const minY = Math.min(floorBal * 0.998, ...pts.map(p => p.y));
-  const maxY = Math.max(targetBal * 1.002, ...pts.map(p => p.y));
-  const range = maxY - minY || 1;
-
-  const toX = (i: number) => PAD.left + (i / N) * chartW;
-  const toY = (v: number) => PAD.top + ((maxY - v) / range) * chartH;
-
-  const linePath = pts.map((p, i) => `${i === 0 ? "M" : "L"}${toX(p.x).toFixed(1)},${toY(p.y).toFixed(1)}`).join(" ");
-  const areaPath = linePath + ` L${toX(N).toFixed(1)},${(PAD.top + chartH).toFixed(1)} L${PAD.left},${(PAD.top + chartH).toFixed(1)} Z`;
-
-  const tY = toY(targetBal);
-  const fY = toY(floorBal);
-  const sY = toY(startBal);
-  const cX = toX(N);
-  const cY = toY(currentBal);
-
-  const fmt = (v: number) => v >= 1000 ? `$${(v / 1000).toFixed(0)}K` : `$${v.toFixed(0)}`;
-
-  return (
-    <div style={{ position: "relative" }}>
-      <style>{`
-        @keyframes pulseDot { 0%,100%{r:5;opacity:1} 50%{r:8;opacity:0.5} }
-        @keyframes pulseRing { 0%{r:10;opacity:0.6} 100%{r:18;opacity:0} }
-      `}</style>
-      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible", display: "block" }}>
-        <defs>
-          <linearGradient id="cgGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#69C5FD" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#69C5FD" stopOpacity="0" />
-          </linearGradient>
-          <linearGradient id="cgLine" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#69C5FD" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#69C5FD" />
-          </linearGradient>
-        </defs>
-
-        {/* Grid */}
-        {[0, 0.25, 0.5, 0.75, 1].map(r => (
-          <line key={r} x1={PAD.left} y1={PAD.top + r * chartH} x2={PAD.left + chartW} y2={PAD.top + r * chartH}
-            stroke="rgba(105, 197, 253,0.12)" strokeWidth={1} />
-        ))}
-
-        {/* Zone between floor and target: green tint */}
-        <rect x={PAD.left} y={tY} width={chartW} height={fY - tY}
-          fill="rgba(255,255,255,0.02)" />
-
-        {/* Target line */}
-        <line x1={PAD.left} y1={tY} x2={PAD.left + chartW} y2={tY}
-          stroke="#69C5FD" strokeWidth={1.5} strokeDasharray="5,4" />
-        <text x={PAD.left + chartW + 6} y={tY + 4} fill="#69C5FD" fontSize={9} fontWeight={800}>{fmt(targetBal)}</text>
-        <text x={PAD.left - 6} y={tY + 4} fill="#69C5FD" fontSize={8} textAnchor="end" fontWeight={700}>
-          {isFr ? "OBJECTIF" : "TARGET"}
-        </text>
-
-        {/* Floor line */}
-        <line x1={PAD.left} y1={fY} x2={PAD.left + chartW} y2={fY}
-          stroke="#ef4444" strokeWidth={1.5} strokeDasharray="5,4" />
-        <text x={PAD.left + chartW + 6} y={fY + 4} fill="#ef4444" fontSize={9} fontWeight={800}>{fmt(floorBal)}</text>
-        <text x={PAD.left - 6} y={fY + 4} fill="#ef4444" fontSize={8} textAnchor="end" fontWeight={700}>
-          {isFr ? "PLANCHER" : "FLOOR"}
-        </text>
-
-        {/* Start line (faint) */}
-        <line x1={PAD.left} y1={sY} x2={PAD.left + chartW} y2={sY}
-          stroke="rgba(255,255,255,0.1)" strokeWidth={1} strokeDasharray="3,6" />
-        <text x={PAD.left - 6} y={sY + 4} fill="rgba(255,255,255,0.45)" fontSize={8} textAnchor="end">{fmt(startBal)}</text>
-
-        {/* Area fill */}
-        <path d={areaPath} fill="url(#cgGrad)" />
-
-        {/* Balance line */}
-        <path d={linePath} fill="none" stroke="url(#cgLine)" strokeWidth={2.5}
-          strokeLinecap="round" strokeLinejoin="round" />
-
-        {/* Pulse ring on current point */}
-        <circle cx={cX} cy={cY} r={12} fill="none" stroke="#69C5FD" strokeOpacity={0}>
-          <animate attributeName="r" values="8;18" dur="1.8s" repeatCount="indefinite" />
-          <animate attributeName="stroke-opacity" values="0.5;0" dur="1.8s" repeatCount="indefinite" />
-        </circle>
-
-        {/* Current point dot */}
-        <circle cx={cX} cy={cY} r={5} fill="#69C5FD" stroke="#fff" strokeWidth={2} />
-
-        {/* Current value label */}
-        <rect x={cX - 26} y={cY - 24} width={52} height={16} rx={4} fill="#69C5FD" />
-        <text x={cX} y={cY - 13} fill="#fff" fontSize={9} textAnchor="middle" fontWeight={800}>
-          {fmt(currentBal)}
-        </text>
-
-        {/* X-axis labels */}
-        <text x={PAD.left} y={H - 6} fill="rgba(255,255,255,0.45)" fontSize={9} textAnchor="middle">
-          {isFr ? "Jour 1" : "Day 1"}
-        </text>
-        <text x={cX} y={H - 6} fill="#69C5FD" fontSize={9} textAnchor="middle" fontWeight={700}>
-          {isFr ? `J.${challenge.trading_days}` : `D.${challenge.trading_days}`}
-        </text>
-      </svg>
-
-      {/* Legend */}
-      <div style={{ display: "flex", gap: 16, justifyContent: "center", marginTop: 8 }}>
-        {[
-          { color: "#69C5FD", label: isFr ? "Solde" : "Balance" },
-          { color: "#69C5FD", label: isFr ? "Objectif" : "Target", dashed: true },
-          { color: "#ef4444", label: isFr ? "Plancher" : "Floor", dashed: true },
-        ].map((item, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-            <svg width={24} height={10}>
-              <line x1={0} y1={5} x2={24} y2={5} stroke={item.color} strokeWidth={item.dashed ? 1.5 : 2.5}
-                strokeDasharray={item.dashed ? "4,3" : undefined} />
-            </svg>
-            <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", fontWeight: 600 }}>{item.label}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 const PHASE_LABELS: Record<string, string> = {
   phase1: "Phase 1",
@@ -263,7 +116,6 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
       {/* Tiers */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 12, marginBottom: 28 }}>
         {tiers.map((t, i) => {
-          const isActive = data?.current_tier === t.tier || (isFr ? false : data?.current_tier === ["Starter", "Partner", "Elite"][i]);
           const actualActive = data && (
             (i === 0 && data.current_tier === "Débutant") ||
             (i === 1 && data.current_tier === "Partenaire") ||
@@ -353,7 +205,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
 
 export default function DashboardClient({ user }: { user: User }) {
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = React.useMemo(() => createClient(), []);
   const { T, lang, setLang } = useLanguage();
   const isFr = lang === "fr";
   const [token, setToken] = useState("");
@@ -452,21 +304,35 @@ export default function DashboardClient({ user }: { user: User }) {
           setProfileBirthDate(p.birth_date || "");
         });
     });
-  }, [user.id]);
+  }, [user.id, supabase]);
 
   // Fetch trade history when challenge changes
   useEffect(() => {
-    if (!challenge?.mt5_login) { setTradeHistory([]); return; }
-    setTradeHistoryLoading(true);
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) return;
-      fetch(`/api/mt5/history?login=${challenge.mt5_login}`, { headers: { Authorization: `Bearer ${session.access_token}` } })
-        .then(r => r.ok ? r.json() : [])
-        .then(data => { setTradeHistory(Array.isArray(data) ? data : []); })
-        .catch(() => setTradeHistory([]))
-        .finally(() => setTradeHistoryLoading(false));
-    });
-  }, [challenge?.mt5_login]);
+    let cancelled = false;
+    const loadTradeHistory = async () => {
+      if (!challenge?.mt5_login) {
+        if (!cancelled) setTradeHistory([]);
+        return;
+      }
+      setTradeHistoryLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        if (!cancelled) setTradeHistoryLoading(false);
+        return;
+      }
+      try {
+        const response = await fetch(`/api/mt5/history?login=${challenge.mt5_login}`, { headers: { Authorization: `Bearer ${session.access_token}` } });
+        const data = response.ok ? await response.json() : [];
+        if (!cancelled) setTradeHistory(Array.isArray(data) ? data : []);
+      } catch {
+        if (!cancelled) setTradeHistory([]);
+      } finally {
+        if (!cancelled) setTradeHistoryLoading(false);
+      }
+    };
+    void loadTradeHistory();
+    return () => { cancelled = true; };
+  }, [challenge?.mt5_login, supabase]);
 
   const loadHistTrades = async (c: Challenge) => {
     if (selectedHistChallenge?.id === c.id) { setSelectedHistChallenge(null); setHistTrades([]); return; }
@@ -571,31 +437,10 @@ export default function DashboardClient({ user }: { user: User }) {
 
   const activeChallenges = allChallenges.filter(c => c.status === "active" || c.status === "funded");
 
-  const effectiveBalance = challenge ? (challenge.status === "failed" && challenge.breach_equity != null ? challenge.breach_equity : challenge.balance) : 0;
-  const profitAmount = challenge ? effectiveBalance - challenge.start_balance : 0;
-  const profitPct = challenge ? ((profitAmount / challenge.start_balance) * 100).toFixed(2) : "0";
-  const targetAmount = challenge ? challenge.start_balance * (1 + challenge.profit_target / 100) : 0;
-  const targetPct = challenge ? Math.min(((profitAmount / (targetAmount - challenge.start_balance)) * 100), 100).toFixed(0) : "0";
-  // DD Jour : depuis l'ouverture du jour (22h reset). Si daily_start_balance = start_balance
-  // (valeur perimee ancienne code), on prend la balance actuelle comme reference => 0% si pas de trade
-  const _b   = challenge?.balance ?? 0;
-  const _sb  = challenge?.start_balance ?? _b;
-  const _dS  = challenge?.daily_start_balance ?? null;
-  const _dL  = challenge?.daily_low_equity ?? _b;
-  // Stale 1: ancien code EOD (daily_start ≈ start_balance) → utiliser balance
-  const _stale1 = _dS !== null && Math.abs(_dS - _sb) < 1;
-  const _periodStart = (_dS !== null && !_stale1) ? _dS : _b;
-  const _periodLow   = _stale1 ? _b : (_dL >= _b - _sb * 0.015 ? _dL : _b);
-  // Pour un breach daily_drawdown confirmé, afficher breach_value directement (évite les écarts de calcul)
-  const dailyDrawdownPct = (challenge?.status === "failed" && challenge?.breach_reason === "daily_drawdown" && challenge?.breach_value != null)
-    ? challenge.breach_value
-    : (_periodStart > 0 ? Math.max(0, (_periodStart - _periodLow) / _periodStart * 100) : 0);
-  const is1StepChallenge = challenge?.model?.toLowerCase().replace(/[\s-]/g,"").includes("1step") ?? false;
-  const highestBalance = challenge?.highest_balance ?? challenge?.start_balance ?? 0;
-  const totalDrawdownRaw = challenge
-    ? ((challenge.start_balance - effectiveBalance) / challenge.start_balance) * 100
+  const effectiveBalance = challenge
+    ? (challenge.status === "failed" && challenge.breach_equity != null ? challenge.breach_equity : challenge.balance)
     : 0;
-  const totalDrawdownPct = Math.max(0, totalDrawdownRaw).toFixed(2);
+  const profitAmount = challenge ? effectiveBalance - challenge.start_balance : 0;
 
   return (
     <div style={{ minHeight: "100vh", background: "#000000", fontFamily: "var(--font-outfit), 'Outfit', sans-serif" }}>
@@ -618,7 +463,6 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <FileText size={16} />, label: T.dash.invoices, tab: "invoices" },
               { icon: <BookOpen size={16} />, label: T.dash.rules, tab: "rules" },
               { icon: <Users size={16} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
-              { icon: <HelpCircle size={16} />, label: isFr ? "Support" : "Support", tab: "support" },
               { icon: <UserIcon size={16} />, label: T.dash.profile, tab: "profile" },
               { icon: <Settings size={16} />, label: T.dash.settings, tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -677,7 +521,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {isMobile && (
         <>
           <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#050505", borderBottom: "1px solid rgba(255,255,255,0.08)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
-            <a href="/"><img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 36, height: 36, objectFit: "contain" }} /></a>
+            <Link href="/"><img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 36, height: 36, objectFit: "contain" }} /></Link>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD" }}>
               {([
                 { tab: "dashboard", label: T.dash.dashboard },
@@ -720,7 +564,6 @@ export default function DashboardClient({ user }: { user: User }) {
                 { icon: <FileText size={20} />, label: T.dash.invoices, tab: "invoices" },
                 { icon: <BookOpen size={20} />, label: T.dash.rules, tab: "rules" },
                 { icon: <Users size={20} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
-                { icon: <HelpCircle size={20} />, label: isFr ? "Support" : "Support", tab: "support" },
                 { icon: <UserIcon size={20} />, label: T.dash.profile, tab: "profile" },
                 { icon: <Settings size={20} />, label: T.dash.settings, tab: "settings" },
               ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -1442,8 +1285,6 @@ export default function DashboardClient({ user }: { user: User }) {
               const lastName = profileLastName || challenge?.client_last_name || "";
               const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
               const challengeDate = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
-              const payoutDate = latestPayout ? new Date(latestPayout.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
-              const payoutAmount = latestPayout ? `$${Number(latestPayout.amount).toLocaleString()}` : "$0";
 
               const phase = challenge?.phase || "phase1";
               const unlockedPhase1 = phase === "phase2" || phase === "funded";
@@ -1585,10 +1426,10 @@ export default function DashboardClient({ user }: { user: User }) {
                 <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.dash.challengesSub}</p>
               </div>
               <div className="dash-new-challenges">
-                <a href="/#pricing" className="dash-trader-btn">
+                <Link href="/#pricing" className="dash-trader-btn">
                   <span className="dash-trader-label">+ Nouveau</span>
                   <span className="dash-trader-badge">TRADER</span>
-                </a>
+                </Link>
                 {/* ALGO masqué */}
               </div>
             </div>
@@ -1698,377 +1539,26 @@ export default function DashboardClient({ user }: { user: User }) {
             <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{T.dash.noChallengeTitle}</h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
             <div className="dash-new-challenges">
-              <a href="/#pricing" className="dash-trader-btn">
+              <Link href="/#pricing" className="dash-trader-btn">
                 <span className="dash-trader-label">Challenge</span>
                 <span className="dash-trader-badge">TRADER</span>
-              </a>
+              </Link>
               {/* ALGO masqué */}
             </div>
           </div>
         ) : (activeTab === "dashboard") && challenge && (
-          <>
-            {/* Challenge selector if multiple — failed exclus */}
-            {activeChallenges.length > 1 && (
-              <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
-                {activeChallenges.map(c => (
-                  <button key={c.id} onClick={() => setChallenge(c)} style={{
-                    padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                    border: challenge.id === c.id ? "1.5px solid #69C5FD" : "1.5px solid #333",
-                    backgroundColor: challenge.id === c.id ? "rgba(105, 197, 253,0.12)" : "transparent",
-                    color: challenge.id === c.id ? "#69C5FD" : "rgba(255,255,255,0.45)",
-                    transition: "all 0.15s",
-                  }}>
-                    {c.account_size} · {c.model === "vip" ? "ALGO" : c.model === "2step" ? "2-Step" : "1-Step"}
-                  </button>
-                ))}
-              </div>
-            )}
-            {/* Loyalty banner */}
-            {allChallenges.length >= 1 && (
-              <>
-                <div style={{ backgroundColor: "rgba(105, 197, 253,0.08)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 12, padding: "10px 14px", marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
-                  <span style={{ fontSize: 18, flexShrink: 0 }}>🎖️</span>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ color: "#FFFFFF", fontWeight: 700, fontSize: 12 }}>
-                      {isFr ? "Remise fidélité −20% à vie" : "Loyalty discount −20%"}
-                    </div>
-                    {!isMobile && (
-                      <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>
-                        {isFr ? "Appliquée automatiquement (hors promo en cours)" : "Auto-applied on future challenges"}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Header */}
-            <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "stretch" : "flex-start", gap: isMobile ? 12 : 0, marginBottom: 24 }}>
-              <div>
-                <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{challenge.model === "vip" ? "Mon Challenge ALGO" : T.dash.myChallenge}</h1>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                  <span style={{ backgroundColor: "rgba(201,168,76,0.15)", color: "#69C5FD", fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "1px" }}>
-                    {PHASE_LABELS[challenge.phase] || challenge.phase} — {challenge.account_size}
-                  </span>
-                  <span style={{ backgroundColor: `${STATUS_COLORS[challenge.status]}20`, color: STATUS_COLORS[challenge.status] || "#888", fontSize: 12, fontWeight: 600, padding: "4px 12px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: STATUS_COLORS[challenge.status] || "#888", display: "inline-block" }} />
-                    {challenge.status === "funded" ? "Reward" : challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
-                  </span>
-                </div>
-              </div>
-              <div className="dash-new-challenges">
-                <a href="/#pricing" className="dash-trader-btn">
-                  <span className="dash-trader-label">+ Nouveau</span>
-                  <span className="dash-trader-badge">TRADER</span>
-                </a>
-                {/* ALGO masqué */}
-              </div>
-            </div>
-
-            {/* Phase Banner */}
-            {challenge.phase === "phase2" && (
-              <div style={{ backgroundColor: "rgba(201,168,76,0.08)", border: "1px solid rgba(201,168,76,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={18} color="#69C5FD" style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: 14 }}>
-                  <span style={{ color: "#69C5FD", fontWeight: 700 }}>{T.dash.phase1PassedMsg} </span>
-                  <span style={{ color: "rgba(255,255,255,0.45)" }}>{T.dash.phase2Msg}</span>
-                </span>
-              </div>
-            )}
-            {challenge.phase === "funded" && (
-              <div style={{ backgroundColor: "rgba(105, 197, 253,0.08)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
-                <Trophy size={18} color="#69C5FD" style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: 14 }}>
-                  <span style={{ color: "#69C5FD", fontWeight: 700 }}>{T.dash.congratulations} </span>
-                  <span style={{ color: "rgba(255,255,255,0.45)" }}>{T.dash.fundedMsg}</span>
-                </span>
-              </div>
-            )}
-            {challenge.status === "failed" && (
-              <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.35)", borderRadius: 12, padding: "16px 20px", marginBottom: 20 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: challenge.breach_reason ? 10 : 0 }}>
-                  <AlertTriangle size={16} color="#ef4444" />
-                  <span style={{ color: "#ef4444", fontWeight: 700, fontSize: 14 }}>
-                    {isFr ? "Challenge échoué — compte désactivé" : "Challenge failed — account disabled"}
-                  </span>
-                </div>
-                {challenge.breach_reason && (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                    <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
-                      <span style={{ color: "rgba(255,255,255,0.45)" }}>{isFr ? "Raison : " : "Reason: "}</span>
-                      <span style={{ color: "#ef4444", fontWeight: 700 }}>
-                        {challenge.breach_reason === "daily_drawdown"
-                          ? (isFr ? "Drawdown journalier dépassé" : "Daily drawdown breached")
-                          : (isFr ? "Drawdown total dépassé" : "Total drawdown breached")}
-                      </span>
-                    </div>
-                    {challenge.breach_value != null && (
-                      <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
-                        <span style={{ color: "rgba(255,255,255,0.45)" }}>{isFr ? "Valeur atteinte : " : "Value reached: "}</span>
-                        <span style={{ color: "#ef4444", fontWeight: 700 }}>{challenge.breach_value.toFixed(2)}%</span>
-                        <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginLeft: 6 }}>
-                          (limite : {challenge.breach_reason === "daily_drawdown" ? challenge.daily_drawdown_limit : challenge.total_drawdown_limit}%)
-                        </span>
-                      </div>
-                    )}
-                    {challenge.breach_at && (
-                      <div style={{ backgroundColor: "rgba(239,68,68,0.12)", borderRadius: 8, padding: "8px 14px", fontSize: 13 }}>
-                        <span style={{ color: "rgba(255,255,255,0.45)" }}>{isFr ? "Déclenché le : " : "Triggered on: "}</span>
-                        <span style={{ color: "#fff", fontWeight: 600 }}>
-                          {new Date(challenge.breach_at).toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* TOP 2-column layout */}
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 10, alignItems: "start", marginBottom: 10 }}>
-
-              {/* LEFT: Balance + Account + Download */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-
-                {/* Balance card */}
-                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: "1.5px", marginBottom: 6 }}>{T.dash.balance}</div>
-                  <div style={{ fontSize: 38, fontWeight: 900, letterSpacing: "-1px", marginBottom: 4 }}>
-                    ${effectiveBalance.toLocaleString()}
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 700, color: profitAmount >= 0 ? "#69C5FD" : "#ef4444" }}>
-                    {profitAmount >= 0 ? "+" : ""}${profitAmount.toLocaleString()} ({profitAmount >= 0 ? "+" : ""}{profitPct}%)
-                  </div>
-                </div>
-
-                {/* Trading account */}
-                {!challenge.mt5_login ? (
-                  <div style={{ backgroundColor: "rgba(201,168,76,0.05)", border: "1px solid rgba(201,168,76,0.2)", borderRadius: 14, padding: "16px 20px" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-                      <Clock size={16} color="#69C5FD" />
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>{T.dash.accountPending}</div>
-                    </div>
-                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{T.dash.accountPendingMsg}</div>
-                  </div>
-                ) : (
-                  <div style={{ backgroundColor: "rgba(105, 197, 253,0.06)", border: "1px solid rgba(105, 197, 253,0.25)", borderRadius: 14, padding: "16px 20px" }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: "#69C5FD", display: "flex", alignItems: "center", gap: 8 }}>
-                      <CheckCircle size={14} /> {T.dash.accountReady}
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                      {[
-                        { label: T.dash.platform, value: "MetaTrader 5", copy: false },
-                        { label: "Login", value: String(challenge.mt5_login), copy: true },
-                        { label: T.dash.password, value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) || "—", copy: true },
-                        { label: T.dash.server, value: challenge.mt5_server || "—", copy: true },
-                      ].map((item, i) => (
-                        <div key={i} onClick={() => item.copy && navigator.clipboard.writeText(item.value)} style={{ backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 14px", cursor: item.copy ? "pointer" : "default" }} title={item.copy ? "Cliquer pour copier" : ""}>
-                          <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 3 }}>{item.label}{item.copy && <span style={{ marginLeft: 4, opacity: 0.5 }}>⎘</span>}</div>
-                          <div style={{ fontSize: 13, fontWeight: 400, fontFamily: "monospace", color: "#FFFFFF", wordBreak: "break-all" }}>{item.value}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Download platforms */}
-                <div style={{ backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 20, padding: "16px 20px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 3 }}>
-                    <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover" }} />
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</div>
-                  </div>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginBottom: 12 }}>{T.dash.downloadSub}</div>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                    {[
-                      { label: "🖥 Windows", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
-                      { label: "🍎 Mac", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
-                      { label: "📱 iPhone / iPad", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
-                      { label: "🤖 Android", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
-                    ].map((item, i) => (
-                      <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
-                        style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#FFFFFF", fontWeight: 600, padding: "9px 14px", borderRadius: 8, textDecoration: "none", fontSize: 12, border: "1px solid rgba(255,255,255,0.1)", display: "inline-block" }}>
-                        {item.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-              {/* RIGHT: Rules checklist */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-
-                {/* Rules checklist */}
-                <div className="card" style={{ padding: 24, border: "1.5px solid rgba(255,255,255,0.18)" }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, color: "#FFFFFF" }}>{T.dash.rulesStatus}</div>
-                  {(() => {
-                    const b = challenge.start_balance;
-                    const profitUSD  = Math.round(b * challenge.profit_target / 100);
-                    const dailyUSD   = Math.round(b * challenge.daily_drawdown_limit / 100);
-                    const totalUSD   = Math.round(b * challenge.total_drawdown_limit / 100);
-                    const rules = [
-                      ...(challenge.phase !== "funded" ? [{
-                        label: T.dash.profitTarget,
-                        pct: `${challenge.profit_target}%`,
-                        usd: `+$${profitUSD.toLocaleString()}`,
-                        usdColor: "#69C5FD",
-                        ok: parseFloat(profitPct) >= challenge.profit_target,
-                        status: parseFloat(profitPct) >= challenge.profit_target ? T.dash.passed : `${profitPct}% / ${challenge.profit_target}%`,
-                      }] : []),
-                      {
-                        label: `Min. ${T.dash.tradingDays}`,
-                        pct: challenge.phase === "funded" ? "15 jours" : "5 jours",
-                        usd: null,
-                        usdColor: "#fff",
-                        ok: challenge.phase === "funded" ? challenge.trading_days >= 7 : challenge.trading_days >= 5,
-                        status: challenge.phase === "funded"
-                          ? (challenge.trading_days >= 7 ? T.dash.passed : `${challenge.trading_days} / 7`)
-                          : (challenge.trading_days >= 5 ? T.dash.passed : `${challenge.trading_days} / 5`),
-                      },
-                      {
-                        label: T.dash.dailyDrawdown,
-                        pct: `${challenge.daily_drawdown_limit}%`,
-                        usd: `-$${dailyUSD.toLocaleString()}`,
-                        usdColor: "rgba(255,255,255,0.45)",
-                        ok: dailyDrawdownPct < challenge.daily_drawdown_limit,
-                        violated: dailyDrawdownPct >= challenge.daily_drawdown_limit,
-                        isDrawdown: true,
-                        status: dailyDrawdownPct >= challenge.daily_drawdown_limit
-                          ? T.dash.violated
-                          : `-${dailyDrawdownPct.toFixed(2)}% / ${challenge.daily_drawdown_limit}%`,
-                      },
-                      {
-                        label: T.dash.totalDrawdown,
-                        pct: `${challenge.total_drawdown_limit}%`,
-                        usd: `-$${totalUSD.toLocaleString()}`,
-                        usdColor: "rgba(255,255,255,0.45)",
-                        ok: parseFloat(totalDrawdownPct) < challenge.total_drawdown_limit,
-                        violated: parseFloat(totalDrawdownPct) >= challenge.total_drawdown_limit,
-                        isDrawdown: true,
-                        status: parseFloat(totalDrawdownPct) >= challenge.total_drawdown_limit
-                          ? T.dash.violated
-                          : `-${totalDrawdownPct}% / ${challenge.total_drawdown_limit}%`,
-                      },
-                      ...(challenge.model === "1step" ? [
-                        (() => {
-                          const maxBestDay = b * challenge.profit_target / 100 * 0.5;
-                          const bestDay = challenge.best_day_profit ?? 0;
-                          const bestDayPct = b > 0 ? ((bestDay / b) * 100) : 0;
-                          const violated = bestDay > maxBestDay;
-                          return {
-                            label: isFr ? "Règle meilleur jour" : "Best day rule",
-                            pct: "≤ 50%",
-                            usd: `≤ $${Math.round(maxBestDay).toLocaleString()}`,
-                            usdColor: "#69C5FD",
-                            ok: !violated,
-                            violated,
-                            isDrawdown: false,
-                            status: bestDay === 0 ? "—" : violated ? T.dash.violated : `+${bestDayPct.toFixed(2)}% / ${(challenge.profit_target * 0.5).toFixed(1)}%`,
-                          };
-                        })(),
-                      ] : []),
-                    ];
-                    return rules.map((rule, i) => (
-                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < rules.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.ok ? "#69C5FD" : "#69C5FD", flexShrink: 0 }} />
-                          <div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{rule.label}</div>
-                            <div style={{ fontSize: 11, marginTop: 2, display: "flex", gap: 6 }}>
-                              <span style={{ color: "rgba(255,255,255,0.45)" }}>{rule.pct}</span>
-                              {rule.usd && <span style={{ color: rule.usdColor, fontWeight: 700 }}>{rule.usd}</span>}
-                            </div>
-                          </div>
-                        </div>
-                        <span style={{ color: (rule as {violated?: boolean}).violated ? "#ef4444" : rule.status === "—" ? "rgba(255,255,255,0.3)" : "#FFFFFF", fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", marginLeft: 8 }}>{rule.status}</span>
-                      </div>
-                    ));
-                  })()}
-                  {challenge.phase === "funded" && (() => {
-                    const dailyOk = dailyDrawdownPct < (challenge.daily_drawdown_limit ?? 5);
-                    const totalOk = parseFloat(totalDrawdownPct) < (challenge.total_drawdown_limit ?? 10);
-                    const daysOk = (challenge.trading_days ?? 0) >= 7;
-                    const canRequest = dailyOk && totalOk && daysOk && challenge.status !== "failed";
-                    return (
-                      <button
-                        onClick={() => canRequest && setActiveTab("payouts")}
-                        className="btn-primary"
-                        style={{ width: "100%", padding: "12px", fontSize: 13, marginTop: 14, opacity: canRequest ? 1 : 0.4, cursor: canRequest ? "pointer" : "not-allowed" }}
-                      >
-                        {T.dash.requestReward}
-                      </button>
-                    );
-                  })()}
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* Historique des positions MT5 */}
-            <div style={{ marginTop: 32 }}>
-              <h2 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16, color: "#FFFFFF" }}>
-                {isFr ? "Historique des positions" : "Trade history"}
-              </h2>
-              {tradeHistoryLoading ? (
-                <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 24, fontSize: 13 }}>
-                  {isFr ? "Chargement…" : "Loading…"}
-                </div>
-              ) : tradeHistory.length === 0 ? (
-                <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 24, fontSize: 13, backgroundColor: "#111111", borderRadius: 14, border: "1px solid rgba(255,255,255,0.07)" }}>
-                  {isFr ? "Aucune position trouvée" : "No trades found"}
-                </div>
-              ) : (
-                <div style={{ overflowX: "auto", borderRadius: 14, border: "1px solid rgba(255,255,255,0.08)", backgroundColor: "#111111" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-                    <thead>
-                      <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.02)" }}>
-                        {["Ticket", isFr ? "Symbole" : "Symbol", "Type", isFr ? "Volume" : "Volume", "Date", "Profit"].map(h => (
-                          <th key={h} style={{ padding: "10px 14px", textAlign: "left", fontWeight: 700, color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px", whiteSpace: "nowrap" }}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tradeHistory
-                        .filter((trade) => {
-                          const t = trade as Record<string, unknown>;
-                          const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
-                          return profit !== 0;
-                        })
-                        .map((trade, i, arr) => {
-                        const t = trade as Record<string, unknown>;
-                        const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
-                        const isBuy = String(t.type ?? t.action ?? "").toLowerCase().includes("buy") || t.type === 0 || t.action === 0;
-                        const closeTime = t.close_time ?? t.time_close ?? t.closed_at ?? "";
-                        const closeDate = closeTime ? new Date(typeof closeTime === "number" ? closeTime * 1000 : String(closeTime)).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
-                        const dealTime = t.time ?? t.open_time ?? t.created_at ?? "";
-                        const dealDate = dealTime ? new Date(typeof dealTime === "number" ? dealTime * 1000 : String(dealTime)).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "—";
-                        return (
-                          <tr key={i} style={{ borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none", transition: "background 0.1s" }}
-                            onMouseEnter={e => (e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.02)")}
-                            onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}>
-                            <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.45)", fontFamily: "monospace" }}>{String(t.ticket ?? t.deal ?? t.id ?? i + 1)}</td>
-                            <td style={{ padding: "10px 14px", fontWeight: 700 }}>{String(t.symbol ?? "—")}</td>
-                            <td style={{ padding: "10px 14px" }}>
-                              <span style={{ backgroundColor: isBuy ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", color: isBuy ? "#16a34a" : "#ef4444", fontWeight: 700, padding: "2px 8px", borderRadius: 6, fontSize: 11 }}>
-                                {isBuy ? "BUY" : "SELL"}
-                              </span>
-                            </td>
-                            <td style={{ padding: "10px 14px" }}>{typeof t.volume === "number" ? (t.volume / 10000).toFixed(2) : String(t.lots ?? "—")}</td>
-                            <td style={{ padding: "10px 14px", color: "rgba(255,255,255,0.45)", fontSize: 12 }}>{dealDate}</td>
-                            <td style={{ padding: "10px 14px", fontWeight: 700, color: profit >= 0 ? "#16a34a" : "#ef4444" }}>
-                              {profit >= 0 ? "+" : ""}{profit.toFixed(2)} $
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-
-          </>
+          <TraderCockpit
+            challenge={challenge}
+            activeChallenges={activeChallenges}
+            allChallengesCount={allChallenges.length}
+            tradeHistory={tradeHistory}
+            tradeHistoryLoading={tradeHistoryLoading}
+            isFr={isFr}
+            isMobile={isMobile}
+            kycStatus={kycStatus}
+            onSelectChallenge={selected => setChallenge(selected as Challenge)}
+            onNavigate={tab => setActiveTab(tab)}
+          />
         )}
       </div>
 

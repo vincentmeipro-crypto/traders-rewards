@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendFundedEmail, sendFailedEmail, sendWelcomeEmail, sendPhase1CertificateEmail, sendChallengeCertificateEmail, sendPhase2Email } from "@/lib/mailer";
 import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName, addMT5Balance, withdrawMT5Balance, enableMT5Account } from "@/lib/mt5";
 import { checkAdmin } from "@/lib/admin-auth";
+import { buildRewardReview, type RewardReviewData } from "@/lib/reward-review";
 
 async function autoTransitionPhase(challenge: Record<string, unknown>) {
   const admin = createAdminClient();
@@ -50,12 +51,37 @@ export async function GET(req: NextRequest) {
   const { data: profiles } = await admin.from("profiles").select("*");
   const profileMap = Object.fromEntries((profiles || []).map(p => [p.user_id, p]));
 
+  const reviewMap: Record<string, RewardReviewData> = {};
+  if (req.nextUrl.searchParams.get("include") === "review") {
+    const [{ data: riskRows }, { data: storedTrades }] = await Promise.all([
+      admin.from("trade_risk_snapshots").select("*").order("first_seen_at", { ascending: false }).limit(5000),
+      admin.from("trade_history").select("*").order("closed_at", { ascending: false }).limit(10000),
+    ]);
+    const risksByChallenge = new Map<string, Record<string, unknown>[]>();
+    const tradesByChallenge = new Map<string, Record<string, unknown>[]>();
+    (riskRows ?? []).forEach(row => risksByChallenge.set(row.challenge_id, [...(risksByChallenge.get(row.challenge_id) ?? []), row]));
+    (storedTrades ?? []).forEach(row => tradesByChallenge.set(row.challenge_id, [...(tradesByChallenge.get(row.challenge_id) ?? []), row]));
+
+    for (const challenge of challenges ?? []) {
+      const review = buildRewardReview({
+        challenge,
+        liveHistory: [],
+        storedHistory: tradesByChallenge.get(challenge.id) ?? [],
+        storedRisks: risksByChallenge.get(challenge.id) ?? [],
+        kycStatus: profileMap[challenge.user_id]?.kyc_status ?? "not_submitted",
+      });
+      const cachedPerformance = challenge.trade_metrics as RewardReviewData["performance"] | null;
+      if (cachedPerformance && typeof cachedPerformance.trades === "number") review.performance = cachedPerformance;
+      reviewMap[challenge.id] = review;
+    }
+  }
   const result = (challenges || []).map(c => ({
     ...c,
     user_email: userMap[c.user_id] || "-",
     client_first_name: profileMap[c.user_id]?.first_name || "",
     client_last_name: profileMap[c.user_id]?.last_name || "",
     client_phone: profileMap[c.user_id]?.phone || "",
+    ...(reviewMap[c.id] ? { reward_review: reviewMap[c.id] } : {}),
   }));
 
   return NextResponse.json(result);
@@ -157,11 +183,10 @@ export async function POST(req: NextRequest) {
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const finalSetupLink = setupLink || `https://www.traders-rewards.eu/reset-password`;
-  const certDate = new Date().toLocaleDateString("fr-FR");
   try {
     if (isReward) {
       await sendFundedEmail(userEmail, accountSize, mt5Login && mt5Password && mt5Server ? { login: mt5Login, password: mt5Password, server: mt5Server } : undefined, finalSetupLink, model);
-      // sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, certDate);
+      // sendChallengeCertificateEmail(userEmail, firstName, lastName, accountSize, new Date().toLocaleDateString("fr-FR"));
     } else {
       await sendWelcomeEmail(
         userEmail, accountSize, model,

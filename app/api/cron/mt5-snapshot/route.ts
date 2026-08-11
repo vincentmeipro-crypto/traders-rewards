@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getMT5Account, getMT5Positions, getMT5History, changeMT5Group, disableMT5Account, updateMT5AccountName } from "@/lib/mt5";
 import { sendFailedEmail } from "@/lib/mailer";
+import { syncTradeRiskSnapshots } from "@/lib/trade-risk-store";
+import { summarizeTradeHistory } from "@/lib/trade-performance";
 
 // Vercel Cron — toutes les minutes
 // Double vérification : equity temps réel + historique deals du jour
@@ -17,7 +19,7 @@ export async function GET(req: NextRequest) {
     .from("challenges")
     .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, daily_low_equity, last_synced_at")
     .not("mt5_login", "is", null)
-    .in("status", ["active"]);
+    .in("status", ["active", "funded"]);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   if (!challenges?.length) return NextResponse.json({ synced: 0, breaches: 0 });
@@ -67,6 +69,13 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
+      await syncTradeRiskSnapshots({
+        admin,
+        challengeId: challenge.id,
+        mt5Login: challenge.mt5_login,
+        accountEquity: equity,
+        positions,
+      }).catch(error => console.error(`[${challenge.mt5_login}] risk snapshot failed:`, error));
       const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
       const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
       const curBalance       = account.balance ?? startBalance;
@@ -154,6 +163,7 @@ export async function GET(req: NextRequest) {
       if (!breachReason) {
         try {
           const history = prefetchedHistory ?? await getMT5History(challenge.mt5_login) as Record<string, unknown>[];
+          prefetchedHistory = history;
           const todayMs = new Date().setHours(0, 0, 0, 0);
 
           const todayDeals = history
@@ -224,6 +234,18 @@ export async function GET(req: NextRequest) {
         ...(effectiveNewDay && { daily_start_balance: curBalance }),
       }).eq("id", challenge.id);
 
+      // Le cache de performance dépend de la migration 20260811. On le met à
+      // jour séparément afin qu'une colonne absente ne bloque jamais le snapshot principal.
+      if (prefetchedHistory) {
+        const { error: metricsError } = await admin.from("challenges").update({
+          trade_metrics: summarizeTradeHistory(prefetchedHistory),
+          trade_metrics_synced_at: new Date().toISOString(),
+        }).eq("id", challenge.id);
+
+        if (metricsError && !["42703", "PGRST204"].includes(metricsError.code ?? "")) {
+          console.warn(`[${challenge.mt5_login}] trade metrics cache failed:`, metricsError.message);
+        }
+      }
       await admin.from("mt5_snapshots").insert({
         challenge_id:    challenge.id,
         mt5_login:       challenge.mt5_login,
