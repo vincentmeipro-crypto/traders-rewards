@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 // ─── Promo ────────────────────────────────────────────────────────
@@ -36,6 +36,10 @@ export default function Pricing() {
   const [isShortScreen,setIsShortScreen]= useState(false);       // ≥900px & viewport-height < 820px
   const [hovIdx,       setHovIdx]       = useState<number | null>(null);
   const [dbPrices,     setDbPrices]     = useState<Record<string, number>>({});
+  const [slideDir,     setSlideDir]     = useState<"left" | "right" | null>(null);
+  const [animKey,      setAnimKey]      = useState(0);
+  const swipeRef  = useRef<HTMLDivElement>(null);
+  const selIdxRef = useRef(selIdx); // toujours sync avec selIdx via effect
 
   useEffect(() => {
     const check = () => {
@@ -61,6 +65,41 @@ export default function Pricing() {
       .catch(() => {});
   }, []);
 
+  // ─── Sync ref selIdx (évite closure stale dans l'effet touch) ─────
+  useEffect(() => { selIdxRef.current = selIdx; }, [selIdx]);
+
+  // ─── Touch swipe — mobile uniquement, listeners non-passifs ───────
+  useEffect(() => {
+    const el = swipeRef.current;
+    if (!el || !isMobile) return;
+    let sx = 0, sy = 0, horiz = false;
+    const onStart = (e: TouchEvent) => {
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY; horiz = false;
+    };
+    const onMove = (e: TouchEvent) => {
+      const dx = e.touches[0].clientX - sx;
+      const dy = e.touches[0].clientY - sy;
+      if (!horiz && Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 10) horiz = true;
+      if (horiz) e.preventDefault(); // bloque le scroll vertical quand mouvement horiz dominant
+    };
+    const onEnd = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - sx;
+      const dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dy) >= Math.abs(dx)) return; // vertical dominant → scroll normal
+      const cur = selIdxRef.current;
+      if      (dx < -45 && cur < ACCOUNTS.length - 1) { setSlideDir("left");  setAnimKey(k => k + 1); setSelIdx(cur + 1); }
+      else if (dx >  45 && cur > 0)                   { setSlideDir("right"); setAnimKey(k => k + 1); setSelIdx(cur - 1); }
+    };
+    el.addEventListener("touchstart", onStart, { passive: true });
+    el.addEventListener("touchmove",  onMove,  { passive: false }); // non-passif obligatoire
+    el.addEventListener("touchend",   onEnd,   { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onStart);
+      el.removeEventListener("touchmove",  onMove);
+      el.removeEventListener("touchend",   onEnd);
+    };
+  }, [isMobile]);
+
   // ─── Prix (DB first, fallback hardcodé) — AUCUNE MODIFICATION ────
   const getPrice = (acc: Acc): string => {
     const c = dbPrices[`${acc.id}-${model}`];
@@ -71,6 +110,14 @@ export default function Pricing() {
     const c = dbPrices[`${acc.id}-${model}`];
     if (c) return `€${Math.round(c * (100 - PROMO_PCT) / 100 / 100)}`;
     return model === "2step" ? acc.promo2 : acc.promo1;
+  };
+
+  // ─── Navigation avec animation (boutons + swipe partagent le même état) ──
+  const goToIdx = (newIdx: number) => {
+    if (newIdx === selIdx) return;
+    setSlideDir(newIdx > selIdx ? "left" : "right");
+    setAnimKey(k => k + 1);
+    setSelIdx(newIdx);
   };
 
   // ─── Lignes de règles — AUCUNE MODIFICATION ───────────────────────
@@ -384,6 +431,16 @@ export default function Pricing() {
             border-color: rgba(255,255,255,0.10);
           }
         }
+        @keyframes ch-from-right {
+          from { transform: translateX(62px); opacity: 0.25; }
+          to   { transform: translateX(0);    opacity: 1;    }
+        }
+        @keyframes ch-from-left {
+          from { transform: translateX(-62px); opacity: 0.25; }
+          to   { transform: translateX(0);     opacity: 1;    }
+        }
+        .ch-enter-from-right { animation: ch-from-right 270ms ease-out both; }
+        .ch-enter-from-left  { animation: ch-from-left  270ms ease-out both; }
       `}</style>
 
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
@@ -586,7 +643,7 @@ export default function Pricing() {
                 return (
                   <button
                     key={acc.id}
-                    onClick={() => setSelIdx(i)}
+                    onClick={() => goToIdx(i)}
                     style={{
                       flex: "1 1 0", padding: "13px 0",
                       borderRadius: 28,
@@ -604,8 +661,27 @@ export default function Pricing() {
                 );
               })}
             </div>
-            <div style={{ width: "calc(100% - 40px)", maxWidth: 390, marginInline: "auto" }}>
-              {renderCard(ACCOUNTS[selIdx], selIdx, true)}
+            {/* Hint swipe — discret, disparaît visuellement après la première interaction */}
+            <div aria-hidden="true" style={{
+              textAlign: "center", marginBottom: 10,
+              fontSize: 9, fontWeight: 500,
+              color: "rgba(255,255,255,0.20)", letterSpacing: "0.8px",
+              userSelect: "none",
+            }}>
+              {'‹'}&nbsp;{L("Glissez pour changer","Desliza para cambiar","Swipe to switch")}&nbsp;{'›'}
+            </div>
+
+            {/* Wrapper swipe — reçoit les touch events + animation par key */}
+            <div ref={swipeRef} style={{ width: "calc(100% - 40px)", maxWidth: 390, marginInline: "auto" }}>
+              <div
+                key={animKey}
+                className={
+                  slideDir === "left"  ? "ch-enter-from-right" :
+                  slideDir === "right" ? "ch-enter-from-left"  : ""
+                }
+              >
+                {renderCard(ACCOUNTS[selIdx], selIdx, true)}
+              </div>
             </div>
           </>
         )}
