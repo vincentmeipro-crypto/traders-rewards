@@ -181,20 +181,20 @@ export default function Pricing() {
 
         {/* ── En-tête : taille de compte ── */}
         <div style={{
-          padding: V("26px 24px 14px", "12px 18px 8px", "16px 20px 10px"),
+          padding: V("18px 18px 10px", "12px 18px 8px", "16px 20px 10px"),
           borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}>
           <div style={{
             fontSize: 9, fontWeight: 700,
             color: "rgba(255,255,255,0.32)",
             letterSpacing: "2.8px", textTransform: "uppercase",
-            marginBottom: V(8, 4, 5),
+            marginBottom: V(4, 4, 5),
           }}>
             {L("Compte","Cuenta","Account")}
           </div>
           <div style={{ display: "flex", alignItems: "baseline", gap: V(10, 6, 8), flexWrap: "wrap" }}>
             <span style={{
-              fontSize: V(40, 23, 26), fontWeight: 900, color: "#FFFFFF",
+              fontSize: V(30, 23, 26), fontWeight: 900, color: "#FFFFFF",
               letterSpacing: "-2px", lineHeight: 1,
             }}>
               {acc.label}
@@ -207,11 +207,11 @@ export default function Pricing() {
 
         {/* ── Prix + CTA ── */}
         <div style={{
-          padding: V("14px 24px 14px", "8px 18px 8px", "10px 20px 10px"),
+          padding: V("10px 18px 8px", "8px 18px 8px", "10px 20px 10px"),
           borderBottom: "1px solid rgba(255,255,255,0.06)",
         }}>
           {PROMO_ACTIVE ? (
-            <div style={{ marginBottom: V(12, 6, 8) }}>
+            <div style={{ marginBottom: V(6, 6, 8) }}>
               <div style={{
                 fontSize: V(13, 11, 12), fontWeight: 700,
                 color: "rgba(255,255,255,0.32)",
@@ -221,16 +221,16 @@ export default function Pricing() {
                 marginBottom: 3,
               }}>{price}</div>
               <div style={{
-                fontSize: V(34, 20, 22), fontWeight: 900,
+                fontSize: V(24, 20, 22), fontWeight: 900,
                 color: "#f97316", letterSpacing: "-1px",
                 textShadow: "0 0 20px rgba(249,115,22,0.38)",
               }}>{promoPrice}</div>
             </div>
           ) : (
             <div style={{
-              fontSize: V(34, 20, 22), fontWeight: 900,
+              fontSize: V(24, 20, 22), fontWeight: 900,
               color: "#FFFFFF", letterSpacing: "-1px",
-              marginBottom: V(12, 6, 8),
+              marginBottom: V(6, 6, 8),
             }}>{price}</div>
           )}
 
@@ -240,7 +240,7 @@ export default function Pricing() {
             className="ch-cta"
             style={{
               display: "block", textAlign: "center",
-              padding: V("14px 16px", "8px 12px", "10px 14px"),
+              padding: V("11px 14px", "8px 12px", "10px 14px"),
               borderRadius: 10, fontSize: V(11, 10, 11), fontWeight: 800,
               letterSpacing: "1.5px", textTransform: "uppercase",
               textDecoration: "none",
@@ -254,22 +254,22 @@ export default function Pricing() {
           <div style={{
             textAlign: "center", fontSize: 9,
             color: "rgba(255,255,255,0.22)",
-            marginTop: V(6, 3, 4), fontWeight: 500,
+            marginTop: V(3, 3, 4), fontWeight: 500,
           }}>
             {L("Frais unique · non remboursable","Cargo único","One-time fee")}
           </div>
         </div>
 
         {/* ── Règles ── */}
-        <div style={{ padding: V("12px 24px 14px", "6px 18px 8px", "8px 20px 10px") }}>
+        <div style={{ padding: V("10px 18px 10px", "6px 18px 8px", "8px 20px 10px") }}>
           {rows.map((row, ri) => {
             if (row.isPhaseHeader) {
               return (
                 <div key={`ph-${ri}`} style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: ri === 0
-                    ? V("6px 0 6px", "4px 0 4px", "6px 0 6px")
-                    : V("12px 0 6px", "8px 0 4px", "12px 0 6px"),
+                    ? V("3px 0 3px", "4px 0 4px", "6px 0 6px")
+                    : V("6px 0 3px", "8px 0 4px", "12px 0 6px"),
                 }}>
                   <div style={{ height: 1, flex: 1, background: "rgba(105,197,253,0.18)" }} />
                   <span style={{
@@ -284,7 +284,7 @@ export default function Pricing() {
             return (
               <div key={ri} style={{
                 display: "flex", justifyContent: "space-between", alignItems: "center",
-                padding: V("7px 0", "3px 0", "4px 0"),
+                padding: V("5px 0", "3px 0", "4px 0"),
                 borderBottom: (ri < rows.length - 1 && !nextIsHeader)
                   ? "1px solid rgba(255,255,255,0.055)" : "none",
               }}>
@@ -304,11 +304,11 @@ export default function Pricing() {
 
         {/* ── Récompense moyenne ── */}
         <div style={{
-          margin: V("0 24px 18px", "0 18px 10px", "0 20px 12px"),
+          margin: V("0 18px 10px", "0 18px 10px", "0 20px 12px"),
           background: "rgba(105,197,253,0.055)",
           border: "1px solid rgba(105,197,253,0.14)",
           borderRadius: 10,
-          padding: V("10px 14px", "5px 10px", "7px 12px"),
+          padding: V("6px 12px", "5px 10px", "7px 12px"),
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
           <span style={{ fontSize: V(10, 9, 10), color: "rgba(255,255,255,0.40)", fontWeight: 500 }}>
@@ -579,7 +579,7 @@ export default function Pricing() {
             <div
               role="group"
               aria-label={L("Taille du compte","Tamaño de cuenta","Account size")}
-              style={{ display: "flex", gap: 8, marginBottom: 32 }}
+              style={{ display: "flex", gap: 8, marginBottom: 20 }}
             >
               {ACCOUNTS.map((acc, i) => {
                 const on = selIdx === i;
@@ -604,7 +604,9 @@ export default function Pricing() {
                 );
               })}
             </div>
-            {renderCard(ACCOUNTS[selIdx], selIdx, true)}
+            <div style={{ width: "calc(100% - 40px)", maxWidth: 390, marginInline: "auto" }}>
+              {renderCard(ACCOUNTS[selIdx], selIdx, true)}
+            </div>
           </>
         )}
 
