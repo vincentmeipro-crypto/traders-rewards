@@ -36,10 +36,10 @@ export default function Hero() {
       : "Educational program · Rewarded traders";
 
   const line1 = isFr
-    ? <><span>Transformez votre trading </span><span style={{ color: "#5DC241" }}>démo</span></>
+    ? <><span>Transformez votre trading </span><span style={{ color: "#69C5FD" }}>démo</span></>
     : isEs
-      ? <><span>Transforma tu trading </span><span style={{ color: "#5DC241" }}>demo</span></>
-      : <><span>Turn your trading </span><span style={{ color: "#5DC241" }}>skills</span></>;
+      ? <><span>Transforma tu trading </span><span style={{ color: "#69C5FD" }}>demo</span></>
+      : <><span>Turn your trading </span><span style={{ color: "#69C5FD" }}>skills</span></>;
 
   // Ligne 2 dominante — 2 mots pour le saut de ligne desktop
   const [line2a, line2b] = isFr
