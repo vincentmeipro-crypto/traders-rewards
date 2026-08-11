@@ -66,6 +66,7 @@ export default function PromotionsPage() {
   const [deleteConfirmId, setDelConfId] = useState<string | null>(null);
   const [toggling, setToggling]         = useState<string | null>(null);
   const [deleting, setDeleting]         = useState<string | null>(null);
+  const [copiedId, setCopiedId]         = useState<string | null>(null);
   const [notification, setNotif]        = useState<{ msg: string; ok: boolean } | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -75,6 +76,17 @@ export default function PromotionsPage() {
   };
 
   const closeMenu = () => { setMenuId(null); setDelConfId(null); };
+
+  const copyPromoCode = async (promo: Promo) => {
+    try {
+      await navigator.clipboard.writeText(promo.code);
+      setCopiedId(promo.id);
+      notify(`Code ${promo.code} copié`);
+      window.setTimeout(() => setCopiedId(current => current === promo.id ? null : current), 1800);
+    } catch {
+      notify("Impossible de copier le code", false);
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -165,6 +177,7 @@ export default function PromotionsPage() {
         .pill-btn:hover  { color: rgba(255,255,255,0.7) !important; }
         .action-item:hover { background: rgba(255,255,255,0.06) !important; }
         .promo-link:hover  { color: #60a5fa !important; }
+        .promo-code-copy:hover { color: #fff !important; border-color: rgba(96,165,250,.42) !important; background: rgba(96,165,250,.08) !important; }
         input:focus-visible, select:focus-visible, button:focus-visible {
           outline: 2px solid rgba(59,130,246,0.5); outline-offset: 2px;
         }
@@ -318,22 +331,35 @@ export default function PromotionsPage() {
                         transition: "background 0.1s",
                       }}>
 
-                        {/* PROMOTION — nom (primary) + code (monospace sub) */}
+                        {/* PROMOTION — nom + code copiable */}
                         <td style={{ padding: "13px 16px" }}>
-                          <a href={`/x8k3pz/promotions/${p.id}`} className="promo-link" style={{
-                            textDecoration: "none", display: "block",
-                          }}>
-                            {p.name ? (
-                              <>
-                                <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{p.name}</div>
-                                <div style={{ fontSize: 12, fontFamily: "monospace", color: "rgba(255,255,255,0.38)", marginTop: 2, letterSpacing: "0.3px" }}>{p.code}</div>
-                              </>
-                            ) : (
-                              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", fontFamily: "monospace", letterSpacing: "0.5px" }}>{p.code}</div>
-                            )}
-                          </a>
+                          {p.name && (
+                            <Link href={`/x8k3pz/promotions/${p.id}`} className="promo-link" style={{ textDecoration: "none", display: "block", fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
+                              {p.name}
+                            </Link>
+                          )}
+                          <button
+                            type="button"
+                            className="promo-code-copy"
+                            onClick={() => void copyPromoCode(p)}
+                            title={`Copier ${p.code}`}
+                            aria-label={`Copier le code promo ${p.code}`}
+                            style={{
+                              display: "inline-flex", alignItems: "center", gap: 7,
+                              padding: p.name ? "3px 7px" : "5px 8px", margin: "-3px 0",
+                              border: "1px solid rgba(255,255,255,.08)", borderRadius: 6,
+                              background: "rgba(255,255,255,.025)", cursor: "copy",
+                              color: copiedId === p.id ? "#4ade80" : p.name ? "rgba(255,255,255,.5)" : "#fff",
+                              fontSize: p.name ? 12 : 13, fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.5px",
+                              transition: "all .15s ease",
+                            }}
+                          >
+                            <span>{p.code}</span>
+                            <span aria-hidden="true" style={{ fontFamily: "sans-serif", fontSize: 11, color: copiedId === p.id ? "#4ade80" : "#60a5fa" }}>
+                              {copiedId === p.id ? "✓ Copié" : "▣"}
+                            </span>
+                          </button>
                         </td>
-
                         {/* Remise */}
                         <td style={{ padding: "13px 16px", fontWeight: 800, color: "#22c55e", fontVariantNumeric: "tabular-nums", fontSize: 13 }}>
                           -{p.discount_percent}%

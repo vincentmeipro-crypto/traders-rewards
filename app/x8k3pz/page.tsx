@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import OverviewCockpit from "@/components/admin/OverviewCockpit";
 import RewardReviewPanel from "@/components/admin/RewardReviewPanel";
 import type { RewardReviewData } from "@/lib/reward-review";
@@ -319,6 +320,7 @@ function AdminPageInner() {
   // Marketing Hub state
   const [marketingView, setMarketingView] = useState("overview");
   const [marketingSearch, setMarketingSearch] = useState("");
+  const [copiedPromoCode, setCopiedPromoCode] = useState<string | null>(null);
 
   const [rateEditId, setRateEditId] = useState<string | null>(null);
   const [rateEditValue, setRateEditValue] = useState("");
@@ -829,6 +831,11 @@ function AdminPageInner() {
   };
 
   const copyToClipboard = (text: string) => navigator.clipboard.writeText(text);
+  const copyPromoToClipboard = async (code: string) => {
+    await navigator.clipboard.writeText(code);
+    setCopiedPromoCode(code);
+    window.setTimeout(() => setCopiedPromoCode(current => current === code ? null : current), 1800);
+  };
 
   const filteredChallenges = useMemo(() => challenges.filter(c => {
     if (c.model === "vip") return false;
@@ -2736,7 +2743,7 @@ function AdminPageInner() {
                           : activePromos.slice(0, 5).map((p, i) => (
                               <div key={p.id} style={{ padding: "12px 20px", borderBottom: i < Math.min(5, activePromos.length) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", display: "flex", alignItems: "center", gap: 12 }}>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <div style={{ fontSize: 12, fontWeight: 800, color: "#fff", fontFamily: "monospace" }}>{p.code}</div>
+                                  <button type="button" onClick={() => void copyPromoToClipboard(p.code)} title={`Copier ${p.code}`} aria-label={`Copier le code promo ${p.code}`} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: 0, border: 0, background: "none", color: copiedPromoCode === p.code ? "#4ade80" : "#fff", fontSize: 12, fontWeight: 800, fontFamily: "monospace", cursor: "copy" }}>{p.code}<span aria-hidden="true" style={{ color: copiedPromoCode === p.code ? "#4ade80" : "#60a5fa", fontSize: 10 }}>{copiedPromoCode === p.code ? "✓ Copié" : "▣"}</span></button>
                                   <div style={{ fontSize: 10, color: "#22c55e", marginTop: 1 }}>-{p.discount_percent}%</div>
                                 </div>
                                 <div style={{ textAlign: "right", flexShrink: 0 }}>
@@ -2801,7 +2808,7 @@ function AdminPageInner() {
                         <a href="/x8k3pz/promotions" style={{ background: "none", border: "none", color: "#60a5fa", fontSize: 12, cursor: "pointer", textDecoration: "none" }}>Voir tous</a>
                       </div>
                       {activePromos.slice(0, 5).map((p, i) => (
-                        <a key={p.id} href={`/x8k3pz/promotions/${p.id}`} style={{
+                        <div key={p.id} style={{
                           display: "flex", alignItems: "center", gap: 12, padding: "12px 20px",
                           borderBottom: i < Math.min(5, activePromos.length) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
                           textDecoration: "none",
@@ -2810,14 +2817,14 @@ function AdminPageInner() {
                           onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                         >
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", fontFamily: "monospace" }}>{p.code}</div>
+                            <button type="button" onClick={() => void copyPromoToClipboard(p.code)} title={`Copier ${p.code}`} aria-label={`Copier le code promo ${p.code}`} style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: 0, border: 0, background: "none", color: copiedPromoCode === p.code ? "#4ade80" : "#fff", fontSize: 13, fontWeight: 800, fontFamily: "monospace", cursor: "copy" }}>{p.code}<span aria-hidden="true" style={{ color: copiedPromoCode === p.code ? "#4ade80" : "#60a5fa", fontSize: 10 }}>{copiedPromoCode === p.code ? "✓ Copié" : "▣"}</span></button>
                             <div style={{ fontSize: 10, color: "#22c55e", marginTop: 1 }}>-{p.discount_percent}%</div>
                           </div>
                           <div style={{ textAlign: "right", flexShrink: 0 }}>
                             <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{p.used_count} util.</div>
-                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{p.max_uses ? `max ${p.max_uses}` : "illimité"}</div>
+                            <Link href={`/x8k3pz/promotions/${p.id}`} style={{ display: "block", marginTop: 2, color: "#60a5fa", fontSize: 10, textDecoration: "none" }}>Gérer →</Link>
                           </div>
-                        </a>
+                        </div>
                       ))}
                     </div>
                   )}

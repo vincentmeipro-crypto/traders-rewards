@@ -346,10 +346,6 @@ export default function TraderCockpit({
           <div><div className={styles.kpiValue}>{challenge.phase === "funded" ? "—" : money(profitRemaining)}</div><div className={styles.kpiMeta}><span>{challenge.phase === "funded" ? (isFr ? "Aucun objectif de profit" : "No profit target") : `${profitProgress.toFixed(0)}% ${isFr ? "accompli" : "complete"}`}</span><span>{challenge.phase !== "funded" && money(targetBalance)}</span></div>{challenge.phase !== "funded" && <Meter value={profitProgress} color={GREEN} />}</div>
         </div>
         <div className={`${styles.card} ${styles.kpi}`}>
-          <div className={styles.kpiTop}><span className={styles.kpiLabel}>Win rate</span><BarChart3 color={BLUE} size={17} /></div>
-          <div><div className={styles.kpiValue}>{tradeHistoryLoading ? "…" : stats.count ? `${stats.winRate.toFixed(0)}%` : "—"}</div><div className={styles.kpiMeta}><span>{stats.count ? `${stats.count} ${isFr ? "trades analysés" : "trades analyzed"}` : (isFr ? "En attente de trades" : "Waiting for trades")}</span><span>{stats.count ? `PF ${Number.isFinite(stats.profitFactor) ? stats.profitFactor.toFixed(2) : "∞"}` : ""}</span></div>{stats.count > 0 && <Meter value={stats.winRate} color={stats.winRate >= 50 ? GREEN : AMBER} />}</div>
-        </div>
-        <div className={`${styles.card} ${styles.kpi}`}>
           <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Drawdown journalier" : "Daily drawdown"}</span><Clock3 color={BLUE} size={17} /></div>
           <div><div className={styles.kpiValue} style={{ color: dailyRiskUsed >= 60 ? riskColor(dailyRiskUsed) : "#fff" }}>{money(dailyBuffer)}</div><div className={styles.kpiMeta}><span>{dailyRiskUsed.toFixed(0)}% {isFr ? "utilisé" : "used"}</span><span>{challenge.daily_drawdown_limit}% max</span></div><Meter value={dailyRiskUsed} color={riskColor(dailyRiskUsed)} /></div>
         </div>

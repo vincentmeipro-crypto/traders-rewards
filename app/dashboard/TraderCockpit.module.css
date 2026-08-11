@@ -51,7 +51,7 @@
 .coachTitle { font-size: 14px; font-weight: 850; margin-bottom: 3px; }
 .coachText { font-size: 12px; color: rgba(255, 255, 255, .5); line-height: 1.45; }
 
-.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
 .kpi { padding: 18px; min-height: 132px; display: flex; flex-direction: column; justify-content: space-between; }
 .kpiTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .kpiLabel { color: rgba(255, 255, 255, .42); font-size: 10px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; }
