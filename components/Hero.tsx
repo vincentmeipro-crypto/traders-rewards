@@ -72,7 +72,7 @@ export default function Hero() {
         style={{
           background:  "#000000",
           width:       "100%",
-          minHeight:   "100vh",
+          minHeight:   isMobile ? "auto" : "100vh",
           position:    "relative",
           overflow:    "hidden",
           display:     "flex",
@@ -236,54 +236,45 @@ export default function Hero() {
           </div>
 
           {/* ╔═══════════════════════════════════════════════╗
-              ║  COLONNE DROITE — trophée                    ║
+              ║  COLONNE DROITE — trophée (desktop only)     ║
               ║  height min(72vh, 640px) ≈ 68 % de l'ancien ║
               ║  mix-blend-mode: lighten → fond noir transparent ║
+              ║  Mobile (<900px) : display:none complet      ║
               ╚═══════════════════════════════════════════════╝ */}
-          <div
-            style={{
-              position:       "relative",
-              alignSelf:      isMobile ? "auto" : "stretch",
-              display:        "flex",
-              alignItems:     "center",
-              justifyContent: isMobile ? "center" : "flex-end",
-              overflow:       "visible",
-              minHeight:      isMobile ? 260 : "auto",
-            }}
-          >
-            <img
-              src="/NOUVELLE IMAGE HERO AVEC TROPHE.png"
-              alt="Trophée Traders Rewards"
+          {!isMobile && (
+            <div
               style={{
-                display: "block",
-                ...(isMobile
-                  ? {
-                      width:  "88%",
-                      height: "auto",
-                    }
-                  : {
-                      position:  "absolute",
-                      top:       "50%",
-                      right:     "0",
-                      transform: "translateY(-50%)",
-                      height:    "min(72vh, 640px)",
-                      width:     "auto",
-                      maxWidth:  "none",
-                    }),
-                objectFit:      "contain",
-                objectPosition: "center center",
-                /* Pixels noirs de l'image → transparents sur fond #000 */
-                mixBlendMode:   "lighten",
-                /* Fondu bord gauche du trophée vers la colonne texte */
-                maskImage: isMobile
-                  ? "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)"
-                  : "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)",
-                WebkitMaskImage: isMobile
-                  ? "linear-gradient(to bottom, transparent 0%, black 12%, black 88%, transparent 100%)"
-                  : "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)",
+                position:       "relative",
+                alignSelf:      "stretch",
+                display:        "flex",
+                alignItems:     "center",
+                justifyContent: "flex-end",
+                overflow:       "visible",
               }}
-            />
-          </div>
+            >
+              <img
+                src="/NOUVELLE IMAGE HERO AVEC TROPHE.png"
+                alt="Trophée Traders Rewards"
+                style={{
+                  display:        "block",
+                  position:       "absolute",
+                  top:            "50%",
+                  right:          "0",
+                  transform:      "translateY(-50%)",
+                  height:         "min(72vh, 640px)",
+                  width:          "auto",
+                  maxWidth:       "none",
+                  objectFit:      "contain",
+                  objectPosition: "center center",
+                  /* Pixels noirs de l'image → transparents sur fond #000 */
+                  mixBlendMode:   "lighten",
+                  /* Fondu bord gauche du trophée vers la colonne texte */
+                  maskImage:       "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)",
+                  WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.5) 12%, black 28%)",
+                }}
+              />
+            </div>
+          )}
         </div>
       </section>
     </>
