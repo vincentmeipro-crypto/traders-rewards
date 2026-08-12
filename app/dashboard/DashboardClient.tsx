@@ -398,6 +398,12 @@ export default function DashboardClient({ user }: { user: User }) {
     setHistTradesLoading(false);
   };
 
+  useEffect(() => {
+    if (activeTab === "history" && challenge && selectedHistChallenge?.id !== challenge.id) {
+      void loadHistTrades(challenge);
+    }
+  }, [activeTab, challenge?.id]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.push("/");
@@ -655,7 +661,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.45)" }}>{T.dash.noHistory}</div>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-                {allChallenges.filter(c => c.status === "failed" || c.status === "passed").map((c, idx) => {
+                {allChallenges.map((c, idx) => {
                   // Pour les comptes failed : balance figée au moment du breach, jamais mise à jour après
                   const finalBalance = c.status === "failed"
                     ? (c.breach_equity ?? c.balance)
