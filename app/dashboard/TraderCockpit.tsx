@@ -115,7 +115,7 @@ function tradeDate(trade: Record<string, unknown>): Date | null {
 function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
   return history
     .map((trade, index) => {
-      const profit = numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission);
+      const profit = numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission) + numeric(trade.fee);
       const rawType = trade.type ?? trade.action;
       const isBuy = rawType === 0 || String(rawType ?? "").toLowerCase().includes("buy");
       const rawVolume = numeric(trade.volume ?? trade.lots);
@@ -128,7 +128,11 @@ function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
         date: tradeDate(trade),
       };
     })
-    .filter(trade => Math.abs(trade.profit) > 0.00001)
+    .filter((trade, index) => {
+      const entry = history[index]?.entry;
+      const isClosingDeal = entry == null || Number(entry) === 1 || Number(entry) === 2;
+      return isClosingDeal && Math.abs(trade.profit) > 0.00001;
+    })
     .sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
 }
 

@@ -19,10 +19,10 @@ function numeric(value: unknown): number {
 export function summarizeTradeHistory(history: Record<string, unknown>[]): TradePerformanceSummary {
   const trades = history.filter(trade => {
     const entry = trade.entry;
-    const profit = numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission);
+    const profit = numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission) + numeric(trade.fee);
     return entry == null ? Math.abs(profit) > 0.00001 : Number(entry) === 1 || Number(entry) === 2;
   });
-  const profits = trades.map(trade => numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission)).filter(value => Math.abs(value) > 0.00001);
+  const profits = trades.map(trade => numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission) + numeric(trade.fee)).filter(value => Math.abs(value) > 0.00001);
   const wins = profits.filter(value => value > 0);
   const losses = profits.filter(value => value < 0);
   const grossProfit = wins.reduce((sum, value) => sum + value, 0);
@@ -30,7 +30,7 @@ export function summarizeTradeHistory(history: Record<string, unknown>[]): Trade
   const bySymbol = new Map<string, number>();
   trades.forEach(trade => {
     const symbol = String(trade.symbol ?? "—");
-    const profit = numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission);
+    const profit = numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission) + numeric(trade.fee);
     bySymbol.set(symbol, (bySymbol.get(symbol) ?? 0) + profit);
   });
   const bestSymbol = [...bySymbol.entries()].sort((a, b) => b[1] - a[1])[0] ?? null;

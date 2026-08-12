@@ -306,16 +306,29 @@ def get_history(login):
         _mt5_lock.release()
         return jsonify({"error": "Cannot connect to MT5"}), 500
     try:
-        from_ts = int(time.time()) - 86400 * 30
-        to_ts   = int(time.time()) + 86400
-        deals = mgr.DealGetByLogin(login, from_ts, to_ts) or []
+        # Direct requests by login return NOTFOUND on this Manager instance.
+        # Group requests work, but large ranges are truncated. Use MT5 server
+        # time (broker timezone) and filter a bounded group response by login.
+        days = min(max(int(request.args.get("days", 7)), 1), 30)
+        to_ts = int(mgr.TimeServer())
+        from_ts = to_ts - 86400 * days
+        user = mgr.UserRequest(login)
+        if not user:
+            return jsonify({"error": f"Account {login} not found"}), 404
+            mgr.Disconnect()
+            _mt5_lock.release()
+        deals = mgr.DealRequestByGroup(user.Group, from_ts, to_ts) or []
+        deals = [deal for deal in deals if int(getattr(deal, "Login", 0)) == login]
         mgr.Disconnect()
         _mt5_lock.release()
         result = []
         for d in deals:
             result.append({"ticket": d.Deal, "login": d.Login, "symbol": d.Symbol, "type": d.Action,
                            "volume": d.Volume, "price": d.Price, "profit": d.Profit,
-                           "time": d.Time, "entry": d.Entry, "comment": d.Comment})
+                           "commission": d.Commission, "fee": d.Fee,
+                           "time": d.Time, "entry": d.Entry, "comment": d.Comment,
+                           "position_id": d.PositionID, "order": d.Order,
+                           "price_sl": d.PriceSL, "price_tp": d.PriceTP})
         return jsonify(result)
     except Exception as e:
         try: mgr.Disconnect()
