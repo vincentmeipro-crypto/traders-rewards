@@ -117,12 +117,14 @@ function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
     .map((trade, index) => {
       const profit = numeric(trade.profit) + numeric(trade.swap) + numeric(trade.commission) + numeric(trade.fee);
       const rawType = trade.type ?? trade.action;
-      const isBuy = rawType === 0 || String(rawType ?? "").toLowerCase().includes("buy");
+      const actionIsBuy = rawType === 0 || String(rawType ?? "").toLowerCase().includes("buy");
+      const isExitDeal = Number(trade.entry) === 1;
+      const positionIsBuy = isExitDeal ? !actionIsBuy : actionIsBuy;
       const rawVolume = numeric(trade.volume ?? trade.lots);
       return {
         id: String(trade.ticket ?? trade.deal ?? trade.id ?? index),
         symbol: String(trade.symbol ?? "—"),
-        side: isBuy ? "BUY" as const : "SELL" as const,
+        side: positionIsBuy ? "BUY" as const : "SELL" as const,
         volume: rawVolume > 100 ? rawVolume / 10_000 : rawVolume,
         profit,
         date: tradeDate(trade),
