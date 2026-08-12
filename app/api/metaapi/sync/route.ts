@@ -141,13 +141,20 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await changeMT5Group(login, "HAR/MAN32/demoG5").catch(() => {});
     await disableMT5Account(login).catch(() => {});
     await changeMT5Password(login).catch(() => {});
-    const alreadyFailed = challenge.status === "failed";
-    await admin.from("challenges").update({
+    const { data: claimedFailure, error: claimError } = await admin.from("challenges").update({
       status: "failed",
       last_synced_at: baseNow,
-      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "best_day_rule", breach_value: parseFloat((dayProfit / startBalance * 100).toFixed(2)), breach_equity: newEquity }),
-    }).eq("id", id);
-    if (!alreadyFailed) {
+      breach_at: baseNow,
+      breach_reason: "best_day_rule",
+      breach_value: parseFloat((dayProfit / startBalance * 100).toFixed(2)),
+      breach_equity: newEquity,
+    })
+      .eq("id", id)
+      .in("status", ["active", "funded"])
+      .select("id")
+      .maybeSingle();
+    if (claimError) throw claimError;
+    if (claimedFailure) {
       try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login, { userId, challengeId: id }); } catch {}
     }
     return { status: "failed", reason: "best_day_rule", profit_pct: (dayProfit / startBalance * 100).toFixed(2) };
@@ -169,15 +176,22 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await changeMT5Group(login, "HAR/MAN32/demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
-    const alreadyFailed = challenge.status === "failed";
-    await admin.from("challenges").update({
+    const { data: claimedFailure, error: claimError } = await admin.from("challenges").update({
       status: "failed",
       balance: dailyLowEquity,
       last_synced_at: baseNow,
       daily_low_equity: dailyLowEquity,
-      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "daily_drawdown", breach_value: dailyDDRounded, breach_equity: dailyLowEquity }),
-    }).eq("id", id);
-    if (!alreadyFailed) {
+      breach_at: baseNow,
+      breach_reason: "daily_drawdown",
+      breach_value: dailyDDRounded,
+      breach_equity: dailyLowEquity,
+    })
+      .eq("id", id)
+      .in("status", ["active", "funded"])
+      .select("id")
+      .maybeSingle();
+    if (claimError) throw claimError;
+    if (claimedFailure) {
       try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login, { userId, challengeId: id }); }
       catch (e) { console.error("sendFailedEmail daily_drawdown error:", e); }
     }
@@ -203,14 +217,21 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await changeMT5Group(login, "HAR/MAN32/demoG5").catch((e) => console.error(`[${login}] changeMT5Group failed:`, e));
     await disableMT5Account(login).catch((e) => console.error(`[${login}] disableMT5Account failed:`, e));
     await changeMT5Password(login).catch((e) => console.error(`[${login}] changeMT5Password failed:`, e));
-    const alreadyFailed = challenge.status === "failed";
-    await admin.from("challenges").update({
+    const { data: claimedFailure, error: claimError } = await admin.from("challenges").update({
       status: "failed",
       balance: newEquity,
       last_synced_at: baseNow,
-      ...(!alreadyFailed && { breach_at: baseNow, breach_reason: "total_drawdown", breach_value: parseFloat(totalDD.toFixed(2)), breach_equity: newEquity }),
-    }).eq("id", id);
-    if (!alreadyFailed) {
+      breach_at: baseNow,
+      breach_reason: "total_drawdown",
+      breach_value: parseFloat(totalDD.toFixed(2)),
+      breach_equity: newEquity,
+    })
+      .eq("id", id)
+      .in("status", ["active", "funded"])
+      .select("id")
+      .maybeSingle();
+    if (claimError) throw claimError;
+    if (claimedFailure) {
       try { await sendFailedEmail(userEmail, accountSize, "total_drawdown", login, { userId, challengeId: id }); }
       catch (e) { console.error("sendFailedEmail total_drawdown error:", e); }
     }

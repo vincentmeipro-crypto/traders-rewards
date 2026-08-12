@@ -202,7 +202,10 @@ export async function GET(req: NextRequest) {
         const breachPct = parseFloat(((startBalance - breachEquity) / startBalance * 100).toFixed(2));
         console.error(`BREACH [${challenge.mt5_login}] ${breachReason} — equity: ${breachEquity}, pct: ${breachPct}%`);
 
-        await admin.from("challenges").update({
+        // Revendication atomique : si une autre synchronisation a déjà passé
+        // ce challenge en failed, aucune ligne n'est retournée et aucun email
+        // supplémentaire n'est envoyé.
+        const { data: claimedFailure, error: claimError } = await admin.from("challenges").update({
           status:         "failed",
           balance:        breachEquity,
           breach_equity:  breachEquity,
@@ -210,7 +213,17 @@ export async function GET(req: NextRequest) {
           breach_reason:  breachReason,
           breach_value:   breachPct,
           last_synced_at: new Date().toISOString(),
-        }).eq("id", challenge.id);
+        })
+          .eq("id", challenge.id)
+          .in("status", ["active", "funded"])
+          .select("id")
+          .maybeSingle();
+
+        if (claimError) throw claimError;
+        if (!claimedFailure) {
+          console.info(`[${challenge.mt5_login}] breach déjà traité par une autre synchronisation`);
+          continue;
+        }
 
         try { await changeMT5Group(challenge.mt5_login, "HAR/MAN32/demoG5"); } catch (e) { console.error("changeMT5Group failed:", e); }
         try { await disableMT5Account(challenge.mt5_login); }                   catch (e) { console.error("disableMT5Account failed:", e); }
