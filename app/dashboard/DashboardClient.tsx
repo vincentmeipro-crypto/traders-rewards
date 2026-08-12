@@ -784,8 +784,13 @@ export default function DashboardClient({ user }: { user: User }) {
                                       return p !== 0;
                                     }).map((trade, ti, arr) => {
                                       const t = trade as Record<string, unknown>;
-                                      const profit = typeof t.profit === "number" ? t.profit : parseFloat(String(t.profit ?? 0));
-                                      const isBuy = t.type === 0 || String(t.type ?? "").toLowerCase().includes("buy");
+                                      const profit = [t.profit, t.swap, t.commission, t.fee]
+                                        .reduce<number>((sum, value) => sum + (Number(value) || 0), 0);
+                                      const actionIsBuy = t.type === 0 || String(t.type ?? "").toLowerCase().includes("buy");
+                                      // Un deal de sortie porte l'action inverse de la position :
+                                      // Une position SELL est par exemple fermee par un deal BUY.
+                                      const isExitDeal = Number(t.entry) === 1;
+                                      const isBuy = isExitDeal ? !actionIsBuy : actionIsBuy;
                                       const timeMs = t.time ? Number(t.time) * 1000 : (t.time_msc ? Number(t.time_msc) : null);
                                       const dateStr = timeMs ? new Date(timeMs).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";
                                       return (
