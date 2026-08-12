@@ -15,6 +15,12 @@ spec.loader.exec_module(watchdog)
 class DrawdownWatchdogTests(unittest.TestCase):
     rule = {"start_balance": 50_000, "daily_drawdown_limit": 5, "total_drawdown_limit": 10}
 
+    def test_equity_uses_open_position_profit_when_account_profit_is_missing(self):
+        account = {"balance": 47_552, "equity": 47_552}
+        positions = [{"profit": -80}, {"profit": 5}]
+        self.assertEqual(watchdog.calculate_equity(account, positions), 47_477)
+        self.assertEqual(watchdog.breach_reason(self.rule, 47_477), "daily_drawdown")
+
     def test_daily_breach_is_detected_at_boundary(self):
         self.assertEqual(watchdog.breach_reason(self.rule, 47_500), "daily_drawdown")
 

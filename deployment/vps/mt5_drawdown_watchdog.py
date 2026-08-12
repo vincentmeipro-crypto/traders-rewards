@@ -39,13 +39,23 @@ def load_rules() -> list[dict]:
     return result.get("accounts", [])
 
 
-def live_equity(login: int) -> float:
-    account = request_json(f"{MT5_LOCAL_URL}/accounts/{login}", MT5_API_SECRET, timeout=2.0)
+def calculate_equity(account: dict, positions: list[dict]) -> float:
     balance = float(account.get("balance") or 0)
+    # The current bridge omits account.profit. Open-position P&L is therefore
+    # the authoritative source while a trade is live.
+    if positions:
+        return balance + sum(float(position.get("profit") or 0) for position in positions)
     profit = account.get("profit")
     if profit is not None:
         return balance + float(profit)
     return float(account.get("equity") or balance)
+
+
+def live_equity(login: int) -> float:
+    account = request_json(f"{MT5_LOCAL_URL}/accounts/{login}", MT5_API_SECRET, timeout=2.0)
+    position_payload = request_json(f"{MT5_LOCAL_URL}/accounts/{login}/positions", MT5_API_SECRET, timeout=2.0)
+    positions = position_payload.get("positions", []) if isinstance(position_payload, dict) else position_payload
+    return calculate_equity(account, positions or [])
 
 
 def breach_reason(rule: dict, equity: float) -> str | None:
