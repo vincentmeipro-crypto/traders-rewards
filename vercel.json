@@ -6,6 +6,7 @@
     "app/api/admin/challenges/route.ts":   { "maxDuration": 60 },
     "app/api/metaapi/sync/route.ts":       { "maxDuration": 60 },
     "app/api/cron/mt5-snapshot/route.ts":  { "maxDuration": 60 },
+    "app/api/cron/mt5-watchdog/route.ts":  { "maxDuration": 60 },
     "app/api/admin/restore-challenges/route.ts": { "maxDuration": 60 }
   },
   "crons": [
@@ -15,6 +16,10 @@
     },
     {
       "path": "/api/cron/mt5-snapshot",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/mt5-watchdog",
       "schedule": "* * * * *"
     }
   ]
