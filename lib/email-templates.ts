@@ -320,10 +320,11 @@ export function buildPhase1CertificateEmail(p: {
   date:        string;
   siteUrl:     string;
   logoUrl:     string;
+  publicToken?: string;
 }): { subject: string; html: string } {
-  const { firstName, lastName, accountSize, date, siteUrl, logoUrl } = p;
+  const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken } = p;
   const name = `${firstName} ${lastName}`.trim();
-  const certUrl = `${siteUrl}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
+  const certUrl = `${siteUrl}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
   const subject = `🏆 Félicitations ${firstName} — Certificat Phase 1 obtenu !`;
   const html = `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
@@ -370,10 +371,11 @@ export function buildChallengeCertificateEmail(p: {
   date:        string;
   siteUrl:     string;
   logoUrl:     string;
+  publicToken?: string;
 }): { subject: string; html: string } {
-  const { firstName, lastName, accountSize, date, siteUrl, logoUrl } = p;
+  const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken } = p;
   const name = `${firstName} ${lastName}`.trim();
-  const certUrl = `${siteUrl}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}`;
+  const certUrl = `${siteUrl}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
   const subject = `🎉 ${firstName} — Vous êtes Trader Reward !`;
   const html = `
     <div style="background:#ffffff;font-family:Helvetica,Arial,sans-serif;padding:40px 16px;">
@@ -423,11 +425,12 @@ export function buildRewardCertificateEmail(p: {
   splitPct:     number;
   siteUrl:      string;
   logoUrl:      string;
+  publicToken?: string;
 }): { subject: string; html: string } {
-  const { firstName, lastName, accountSize, grossAmount, date, netAmountEur, splitPct, siteUrl, logoUrl } = p;
+  const { firstName, lastName, accountSize, grossAmount, date, netAmountEur, splitPct, siteUrl, logoUrl, publicToken } = p;
   const name = `${firstName} ${lastName}`.trim();
   const netAmount = Math.round(grossAmount * splitPct / 100);
-  const certUrl = `${siteUrl}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}`;
+  const certUrl = `${siteUrl}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
   const eurRow = netAmountEur != null
     ? `<tr><td style="color:#777;font-size:14px;padding:12px 0;border-bottom:1px solid #e8e8e8;">Équivalent EUR :</td><td style="color:#3b82f6;font-size:15px;font-weight:800;padding:12px 0;border-bottom:1px solid #e8e8e8;text-align:right;">≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td></tr>`
     : "";

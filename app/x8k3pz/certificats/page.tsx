@@ -12,6 +12,7 @@ type CertScan = {
 type Cert = {
   id: string;
   public_token: string;
+  certificate_type: "phase1" | "phase2" | "reward";
   trader_display_name: string;
   account_size: string | null;
   amount: string | null;
@@ -21,12 +22,13 @@ type Cert = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function certPreviewUrl(token: string, name: string, amount: string, date: string): string {
-  const parts = name.trim().split(" ");
+function certPreviewUrl(cert: Cert, amount: string, date: string): string {
+  const parts = cert.trader_display_name.trim().split(" ");
+  const pageType = cert.certificate_type === "phase2" ? "phase2" : cert.certificate_type;
   const firstname = encodeURIComponent(parts[0] || "");
   const lastname  = encodeURIComponent(parts.slice(1).join(" "));
   return (
-    `/certificate?type=reward&token=${encodeURIComponent(token)}` +
+    `/certificate?type=${pageType}&token=${encodeURIComponent(cert.public_token)}` +
     `&firstname=${firstname}&lastname=${lastname}` +
     `&amount=${encodeURIComponent(amount)}&date=${encodeURIComponent(date)}`
   );
@@ -77,7 +79,12 @@ function Row({ cert }: { cert: Cert }) {
 
   const issuedStr  = fmtDate(cert.issued_at);
   const amountStr  = cert.amount || cert.account_size || "—";
-  const previewUrl = certPreviewUrl(cert.public_token, cert.trader_display_name, amountStr, issuedStr);
+  const previewUrl = certPreviewUrl(cert, amountStr, issuedStr);
+  const typeLabel = cert.certificate_type === "phase1"
+    ? "Phase 1"
+    : cert.certificate_type === "phase2"
+      ? "Phase 2"
+      : "Reward";
   // "Vérifier →" ouvert par l'admin = source='link', distingué des scans QR physiques
   const verifyUrl  = `/verify/${cert.public_token}?source=link`;
 
@@ -92,8 +99,17 @@ function Row({ cert }: { cert: Cert }) {
         alignItems: "flex-start", gap: 16, flexWrap: "wrap",
       }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, color: "#3b82f6", fontSize: 15 }}>
-            {cert.trader_display_name}
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ fontWeight: 700, color: "#3b82f6", fontSize: 15 }}>
+              {cert.trader_display_name}
+            </div>
+            <span style={{
+              fontSize: 9, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase",
+              color: "#69C5FD", border: "1px solid #69C5FD35", background: "#69C5FD0d",
+              borderRadius: 999, padding: "3px 7px",
+            }}>
+              {typeLabel}
+            </span>
           </div>
           <div style={{ fontSize: 11, color: "#555", marginTop: 3 }}>
             {cert.account_size || "—"} · {amountStr} · {issuedStr}
@@ -158,16 +174,33 @@ function Row({ cert }: { cert: Cert }) {
 export default async function CertificatsPage() {
   const admin = createAdminClient();
 
-  const { data, error } = await admin
+  const result = await admin
     .from("reward_certificates")
     .select(
-      "id, public_token, trader_display_name, account_size, amount, issued_at," +
+      "id, public_token, certificate_type, trader_display_name, account_size, amount, issued_at," +
       " reward_certificate_scans(scanned_at, source)"
     )
     .is("revoked_at", null)
     .order("issued_at", { ascending: false });
 
-  const certificates = (data ?? []) as unknown as Cert[];
+  let loadError = result.error;
+  let certificates = (result.data ?? []) as unknown as Cert[];
+
+  if (loadError && /certificate_type/i.test(loadError.message)) {
+    const fallback = await admin
+      .from("reward_certificates")
+      .select(
+        "id, public_token, trader_display_name, account_size, amount, issued_at," +
+        " reward_certificate_scans(scanned_at, source)"
+      )
+      .is("revoked_at", null)
+      .order("issued_at", { ascending: false });
+    loadError = fallback.error;
+    certificates = ((fallback.data ?? []) as unknown as Omit<Cert, "certificate_type">[]).map(cert => ({
+      ...cert,
+      certificate_type: "reward" as const,
+    })) as unknown as Cert[];
+  }
 
   return (
     <main style={{
@@ -185,7 +218,7 @@ export default async function CertificatsPage() {
             Admin — Traders Rewards
           </div>
           <h1 style={{ fontSize: 26, fontWeight: 900, color: "#fff", margin: 0 }}>
-            Certificats Reward
+            Certificats vérifiables
           </h1>
           <p style={{ color: "#555", fontSize: 12, marginTop: 8, marginBottom: 0, lineHeight: 1.6 }}>
             <span style={{ color: "#666", fontWeight: 700 }}>Ouvrir →</span> prévisualise le certificat imprimable.{" "}
@@ -195,7 +228,7 @@ export default async function CertificatsPage() {
         </div>
 
         {/* ── Contenu ── */}
-        {error ? (
+        {loadError ? (
           <div style={{
             color: "#fca5a5", background: "#450a0a55",
             border: "1px solid #7f1d1d", padding: 16, borderRadius: 6,

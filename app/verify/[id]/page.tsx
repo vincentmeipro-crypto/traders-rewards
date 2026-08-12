@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import Image from "next/image";
+import { certificateTypeLabel, findCertificateByToken } from "@/lib/certificates";
 
 export const dynamic = "force-dynamic";
 const TOKEN_PATTERN = /^[0-9a-f]{32}$/;
@@ -15,9 +16,9 @@ export default async function VerifyPage({ params, searchParams }: { params: Pro
   const { source } = await searchParams;
   const admin = createAdminClient();
 
-  const { data: certificate } = TOKEN_PATTERN.test(token)
-    ? await admin.from("reward_certificates").select("id, trader_display_name, account_size, amount, issued_at, revoked_at").eq("public_token", token).maybeSingle()
-    : { data: null };
+  const certificate = TOKEN_PATTERN.test(token)
+    ? await findCertificateByToken(admin, token)
+    : null;
 
   const valid = !!certificate && !certificate.revoked_at;
   if (valid && certificate) {
@@ -43,6 +44,7 @@ export default async function VerifyPage({ params, searchParams }: { params: Pro
               <div style={{ fontSize: 24, fontWeight: 700, color: "#3b82f6" }}>{publicName(certificate.trader_display_name)}</div>
             </div>
             {[
+              ["Type de certificat", certificateTypeLabel(certificate.certificate_type)],
               ["Compte", certificate.account_size],
               ["Montant versé", certificate.amount],
               ["Date d’émission", new Date(`${certificate.issued_at}T00:00:00`).toLocaleDateString("fr-FR")],

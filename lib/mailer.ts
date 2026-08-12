@@ -25,6 +25,7 @@
 import { getBrandingConfig, getPayoutSplits } from "@/lib/config";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAIL } from "@/lib/admin-auth";
+import { ensureCertificateRecord } from "@/lib/certificates";
 import {
   buildWelcomeEmail,
   buildPhase2Email,
@@ -259,7 +260,15 @@ export async function sendPhase1CertificateEmail(
   opts?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
-  const { subject, html } = buildPhase1CertificateEmail({ firstName, lastName, accountSize, date, siteUrl, logoUrl });
+  const publicToken = opts?.challengeId ? await ensureCertificateRecord({
+    type: "phase1",
+    challengeId: opts.challengeId,
+    traderDisplayName: `${firstName} ${lastName}`,
+    accountSize,
+  }) : null;
+  const { subject, html } = buildPhase1CertificateEmail({
+    firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken: publicToken ?? undefined,
+  });
   await _loggedSend({
     type: "phase1_certificate",
     to,
@@ -275,7 +284,15 @@ export async function sendChallengeCertificateEmail(
   opts?: { userId?: string; challengeId?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
-  const { subject, html } = buildChallengeCertificateEmail({ firstName, lastName, accountSize, date, siteUrl, logoUrl });
+  const publicToken = opts?.challengeId ? await ensureCertificateRecord({
+    type: "phase2",
+    challengeId: opts.challengeId,
+    traderDisplayName: `${firstName} ${lastName}`,
+    accountSize,
+  }) : null;
+  const { subject, html } = buildChallengeCertificateEmail({
+    firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken: publicToken ?? undefined,
+  });
   await _loggedSend({
     type: "challenge_certificate",
     to,
@@ -289,7 +306,7 @@ export async function sendChallengeCertificateEmail(
 export async function sendRewardCertificateEmail(
   to: string, firstName: string, lastName: string, accountSize: string,
   grossAmount: number, model: string, date: string, netAmountEur?: number,
-  opts?: { userId?: string; challengeId?: string },
+  opts?: { userId?: string; challengeId?: string; publicToken?: string },
 ) {
   const [branding, splits] = await Promise.all([
     getBrandingConfig(),
@@ -300,6 +317,7 @@ export async function sendRewardCertificateEmail(
   const splitPct = is1Step ? splits.split1step : splits.split2step;
   const { subject, html } = buildRewardCertificateEmail({
     firstName, lastName, accountSize, grossAmount, date, netAmountEur, splitPct, siteUrl, logoUrl,
+    publicToken: opts?.publicToken,
   });
   await _loggedSend({
     type: "reward_certificate",

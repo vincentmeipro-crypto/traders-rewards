@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { checkRateLimit } from "@/lib/chat-rate-limit";
+import { findCertificateByToken } from "@/lib/certificates";
 
 // ── Rate limit ────────────────────────────────────────────────────────────────
 // 30 vérifications / minute / IP — réutilise lib/chat-rate-limit.ts (in-memory)
@@ -36,11 +37,7 @@ export async function GET(
 
   // ── 3. Lookup DB ──────────────────────────────────────────────────────────
   const admin = createAdminClient();
-  const { data: certificate } = await admin
-    .from("reward_certificates")
-    .select("id, trader_display_name, account_size, amount, issued_at, revoked_at")
-    .eq("public_token", token)
-    .maybeSingle();
+  const certificate = await findCertificateByToken(admin, token);
 
   if (!certificate || certificate.revoked_at) {
     return NextResponse.json(
@@ -66,6 +63,7 @@ export async function GET(
     valid: true,
     certificate: {
       token,
+      type:         certificate.certificate_type,
       trader_name:  publicName(certificate.trader_display_name),
       account_size: certificate.account_size,
       amount:       certificate.amount,

@@ -7,6 +7,8 @@ import { Suspense, useRef, useEffect, useState, type ReactNode } from "react";
 // Le résultat visuel est identique à l'ancien innerHTML.
 import QRCode from "qrcode";
 
+const TROPHY_SRC = "/NOUVELLE%20IMAGE%20HERO%20AVEC%20TROPHE.png";
+
 function BodySegments({ html }: { html: string }): ReactNode {
   const parts = html.split(/(<b>[^<]*<\/b>)/g);
   return (
@@ -106,6 +108,26 @@ function CertContent() {
       // Bottom-left triangle
       tri([[0,H],[90,H],[0,H-90]], "rgba(105,197,253,0.07)");
 
+      // Trophée de marque — le mode screen fond son arrière-plan noir dans le certificat.
+      const trophy = new Image();
+      await new Promise<void>(resolve => {
+        trophy.onload = () => resolve();
+        trophy.onerror = () => resolve();
+        trophy.src = TROPHY_SRC;
+      });
+      if (trophy.naturalWidth > 0) {
+        ctx.save();
+        ctx.globalCompositeOperation = "screen";
+        ctx.globalAlpha = type === "reward" ? 0.82 : type === "phase2" || type === "challenge" ? 0.72 : 0.62;
+        ctx.drawImage(
+          trophy,
+          trophy.naturalWidth * 0.48, trophy.naturalHeight * 0.06,
+          trophy.naturalWidth * 0.50, trophy.naturalHeight * 0.88,
+          405, 145, 235, 275,
+        );
+        ctx.restore();
+      }
+
       // Top label
       ctx.fillStyle = "#69C5FD";
       ctx.font = "700 11px 'Segoe UI',system-ui,sans-serif";
@@ -159,7 +181,7 @@ function CertContent() {
       for (const w of words) {
         if (/^\s+$/.test(w.text)) { if (lWords.length) { lWords.push(w); lW += getW(w); } continue; }
         const ww = getW(w);
-        if (lW + ww > 500 && lWords.length) flushL();
+        if (lW + ww > 350 && lWords.length) flushL();
         lWords.push(w); lW += ww;
       }
       if (lWords.length) flushL();
@@ -222,6 +244,22 @@ function CertContent() {
           <line x1="0" y1="0" x2="90" y2="90" stroke="#69C5FD" strokeWidth="0.5" opacity="0.5"/>
         </svg>
 
+        {/* Trophée signature — le fond noir disparaît grâce au mode screen. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={TROPHY_SRC}
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute", top: 145, right: 18, zIndex: 0,
+            width: 235, height: 275, objectFit: "cover", objectPosition: "right center",
+            opacity: type === "reward" ? 0.82 : type === "phase2" || type === "challenge" ? 0.72 : 0.62,
+            mixBlendMode: "screen", pointerEvents: "none",
+            filter: "contrast(1.06) saturate(1.08)",
+            maskImage: "linear-gradient(to bottom, transparent 0%, #000 10%, #000 84%, transparent 100%)",
+          }}
+        />
+
         {/* TOP ROW */}
         <div style={{ position: "relative", zIndex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28, flexShrink: 0 }}>
           <div>
@@ -238,7 +276,7 @@ function CertContent() {
         {/* BODY */}
         <div style={{ position: "relative", zIndex: 1, flex: 1, display: "flex", flexDirection: "column" }}>
           <div style={{ fontSize: 30, fontWeight: 700, color: "#69C5FD", letterSpacing: "0.01em", marginBottom: 14, lineHeight: 1 }}>{name}</div>
-          <div style={{ fontSize: 13, lineHeight: 1.72, color: "#999", maxWidth: 500 }}>
+          <div style={{ fontSize: 13, lineHeight: 1.72, color: "#999", maxWidth: 350 }}>
             <BodySegments html={body} />
           </div>
           {(type === "reward") && amount && (

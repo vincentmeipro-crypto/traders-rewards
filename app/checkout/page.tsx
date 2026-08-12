@@ -1,8 +1,10 @@
 ﻿"use client";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { ChevronRight, X, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Bitcoin, Check, ChevronRight, CreditCard, LockKeyhole, ShieldCheck, Sparkles, X } from "lucide-react";
 
 type ModelKey = "2step" | "1step";
 type Challenge = { label: string; model: "2-Step" | "1-Step"; price: string; amount: number };
@@ -68,6 +70,14 @@ const FALLBACK_PRODUCTS: CheckoutProduct[] = Object.entries(CHALLENGES).map(([sl
 const SIZES = ["10k", "25k", "50k", "100k", "200k"];
 const SIZE_LABELS: Record<string, string> = { "10k": "$10K", "25k": "$25K", "50k": "$50K", "100k": "$100K", "200k": "$200K" };
 const LOYALTY_PCT = 20;
+
+function EyeOpen() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+}
+
+function EyeOff() {
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
+}
 
 function formatPrice(cents: number) {
   return `€${(cents / 100).toFixed(2).replace(".00", "")}`;
@@ -136,7 +146,7 @@ function CheckoutContent() {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener("resize", check);
-    setRefCode(localStorage.getItem("elysium_ref") || "");
+    queueMicrotask(() => setRefCode(localStorage.getItem("elysium_ref") || ""));
     return () => window.removeEventListener("resize", check);
   }, []);
 
@@ -249,7 +259,7 @@ function CheckoutContent() {
     // `discount` intentionnellement absent : le serveur recalcule le montant réel.
     const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, refCode }) });
     const data = await res.json();
-    if (data.url) { window.location.href = data.url; return; }
+    if (data.url) { window.location.assign(data.url); return; }
     if (data.code === "USE_FREE_PATH") { setLoadingStripe(false); await handleFree(); return; }
     setPayError(data.error || "Erreur paiement."); setLoadingStripe(false);
   };
@@ -262,7 +272,7 @@ function CheckoutContent() {
     // `discount` intentionnellement absent : le serveur recalcule le montant réel.
     const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode }) });
     const data = await res.json();
-    if (data.url) { window.location.href = data.url; return; }
+    if (data.url) { window.location.assign(data.url); return; }
     if (data.code === "USE_FREE_PATH") { setLoadingCrypto(false); await handleFree(); return; }
     setPayError(data.error || "Erreur paiement."); setLoadingCrypto(false);
   };
@@ -279,53 +289,96 @@ function CheckoutContent() {
   };
 
   const inp: React.CSSProperties = {
-    width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8,
-    padding: "10px 14px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box",
+    width: "100%", minHeight: 46, background: "rgba(255,255,255,0.035)", border: "1px solid rgba(255,255,255,0.11)", borderRadius: 10,
+    padding: "11px 14px", color: "#fff", fontSize: 13, outline: "none", boxSizing: "border-box",
   };
   const lbl: React.CSSProperties = {
     color: "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: 700, letterSpacing: "1px",
     marginBottom: 6, display: "block", textTransform: "uppercase",
   };
   const card: React.CSSProperties = {
-    background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px",
+    background: "linear-gradient(145deg, rgba(18,21,24,0.96), rgba(8,10,12,0.98))",
+    border: "1px solid rgba(255,255,255,0.10)", borderRadius: 18,
+    padding: isMobile ? "20px 18px" : "24px 26px",
+    boxShadow: "0 18px 60px rgba(0,0,0,0.28)",
   };
 
-  const EyeOpen = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
-  const EyeOff  = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
-
   return (
-    <div style={{ minHeight: "100vh", background: "#000", color: "#fff", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <div className="co-page" style={{ minHeight: "100vh", background: "#000", color: "#fff" }}>
       <style>{`
-        .co-input:focus { border-color: rgba(105,197,253,0.5) !important; }
-        .co-select option { background: #111; color: #fff; }
-        @property --co-angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-        @keyframes coSpin { to { --co-angle: 360deg; } }
-        .co-border {
-          padding: 1.5px; border-radius: 12px; display: block;
-          background: conic-gradient(from var(--co-angle), #1d4ed8 0%, #69C5FD 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
-          animation: coSpin 3s linear infinite;
+        .co-page { position: relative; isolation: isolate; overflow: hidden; }
+        .co-page::before {
+          content: ""; position: fixed; z-index: -1; inset: 0; pointer-events: none;
+          background:
+            radial-gradient(circle at 76% 9%, rgba(105,197,253,0.13), transparent 26%),
+            radial-gradient(circle at 8% 44%, rgba(105,197,253,0.055), transparent 22%),
+            linear-gradient(180deg, #020304 0%, #000 42%);
         }
+        .co-input { transition: border-color .2s ease, box-shadow .2s ease, background .2s ease; }
+        .co-input:focus { border-color: rgba(105,197,253,0.7) !important; box-shadow: 0 0 0 3px rgba(105,197,253,0.08); background: rgba(105,197,253,0.035) !important; }
+        .co-input::placeholder { color: rgba(255,255,255,.25); }
+        .co-select option { background: #111; color: #fff; }
+        .co-border { border-radius: 12px; display: block; }
         .co-border-btn {
           display: flex; align-items: center; justify-content: center; gap: 10px;
-          width: 100%; padding: 16px; border-radius: 10px;
-          font-size: 14px; font-weight: 800; letter-spacing: 0.5px;
-          background: #000; color: #fff; border: none; cursor: pointer;
-          transition: opacity 0.2s;
+          width: 100%; min-height: 54px; padding: 15px 18px; border-radius: 10px;
+          font-size: 13px; font-weight: 900; letter-spacing: 1.1px; text-transform: uppercase;
+          background: #69C5FD; color: #020304; border: 1px solid #69C5FD; cursor: pointer;
+          box-shadow: 0 14px 34px rgba(105,197,253,.18);
+          transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
         }
+        .co-border-btn:hover:not(:disabled) { transform: translateY(-1px); background: #8dd4ff; box-shadow: 0 18px 40px rgba(105,197,253,.25); }
+        .co-border-btn.crypto { background: rgba(105,197,253,.055); color: #fff; border-color: rgba(105,197,253,.36); box-shadow: none; }
+        .co-border-btn.crypto:hover:not(:disabled) { background: rgba(105,197,253,.11); border-color: #69C5FD; box-shadow: 0 14px 34px rgba(105,197,253,.10); }
         .co-border-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .co-summary { position: sticky; top: 24px; }
+        .co-step-line { height: 1px; flex: 1; max-width: 72px; background: linear-gradient(90deg, rgba(105,197,253,.55), rgba(255,255,255,.12)); }
+        @media (max-width: 767px) {
+          .co-summary { position: static; }
+          .co-step-line { max-width: 34px; }
+        }
       `}</style>
 
       {/* Header */}
-      <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "12px 32px", display: "flex", alignItems: "center", gap: 12 }}>
-        <a href="/#pricing" style={{ textDecoration: "none", color: "rgba(255,255,255,0.5)", fontSize: 13 }}>← Challenges</a>
-        <span style={{ color: "rgba(255,255,255,0.2)" }}>/</span>
-        <span style={{ color: "#fff", fontSize: 13, fontWeight: 600 }}>Commencer le challenge</span>
+      <div style={{ minHeight: isMobile ? 64 : 76, borderBottom: "1px solid rgba(255,255,255,0.10)", padding: isMobile ? "0 16px" : "0 34px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,0,0,.72)", backdropFilter: "blur(18px)" }}>
+        <Link href="/#pricing" style={{ textDecoration: "none", color: "rgba(255,255,255,0.62)", fontSize: 12, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 8, textTransform: "uppercase", letterSpacing: ".08em" }}>
+          <ArrowLeft size={15} /> {isMobile ? "Retour" : "Retour aux challenges"}
+        </Link>
+        <Link href="/" aria-label="Traders Rewards" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", height: isMobile ? 58 : 70, display: "flex", alignItems: "center" }}>
+          <Image src="/logo-blanc-transparent.png" alt="Traders Rewards" width={176} height={112} priority style={{ width: isMobile ? 145 : 176, height: isMobile ? 92 : 112, objectFit: "contain" }} />
+        </Link>
+        <div style={{ color: "rgba(255,255,255,.5)", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 7, letterSpacing: ".05em", textTransform: "uppercase" }}>
+          <LockKeyhole size={14} color="#69C5FD" /> {!isMobile && "Paiement sécurisé"}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "30px 18px 18px" : "50px 24px 10px", textAlign: "center" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "#69C5FD", fontSize: 10, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", marginBottom: 14 }}>
+          <Sparkles size={13} /> Votre parcours commence ici
+        </div>
+        <h1 style={{ margin: 0, fontSize: isMobile ? 34 : 50, lineHeight: 1.02, letterSpacing: "-.04em", fontWeight: 900 }}>
+          Finalisez votre <span style={{ color: "#69C5FD" }}>Challenge</span>
+        </h1>
+        <p style={{ margin: "12px auto 20px", maxWidth: 610, color: "rgba(255,255,255,.48)", fontSize: isMobile ? 13 : 15, lineHeight: 1.6 }}>
+          Choisissez votre compte, renseignez vos informations et accédez à votre espace trader en quelques minutes.
+        </p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? 8 : 12 }}>
+          {["Challenge", "Informations", "Paiement"].map((step, index) => (
+            <div key={step} style={{ display: "contents" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 7, color: index === 0 ? "#fff" : "rgba(255,255,255,.4)", fontSize: 10, fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" }}>
+                <span style={{ width: 22, height: 22, borderRadius: "50%", display: "grid", placeItems: "center", background: index === 0 ? "#69C5FD" : "rgba(255,255,255,.06)", border: `1px solid ${index === 0 ? "#69C5FD" : "rgba(255,255,255,.12)"}`, color: index === 0 ? "#000" : "rgba(255,255,255,.5)" }}>{index + 1}</span>
+                {!isMobile && step}
+              </div>
+              {index < 2 && <div className="co-step-line" />}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Mobile résumé */}
       {isMobile && (
         <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
-          <img src="/MT5.png" alt="MT5" style={{ width: 36, height: 36, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+          <Image src="/MT5.png" alt="MT5" width={36} height={36} style={{ width: 36, height: 36, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
           <div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "1px" }}>Challenge {challenge.model}</div>
             <div style={{ fontWeight: 700, fontSize: 14 }}>{challenge.label}</div>
@@ -337,13 +390,13 @@ function CheckoutContent() {
       )}
 
       {/* Body */}
-      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", maxWidth: 1200, margin: "0 auto", padding: isMobile ? "0" : "40px 24px", gap: isMobile ? 0 : 32 }}>
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", maxWidth: 1200, margin: "0 auto", padding: isMobile ? "0" : "28px 24px 64px", gap: isMobile ? 0 : 28, alignItems: "flex-start" }}>
 
         {/* LEFT — Formulaire */}
         <div style={{ flex: 1, padding: isMobile ? "16px" : "0", display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Sélecteur challenge */}
-          <div style={card}>
+          <div style={{ ...card, borderColor: "rgba(105,197,253,.23)", boxShadow: "0 22px 70px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03)" }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Challenge</div>
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
               {([{ key: "2step", label: "2-Step" }, { key: "1step", label: "1-Step" }] as const).map(m => (
@@ -359,8 +412,8 @@ function CheckoutContent() {
               {SIZES.map(size => (
                 <button key={size} onClick={() => changeSize(size)} style={{
                   flex: 1, padding: "8px 4px", fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border: selectedSize === size ? "1.5px solid #fff" : "1.5px solid rgba(255,255,255,0.1)",
-                  background: selectedSize === size ? "#fff" : "#111",
+                  border: selectedSize === size ? "1.5px solid #69C5FD" : "1.5px solid rgba(255,255,255,0.1)",
+                  background: selectedSize === size ? "#69C5FD" : "#111",
                   color: selectedSize === size ? "#000" : "rgba(255,255,255,0.5)",
                 }}>{SIZE_LABELS[size]}</button>
               ))}
@@ -470,14 +523,14 @@ function CheckoutContent() {
         </div>
 
         {/* RIGHT — Résumé + paiement */}
-        <div style={{ flex: "0 0 360px", padding: isMobile ? "16px" : "0", display: "flex", flexDirection: "column", gap: 16 }}>
+        <div className="co-summary" style={{ flex: "0 0 368px", width: isMobile ? "100%" : undefined, padding: isMobile ? "16px" : "0", display: "flex", flexDirection: "column", gap: 14 }}>
 
           {/* Résumé desktop */}
           {!isMobile && (
-            <div style={card}>
+            <div style={{ ...card, borderColor: "rgba(105,197,253,.24)", boxShadow: "0 24px 80px rgba(0,0,0,.42), 0 0 50px rgba(105,197,253,.045)" }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Résumé</div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                <img src="/MT5.png" alt="MT5" style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+                <Image src="/MT5.png" alt="MT5" width={40} height={40} style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>Traders Rewards Challenge</div>
                   <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
@@ -595,19 +648,26 @@ function CheckoutContent() {
             ) : (<>
               <div className="co-border" style={{ opacity: (anyLoading || !canPay) ? 0.5 : 1 }}>
                 <button onClick={handleStripe} disabled={anyLoading || !canPay} className="co-border-btn">
-                  {loadingStripe ? "Redirection..." : <><span>💳</span> Payer par carte <ChevronRight size={16} /></>}
+                  {loadingStripe ? "Redirection..." : <><CreditCard size={17} /> Payer par carte <ChevronRight size={16} /></>}
                 </button>
               </div>
               <div className="co-border" style={{ opacity: (anyLoading || !canPay) ? 0.5 : 1 }}>
-                <button onClick={handleCrypto} disabled={anyLoading || !canPay} className="co-border-btn">
-                  {loadingCrypto ? "Redirection..." : <><span>₿</span> Payer en crypto <ChevronRight size={16} /></>}
+                <button onClick={handleCrypto} disabled={anyLoading || !canPay} className="co-border-btn crypto">
+                  {loadingCrypto ? "Redirection..." : <><Bitcoin size={17} /> Payer en crypto <ChevronRight size={16} /></>}
                 </button>
               </div>
             </>)}
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 4 }}>
-              <ShieldCheck size={13} color="rgba(255,255,255,0.2)" />
-              <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 11 }}>Sécurisé par Stripe · SSL · Aucun abonnement</span>
+              <ShieldCheck size={13} color="#69C5FD" />
+              <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 10, fontWeight: 600, letterSpacing: ".03em" }}>Sécurisé par Stripe · SSL · Aucun abonnement</span>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 7, marginTop: 4 }}>
+              {["Accès rapide", "Paiement unique", "Support humain"].map(item => (
+                <div key={item} style={{ minHeight: 48, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, padding: "7px 4px", border: "1px solid rgba(255,255,255,.07)", borderRadius: 9, background: "rgba(255,255,255,.025)", color: "rgba(255,255,255,.42)", fontSize: 9, fontWeight: 700, textAlign: "center" }}>
+                  <Check size={12} color="#69C5FD" /> {item}
+                </div>
+              ))}
             </div>
           </div>
 

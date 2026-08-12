@@ -2,6 +2,7 @@
 import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendRewardCertificateEmail } from "@/lib/mailer";
+import { ensureCertificateRecord } from "@/lib/certificates";
 import { getMT5Account, withdrawMT5Balance } from "@/lib/mt5";
 
 
@@ -48,17 +49,6 @@ export async function PATCH(req: NextRequest) {
         const netAmount = parseFloat((grossAmount * splitPct).toFixed(2));
         await admin.from("payouts").update({ amount: netAmount }).eq("id", id);
 
-        // Create the opaque, publicly verifiable certificate for this payout.
-        await admin.from("reward_certificates").upsert({
-          source_key: `payout:${data.id}`,
-          payout_id: data.id,
-          challenge_id: challenge.id,
-          trader_display_name: `${firstName} ${lastName}`.trim() || "Trader",
-          account_size: challenge.account_size,
-          amount: `${netAmount.toLocaleString("fr-FR")} ${previous?.payment_method === "bank" ? "EUR" : "USD"}`,
-          issued_at: new Date().toISOString().slice(0, 10),
-        }, { onConflict: "source_key" });
-
         // 1. Reset DB en premier (avant withdrawal) pour éviter que le sync restore l'ancien high
         const resetNow = new Date().toISOString();
         await admin.from("challenges").update({
@@ -97,10 +87,36 @@ export async function PATCH(req: NextRequest) {
           }
         }
 
+        // Certificat Reward vérifiable : le même jeton alimente le QR, l'email et le dashboard.
+        const certificateAmount = previous?.payment_method === "bank" && netAmountEur != null
+          ? `${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} EUR`
+          : `${netAmount.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+        const publicToken = await ensureCertificateRecord({
+          type: "reward",
+          challengeId: challenge.id,
+          payoutId: data.id,
+          traderDisplayName: `${firstName} ${lastName}`,
+          accountSize: challenge.account_size,
+          amount: certificateAmount,
+        });
+
         // Email certificat récompense (grossAmount = profit brut soumis par le trader)
         const certDate = new Date().toLocaleDateString("fr-FR");
-        await sendRewardCertificateEmail(userEmail, firstName, lastName, challenge.account_size, grossAmount, challenge.model, certDate, netAmountEur, { userId: data.user_id as string, challengeId: challenge.id as string })
-          .catch((e) => console.error("Reward cert email error:", e));
+        await sendRewardCertificateEmail(
+          userEmail,
+          firstName,
+          lastName,
+          challenge.account_size,
+          grossAmount,
+          challenge.model,
+          certDate,
+          netAmountEur,
+          {
+            userId: data.user_id as string,
+            challengeId: challenge.id as string,
+            publicToken: publicToken ?? undefined,
+          },
+        ).catch((e) => console.error("Reward cert email error:", e));
       }
     } catch (e) {
       console.error("Payout approval error:", e);

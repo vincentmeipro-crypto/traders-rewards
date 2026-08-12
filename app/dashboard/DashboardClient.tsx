@@ -7,6 +7,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
+import QRCode from "qrcode";
 import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle } from "lucide-react";
 import SupportTab from "./SupportTab";
 import TraderCockpit from "./TraderCockpit";
@@ -68,6 +69,50 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 type Tab = "dashboard" | "challenges" | "payouts" | "kyc" | "certificates" | "history" | "invoices" | "rules" | "settings" | "profile" | "affiliate" | "support";
+
+type CertificateSummary = {
+  public_token: string;
+  certificate_type: "phase1" | "phase2" | "reward";
+  challenge_id: string | null;
+  payout_id: string | null;
+  issued_at: string;
+};
+
+function CertificateQr({ token, size = 38 }: { token?: string; size?: number }) {
+  const [qr, setQr] = useState({ token: "", src: "" });
+  const src = qr.token === token ? qr.src : "";
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!token || !/^[0-9a-f]{32}$/.test(token)) return;
+    QRCode.toDataURL(`${window.location.origin}/verify/${token}?source=qr`, {
+      width: Math.max(size * 3, 120),
+      margin: 1,
+      errorCorrectionLevel: "M",
+      color: { dark: "#000000", light: "#ffffff" },
+    }).then(dataUrl => {
+      if (!cancelled) setQr({ token, src: dataUrl });
+    }).catch(() => {
+      if (!cancelled) setQr({ token, src: "" });
+    });
+    return () => { cancelled = true; };
+  }, [size, token]);
+
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: 3, overflow: "hidden",
+      background: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+      flexShrink: 0,
+    }}>
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt="QR de vérification" width={size} height={size} style={{ display: "block" }} />
+      ) : (
+        <ShieldCheck size={Math.max(14, size * 0.48)} color="#0e0e0e" />
+      )}
+    </div>
+  );
+}
 
 type AffiliateData = {
   code: string;
@@ -212,7 +257,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string; challenge_id?: string; payment_method?: string; rejection_reason?: string }[]>([]);
-  const [latestPayout, setLatestPayout] = useState<{ amount: number; created_at: string; status: string } | null>(null);
+  const [certificates, setCertificates] = useState<CertificateSummary[]>([]);
   const [tradeHistory, setTradeHistory] = useState<Record<string, unknown>[]>([]);
   const [tradeHistoryLoading, setTradeHistoryLoading] = useState(false);
   const [selectedHistChallenge, setSelectedHistChallenge] = useState<Challenge | null>(null);
@@ -279,7 +324,6 @@ export default function DashboardClient({ user }: { user: User }) {
       .then(({ data }) => {
         if (data && data.length > 0) {
           setAllPayouts(data);
-          setLatestPayout(data[0]);
         }
       });
     fetch("/api/kyc").then(r => r.json()).then(data => {
@@ -291,6 +335,10 @@ export default function DashboardClient({ user }: { user: User }) {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
       setToken(session.access_token);
+      fetch("/api/certificates", { headers: { Authorization: `Bearer ${session.access_token}` } })
+        .then(r => r.ok ? r.json() : [])
+        .then(data => setCertificates(Array.isArray(data) ? data : []))
+        .catch(() => setCertificates([]));
       fetch("/api/profile", { headers: { Authorization: `Bearer ${session.access_token}` } })
         .then(r => r.json()).then(p => {
           if (!p) return;
@@ -1289,9 +1337,17 @@ export default function DashboardClient({ user }: { user: User }) {
               const phase = challenge?.phase || "phase1";
               const unlockedPhase1 = phase === "phase2" || phase === "funded";
               const unlockedChallenge = phase === "funded";
-              const unlockedReward = !!latestPayout;
-
               const paidPayouts = allPayouts.filter(p => p.status === "paid");
+              const unlockedReward = paidPayouts.length > 0;
+              const certificateFor = (certificateType: CertificateSummary["certificate_type"], payoutId?: string) =>
+                certificates.find(cert =>
+                  cert.certificate_type === certificateType &&
+                  (payoutId ? cert.payout_id === payoutId : cert.challenge_id === challenge?.id)
+                );
+              const phase1Certificate = certificateFor("phase1");
+              const phase2Certificate = certificateFor("phase2");
+              const issuedDate = (cert?: CertificateSummary) =>
+                cert ? new Date(`${cert.issued_at}T00:00:00`).toLocaleDateString("fr-FR") : challengeDate;
 
               const baseCerts = [
                 {
@@ -1299,7 +1355,8 @@ export default function DashboardClient({ user }: { user: User }) {
                   title: "Phase 1", topLabel: "Traders Rewards — Certification",
                   unlocked: unlockedPhase1,
                   amount: challenge?.account_size || "$100,000",
-                  date: challengeDate,
+                  date: issuedDate(phase1Certificate),
+                  token: phase1Certificate?.public_token,
                   key: "phase1",
                 },
                 {
@@ -1307,7 +1364,8 @@ export default function DashboardClient({ user }: { user: User }) {
                   title: "Phase 2", topLabel: "Traders Rewards — Certification",
                   unlocked: unlockedChallenge,
                   amount: challenge?.account_size || "$100,000",
-                  date: challengeDate,
+                  date: issuedDate(phase2Certificate),
+                  token: phase2Certificate?.public_token,
                   key: "challenge",
                 },
                 ...(!unlockedReward ? [{
@@ -1316,6 +1374,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   unlocked: false,
                   amount: "$0",
                   date: "",
+                  token: undefined,
                   key: "reward-locked",
                 }] : []),
               ];
@@ -1325,7 +1384,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {/* Phase 1 + Challenge */}
                   <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
                     {baseCerts.map((cert) => {
-                      const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(cert.amount)}&date=${encodeURIComponent(cert.date)}`;
+                      const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(cert.amount)}&date=${encodeURIComponent(cert.date)}${cert.token ? `&token=${encodeURIComponent(cert.token)}` : ""}`;
                       return (
                         <div key={cert.key} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                           <div style={{ position: "relative", borderRadius: 10, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.5)", filter: cert.unlocked ? "none" : "brightness(0.3)" }}>
@@ -1345,9 +1404,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               </div>
                               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 8 }}>
                                 <div style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{cert.date}</div>
-                                <div style={{ width: 28, height: 28, background: "#fff", borderRadius: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                  <div style={{ width: 22, height: 22, background: "repeating-linear-gradient(0deg,#000 0,#000 2px,#fff 2px,#fff 4px),repeating-linear-gradient(90deg,#000 0,#000 2px,#fff 2px,#fff 4px)", backgroundBlendMode: "multiply" }} />
-                                </div>
+                                <CertificateQr token={cert.token} />
                               </div>
                             </div>
                             {!cert.unlocked && (
@@ -1380,8 +1437,12 @@ export default function DashboardClient({ user }: { user: User }) {
                       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
                         {paidPayouts.map((p) => {
                           const amt = `$${Number(p.amount).toLocaleString()}`;
-                          const dt = new Date(p.created_at).toLocaleDateString("fr-FR");
-                          const href = `/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amt)}&date=${encodeURIComponent(dt)}`;
+                          const rewardCertificate = certificateFor("reward", p.id);
+                          const dt = rewardCertificate
+                            ? issuedDate(rewardCertificate)
+                            : new Date(p.created_at).toLocaleDateString("fr-FR");
+                          const publicToken = rewardCertificate?.public_token;
+                          const href = `/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(amt)}&date=${encodeURIComponent(dt)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
                           return (
                             <div key={p.id} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                               <div style={{ borderRadius: 10, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
@@ -1398,7 +1459,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{amt}</div>
                                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto" }}>
                                     <div style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dt}</div>
-                                    <div style={{ width: 28, height: 28, background: "#fff", borderRadius: 2 }} />
+                                    <CertificateQr token={publicToken} />
                                   </div>
                                 </div>
                               </div>
