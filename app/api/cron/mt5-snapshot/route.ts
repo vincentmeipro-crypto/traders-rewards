@@ -234,7 +234,7 @@ export async function GET(req: NextRequest) {
           console.warn(`[${challenge.mt5_login}] trade metrics cache failed:`, metricsError.message);
         }
       }
-      await admin.from("mt5_snapshots").insert({
+      const { error: snapshotError } = await admin.from("mt5_snapshots").insert({
         challenge_id:    challenge.id,
         mt5_login:       challenge.mt5_login,
         balance:         account.balance ?? null,
@@ -245,6 +245,7 @@ export async function GET(req: NextRequest) {
         positions_count: positions.length,
         positions:       positions,
       });
+      if (snapshotError) throw new Error(`MT5 snapshot persistence failed: ${snapshotError.message}`);
 
       synced++;
     } catch (e) {
