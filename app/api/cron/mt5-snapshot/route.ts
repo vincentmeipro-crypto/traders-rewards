@@ -38,7 +38,10 @@ export async function GET(req: NextRequest) {
         getMT5Positions(challenge.mt5_login).catch(() => []),
       ]);
 
-      const equity       = account.equity ?? account.balance ?? 0;
+      // balance + profit flottant est plus fiable que l'equity potentiellement mise en cache.
+      const equity       = typeof account.profit === "number"
+        ? (account.balance ?? 0) + account.profit
+        : (account.equity ?? account.balance ?? 0);
       const startBalance = challenge.start_balance ?? challenge.balance ?? 0;
       const totalLimit   = challenge.total_drawdown_limit ?? 10;
       const dailyLimit   = challenge.daily_drawdown_limit ?? 5;
@@ -80,37 +83,9 @@ export async function GET(req: NextRequest) {
       const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
       const curBalance       = account.balance ?? startBalance;
 
-      const noOpenPos        = Math.abs(equity - curBalance) < 0.50;
-
-      // Staleness 1 : ancien code EOD stockait daily_start = start_balance
-      const dailyStartIsStale = !isNewDay && storedDailyStart !== null
-        && Math.abs(storedDailyStart - startBalance) < 0.01
-        && curBalance < startBalance - 0.01;
-
-      // Staleness 2 : daily_low anachronique (beaucoup plus bas que balance actuelle)
-      const dailyLowIsStale  = !isNewDay && storedDailyLow !== null
-        && noOpenPos
-        && storedDailyLow < curBalance - startBalance * 0.01;
-
-      // Staleness 3 : daily_start nettement au-dessus de curBalance sans trades aujourd'hui
-      // (reset 22h manqué — ex: compte restauré avec ancien daily_start d'une période bénéficiaire)
-      let dailyStartMissedReset = false;
+      // Etat monotone : seul le rollover broker de 22:00 UTC peut réinitialiser le plus bas.
+      const effectiveNewDay = isNewDay;
       let prefetchedHistory: Record<string, unknown>[] | null = null;
-      if (!isNewDay && storedDailyStart !== null && noOpenPos
-          && storedDailyStart > curBalance + startBalance * 0.005) {
-        try {
-          prefetchedHistory = await getMT5History(challenge.mt5_login) as Record<string, unknown>[];
-          const noTradesToday = !prefetchedHistory.some(
-            d => (d.time as number) * 1000 >= tradingDayStart.getTime()
-          );
-          if (noTradesToday) {
-            dailyStartMissedReset = true;
-            console.warn(`[${challenge.mt5_login}] daily_start=${storedDailyStart} >> balance=${curBalance}, aucun trade aujourd'hui → reset`);
-          }
-        } catch {}
-      }
-
-      const effectiveNewDay  = isNewDay || dailyStartIsStale || dailyLowIsStale || dailyStartMissedReset;
 
       const dailyStartBalance = (effectiveNewDay || storedDailyStart === null) ? curBalance : storedDailyStart;
       const dailyLowEquity    = (effectiveNewDay || storedDailyLow   === null) ? equity : Math.min(storedDailyLow, equity);
@@ -143,16 +118,16 @@ export async function GET(req: NextRequest) {
         if (pastSnaps?.length) {
           for (const snap of pastSnaps) {
             const snapEquity = snap.equity ?? snap.balance ?? 0;
-            if (snapEquity > 0 && snapEquity <= dailyThreshold) {
-              breachReason = "daily_drawdown";
-              breachEquity = snapEquity;
-              console.error(`BREACH SNAPSHOT [${challenge.mt5_login}] daily_drawdown — equity snapshot: ${snapEquity}`);
-              break;
-            }
             if (snapEquity > 0 && snapEquity <= totalThreshold) {
               breachReason = "total_drawdown";
               breachEquity = snapEquity;
               console.error(`BREACH SNAPSHOT [${challenge.mt5_login}] total_drawdown — equity snapshot: ${snapEquity}`);
+              break;
+            }
+            if (snapEquity > 0 && snapEquity <= dailyThreshold) {
+              breachReason = "daily_drawdown";
+              breachEquity = snapEquity;
+              console.error(`BREACH SNAPSHOT [${challenge.mt5_login}] daily_drawdown — equity snapshot: ${snapEquity}`);
               break;
             }
           }
@@ -164,7 +139,7 @@ export async function GET(req: NextRequest) {
         try {
           const history = prefetchedHistory ?? await getMT5History(challenge.mt5_login) as Record<string, unknown>[];
           prefetchedHistory = history;
-          const todayMs = new Date().setHours(0, 0, 0, 0);
+          const todayMs = tradingDayStart.getTime();
 
           const todayDeals = history
             .filter(d => (d.time as number) * 1000 >= todayMs)
@@ -179,16 +154,16 @@ export async function GET(req: NextRequest) {
             const profit = typeof deal.profit === "number" ? deal.profit : 0;
             runningBalance += profit;
             // Vérifier DAILY DD (5%) ET TOTAL DD (10%) sur chaque deal fermé
-            if (runningBalance <= dailyThreshold) {
-              breachReason = "daily_drawdown";
-              breachEquity = runningBalance;
-              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] daily_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${dailyThreshold})`);
-              break;
-            }
             if (runningBalance <= totalThreshold) {
               breachReason = "total_drawdown";
               breachEquity = runningBalance;
               console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] total_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${totalThreshold})`);
+              break;
+            }
+            if (runningBalance <= dailyThreshold) {
+              breachReason = "daily_drawdown";
+              breachEquity = runningBalance;
+              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] daily_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${dailyThreshold})`);
               break;
             }
           }

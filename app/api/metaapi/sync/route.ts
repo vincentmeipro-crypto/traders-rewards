@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getMT5Account, createMT5Account, changeMT5Group, disableMT5Account, closeAllPositions, changeMT5Password } from "@/lib/mt5";
 import {
@@ -100,16 +100,8 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
   const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
 
-  // Detecte donnees perimees de l'ancien code EOD
-  const noOpenPos        = Math.abs(newEquity - newBalance) < 0.50;
-  const dailyStartIsStale = !isNewDay && storedDailyStart !== null
-    && Math.abs(storedDailyStart - startBalance) < 0.01
-    && newBalance < startBalance - 0.01;
-  // daily_low_equity perimee : valeur bien plus basse que la balance actuelle sans position ouverte
-  const dailyLowIsStale  = !isNewDay && storedDailyLow !== null
-    && noOpenPos
-    && storedDailyLow < newBalance - startBalance * 0.01;
-  const effectiveNewDay  = isNewDay || dailyStartIsStale || dailyLowIsStale;
+  // Etat monotone : seul le rollover broker de 22:00 UTC peut réinitialiser le plus bas.
+  const effectiveNewDay = isNewDay;
 
   const dailyStartBalance = (effectiveNewDay || storedDailyStart === null) ? newBalance : storedDailyStart;
   const dailyLowEquity    = (effectiveNewDay || storedDailyLow   === null)
@@ -162,7 +154,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 5b. Breach drawdown journalier — plancher fixe base sur start_balance original
   const dailyFloorEquity = startBalance * (1 - dailyLimit / 100);
-  if (dailyLowEquity < dailyFloorEquity) {
+  if (dailyLowEquity <= dailyFloorEquity) {
     const closeResult = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
     if (closeResult.positions.length > 0) {
       try {
@@ -201,7 +193,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // 6. Breach drawdown total — référence fixe start_balance pour tous les modèles
   let totalDD = 0;
   let totalViolated = false;
-  totalDD = startBalance > 0 ? ((startBalance - newBalance) / startBalance) * 100 : 0;
+  totalDD = startBalance > 0 ? ((startBalance - Math.min(newEquity, dailyLowEquity)) / startBalance) * 100 : 0;
   if (totalDD >= totalLimit) totalViolated = true;
   if (totalViolated) {
     const closeResult2 = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
