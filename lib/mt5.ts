@@ -67,6 +67,7 @@ export async function createMT5Account(params: {
   const res = await fetch(`${MT5_URL}/accounts/create`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(20_000),
     body: JSON.stringify({
       first_name:   params.firstName,
       last_name:    params.label ? `${params.lastName} | ${params.label}` : params.lastName,
@@ -91,6 +92,7 @@ export async function changeMT5Group(login: number, newGroup: string): Promise<v
   const res = await fetch(`${MT5_URL}/accounts/change-group`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(20_000),
     body: JSON.stringify({ login, new_group: newGroup }),
   });
   if (!res.ok) throw new Error(`MT5 change-group failed: ${await res.text()}`);
@@ -100,6 +102,7 @@ export async function disableMT5Account(login: number): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/disable`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(15_000),
     body: JSON.stringify({ login }),
   });
   if (!res.ok) throw new Error(`MT5 disable failed: ${await res.text()}`);
@@ -109,6 +112,7 @@ export async function enableMT5Account(login: number): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/enable`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(15_000),
     body: JSON.stringify({ login }),
   });
   if (!res.ok) throw new Error(`MT5 enable failed: ${await res.text()}`);
@@ -118,6 +122,7 @@ export async function addMT5Balance(login: number, amount: number, comment = "De
   const res = await fetch(`${MT5_URL}/accounts/add-balance`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(20_000),
     body: JSON.stringify({ login, amount, comment }),
   });
   if (!res.ok) throw new Error(`MT5 add-balance failed: ${await res.text()}`);
@@ -127,6 +132,7 @@ export async function withdrawMT5Balance(login: number, amount: number, comment 
   const res = await fetch(`${MT5_URL}/accounts/withdraw`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(20_000),
     body: JSON.stringify({
       login,
       amount: Math.abs(amount),
@@ -139,6 +145,7 @@ export async function withdrawMT5Balance(login: number, amount: number, comment 
 export async function getMT5Account(login: number) {
   const res = await fetch(`${MT5_URL}/accounts/${login}`, {
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(8_000),
   });
   if (!res.ok) throw new Error(`MT5 get failed: ${await res.text()}`);
   return res.json();
@@ -147,6 +154,7 @@ export async function getMT5Account(login: number) {
 export async function getMT5History(login: number): Promise<unknown[]> {
   const res = await fetch(`${MT5_URL}/accounts/${login}/history`, {
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) throw new Error(`MT5 history failed: ${await res.text()}`);
   return res.json();
@@ -156,6 +164,7 @@ export async function changeMT5Password(login: number): Promise<void> {
   const res = await fetch(`${MT5_URL}/accounts/${login}/change-password`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(15_000),
   });
   if (!res.ok) throw new Error(`MT5 change-password failed: ${await res.text()}`);
 }
@@ -164,6 +173,7 @@ export async function updateMT5AccountName(login: number, firstName: string, las
   const res = await fetch(`${MT5_URL}/accounts/${login}/update-name`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(15_000),
     body: JSON.stringify({ first_name: firstName, last_name: lastName, label }),
   });
   if (!res.ok) throw new Error(`MT5 update-name failed: ${await res.text()}`);
@@ -186,7 +196,10 @@ export async function updateMT5AccountNameWithRetry(
 }
 
 export async function getMT5Positions(login: number): Promise<MT5Position[]> {
-  const res = await fetch(`${MT5_URL}/accounts/${login}/positions`, { headers: MT5_HEADERS });
+  const res = await fetch(`${MT5_URL}/accounts/${login}/positions`, {
+    headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(8_000),
+  });
   if (!res.ok) throw new Error(`MT5 positions failed: ${await res.text()}`);
   const data = await res.json();
   return data.positions ?? [];
@@ -196,6 +209,7 @@ export async function closeAllPositions(login: number): Promise<{ closed: number
   const res = await fetch(`${MT5_URL}/accounts/${login}/close-positions`, {
     method: "POST",
     headers: MT5_HEADERS,
+    signal: AbortSignal.timeout(20_000),
   });
   if (!res.ok) throw new Error(`MT5 close-positions failed: ${await res.text()}`);
   const data = await res.json();

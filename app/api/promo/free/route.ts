@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
 import {
@@ -132,58 +132,63 @@ export async function POST(req: NextRequest) {
 
     const challengeId = challenge?.id as string | undefined;
 
-    // Attacher le challenge à l'usage promo (best-effort, non bloquant)
-    if (cr.usageId && challengeId) {
-      try {
-        await admin.from("promo_code_usages")
-          .update({ challenge_id: challengeId })
-          .eq("id", cr.usageId);
-      } catch (e) {
-        console.error("[promo/free] usage challenge_id update error:", e);
+    // ── Répondre au client immédiatement — MT5 + email en arrière-plan ──
+    // after() s'exécute après la réponse HTTP dans la même invocation Vercel.
+    // Le client voit "ok" en ~1-2s ; les IDs MT5 arrivent dans l'email ~30s après.
+    after(async () => {
+      // Attacher le challenge à l'usage promo (best-effort, non bloquant)
+      if (cr.usageId && challengeId) {
+        try {
+          await admin.from("promo_code_usages")
+            .update({ challenge_id: challengeId })
+            .eq("id", cr.usageId);
+        } catch (e) {
+          console.error("[promo/free] usage challenge_id update error:", e);
+        }
       }
-    }
 
-    const mt5Url    = process.env.MT5_API_URL;
-    const mt5Secret = process.env.MT5_API_SECRET;
+      const mt5Url    = process.env.MT5_API_URL;
+      const mt5Secret = process.env.MT5_API_SECRET;
 
-    // ── Provision MT5 ─────────────────────────────────────────────────
-    if (mt5Url && mt5Secret && challengeId) {
-      try {
-        const userEmail = user?.email || "";
-        const mt5Res = await fetch(`${mt5Url}/provision-challenge`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-api-key": mt5Secret },
-          body: JSON.stringify({
-            challenge_id: challengeId,
-            first_name:   firstName,
-            last_name:    lastName,
-            email:        userEmail,
-            model:        product.model,
-            balance:      product.balance_usd,
-          }),
-        });
-        if (mt5Res.ok) {
-          const mt5Data = await mt5Res.json();
-          if (mt5Data.ok && mt5Data.login) {
-            await admin.from("challenges").update({
-              mt5_login:             mt5Data.login,
-              mt5_password:          mt5Data.password,
-              mt5_password_investor: mt5Data.password_investor,
-              mt5_server:            mt5Data.server,
-            }).eq("id", challengeId);
-            if (userEmail) {
-              try {
-                await sendWelcomeEmail(userEmail, product.account_size, product.model, {
-                  login:    mt5Data.login,
-                  password: mt5Data.password,
-                  server:   mt5Data.server,
-                }, undefined, { userId: userId as string, challengeId });
-              } catch (e) { console.error("[promo/free] Welcome email failed:", e); }
+      // ── Provision MT5 ───────────────────────────────────────────────
+      if (mt5Url && mt5Secret && challengeId) {
+        try {
+          const userEmail = user?.email || "";
+          const mt5Res = await fetch(`${mt5Url}/provision-challenge`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-api-key": mt5Secret },
+            body: JSON.stringify({
+              challenge_id: challengeId,
+              first_name:   firstName,
+              last_name:    lastName,
+              email:        userEmail,
+              model:        product.model,
+              balance:      product.balance_usd,
+            }),
+          });
+          if (mt5Res.ok) {
+            const mt5Data = await mt5Res.json();
+            if (mt5Data.ok && mt5Data.login) {
+              await admin.from("challenges").update({
+                mt5_login:             mt5Data.login,
+                mt5_password:          mt5Data.password,
+                mt5_password_investor: mt5Data.password_investor,
+                mt5_server:            mt5Data.server,
+              }).eq("id", challengeId);
+              if (userEmail) {
+                try {
+                  await sendWelcomeEmail(userEmail, product.account_size, product.model, {
+                    login:    mt5Data.login,
+                    password: mt5Data.password,
+                    server:   mt5Data.server,
+                  }, undefined, { userId: userId as string, challengeId });
+                } catch (e) { console.error("[promo/free] Welcome email failed:", e); }
+              }
             }
           }
-        }
-      } catch (e) { console.error("[promo/free] MT5 provision error:", e); }
-    }
+        } catch (e) { console.error("[promo/free] MT5 provision error:", e); }
+      }
+    });
 
     return NextResponse.json({ ok: true });
   } catch (err) {

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWelcomeEmail } from "@/lib/mailer";
@@ -186,84 +186,90 @@ export async function POST(req: NextRequest) {
 
     const challengeId = inserted?.id as string | undefined;
 
-    // Attacher le challenge à l'usage promo (best-effort, non bloquant)
-    if (promoUsageId && challengeId) {
-      try {
-        await admin.from("promo_code_usages")
-          .update({ challenge_id: challengeId })
-          .eq("id", promoUsageId);
-      } catch (e) {
-        console.error("[stripe/webhook] usage challenge_id update error:", e);
+    // ── Répondre à Stripe immédiatement — MT5 + email + affiliation en arrière-plan ──
+    // after() s'exécute après que la réponse HTTP a été envoyée, dans la même
+    // invocation Vercel (maxDuration: 60). Stripe reçoit son 200 en ~2s et ne
+    // tentera plus de retry à 5 minutes.
+    after(async () => {
+      // Attacher le challenge à l'usage promo (best-effort, non bloquant)
+      if (promoUsageId && challengeId) {
+        try {
+          await admin.from("promo_code_usages")
+            .update({ challenge_id: challengeId })
+            .eq("id", promoUsageId);
+        } catch (e) {
+          console.error("[stripe/webhook] usage challenge_id update error:", e);
+        }
       }
-    }
 
-    // ── Provision MT5 ─────────────────────────────────────────────────
-    if (challengeId) {
-      const challengeModel       = (challengeInsert.model       as string) || model;
-      const challengeAccountSize = (challengeInsert.account_size as string) || accountSize;
-      const challengeBalance     = (challengeInsert.balance      as number) || size;
+      // ── Provision MT5 ───────────────────────────────────────────────
+      if (challengeId) {
+        const challengeModel       = (challengeInsert.model       as string) || model;
+        const challengeAccountSize = (challengeInsert.account_size as string) || accountSize;
+        const challengeBalance     = (challengeInsert.balance      as number) || size;
 
-      try {
-        const mt5Res = await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
-          method: "POST",
-          headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            challenge_id: challengeId,
-            first_name:   firstName,
-            last_name:    lastName,
-            email,
-            model:        challengeModel,
-            balance:      challengeBalance,
-          }),
-        });
-        if (mt5Res.ok) {
-          const mt5Data = await mt5Res.json();
-          if (mt5Data.ok && mt5Data.login) {
-            await admin.from("challenges").update({
-              mt5_login:             mt5Data.login,
-              mt5_password:          mt5Data.password,
-              mt5_password_investor: mt5Data.password_investor,
-              mt5_server:            mt5Data.server,
-            }).eq("id", challengeId);
-            if (email) {
-              try {
-                await sendWelcomeEmail(email, challengeAccountSize, challengeModel, {
-                  login:    mt5Data.login,
-                  password: mt5Data.password,
-                  server:   mt5Data.server,
-                }, undefined, { userId: userId as string, challengeId });
-              } catch (e) { console.error("Welcome email failed:", e); }
+        try {
+          const mt5Res = await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
+            method: "POST",
+            headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
+            body: JSON.stringify({
+              challenge_id: challengeId,
+              first_name:   firstName,
+              last_name:    lastName,
+              email,
+              model:        challengeModel,
+              balance:      challengeBalance,
+            }),
+          });
+          if (mt5Res.ok) {
+            const mt5Data = await mt5Res.json();
+            if (mt5Data.ok && mt5Data.login) {
+              await admin.from("challenges").update({
+                mt5_login:             mt5Data.login,
+                mt5_password:          mt5Data.password,
+                mt5_password_investor: mt5Data.password_investor,
+                mt5_server:            mt5Data.server,
+              }).eq("id", challengeId);
+              if (email) {
+                try {
+                  await sendWelcomeEmail(email, challengeAccountSize, challengeModel, {
+                    login:    mt5Data.login,
+                    password: mt5Data.password,
+                    server:   mt5Data.server,
+                  }, undefined, { userId: userId as string, challengeId });
+                } catch (e) { console.error("[stripe/webhook] Welcome email failed:", e); }
+              }
             }
           }
-        }
-      } catch (e) { console.error("MT5 provision error:", e); }
-    }
+        } catch (e) { console.error("[stripe/webhook] MT5 provision error:", e); }
+      }
 
-    // ── Affiliation ───────────────────────────────────────────────────
-    if (refCode) {
-      try {
-        const { data: affiliate } = await admin
-          .from("affiliates")
-          .select("user_id, commission_rate, total_earned")
-          .eq("code", refCode)
-          .single();
-        if (affiliate && affiliate.user_id !== userId) {
-          const rate       = (affiliate.commission_rate || 10) / 100;
-          const amountPaid = amountPaidCents / 100;
-          const commission = Math.round(amountPaid * rate * 100) / 100;
-          await admin.from("affiliate_referrals").insert({
-            affiliate_user_id: affiliate.user_id,
-            referred_user_id:  userId,
-            purchase_amount:   amountPaid,
-            commission_amount: commission,
-            status:            "pending",
-          });
-          await admin.from("affiliates")
-            .update({ total_earned: (affiliate.total_earned || 0) + commission })
-            .eq("user_id", affiliate.user_id);
-        }
-      } catch (e) { console.error("Affiliate referral error:", e); }
-    }
+      // ── Affiliation ─────────────────────────────────────────────────
+      if (refCode) {
+        try {
+          const { data: affiliate } = await admin
+            .from("affiliates")
+            .select("user_id, commission_rate, total_earned")
+            .eq("code", refCode)
+            .single();
+          if (affiliate && affiliate.user_id !== userId) {
+            const rate       = (affiliate.commission_rate || 10) / 100;
+            const amountPaid = amountPaidCents / 100;
+            const commission = Math.round(amountPaid * rate * 100) / 100;
+            await admin.from("affiliate_referrals").insert({
+              affiliate_user_id: affiliate.user_id,
+              referred_user_id:  userId,
+              purchase_amount:   amountPaid,
+              commission_amount: commission,
+              status:            "pending",
+            });
+            await admin.from("affiliates")
+              .update({ total_earned: (affiliate.total_earned || 0) + commission })
+              .eq("user_id", affiliate.user_id);
+          }
+        } catch (e) { console.error("[stripe/webhook] Affiliate referral error:", e); }
+      }
+    });
   }
 
   return NextResponse.json({ received: true });
