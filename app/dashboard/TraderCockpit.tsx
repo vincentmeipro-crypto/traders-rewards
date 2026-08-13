@@ -77,6 +77,7 @@ type Props = {
   kycStatus: string;
   onSelectChallenge: (challenge: CockpitChallenge) => void;
   onNavigate: (tab: CockpitTab) => void;
+  onRefresh?: () => void;
 };
 
 const BLUE = "#69C5FD";
@@ -181,6 +182,7 @@ export default function TraderCockpit({
   kycStatus,
   onSelectChallenge,
   onNavigate,
+  onRefresh,
 }: Props) {
   const [showCredentials, setShowCredentials] = useState(false);
   const [copied, setCopied] = useState("");
@@ -332,7 +334,7 @@ export default function TraderCockpit({
         </div>
         <div className={styles.headerActions}>
           {allChallengesCount > 0 && <span className={styles.pill} style={{ color: BLUE, background: "rgba(105,197,253,.08)", alignSelf: "center" }}>🎖️ −20% {isFr ? "fidélité" : "loyalty"}</span>}
-          <button className={styles.button} onClick={() => window.location.reload()}><RefreshCw size={14} />{isFr ? "Actualiser" : "Refresh"}</button>
+          <button className={styles.button} onClick={() => onRefresh ? onRefresh() : window.location.reload()}><RefreshCw size={14} />{isFr ? "Actualiser" : "Refresh"}</button>
           <Link className={`${styles.button} ${styles.buttonPrimary}`} href="/#pricing">+ {isFr ? "Nouveau challenge" : "New challenge"}</Link>
         </div>
       </header>
