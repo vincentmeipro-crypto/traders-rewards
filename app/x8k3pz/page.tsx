@@ -1460,12 +1460,29 @@ function AdminPageInner() {
                                         <button onClick={() => saveChallenge(c.id)} aria-label="Sauvegarder" style={{ background: "#22c55e", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>✓</button>
                                         <button onClick={() => { setEditing(null); setEditData({}); }} aria-label="Annuler" style={{ background: "transparent", color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer" }}>✕</button>
                                       </div>
-                                    : <button
-                                        onClick={() => { setEditing(c.id); setEditData({}); setExpandedChallenge(c.id); }}
-                                        style={{ background: "rgba(255,255,255,0.07)", color: "#fff", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}
-                                      >
-                                        Éditer
-                                      </button>
+                                    : <div style={{ display: "flex", gap: 6 }}>
+                                        <button
+                                          onClick={() => { setEditing(c.id); setEditData({}); setExpandedChallenge(c.id); }}
+                                          style={{ background: "rgba(255,255,255,0.07)", color: "#fff", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, padding: "5px 12px", fontSize: 12, cursor: "pointer" }}
+                                        >
+                                          Éditer
+                                        </button>
+                                        {(c.status === "passed" || c.status === "active" || c.status === "funded") && (
+                                          <button
+                                            title="Envoyer certificat de passage"
+                                            onClick={async (e) => {
+                                              e.stopPropagation();
+                                              if (!confirm(`Envoyer le certificat à ${c.user_email} ?`)) return;
+                                              const r = await fetch("/api/admin/challenges/cert", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id: c.id }) });
+                                              const d = await r.json();
+                                              alert(r.ok ? `✅ Certificat envoyé à ${d.sentTo}` : `❌ Erreur : ${d.error}`);
+                                            }}
+                                            style={{ background: "rgba(245,158,11,0.12)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.25)", borderRadius: 6, padding: "5px 8px", fontSize: 12, cursor: "pointer" }}
+                                          >
+                                            📜
+                                          </button>
+                                        )}
+                                      </div>
                                   }
                                 </td>
                               </tr>

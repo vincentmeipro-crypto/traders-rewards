@@ -358,6 +358,21 @@ export async function PATCH(req: NextRequest) {
     ? await autoTransitionPhase(data)
     : null;
 
+  // Certificat automatique si le challenge vient d'être validé (auto-transition → passed)
+  if (transitioned === "passed" && userEmail) {
+    const certDate = new Date().toLocaleDateString("fr-FR");
+    const challengeCtx = { userId: data.user_id as string, challengeId: id };
+    const modelStr = ((data.model as string) ?? "").toLowerCase().replace(/[\s-]/g, "");
+    const is1StepModel = modelStr.includes("1step") || modelStr.includes("instant");
+    if (is1StepModel || data.phase === "phase2") {
+      // 1STEP (1 seule phase) ou 2STEP phase2 passée → certificat de challenge complet
+      try { await sendChallengeCertificateEmail(userEmail, firstName, lastName, data.account_size, certDate, challengeCtx); } catch (e) { console.error("sendChallengeCertificateEmail (auto) error:", e); }
+    } else {
+      // 2STEP phase1 passée → certificat phase 1
+      try { await sendPhase1CertificateEmail(userEmail, firstName, lastName, data.account_size, certDate, challengeCtx); } catch (e) { console.error("sendPhase1CertificateEmail (auto) error:", e); }
+    }
+  }
+
   const { data: latest } = await admin.from("challenges").select("*").eq("id", id).single();
   return NextResponse.json({ ...latest, user_email: userEmail, transitioned });
 }
