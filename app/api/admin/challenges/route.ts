@@ -219,10 +219,11 @@ export async function PATCH(req: NextRequest) {
   const { data: current } = await admin.from("challenges").select("*").eq("id", id).single();
 
   // Auto-increment trading_days if balance changed — once per calendar day only
+  // (skipped if admin explicitly provided a trading_days value)
   if (current && updates.balance !== undefined && updates.balance !== current.balance) {
     const lastSyncedDay = current.last_synced_at ? new Date(current.last_synced_at).toDateString() : null;
     const alreadyCountedToday = lastSyncedDay === new Date().toDateString();
-    if (!alreadyCountedToday) {
+    if (!alreadyCountedToday && updates.trading_days === undefined) {
       updates.trading_days = (current.trading_days || 0) + 1;
     }
     updates.last_synced_at = new Date().toISOString();

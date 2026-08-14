@@ -1341,13 +1341,13 @@ function AdminPageInner() {
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                        {["Trader", "Compte", "Phase", "Statut", "Balance", "Risk", "MT5", ""].map((h, i) => (
+                        {["Trader", "Compte", "Phase", "Statut", "Balance", "Jours", "Risk", "MT5", ""].map((h, i) => (
                           <th key={i} style={{ padding: "10px 12px", textAlign: "left", color: "rgba(255,255,255,0.35)", fontWeight: 700, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, whiteSpace: "nowrap" }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     {pipelineChallenges.length === 0
-                      ? <tbody><tr><td colSpan={8} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>
+                      ? <tbody><tr><td colSpan={9} style={{ padding: 40, textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 13 }}>
                           {search || pipelineFilter !== "all" ? "Aucun résultat pour ces filtres" : "Aucun challenge"}
                         </td></tr></tbody>
                       : pipelineChallenges.map(c => {
@@ -1416,6 +1416,14 @@ function AdminPageInner() {
                                   }
                                 </td>
 
+                                {/* J. tradés */}
+                                <td style={{ padding: "11px 12px" }} onClick={e => e.stopPropagation()}>
+                                  {isEditing
+                                    ? <input type="number" min={0} value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
+                                    : <span style={{ color: (c.trading_days ?? 0) >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontSize: 12, fontVariantNumeric: "tabular-nums" }}>{c.trading_days ?? 0}</span>
+                                  }
+                                </td>
+
                                 {/* Risk */}
                                 <td style={{ padding: "11px 12px", minWidth: 110 }}>
                                   {risk ? (
@@ -1465,7 +1473,7 @@ function AdminPageInner() {
                               {/* ── Panneau de détail expandable P1-P9 ── */}
                               {isExpanded && (
                                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                                  <td colSpan={8} style={{ padding: 0 }}>
+                                  <td colSpan={9} style={{ padding: 0 }}>
                                     <div style={{ background: "rgba(0,0,0,0.22)", borderTop: "1px solid rgba(59,130,246,0.1)", padding: isMobile ? "16px" : "20px 28px", display: "flex", flexDirection: "column", gap: 20 }}>
 
                                       {/* P7 — Challenge card dominante (pleine largeur) */}
@@ -1556,12 +1564,6 @@ function AdminPageInner() {
                                               </button>
                                             </div>
                                           ))}
-                                          {isEditing && (
-                                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
-                                              <span style={{ width: 68, flexShrink: 0, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>J. tradés</span>
-                                              <input type="number" value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "5px 8px", color: "#fff", fontSize: 12, width: 70 }} />
-                                            </div>
-                                          )}
                                         </div>
 
                                         {/* Colonne MT5 + Actions */}
