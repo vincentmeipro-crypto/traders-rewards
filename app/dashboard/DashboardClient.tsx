@@ -302,26 +302,28 @@ export default function DashboardClient({ user }: { user: User }) {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const fetchChallenges = async (preserveId?: string) => {
-    const { data } = await supabase
+  const handleRefresh = () => {
+    if (challenge?.id) sessionStorage.setItem("dash_sel_challenge", challenge.id);
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    supabase
       .from("challenges")
       .select("*")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
-    if (data && data.length > 0) {
-      setAllChallenges(data);
-      const restored = preserveId ? data.find((c: Challenge) => c.id === preserveId) : null;
-      const firstActive = data.find((c: Challenge) => c.status === "active" || c.status === "funded") || null;
-      setChallenge(restored ?? firstActive);
-    }
-    setLoading(false);
-  };
-
-  const handleRefresh = () => fetchChallenges(challenge?.id);
-
-  useEffect(() => {
-    fetchChallenges();
-    supabase
+      .order("created_at", { ascending: false })
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          setAllChallenges(data);
+          const savedId = sessionStorage.getItem("dash_sel_challenge");
+          if (savedId) sessionStorage.removeItem("dash_sel_challenge");
+          const restored = savedId ? data.find((c: Challenge) => c.id === savedId) : null;
+          const firstActive = data.find((c: Challenge) => c.status === "active" || c.status === "funded") || null;
+          setChallenge(restored ?? firstActive);
+        }
+        setLoading(false);
+      });
     supabase
       .from("payouts")
       .select("id, amount, created_at, status, challenge_id, payment_method, rejection_reason")
