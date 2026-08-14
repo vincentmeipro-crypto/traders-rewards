@@ -321,8 +321,9 @@ export function buildPhase1CertificateEmail(p: {
   siteUrl:     string;
   logoUrl:     string;
   publicToken?: string;
+  qrDataUrl?:  string;
 }): { subject: string; html: string } {
-  const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken } = p;
+  const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken, qrDataUrl } = p;
   const name = `${firstName} ${lastName}`.trim();
   const certUrl = `${siteUrl}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
   const subject = `🏆 Félicitations ${firstName} — Certificat Phase 1 obtenu !`;
@@ -351,6 +352,12 @@ export function buildPhase1CertificateEmail(p: {
               <tr><td style="color:#777;font-size:14px;padding:12px 0;">Date :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;text-align:right;">${date}</td></tr>
             </table>
             <a href="${certUrl}" style="display:block;background:#00C2FF;color:#000;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">Télécharger mon certificat →</a>
+            ${qrDataUrl ? `
+            <div style="text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid #e8e8e8;">
+              <p style="color:#999;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px 0;">Vérification d'authenticité</p>
+              <a href="${certUrl}"><img src="${qrDataUrl}" alt="QR Code traçable" style="width:150px;height:150px;display:inline-block;border:3px solid #e8f0fe;border-radius:8px;" /></a>
+              <p style="color:#aaa;font-size:11px;margin:10px 0 0 0;">Scannez ce QR code pour vérifier ce certificat</p>
+            </div>` : ""}
           </div>
         </div>
         <div style="margin-top:24px;padding:0 8px;">
@@ -372,8 +379,9 @@ export function buildChallengeCertificateEmail(p: {
   siteUrl:     string;
   logoUrl:     string;
   publicToken?: string;
+  qrDataUrl?:  string;
 }): { subject: string; html: string } {
-  const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken } = p;
+  const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken, qrDataUrl } = p;
   const name = `${firstName} ${lastName}`.trim();
   const certUrl = `${siteUrl}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
   const subject = `🎉 ${firstName} — Vous êtes Trader Reward !`;
@@ -402,6 +410,12 @@ export function buildChallengeCertificateEmail(p: {
               <tr><td style="color:#777;font-size:14px;padding:12px 0;">Date :</td><td style="color:#111;font-size:14px;font-weight:700;padding:12px 0;text-align:right;">${date}</td></tr>
             </table>
             <a href="${certUrl}" style="display:block;background:#a855f7;color:#fff;text-align:center;padding:15px 24px;border-radius:8px;font-weight:700;text-decoration:none;font-size:15px;">Télécharger mon certificat →</a>
+            ${qrDataUrl ? `
+            <div style="text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid #e8e8e8;">
+              <p style="color:#999;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px 0;">Vérification d'authenticité</p>
+              <a href="${certUrl}"><img src="${qrDataUrl}" alt="QR Code traçable" style="width:150px;height:150px;display:inline-block;border:3px solid #ede9fe;border-radius:8px;" /></a>
+              <p style="color:#aaa;font-size:11px;margin:10px 0 0 0;">Scannez ce QR code pour vérifier ce certificat</p>
+            </div>` : ""}
           </div>
         </div>
         <div style="margin-top:24px;padding:0 8px;">

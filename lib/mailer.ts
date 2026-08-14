@@ -22,10 +22,20 @@
  * ============================================================
  */
 
+import QRCode from "qrcode";
 import { getBrandingConfig, getPayoutSplits } from "@/lib/config";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAIL } from "@/lib/admin-auth";
 import { ensureCertificateRecord } from "@/lib/certificates";
+
+async function generateQRDataUrl(url: string): Promise<string | undefined> {
+  try {
+    return await QRCode.toDataURL(url, { width: 280, margin: 2, color: { dark: "#000000", light: "#ffffff" } });
+  } catch (e) {
+    console.error("[mailer] QR code generation failed:", e);
+    return undefined;
+  }
+}
 import {
   buildWelcomeEmail,
   buildPhase2Email,
@@ -266,8 +276,11 @@ export async function sendPhase1CertificateEmail(
     traderDisplayName: `${firstName} ${lastName}`,
     accountSize,
   }) : null;
+  const name = `${firstName} ${lastName}`.trim();
+  const certUrl = `${siteUrl}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
+  const qrDataUrl = publicToken ? await generateQRDataUrl(certUrl) : undefined;
   const { subject, html } = buildPhase1CertificateEmail({
-    firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken: publicToken ?? undefined,
+    firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken: publicToken ?? undefined, qrDataUrl,
   });
   await _loggedSend({
     type: "phase1_certificate",
@@ -290,8 +303,11 @@ export async function sendChallengeCertificateEmail(
     traderDisplayName: `${firstName} ${lastName}`,
     accountSize,
   }) : null;
+  const name = `${firstName} ${lastName}`.trim();
+  const certUrl = `${siteUrl}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
+  const qrDataUrl = publicToken ? await generateQRDataUrl(certUrl) : undefined;
   const { subject, html } = buildChallengeCertificateEmail({
-    firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken: publicToken ?? undefined,
+    firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken: publicToken ?? undefined, qrDataUrl,
   });
   await _loggedSend({
     type: "challenge_certificate",
