@@ -53,9 +53,8 @@ export async function ensureCertificateRecord(params: {
       ignoreDuplicates: true,
     });
 
-  // Compatibilité pendant le déploiement : l'ancien registre Reward reste utilisable
-  // avant l'application de la migration multi-certificats.
-  if (error && params.type === "reward" && isMissingCertificateType(error)) {
+  // Fallback si la colonne certificate_type n'existe pas encore (migration en attente)
+  if (error && isMissingCertificateType(error)) {
     ({ error } = await admin
       .from("reward_certificates")
       .upsert(basePayload, { onConflict: "source_key", ignoreDuplicates: true }));
