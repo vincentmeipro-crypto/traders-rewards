@@ -71,6 +71,13 @@ type EmailAction = {
   href: string;
 };
 
+type EmailHighlight = {
+  icon: string;
+  eyebrow: string;
+  title: string;
+  text: string;
+};
+
 function buildEmail({
   title,
   body,
@@ -80,6 +87,7 @@ function buildEmail({
   eyebrow = "TRADERS REWARDS",
   preheader,
   footerNote,
+  highlight,
 }: {
   title: string;
   body: string;
@@ -89,6 +97,7 @@ function buildEmail({
   eyebrow?: string;
   preheader?: string;
   footerNote?: string;
+  highlight?: EmailHighlight;
 }) {
   const formattedBody = body.replace(/\n/g, "<br/>");
   const detailRows = details.map((detail, index) => `
@@ -153,6 +162,18 @@ function buildEmail({
               ${details.length ? `
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:0 0 30px;background:#f7f7f5;border:1px solid #e2e2df;border-radius:10px;border-collapse:separate;">
                 ${detailRows}
+              </table>` : ""}
+
+              ${highlight ? `
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:0 0 22px;background:#eaf7ff;border:1px solid #69C5FD;border-radius:10px;border-collapse:separate;">
+                <tr>
+                  <td width="54" valign="top" style="padding:18px 0 18px 18px;font-family:Arial,Helvetica,sans-serif;font-size:27px;line-height:1;">${highlight.icon}</td>
+                  <td style="padding:17px 18px 17px 12px;">
+                    <p style="margin:0 0 4px;color:#287fb4;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:800;letter-spacing:1.5px;line-height:1.4;text-transform:uppercase;">${highlight.eyebrow}</p>
+                    <p style="margin:0 0 5px;color:#0b5684;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.2px;line-height:1.3;">${highlight.title}</p>
+                    <p style="margin:0;color:#355467;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.55;">${highlight.text}</p>
+                  </td>
+                </tr>
               </table>` : ""}
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -414,7 +435,13 @@ export function buildFailedEmail(p: {
       { label: "Raison", value: reasonLabel },
       { label: "Statut", value: "Challenge clôturé" },
     ],
-    cta: { text: "Commencer un nouveau challenge", href: `${siteUrl}/#pricing` },
+    highlight: {
+      icon: "🏅",
+      eyebrow: "AVANTAGE FIDÉLITÉ DÉBLOQUÉ",
+      title: "-20% à vie sur vos prochains challenges",
+      text: "Votre remise fidélité est déjà active. Elle s'applique automatiquement au checkout, hors promotion en cours.",
+    },
+    cta: { text: "Profiter de mes -20%", href: `${siteUrl}/#pricing` },
     logoUrl,
   });
   return { subject, html };
