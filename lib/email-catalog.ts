@@ -74,7 +74,7 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   },
   {
     type:        "funded",
-    label:       "Compte certifié",
+    label:       "Compte Reward",
     description: "Envoyé quand un trader valide la Phase 2 et obtient son compte Reward avec un nouveau login MT5.",
     trigger:     "MetaAPI sync — objectif Phase 2 atteint",
     sensitive:   true,
@@ -123,7 +123,7 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
     type:        "challenge_certificate",
     label:       "Certificat Challenge",
     description: "Certificat de validation du challenge complet (Phase 2 réussie).",
-    trigger:     "MetaAPI sync — objectif Phase 2 atteint (simultané avec Compte certifié)",
+    trigger:     "MetaAPI sync — objectif Phase 2 atteint (simultané avec Compte Reward)",
     sensitive:   false,
     variables: [
       { name: "firstName",   sensitive: false },

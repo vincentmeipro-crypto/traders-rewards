@@ -432,7 +432,7 @@ export function buildFundedEmail(p: {
 }): { subject: string; html: string } {
   const { accountSize, mt5, setupLink, splitPct, siteUrl, logoUrl } = p;
   const ctaHref = setupLink || `${siteUrl}/dashboard`;
-  const ctaText = setupLink ? "Créer mon mot de passe et accéder au Dashboard" : "Demander ma première récompense";
+  const ctaText = setupLink ? "Créer mon mot de passe et accéder au Dashboard" : "Accéder à mon Dashboard";
   const profitSplit = `${splitPct}% pour vous`;
   const subject = "Votre compte Trader Reward est prêt";
   const html = buildEmail({
