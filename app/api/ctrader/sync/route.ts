@@ -28,7 +28,7 @@ async function getAccountData(accessToken: string) {
   return data.data?.[0] || null;
 }
 
-async function checkAndTransition(challenge: Record<string, unknown>, userEmail: string, prevBalance: number) {
+async function checkAndTransition(challenge: Record<string, unknown>, userEmail: string) {
   const admin = createAdminClient();
   const balance = challenge.balance as number;
   const startBalance = challenge.start_balance as number;
@@ -47,13 +47,13 @@ async function checkAndTransition(challenge: Record<string, unknown>, userEmail:
     return "failed_total_drawdown";
   }
 
-  // Check daily drawdown (today's drop vs yesterday's closing balance)
-  if (prevBalance > 0) {
-    const dailyDrawdownPct = ((prevBalance - balance) / prevBalance) * 100;
-    if (dailyDrawdownPct >= dailyDrawdownLimit) {
-      await admin.from("challenges").update({ status: "failed" }).eq("id", id);
-      return "failed_daily_drawdown";
-    }
+  // Daily drawdown uses the broker-day opening balance.
+  const dailyStartBalance = Number(challenge.daily_start_balance ?? startBalance);
+  const dailyLowEquity = Number(challenge.daily_low_equity ?? balance);
+  const dailyFloor = dailyStartBalance * (1 - dailyDrawdownLimit / 100);
+  if (dailyLowEquity <= dailyFloor) {
+    await admin.from("challenges").update({ status: "failed" }).eq("id", id);
+    return "failed_daily_drawdown";
   }
 
   const profitPct = ((balance - startBalance) / startBalance) * 100;
@@ -134,13 +134,7 @@ export async function GET(req: NextRequest) {
       const storedDailyStart = (challenge.daily_start_balance as number | null) ?? null;
       const storedDailyLow   = (challenge.daily_low_equity    as number | null) ?? null;
 
-      // Detecte donnees perimees
-      const dailyStartIsStale = !isNewDay && storedDailyStart !== null
-        && Math.abs(storedDailyStart - startBalance) < 0.01
-        && newBalance < startBalance - 0.01;
-      const dailyLowIsStale = !isNewDay && storedDailyLow !== null
-        && storedDailyLow < newBalance - startBalance * 0.01;
-      const effectiveNewDay = isNewDay || dailyStartIsStale || dailyLowIsStale;
+      const effectiveNewDay = isNewDay;
 
       const dailyStartBalance = (effectiveNewDay || storedDailyStart === null) ? newBalance : storedDailyStart;
       const dailyLowEquity    = (effectiveNewDay || storedDailyLow   === null) ? newBalance : Math.min(storedDailyLow, newBalance);
@@ -162,9 +156,9 @@ export async function GET(req: NextRequest) {
       }).eq("id", challenge.id);
 
       // Check phase transition + drawdown (prevBalance = balance before this sync)
-      const updated = { ...challenge, balance: newBalance, trading_days: newTradingDays };
+      const updated = { ...challenge, balance: newBalance, trading_days: newTradingDays, daily_start_balance: dailyStartBalance, daily_low_equity: dailyLowEquity };
       const userEmail = userMap[challenge.user_id] || "";
-      await checkAndTransition(updated, userEmail, challenge.balance);
+      await checkAndTransition(updated, userEmail);
 
       synced++;
     } catch (e) {

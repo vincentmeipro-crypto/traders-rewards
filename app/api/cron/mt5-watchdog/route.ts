@@ -19,14 +19,19 @@ export async function GET(req: NextRequest) {
 
   const admin = createAdminClient();
   const { data: challenges, error } = await admin.from("challenges")
-    .select("id, mt5_login, start_balance, daily_drawdown_limit, total_drawdown_limit")
+    .select("id, mt5_login, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, last_synced_at")
     .not("mt5_login", "is", null)
     .in("status", ["active", "funded"]);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   const startedAt = Date.now();
+  const now = new Date(startedAt);
+  const tradingDayStart = new Date(now);
+  if (now.getUTCHours() < 22) tradingDayStart.setUTCDate(tradingDayStart.getUTCDate() - 1);
+  tradingDayStart.setUTCHours(22, 0, 0, 0);
   const latched = new Set<number>();
   const pending = new Map<number, number>();
+  const dailyReferences = new Map<number, number>();
   let samples = 0;
   let errors = 0;
 
@@ -52,7 +57,18 @@ export async function GET(req: NextRequest) {
         if (!Number.isFinite(equity) || equity <= 0) return;
 
         const startBalance = Number(challenge.start_balance);
-        const dailyFloor = startBalance * (1 - Number(challenge.daily_drawdown_limit ?? 5) / 100);
+        let dailyReference = dailyReferences.get(login);
+        if (!dailyReference) {
+          const storedDailyStart = Number(challenge.daily_start_balance);
+          const lastSyncedAt = challenge.last_synced_at ? new Date(challenge.last_synced_at).getTime() : 0;
+          dailyReference = lastSyncedAt >= tradingDayStart.getTime() && storedDailyStart > 0
+            ? storedDailyStart
+            : balance > 0
+              ? balance
+              : Number(challenge.balance ?? startBalance);
+          if (dailyReference > 0) dailyReferences.set(login, dailyReference);
+        }
+        const dailyFloor = dailyReference * (1 - Number(challenge.daily_drawdown_limit ?? 5) / 100);
         const totalFloor = startBalance * (1 - Number(challenge.total_drawdown_limit ?? 10) / 100);
         if (equity <= dailyFloor || equity <= totalFloor) {
           pending.set(login, Math.min(pending.get(login) ?? equity, equity));
@@ -74,7 +90,7 @@ export async function GET(req: NextRequest) {
             Authorization: `Bearer ${watchdogSecret}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ login, equity, observed_at: new Date().toISOString() }),
+          body: JSON.stringify({ login, equity, daily_start_balance: dailyReferences.get(login), observed_at: new Date().toISOString() }),
           cache: "no-store",
         });
         if (!response.ok) throw new Error(`breach endpoint returned ${response.status}`);

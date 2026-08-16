@@ -307,7 +307,9 @@ export async function PATCH(req: NextRequest) {
   // Check drawdown violations (ignoré lors d'un reset de phase)
   if (updates.balance !== undefined && current && !isPhaseTransition) {
     const totalDrawdownPct = ((data.start_balance - data.balance) / data.start_balance) * 100;
-    const dailyDrawdownPct = current.balance > 0 ? ((current.balance - data.balance) / current.balance) * 100 : 0;
+    const dailyStartBalance = Number(data.daily_start_balance ?? current.daily_start_balance ?? current.balance);
+    const dailyLowEquity = Math.min(Number(data.daily_low_equity ?? data.balance), Number(data.balance));
+    const dailyDrawdownPct = dailyStartBalance > 0 ? ((dailyStartBalance - dailyLowEquity) / dailyStartBalance) * 100 : 0;
 
     if (totalDrawdownPct >= data.total_drawdown_limit) {
       await admin.from("challenges").update({ status: "failed" }).eq("id", id);

@@ -202,10 +202,9 @@ export default function TraderCockpit({
   const profitProgress = profitTargetUsd > 0 ? clamp(profit / profitTargetUsd * 100) : 100;
   const minDays = challenge.phase === "funded" ? 7 : 5;
   const daysRemaining = Math.max(0, minDays - challenge.trading_days);
-  const dailyLimitUsd = challenge.start_balance * challenge.daily_drawdown_limit / 100;
-  // La règle Traders Rewards utilise un plancher fixe calculé sur le capital initial.
-  // daily_start_balance sert au suivi de journée, jamais à repousser la limite de perte.
-  const dailyFloor = challenge.start_balance - dailyLimitUsd;
+  const dailyReferenceBalance = challenge.daily_start_balance ?? challenge.start_balance;
+  const dailyLimitUsd = dailyReferenceBalance * challenge.daily_drawdown_limit / 100;
+  const dailyFloor = dailyReferenceBalance - dailyLimitUsd;
   const dailyBuffer = Math.max(0, equity - dailyFloor);
   const dailyRiskUsed = clamp((1 - dailyBuffer / Math.max(dailyLimitUsd, 1)) * 100);
   const isOneStep = challenge.model.toLowerCase().replace(/[\s-]/g, "").includes("1step");

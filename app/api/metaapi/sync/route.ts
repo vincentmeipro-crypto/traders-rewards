@@ -142,9 +142,8 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   } catch {}
 
   // 5a. La règle du meilleur jour ajuste uniquement effectiveProfitTarget.
-
-  // 5b. Breach drawdown journalier — plancher fixe base sur start_balance original
-  const dailyFloorEquity = startBalance * (1 - dailyLimit / 100);
+  // 5b. Daily drawdown uses the broker-day opening balance.
+  const dailyFloorEquity = dailyStartBalance * (1 - dailyLimit / 100);
   if (dailyLowEquity <= dailyFloorEquity) {
     const closeResult = await closeAllPositions(login).catch((e) => { console.error(`[${login}] closeAllPositions failed:`, e); return { closed: 0, positions: [] }; });
     if (closeResult.positions.length > 0) {

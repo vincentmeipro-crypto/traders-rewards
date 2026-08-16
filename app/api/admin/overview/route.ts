@@ -158,9 +158,9 @@ export async function GET(req: NextRequest) {
 
       const dS    = c.daily_start_balance as number | null;
       const dL    = c.daily_low_equity    as number | null;
-      const stale = dS !== null && dS !== undefined && Math.abs(dS - c.start_balance) < 1;
+
       let dailyDD = 0; let dailyConsumed = 0;
-      const hasDailyData = !!(dS && !stale);
+      const hasDailyData = !!(dS && dS > 0);
       if (hasDailyData && dS) {
         const low = dL !== null && dL !== undefined ? Math.min(dL, c.balance) : c.balance;
         dailyDD       = Math.max(0, (dS - low) / dS * 100);

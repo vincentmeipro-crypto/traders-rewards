@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
   if (!authorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const admin = createAdminClient();
   const { data, error } = await admin.from("challenges")
-    .select("id, mt5_login, start_balance, daily_drawdown_limit, total_drawdown_limit")
+    .select("id, mt5_login, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance")
     .not("mt5_login", "is", null)
     .in("status", ["active", "funded"]);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   if (!authorized(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const body = await req.json().catch(() => null) as { login?: unknown; equity?: unknown; observed_at?: unknown } | null;
+  const body = await req.json().catch(() => null) as { login?: unknown; equity?: unknown; daily_start_balance?: unknown; observed_at?: unknown } | null;
   const login = Number(body?.login);
   const equity = Number(body?.equity);
   if (!Number.isSafeInteger(login) || !Number.isFinite(equity) || equity <= 0) {
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   const admin = createAdminClient();
   const { data: challenge, error } = await admin.from("challenges")
-    .select("id, user_id, account_size, start_balance, daily_drawdown_limit, total_drawdown_limit, status")
+    .select("id, user_id, account_size, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, status")
     .eq("mt5_login", login)
     .in("status", ["active", "funded"])
     .maybeSingle();
@@ -40,7 +40,14 @@ export async function POST(req: NextRequest) {
   const startBalance = Number(challenge.start_balance);
   const dailyLimit = Number(challenge.daily_drawdown_limit ?? 5);
   const totalLimit = Number(challenge.total_drawdown_limit ?? 10);
-  const dailyFloor = startBalance * (1 - dailyLimit / 100);
+  const reportedDailyStart = Number(body?.daily_start_balance);
+  const storedDailyStart = Number(challenge.daily_start_balance);
+  const dailyReference = reportedDailyStart > 0
+    ? reportedDailyStart
+    : storedDailyStart > 0
+      ? storedDailyStart
+      : startBalance;
+  const dailyFloor = dailyReference * (1 - dailyLimit / 100);
   const totalFloor = startBalance * (1 - totalLimit / 100);
   const reason = equity <= totalFloor ? "total_drawdown" : equity <= dailyFloor ? "daily_drawdown" : null;
   if (!reason) return NextResponse.json({ breach: false });
@@ -48,7 +55,8 @@ export async function POST(req: NextRequest) {
   const observedAt = typeof body?.observed_at === "string" && !Number.isNaN(Date.parse(body.observed_at))
     ? new Date(body.observed_at).toISOString()
     : new Date().toISOString();
-  const breachValue = Number((((startBalance - equity) / startBalance) * 100).toFixed(2));
+  const breachReference = reason === "daily_drawdown" ? dailyReference : startBalance;
+  const breachValue = Number((((breachReference - equity) / breachReference) * 100).toFixed(2));
 
   // Safety actions are intentionally attempted before the DB claim: if Supabase is
   // temporarily unavailable, stopping the account is safer than leaving it tradable.
@@ -61,6 +69,7 @@ export async function POST(req: NextRequest) {
     status: "failed",
     balance: equity,
     equity,
+    daily_start_balance: dailyReference,
     daily_low_equity: equity,
     breach_equity: equity,
     breach_at: observedAt,

@@ -92,10 +92,9 @@ export async function GET(req: NextRequest) {
 
       // daily_dd affiché = perte depuis l'ouverture du jour (0 si pas de perte aujourd'hui)
       const dailyDDDisplay = dailyStartBalance > 0 ? Math.max(0, (dailyStartBalance - dailyLowEquity) / dailyStartBalance * 100) : 0;
-
-      // Seuils de breach : plancher fixe basé sur start_balance original
+      // Total uses initial capital; daily uses the broker-day opening balance.
       const totalThreshold = startBalance * (1 - totalLimit / 100);
-      const dailyThreshold = startBalance * (1 - dailyLimit / 100);
+      const dailyThreshold = dailyStartBalance * (1 - dailyLimit / 100);
 
       let breachReason: string | null = null;
       let breachEquity = equity;
@@ -110,7 +109,7 @@ export async function GET(req: NextRequest) {
       if (!breachReason) {
         const { data: pastSnaps } = await admin
           .from("mt5_snapshots")
-          .select("equity, balance")
+          .select("equity, balance, created_at")
           .eq("mt5_login", challenge.mt5_login)
           .order("created_at", { ascending: false })
           .limit(20);
@@ -124,7 +123,8 @@ export async function GET(req: NextRequest) {
               console.error(`BREACH SNAPSHOT [${challenge.mt5_login}] total_drawdown — equity snapshot: ${snapEquity}`);
               break;
             }
-            if (snapEquity > 0 && snapEquity <= dailyThreshold) {
+            const snapshotIsToday = new Date(snap.created_at).getTime() >= tradingDayStart.getTime();
+            if (snapshotIsToday && snapEquity > 0 && snapEquity <= dailyThreshold) {
               breachReason = "daily_drawdown";
               breachEquity = snapEquity;
               console.error(`BREACH SNAPSHOT [${challenge.mt5_login}] daily_drawdown — equity snapshot: ${snapEquity}`);
@@ -142,12 +142,13 @@ export async function GET(req: NextRequest) {
           const todayMs = tradingDayStart.getTime();
 
           const todayDeals = history
-            .filter(d => (d.time as number) * 1000 >= todayMs)
+            .filter(d => (d.time as number) * 1000 >= todayMs && Boolean(d.symbol))
             .sort((a, b) => (a.time as number) - (b.time as number));
 
           // Reconstruction correcte : solde en début de journée = balance MT5 actuelle - profits d'aujourd'hui
           const todayProfitTotal = todayDeals.reduce((s, d) => s + (typeof d.profit === "number" ? d.profit : 0), 0);
           const balanceStartOfDay = (account.balance ?? startBalance) - todayProfitTotal;
+          const historyDailyThreshold = balanceStartOfDay * (1 - dailyLimit / 100);
 
           let runningBalance = balanceStartOfDay;
           for (const deal of todayDeals) {
@@ -160,10 +161,10 @@ export async function GET(req: NextRequest) {
               console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] total_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${totalThreshold})`);
               break;
             }
-            if (runningBalance <= dailyThreshold) {
+            if (runningBalance <= historyDailyThreshold) {
               breachReason = "daily_drawdown";
               breachEquity = runningBalance;
-              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] daily_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${dailyThreshold})`);
+              console.error(`BREACH HISTORIQUE [${challenge.mt5_login}] daily_drawdown — balance reconstituée: ${runningBalance.toFixed(0)} (seuil: ${historyDailyThreshold})`);
               break;
             }
           }
@@ -174,7 +175,8 @@ export async function GET(req: NextRequest) {
 
       // --- COUPE IMMÉDIATE si breach détecté ---
       if (breachReason) {
-        const breachPct = parseFloat(((startBalance - breachEquity) / startBalance * 100).toFixed(2));
+        const breachReference = breachReason === "daily_drawdown" ? dailyStartBalance : startBalance;
+        const breachPct = parseFloat(((breachReference - breachEquity) / breachReference * 100).toFixed(2));
         console.error(`BREACH [${challenge.mt5_login}] ${breachReason} — equity: ${breachEquity}, pct: ${breachPct}%`);
 
         // Revendication atomique : si une autre synchronisation a déjà passé
