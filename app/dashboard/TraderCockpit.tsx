@@ -378,11 +378,11 @@ export default function TraderCockpit({
         </div>
         <div className={`${styles.card} ${styles.panel}`}>
           <SectionTitle icon={<Gauge size={17} />} title={isFr ? "Limites en direct" : "Live limits"} subtitle={isFr ? "Les chiffres à connaître avant chaque trade" : "Know these before every trade"} />
-          <Rule label={isFr ? "Objectif de profit" : "Profit target"} value={challenge.phase === "funded" ? "—" : `${profitProgress.toFixed(0)}%`} progress={challenge.phase === "funded" ? undefined : profitProgress} color={GREEN} help={challenge.phase === "funded" ? (isFr ? "Aucun objectif sur le compte Reward" : "No target on Reward account") : `${money(profitRemaining)} ${isFr ? "encore nécessaires" : "still required"}`} />
+          <Rule label={isFr ? "Objectif de profit" : "Profit target"} value={challenge.phase === "funded" ? "—" : `${challenge.profit_target.toFixed(2)}%`} progress={challenge.phase === "funded" ? undefined : profitProgress} color={GREEN} help={challenge.phase === "funded" ? (isFr ? "Aucun objectif sur le compte Reward" : "No target on Reward account") : `${money(profitRemaining)} ${isFr ? "encore nécessaires" : "still required"}`} />
           <Rule label={isFr ? "Jours minimum" : "Minimum days"} value={`${challenge.trading_days} / ${minDays}`} progress={challenge.trading_days / minDays * 100} color={BLUE} help={daysRemaining ? `${daysRemaining} ${isFr ? "jour(s) restant(s)" : "day(s) remaining"}` : isFr ? "Condition validée" : "Requirement met"} />
           <Rule label={isFr ? "Perte journalière" : "Daily loss"} value={`${money(dailyBuffer)} ${isFr ? "disponibles" : "available"}`} progress={dailyRiskUsed} color={riskColor(dailyRiskUsed)} help={`${isFr ? "Plancher du jour" : "Today's floor"} : ${money(dailyFloor)}`} />
           <Rule label={isFr ? "Perte totale" : "Total loss"} value={`${money(totalBuffer)} ${isFr ? "disponibles" : "available"}`} progress={totalRiskUsed} color={riskColor(totalRiskUsed)} help={`${isFr ? "Plancher du compte" : "Account floor"} : ${money(totalFloor)}`} />
-          {isOneStep && <Rule label={isFr ? "Meilleure journée" : "Best day"} value={money(challenge.best_day_profit ?? 0)} help={isFr ? "Doit rester ≤ 50% des profits positifs" : "Must remain ≤ 50% of positive profits"} />}
+          {isOneStep && <Rule label={isFr ? "Meilleure journée" : "Best day"} value={money(challenge.best_day_profit ?? 0)} help={isFr ? "Le profit total requis doit être au moins égal à 2× la meilleure journée" : "Required total profit must be at least 2× the best day"} />}
         </div>
       </div>
 

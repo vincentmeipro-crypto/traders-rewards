@@ -87,9 +87,6 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const hadActivity      = Math.abs(newBalance - prevBalance) > 0.01 || Math.abs(floatingProfit) > 0.01;
   const dayWasCounted    = hadActivity && !alreadyCounted;
   const newTradingDays   = dayWasCounted ? prevTradingDays + 1 : prevTradingDays;
-  const dayProfit        = newBalance - prevBalance;
-  const prevBestDay      = (challenge.best_day_profit as number | null) ?? 0;
-  const newBestDay       = Math.max(prevBestDay, dayProfit > 0 ? dayProfit : 0);
 
   // 3. Drawdown journalier — tracking du pire equity de la journee
   // 1-Step EOD trailing: highest_balance advances only at day rollover (not intraday)
@@ -108,6 +105,19 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     ? newEquity
     : Math.min(storedDailyLow, newEquity);
 
+  // Règle de cohérence 1-Step : le meilleur jour ne peut représenter
+  // plus de 50% du profit total validant. Le compte ne fail jamais pour
+  // cette règle ; l'objectif augmente à 2 × le meilleur jour si nécessaire.
+  const currentDayProfit = Math.max(0, newBalance - dailyStartBalance);
+  const prevBestDay = (challenge.best_day_profit as number | null) ?? 0;
+  const newBestDay = Math.max(prevBestDay, currentDayProfit);
+  const consistencyTargetPct = startBalance > 0
+    ? Math.ceil((newBestDay * 2 / startBalance * 100) * 100) / 100
+    : profitTarget;
+  const effectiveProfitTarget = is1Step && phase === "phase1"
+    ? Math.max(profitTarget, consistencyTargetPct)
+    : profitTarget;
+
   // DD journalier affiche : perte depuis l'ouverture du jour (0 si aucune perte aujourd'hui)
   const dailyDD        = dailyStartBalance > 0 ? Math.max(0, (dailyStartBalance - dailyLowEquity) / dailyStartBalance * 100) : 0;
   const dailyDDRounded = parseFloat(dailyDD.toFixed(2));
@@ -123,34 +133,15 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     ...(effectiveNewDay && { daily_start_balance: newBalance }),
     ...(dayWasCounted && { last_trading_day: tradingDayId }),
   }).eq("id", id);
-  try { await admin.from("challenges").update({ daily_dd: dailyDDRounded, best_day_profit: newBestDay }).eq("id", id); } catch {}
+  try {
+    await admin.from("challenges").update({
+      daily_dd: dailyDDRounded,
+      best_day_profit: newBestDay,
+      ...(effectiveProfitTarget > profitTarget && { profit_target: effectiveProfitTarget }),
+    }).eq("id", id);
+  } catch {}
 
-  // 5a. Règle du meilleur jour 50% (1-step phase1 uniquement)
-  // Un seul jour de profit ne peut pas dépasser 50% de l'objectif de profit
-  const bestDayLimit = startBalance * (profitTarget / 100) * 0.5;
-  const bestDayViolated = is1Step && phase === "phase1" && profitTarget > 0 && dayProfit > bestDayLimit;
-  if (bestDayViolated) {
-    await changeMT5Group(login, "HAR/MAN32/demoG5").catch(() => {});
-    await disableMT5Account(login).catch(() => {});
-    await changeMT5Password(login).catch(() => {});
-    const { data: claimedFailure, error: claimError } = await admin.from("challenges").update({
-      status: "failed",
-      last_synced_at: baseNow,
-      breach_at: baseNow,
-      breach_reason: "best_day_rule",
-      breach_value: parseFloat((dayProfit / startBalance * 100).toFixed(2)),
-      breach_equity: newEquity,
-    })
-      .eq("id", id)
-      .in("status", ["active", "funded"])
-      .select("id")
-      .maybeSingle();
-    if (claimError) throw claimError;
-    if (claimedFailure) {
-      try { await sendFailedEmail(userEmail, accountSize, "daily_drawdown", login, { userId, challengeId: id }); } catch {}
-    }
-    return { status: "failed", reason: "best_day_rule", profit_pct: (dayProfit / startBalance * 100).toFixed(2) };
-  }
+  // 5a. La règle du meilleur jour ajuste uniquement effectiveProfitTarget.
 
   // 5b. Breach drawdown journalier — plancher fixe base sur start_balance original
   const dailyFloorEquity = startBalance * (1 - dailyLimit / 100);
@@ -232,7 +223,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 7. Transitions de phase — nouveau compte MT5 à chaque phase, ancien désactivé (grp5)
   const profitPct = startBalance > 0 ? ((newBalance - startBalance) / startBalance) * 100 : 0;
-  const targetMet = profitPct >= profitTarget;
+  const targetMet = profitPct >= effectiveProfitTarget;
   const daysMet   = newTradingDays >= 5;
   const certDate  = new Date().toLocaleDateString("fr-FR");
 
@@ -299,7 +290,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, { model, highestBalance: newHighest, totalLimit, startBalance }, { userId, challengeId: id }).catch(() => {});
   }
 
-  return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2), rawBalance: info.balance, rawEquity: newEquity, rawProfit: info.profit, prevBalance };
+  return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), profitTarget: effectiveProfitTarget, tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2), rawBalance: info.balance, rawEquity: newEquity, rawProfit: info.profit, prevBalance };
 }
 
 // â”€â”€ Route â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
