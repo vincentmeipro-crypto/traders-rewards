@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import PricingRuleEducation, { type PricingRuleKey } from "./PricingRuleEducation";
 
 // ─── Promo ────────────────────────────────────────────────────────
 const PROMO_ACTIVE = new Date() < new Date("2026-08-16T00:00:00");
@@ -17,7 +18,7 @@ const ACCOUNTS = [
 ];
 
 type Acc = typeof ACCOUNTS[0];
-type Row = { label: string; value: string; pct?: number; isPhaseHeader?: boolean };
+type Row = { label: string; value: string; pct?: number; isPhaseHeader?: boolean; ruleKey?: PricingRuleKey };
 type PublicProduct = {
   slug: string;
   model: "2step" | "1step";
@@ -41,6 +42,7 @@ export default function Pricing() {
   const [selIdx,       setSelIdx]       = useState(defaultAccountIdx); // 100k par défaut
   const [showPct,      setShowPct]      = useState(true);
   const [showSteps,    setShowSteps]    = useState(false);
+  const [rulePreview,  setRulePreview]  = useState<{ key: PricingRuleKey; value: string } | null>(null);
   const [isMobile,     setIsMobile]     = useState(false);
   const [isShortScreen,setIsShortScreen]= useState(false);       // ≥1100px & viewport-height < 820px
   const [hovIdx,       setHovIdx]       = useState<number | null>(null);
@@ -138,35 +140,35 @@ export default function Pricing() {
   // ─── Lignes de règles — AUCUNE MODIFICATION ───────────────────────
   const buildRows = (): Row[] => {
     if (model === "1step") return [
-      { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "10%",  pct: 0.10 },
-      { label: L("Perte journalière","Pérdida diaria","Daily loss"),           value: "3%",   pct: 0.03 },
-      { label: L("Perte totale","Pérdida total","Total loss"),                 value: "10%",  pct: 0.10 },
-      { label: L("Règle best day","Regla best day","Best day rule"),           value: "≤ 50%" },
-      { label: L("Jours min","Días mín","Min days"),                           value: L("5 jours","5 días","5 days") },
-      { label: L("Limite de temps","Límite tiempo","Time limit"),              value: L("Illimité","Ilimitado","Unlimited") },
-      { label: L("Partage profits","Reparto profits","Profit split"),          value: "90%" },
-      { label: L("Max cumulé","Máx acumulado","Max cumulated"),               value: "$200K" },
+      { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "10%",  pct: 0.10, ruleKey: "profitTarget" },
+      { label: L("Perte journalière","Pérdida diaria","Daily loss"),           value: "3%",   pct: 0.03, ruleKey: "dailyLoss" },
+      { label: L("Perte totale","Pérdida total","Total loss"),                 value: "10%",  pct: 0.10, ruleKey: "totalLoss" },
+      { label: L("Règle best day","Regla best day","Best day rule"),           value: "≤ 50%", ruleKey: "bestDay" },
+      { label: L("Jours min","Días mín","Min days"),                           value: L("5 jours","5 días","5 days"), ruleKey: "minimumDays" },
+      { label: L("Limite de temps","Límite tiempo","Time limit"),              value: L("Illimité","Ilimitado","Unlimited"), ruleKey: "timeLimit" },
+      { label: L("Partage profits","Reparto profits","Profit split"),          value: "90%", ruleKey: "profitSplit" },
+      { label: L("Max cumulé","Máx acumulado","Max cumulated"),               value: "$200K", ruleKey: "maxAllocation" },
     ];
     if (!showSteps) return [
-      { label: L("Étape 1 — Objectif","Fase 1 — Objetivo","Phase 1 — Target"), value: "10%", pct: 0.10 },
-      { label: L("Étape 2 — Objectif","Fase 2 — Objetivo","Phase 2 — Target"), value: "5%",  pct: 0.05 },
-      { label: L("Perte journalière","Pérdida diaria","Daily loss"),            value: "5%",  pct: 0.05 },
-      { label: L("Perte totale","Pérdida total","Total loss"),                  value: "10%", pct: 0.10 },
-      { label: L("Jours min","Días mín","Min days"),                            value: L("5 jours","5 días","5 days") },
-      { label: L("Limite de temps","Límite tiempo","Time limit"),               value: L("Illimité","Ilimitado","Unlimited") },
-      { label: L("Partage profits","Reparto profits","Profit split"),           value: "80%" },
+      { label: L("Étape 1 — Objectif","Fase 1 — Objetivo","Phase 1 — Target"), value: "10%", pct: 0.10, ruleKey: "profitTarget" },
+      { label: L("Étape 2 — Objectif","Fase 2 — Objetivo","Phase 2 — Target"), value: "5%",  pct: 0.05, ruleKey: "phaseTwoTarget" },
+      { label: L("Perte journalière","Pérdida diaria","Daily loss"),            value: "5%",  pct: 0.05, ruleKey: "dailyLoss" },
+      { label: L("Perte totale","Pérdida total","Total loss"),                  value: "10%", pct: 0.10, ruleKey: "totalLoss" },
+      { label: L("Jours min","Días mín","Min days"),                            value: L("5 jours","5 días","5 days"), ruleKey: "minimumDays" },
+      { label: L("Limite de temps","Límite tiempo","Time limit"),               value: L("Illimité","Ilimitado","Unlimited"), ruleKey: "timeLimit" },
+      { label: L("Partage profits","Reparto profits","Profit split"),           value: "80%", ruleKey: "profitSplit" },
     ];
     return [
       { label: L("ÉTAPE 1","FASE 1","PHASE 1"),   value: "", isPhaseHeader: true },
-      { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "10%", pct: 0.10 },
+      { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "10%", pct: 0.10, ruleKey: "profitTarget" },
       { label: L("ÉTAPE 2","FASE 2","PHASE 2"),   value: "", isPhaseHeader: true },
-      { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "5%",  pct: 0.05 },
+      { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "5%",  pct: 0.05, ruleKey: "phaseTwoTarget" },
       { label: L("COMMUN","COMÚN","COMMON"),       value: "", isPhaseHeader: true },
-      { label: L("Perte journalière","Pérdida diaria","Daily loss"),           value: "5%",  pct: 0.05 },
-      { label: L("Perte totale","Pérdida total","Total loss"),                 value: "10%", pct: 0.10 },
-      { label: L("Jours min","Días mín","Min days"),                           value: L("5 jours","5 días","5 days") },
-      { label: L("Limite de temps","Límite tiempo","Time limit"),              value: L("Illimité","Ilimitado","Unlimited") },
-      { label: L("Partage profits","Reparto profits","Profit split"),          value: "80%" },
+      { label: L("Perte journalière","Pérdida diaria","Daily loss"),           value: "5%",  pct: 0.05, ruleKey: "dailyLoss" },
+      { label: L("Perte totale","Pérdida total","Total loss"),                 value: "10%", pct: 0.10, ruleKey: "totalLoss" },
+      { label: L("Jours min","Días mín","Min days"),                           value: L("5 jours","5 días","5 days"), ruleKey: "minimumDays" },
+      { label: L("Limite de temps","Límite tiempo","Time limit"),              value: L("Illimité","Ilimitado","Unlimited"), ruleKey: "timeLimit" },
+      { label: L("Partage profits","Reparto profits","Profit split"),          value: "80%", ruleKey: "profitSplit" },
     ];
   };
 
@@ -344,22 +346,35 @@ export default function Pricing() {
             }
             const nextIsHeader = rows[ri + 1]?.isPhaseHeader;
             return (
-              <div key={ri} style={{
-                display: "flex", justifyContent: "space-between", alignItems: "center",
-                padding: V("5px 0", "3px 0", "4px 0"),
-                borderBottom: (ri < rows.length - 1 && !nextIsHeader)
-                  ? "1px solid rgba(255,255,255,0.055)" : "none",
-              }}>
-                <span style={{
-                  color: "rgba(255,255,255,0.48)",
-                  fontSize: V(12, 10, 10), fontWeight: 500,
-                }}>{row.label}</span>
-                <span style={{
-                  color: "#FFFFFF",
-                  fontSize: V(12, 10, 10), fontWeight: 700,
-                  paddingLeft: 8,
-                }}>{fmtRow(row, acc.size)}</span>
-              </div>
+              <button
+                key={ri}
+                type="button"
+                disabled={!row.ruleKey}
+                onClick={event => {
+                  event.stopPropagation();
+                  if (!row.ruleKey) return;
+                  setSelIdx(i);
+                  setRulePreview({ key: row.ruleKey, value: row.value });
+                }}
+                aria-label={row.ruleKey ? `${row.label} — ${L("ouvrir l'explication","abrir la explicación","open explanation")}` : undefined}
+                style={{
+                  display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", gap: 8,
+                  padding: V("7px 4px", "5px 4px", "6px 4px"), margin: "0 -4px",
+                  border: "none", borderBottom: (ri < rows.length - 1 && !nextIsHeader)
+                    ? "1px solid rgba(255,255,255,0.055)" : "none",
+                  borderRadius: 6, background: "transparent", color: "inherit",
+                  cursor: row.ruleKey ? "help" : "default", fontFamily: "inherit", textAlign: "left",
+                  transition: "background .16s ease, color .16s ease",
+                }}
+                onMouseEnter={event => { if (row.ruleKey) event.currentTarget.style.background = "rgba(105,197,253,.06)"; }}
+                onMouseLeave={event => { event.currentTarget.style.background = "transparent"; }}
+              >
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.48)", fontSize: V(12, 10, 10), fontWeight: 500 }}>
+                  {row.label}
+                  {row.ruleKey && <i aria-hidden="true" style={{ display: "inline-grid", placeItems: "center", width: 14, height: 14, border: "1px solid rgba(105,197,253,.32)", borderRadius: "50%", color: "#69C5FD", fontSize: 8, fontStyle: "normal", fontWeight: 900 }}>i</i>}
+                </span>
+                <span style={{ color: "#FFFFFF", fontSize: V(12, 10, 10), fontWeight: 700, paddingLeft: 4, whiteSpace: "nowrap" }}>{fmtRow(row, acc.size)}</span>
+              </button>
             );
           })}
         </div>
@@ -560,7 +575,7 @@ export default function Pricing() {
                   key={tab.id}
                   role="tab"
                   aria-selected={on}
-                  onClick={() => { setModel(tab.id); setSelIdx(defaultAccountIdx); setShowSteps(false); }}
+                  onClick={() => { setModel(tab.id); setSelIdx(defaultAccountIdx); setShowSteps(false); setRulePreview(null); }}
                   style={{
                     background:   on ? "#69C5FD" : "transparent",
                     color:        on ? "#000000" : "rgba(255,255,255,0.46)",
@@ -646,6 +661,10 @@ export default function Pricing() {
         {/* ══════════════════════════════
             MOBILE : boutons + carte unique
         ══════════════════════════════ */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, margin: isMobile ? "-8px 0 18px" : "-5px 0 14px", color: "rgba(255,255,255,.32)", fontSize: isMobile ? 10 : 11 }}>
+          <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 18, height: 18, borderRadius: "50%", border: "1px solid rgba(105,197,253,.28)", color: "#69C5FD", fontSize: 10, fontWeight: 900 }}>i</span>
+          {L("Cliquez sur une règle pour comprendre son calcul", "Haz clic en una regla para entenderla", "Click any rule to understand how it works")}
+        </div>
         {isMobile && (
           <>
             <div
@@ -745,6 +764,7 @@ export default function Pricing() {
         </div>
 
       </div>
+      <PricingRuleEducation active={rulePreview} model={model} lang={lang} onDismiss={() => setRulePreview(null)} />
     </section>
   );
 }
