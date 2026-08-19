@@ -1,0 +1,928 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   TRADERS REWARDS — CockpitTools styles
+   Dark design, #69C5FD accent, matches TraderCockpit visual language.
+───────────────────────────────────────────────────────────────────────────── */
+
+.root {
+  --blue:  #69C5FD;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --red:   #ef4444;
+  color: #fff;
+}
+
+.root * { box-sizing: border-box; }
+
+/* ── Tool navigation ─────────────────────────────────────────────────────── */
+
+.toolNav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.toolNavBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .035);
+  color: rgba(255, 255, 255, .55);
+  font: 750 12px inherit;
+  cursor: pointer;
+  transition: .18s ease;
+  text-align: left;
+}
+
+.toolNavBtn:hover {
+  border-color: rgba(105, 197, 253, .35);
+  color: #fff;
+  background: rgba(105, 197, 253, .06);
+}
+
+.toolNavBtnActive {
+  background: #69C5FD;
+  border-color: #69C5FD;
+  color: #02070b;
+}
+
+.toolNavBtnActive:hover {
+  background: #7dcffe;
+  border-color: #7dcffe;
+  color: #02070b;
+}
+
+.toolNavSoon {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, .08);
+  color: rgba(255, 255, 255, .42);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
+.toolNavBtnActive .toolNavSoon {
+  background: rgba(2, 7, 11, .18);
+  color: rgba(2, 7, 11, .55);
+}
+
+/* ── Tool card ───────────────────────────────────────────────────────────── */
+
+.toolCard {
+  background: linear-gradient(145deg, rgba(17, 21, 25, .98), rgba(8, 11, 14, .98));
+  border: 1px solid rgba(255, 255, 255, .085);
+  border-radius: 18px;
+  box-shadow: 0 22px 50px rgba(0, 0, 0, .22);
+  overflow: hidden;
+  padding: 22px;
+}
+
+/* ── Tool header ─────────────────────────────────────────────────────────── */
+
+.toolHeader { margin-bottom: 6px; }
+
+.toolEyebrow {
+  color: #69C5FD;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.toolTitle {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -.6px;
+  margin: 0 0 6px;
+}
+
+.toolSub {
+  color: rgba(255, 255, 255, .45);
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.toolDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, .07);
+  margin: 18px 0;
+}
+
+/* ── Tool section (calculator body) ─────────────────────────────────────── */
+
+.toolSection { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── Form fields ─────────────────────────────────────────────────────────── */
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+.fieldLabel {
+  color: rgba(255, 255, 255, .42);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.fieldWrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .04);
+  overflow: hidden;
+  transition: border-color .18s ease;
+}
+
+.fieldWrap:focus-within {
+  border-color: rgba(105, 197, 253, .55);
+  background: rgba(105, 197, 253, .04);
+}
+
+.fieldInput {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 12px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font: 700 14px inherit;
+  appearance: textfield;
+}
+
+.fieldInput::-webkit-outer-spin-button,
+.fieldInput::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.fieldSuffix {
+  padding: 0 12px 0 4px;
+  color: rgba(255, 255, 255, .35);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.fieldHint {
+  color: rgba(255, 255, 255, .28);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* ── Symbol selector ─────────────────────────────────────────────────────── */
+
+.symbolSelect {
+  appearance: none;
+  width: 100%;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 11px;
+  color: #fff;
+  font: 700 14px inherit;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .18s ease, background .18s ease;
+}
+
+.symbolSelect:hover {
+  border-color: rgba(105, 197, 253, .35);
+  background: rgba(105, 197, 253, .04);
+}
+
+.symbolSelect:focus {
+  border-color: rgba(105, 197, 253, .55);
+  background: rgba(105, 197, 253, .04);
+}
+
+.symbolSelect option {
+  background: #111820;
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── Direction toggle ────────────────────────────────────────────────────── */
+
+.dirRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dirToggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.dirBtn {
+  padding: 9px 20px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, .42);
+  font: 850 12px inherit;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.dirBtnBuy {
+  background: rgba(34, 197, 94, .14);
+  color: #22c55e;
+}
+
+.dirBtnSell {
+  background: rgba(239, 68, 68, .14);
+  color: #ef4444;
+}
+
+/* ── Price grid ──────────────────────────────────────────────────────────── */
+
+.priceGrid {
+  display: grid;
+  gap: 12px;
+}
+
+/* ── Risk row ────────────────────────────────────────────────────────────── */
+
+.riskRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.riskModeToggle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.modeGroup {
+  display: flex;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 11px;
+  overflow: hidden;
+}
+
+.modeBtn {
+  flex: 1;
+  padding: 11px 18px;
+  background: rgba(255, 255, 255, .04);
+  border: none;
+  color: rgba(255, 255, 255, .4);
+  font: 850 13px inherit;
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.modeBtnActive {
+  background: rgba(105, 197, 253, .18);
+  color: #69C5FD;
+}
+
+/* ── Warnings ────────────────────────────────────────────────────────────── */
+
+.warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px 14px;
+  border-radius: 11px;
+  background: rgba(245, 158, 11, .09);
+  border: 1px solid rgba(245, 158, 11, .2);
+  color: #f59e0b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.warning svg { flex: 0 0 auto; margin-top: 1px; }
+
+/* ── Results ─────────────────────────────────────────────────────────────── */
+
+.resultBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, .065);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .022);
+}
+
+.resultSectionTitle {
+  color: rgba(255, 255, 255, .38);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.resultKpis {
+  display: grid;
+  gap: 10px;
+}
+
+.resultKpi {
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, .06);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .03);
+}
+
+.resultKpiLabel {
+  color: rgba(255, 255, 255, .38);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.resultKpiValue {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -.5px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.resultKpiSub {
+  color: rgba(255, 255, 255, .38);
+  font-size: 10px;
+}
+
+/* ── Distances ───────────────────────────────────────────────────────────── */
+
+.distRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.distChip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .03);
+  min-width: 120px;
+}
+
+.distChipTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.distLabel {
+  color: rgba(255, 255, 255, .35);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.distUnit {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 100px;
+  background: rgba(105, 197, 253, .1);
+  color: #69C5FD;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.distValue {
+  font-size: 16px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  color: #69C5FD;
+  letter-spacing: -.3px;
+}
+
+/* ── Propfirm impact ─────────────────────────────────────────────────────── */
+
+.impactBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 15px;
+  border-radius: 12px;
+  background: rgba(105, 197, 253, .04);
+  border: 1px solid rgba(105, 197, 253, .1);
+}
+
+.impactTitle {
+  color: rgba(255, 255, 255, .38);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.impactRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.impactLabel {
+  color: rgba(255, 255, 255, .55);
+  font-size: 11px;
+}
+
+.impactRight {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.impactOf {
+  color: rgba(255, 255, 255, .28);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.impactWarn {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.miniMeter {
+  height: 5px;
+  background: rgba(255, 255, 255, .07);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.miniMeterFill {
+  height: 100%;
+  border-radius: inherit;
+  transition: width .4s ease;
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 36px 24px;
+  border: 1px dashed rgba(255, 255, 255, .08);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.emptyStateText {
+  color: rgba(255, 255, 255, .32);
+  font-size: 13px;
+  line-height: 1.55;
+  max-width: 340px;
+}
+
+/* ── Coming soon ─────────────────────────────────────────────────────────── */
+
+.comingSoon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 52px 24px;
+  text-align: center;
+}
+
+.comingSoonIcon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: rgba(105, 197, 253, .08);
+}
+
+.comingSoonTitle {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -.4px;
+}
+
+.comingSoonDesc {
+  color: rgba(255, 255, 255, .42);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 380px;
+}
+
+.comingSoonBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: 100px;
+  background: rgba(105, 197, 253, .09);
+  border: 1px solid rgba(105, 197, 253, .2);
+  color: #69C5FD;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .5px;
+}
+
+/* ── Approximation note ─────────────────────────────────────────────────── */
+
+.approxNote {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(105, 197, 253, .07);
+  border: 1px solid rgba(105, 197, 253, .15);
+  color: rgba(105, 197, 253, .85);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* ── Specs unavailable (AUTRE) ───────────────────────────────────────────── */
+
+.specsUnavailable {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, .07);
+  border: 1px solid rgba(245, 158, 11, .18);
+}
+
+.specsUnavailable svg { flex: 0 0 auto; margin-top: 2px; }
+
+.specsUnavailable strong {
+  color: #f59e0b;
+  font-size: 12px;
+  font-weight: 800;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.specsUnavailableSub {
+  color: rgba(255, 255, 255, .38);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* ── Field error ─────────────────────────────────────────────────────────── */
+
+.fieldError {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 5px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, .09);
+  border: 1px solid rgba(239, 68, 68, .22);
+  color: #ef4444;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.fieldError svg { flex: 0 0 auto; margin-top: 1px; }
+
+/* ── Results area ────────────────────────────────────────────────────────── */
+
+.resultsArea {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+/* ── R:R ratio block ─────────────────────────────────────────────────────── */
+
+.rrBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 20px;
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .025);
+  text-align: center;
+}
+
+.rrEyebrow {
+  color: rgba(255, 255, 255, .35);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.rrBigRatio {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.rrQuality {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .4px;
+}
+
+.rrNoTp {
+  color: rgba(255, 255, 255, .32);
+  font-size: 12px;
+}
+
+/* ── Monetary cards ──────────────────────────────────────────────────────── */
+
+.monetaryGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.monetaryCard {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, .06);
+  background: rgba(255, 255, 255, .025);
+}
+
+.monetaryCardLoss {
+  border-color: rgba(239, 68, 68, .18);
+  background: rgba(239, 68, 68, .05);
+}
+
+.monetaryCardGain {
+  border-color: rgba(34, 197, 94, .18);
+  background: rgba(34, 197, 94, .05);
+}
+
+.monetaryCardNeutral {
+  border-color: rgba(255, 255, 255, .06);
+  background: rgba(255, 255, 255, .015);
+}
+
+.monetaryLabel {
+  color: rgba(255, 255, 255, .42);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .9px;
+  text-transform: uppercase;
+}
+
+.monetaryValue {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -.8px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.monetarySub {
+  color: rgba(255, 255, 255, .38);
+  font-size: 11px;
+}
+
+.monetaryNoTp {
+  color: rgba(255, 255, 255, .25);
+  font-size: 13px;
+  padding: 8px 0;
+}
+
+/* ── No pip value message ────────────────────────────────────────────────── */
+
+.noPipValue {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(245, 158, 11, .07);
+  border: 1px solid rgba(245, 158, 11, .18);
+}
+
+.noPipValue svg { flex: 0 0 auto; margin-top: 1px; }
+
+.noPipValue strong {
+  color: #f59e0b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* ── Manual pip value section ────────────────────────────────────────────── */
+
+.manualPipSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed rgba(245, 158, 11, .25);
+  background: rgba(245, 158, 11, .04);
+}
+
+.manualPipNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: rgba(245, 158, 11, .85);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.manualPipNote svg { flex: 0 0 auto; margin-top: 1px; }
+
+/* ── Impact area ─────────────────────────────────────────────────────────── */
+
+.impactArea {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(105, 197, 253, .12);
+  background: rgba(105, 197, 253, .03);
+}
+
+.impactAreaTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, .42);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.impactModelBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: rgba(105, 197, 253, .12);
+  color: #69C5FD;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+
+.impactDDBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .025);
+  border: 1px solid rgba(255, 255, 255, .055);
+}
+
+.impactDDTitle {
+  color: rgba(255, 255, 255, .65);
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.impactDDSub {
+  color: rgba(255, 255, 255, .28);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Before → After flow */
+
+.marginFlow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.marginSide {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.marginSideLabel {
+  color: rgba(255, 255, 255, .32);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+}
+
+.marginSideValue {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.marginArrow {
+  color: rgba(255, 255, 255, .22);
+  font-size: 16px;
+  flex: 0 0 auto;
+  padding: 0 2px;
+}
+
+/* Impact stat */
+
+.impactStatRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.impactStatLabel {
+  color: rgba(255, 255, 255, .3);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.impactStatValue {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* DD violation */
+
+.ddViolation {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: rgba(239, 68, 68, .1);
+  border: 1px solid rgba(239, 68, 68, .25);
+  color: #ef4444;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.ddViolation svg { flex: 0 0 auto; margin-top: 1px; }
+
+/* Impact disclaimer */
+
+.impactDisclaimer {
+  color: rgba(255, 255, 255, .22);
+  font-size: 10px;
+  line-height: 1.5;
+  border-top: 1px solid rgba(255, 255, 255, .055);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 760px) {
+  .toolCard { padding: 16px; }
+  .toolTitle { font-size: 18px; }
+  .toolNav { gap: 5px; }
+  .toolNavBtn { padding: 8px 12px; font-size: 11px; }
+  .toolNavSoon { display: none; }
+  .dirRow { flex-direction: column; align-items: flex-start; }
+  .riskRow { flex-direction: column; }
+  .riskModeToggle { flex-direction: row; align-items: center; gap: 12px; width: 100%; }
+  .modeGroup { flex: 0 0 auto; }
+  .resultKpiValue { font-size: 18px; }
+  .comingSoon { padding: 36px 16px; }
+  .rrBigRatio { font-size: 32px; }
+  .monetaryValue { font-size: 22px; }
+  .marginSideValue { font-size: 15px; }
+  .impactArea { padding: 14px; }
+}

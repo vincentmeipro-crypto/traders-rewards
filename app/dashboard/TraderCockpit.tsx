@@ -33,7 +33,12 @@ import {
 } from "lucide-react";
 import CockpitChart, { type CockpitTrade } from "./CockpitChart";
 import EconomicCalendar from "./EconomicCalendar";
+import CockpitTools from "./CockpitTools";
 import styles from "./TraderCockpit.module.css";
+import { extractContractRules } from "@/lib/contract-rules";
+import { getSyncFreshness } from "@/lib/sync-freshness";
+
+export type CockpitSubTab = "cockpit" | "tools";
 
 export type CockpitTab = "challenges" | "payouts" | "rules" | "history" | "support" | "kyc";
 
@@ -64,6 +69,7 @@ export type CockpitChallenge = {
   breach_at?: string;
   open_positions?: Record<string, unknown>[];
   positions_synced_at?: string;
+  rules_snapshot?: unknown;
 };
 
 type Props = {
@@ -80,10 +86,10 @@ type Props = {
   onRefresh?: () => void;
 };
 
-const BLUE = "#69C5FD";
+const BLUE  = "#69C5FD";
 const GREEN = "#22c55e";
 const AMBER = "#f59e0b";
-const RED = "#ef4444";
+const RED   = "#ef4444";
 
 function numeric(value: unknown, fallback = 0): number {
   const parsed = typeof value === "number" ? value : Number(value);
@@ -139,15 +145,6 @@ function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
     .sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
 }
 
-function syncLabel(value: string | undefined, isFr: boolean): string {
-  if (!value) return isFr ? "Synchronisation en attente" : "Waiting for sync";
-  const minutes = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 60_000));
-  if (minutes < 1) return isFr ? "Synchronisé à l'instant" : "Synced just now";
-  if (minutes < 60) return isFr ? `Synchronisé il y a ${minutes} min` : `Synced ${minutes} min ago`;
-  const hours = Math.floor(minutes / 60);
-  return isFr ? `Synchronisé il y a ${hours} h` : `Synced ${hours}h ago`;
-}
-
 function phaseLabel(phase: string, isFr: boolean): string {
   if (phase === "phase1") return "Phase 1";
   if (phase === "phase2") return "Phase 2";
@@ -171,6 +168,177 @@ function Meter({ value, color = BLUE }: { value: number; color?: string }) {
   return <div className={styles.meter}><div className={styles.meterFill} style={{ width: `${clamp(value)}%`, background: color }} /></div>;
 }
 
+// ── Objective Block V2 ────────────────────────────────────────────────────────
+
+type ObjectiveBlockProps = {
+  phase: string;
+  startBalance: number;
+  targetBalance: number;
+  effectiveBalance: number;
+  profit: number;
+  profitRemaining: number;
+  profitProgress: number;
+  tradingDays: number;
+  minDays: number;
+  daysRemaining: number;
+  isFr: boolean;
+};
+
+function ObjectiveBlock({
+  phase,
+  startBalance,
+  targetBalance,
+  profit,
+  profitRemaining,
+  profitProgress,
+  tradingDays,
+  minDays,
+  daysRemaining,
+  isFr,
+}: ObjectiveBlockProps) {
+  const isFunded = phase === "funded";
+
+  return (
+    <div className={`${styles.card} ${styles.objectiveBlock}`}>
+      {/* Eyebrow */}
+      <div className={styles.objectiveEyebrow}>
+        {isFunded
+          ? (isFr ? "Compte Reward" : "Reward Account")
+          : phase === "phase1"
+            ? (isFr ? "Objectif — Phase 1" : "Objective — Phase 1")
+            : phase === "phase2"
+              ? (isFr ? "Objectif — Phase 2" : "Objective — Phase 2")
+              : (isFr ? "Objectif — Challenge" : "Objective — Challenge")}
+      </div>
+
+      {!isFunded && (
+        <div className={styles.objectiveBody}>
+          {/* Start → Target endpoints */}
+          <div className={styles.objectiveEndpoints}>
+            <span className={styles.objectiveStart}>{money(startBalance)}</span>
+            <span className={styles.objectiveArrow}>→</span>
+            <span className={styles.objectiveTarget}>{money(targetBalance)}</span>
+          </div>
+
+          {/* Progress bar */}
+          <div className={styles.objectiveBarWrap}>
+            <div className={styles.objectiveBarTrack}>
+              <div
+                className={styles.objectiveBarFill}
+                style={{ width: `${profitProgress}%` }}
+              />
+            </div>
+            <span className={styles.objectivePercent}>{profitProgress.toFixed(0)}%</span>
+          </div>
+
+          {/* Amounts */}
+          <div className={styles.objectiveAmounts}>
+            <div className={styles.objectiveAmount}>
+              <div className={styles.objectiveAmountLabel}>{isFr ? "Réalisé" : "Achieved"}</div>
+              <div
+                className={styles.objectiveAmountValue}
+                style={{ color: profit >= 0 ? GREEN : RED }}
+              >
+                {profit >= 0 ? "+" : ""}{money(profit)}
+              </div>
+            </div>
+            <div className={styles.objectiveAmountSep} />
+            <div className={styles.objectiveAmount} style={{ textAlign: "right" }}>
+              <div className={styles.objectiveAmountLabel}>{isFr ? "Encore nécessaire" : "Still needed"}</div>
+              <div className={styles.objectiveAmountValue}>
+                {profitRemaining > 0 ? money(profitRemaining) : <span style={{ color: GREEN }}>✓ {isFr ? "Atteint" : "Reached"}</span>}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Days row */}
+      <div className={styles.objectiveDaysRow}>
+        <div className={styles.objectiveDaysLeft}>
+          <span className={styles.objectiveDaysCount}>{tradingDays}</span>
+          <span className={styles.objectiveDaysSep}> / </span>
+          <span className={styles.objectiveDaysMin}>{minDays}</span>
+          <span className={styles.objectiveDaysLabel}>
+            {" "}{isFr ? "jours minimum tradés" : "minimum days traded"}
+          </span>
+        </div>
+        {daysRemaining > 0 ? (
+          <span className={styles.objectiveDaysBadge}>
+            {daysRemaining} {isFr
+              ? `jour${daysRemaining > 1 ? "s" : ""} restant${daysRemaining > 1 ? "s" : ""}`
+              : `day${daysRemaining > 1 ? "s" : ""} left`}
+          </span>
+        ) : (
+          <span className={styles.objectiveDaysDone}>
+            ✓ {isFr ? "Condition validée" : "Requirement met"}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Tools Placeholder ─────────────────────────────────────────────────────────
+
+function ToolsPlaceholder({ isFr, isMobile }: { isFr: boolean; isMobile: boolean }) {
+  const tools = [
+    {
+      icon: <TrendingUp size={26} color={BLUE} />,
+      title: isFr ? "Risque / Rendement" : "Risk / Reward",
+      desc: isFr
+        ? "Calcule ton ratio R:R, la perte et le gain potentiels avant d'entrer en position."
+        : "Calculate your R:R ratio, potential loss and gain before entering a trade.",
+    },
+    {
+      icon: <Target size={26} color={BLUE} />,
+      title: isFr ? "Calculateur de lot" : "Lot Calculator",
+      desc: isFr
+        ? "Détermine la taille de position optimale en fonction de ton capital et de ton risque défini."
+        : "Find the optimal position size based on your capital and defined risk percentage.",
+    },
+    {
+      icon: <ShieldCheck size={26} color={BLUE} />,
+      title: isFr ? "Simulateur de risque" : "Risk Simulator",
+      desc: isFr
+        ? "Simule l'impact d'un stop-loss sur ton drawdown journalier et total avant de passer le trade."
+        : "Simulate a stop-loss impact on your daily and total drawdown before placing the trade.",
+    },
+  ];
+
+  return (
+    <div className={styles.toolsPlaceholder}>
+      <div className={styles.toolsHeader}>
+        <div className={styles.toolsEyebrow}>Traders Rewards</div>
+        <h2 className={styles.toolsTitle}>{isFr ? "Outils Trader" : "Trader Tools"}</h2>
+        <p className={styles.toolsSub}>
+          {isFr
+            ? "Des outils concrets pour mieux gérer ton risque et réussir ton challenge."
+            : "Concrete tools to better manage your risk and succeed in your challenge."}
+        </p>
+      </div>
+
+      <div
+        className={styles.toolsGrid}
+        style={{ gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)" }}
+      >
+        {tools.map((tool, i) => (
+          <div key={i} className={`${styles.card} ${styles.toolCard}`}>
+            <div className={styles.toolIcon}>{tool.icon}</div>
+            <div className={styles.toolName}>{tool.title}</div>
+            <div className={styles.toolDesc}>{tool.desc}</div>
+            <div className={styles.toolSoon}>
+              {isFr ? "Bientôt disponible" : "Coming soon"}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main component ────────────────────────────────────────────────────────────
+
 export default function TraderCockpit({
   challenge,
   activeChallenges,
@@ -184,12 +352,34 @@ export default function TraderCockpit({
   onNavigate,
   onRefresh,
 }: Props) {
+  const [subTab, setSubTab]                 = useState<CockpitSubTab>("cockpit");
   const [showCredentials, setShowCredentials] = useState(false);
-  const [copied, setCopied] = useState("");
-  const [planChecks, setPlanChecks] = useState([false, false, false]);
-  const [journalNote, setJournalNote] = useState("");
-  const [loadedPlanKey, setLoadedPlanKey] = useState("");
+  const [copied, setCopied]                 = useState("");
+  const [planChecks, setPlanChecks]         = useState([false, false, false]);
+  const [journalNote, setJournalNote]       = useState("");
+  const [loadedPlanKey, setLoadedPlanKey]   = useState("");
 
+  // ── Contract rules ──────────────────────────────────────────────────────────
+  const contractRules = useMemo(
+    () =>
+      extractContractRules(challenge.rules_snapshot, {
+        phase:                challenge.phase,
+        model:                challenge.model,
+        daily_drawdown_limit: challenge.daily_drawdown_limit,
+        total_drawdown_limit: challenge.total_drawdown_limit,
+        profit_target:        challenge.profit_target,
+        trading_days:         challenge.trading_days,
+      }),
+    [challenge],
+  );
+
+  // ── Sync freshness ──────────────────────────────────────────────────────────
+  const freshness = useMemo(
+    () => getSyncFreshness(challenge.last_synced_at),
+    [challenge.last_synced_at],
+  );
+
+  // ── Core computations (formulas unchanged) ──────────────────────────────────
   const trades = useMemo(() => parseTrades(tradeHistory), [tradeHistory]);
   const positions = Array.isArray(challenge.open_positions) ? challenge.open_positions : [];
   const floatingPnl = positions.reduce((sum, position) => sum + numeric(position.profit) + numeric(position.swap), 0);
@@ -200,7 +390,10 @@ export default function TraderCockpit({
   const targetBalance = challenge.start_balance + profitTargetUsd;
   const profitRemaining = Math.max(0, targetBalance - effectiveBalance);
   const profitProgress = profitTargetUsd > 0 ? clamp(profit / profitTargetUsd * 100) : 100;
-  const minDays = challenge.phase === "funded" ? 7 : 5;
+
+  // minDays from contract rules (snapshot → fallback)
+  const minDays = contractRules.minTradingDays;
+
   const daysRemaining = Math.max(0, minDays - challenge.trading_days);
   const dailyReferenceBalance = challenge.daily_start_balance ?? challenge.start_balance;
   const dailyLimitUsd = dailyReferenceBalance * challenge.daily_drawdown_limit / 100;
@@ -311,8 +504,13 @@ export default function TraderCockpit({
 
   const riskColor = (used: number) => used >= 85 ? RED : used >= 60 ? AMBER : BLUE;
 
+  // best day rule from contract (show only when contractually present)
+  const bestDayRule = contractRules.bestDayRule;
+
   return (
     <div className={styles.root} data-mobile={isMobile ? "true" : "false"}>
+
+      {/* ── Header ── */}
       <header className={styles.header}>
         <div>
           <div className={styles.eyebrow}>{isFr ? "Cockpit de progression" : "Progress cockpit"}</div>
@@ -328,7 +526,14 @@ export default function TraderCockpit({
             ) : <span className={styles.pill} style={{ color: BLUE, background: "rgba(105,197,253,.1)" }}>{challenge.account_size} · {challenge.model === "2step" ? "2-Step" : challenge.model === "1step" ? "1-Step" : challenge.model}</span>}
             <span className={styles.pill} style={{ color: BLUE, background: "rgba(105,197,253,.08)" }}><Target size={13} />{phaseLabel(challenge.phase, isFr)}</span>
             <span className={styles.pill} style={{ color: health.color, background: `${health.color}16` }}>{health.icon}{health.label}</span>
-            <span className={styles.muted} style={{ fontSize: 10, display: "inline-flex", gap: 5, alignItems: "center" }}><Activity size={11} />{syncLabel(challenge.last_synced_at, isFr)}</span>
+            {/* Freshness indicator — color-coded, never reveals infrastructure */}
+            <span
+              className={styles.muted}
+              style={{ fontSize: 10, display: "inline-flex", gap: 5, alignItems: "center", color: freshness.color }}
+            >
+              <Activity size={11} />
+              {isFr ? freshness.labelFr : freshness.label}
+            </span>
           </div>
         </div>
         <div className={styles.headerActions}>
@@ -338,124 +543,228 @@ export default function TraderCockpit({
         </div>
       </header>
 
-      <div className={styles.coach} style={{ borderColor: `${nextAction.color}45`, background: `linear-gradient(90deg,${nextAction.color}18,transparent)` }}>
-        <div className={styles.coachIcon} style={{ color: nextAction.color, background: `${nextAction.color}18` }}>{nextAction.icon}</div>
-        <div className={styles.coachCopy}><div className={styles.coachTitle}>{nextAction.title}</div><div className={styles.coachText}>{nextAction.text}</div></div>
-        <button className={styles.button} onClick={nextAction.action}>{nextAction.label}<ArrowRight size={14} /></button>
+      {/* ── Sub-tab navigation ── */}
+      <div className={styles.subTabNav}>
+        <button
+          className={`${styles.subTabBtn} ${subTab === "cockpit" ? styles.subTabBtnActive : ""}`}
+          onClick={() => setSubTab("cockpit")}
+        >
+          Cockpit
+        </button>
+        <button
+          className={`${styles.subTabBtn} ${subTab === "tools" ? styles.subTabBtnActive : ""}`}
+          onClick={() => setSubTab("tools")}
+        >
+          {isFr ? "Outils" : "Tools"}
+        </button>
       </div>
 
-      <div className={styles.kpis}>
-        <div className={`${styles.card} ${styles.kpi}`}>
-          <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Equity actuelle" : "Current equity"}</span><Activity color={BLUE} size={17} /></div>
-          <div><div className={styles.kpiValue}>{money(equity)}</div><div className={styles.kpiMeta}><span style={{ color: profit >= 0 ? GREEN : RED }}>{profit >= 0 ? "+" : ""}{money(profit)} ({profit >= 0 ? "+" : ""}{(profit / challenge.start_balance * 100).toFixed(2)}%)</span><span>{floatingPnl ? `${isFr ? "Flottant" : "Floating"} ${money(floatingPnl, 2)}` : isFr ? "Aucune exposition" : "No exposure"}</span></div></div>
-        </div>
-        <div className={`${styles.card} ${styles.kpi}`}>
-          <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Objectif restant" : "Remaining target"}</span><Target color={BLUE} size={17} /></div>
-          <div><div className={styles.kpiValue}>{challenge.phase === "funded" ? "—" : money(profitRemaining)}</div><div className={styles.kpiMeta}><span>{challenge.phase === "funded" ? (isFr ? "Aucun objectif de profit" : "No profit target") : `${profitProgress.toFixed(0)}% ${isFr ? "accompli" : "complete"}`}</span><span>{challenge.phase !== "funded" && money(targetBalance)}</span></div>{challenge.phase !== "funded" && <Meter value={profitProgress} color={GREEN} />}</div>
-        </div>
-        <div className={`${styles.card} ${styles.kpi}`}>
-          <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Drawdown journalier" : "Daily drawdown"}</span><Clock3 color={BLUE} size={17} /></div>
-          <div><div className={styles.kpiValue} style={{ color: dailyRiskUsed >= 60 ? riskColor(dailyRiskUsed) : "#fff" }}>{money(dailyBuffer)}</div><div className={styles.kpiMeta}><span>{dailyRiskUsed.toFixed(0)}% {isFr ? "utilisé" : "used"}</span><span>{challenge.daily_drawdown_limit}% max</span></div><Meter value={dailyRiskUsed} color={riskColor(dailyRiskUsed)} /></div>
-        </div>
-        <div className={`${styles.card} ${styles.kpi}`}>
-          <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Drawdown total" : "Total drawdown"}</span><ShieldCheck color={BLUE} size={17} /></div>
-          <div><div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalBuffer)}</div><div className={styles.kpiMeta}><span>{isOneStep ? (isFr ? "Plancher trailing EOD" : "EOD trailing floor") : (isFr ? "Plancher statique" : "Static floor")}</span><span>{money(totalFloor)}</span></div><Meter value={totalRiskUsed} color={riskColor(totalRiskUsed)} /></div>
-        </div>
-      </div>
-
-      <div className={`${styles.card} ${styles.journey}`}>
-        <div className={styles.journeyHead}><strong style={{ color: "rgba(255,255,255,.72)" }}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{challenge.trading_days}/{minDays} {isFr ? "jours validés" : "days complete"}</span></div>
-        <div className={styles.steps} style={{ gridTemplateColumns: `repeat(${phaseSteps.length},minmax(120px,1fr))` }}>
-          {phaseSteps.map((step, index) => <div key={step} className={`${styles.step} ${index < phaseIndex ? styles.stepDone : index === phaseIndex ? styles.stepActive : ""}`}><span className={styles.stepDot}>{index < phaseIndex ? <Check size={12} /> : index + 1}</span><span className={styles.stepText}>{step}</span></div>)}
-        </div>
-      </div>
-
-      <div className={styles.mainGrid}>
-        <div className={`${styles.card} ${styles.panel}`}>
-          <SectionTitle icon={<LineChart size={17} />} title={isFr ? "Trajectoire du compte" : "Account trajectory"} subtitle={isFr ? "Courbe reconstruite uniquement avec tes résultats MT5 réels" : "Built only from your real MT5 results"} />
-          <CockpitChart trades={trades} startBalance={challenge.start_balance} currentBalance={effectiveBalance} targetBalance={targetBalance} floorBalance={totalFloor} isFr={isFr} />
-        </div>
-        <div className={`${styles.card} ${styles.panel}`}>
-          <SectionTitle icon={<Gauge size={17} />} title={isFr ? "Limites en direct" : "Live limits"} subtitle={isFr ? "Les chiffres à connaître avant chaque trade" : "Know these before every trade"} />
-          <Rule label={isFr ? "Objectif de profit" : "Profit target"} value={challenge.phase === "funded" ? "—" : `${challenge.profit_target.toFixed(2)}%`} progress={challenge.phase === "funded" ? undefined : profitProgress} color={GREEN} help={challenge.phase === "funded" ? (isFr ? "Aucun objectif sur le compte Reward" : "No target on Reward account") : `${money(profitRemaining)} ${isFr ? "encore nécessaires" : "still required"}`} />
-          <Rule label={isFr ? "Jours minimum" : "Minimum days"} value={`${challenge.trading_days} / ${minDays}`} progress={challenge.trading_days / minDays * 100} color={BLUE} help={daysRemaining ? `${daysRemaining} ${isFr ? "jour(s) restant(s)" : "day(s) remaining"}` : isFr ? "Condition validée" : "Requirement met"} />
-          <Rule label={isFr ? "Perte journalière" : "Daily loss"} value={`${money(dailyBuffer)} ${isFr ? "disponibles" : "available"}`} progress={dailyRiskUsed} color={riskColor(dailyRiskUsed)} help={`${isFr ? "Plancher du jour" : "Today's floor"} : ${money(dailyFloor)}`} />
-          <Rule label={isFr ? "Perte totale" : "Total loss"} value={`${money(totalBuffer)} ${isFr ? "disponibles" : "available"}`} progress={totalRiskUsed} color={riskColor(totalRiskUsed)} help={`${isFr ? "Plancher du compte" : "Account floor"} : ${money(totalFloor)}`} />
-          {isOneStep && <Rule label={isFr ? "Meilleure journée" : "Best day"} value={money(challenge.best_day_profit ?? 0)} help={isFr ? "Le profit total requis doit être au moins égal à 2× la meilleure journée" : "Required total profit must be at least 2× the best day"} />}
-        </div>
-      </div>
-
-      <div className={styles.twoGrid}>
-        <div className={`${styles.card} ${styles.panel}`}>
-          <SectionTitle icon={<CalendarDays size={17} />} title={isFr ? "Calendrier P&L" : "P&L calendar"} subtitle={isFr ? "Deux semaines de régularité en un regard" : "Two weeks at a glance"} />
-          <div className={styles.calendar}>{calendarDays.map(({ date, pnl }) => <div key={date.toISOString()} className={styles.day} style={pnl > 0 ? { background: "rgba(34,197,94,.08)", borderColor: "rgba(34,197,94,.18)" } : pnl < 0 ? { background: "rgba(239,68,68,.08)", borderColor: "rgba(239,68,68,.18)" } : undefined}><div className={styles.dayName}>{date.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { weekday: "short" })}</div><div className={styles.dayNumber}>{date.getDate()}</div><div className={styles.dayPnl} style={{ color: pnl > 0 ? GREEN : pnl < 0 ? RED : "rgba(255,255,255,.25)" }}>{pnl ? `${pnl > 0 ? "+" : ""}${money(pnl)}` : "—"}</div></div>)}</div>
-        </div>
-        <div className={`${styles.card} ${styles.panel}`}>
-          <SectionTitle icon={<BarChart3 size={17} />} title={isFr ? "Signature de performance" : "Performance signature"} subtitle={tradeHistoryLoading ? (isFr ? "Analyse en cours…" : "Analyzing…") : `${stats.count} ${isFr ? "trades clôturés analysés" : "closed trades analyzed"}`} />
-          <div className={styles.stats}>{[
-            { label: isFr ? "Taux de réussite" : "Win rate", value: `${stats.winRate.toFixed(0)}%`, note: isFr ? "Trades gagnants" : "Winning trades" },
-            { label: "Profit factor", value: Number.isFinite(stats.profitFactor) ? stats.profitFactor.toFixed(2) : "∞", note: isFr ? "Gains / pertes" : "Wins / losses" },
-            { label: isFr ? "Espérance" : "Expectancy", value: money(stats.expectancy, 2), note: isFr ? "Par trade" : "Per trade" },
-            { label: isFr ? "Gain moyen" : "Average win", value: money(stats.averageWin), note: isFr ? "Trade gagnant" : "Winning trade" },
-            { label: isFr ? "Perte moyenne" : "Average loss", value: money(stats.averageLoss), note: isFr ? "Trade perdant" : "Losing trade" },
-            { label: isFr ? "Meilleur symbole" : "Best symbol", value: stats.bestSymbol?.[0] ?? "—", note: stats.bestSymbol ? money(stats.bestSymbol[1]) : (isFr ? "Pas assez de données" : "Not enough data") },
-          ].map(item => <div key={item.label} className={styles.stat}><div className={styles.statLabel}>{item.label}</div><div className={styles.statValue}>{item.value}</div><div className={styles.statNote}>{item.note}</div></div>)}</div>
-        </div>
-      </div>
-
-      <EconomicCalendar isFr={isFr} />
-
-      <div className={styles.twoGrid}>
-        <div className={`${styles.card} ${styles.panel}`}>
-          <SectionTitle icon={<TrendingUp size={17} />} title={isFr ? "Positions ouvertes" : "Open positions"} subtitle={`${positions.length} ${isFr ? "position(s) · P&L flottant" : "position(s) · floating P&L"} ${money(floatingPnl, 2)}`} />
-          {positions.length === 0 ? <Empty icon={<Activity size={20} />} text={isFr ? "Aucune position ouverte. Ton exposition est actuellement nulle." : "No open positions. Your current exposure is zero."} /> : <div className={styles.positions}>{positions.slice(0, 6).map((position, index) => {
-            const side = position.type === 0 || String(position.type).toLowerCase().includes("buy") ? "BUY" : "SELL";
-            const pnl = numeric(position.profit) + numeric(position.swap);
-            const rawVolume = numeric(position.volume);
-            const volume = rawVolume > 100 ? rawVolume / 10_000 : rawVolume;
-            return <div className={styles.position} key={String(position.ticket ?? index)}><div><b>{String(position.symbol ?? "—")}</b><span style={{ marginLeft: 7, color: side === "BUY" ? GREEN : RED, fontSize: 9, fontWeight: 850 }}>{side}</span></div><span>{volume.toFixed(2)} lot</span><span className={styles.muted}>{String(position.open_price ?? position.price_open ?? "—")}</span><strong style={{ color: pnl >= 0 ? GREEN : RED, textAlign: "right" }}>{pnl >= 0 ? "+" : ""}{money(pnl, 2)}</strong></div>;
-          })}</div>}
-        </div>
-        <div className={`${styles.card} ${styles.panel}`} id="daily-plan">
-          <SectionTitle icon={<ClipboardCheck size={17} />} title={isFr ? "Plan de session" : "Session plan"} subtitle={isFr ? "Sauvegardé automatiquement sur cet appareil" : "Auto-saved on this device"} />
-          {planItems.map((item, index) => <div key={item} className={styles.planItem} onClick={() => setPlanChecks(current => current.map((checked, itemIndex) => itemIndex === index ? !checked : checked))}><span className={`${styles.check} ${planChecks[index] ? styles.checkOn : ""}`}>{planChecks[index] && <Check size={13} />}</span><span className={styles.planText} style={planChecks[index] ? { textDecoration: "line-through", color: "rgba(255,255,255,.32)" } : undefined}>{item}</span></div>)}
-          <textarea className={styles.note} value={journalNote} onChange={event => setJournalNote(event.target.value)} placeholder={isFr ? "Mon setup, mon état d'esprit et la règle que je veux respecter aujourd'hui…" : "My setup, mindset and the rule I want to respect today…"} />
-        </div>
-      </div>
-
-      <div className={styles.twoGrid}>
-        <div className={`${styles.card} ${styles.panel}`}>
-          <SectionTitle icon={<Zap size={17} />} title={isFr ? "Accès rapide" : "Quick access"} subtitle={challenge.mt5_login ? (isFr ? "Tes accès restent masqués par défaut" : "Credentials stay hidden by default") : (isFr ? "Disponible dès la création du compte" : "Available once the account is created")} />
-          {challenge.mt5_login ? <>
-            <div className={styles.credentials}>{[
-              { label: "Login", value: String(challenge.mt5_login), secret: false },
-              { label: isFr ? "Mot de passe" : "Password", value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) ?? "—", secret: true },
-              { label: isFr ? "Serveur" : "Server", value: challenge.mt5_server ?? "—", secret: false },
-              { label: isFr ? "Plateforme" : "Platform", value: "MetaTrader 5", secret: false },
-            ].map(item => <div className={styles.credential} key={item.label} onClick={() => item.secret && !showCredentials ? setShowCredentials(true) : copyValue(item.label, item.value)}><div className={styles.credentialLabel}>{item.label} {copied === item.label ? <span style={{ color: GREEN }}>✓ {isFr ? "copié" : "copied"}</span> : <Copy size={9} style={{ marginLeft: 4 }} />}</div><div className={styles.credentialValue}>{item.secret && !showCredentials ? "••••••••••" : item.value}</div></div>)}</div>
-            <div className={styles.quickActions}><button className={styles.button} onClick={() => setShowCredentials(value => !value)}>{showCredentials ? <EyeOff size={14} /> : <Eye size={14} />}{showCredentials ? (isFr ? "Masquer" : "Hide") : (isFr ? "Révéler" : "Reveal")}</button><button className={styles.button} onClick={() => onNavigate("rules")}><BookOpen size={14} />{isFr ? "Règles" : "Rules"}</button><button className={styles.button} onClick={() => onNavigate("support")}><LifeBuoy size={14} />Support</button></div>
-          </> : <Empty icon={<Clock3 size={20} />} text={isFr ? "Le compte est en cours de configuration. Les identifiants apparaîtront ici automatiquement." : "The account is being configured. Credentials will appear here automatically."} />}
-          <div className={styles.platformBlock}>
-            <div className={styles.platformHeading}>
-              <Image className={styles.platformLogo} src="/MT5.png" alt="MetaTrader 5" width={40} height={40} />
-              <div><strong>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</strong><span>{isFr ? "Installe MT5 puis connecte-toi avec les accès affichés ci-dessus." : "Install MT5, then sign in with the credentials shown above."}</span></div>
-            </div>
-            <div className={styles.platformGrid}>{[
-              { label: "Windows", icon: "🖥️", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
-              { label: "Mac", icon: "🍎", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
-              { label: "iPhone / iPad", icon: "📱", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
-              { label: "Android", icon: "🤖", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
-            ].map(platform => <a className={styles.platformButton} href={platform.href} key={platform.label} target="_blank" rel="noopener noreferrer"><span>{platform.icon}</span><b>{platform.label}</b><Download size={13} /></a>)}</div>
+      {/* ══════════════════════════════════════════════════════════════
+          COCKPIT TAB
+      ══════════════════════════════════════════════════════════════ */}
+      {subTab === "cockpit" && (
+        <>
+          {/* Coach bar */}
+          <div className={styles.coach} style={{ borderColor: `${nextAction.color}45`, background: `linear-gradient(90deg,${nextAction.color}18,transparent)` }}>
+            <div className={styles.coachIcon} style={{ color: nextAction.color, background: `${nextAction.color}18` }}>{nextAction.icon}</div>
+            <div className={styles.coachCopy}><div className={styles.coachTitle}>{nextAction.title}</div><div className={styles.coachText}>{nextAction.text}</div></div>
+            <button className={styles.button} onClick={nextAction.action}>{nextAction.label}<ArrowRight size={14} /></button>
           </div>
-        </div>
-        <div className={`${styles.card} ${styles.panel}`}>
-          <SectionTitle icon={<History size={17} />} title={isFr ? "Derniers trades" : "Recent trades"} subtitle={isFr ? "Lecture rapide de ta session" : "Quick session review"} />
-          {trades.length === 0 ? <Empty icon={<CircleDollarSign size={20} />} text={isFr ? "Les trades clôturés apparaîtront ici automatiquement." : "Closed trades will appear here automatically."} /> : <div>{[...trades].reverse().slice(0, 5).map(trade => <div className={styles.trade} key={trade.id}><span><b>{trade.symbol}</b><small style={{ color: trade.side === "BUY" ? GREEN : RED, marginLeft: 6 }}>{trade.side}</small></span><span className={styles.muted}>{trade.date?.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "short" }) ?? "—"}</span><strong style={{ color: trade.profit >= 0 ? GREEN : RED, textAlign: "right" }}>{trade.profit >= 0 ? "+" : ""}{money(trade.profit, 2)}</strong></div>)}<button className={styles.button} style={{ width: "100%", marginTop: 9 }} onClick={() => onNavigate("history")}>{isFr ? "Ouvrir tout l'historique" : "Open full history"}<ArrowRight size={14} /></button></div>}
-        </div>
-      </div>
+
+          {/* KPI cards */}
+          <div className={styles.kpis}>
+
+            {/* Equity — label switches to "Dernière valeur connue" when stale */}
+            <div className={`${styles.card} ${styles.kpi}`}>
+              <div className={styles.kpiTop}>
+                <span className={styles.kpiLabel}>
+                  {freshness.isStale
+                    ? (isFr ? "Dernière valeur connue" : "Last known value")
+                    : (isFr ? "Equity actuelle" : "Current equity")}
+                </span>
+                <Activity color={freshness.isStale ? AMBER : BLUE} size={17} />
+              </div>
+              <div>
+                <div className={styles.kpiValue}>{money(equity)}</div>
+                <div className={styles.kpiMeta}>
+                  <span style={{ color: profit >= 0 ? GREEN : RED }}>{profit >= 0 ? "+" : ""}{money(profit)} ({profit >= 0 ? "+" : ""}{(profit / challenge.start_balance * 100).toFixed(2)}%)</span>
+                  <span>{floatingPnl ? `${isFr ? "Flottant" : "Floating"} ${money(floatingPnl, 2)}` : isFr ? "Aucune exposition" : "No exposure"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Objective remaining */}
+            <div className={`${styles.card} ${styles.kpi}`}>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Objectif restant" : "Remaining target"}</span><Target color={BLUE} size={17} /></div>
+              <div>
+                <div className={styles.kpiValue}>{challenge.phase === "funded" ? "—" : money(profitRemaining)}</div>
+                <div className={styles.kpiMeta}>
+                  <span>{challenge.phase === "funded" ? (isFr ? "Aucun objectif de profit" : "No profit target") : `${profitProgress.toFixed(0)}% ${isFr ? "accompli" : "complete"}`}</span>
+                  <span>{challenge.phase !== "funded" && money(targetBalance)}</span>
+                </div>
+                {challenge.phase !== "funded" && <Meter value={profitProgress} color={GREEN} />}
+              </div>
+            </div>
+
+            {/* Daily DD — now shows Plancher $ instead of "X% max" */}
+            <div className={`${styles.card} ${styles.kpi}`}>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Marge journalière" : "Daily margin"}</span><Clock3 color={BLUE} size={17} /></div>
+              <div>
+                <div className={styles.kpiValue} style={{ color: dailyRiskUsed >= 60 ? riskColor(dailyRiskUsed) : "#fff" }}>{money(dailyBuffer)}</div>
+                <div className={styles.kpiMeta}>
+                  <span>{dailyRiskUsed.toFixed(0)}% {isFr ? "utilisé" : "used"}</span>
+                  <span>{isFr ? "Plancher" : "Floor"} {money(dailyFloor)}</span>
+                </div>
+                <Meter value={dailyRiskUsed} color={riskColor(dailyRiskUsed)} />
+              </div>
+            </div>
+
+            {/* Total DD */}
+            <div className={`${styles.card} ${styles.kpi}`}>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Marge totale" : "Total margin"}</span><ShieldCheck color={BLUE} size={17} /></div>
+              <div>
+                <div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalBuffer)}</div>
+                <div className={styles.kpiMeta}>
+                  <span>{isOneStep ? (isFr ? "Plancher trailing EOD" : "EOD trailing floor") : (isFr ? "Plancher statique" : "Static floor")}</span>
+                  <span>{money(totalFloor)}</span>
+                </div>
+                <Meter value={totalRiskUsed} color={riskColor(totalRiskUsed)} />
+              </div>
+            </div>
+
+          </div>
+
+          {/* ── Objective Block V2 ── */}
+          <ObjectiveBlock
+            phase={challenge.phase}
+            startBalance={challenge.start_balance}
+            targetBalance={targetBalance}
+            effectiveBalance={effectiveBalance}
+            profit={profit}
+            profitRemaining={profitRemaining}
+            profitProgress={profitProgress}
+            tradingDays={challenge.trading_days}
+            minDays={minDays}
+            daysRemaining={daysRemaining}
+            isFr={isFr}
+          />
+
+          {/* Journey stepper */}
+          <div className={`${styles.card} ${styles.journey}`}>
+            <div className={styles.journeyHead}><strong style={{ color: "rgba(255,255,255,.72)" }}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{challenge.trading_days}/{minDays} {isFr ? "jours validés" : "days complete"}</span></div>
+            <div className={styles.steps} style={{ gridTemplateColumns: `repeat(${phaseSteps.length},minmax(120px,1fr))` }}>
+              {phaseSteps.map((step, index) => <div key={step} className={`${styles.step} ${index < phaseIndex ? styles.stepDone : index === phaseIndex ? styles.stepActive : ""}`}><span className={styles.stepDot}>{index < phaseIndex ? <Check size={12} /> : index + 1}</span><span className={styles.stepText}>{step}</span></div>)}
+            </div>
+          </div>
+
+          {/* Main grid */}
+          <div className={styles.mainGrid}>
+            <div className={`${styles.card} ${styles.panel}`}>
+              <SectionTitle icon={<LineChart size={17} />} title={isFr ? "Trajectoire du compte" : "Account trajectory"} subtitle={isFr ? "Courbe reconstruite uniquement avec tes résultats MT5 réels" : "Built only from your real MT5 results"} />
+              <CockpitChart trades={trades} startBalance={challenge.start_balance} currentBalance={effectiveBalance} targetBalance={targetBalance} floorBalance={totalFloor} isFr={isFr} />
+            </div>
+            <div className={`${styles.card} ${styles.panel}`}>
+              <SectionTitle icon={<Gauge size={17} />} title={isFr ? "Limites en direct" : "Live limits"} subtitle={isFr ? "Les chiffres à connaître avant chaque trade" : "Know these before every trade"} />
+              <Rule label={isFr ? "Objectif de profit" : "Profit target"} value={challenge.phase === "funded" ? "—" : `${challenge.profit_target.toFixed(2)}%`} progress={challenge.phase === "funded" ? undefined : profitProgress} color={GREEN} help={challenge.phase === "funded" ? (isFr ? "Aucun objectif sur le compte Reward" : "No target on Reward account") : `${money(profitRemaining)} ${isFr ? "encore nécessaires" : "still required"}`} />
+              <Rule label={isFr ? "Jours minimum" : "Minimum days"} value={`${challenge.trading_days} / ${minDays}`} progress={challenge.trading_days / minDays * 100} color={BLUE} help={daysRemaining ? `${daysRemaining} ${isFr ? "jour(s) restant(s)" : "day(s) remaining"}` : isFr ? "Condition validée" : "Requirement met"} />
+              <Rule label={isFr ? "Perte journalière" : "Daily loss"} value={`${money(dailyBuffer)} ${isFr ? "disponibles" : "available"}`} progress={dailyRiskUsed} color={riskColor(dailyRiskUsed)} help={`${isFr ? "Plancher du jour" : "Today's floor"} : ${money(dailyFloor)}`} />
+              <Rule label={isFr ? "Perte totale" : "Total loss"} value={`${money(totalBuffer)} ${isFr ? "disponibles" : "available"}`} progress={totalRiskUsed} color={riskColor(totalRiskUsed)} help={`${isFr ? "Plancher du compte" : "Account floor"} : ${money(totalFloor)}`} />
+              {/* Best day rule — only shown when contractually present in snapshot */}
+              {bestDayRule != null && (
+                <Rule
+                  label={isFr ? "Meilleure journée" : "Best day"}
+                  value={money(challenge.best_day_profit ?? 0)}
+                  help={isFr
+                    ? `Limite : ${bestDayRule} du profit total requis par journée`
+                    : `Limit: ${bestDayRule} of required total profit per day`}
+                />
+              )}
+            </div>
+          </div>
+
+          <div className={styles.twoGrid}>
+            <div className={`${styles.card} ${styles.panel}`}>
+              <SectionTitle icon={<CalendarDays size={17} />} title={isFr ? "Calendrier P&L" : "P&L calendar"} subtitle={isFr ? "Deux semaines de régularité en un regard" : "Two weeks at a glance"} />
+              <div className={styles.calendar}>{calendarDays.map(({ date, pnl }) => <div key={date.toISOString()} className={styles.day} style={pnl > 0 ? { background: "rgba(34,197,94,.08)", borderColor: "rgba(34,197,94,.18)" } : pnl < 0 ? { background: "rgba(239,68,68,.08)", borderColor: "rgba(239,68,68,.18)" } : undefined}><div className={styles.dayName}>{date.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { weekday: "short" })}</div><div className={styles.dayNumber}>{date.getDate()}</div><div className={styles.dayPnl} style={{ color: pnl > 0 ? GREEN : pnl < 0 ? RED : "rgba(255,255,255,.25)" }}>{pnl ? `${pnl > 0 ? "+" : ""}${money(pnl)}` : "—"}</div></div>)}</div>
+            </div>
+            <div className={`${styles.card} ${styles.panel}`}>
+              <SectionTitle icon={<BarChart3 size={17} />} title={isFr ? "Signature de performance" : "Performance signature"} subtitle={tradeHistoryLoading ? (isFr ? "Analyse en cours…" : "Analyzing…") : `${stats.count} ${isFr ? "trades clôturés analysés" : "closed trades analyzed"}`} />
+              <div className={styles.stats}>{[
+                { label: isFr ? "Taux de réussite" : "Win rate", value: `${stats.winRate.toFixed(0)}%`, note: isFr ? "Trades gagnants" : "Winning trades" },
+                { label: "Profit factor", value: Number.isFinite(stats.profitFactor) ? stats.profitFactor.toFixed(2) : "∞", note: isFr ? "Gains / pertes" : "Wins / losses" },
+                { label: isFr ? "Espérance" : "Expectancy", value: money(stats.expectancy, 2), note: isFr ? "Par trade" : "Per trade" },
+                { label: isFr ? "Gain moyen" : "Average win", value: money(stats.averageWin), note: isFr ? "Trade gagnant" : "Winning trade" },
+                { label: isFr ? "Perte moyenne" : "Average loss", value: money(stats.averageLoss), note: isFr ? "Trade perdant" : "Losing trade" },
+                { label: isFr ? "Meilleur symbole" : "Best symbol", value: stats.bestSymbol?.[0] ?? "—", note: stats.bestSymbol ? money(stats.bestSymbol[1]) : (isFr ? "Pas assez de données" : "Not enough data") },
+              ].map(item => <div key={item.label} className={styles.stat}><div className={styles.statLabel}>{item.label}</div><div className={styles.statValue}>{item.value}</div><div className={styles.statNote}>{item.note}</div></div>)}</div>
+            </div>
+          </div>
+
+          <EconomicCalendar isFr={isFr} />
+
+          <div className={styles.twoGrid}>
+            <div className={`${styles.card} ${styles.panel}`}>
+              <SectionTitle icon={<TrendingUp size={17} />} title={isFr ? "Positions ouvertes" : "Open positions"} subtitle={`${positions.length} ${isFr ? "position(s) · P&L flottant" : "position(s) · floating P&L"} ${money(floatingPnl, 2)}`} />
+              {positions.length === 0 ? <Empty icon={<Activity size={20} />} text={isFr ? "Aucune position ouverte. Ton exposition est actuellement nulle." : "No open positions. Your current exposure is zero."} /> : <div className={styles.positions}>{positions.slice(0, 6).map((position, index) => {
+                const side = position.type === 0 || String(position.type).toLowerCase().includes("buy") ? "BUY" : "SELL";
+                const pnl = numeric(position.profit) + numeric(position.swap);
+                const rawVolume = numeric(position.volume);
+                const volume = rawVolume > 100 ? rawVolume / 10_000 : rawVolume;
+                return <div className={styles.position} key={String(position.ticket ?? index)}><div><b>{String(position.symbol ?? "—")}</b><span style={{ marginLeft: 7, color: side === "BUY" ? GREEN : RED, fontSize: 9, fontWeight: 850 }}>{side}</span></div><span>{volume.toFixed(2)} lot</span><span className={styles.muted}>{String(position.open_price ?? position.price_open ?? "—")}</span><strong style={{ color: pnl >= 0 ? GREEN : RED, textAlign: "right" }}>{pnl >= 0 ? "+" : ""}{money(pnl, 2)}</strong></div>;
+              })}</div>}
+            </div>
+            <div className={`${styles.card} ${styles.panel}`} id="daily-plan">
+              <SectionTitle icon={<ClipboardCheck size={17} />} title={isFr ? "Plan de session" : "Session plan"} subtitle={isFr ? "Sauvegardé automatiquement sur cet appareil" : "Auto-saved on this device"} />
+              {planItems.map((item, index) => <div key={item} className={styles.planItem} onClick={() => setPlanChecks(current => current.map((checked, itemIndex) => itemIndex === index ? !checked : checked))}><span className={`${styles.check} ${planChecks[index] ? styles.checkOn : ""}`}>{planChecks[index] && <Check size={13} />}</span><span className={styles.planText} style={planChecks[index] ? { textDecoration: "line-through", color: "rgba(255,255,255,.32)" } : undefined}>{item}</span></div>)}
+              <textarea className={styles.note} value={journalNote} onChange={event => setJournalNote(event.target.value)} placeholder={isFr ? "Mon setup, mon état d'esprit et la règle que je veux respecter aujourd'hui…" : "My setup, mindset and the rule I want to respect today…"} />
+            </div>
+          </div>
+
+          <div className={styles.twoGrid}>
+            <div className={`${styles.card} ${styles.panel}`}>
+              <SectionTitle icon={<Zap size={17} />} title={isFr ? "Accès rapide" : "Quick access"} subtitle={challenge.mt5_login ? (isFr ? "Tes accès restent masqués par défaut" : "Credentials stay hidden by default") : (isFr ? "Disponible dès la création du compte" : "Available once the account is created")} />
+              {challenge.mt5_login ? <>
+                <div className={styles.credentials}>{[
+                  { label: "Login", value: String(challenge.mt5_login), secret: false },
+                  { label: isFr ? "Mot de passe" : "Password", value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) ?? "—", secret: true },
+                  { label: isFr ? "Serveur" : "Server", value: challenge.mt5_server ?? "—", secret: false },
+                  { label: isFr ? "Plateforme" : "Platform", value: "MetaTrader 5", secret: false },
+                ].map(item => <div className={styles.credential} key={item.label} onClick={() => item.secret && !showCredentials ? setShowCredentials(true) : copyValue(item.label, item.value)}><div className={styles.credentialLabel}>{item.label} {copied === item.label ? <span style={{ color: GREEN }}>✓ {isFr ? "copié" : "copied"}</span> : <Copy size={9} style={{ marginLeft: 4 }} />}</div><div className={styles.credentialValue}>{item.secret && !showCredentials ? "••••••••••" : item.value}</div></div>)}</div>
+                <div className={styles.quickActions}><button className={styles.button} onClick={() => setShowCredentials(value => !value)}>{showCredentials ? <EyeOff size={14} /> : <Eye size={14} />}{showCredentials ? (isFr ? "Masquer" : "Hide") : (isFr ? "Révéler" : "Reveal")}</button><button className={styles.button} onClick={() => onNavigate("rules")}><BookOpen size={14} />{isFr ? "Règles" : "Rules"}</button><button className={styles.button} onClick={() => onNavigate("support")}><LifeBuoy size={14} />Support</button></div>
+              </> : <Empty icon={<Clock3 size={20} />} text={isFr ? "Le compte est en cours de configuration. Les identifiants apparaîtront ici automatiquement." : "The account is being configured. Credentials will appear here automatically."} />}
+              <div className={styles.platformBlock}>
+                <div className={styles.platformHeading}>
+                  <Image className={styles.platformLogo} src="/MT5.png" alt="MetaTrader 5" width={40} height={40} />
+                  <div><strong>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</strong><span>{isFr ? "Installe MT5 puis connecte-toi avec les accès affichés ci-dessus." : "Install MT5, then sign in with the credentials shown above."}</span></div>
+                </div>
+                <div className={styles.platformGrid}>{[
+                  { label: "Windows", icon: "🖥️", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
+                  { label: "Mac", icon: "🍎", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
+                  { label: "iPhone / iPad", icon: "📱", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
+                  { label: "Android", icon: "🤖", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
+                ].map(platform => <a className={styles.platformButton} href={platform.href} key={platform.label} target="_blank" rel="noopener noreferrer"><span>{platform.icon}</span><b>{platform.label}</b><Download size={13} /></a>)}</div>
+              </div>
+            </div>
+            <div className={`${styles.card} ${styles.panel}`}>
+              <SectionTitle icon={<History size={17} />} title={isFr ? "Derniers trades" : "Recent trades"} subtitle={isFr ? "Lecture rapide de ta session" : "Quick session review"} />
+              {trades.length === 0 ? <Empty icon={<CircleDollarSign size={20} />} text={isFr ? "Les trades clôturés apparaîtront ici automatiquement." : "Closed trades will appear here automatically."} /> : <div>{[...trades].reverse().slice(0, 5).map(trade => <div className={styles.trade} key={trade.id}><span><b>{trade.symbol}</b><small style={{ color: trade.side === "BUY" ? GREEN : RED, marginLeft: 6 }}>{trade.side}</small></span><span className={styles.muted}>{trade.date?.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "short" }) ?? "—"}</span><strong style={{ color: trade.profit >= 0 ? GREEN : RED, textAlign: "right" }}>{trade.profit >= 0 ? "+" : ""}{money(trade.profit, 2)}</strong></div>)}<button className={styles.button} style={{ width: "100%", marginTop: 9 }} onClick={() => onNavigate("history")}>{isFr ? "Ouvrir tout l'historique" : "Open full history"}<ArrowRight size={14} /></button></div>}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════
+          TOOLS TAB
+      ══════════════════════════════════════════════════════════════ */}
+      {subTab === "tools" && (
+        <CockpitTools challenge={challenge} isFr={isFr} isMobile={isMobile} />
+      )}
+
     </div>
   );
 }
+
+// ── Sub-components ────────────────────────────────────────────────────────────
 
 function Rule({ label, value, progress, color = BLUE, help }: { label: string; value: string; progress?: number; color?: string; help?: string }) {
   return <div className={styles.rule}><div className={styles.ruleTop}><span className={styles.ruleLabel}>{label}</span><span className={styles.ruleValue}>{value}</span></div>{progress != null && <Meter value={progress} color={color} />}{help && <div className={styles.ruleHelp}>{help}</div>}</div>;

@@ -8,9 +8,10 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import QRCode from "qrcode";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle, Zap } from "lucide-react";
 import SupportTab from "./SupportTab";
 import TraderCockpit from "./TraderCockpit";
+import { extractContractRules } from "@/lib/contract-rules";
 
 type Challenge = {
   id: string;
@@ -46,6 +47,7 @@ type Challenge = {
   best_day_profit?: number;
   daily_low_equity?: number;
   daily_start_balance?: number;
+  rules_snapshot?: unknown;
 };
 
 const PHASE_LABELS: Record<string, string> = {
@@ -937,30 +939,149 @@ export default function DashboardClient({ user }: { user: User }) {
           </div>
         )}
 
-        {/* Rules Tab */}
-        {activeTab === "rules" && (
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rules}</h1>
-            <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.tradingRulesSub}</p>
-            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
-              {[
-                { title: isFr ? "Objectif de profit" : "Profit Target", desc: isFr ? "Phase 1 : atteindre 10% de profit. Phase 2 : atteindre 5% de profit." : "Phase 1: reach 10% profit. Phase 2: reach 5% profit.", icon: <Target size={20} color="#69C5FD" /> },
-                { title: isFr ? "Jours de trading minimum" : "Minimum Trading Days", desc: isFr ? "Vous devez trader au moins 5 jours différents avant de valider une phase." : "You must trade at least 5 different days before passing a phase.", icon: <Calendar size={20} color="#69C5FD" /> },
-                { title: isFr ? "Drawdown journalier" : "Daily Drawdown", desc: isFr ? "Votre compte ne peut pas perdre plus de 5% de sa valeur en une journée (2 Étapes) ou 3% (1 Étape)." : "Your account cannot lose more than 5% of its value in a single day (2-Step) or 3% (1-Step).", icon: <TrendingDown size={20} color="#69C5FD" /> },
-                { title: isFr ? "Drawdown total" : "Total Drawdown", desc: isFr ? "Votre compte ne peut pas descendre de plus de 10% sous le solde de départ." : "Your account cannot drop more than 10% below the starting balance at any time.", icon: <Shield size={20} color="#69C5FD" /> },
-                { title: isFr ? "Sans limite de temps" : "No Time Limit", desc: isFr ? "Prenez le temps qu'il vous faut. Il n'y a pas de date d'expiration sur votre challenge." : "Take as long as you need. There is no expiry date on your challenge.", icon: <Clock size={20} color="#69C5FD" /> },
-                { title: isFr ? "Tous styles de trading" : "Any Trading Style", desc: isFr ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées." : "Scalping, swing trading, news trading — all strategies are allowed.", icon: <BarChart2 size={20} color="#69C5FD" /> },
-                { title: isFr ? "Partage des profits" : "Reward Split", desc: isFr ? "Les traders Reward gardent 80% des profits. Récompenses traitées sous 24-48h." : "Reward traders keep 80% of profits. Rewards processed within 24-48h.", icon: <Percent size={20} color="#69C5FD" /> },
-              ].map((rule, i) => (
-                <div key={i} className="card" style={{ padding: 24 }}>
-                  <div style={{ backgroundColor: "rgba(105, 197, 253,0.12)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
-                  <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
-                </div>
-              ))}
+        {/* Rules Tab — dynamic from rules_snapshot, falls back to challenge columns */}
+        {activeTab === "rules" && (() => {
+          // Extract contract rules from the selected challenge's snapshot
+          const contractRules = challenge
+            ? extractContractRules(challenge.rules_snapshot, {
+                phase:                challenge.phase,
+                model:                challenge.model,
+                daily_drawdown_limit: challenge.daily_drawdown_limit,
+                total_drawdown_limit: challenge.total_drawdown_limit,
+                profit_target:        challenge.profit_target,
+                trading_days:         challenge.trading_days,
+              })
+            : null;
+
+          const isChallenge1Step = challenge
+            ? challenge.model.toLowerCase().replace(/[\s-]/g, "").includes("1step")
+            : false;
+
+          // Resolve values: snapshot → challenge columns → generic fallback
+          const pt   = contractRules?.currentPhase?.profit_target ?? challenge?.profit_target ?? null;
+          const ddDay = contractRules?.currentPhase?.daily_drawdown ?? challenge?.daily_drawdown_limit ?? null;
+          const ddTot = contractRules?.currentPhase?.total_drawdown ?? challenge?.total_drawdown_limit ?? null;
+          const minD  = contractRules?.minTradingDays ?? (challenge?.phase === "funded" ? 7 : 5);
+          const split = contractRules?.profitSplit ?? null;
+          const lev   = contractRules?.leverage ?? null;
+          const bdr   = contractRules?.bestDayRule ?? null;
+          const isFunded = challenge?.phase === "funded";
+
+          const ruleCards: { title: string; desc: string; icon: React.ReactNode }[] = [];
+
+          // Profit target (only for challenge phases)
+          if (!isFunded && pt != null) {
+            ruleCards.push({
+              icon: <Target size={20} color="#69C5FD" />,
+              title: isFr ? "Objectif de profit" : "Profit Target",
+              desc: isFr
+                ? `Atteindre ${pt}% de profit sur ce compte pour valider la phase.`
+                : `Reach ${pt}% profit on this account to pass the phase.`,
+            });
+          }
+
+          // Minimum trading days
+          ruleCards.push({
+            icon: <Calendar size={20} color="#69C5FD" />,
+            title: isFr ? "Jours de trading minimum" : "Minimum Trading Days",
+            desc: isFr
+              ? `Vous devez trader au moins ${minD} jours différents avant de valider cette phase.`
+              : `You must trade at least ${minD} different days before passing this phase.`,
+          });
+
+          // Daily drawdown
+          if (ddDay != null) {
+            ruleCards.push({
+              icon: <TrendingDown size={20} color="#69C5FD" />,
+              title: isFr ? "Drawdown journalier" : "Daily Drawdown",
+              desc: isFr
+                ? `Votre compte ne peut pas perdre plus de ${ddDay}% de sa valeur de référence en une seule journée.`
+                : `Your account cannot lose more than ${ddDay}% of its reference value in a single day.`,
+            });
+          }
+
+          // Total drawdown
+          if (ddTot != null) {
+            ruleCards.push({
+              icon: <Shield size={20} color="#69C5FD" />,
+              title: isFr ? "Drawdown total" : "Total Drawdown",
+              desc: isChallenge1Step
+                ? (isFr
+                  ? `Drawdown trailing : le plancher monte avec le solde maximum atteint (${ddTot}% de l'objectif de départ).`
+                  : `Trailing drawdown: the floor rises with the highest balance (${ddTot}% of the starting target).`)
+                : (isFr
+                  ? `Le solde ne peut pas descendre de plus de ${ddTot}% sous le solde initial du compte.`
+                  : `The balance cannot drop more than ${ddTot}% below the account starting balance.`),
+            });
+          }
+
+          // Best day rule (only when contractually present)
+          if (bdr != null) {
+            ruleCards.push({
+              icon: <TrendingUp size={20} color="#69C5FD" />,
+              title: isFr ? "Règle Best Day" : "Best Day Rule",
+              desc: isFr
+                ? `Le profit d'une seule journée ne peut pas dépasser ${bdr} du profit total requis pour valider le challenge.`
+                : `A single day's profit cannot exceed ${bdr} of the required total profit needed to pass the challenge.`,
+            });
+          }
+
+          // Profit split (if snapshot has funded phase)
+          if (split != null) {
+            ruleCards.push({
+              icon: <Percent size={20} color="#69C5FD" />,
+              title: isFr ? "Partage des profits" : "Reward Split",
+              desc: isFr
+                ? `Les traders Reward conservent ${split}% des profits générés. Récompenses traitées sous 24-48h.`
+                : `Reward traders keep ${split}% of generated profits. Rewards processed within 24-48h.`,
+            });
+          }
+
+          // Leverage (if in snapshot)
+          if (lev != null) {
+            ruleCards.push({
+              icon: <Zap size={20} color="#69C5FD" />,
+              title: isFr ? "Levier" : "Leverage",
+              desc: `1:${lev}`,
+            });
+          }
+
+          // Universal platform rules
+          ruleCards.push({
+            icon: <Clock size={20} color="#69C5FD" />,
+            title: isFr ? "Sans limite de temps" : "No Time Limit",
+            desc: isFr
+              ? "Il n'y a pas de date d'expiration sur votre challenge. Prenez le temps qu'il vous faut."
+              : "There is no expiry date on your challenge. Take as long as you need.",
+          });
+          ruleCards.push({
+            icon: <BarChart2 size={20} color="#69C5FD" />,
+            title: isFr ? "Tous styles de trading" : "Any Trading Style",
+            desc: isFr
+              ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées."
+              : "Scalping, swing trading, news trading — all strategies are allowed.",
+          });
+
+          return (
+            <div>
+              <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rules}</h1>
+              <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>
+                {contractRules?.hasSnapshot
+                  ? (isFr ? "Règles contractuelles spécifiques à ce compte — issues du snapshot d'achat." : "Contractual rules specific to this account — from your purchase snapshot.")
+                  : T.dash.tradingRulesSub}
+              </p>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
+                {ruleCards.map((rule, i) => (
+                  <div key={i} className="card" style={{ padding: 24 }}>
+                    <div style={{ backgroundColor: "rgba(105, 197, 253,0.12)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
+                    <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
+                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Profile Tab */}
         {activeTab === "profile" && (
