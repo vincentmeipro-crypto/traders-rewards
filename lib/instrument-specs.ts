@@ -78,6 +78,21 @@ export interface InstrumentSpec {
   calculationMode: CalcMode;
   /** Note affichée dans l'UI quand isExact = false */
   approxNote?:     string;
+  /**
+   * Pas de lot minimum (ex: 0.01 = micro-lot).
+   * Si non renseigné → convention standard MT5 (0.01) via getLotStep().
+   */
+  lotStep?:        number;
+  /**
+   * Volume minimum par trade.
+   * Si non renseigné → convention standard MT5 (0.01) via getLotMin().
+   */
+  lotMin?:         number;
+  /**
+   * Volume maximum par trade.
+   * Si non renseigné → aucune contrainte max appliquée (dépend du broker).
+   */
+  lotMax?:         number;
 }
 
 // ─── Catalogue ───────────────────────────────────────────────────────────────
@@ -419,6 +434,432 @@ export const TEST_CASES: TestCase[] = [
     expected: { slPips: 30, tpPips: 90, pipValue: 25, risk: 750, reward: 2250, rr: 3 },
   },
 ];
+
+// ─── Challenge margins helper ─────────────────────────────────────────────────
+
+/**
+ * Données minimales du challenge pour le calcul des marges DD.
+ * Compatible avec CockpitChallenge (TraderCockpit.tsx) par duck-typing.
+ */
+export interface ChallengeMarginInput {
+  balance:              number;
+  start_balance:        number;
+  daily_drawdown_limit: number;
+  total_drawdown_limit: number;
+  model:                string;
+  highest_balance?:     number;
+  daily_start_balance?: number;
+  breach_equity?:       number;
+  status:               string;
+}
+
+export interface ChallengeMargins {
+  equity:        number;
+  isOneStep:     boolean;
+  dailyRef:      number;
+  dailyLimitUsd: number;
+  dailyFloor:    number;
+  dailyBuffer:   number;
+  trailingRef:   number;
+  totalLimitUsd: number;
+  totalFloor:    number;
+  totalBuffer:   number;
+}
+
+/**
+ * Calcule les marges journalière et totale du challenge.
+ *
+ * STRICTEMENT identique aux formules dans TraderCockpit.tsx et CockpitTools.tsx.
+ * Source de vérité partagée — NE PAS DUPLIQUER.
+ *
+ * 1-Step  → trailing DD (plancher monte avec highest_balance)
+ * 2-Step  → plancher fixe sur start_balance
+ */
+export function calcChallengeMargins(c: ChallengeMarginInput): ChallengeMargins {
+  const equity =
+    c.status === "failed" && c.breach_equity != null
+      ? c.breach_equity
+      : c.balance;
+
+  const isOneStep = c.model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+
+  const dailyRef      = c.daily_start_balance ?? c.start_balance;
+  const dailyLimitUsd = dailyRef * c.daily_drawdown_limit / 100;
+  const dailyFloor    = dailyRef - dailyLimitUsd;
+  const dailyBuffer   = Math.max(0, equity - dailyFloor);
+
+  const trailingRef   = isOneStep
+    ? Math.max(c.highest_balance ?? c.start_balance, c.start_balance)
+    : c.start_balance;
+  const totalLimitUsd = c.start_balance * c.total_drawdown_limit / 100;
+  const totalFloor    = trailingRef - totalLimitUsd;
+  const totalBuffer   = Math.max(0, equity - totalFloor);
+
+  return {
+    equity, isOneStep,
+    dailyRef, dailyLimitUsd, dailyFloor, dailyBuffer,
+    trailingRef, totalLimitUsd, totalFloor, totalBuffer,
+  };
+}
+
+// ─── Lot size helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Retourne le pas de lot à appliquer.
+ * Convention MT5 standard (0.01) si non confirmé dans le catalogue.
+ */
+export function getLotStep(spec: InstrumentSpec): number {
+  return spec.lotStep ?? 0.01;
+}
+
+/**
+ * Retourne le lot minimum pour cet instrument.
+ * Convention MT5 standard (0.01) si non confirmé.
+ */
+export function getLotMin(spec: InstrumentSpec): number {
+  return spec.lotMin ?? 0.01;
+}
+
+export interface LotSizeResult {
+  /** Lot mathématique brut avant arrondi */
+  lotRaw:              number;
+  /** Lot final arrondi vers le BAS — JAMAIS vers le haut */
+  lotFinal:            number;
+  /** Pas de lot appliqué (spec.lotStep ?? 0.01 par défaut MT5) */
+  stepUsed:            number;
+  /** true si spec.lotStep est renseigné dans le catalogue — false = hypothèse MT5 standard non contractuelle */
+  hasConfirmedStep:    boolean;
+  /** true si spec.lotMin est renseigné dans le catalogue — false = minimum réel inconnu */
+  hasConfirmedMin:     boolean;
+  /** $ de risque par lot standard à cette distance SL */
+  riskPerLot:          number;
+  /** $ de risque réel avec lotFinal */
+  actualRiskUsd:       number;
+  /** $ de risque demandé (toujours ≥ actualRiskUsd) */
+  requestedRiskUsd:    number;
+  /** Invariant garanti : actualRisk ≤ requestedRisk + tolérance floating-point */
+  withinRequestedRisk: boolean;
+  /**
+   * true UNIQUEMENT si le volume est définitivement trop faible pour trader :
+   *   - lotFinal === 0  (universel — 0 lot n'est pas un trade valide)
+   *   - OU spec.lotMin est CONFIRMÉ dans le catalogue ET lotFinal < spec.lotMin
+   *
+   * Ne jamais déclencher tooSmall uniquement à cause du fallback 0.01 non confirmé.
+   */
+  tooSmall:            boolean;
+}
+
+/**
+ * Calcule la taille de lot recommandée pour un risque dollar et une distance SL.
+ *
+ * Formule :
+ *   riskPerLot = calcTradeRisk(spec, 1, slDist).amountUsd
+ *   lotRaw     = requestedRiskUsd / riskPerLot
+ *   lotFinal   = floor(lotRaw / step) × step  ← TOUJOURS vers le BAS
+ *   actualRisk = calcTradeRisk(spec, lotFinal, slDist).amountUsd
+ *
+ * Invariant garanti : actualRisk ≤ requestedRisk
+ *
+ * Retourne null si :
+ *   - spec.calculationMode === "unknown" (AUTRE)
+ *   - requestedRiskUsd ≤ 0
+ *   - slDist ≤ 0
+ */
+export function calcLotSize(
+  spec:             InstrumentSpec,
+  slDist:           number,
+  requestedRiskUsd: number,
+): LotSizeResult | null {
+  if (!hasMonetaryCalc(spec))  return null;
+  if (requestedRiskUsd <= 0)   return null;
+  if (slDist <= 0)             return null;
+
+  // Risque par 1 lot standard à cette distance SL
+  const riskPerLot = calcTradeRisk(spec, 1, slDist).amountUsd;
+  if (riskPerLot <= 0) return null;
+
+  // Lot mathématique brut
+  const lotRaw          = requestedRiskUsd / riskPerLot;
+  const stepUsed        = getLotStep(spec);
+  const hasConfirmedStep = spec.lotStep != null;
+
+  // Arrondi vers le BAS — évite de JAMAIS dépasser le risque demandé
+  // Gestion floating-point : floor(0.237 × 100) / 100 = 0.23
+  const scale    = Math.round(1 / stepUsed);
+  const lotFinal = Math.floor(lotRaw * scale) / scale;
+
+  // ── Statut lotMin — JAMAIS utiliser le fallback 0.01 comme seuil décisionnel ──
+  const hasConfirmedMin = spec.lotMin != null;
+
+  // tooSmall : true seulement si le volume est DÉFINITIVEMENT trop faible :
+  //   1. lotFinal === 0 → 0 lot est universellement invalide
+  //   2. spec.lotMin confirmé dans le catalogue ET lotFinal en dessous
+  // Le fallback 0.01 de getLotMin() n'est JAMAIS utilisé ici comme décision.
+  const tooSmall =
+    lotFinal === 0 ||
+    (hasConfirmedMin && spec.lotMin != null && lotFinal < spec.lotMin);
+
+  const actualRiskUsd = tooSmall
+    ? 0
+    : calcTradeRisk(spec, lotFinal, slDist).amountUsd;
+
+  return {
+    lotRaw,
+    lotFinal,
+    stepUsed,
+    hasConfirmedStep,
+    hasConfirmedMin,
+    riskPerLot,
+    actualRiskUsd,
+    requestedRiskUsd,
+    withinRequestedRisk: actualRiskUsd <= requestedRiskUsd + 0.001,
+    tooSmall,
+  };
+}
+
+// ─── Tests — Calculateur de Lot ───────────────────────────────────────────────
+
+export interface LotTestCase {
+  name:             string;
+  symbol:           string;
+  /** abs(entry - sl), déjà calculé — toujours positif */
+  slDist:           number;
+  requestedRiskUsd: number;
+  expected: {
+    /** true si calcLotSize doit retourner null */
+    isNull?:              boolean;
+    lotFinal?:            number;
+    actualRiskUsd?:       number;
+    tooSmall?:            boolean;
+    /** Vérification de l'invariant : actualRisk ≤ requestedRisk */
+    withinRequestedRisk?: boolean;
+    /** Vérifie que la distinction spec confirmée / hypothèse est correcte */
+    hasConfirmedStep?:    boolean;
+    hasConfirmedMin?:     boolean;
+  };
+}
+
+/**
+ * 16 cas de test couvrant tous les scénarios du Calculateur de Lot.
+ *
+ * Vérifications manuelles :
+ *   EURUSD 50 pips SL  → riskPerLot = 50 × $10 = $500 → lot = 100/500 = 0.20
+ *   XAUUSD 500 pips SL → riskPerLot = 500 × $10 = $5000 → lot = 500/5000 = 0.10
+ *   US30   100 pts SL  → riskPerLot = 100 × $1 = $100 → lot = 100/100 = 1.00
+ *   BTCUSD 2000 pts SL → riskPerLot = 2000 × $1 = $2000 → lot = 200/2000 = 0.10
+ */
+export const LOT_TEST_CASES: LotTestCase[] = [
+
+  // 1. EURUSD — risque en $ connu
+  {
+    name: "EURUSD BUY — $100 risque, SL 50 pips",
+    symbol: "EURUSD", slDist: 0.0050, requestedRiskUsd: 100,
+    // riskPerLot = 50 pips × $10 = $500 → lotRaw = 0.20
+    expected: { lotFinal: 0.20, actualRiskUsd: 100, withinRequestedRisk: true },
+  },
+
+  // 2. XAUUSD — référence confirmée Traders Rewards
+  {
+    name: "XAUUSD SELL — $500 risque, SL 500 pips (50 pts de prix)",
+    symbol: "XAUUSD", slDist: 50, requestedRiskUsd: 500,
+    // pips = 50/0.10 = 500 → riskPerLot = 500 × $10 = $5000 → lotRaw = 0.10
+    expected: { lotFinal: 0.10, actualRiskUsd: 500, withinRequestedRisk: true },
+  },
+
+  // 3. Indice USD (US30)
+  {
+    name: "US30 BUY — $100 risque, SL 100 points",
+    symbol: "US30", slDist: 100, requestedRiskUsd: 100,
+    // pips = 100/1 = 100 → riskPerLot = 100 × $1 = $100 → lotRaw = 1.00
+    expected: { lotFinal: 1.00, actualRiskUsd: 100, withinRequestedRisk: true },
+  },
+
+  // 4. Crypto (BTCUSD)
+  {
+    name: "BTCUSD BUY — $200 risque, SL 2000 points",
+    symbol: "BTCUSD", slDist: 2000, requestedRiskUsd: 200,
+    // pips = 2000/1 = 2000 → riskPerLot = $2000 → lotRaw = 0.10
+    expected: { lotFinal: 0.10, actualRiskUsd: 200, withinRequestedRisk: true },
+  },
+
+  // 5. Direction BUY — sl < entry (distance correcte)
+  {
+    name: "GBPUSD BUY — direction correcte (sl < entry)",
+    symbol: "GBPUSD", slDist: 0.0030, requestedRiskUsd: 150,
+    // pips = 30 → riskPerLot = $300 → lotRaw = 0.50
+    expected: { lotFinal: 0.50, actualRiskUsd: 150, withinRequestedRisk: true },
+  },
+
+  // 6. Direction SELL — sl > entry (distance correcte)
+  {
+    name: "EURUSD SELL — direction correcte (sl > entry)",
+    symbol: "EURUSD", slDist: 0.0050, requestedRiskUsd: 100,
+    // Même distance → identique au cas BUY
+    expected: { lotFinal: 0.20, actualRiskUsd: 100, withinRequestedRisk: true },
+  },
+
+  // 7. Risque mode $ — input direct
+  {
+    name: "EURUSD — risque mode $ ($250 directs, SL 25 pips)",
+    symbol: "EURUSD", slDist: 0.0025, requestedRiskUsd: 250,
+    // pips = 25 → riskPerLot = $250 → lotRaw = 1.00
+    expected: { lotFinal: 1.00, actualRiskUsd: 250, withinRequestedRisk: true },
+  },
+
+  // 8. Risque mode % — capital $100 000, 0.5 % → $500
+  {
+    name: "XAUUSD — risque mode % (0.5 % × $100 000 = $500, SL 500 pips)",
+    symbol: "XAUUSD", slDist: 50, requestedRiskUsd: 500,
+    // Même slDist que test 2 — vérifie que la conversion % → $ est juste
+    expected: { lotFinal: 0.10, actualRiskUsd: 500, withinRequestedRisk: true },
+  },
+
+  // 9. Lot décimal (résultat non entier)
+  {
+    name: "GBPUSD — lot décimal ($150, SL 30 pips → 0.50 lot)",
+    symbol: "GBPUSD", slDist: 0.0030, requestedRiskUsd: 150,
+    expected: { lotFinal: 0.50, withinRequestedRisk: true },
+  },
+
+  // 10. Arrondi vers le BAS — lotRaw non entier → floor
+  {
+    name: "EURUSD — arrondi BAS (31 pips SL, $73.50 → lotRaw=0.2371 → 0.23)",
+    symbol: "EURUSD", slDist: 0.0031, requestedRiskUsd: 73.50,
+    // riskPerLot = 31 × $10 = $310 → lotRaw = 73.50/310 = 0.23709…
+    // lotFinal = floor(0.23709 × 100)/100 = 23/100 = 0.23
+    // actualRisk = 0.23 × $310 = $71.30 ≤ $73.50 ✓
+    expected: { lotFinal: 0.23, actualRiskUsd: 71.30, withinRequestedRisk: true },
+  },
+
+  // 11. Lot min — risque trop faible → tooSmall = true
+  {
+    name: "EURUSD — risque trop faible ($0.05, SL 50 pips → tooSmall)",
+    symbol: "EURUSD", slDist: 0.0050, requestedRiskUsd: 0.05,
+    // riskPerLot = $500 → lotRaw = 0.0001 → lotFinal = 0.00 < lotMin (0.01)
+    expected: { tooSmall: true, actualRiskUsd: 0, withinRequestedRisk: true },
+  },
+
+  // 12. Invariant withinRequestedRisk — vérification globale
+  {
+    name: "USDJPY — invariant actualRisk ≤ requestedRisk (SL 100 pips, $335)",
+    symbol: "USDJPY", slDist: 1.000, requestedRiskUsd: 335,
+    // pips = 1.000/0.01 = 100 → riskPerLot = 100 × $6.70 = $670 → lotRaw = 0.50
+    // actualRisk ≈ $335 ≤ $335 ✓
+    expected: { lotFinal: 0.50, withinRequestedRisk: true },
+  },
+
+  // 13. Actif inconnu (AUTRE) → null
+  {
+    name: "AUTRE — calcul impossible (mode unknown) → null",
+    symbol: "AUTRE", slDist: 100, requestedRiskUsd: 100,
+    expected: { isNull: true },
+  },
+
+  // 14. Distance SL = 0 → null (SL identique à l'entrée)
+  {
+    name: "Distance SL = 0 → null",
+    symbol: "EURUSD", slDist: 0, requestedRiskUsd: 100,
+    expected: { isNull: true },
+  },
+
+  // 15. Risque = 0 → null
+  {
+    name: "Risque demandé = 0 → null",
+    symbol: "EURUSD", slDist: 0.0050, requestedRiskUsd: 0,
+    expected: { isNull: true },
+  },
+
+  // 16. Risque négatif → null
+  {
+    name: "Risque demandé négatif → null",
+    symbol: "EURUSD", slDist: 0.0050, requestedRiskUsd: -100,
+    expected: { isNull: true },
+  },
+
+  // 17. Distinction spec confirmée / hypothèse — EURUSD a lotStep et lotMin NON renseignés
+  {
+    name: "EURUSD — hasConfirmedStep=false · hasConfirmedMin=false (specs supposées)",
+    symbol: "EURUSD", slDist: 0.0050, requestedRiskUsd: 100,
+    // Vérifie que le catalogue ne prétend pas connaître le step/min réel du broker
+    expected: { hasConfirmedStep: false, hasConfirmedMin: false, lotFinal: 0.20 },
+  },
+
+  // 18. Absence de lotMax — grand volume sans contrainte artificielle
+  {
+    name: "EURUSD — pas de limite lotMax, grand volume ($50 000, SL 50 pips → 100 lots)",
+    symbol: "EURUSD", slDist: 0.0050, requestedRiskUsd: 50_000,
+    // riskPerLot = 50 pips × $10 = $500 → lotRaw = 100.00 → aucune limite max
+    expected: { lotFinal: 100.00, actualRiskUsd: 50_000, withinRequestedRisk: true },
+  },
+];
+
+/** Exécute les 16 tests du Calculateur de Lot. */
+export function runLotTests(): TestResult[] {
+  return LOT_TEST_CASES.map(tc => {
+    const spec = getSpec(tc.symbol);
+
+    // ── Cas attendu null ────────────────────────────────────────────────────
+    if (tc.expected.isNull) {
+      const result = spec ? calcLotSize(spec, tc.slDist, tc.requestedRiskUsd) : null;
+      const passed = result === null;
+      return {
+        name:     tc.name,
+        passed,
+        got:      {},
+        expected: {},
+        errors:   passed ? [] : [`Attendu null, obtenu lotFinal=${result?.lotFinal}`],
+      };
+    }
+
+    // ── Cas avec résultat attendu ───────────────────────────────────────────
+    if (!spec) {
+      return {
+        name: tc.name, passed: false, got: {}, expected: {},
+        errors: [`Spec non trouvée pour ${tc.symbol}`],
+      };
+    }
+
+    const result = calcLotSize(spec, tc.slDist, tc.requestedRiskUsd);
+
+    if (!result) {
+      return {
+        name: tc.name, passed: false, got: {}, expected: tc.expected as Record<string, number>,
+        errors: [`Résultat null inattendu (requestedRiskUsd=${tc.requestedRiskUsd}, slDist=${tc.slDist})`],
+      };
+    }
+
+    const errors: string[] = [];
+
+    if (tc.expected.lotFinal != null && !approxEq(result.lotFinal, tc.expected.lotFinal)) {
+      errors.push(`lotFinal: attendu ${tc.expected.lotFinal}, obtenu ${result.lotFinal.toFixed(4)}`);
+    }
+    if (tc.expected.actualRiskUsd != null && !approxEq(result.actualRiskUsd, tc.expected.actualRiskUsd)) {
+      errors.push(`actualRiskUsd: attendu ${tc.expected.actualRiskUsd.toFixed(2)}, obtenu ${result.actualRiskUsd.toFixed(2)}`);
+    }
+    if (tc.expected.tooSmall != null && result.tooSmall !== tc.expected.tooSmall) {
+      errors.push(`tooSmall: attendu ${tc.expected.tooSmall}, obtenu ${result.tooSmall}`);
+    }
+    if (tc.expected.withinRequestedRisk === true && !result.withinRequestedRisk) {
+      errors.push(
+        `withinRequestedRisk: VIOLATION — actualRisk=${result.actualRiskUsd.toFixed(4)} > requested=${result.requestedRiskUsd}`
+      );
+    }
+    if (tc.expected.hasConfirmedStep != null && result.hasConfirmedStep !== tc.expected.hasConfirmedStep) {
+      errors.push(`hasConfirmedStep: attendu ${tc.expected.hasConfirmedStep}, obtenu ${result.hasConfirmedStep}`);
+    }
+    if (tc.expected.hasConfirmedMin != null && result.hasConfirmedMin !== tc.expected.hasConfirmedMin) {
+      errors.push(`hasConfirmedMin: attendu ${tc.expected.hasConfirmedMin}, obtenu ${result.hasConfirmedMin}`);
+    }
+
+    return {
+      name:     tc.name,
+      passed:   errors.length === 0,
+      got:      { lotFinal: result.lotFinal, actualRiskUsd: result.actualRiskUsd },
+      expected: tc.expected as Partial<Record<string, number>>,
+      errors,
+    };
+  });
+}
 
 /** Exécute tous les tests et retourne les résultats. */
 export function runInstrumentTests(): TestResult[] {

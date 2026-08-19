@@ -896,6 +896,118 @@
 
 .ddViolation svg { flex: 0 0 auto; margin-top: 1px; }
 
+/* ── Lot Calculator — big number block ───────────────────────────────────── */
+
+.lotResultBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 28px 20px 22px;
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .025);
+  text-align: center;
+}
+
+.lotResultEyebrow {
+  color: rgba(255, 255, 255, .35);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.lotBigNumber {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -2.5px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: color .25s ease;
+}
+
+.lotUnit {
+  color: rgba(255, 255, 255, .35);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-top: 2px;
+  margin-bottom: 8px;
+}
+
+.lotRiskMeta {
+  color: rgba(255, 255, 255, .42);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.lotRiskMeta strong {
+  color: rgba(255, 255, 255, .8);
+  font-weight: 800;
+}
+
+.lotTooSmall {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(245, 158, 11, .09);
+  border: 1px solid rgba(245, 158, 11, .22);
+  color: #f59e0b;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.lotTooSmall svg { flex: 0 0 auto; }
+
+/* ── Lot Calculator — risk mode toggle ───────────────────────────────────── */
+
+.riskToggle {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 11px;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+.riskToggleBtn {
+  flex: 1;
+  padding: 0 14px;
+  min-height: 22px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, .38);
+  font: 850 11px inherit;
+  cursor: pointer;
+  transition: .18s ease;
+  line-height: 1;
+}
+
+.riskToggleBtn:hover {
+  background: rgba(105, 197, 253, .08);
+  color: rgba(255, 255, 255, .7);
+}
+
+.riskToggleBtnActive {
+  background: rgba(105, 197, 253, .18);
+  color: #69C5FD;
+}
+
+/* ── Capital reference ────────────────────────────────────────────────────── */
+
+.capitalRef {
+  color: rgba(255, 255, 255, .28);
+  font-size: 10px;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
 /* Impact disclaimer */
 
 .impactDisclaimer {

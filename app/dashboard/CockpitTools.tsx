@@ -20,6 +20,9 @@ import {
   getSpec,
   calcTradeRisk,
   hasMonetaryCalc,
+  calcChallengeMargins,
+  calcLotSize,
+  type LotSizeResult,
 } from "@/lib/instrument-specs";
 import styles from "./CockpitTools.module.css";
 
@@ -184,26 +187,12 @@ function RRCalculator({
       }
     }
 
-    // ── Formules DD — STRICTEMENT identiques à TraderCockpit.tsx ──────────────
-    const effectiveBalance =
-      challenge.status === "failed" && challenge.breach_equity != null
-        ? challenge.breach_equity
-        : challenge.balance;
-    const equity = effectiveBalance; // pas de floating P&L dans la simulation
-
-    const isOneStep = challenge.model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
-
-    const dailyRef      = challenge.daily_start_balance ?? challenge.start_balance;
-    const dailyLimitUsd = dailyRef * challenge.daily_drawdown_limit / 100;
-    const dailyFloor    = dailyRef - dailyLimitUsd;
-    const dailyBuffer   = Math.max(0, equity - dailyFloor);
-
-    const trailingRef   = isOneStep
-      ? Math.max(challenge.highest_balance ?? challenge.start_balance, challenge.start_balance)
-      : challenge.start_balance;
-    const totalLimitUsd = challenge.start_balance * challenge.total_drawdown_limit / 100;
-    const totalFloor    = trailingRef - totalLimitUsd;
-    const totalBuffer   = Math.max(0, equity - totalFloor);
+    // ── Formules DD — via calcChallengeMargins() (source de vérité partagée) ──
+    const {
+      equity, isOneStep,
+      dailyBuffer, dailyFloor, dailyLimitUsd,
+      totalBuffer, totalFloor, totalLimitUsd,
+    } = calcChallengeMargins(challenge);
 
     // ── Impact après SL ────────────────────────────────────────────────────────
     let dailyBufferAfterSL: number | null = null;
@@ -608,6 +597,434 @@ function RRCalculator({
   );
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+//  LOT CALCULATOR v1
+//  Inputs : Actif + Direction + Entrée + SL + Risque ($ ou %)
+//  Calcul : lotRaw = riskUsd / (pips × pipValuePerLot) — arrondi BAS
+//  Source specs : lib/instrument-specs.ts — aucune duplication
+// ═════════════════════════════════════════════════════════════════════════════
+
+function LotCalculator({
+  challenge,
+  isFr,
+  isMobile,
+}: {
+  challenge: CockpitChallenge;
+  isFr:      boolean;
+  isMobile:  boolean;
+}) {
+  const [symbol,    setSymbol]    = useState("EURUSD");
+  const [direction, setDirection] = useState<"BUY" | "SELL">("BUY");
+  const [entry,     setEntry]     = useState("");
+  const [sl,        setSl]        = useState("");
+  const [riskInput, setRiskInput] = useState("1");
+  const [riskMode,  setRiskMode]  = useState<"pct" | "usd">("pct");
+
+  const spec     = getSpec(symbol);
+  const isApprox = spec != null && !spec.isExact && hasMonetaryCalc(spec);
+  const pipLabel = spec?.pipLabel ?? "points";
+
+  // ── Calcul ─────────────────────────────────────────────────────────────────
+  const calc = useMemo(() => {
+    const e = parseFloat(entry);
+    const s = parseFloat(sl);
+    const r = parseFloat(riskInput);
+
+    if (isNaN(e) || isNaN(s) || !e || !s) return null;
+    if (isNaN(r) || r <= 0)               return null;
+
+    const slDist = Math.abs(e - s);
+    if (slDist < 1e-10) return null;
+
+    // Validation direction (BUY : SL en dessous, SELL : SL au-dessus)
+    const slOnWrongSide = direction === "BUY" ? s >= e : s <= e;
+
+    // Marges DD — STRICTEMENT identiques à TraderCockpit.tsx
+    const {
+      equity, isOneStep,
+      dailyBuffer, dailyFloor, dailyLimitUsd,
+      totalBuffer, totalFloor, totalLimitUsd,
+    } = calcChallengeMargins(challenge);
+
+    // Risque en USD
+    const riskUsd = riskMode === "pct" ? equity * r / 100 : r;
+    const riskPct = equity > 0 ? riskUsd / equity * 100 : 0;
+
+    // Specs de l'actif
+    const currentSpec  = getSpec(symbol);
+    const canCalcMoney = currentSpec != null && hasMonetaryCalc(currentSpec);
+
+    // Distance SL en pips (pour affichage)
+    const slPips = currentSpec ? slDist / currentSpec.pipSize : slDist;
+
+    // Calcul de lot (skip si SL invalide ou specs manquantes)
+    let lotResult: LotSizeResult | null = null;
+    if (canCalcMoney && currentSpec && !slOnWrongSide) {
+      lotResult = calcLotSize(currentSpec, slDist, riskUsd);
+    }
+
+    // Impact sur le challenge (avec risque réel après arrondi)
+    let dailyBufferAfter: number | null = null;
+    let totalBufferAfter: number | null = null;
+    let dailyImpactPct:   number | null = null;
+    let totalImpactPct:   number | null = null;
+    let dailyViolation  = false;
+    let totalViolation  = false;
+
+    if (lotResult && !lotResult.tooSmall) {
+      const actualRisk    = lotResult.actualRiskUsd;
+      const equityAfterSL = equity - actualRisk;
+      dailyBufferAfter = Math.max(0, equityAfterSL - dailyFloor);
+      totalBufferAfter = Math.max(0, equityAfterSL - totalFloor);
+      // Impact = part de la marge RESTANTE consommée — identique au R:R Calculator
+      dailyImpactPct   = dailyBuffer > 0 ? actualRisk / dailyBuffer * 100 : 0;
+      totalImpactPct   = totalBuffer > 0 ? actualRisk / totalBuffer * 100 : 0;
+      dailyViolation   = equityAfterSL < dailyFloor;
+      totalViolation   = equityAfterSL < totalFloor;
+    }
+
+    return {
+      slDist, slPips, slOnWrongSide,
+      riskUsd, riskPct,
+      equity, isOneStep,
+      canCalcMoney,
+      dailyBuffer, dailyFloor, dailyLimitUsd,
+      totalBuffer, totalFloor, totalLimitUsd,
+      dailyBufferAfter, totalBufferAfter,
+      dailyImpactPct, totalImpactPct,
+      dailyViolation, totalViolation,
+      lotResult,
+    };
+  }, [symbol, direction, entry, sl, riskInput, riskMode, challenge]);
+
+  const hasValidLot =
+    calc != null &&
+    !calc.slOnWrongSide &&
+    calc.canCalcMoney &&
+    calc.lotResult != null;
+
+  // Couleur du big number basée sur l'impact journalier
+  const lotColor =
+    calc?.dailyImpactPct != null && calc.dailyImpactPct > 60 ? RED
+    : calc?.dailyImpactPct != null && calc.dailyImpactPct > 30 ? AMBER
+    : GREEN;
+
+  return (
+    <div className={styles.toolSection}>
+
+      {/* ── Actif ─────────────────────────────────────────────────── */}
+      <Field label={isFr ? "Actif" : "Asset"}>
+        <select
+          className={styles.symbolSelect}
+          value={symbol}
+          onChange={e => setSymbol(e.target.value)}
+        >
+          {INSTRUMENT_SPECS.map(s => (
+            <option key={s.symbol} value={s.symbol}>
+              {s.symbol} — {s.label}
+            </option>
+          ))}
+        </select>
+      </Field>
+
+      {/* ── Note approximation ────────────────────────────────────── */}
+      {isApprox && spec?.approxNote && (
+        <div className={styles.approxNote}>
+          <Info size={12} color={BLUE} />
+          <span>
+            {isFr
+              ? `Valeurs ${spec.approxNote}. Résultats indicatifs.`
+              : `Values ${spec.approxNote}. Indicative results.`}
+          </span>
+        </div>
+      )}
+
+      {/* ── Direction ─────────────────────────────────────────────── */}
+      <div className={styles.dirRow}>
+        <span className={styles.fieldLabel}>
+          {isFr ? "Direction" : "Direction"}
+        </span>
+        <div className={styles.dirToggle}>
+          <button
+            className={`${styles.dirBtn} ${direction === "BUY"  ? styles.dirBtnBuy  : ""}`}
+            onClick={() => setDirection("BUY")}
+          >▲ BUY</button>
+          <button
+            className={`${styles.dirBtn} ${direction === "SELL" ? styles.dirBtnSell : ""}`}
+            onClick={() => setDirection("SELL")}
+          >▼ SELL</button>
+        </div>
+      </div>
+
+      {/* ── Entrée + Stop Loss ────────────────────────────────────── */}
+      <div
+        className={styles.priceGrid}
+        style={{ gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr" }}
+      >
+        <Field label={isFr ? "Prix d'entrée" : "Entry price"}>
+          <PriceInput value={entry} onChange={setEntry} placeholder="1.08500" />
+        </Field>
+
+        <Field
+          label="Stop Loss"
+          hint={
+            calc?.slOnWrongSide
+              ? undefined
+              : direction === "BUY"
+                ? (isFr ? "↓ En dessous de l'entrée" : "↓ Below entry")
+                : (isFr ? "↑ Au-dessus de l'entrée" : "↑ Above entry")
+          }
+        >
+          <div>
+            <PriceInput
+              value={sl}
+              onChange={setSl}
+              placeholder={direction === "BUY" ? "1.08200" : "1.08800"}
+            />
+            {calc?.slOnWrongSide && (
+              <div className={styles.fieldError}>
+                <AlertTriangle size={12} />
+                {direction === "BUY"
+                  ? (isFr ? "SL doit être en dessous de l'entrée (BUY)." : "SL must be below entry for a BUY.")
+                  : (isFr ? "SL doit être au-dessus de l'entrée (SELL)." : "SL must be above entry for a SELL.")}
+              </div>
+            )}
+          </div>
+        </Field>
+      </div>
+
+      {/* ── Risque souhaité + toggle $/% ──────────────────────────── */}
+      <Field label={isFr ? "Risque souhaité" : "Desired risk"}>
+        <div style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
+          <div className={styles.fieldWrap} style={{ flex: 1 }}>
+            <input
+              type="number"
+              step="any"
+              min="0"
+              inputMode="decimal"
+              className={styles.fieldInput}
+              value={riskInput}
+              onChange={e => setRiskInput(e.target.value)}
+              placeholder={riskMode === "pct" ? "1.00" : "100"}
+            />
+            <span className={styles.fieldSuffix}>
+              {riskMode === "pct" ? "%" : "$"}
+            </span>
+          </div>
+          <div className={styles.riskToggle}>
+            <button
+              className={`${styles.riskToggleBtn} ${riskMode === "pct" ? styles.riskToggleBtnActive : ""}`}
+              onClick={() => setRiskMode("pct")}
+            >%</button>
+            <button
+              className={`${styles.riskToggleBtn} ${riskMode === "usd" ? styles.riskToggleBtnActive : ""}`}
+              onClick={() => setRiskMode("usd")}
+            >$</button>
+          </div>
+        </div>
+        {/* Capital de référence */}
+        {calc && calc.equity > 0 && (
+          <div className={styles.capitalRef}>
+            {isFr ? "Capital simulé" : "Simulated capital"} : {money(calc.equity)}
+            {riskMode === "pct" && calc.riskUsd > 0 && (
+              <> = {money(calc.riskUsd, 2)} {isFr ? "de risque" : "of risk"}</>
+            )}
+          </div>
+        )}
+      </Field>
+
+      {/* ══ RÉSULTATS ══════════════════════════════════════════════════════ */}
+
+      {/* AUTRE / specs indisponibles */}
+      {calc != null && !calc.slOnWrongSide && !calc.canCalcMoney && (
+        <div className={styles.specsUnavailable}>
+          <AlertTriangle size={16} color={AMBER} />
+          <div>
+            <strong>
+              {isFr
+                ? "Spécifications non disponibles pour cet actif."
+                : "Specifications not available for this asset."}
+            </strong>
+            <div className={styles.specsUnavailableSub}>
+              {isFr
+                ? "Sélectionnez un actif supporté pour calculer le lot optimal."
+                : "Select a supported asset to calculate the optimal lot size."}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Résultats valides */}
+      {hasValidLot && calc != null && calc.lotResult != null && (
+        <div className={styles.resultsArea}>
+
+          {/* ── Big lot number ─────────────────────────────────────── */}
+          <div className={styles.lotResultBlock}>
+            <div className={styles.lotResultEyebrow}>
+              {isFr ? "LOT RECOMMANDÉ" : "RECOMMENDED LOT"}
+            </div>
+
+            {calc.lotResult.tooSmall ? (
+              <div className={styles.lotTooSmall}>
+                <AlertTriangle size={16} color={AMBER} />
+                <span>
+                  {calc.lotResult.hasConfirmedMin
+                    ? (isFr
+                        ? "Risque insuffisant — volume calculé inférieur au minimum autorisé pour cet actif."
+                        : "Insufficient risk — calculated lot below the confirmed minimum for this asset.")
+                    : (isFr
+                        ? "Volume calculé inférieur à 0,01 lot. Le volume minimum réel dépend des spécifications de l'actif sur ta plateforme."
+                        : "Calculated lot below 0.01. The actual minimum lot depends on your platform's asset specifications.")}
+                </span>
+              </div>
+            ) : (
+              <>
+                <div className={styles.lotBigNumber} style={{ color: lotColor }}>
+                  {isApprox ? "≈ " : ""}
+                  {calc.lotResult.lotFinal.toFixed(2)}
+                </div>
+                <div className={styles.lotUnit}>lot</div>
+                <div className={styles.lotRiskMeta}>
+                  {isApprox ? "≈ " : ""}
+                  {isFr ? "Risque réel" : "Actual risk"}{" "}
+                  <strong>{money(calc.lotResult.actualRiskUsd, 2)}</strong>
+                  {" · "}<strong>{pct(calc.riskPct, 2)}</strong>
+                  {" "}{isFr ? "du capital" : "of capital"}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* ── Chips résumé ───────────────────────────────────────── */}
+          {!calc.lotResult.tooSmall && (
+            <div className={styles.distRow}>
+
+              {/* Distance SL */}
+              <div className={styles.distChip}>
+                <div className={styles.distChipTop}>
+                  <span className={styles.distLabel}>SL</span>
+                  <span className={styles.distUnit}>{pipLabel}</span>
+                </div>
+                <span className={styles.distValue}>{fmtPips(calc.slPips)}</span>
+              </div>
+
+              {/* Risque demandé */}
+              <div className={styles.distChip}>
+                <div className={styles.distChipTop}>
+                  <span className={styles.distLabel}>
+                    {isFr ? "Risque demandé" : "Requested risk"}
+                  </span>
+                </div>
+                <span className={styles.distValue}>{money(calc.riskUsd, 2)}</span>
+              </div>
+
+              {/* Risque réel */}
+              <div className={styles.distChip}>
+                <div className={styles.distChipTop}>
+                  <span className={styles.distLabel}>
+                    {isFr ? "Risque réel" : "Actual risk"}
+                  </span>
+                </div>
+                <span className={styles.distValue} style={{ color: GREEN }}>
+                  {money(calc.lotResult.actualRiskUsd, 2)}
+                </span>
+              </div>
+
+              {/* Risque par lot */}
+              <div className={styles.distChip}>
+                <div className={styles.distChipTop}>
+                  <span className={styles.distLabel}>
+                    {isApprox ? "≈ " : ""}
+                    {isFr ? "Risque / lot" : "Risk / lot"}
+                  </span>
+                </div>
+                <span
+                  className={styles.distValue}
+                  style={{ color: isApprox ? AMBER : undefined }}
+                >
+                  {isApprox ? "≈ " : ""}{fmtPipValue(calc.lotResult.riskPerLot)}
+                </span>
+              </div>
+
+            </div>
+          )}
+
+          {/* ── Avertissement pas de lot non confirmé ──────────────── */}
+          {!calc.lotResult.hasConfirmedStep && !calc.lotResult.tooSmall && (
+            <div className={styles.approxNote} style={{ borderColor: "rgba(245,158,11,.2)", background: "rgba(245,158,11,.06)" }}>
+              <Info size={12} color={AMBER} />
+              <span style={{ color: "rgba(245,158,11,.85)" }}>
+                {isFr
+                  ? `Pas de volume non confirmé pour cet actif — calcul effectué avec un pas de ${calc.lotResult.stepUsed.toFixed(2)} lot (hypothèse MT5 standard). Vérifie le volume autorisé sur ta plateforme avant de placer le trade.`
+                  : `Lot step not confirmed for this asset — calculation based on ${calc.lotResult.stepUsed.toFixed(2)} lot step (MT5 standard assumption). Verify the allowed lot size on your platform before placing the trade.`}
+              </span>
+            </div>
+          )}
+
+          {/* ── Impact sur le challenge ─────────────────────────────── */}
+          {!calc.lotResult.tooSmall && calc.lotResult.actualRiskUsd > 0 && (
+            <div className={styles.impactArea}>
+              <div className={styles.impactAreaTitle}>
+                {isFr ? "Impact sur ton challenge" : "Impact on your challenge"}
+                {calc.isOneStep && (
+                  <span className={styles.impactModelBadge}>1-Step · Trailing DD</span>
+                )}
+              </div>
+
+              <DDBlock
+                label={isFr ? "Marge journalière" : "Daily margin"}
+                sub=""
+                bufferBefore={calc.dailyBuffer}
+                bufferAfter={calc.dailyBufferAfter}
+                impactPct={calc.dailyImpactPct}
+                limitUsd={calc.dailyLimitUsd}
+                violation={calc.dailyViolation}
+                amberThreshold={60}
+                isFr={isFr}
+              />
+
+              <DDBlock
+                label={isFr ? "Marge totale" : "Total margin"}
+                sub={
+                  calc.isOneStep
+                    ? (isFr ? "trailing — basé sur highest balance" : "trailing — based on highest balance")
+                    : (isFr ? "plancher fixe" : "fixed floor")
+                }
+                bufferBefore={calc.totalBuffer}
+                bufferAfter={calc.totalBufferAfter}
+                impactPct={calc.totalImpactPct}
+                limitUsd={calc.totalLimitUsd}
+                violation={calc.totalViolation}
+                amberThreshold={30}
+                isFr={isFr}
+              />
+
+              <div className={styles.impactDisclaimer}>
+                {isFr
+                  ? "Simulation basée sur le solde actuel. Les positions ouvertes peuvent modifier ces chiffres."
+                  : "Simulation based on current balance. Open positions may affect these figures."}
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
+      {/* Empty state */}
+      {calc == null && (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyStateText}>
+            {isFr
+              ? "Renseigne un actif, une direction, un prix d'entrée, un Stop Loss et un risque pour calculer le lot optimal."
+              : "Enter an asset, direction, entry price, Stop Loss, and risk to calculate the optimal lot size."}
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
 // ── Composant DD block (daily + total) ────────────────────────────────────────
 
 function DDBlock({
@@ -710,7 +1127,7 @@ export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
 
   const tabs: { id: ToolTab; label: string; live: boolean }[] = [
     { id: "rr",        label: isFr ? "Risque / Rendement" : "Risk / Reward",  live: true  },
-    { id: "lot",       label: isFr ? "Calculateur de lot"  : "Lot Calculator", live: false },
+    { id: "lot",       label: isFr ? "Calculateur de lot"  : "Lot Calculator", live: true  },
     { id: "simulator", label: isFr ? "Simulateur de risque" : "Risk Simulator", live: false },
   ];
 
@@ -757,14 +1174,23 @@ export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
         )}
 
         {activeTool === "lot" && (
-          <ComingSoonStub
-            icon={<Target size={36} color={BLUE} />}
-            title={isFr ? "Calculateur de lot" : "Lot Calculator"}
-            desc={isFr
-              ? "Entre ton Entry, ton SL et le risque souhaité en $ ou % — le nombre de lots optimal est calculé automatiquement."
-              : "Enter your entry, SL, and desired risk in $ or % — the optimal lot size is calculated automatically."}
-            isFr={isFr}
-          />
+          <>
+            <div className={styles.toolHeader}>
+              <div className={styles.toolEyebrow}>
+                {isFr ? "Calcul avant d'entrer" : "Pre-trade calculation"}
+              </div>
+              <h2 className={styles.toolTitle}>
+                {isFr ? "Calculateur de lot" : "Lot Calculator"}
+              </h2>
+              <p className={styles.toolSub}>
+                {isFr
+                  ? "Indique ton Entry, ton Stop Loss et le risque souhaité — le lot optimal est calculé automatiquement sans dépasser ton risque."
+                  : "Enter your Entry, Stop Loss and desired risk — the optimal lot size is calculated automatically without exceeding your risk."}
+              </p>
+            </div>
+            <div className={styles.toolDivider} />
+            <LotCalculator challenge={challenge} isFr={isFr} isMobile={isMobile} />
+          </>
         )}
 
         {activeTool === "simulator" && (

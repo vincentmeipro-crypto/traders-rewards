@@ -8,7 +8,12 @@
  *   2. Pourcentages de risque (capital actuel + marges restantes)
  */
 
-import { runInstrumentTests, TEST_CASES } from "../lib/instrument-specs";
+import {
+  runInstrumentTests,
+  runLotTests,
+  TEST_CASES,
+  LOT_TEST_CASES,
+} from "../lib/instrument-specs";
 
 const GREEN  = "\x1b[32m";
 const RED    = "\x1b[31m";
@@ -117,6 +122,10 @@ const percentageTests: SimpleResult[] = [];
   ]));
 }
 
+// ─── Suite 3 : Calculateur de Lot (16 cas) ───────────────────────────────────
+
+const lotResults = runLotTests();
+
 // ─── Affichage ────────────────────────────────────────────────────────────────
 
 let totalPassed = 0;
@@ -145,8 +154,10 @@ console.log(`${BOLD}════════════════════
 
 printResults("Instruments (pip · valeur · risque monétaire)", instrumentResults);
 printResults("Pourcentages (capital actuel · marges restantes)", percentageTests);
+printResults("Calculateur de Lot (lot · arrondi · invariants)", lotResults);
 
-const totalTests = TEST_CASES.length + percentageTests.length;
+const totalTests = TEST_CASES.length + percentageTests.length + LOT_TEST_CASES.length;
+// ↑ Attendu : 8 instruments + 4 pourcentages + 18 lot = 30 tests
 console.log(`\n${BOLD}───────────────────────────────────────────────────────${RESET}`);
 const col = totalFailed === 0 ? GREEN : RED;
 console.log(`  ${col}${BOLD}${totalPassed}/${totalTests} passed${RESET}  |  ${totalFailed} failed`);
