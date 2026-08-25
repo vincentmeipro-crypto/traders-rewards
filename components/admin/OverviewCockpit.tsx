@@ -8,8 +8,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
+import { createClient } from "@/lib/supabase/client";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -110,9 +109,11 @@ export default function OverviewCockpit() {
   const [loading, setLoading] = useState(true);
   const [error, setError]   = useState<string | null>(null);
 
+  const supabase = createClient();
+
   useEffect(() => {
     let cancelled = false;
-    fetch("/api/admin/overview", { headers: { "x-admin-key": ADMIN_KEY } })
+    supabase.auth.getSession().then(({ data: { session } }) => fetch("/api/admin/overview", { headers: session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {} }))
       .then(r => r.json())
       .then(d => {
         if (cancelled) return;
@@ -361,3 +362,7 @@ export default function OverviewCockpit() {
     </div>
   );
 }
+
+
+
+
