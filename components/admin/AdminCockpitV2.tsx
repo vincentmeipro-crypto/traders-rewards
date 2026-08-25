@@ -4,13 +4,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import styles from "./AdminCockpitV2.module.css";
 
+const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
+
 type Data={kpis:{activeTotal:number;certified:number;passed:number;traders:number;pendingPayoutsCount:number;pendingPayoutsAmt:number;caMonth:number;kycPending:number;supportNew:number;supportOpen:number;emailFailed24h:number;emailSent24h:number;promoActive:number};riskWatch:Array<{id:string;user_email:string;account_size:string;totalDD:number;totalLimit:number;totalConsumed:number}>;recentEvents:Array<{at:string;label:string;sub:string;color:string}>};
 const euro=(n:number)=>`${n.toLocaleString("fr-FR")} €`;
 const relative=(iso:string)=>{const h=(Date.now()-new Date(iso).getTime())/3600000;if(h<1)return `${Math.max(1,Math.round(h*60))} min`;if(h<24)return `${Math.round(h)} h`;return new Date(iso).toLocaleDateString("fr-FR",{day:"2-digit",month:"short"})};
 
 export default function AdminCockpitV2(){
  const supabase=useMemo(()=>createClient(),[]);const[data,setData]=useState<Data|null>(null);const[error,setError]=useState("");const[loading,setLoading]=useState(true);
- const load=useCallback(async()=>{setLoading(true);setError("");try{const{data:{session}}=await supabase.auth.getSession();if(!session)throw new Error("Session administrateur expirée");const response=await fetch("/api/admin/overview",{headers:{Authorization:`Bearer ${session.access_token}`},cache:"no-store"});const json=await response.json();if(!response.ok)throw new Error(json.error||"Cockpit indisponible");setData(json)}catch(e){setError(e instanceof Error?e.message:"Erreur inconnue")}finally{setLoading(false)}},[supabase]);
+ const load=useCallback(async()=>{setLoading(true);setError("");try{const response=await fetch("/api/admin/overview",{headers:{"x-admin-key":ADMIN_KEY},cache:"no-store"});const json=await response.json();if(!response.ok)throw new Error(json.error||"Cockpit indisponible");setData(json)}catch(e){setError(e instanceof Error?e.message:"Erreur inconnue")}finally{setLoading(false)}},[supabase]);
  useEffect(()=>{void load()},[load]);
  if(loading)return <div className={`${styles.card} ${styles.skeleton}`}/>;if(error||!data)return <div className={styles.card}>Impossible de charger le Cockpit : {error}</div>;
  const k=data.kpis;const actions=[
@@ -35,3 +37,7 @@ export default function AdminCockpitV2(){
   </section>
  </div>
 }
+
+
+
+
