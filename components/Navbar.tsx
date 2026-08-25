@@ -15,9 +15,8 @@ const FlagImg = ({ code }: { code: string }) => (
 );
 function TraderLink() {
   return (
-    <Link href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 10px" }}>
-      <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.8px", textTransform: "uppercase", color: "rgba(255,255,255,0.85)" }}>Challenge</span>
-      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "#69C5FD", color: "#000", padding: "2px 8px", borderRadius: 4 }}>TRADER</span>
+    <Link href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", padding: "8px 10px" }}>
+      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "rgba(156,207,234,0.65)", color: "#FFFFFF", padding: "2px 8px", borderRadius: 4 }}>CHALLENGE</span>
     </Link>
   );
 }
@@ -44,8 +43,8 @@ export default function Navbar() {
   const current = languages.find(l => l.code === lang)!;
 
   const navLinks: [string, string][] = [
-    [T.nav.howItWorks, "/#how-it-works"],
-    [T.nav.rules, "/#rules"],
+    [T.nav.howItWorks, "/#parcours-3-niveaux"],
+    [T.nav.rules, "/#parcours-3-niveaux"],
     [T.nav.faq, "/#faq"],
     ["Support", "/support"],
     ["Partenariat", "/partenariat"],
@@ -70,16 +69,16 @@ export default function Navbar() {
         }
         .vip-border {
           padding: 1.5px; border-radius: 6px; display: inline-block;
-          background: conic-gradient(from var(--vip-angle), #1d4ed8 0%, #69C5FD 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
+          background: conic-gradient(from var(--vip-angle), #1d4ed8 0%, #9CCFEA 25%, #ffffff 45%, #EF4444 65%, #1d4ed8 100%);
           animation: vipSpin 3s linear infinite;
-          box-shadow: 0 0 8px rgba(105,197,253,0.5), 0 0 16px rgba(239,68,68,0.2);
+          box-shadow: 0 0 8px rgba(156,207,234,0.5), 0 0 16px rgba(239,68,68,0.2);
         }
         .vip-inner {
           background: #000; border-radius: 4px; padding: 6px 14px;
           display: flex; align-items: center;
         }
         .vip-text {
-          background: linear-gradient(90deg, #1d4ed8 0%, #69C5FD 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%);
+          background: linear-gradient(90deg, #1d4ed8 0%, #9CCFEA 20%, #ffffff 40%, #EF4444 60%, #1d4ed8 80%);
           background-size: 200% auto;
           -webkit-background-clip: text; -webkit-text-fill-color: transparent;
           background-clip: text;
@@ -117,9 +116,9 @@ export default function Navbar() {
       <nav className={`home-navbar${scrolled ? " is-scrolled" : ""}`} style={{
         position: "fixed", top: "var(--promo-banner-height, 0px)", left: 0, right: 0, zIndex: 100,
         backgroundColor: scrolled ? "rgba(0,0,0,0.9)" : "#000000",
-        borderBottom: scrolled ? "1px solid rgba(105,197,253,0.2)" : "1px solid rgba(255,255,255,0.18)",
+        borderBottom: scrolled ? "1px solid rgba(156,207,234,0.2)" : "1px solid rgba(255,255,255,0.18)",
         backdropFilter: scrolled ? "blur(18px)" : "none",
-        boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42), 0 1px 0 rgba(105,197,253,0.04)" : "none",
+        boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42), 0 1px 0 rgba(156,207,234,0.04)" : "none",
         transition: "all 0.3s ease",
       }}>
         <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: isMobile ? "space-between" : "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: isMobile ? "hidden" : "visible" }}>
@@ -147,7 +146,7 @@ export default function Navbar() {
             <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
               <TraderLink />
               {navLinks.map(([label, href]) => (
-                <a key={href} href={href} className="nav-link">{label}</a>
+                <a key={`${label}-${href}`} href={href} className="nav-link">{label}</a>
               ))}
             </div>
           )}
@@ -207,10 +206,10 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {open && (
-          <div style={{ backgroundColor: "rgba(3,5,7,0.98)", borderTop: "1px solid rgba(105,197,253,0.16)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ backgroundColor: "rgba(3,5,7,0.98)", borderTop: "1px solid rgba(156,207,234,0.16)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
             <div onClick={() => setOpen(false)}><TraderLink /></div>
             {navLinks.map(([label, href]) => (
-              <a key={href} href={href} onClick={() => setOpen(false)}
+              <a key={`${label}-${href}`} href={href} onClick={() => setOpen(false)}
                 style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, fontWeight: 500, textDecoration: "none" }}>{label}</a>
             ))}
             <hr style={{ borderColor: "rgba(255,255,255,0.12)", margin: "4px 0" }} />

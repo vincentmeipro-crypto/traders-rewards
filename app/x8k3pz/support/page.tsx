@@ -275,10 +275,11 @@ function TicketThread({ ticketId }: { ticketId: string }) {
         headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
         body:    JSON.stringify({ message: trimmed }),
       });
-      const d = await res.json() as { error?: string };
+      const d = await res.json() as { error?: string; emailSent?: boolean };
       if (!res.ok) { setSendError(d.error ?? "Erreur"); return; }
       setDraft("");
       await fetchMessages();
+      if (d.emailSent === false) setSendError("Réponse enregistrée, mais l’email n’a pas pu être envoyé.");
     } catch { setSendError("Erreur réseau"); }
     finally { setSending(false); }
   };

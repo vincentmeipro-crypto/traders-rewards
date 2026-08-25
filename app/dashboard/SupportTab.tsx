@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 /**
  * TRADERS REWARDS — SupportTab
@@ -60,14 +60,14 @@ interface SupportMessage {
 // ── Configs ───────────────────────────────────────────────────────────────────
 
 const TICKET_STATUS: Record<string, { fr: string; en: string; color: string; bg: string }> = {
-  new:      { fr: "Nouveau",  en: "New",         color: "#69C5FD", bg: "rgba(105,197,253,0.12)" },
+  new:      { fr: "Nouveau",  en: "New",         color: "#9CCFEA", bg: "rgba(156,207,234,0.12)" },
   open:     { fr: "En cours", en: "In progress",  color: "#F59E0B", bg: "rgba(245,158,11,0.12)" },
   resolved: { fr: "Résolu",   en: "Resolved",     color: "#22C55E", bg: "rgba(34,197,94,0.12)"  },
 };
 
 const CONV_STATUS: Record<string, { fr: string; en: string; color: string }> = {
   waiting_support: { fr: "En attente d'un agent",  en: "Waiting for agent",  color: "#F59E0B" },
-  open:            { fr: "En cours",                en: "In progress",        color: "#69C5FD" },
+  open:            { fr: "En cours",                en: "In progress",        color: "#9CCFEA" },
   waiting_client:  { fr: "Réponse reçue ✓",        en: "Reply received ✓",   color: "#22C55E" },
   closed:          { fr: "Fermé",                   en: "Closed",             color: "#6B7280" },
 };
@@ -384,7 +384,7 @@ export default function SupportTab({
 
       {/* ── Page header ───────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: isMobile ? 22 : 26, fontWeight: 800, color: "#ffffff", marginBottom: 6 }}>
+        <h1 className="dash-chrome-title" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 800, marginBottom: 6 }}>
           {isFr ? "Centre d'aide" : "Help Center"}
         </h1>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
@@ -417,7 +417,7 @@ export default function SupportTab({
               fontSize:        14,
               fontWeight:      subTab === t ? 700 : 500,
               color:           subTab === t ? "#000000" : "rgba(255,255,255,0.45)",
-              backgroundColor: subTab === t ? "#69C5FD" : "transparent",
+              background: subTab === t ? "linear-gradient(115deg,#5f8ca4 0%,#d5f1ff 22%,#8fc4df 45%,#ecf9ff 65%,#74a9c4 100%)" : "transparent",
               transition:      "all 0.15s",
               position:        "relative",
             }}
@@ -471,12 +471,10 @@ export default function SupportTab({
                   setFormError(null);
                   setFormSuccess(false);
                 }}
+                className="btn-primary"
                 style={{
                   padding:         "9px 18px",
                   borderRadius:    9,
-                  border:          "1px solid rgba(105,197,253,0.4)",
-                  backgroundColor: "rgba(105,197,253,0.1)",
-                  color:           "#69C5FD",
                   fontSize:        13,
                   fontWeight:      700,
                   cursor:          "pointer",
@@ -485,8 +483,6 @@ export default function SupportTab({
                   gap:             7,
                   transition:      "all 0.15s",
                 }}
-                onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(105,197,253,0.18)"; }}
-                onMouseOut={e =>  { e.currentTarget.style.backgroundColor = "rgba(105,197,253,0.1)";  }}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -667,7 +663,7 @@ export default function SupportTab({
                         padding:         "9px 24px",
                         borderRadius:    9,
                         border:          "none",
-                        backgroundColor: formSending ? "rgba(105,197,253,0.5)" : "#69C5FD",
+                        backgroundColor: formSending ? "rgba(156,207,234,0.5)" : "#9CCFEA",
                         color:           "#000000",
                         fontSize:        13,
                         fontWeight:      700,
@@ -699,7 +695,7 @@ export default function SupportTab({
                 onClick={() => setSelectedTicket(null)}
                 style={{
                   background: "none", border: "none", cursor: "pointer",
-                  color: "#69C5FD", fontSize: 13, fontWeight: 600,
+                  color: "#9CCFEA", fontSize: 13, fontWeight: 600,
                   display: "flex", alignItems: "center", gap: 6, padding: 0, marginBottom: 18,
                 }}
               >
@@ -775,9 +771,9 @@ export default function SupportTab({
                             <div style={{
                               maxWidth:     "78%",
                               background:   isClient
-                                ? "rgba(105,197,253,0.18)"
+                                ? "rgba(156,207,234,0.18)"
                                 : "rgba(255,255,255,0.07)",
-                              border:       `1px solid ${isClient ? "rgba(105,197,253,0.3)" : "rgba(255,255,255,0.09)"}`,
+                              border:       `1px solid ${isClient ? "rgba(156,207,234,0.3)" : "rgba(255,255,255,0.09)"}`,
                               borderRadius: isClient
                                 ? "12px 12px 2px 12px"
                                 : "12px 12px 12px 2px",
@@ -840,7 +836,7 @@ export default function SupportTab({
                         resize:    "vertical",
                         minHeight: 72,
                         maxHeight: 200,
-                        border:    `1px solid ${reply.trim() ? "rgba(105,197,253,0.4)" : "rgba(255,255,255,0.1)"}`,
+                        border:    `1px solid ${reply.trim() ? "rgba(156,207,234,0.4)" : "rgba(255,255,255,0.1)"}`,
                         transition: "border-color 0.15s",
                       }}
                     />
@@ -863,8 +859,8 @@ export default function SupportTab({
                           borderRadius:    9,
                           border:          "none",
                           backgroundColor: replySending || !reply.trim()
-                            ? "rgba(105,197,253,0.35)"
-                            : "#69C5FD",
+                            ? "rgba(156,207,234,0.35)"
+                            : "#9CCFEA",
                           color:           "#000000",
                           fontSize:        13,
                           fontWeight:      700,
@@ -930,7 +926,7 @@ export default function SupportTab({
                       padding:         "10px 22px",
                       borderRadius:    9,
                       border:          "none",
-                      backgroundColor: "#69C5FD",
+                      backgroundColor: "#9CCFEA",
                       color:           "#000000",
                       fontSize:        13,
                       fontWeight:      700,
@@ -961,7 +957,7 @@ export default function SupportTab({
                         textAlign:       "left",
                         transition:      "all 0.15s",
                       }}
-                      onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.055)"; e.currentTarget.style.borderColor = "rgba(105,197,253,0.25)"; }}
+                      onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.055)"; e.currentTarget.style.borderColor = "rgba(156,207,234,0.25)"; }}
                       onMouseOut={e =>  { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)";  e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)"; }}
                     >
                       {/* Icon */}
@@ -969,13 +965,13 @@ export default function SupportTab({
                         width:           36,
                         height:          36,
                         borderRadius:    9,
-                        backgroundColor: "rgba(105,197,253,0.1)",
+                        backgroundColor: "rgba(156,207,234,0.1)",
                         display:         "flex",
                         alignItems:      "center",
                         justifyContent:  "center",
                         flexShrink:      0,
                       }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#69C5FD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CCFEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                         </svg>
                       </div>
@@ -1053,7 +1049,7 @@ export default function SupportTab({
                   <div style={{
                     backgroundColor: "rgba(255,255,255,0.03)",
                     border:          unreadCount > 0
-                      ? "1px solid rgba(105,197,253,0.4)"
+                      ? "1px solid rgba(156,207,234,0.4)"
                       : "1px solid rgba(255,255,255,0.09)",
                     borderRadius:    14,
                     padding:         24,
@@ -1066,7 +1062,7 @@ export default function SupportTab({
                           width:           38,
                           height:          38,
                           borderRadius:    10,
-                          backgroundColor: "#69C5FD",
+                          backgroundColor: "#9CCFEA",
                           display:         "flex",
                           alignItems:      "center",
                           justifyContent:  "center",
@@ -1120,7 +1116,7 @@ export default function SupportTab({
                         backgroundColor: "rgba(255,255,255,0.04)",
                         borderRadius:    9,
                         marginBottom:    16,
-                        borderLeft:      `3px solid ${lastMsg.sender_type === "admin" ? "#69C5FD" : "rgba(255,255,255,0.15)"}`,
+                        borderLeft:      `3px solid ${lastMsg.sender_type === "admin" ? "#9CCFEA" : "rgba(255,255,255,0.15)"}`,
                       }}>
                         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 5 }}>
                           {lastMsg.sender_type === "admin"
@@ -1151,7 +1147,7 @@ export default function SupportTab({
                         padding:         "12px",
                         borderRadius:    10,
                         border:          "none",
-                        backgroundColor: "#69C5FD",
+                        backgroundColor: "#9CCFEA",
                         color:           "#000000",
                         fontSize:        14,
                         fontWeight:      700,
@@ -1163,7 +1159,7 @@ export default function SupportTab({
                         transition:      "background 0.15s",
                       }}
                       onMouseOver={e => { e.currentTarget.style.backgroundColor = "#89d1fd"; }}
-                      onMouseOut={e =>  { e.currentTarget.style.backgroundColor = "#69C5FD"; }}
+                      onMouseOut={e =>  { e.currentTarget.style.backgroundColor = "#9CCFEA"; }}
                     >
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -1212,7 +1208,7 @@ export default function SupportTab({
                       padding:         "12px 28px",
                       borderRadius:    10,
                       border:          "none",
-                      backgroundColor: "#69C5FD",
+                      backgroundColor: "#9CCFEA",
                       color:           "#000000",
                       fontSize:        14,
                       fontWeight:      700,
@@ -1223,7 +1219,7 @@ export default function SupportTab({
                       transition:      "background 0.15s",
                     }}
                     onMouseOver={e => { e.currentTarget.style.backgroundColor = "#89d1fd"; }}
-                    onMouseOut={e =>  { e.currentTarget.style.backgroundColor = "#69C5FD"; }}
+                    onMouseOut={e =>  { e.currentTarget.style.backgroundColor = "#9CCFEA"; }}
                   >
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>

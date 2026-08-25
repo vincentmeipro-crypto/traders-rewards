@@ -41,3 +41,14 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# local/generated artifacts
+.codex-artifacts/
+outputs/
+supabase/.temp/
+artifact_sources_investor.txt
+build_investor_deck.mjs
+finalize_corrected_artifacts.mjs
+polish_investor_artifacts.mjs
+update_charges_artifacts.mjs
+run_update_charges_v*.mjs

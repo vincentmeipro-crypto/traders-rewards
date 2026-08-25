@@ -45,6 +45,12 @@ function formatRelativeDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
 }
 
+const STANDARD_PRICES: Record<string, number> = {
+  "rewards-25k": 190,
+  "rewards-50k": 290,
+  "rewards-100k": 590,
+};
+
 // ── Composants atomiques ─────────────────────────────────────────
 const StatusBadge = ({ active }: { active: boolean }) => (
   <span style={{
@@ -78,7 +84,8 @@ export default function ProductsPage() {
   const router = useRouter();
   const [products, setProducts]         = useState<Product[]>([]);
   const [loading, setLoading]           = useState(true);
-  const [showInactive, setShowInactive] = useState(true);
+  const [showInactive, setShowInactive] = useState(false);
+  const [showArchives, setShowArchives] = useState(false);
   const [hoveredId, setHoveredId]       = useState<string | null>(null);
   const [menuOpenId, setMenuOpenId]     = useState<string | null>(null);
   const [togglingId, setTogglingId]     = useState<string | null>(null);
@@ -166,10 +173,15 @@ export default function ProductsPage() {
   const filtered  = products.filter(p => showInactive || p.active);
   const nbInactifs = products.filter(p => !p.active).length;
 
+  const isCurrentOffer = (product: Product) => ["rewards-25k", "rewards-50k", "rewards-100k"].includes(product.slug);
+  const currentOffers = filtered
+    .filter(isCurrentOffer)
+    .sort((a, b) => a.display_order - b.display_order);
+  const archivedOffers = filtered.filter(product => !isCurrentOffer(product));
+
   const groups: { model: string; items: Product[] }[] = [
-    { model: "2step", items: filtered.filter(p => p.model === "2step") },
-    { model: "1step", items: filtered.filter(p => p.model === "1step") },
-    { model: "vip",   items: filtered.filter(p => p.model === "vip")   },
+    { model: "current", items: currentOffers },
+    ...(showArchives ? [{ model: "archive", items: archivedOffers }] : []),
   ].filter(g => g.items.length > 0);
 
   // P1#6: Actions 132px → 52px (bouton Éditer supprimé, uniquement ⋯)
@@ -179,9 +191,8 @@ export default function ProductsPage() {
 
   // P1#7: Labels de groupes complets
   const GROUP_LABELS: Record<string, string> = {
-    "2step": "2-Step Challenge",
-    "1step": "1-Step Challenge",
-    "vip":   "VIP / Algo",
+    "current": "OFFRES ACTUELLES — CHALLENGE",
+    "archive": "ARCHIVES — ANCIENS PRODUITS",
   };
 
   return (
@@ -224,7 +235,7 @@ export default function ProductsPage() {
             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>Produits</span>
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0, letterSpacing: "-0.5px" }}>
-            Produits Challenge
+            OFFRES & RÈGLES
           </h1>
         </div>
 
@@ -245,9 +256,13 @@ export default function ProductsPage() {
               </span>
             )}
           </label>
+          <label style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", cursor: "pointer", display: "flex", alignItems: "center", gap: 7, userSelect: "none" as const }}>
+            <input type="checkbox" checked={showArchives} onChange={e => setShowArchives(e.target.checked)} style={{ accentColor: "#9CCFEA", width: 14, height: 14 }} />
+            Afficher les archives ({products.filter(product => !isCurrentOffer(product)).length})
+          </label>
           <a
             href="/x8k3pz/products/new"
-            style={{ background: "#3B82F6", color: "#fff", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 700, textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}
+            style={{ background: "linear-gradient(110deg,#eff7fa,#9ccfea 42%,#e8eef1 72%,#788b98)", color: "#071018", border: "1px solid rgba(255,255,255,.65)", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 900, textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}
           >
             + Nouveau produit
           </a>
@@ -281,9 +296,9 @@ export default function ProductsPage() {
               </div>
             ))}
           </div>
-        ) : filtered.length === 0 ? (
+        ) : groups.length === 0 ? (
           <div style={{ padding: "80px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>
-            Aucun produit{!showInactive ? " actif" : ""}
+            Aucune offre actuelle trouvée. Activez « Afficher les archives » pour consulter les anciens produits.
           </div>
         ) : (
           groups.map(group => (
@@ -298,7 +313,7 @@ export default function ProductsPage() {
                 <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>
                   {GROUP_LABELS[group.model]}
                 </span>
-                <ModelBadge model={group.model} />
+                <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".12em", padding: "3px 8px", borderRadius: 4, color: group.model === "current" ? "#061018" : "#7f8c95", background: group.model === "current" ? "linear-gradient(110deg,#e9f4f9,#9ccfea,#dfe7eb)" : "rgba(255,255,255,.05)", border: "1px solid rgba(156,207,234,.2)" }}>{group.model === "current" ? "ACTUEL" : "HISTORIQUE"}</span>
                 <span style={{ fontSize: 10, color: "rgba(255,255,255,0.22)" }}>
                   {group.items.length} produit{group.items.length > 1 ? "s" : ""}
                 </span>
@@ -315,8 +330,8 @@ export default function ProductsPage() {
               }}>
                 <div>Statut</div>
                 <div>Produit</div>
-                <div>Prix</div>
-                {!isNarrow && <div>Règles Phase 1</div>}
+                <div>Prix promo</div>
+                {!isNarrow && <div>Règles du Challenge</div>}
                 {!isNarrow && <div>Modifié</div>}
                 <div>Challenges</div>
                 <div />
@@ -369,19 +384,26 @@ export default function ProductsPage() {
 
                     {/* Prix */}
                     <div style={{ fontSize: 16, fontWeight: 800, color: product.active ? "#fff" : "rgba(255,255,255,0.28)", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.3px" }}>
+                      {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,.3)", textDecoration: "line-through", marginBottom: 2 }}>€{STANDARD_PRICES[product.slug]}</span>}
                       €{priceEur}
+                      {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 9, color: "#9ccfea", marginTop: 2 }}>LANCEMENT −90%</span>}
                     </div>
 
-                    {/* Règles Phase 1 — masqué en narrow */}
+                    {/* Règles contractuelles du Challenge — masqué en narrow */}
                     {!isNarrow && (
                       <div>
                         {p1 ? (
                           <div style={{ display: "flex", gap: 12, fontSize: 12, color: "rgba(255,255,255,0.42)", flexWrap: "wrap" }}>
-                            {p1.profit_target !== null && (
-                              <span>Obj. <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.profit_target}%</strong></span>
-                            )}
-                            <span>DD/j <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.daily_drawdown}%</strong></span>
-                            <span>DD <strong style={{ color: "rgba(255,255,255,0.78)", fontVariantNumeric: "tabular-nums" }}>{p1.total_drawdown}%</strong></span>
+                            {isCurrentOffer(product) ? <>
+                              <span>Objectif <strong style={{ color: "#9ccfea" }}>+6%</strong></span>
+                              <span>Trailing DD EOD <strong style={{ color: "#9ccfea" }}>{product.slug === "rewards-100k" ? "3%" : "4%"}</strong></span>
+                              <span>Consistance <strong style={{ color: "#9ccfea" }}>≤50%</strong></span>
+                              <span>Minimum <strong style={{ color: "#9ccfea" }}>2 jours</strong></span>
+                            </> : <>
+                              {p1.profit_target !== null && <span>Obj. <strong>{p1.profit_target}%</strong></span>}
+                              <span>DD/j <strong>{p1.daily_drawdown}%</strong></span>
+                              <span>DD <strong>{p1.total_drawdown}%</strong></span>
+                            </>}
                           </div>
                         ) : (
                           <span style={{ fontSize: 12, color: "rgba(255,255,255,0.18)" }}>—</span>

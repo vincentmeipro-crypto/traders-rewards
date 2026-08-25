@@ -16,7 +16,7 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 const SITE_URL = "https://www.traders-rewards.eu";
 const TITLE = "Traders Rewards | Programme Éducatif de Trading";
 const DESCRIPTION =
-  "Transformez votre trading démo en vraies récompenses. Le programme FRANÇAIS qui récompense les traders disciplinés. Capital simulé jusqu'à 200 000 € · Récompenses jusqu'à 90%.";
+  "Transformez votre trading démo en vraies Rewards. Choisissez un Challenge 25K, 50K ou 100K, validez un objectif unique de +6% et progressez jusqu'au statut Trader Reward.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -40,11 +40,11 @@ export const metadata: Metadata = {
     "programme trading paris",
     "formation trader récompensée",
     "capital simulé trading",
-    "challenge 1 step",
-    "challenge 2 step",
-    "instant reward trading",
-    "programme français trading",
-    "meilleur programme trading france",
+    "challenge trading 25K",
+    "challenge trading 50K",
+    "challenge trading 100K",
+    "reward account",
+    "trader reward",
   ],
   authors: [{ name: "Traders Rewards", url: SITE_URL }],
   creator: "Traders Rewards",
@@ -95,7 +95,7 @@ export const metadata: Metadata = {
         url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "Traders Rewards — Programme Éducatif de Trading Français",
+        alt: "Traders Rewards — Challenge de trading simulé et Rewards",
       },
     ],
   },
@@ -121,10 +121,10 @@ const jsonLd = {
         "@type": "ImageObject",
         url: `${SITE_URL}/traders-rewards-logo.png`,
       },
-      description: "Programme éducatif de trading français. Performez en compte démo et recevez jusqu'à 90% de récompenses sur vos profits simulés.",
+      description: "Programme de trading simulé avec Challenges 25K, 50K et 100K et parcours progressif de cinq Rewards.",
       address: {
         "@type": "PostalAddress",
-        addressCountry: "FR",
+        addressCountry: "EE",
       },
       contactPoint: {
         "@type": "ContactPoint",
@@ -170,15 +170,15 @@ const jsonLd = {
           name: "Comment démarrer avec Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Choisissez votre challenge (2-Step ou 1-Step), sélectionnez la taille de votre compte ($10K à $200K), effectuez le paiement et recevez vos identifiants instantanément par email.",
+            text: "Choisissez un Challenge 25K, 50K ou 100K. L'objectif unique est de +6%, avec un minimum de 2 journées et un maximum de 30 jours calendaires.",
           },
         },
         {
           "@type": "Question",
-          name: "Combien puis-je gagner avec le programme Traders Rewards ?",
+          name: "Comment fonctionne le parcours Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Vous conservez jusqu'à 90% de vos profits simulés (90% pour le 1-Step, 80% pour le 2-Step). Sur un compte $100K avec 6% de profit, vous touchez environ €4,800.",
+            text: "Après validation du Challenge, vous activez votre Reward Account et progressez à travers 5 Rewards successives jusqu'au statut Trader Reward.",
           },
         },
         {
@@ -186,7 +186,7 @@ const jsonLd = {
           name: "Y a-t-il une limite de temps pour passer le challenge ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Non. Il n'y a absolument aucune limite de temps sur nos challenges. Tradez à votre rythme, en jours, semaines ou mois.",
+            text: "Le Challenge doit être validé dans un délai maximum de 30 jours calendaires. Le Reward Account dispose ensuite d'un temps illimité.",
           },
         },
         {
@@ -194,7 +194,7 @@ const jsonLd = {
           name: "Quels sont les objectifs de profit du challenge ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "2-Step : Phase 1 = +10%, Phase 2 = +5%. 1-Step : une seule phase avec un objectif de +10%.",
+            text: "Le Challenge comporte une seule étape avec un objectif de profit de +6%.",
           },
         },
         {
@@ -202,7 +202,7 @@ const jsonLd = {
           name: "Quelles sont les règles de drawdown ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "2-Step : 5% de perte journalière maximum et 10% total. 1-Step : 3% journalier et 10% total.",
+            text: "Il n'y a pas de Daily Drawdown séparé. Le Trailing Drawdown EOD est de 4% sur les comptes 25K et 50K, et de 3% sur le compte 100K.",
           },
         },
         {
@@ -210,15 +210,15 @@ const jsonLd = {
           name: "Comment et quand suis-je payé ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Première récompense disponible dès le 15ème jour. Ensuite tous les 15 jours. Traitement sous 24-48h via crypto ou virement bancaire (IBAN).",
+            text: "La première Reward est accessible après avoir atteint +4% et validé au moins 5 journées qualifiantes sur le Reward Account, sous réserve du respect des règles du programme.",
           },
         },
         {
           "@type": "Question",
-          name: "Traders Rewards est-elle un programme français de trading ?",
+          name: "Le trading est-il réel ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Oui, Traders Rewards est un programme éducatif de trading basé en France, avec un support en français et des paiements en euros. C'est le programme français de référence pour les traders européens.",
+            text: "Non. Tous les comptes et toutes les opérations sont simulés. Les Rewards approuvées sont versées conformément aux conditions du programme.",
           },
         },
       ],
@@ -228,7 +228,7 @@ const jsonLd = {
       "@id": `${SITE_URL}/#service`,
       name: "Challenge Trading — Programme Éducatif",
       provider: { "@id": `${SITE_URL}/#organization` },
-      description: "Programme d'évaluation de traders : passez un challenge, devenez Trader Reward et touchez jusqu'à 90% de vos profits sur capital simulé.",
+      description: "Programme de trading simulé : validez un Challenge en une étape puis progressez à travers 5 niveaux de Rewards jusqu'au statut Trader Reward.",
       areaServed: {
         "@type": "GeoShape",
         name: "Europe",
@@ -239,18 +239,18 @@ const jsonLd = {
         itemListElement: [
           {
             "@type": "Offer",
-            name: "Challenge 1-Step $50,000",
-            description: "Challenge trading 1 phase, compte simulé $50,000, objectif : +10%, partage des profits : 90%",
+            name: "Challenge 50K",
+            description: "Challenge en une étape sur compte simulé 50K, objectif +6%, Trailing Drawdown EOD 4%.",
             priceCurrency: "EUR",
-            price: "249",
+            price: "29",
             url: `${SITE_URL}/#pricing`,
           },
           {
             "@type": "Offer",
-            name: "Instant Reward $50,000",
-            description: "Compte Reward immédiat $50,000, sans objectif de profit, partage 90%",
+            name: "Challenge 100K",
+            description: "Challenge en une étape sur compte simulé 100K, objectif +6%, Trailing Drawdown EOD 3%.",
             priceCurrency: "EUR",
-            price: "1300",
+            price: "59",
             url: `${SITE_URL}/#pricing`,
           },
         ],

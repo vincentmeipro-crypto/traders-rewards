@@ -11,22 +11,23 @@
 
 .header { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 15px; }
 .heading { display: flex; align-items: center; gap: 10px; }
-.icon { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 auto; border-radius: 10px; color: #69c5fd; background: rgba(105, 197, 253, .1); }
+.icon { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 auto; border-radius: 10px; color: #9CCFEA; background: rgba(156,207,234, .1); }
 .heading h2 { margin: 0; font-size: 14px; font-weight: 850; }
 .heading p { margin: 2px 0 0; color: rgba(255, 255, 255, .38); font-size: 10px; }
+.impactBadge { display: inline-block; margin-left: 7px; padding: 1px 5px; background: rgba(239, 68, 68, .12); border: 1px solid rgba(239, 68, 68, .22); border-radius: 4px; color: #ef4444; font-size: 8px; font-weight: 800; letter-spacing: .3px; vertical-align: middle; line-height: 1.6; }
 .filters { display: flex; gap: 6px; }
 .filter, .filterActive { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 10px; border: 1px solid rgba(255, 255, 255, .09); border-radius: 9px; color: rgba(255, 255, 255, .45); background: rgba(255, 255, 255, .025); font: 750 10px inherit; cursor: pointer; }
-.filterActive { color: #fff; border-color: rgba(105, 197, 253, .35); background: rgba(105, 197, 253, .11); box-shadow: inset 0 0 18px rgba(105, 197, 253, .04); }
+.filterActive { color: #fff; border-color: rgba(156,207,234, .35); background: rgba(156,207,234, .11); box-shadow: inset 0 0 18px rgba(156,207,234, .04); }
 .state { display: grid; place-items: center; min-height: 150px; color: rgba(255, 255, 255, .35); font-size: 11px; border: 1px dashed rgba(255, 255, 255, .08); border-radius: 12px; }
 .table { overflow: hidden; border: 1px solid rgba(255, 255, 255, .06); border-radius: 12px; }
 .tableHeader, .row { display: grid; grid-template-columns: 90px 80px minmax(230px, 1fr) 100px 100px; align-items: center; gap: 10px; }
 .tableHeader { padding: 8px 12px; color: rgba(255, 255, 255, .28); background: rgba(255, 255, 255, .025); font-size: 8px; font-weight: 800; letter-spacing: .9px; text-transform: uppercase; }
 .row { min-height: 59px; padding: 9px 12px; border-top: 1px solid rgba(255, 255, 255, .05); transition: background .15s ease; }
-.row:hover { background: rgba(105, 197, 253, .035); }
+.row:hover { background: rgba(156,207,234, .035); }
 .date strong { display: block; font-size: 12px; }
 .date span { display: block; margin-top: 2px; color: rgba(255, 255, 255, .32); font-size: 8px; text-transform: capitalize; }
 .currency { display: flex; align-items: center; gap: 7px; font-size: 13px; }
-.currency b { color: #69c5fd; font-size: 10px; }
+.currency b { color: #9CCFEA; font-size: 10px; }
 .flag { width: 19px; height: 13px; flex: 0 0 auto; border: 1px solid rgba(255, 255, 255, .2); border-radius: 3px; box-shadow: 0 2px 7px rgba(0, 0, 0, .35); }
 .event strong { display: block; overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .event span { display: flex; align-items: center; gap: 5px; margin-top: 4px; color: rgba(255, 255, 255, .34); font-size: 8px; }
@@ -34,7 +35,7 @@
 .value { font-size: 11px; font-weight: 750; }
 .value small { display: none; }
 .footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 11px; color: rgba(255, 255, 255, .28); font-size: 9px; }
-.footer a { display: inline-flex; align-items: center; gap: 5px; color: #69c5fd; font-weight: 750; text-decoration: none; }
+.footer a { display: inline-flex; align-items: center; gap: 5px; color: #9CCFEA; font-weight: 750; text-decoration: none; }
 
 @media (max-width: 760px) {
   .card { padding: 15px; }

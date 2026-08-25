@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -8,7 +8,7 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import QRCode from "qrcode";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, TrendingDown, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle, Zap } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle, Zap } from "lucide-react";
 import SupportTab from "./SupportTab";
 import TraderCockpit from "./TraderCockpit";
 import { extractContractRules } from "@/lib/contract-rules";
@@ -50,23 +50,17 @@ type Challenge = {
   rules_snapshot?: unknown;
 };
 
-const PHASE_LABELS: Record<string, string> = {
-  phase1: "Phase 1",
-  phase2: "Phase 2",
-  funded: "Reward",
-};
-
 const STATUS_LABELS: Record<string, string> = {
   active: "Active",
-  passed: "Passed",
-  funded: "Reward",
-  failed: "Failed",
+  passed: "Validé",
+  funded: "Active",
+  failed: "Échoué",
 };
 
 const STATUS_COLORS: Record<string, string> = {
   active: "#22c55e",
-  passed: "#69C5FD",
-  funded: "#69C5FD",
+  passed: "#9CCFEA",
+  funded: "#9CCFEA",
   failed: "#ef4444",
 };
 
@@ -148,14 +142,14 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
   };
 
   const tiers = [
-    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "#69C5FD", bg: "rgba(105, 197, 253,0.12)" },
+    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "#9CCFEA", bg: "rgba(156,207,234,0.12)" },
     { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 29 ventes" : "11 to 29 sales", pct: "15%", color: "#a855f7", bg: "rgba(168,85,247,0.08)" },
     { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ ventes" : "30+ sales", pct: "20%", color: "#d97706", bg: "rgba(217,119,6,0.08)" },
   ];
 
   return (
     <div style={{ maxWidth: 680 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{isFr ? "Programme Affiliation" : "Affiliate Program"}</h1>
+      <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{isFr ? "Programme Affiliation" : "Affiliate Program"}</h1>
       <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 28 }}>
         {isFr ? "Partagez votre lien et gagnez des commissions sur chaque vente." : "Share your link and earn commissions on every sale."}
       </p>
@@ -181,7 +175,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
 
       {/* Mon lien */}
       <div className="card" style={{ padding: 24, marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 14, color: "#69C5FD", marginBottom: 14 }}>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#9CCFEA", marginBottom: 14 }}>
           {isFr ? "Mon lien affilié" : "My affiliate link"}
         </div>
         {loading ? (
@@ -192,12 +186,12 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
               <div style={{ flex: 1, background: "rgba(255,255,255,0.06)", borderRadius: 8, padding: "10px 14px", fontFamily: "monospace", fontSize: 13, color: "rgba(255,255,255,0.85)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}>
                 {data?.link || "—"}
               </div>
-              <button onClick={copyLink} style={{ padding: "10px 18px", background: copied ? "#16a34a" : "#69C5FD", color: copied ? "#fff" : "#000", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}>
+              <button onClick={copyLink} style={{ padding: "10px 18px", background: copied ? "#16a34a" : "#9CCFEA", color: copied ? "#fff" : "#000", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}>
                 {copied ? (isFr ? "Copié !" : "Copied!") : (isFr ? "Copier" : "Copy")}
               </button>
             </div>
             <div style={{ marginTop: 10, color: "rgba(255,255,255,0.45)", fontSize: 12 }}>
-              {isFr ? "Code : " : "Code: "}<span style={{ fontFamily: "monospace", fontWeight: 700, color: "#69C5FD" }}>{data?.code}</span>
+              {isFr ? "Code : " : "Code: "}<span style={{ fontFamily: "monospace", fontWeight: 700, color: "#9CCFEA" }}>{data?.code}</span>
             </div>
           </>
         )}
@@ -213,7 +207,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
         ].map((s, i) => (
           <div key={i} className="card" style={{ padding: "16px 14px", textAlign: "center" }}>
             <div style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</div>
-            <div style={{ fontWeight: 900, fontSize: 18, color: "#69C5FD", marginBottom: 4 }}>{s.value}</div>
+            <div style={{ fontWeight: 900, fontSize: 18, color: "#9CCFEA", marginBottom: 4 }}>{s.value}</div>
             <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 11 }}>{s.label}</div>
           </div>
         ))}
@@ -221,7 +215,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
 
       {/* Comment ça marche */}
       <div className="card" style={{ padding: 22, marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 14, color: "#69C5FD", marginBottom: 14 }}>{isFr ? "Comment ça fonctionne" : "How it works"}</div>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "#9CCFEA", marginBottom: 14 }}>{isFr ? "Comment ça fonctionne" : "How it works"}</div>
         {[
           { icon: "🔗", text: isFr ? "Partagez votre lien unique — il est valide à vie." : "Share your unique link — it never expires." },
           { icon: "💰", text: isFr ? "Gagnez une commission sur chaque challenge acheté via votre lien." : "Earn a commission on every challenge purchased via your link." },
@@ -242,7 +236,7 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
           {isFr ? "Minimum 100€ de commissions validées." : "Minimum €100 in validated commissions."}
         </div>
         <a href="mailto:contact@traders-rewards.eu?subject=Retrait%20commission%20affiliation"
-          style={{ display: "inline-block", backgroundColor: "#69C5FD", color: "#000", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none" }}>
+          style={{ display: "inline-block", backgroundColor: "#9CCFEA", color: "#000", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none" }}>
           contact@traders-rewards.eu
         </a>
       </div>
@@ -256,6 +250,8 @@ export default function DashboardClient({ user }: { user: User }) {
   const { T, lang, setLang } = useLanguage();
   const isFr = lang === "fr";
   const [token, setToken] = useState("");
+  const [supportUnreadCount, setSupportUnreadCount] = useState(0);
+  const [latestSupportReplyAt, setLatestSupportReplyAt] = useState<string | null>(null);
   const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string; challenge_id?: string; payment_method?: string; rejection_reason?: string }[]>([]);
@@ -363,6 +359,37 @@ export default function DashboardClient({ user }: { user: User }) {
         });
     });
   }, [user.id, supabase]);
+
+  // Réponses Support : compteur global visible même hors du Centre d'aide.
+  useEffect(() => {
+    if (!token) return;
+    let cancelled = false;
+    const storageKey = `support_seen_at:${user.id}`;
+    const refreshSupportUnread = async () => {
+      const seenAt = localStorage.getItem(storageKey);
+      const query = seenAt ? `?since=${encodeURIComponent(seenAt)}` : "";
+      try {
+        const response = await fetch(`/api/support/unread${query}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: "no-store",
+        });
+        if (!response.ok || cancelled) return;
+        const data = await response.json() as { unreadCount?: number; latestAdminMessageAt?: string | null };
+        setSupportUnreadCount(data.unreadCount ?? 0);
+        setLatestSupportReplyAt(data.latestAdminMessageAt ?? null);
+      } catch { /* prochaine tentative automatique */ }
+    };
+    void refreshSupportUnread();
+    const interval = window.setInterval(refreshSupportUnread, 10_000);
+    return () => { cancelled = true; window.clearInterval(interval); };
+  }, [token, user.id]);
+
+  // L'ouverture du Centre d'aide marque les réponses présentes comme lues.
+  useEffect(() => {
+    if (activeTab !== "support" || !latestSupportReplyAt) return;
+    localStorage.setItem(`support_seen_at:${user.id}`, latestSupportReplyAt);
+    setSupportUnreadCount(0);
+  }, [activeTab, latestSupportReplyAt, user.id]);
 
   // Fetch trade history when challenge changes
   useEffect(() => {
@@ -505,15 +532,21 @@ export default function DashboardClient({ user }: { user: User }) {
     ? (challenge.status === "failed" && challenge.breach_equity != null ? challenge.breach_equity : challenge.balance)
     : 0;
   const profitAmount = challenge ? effectiveBalance - challenge.start_balance : 0;
+  const chromeMenuText = {
+    color: "transparent",
+    backgroundImage: "linear-gradient(105deg, #74787d 0%, #ffffff 32%, #a0a4a8 62%, #f2f3f4 100%)",
+    backgroundClip: "text",
+    WebkitBackgroundClip: "text",
+  } as const;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", fontFamily: "var(--font-outfit), 'Outfit', sans-serif" }}>
+    <div className="dashboard-shell" style={{ minHeight: "100vh", background: "#000000", fontFamily: "var(--font-outfit), 'Outfit', sans-serif" }}>
 
       {/* Sidebar — desktop only */}
       {!isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#050505", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", zIndex: 50 }}>
-          <div style={{ padding: "20px 20px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
-            <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 120, height: "auto", objectFit: "contain" }} />
+          <div style={{ height: 110, padding: "0 10px", overflow: "hidden", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center" }}>
+            <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 220, maxWidth: "100%", height: "auto", objectFit: "contain", flexShrink: 0 }} />
           </div>
 
           <nav style={{ padding: "16px 12px", flex: 1, overflowY: "auto" }}>
@@ -533,15 +566,15 @@ export default function DashboardClient({ user }: { user: User }) {
               <div key={item.tab} onClick={() => setActiveTab(item.tab)} style={{
                 display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
                 borderRadius: 10, marginBottom: 4, cursor: "pointer",
-                backgroundColor: activeTab === item.tab ? "rgba(105, 197, 253,0.12)" : "transparent",
-                borderLeft: activeTab === item.tab ? "2px solid #69C5FD" : "2px solid transparent",
+                backgroundColor: activeTab === item.tab ? "rgba(156,207,234,0.12)" : "transparent",
+                borderLeft: activeTab === item.tab ? "2px solid #9CCFEA" : "2px solid transparent",
                 transition: "all 0.15s",
               }}
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
               onMouseOut={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "transparent"; }}
               >
                 <span style={{ color: activeTab === item.tab ? "#FFFFFF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "rgba(255,255,255,0.45)") }}>{item.icon}</span>
-                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 600 : 400, color: activeTab === item.tab ? "#FFFFFF" : (item.tab === "kyc" && kycStatus === "approved" ? "#22c55e" : "rgba(255,255,255,0.55)") }}>{item.label}</span>
+                <span style={{ fontSize: 14, fontWeight: activeTab === item.tab ? 700 : 500, ...(item.tab === "kyc" && kycStatus === "approved" ? { color: "#22c55e" } : chromeMenuText) }}>{item.label}</span>
               </div>
             ))}
           </nav>
@@ -551,7 +584,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <div style={{ padding: "10px 16px", marginBottom: 4, display: "flex", flexWrap: "wrap", gap: 6 }}>
               {languages.map(l => (
                 <button key={l.code} onClick={() => setLang(l.code)}
-                  style={{ background: "none", border: lang === l.code ? "1px solid #69C5FD" : "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
+                  style={{ background: "none", border: lang === l.code ? "1px solid #9CCFEA" : "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "3px 8px", cursor: "pointer", display: "flex", alignItems: "center", gap: 4, opacity: lang === l.code ? 1 : 0.5 }}>
                   <img src={`https://flagcdn.com/16x12/${l.code === "en" ? "gb" : l.code}.png`} width={16} height={12} alt={l.code} style={{ borderRadius: 1 }} />
                 </button>
               ))}
@@ -562,12 +595,13 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
             <div
               onClick={() => setActiveTab("support")}
-              style={{ display: "flex", flexDirection: "column", gap: 3, width: "100%", padding: "10px 16px", borderRadius: 10, color: "#69C5FD", marginBottom: 4, backgroundColor: "rgba(105, 197, 253,0.08)", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer" }}
+              style={{ display: "flex", flexDirection: "column", gap: 3, width: "100%", padding: "10px 16px", borderRadius: 10, color: "#9CCFEA", marginBottom: 4, backgroundColor: "rgba(156,207,234,0.08)", border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer" }}
               onMouseOver={e => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)"; }}
-              onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(105, 197, 253,0.08)"; }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(156,207,234,0.08)"; }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
                 <MessageCircle size={16} />
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
+                {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 20, height: 20, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#9CCFEA", color: "#02070b", fontSize: 10, fontWeight: 900, boxShadow: "0 0 16px rgba(156,207,234,.35)" }} aria-label={`${supportUnreadCount} réponse(s) non lue(s)`}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
               </div>
               <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", paddingLeft: 26 }}>contact@traders-rewards.eu</span>
             </div>
@@ -586,7 +620,7 @@ export default function DashboardClient({ user }: { user: User }) {
         <>
           <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#050505", borderBottom: "1px solid rgba(255,255,255,0.08)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
             <Link href="/"><img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 36, height: 36, objectFit: "contain" }} /></Link>
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD" }}>
+            <div style={{ fontSize: 13, fontWeight: 800, ...chromeMenuText }}>
               {([
                 { tab: "dashboard", label: T.dash.dashboard },
                 { tab: "challenges", label: T.dash.challenges },
@@ -604,12 +638,12 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
             <button onClick={() => setMenuOpen(o => !o)} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", gap: 5, padding: 4 }}>
               {menuOpen ? (
-                <span style={{ color: "#69C5FD", fontSize: 22, lineHeight: 1 }}>✕</span>
+                <span style={{ color: "#9CCFEA", fontSize: 22, lineHeight: 1 }}>✕</span>
               ) : (
                 <>
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#69C5FD", borderRadius: 2 }} />
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#69C5FD", borderRadius: 2 }} />
-                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#69C5FD", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#9CCFEA", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#9CCFEA", borderRadius: 2 }} />
+                  <span style={{ display: "block", width: 22, height: 2, backgroundColor: "#9CCFEA", borderRadius: 2 }} />
                 </>
               )}
             </button>
@@ -634,19 +668,20 @@ export default function DashboardClient({ user }: { user: User }) {
                 <button key={item.tab} onClick={() => { setActiveTab(item.tab); setMenuOpen(false); }} style={{
                   display: "flex", alignItems: "center", gap: 16, width: "100%",
                   padding: "16px 24px", background: "none", border: "none", cursor: "pointer",
-                  borderBottom: "1px solid rgba(105, 197, 253,0.12)",
-                  backgroundColor: activeTab === item.tab ? "rgba(105, 197, 253,0.12)" : "transparent",
-                  borderLeft: activeTab === item.tab ? "3px solid #69C5FD" : "3px solid transparent",
+                  borderBottom: "1px solid rgba(156,207,234,0.12)",
+                  backgroundColor: activeTab === item.tab ? "rgba(156,207,234,0.12)" : "transparent",
+                  borderLeft: activeTab === item.tab ? "3px solid #9CCFEA" : "3px solid transparent",
                 }}>
                   <span style={{ color: activeTab === item.tab ? "#FFFFFF" : "rgba(255,255,255,0.45)" }}>{item.icon}</span>
-                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 700 : 500, color: activeTab === item.tab ? "#FFFFFF" : "rgba(255,255,255,0.7)" }}>{item.label}</span>
+                  <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 800 : 600, ...(item.tab === "kyc" && kycStatus === "approved" ? { color: "#22c55e" } : chromeMenuText) }}>{item.label}</span>
                   {activeTab === item.tab && <ChevronRight size={16} color="#FFFFFF" style={{ marginLeft: "auto" }} />}
                 </button>
               ))}
               <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: 8 }}>
-                <div onClick={() => { setActiveTab("support"); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", color: "#69C5FD", marginBottom: 12, cursor: "pointer" }}>
+                <div onClick={() => { setActiveTab("support"); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", color: "#9CCFEA", marginBottom: 12, cursor: "pointer" }}>
                   <MessageCircle size={20} />
                   <span style={{ fontSize: 15, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
+                  {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 22, height: 22, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#9CCFEA", color: "#02070b", fontSize: 10, fontWeight: 900 }}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
                 </div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>{user.email}</div>
                 <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 15, fontWeight: 600, padding: 0 }}>
@@ -664,7 +699,7 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* ══ HISTORIQUE ══ */}
         {activeTab === "history" && (
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.history}</h1>
+            <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.history}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.historySub}</p>
 
             {allChallenges.length === 0 ? (
@@ -680,9 +715,9 @@ export default function DashboardClient({ user }: { user: User }) {
                   const profit = (c.status === "failed" && c.breach_reason === "daily_drawdown" && c.daily_drawdown_limit != null)
                     ? (-c.daily_drawdown_limit).toFixed(1)
                     : (finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null);
-                  const phaseReached = c.phase === "funded" ? (isFr ? "🏆 Compte Reward" : "🏆 Reward Account") : c.phase === "phase2" ? "Phase 2" : "Phase 1";
+                  const phaseReached = c.phase === "funded" ? (isFr ? "REWARD ACCOUNT" : "REWARD ACCOUNT") : "CHALLENGER";
                   const isLast = idx === allChallenges.length - 1;
-                  const dotColor = c.status === "funded" ? "#69C5FD" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#69C5FD" : "#69C5FD";
+                  const dotColor = c.status === "funded" ? "#9CCFEA" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#9CCFEA" : "#9CCFEA";
                   const relatedPayouts = allPayouts.filter(p => {
                     const pd = new Date(p.created_at).getTime();
                     const cd = new Date(c.created_at).getTime();
@@ -702,14 +737,14 @@ export default function DashboardClient({ user }: { user: User }) {
 
                       {/* Card */}
                       <div style={{ flex: 1, marginBottom: 16 }}>
-                      <div onClick={() => loadHistTrades(c)} style={{ backgroundColor: "#111111", border: `1px solid ${isSelectedHist ? "#69C5FD" : "rgba(255,255,255,0.08)"}`, borderRadius: 14, padding: "20px 24px", cursor: c.mt5_login ? "pointer" : "default", transition: "border 0.15s" }}>
+                      <div onClick={() => loadHistTrades(c)} style={{ backgroundColor: "#111111", border: `1px solid ${isSelectedHist ? "#9CCFEA" : "rgba(255,255,255,0.08)"}`, borderRadius: 14, padding: "20px 24px", cursor: c.mt5_login ? "pointer" : "default", transition: "border 0.15s" }}>
                         {/* Header */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model}</div>
+                            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.phase === "funded" ? "Reward Account" : "Challenge"}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                               <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{STATUS_LABELS[c.status] || c.status}</span>
-                              <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(105, 197, 253,0.08)", color: c.phase === "funded" ? "#69C5FD" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
+                              <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(156,207,234,0.08)", color: c.phase === "funded" ? "#9CCFEA" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
                             </div>
                           </div>
                           <div style={{ textAlign: "right" }}>
@@ -742,11 +777,11 @@ export default function DashboardClient({ user }: { user: User }) {
                             {relatedPayouts.map(p => (
                               <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 8, marginBottom: 6 }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                  <Trophy size={14} color="#69C5FD" />
-                                  <span style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD" }}>€{p.amount?.toLocaleString()}</span>
+                                  <Trophy size={14} color="#9CCFEA" />
+                                  <span style={{ fontSize: 13, fontWeight: 700, color: "#9CCFEA" }}>€{p.amount?.toLocaleString()}</span>
                                   <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</span>
                                 </div>
-                                <span style={{ backgroundColor: p.status === "paid" ? "#69C5FD20" : p.status === "pending" ? "#69C5FD20" : "#ef444420", color: p.status === "paid" ? "#69C5FD" : p.status === "pending" ? "#69C5FD" : "#ef4444", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
+                                <span style={{ backgroundColor: p.status === "paid" ? "#9CCFEA20" : p.status === "pending" ? "#9CCFEA20" : "#ef444420", color: p.status === "paid" ? "#9CCFEA" : p.status === "pending" ? "#9CCFEA" : "#ef4444", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>
                                   {p.status === "paid" ? T.dash.rewardPaid : p.status === "pending" ? T.dash.rewardPending : T.dash.rewardRejected}
                                 </span>
                               </div>
@@ -755,7 +790,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         )}
                         {/* Click hint */}
                         {c.mt5_login && (
-                          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6, color: "#69C5FD", fontSize: 12, fontWeight: 600 }}>
+                          <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6, color: "#9CCFEA", fontSize: 12, fontWeight: 600 }}>
                             <BarChart2 size={13} />
                             {isSelectedHist
                               ? (isFr ? "Masquer l'historique ▲" : "Hide trade history ▲")
@@ -767,7 +802,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         {/* Trade history expand */}
                         {isSelectedHist && (
                           <div style={{ marginTop: 8, backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "16px 20px" }}>
-                            <div style={{ fontWeight: 700, fontSize: 14, color: "#69C5FD", marginBottom: 12 }}>
+                            <div style={{ fontWeight: 700, fontSize: 14, color: "#9CCFEA", marginBottom: 12 }}>
                               {isFr ? "Historique des positions" : "Trade history"} — {c.account_size}
                             </div>
                             {histTradesLoading ? (
@@ -839,7 +874,7 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* ══ FACTURES ══ */}
         {activeTab === "invoices" && (
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.invoices}</h1>
+            <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.invoices}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.invoicesSub}</p>
 
             {allChallenges.length === 0 ? (
@@ -856,17 +891,17 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
                           <div style={{ backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "8px 14px" }}>
                             <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 10, marginBottom: 2 }}>N° FACTURE</div>
-                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#69C5FD" }}>{invoiceNum}</div>
+                            <div style={{ fontFamily: "monospace", fontWeight: 700, fontSize: 13, color: "#9CCFEA" }}>{invoiceNum}</div>
                           </div>
                           <div>
                             <div style={{ fontWeight: 700, fontSize: 15 }}>Challenge {c.account_size}</div>
-                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{c.model} — {d.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
+                            <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>Challenge — {d.toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" })}</div>
                           </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                           <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 20, fontWeight: 900, color: "#69C5FD" }}>€{c.amount_paid}</div>
-                            <span style={{ backgroundColor: "#69C5FD20", color: "#69C5FD", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{T.dash.paidBadge}</span>
+                            <div style={{ fontSize: 20, fontWeight: 900, color: "#9CCFEA" }}>€{c.amount_paid}</div>
+                            <span style={{ backgroundColor: "#9CCFEA20", color: "#9CCFEA", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 100 }}>{T.dash.paidBadge}</span>
                           </div>
                           <button onClick={() => {
                             const clientName = `${c.client_first_name || ""} ${c.client_last_name || ""}`.trim() || "—";
@@ -914,7 +949,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               <table>
                                 <thead><tr><th>Description</th><th>Quantité</th><th style="text-align:right">Montant</th></tr></thead>
                                 <tbody>
-                                  <tr><td>Challenge de trading ${c.account_size} — ${c.model}<br><span style="color:#888;font-size:12px">Accès à la plateforme de challenge sur compte simulé</span></td><td>1</td><td style="text-align:right;font-weight:700">€${c.amount_paid}</td></tr>
+                                  <tr><td>Challenge Traders Rewards ${c.account_size}<br><span style="color:#888;font-size:12px">Accès à un environnement éducatif de trading simulé</span></td><td>1</td><td style="text-align:right;font-weight:700">€${c.amount_paid}</td></tr>
                                 </tbody>
                               </table>
                               <div class="total">Total TTC : €${c.amount_paid}</div>
@@ -926,7 +961,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </body></html>`);
                             w.document.close();
                           }}
-                            style={{ backgroundColor: "#69C5FD", border: "none", borderRadius: 10, padding: "10px 18px", color: "#000", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                            style={{ backgroundColor: "#9CCFEA", border: "none", borderRadius: 10, padding: "10px 18px", color: "#000", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
                             {T.dash.viewInvoice}
                           </button>
                         </div>
@@ -953,109 +988,78 @@ export default function DashboardClient({ user }: { user: User }) {
               })
             : null;
 
-          const isChallenge1Step = challenge
-            ? challenge.model.toLowerCase().replace(/[\s-]/g, "").includes("1step")
-            : false;
-
           // Resolve values: snapshot → challenge columns → generic fallback
           const pt   = contractRules?.currentPhase?.profit_target ?? challenge?.profit_target ?? null;
-          const ddDay = contractRules?.currentPhase?.daily_drawdown ?? challenge?.daily_drawdown_limit ?? null;
-          const ddTot = contractRules?.currentPhase?.total_drawdown ?? challenge?.total_drawdown_limit ?? null;
-          const minD  = contractRules?.minTradingDays ?? (challenge?.phase === "funded" ? 7 : 5);
-          const split = contractRules?.profitSplit ?? null;
-          const lev   = contractRules?.leverage ?? null;
-          const bdr   = contractRules?.bestDayRule ?? null;
+          const minD  = challenge?.phase === "funded" ? 5 : 2;
           const isFunded = challenge?.phase === "funded";
+          const selectedAccountSize = challenge
+            ? Number(String(challenge.account_size).replace(/[^0-9.]/g, "")) * (String(challenge.account_size).toUpperCase().includes("K") ? 1000 : 1)
+            : 0;
+          const rewardsDdPct = selectedAccountSize >= 100_000 ? 3 : 4;
 
           const ruleCards: { title: string; desc: string; icon: React.ReactNode }[] = [];
 
-          // Profit target (only for challenge phases)
-          if (!isFunded && pt != null) {
+          // Objectif du niveau : +6% sur le Challenge, puis +4% sur le Reward Account.
+          if (pt != null || isFunded) {
+            const displayedTarget = isFunded ? 4 : (pt ?? 6);
             ruleCards.push({
-              icon: <Target size={20} color="#69C5FD" />,
-              title: isFr ? "Objectif de profit" : "Profit Target",
+              icon: <Target size={20} color="#9CCFEA" />,
+              title: isFunded ? (isFr ? "Seuil de Reward" : "Reward Threshold") : (isFr ? "Objectif du Challenge" : "Challenge Target"),
               desc: isFr
-                ? `Atteindre ${pt}% de profit sur ce compte pour valider la phase.`
-                : `Reach ${pt}% profit on this account to pass the phase.`,
+                ? `Atteindre +${displayedTarget}% sur ce compte pour ${isFunded ? "débloquer la prochaine Reward" : "valider le Challenge"}.`
+                : `Reach +${displayedTarget}% on this account to ${isFunded ? "unlock the next Reward" : "pass the Challenge"}.`,
             });
           }
 
           // Minimum trading days
           ruleCards.push({
-            icon: <Calendar size={20} color="#69C5FD" />,
+            icon: <Calendar size={20} color="#9CCFEA" />,
             title: isFr ? "Jours de trading minimum" : "Minimum Trading Days",
             desc: isFr
-              ? `Vous devez trader au moins ${minD} jours différents avant de valider cette phase.`
-              : `You must trade at least ${minD} different days before passing this phase.`,
+              ? isFunded
+                ? `Vous devez enregistrer au moins ${minD} journées qualifiantes avant de demander la Reward.`
+                : `Vous devez trader au moins ${minD} jours différents avant de valider le Challenge.`
+              : isFunded
+                ? `You need at least ${minD} qualifying days before requesting the Reward.`
+                : `You must trade at least ${minD} different days before passing the Challenge.`,
           });
 
-          // Daily drawdown
-          if (ddDay != null) {
-            ruleCards.push({
-              icon: <TrendingDown size={20} color="#69C5FD" />,
-              title: isFr ? "Drawdown journalier" : "Daily Drawdown",
-              desc: isFr
-                ? `Votre compte ne peut pas perdre plus de ${ddDay}% de sa valeur de référence en une seule journée.`
-                : `Your account cannot lose more than ${ddDay}% of its reference value in a single day.`,
-            });
-          }
-
-          // Total drawdown
-          if (ddTot != null) {
-            ruleCards.push({
-              icon: <Shield size={20} color="#69C5FD" />,
-              title: isFr ? "Drawdown total" : "Total Drawdown",
-              desc: isChallenge1Step
-                ? (isFr
-                  ? `Drawdown trailing : le plancher monte avec le solde maximum atteint (${ddTot}% de l'objectif de départ).`
-                  : `Trailing drawdown: the floor rises with the highest balance (${ddTot}% of the starting target).`)
-                : (isFr
-                  ? `Le solde ne peut pas descendre de plus de ${ddTot}% sous le solde initial du compte.`
-                  : `The balance cannot drop more than ${ddTot}% below the account starting balance.`),
-            });
-          }
-
-          // Best day rule (only when contractually present)
-          if (bdr != null) {
-            ruleCards.push({
-              icon: <TrendingUp size={20} color="#69C5FD" />,
-              title: isFr ? "Règle Best Day" : "Best Day Rule",
-              desc: isFr
-                ? `Le profit d'une seule journée ne peut pas dépasser ${bdr} du profit total requis pour valider le challenge.`
-                : `A single day's profit cannot exceed ${bdr} of the required total profit needed to pass the challenge.`,
-            });
-          }
-
-          // Profit split (if snapshot has funded phase)
-          if (split != null) {
-            ruleCards.push({
-              icon: <Percent size={20} color="#69C5FD" />,
-              title: isFr ? "Partage des profits" : "Reward Split",
-              desc: isFr
-                ? `Les traders Reward conservent ${split}% des profits générés. Récompenses traitées sous 24-48h.`
-                : `Reward traders keep ${split}% of generated profits. Rewards processed within 24-48h.`,
-            });
-          }
-
-          // Leverage (if in snapshot)
-          if (lev != null) {
-            ruleCards.push({
-              icon: <Zap size={20} color="#69C5FD" />,
-              title: isFr ? "Levier" : "Leverage",
-              desc: `1:${lev}`,
-            });
-          }
-
-          // Universal platform rules
+          // Une seule limite de risque : Drawdown total en modèle trailing EOD.
           ruleCards.push({
-            icon: <Clock size={20} color="#69C5FD" />,
-            title: isFr ? "Sans limite de temps" : "No Time Limit",
+            icon: <Shield size={20} color="#9CCFEA" />,
+            title: isFr ? "Drawdown total · Trailing EOD" : "Total Drawdown · Trailing EOD",
             desc: isFr
-              ? "Il n'y a pas de date d'expiration sur votre challenge. Prenez le temps qu'il vous faut."
-              : "There is no expiry date on your challenge. Take as long as you need.",
+              ? `Limite unique de ${rewardsDdPct}% : le plancher suit le plus haut solde de fin de journée. La violation est contrôlée sur l'equity en temps réel.`
+              : `Single ${rewardsDdPct}% limit: the floor follows the highest end-of-day balance. Breaches are checked against live equity.`,
+          });
+
+          // Règle de consistance : meilleure journée / profit total.
+          const consistencyPct = isFunded ? 33 : 50;
+          ruleCards.push({
+            icon: <Percent size={20} color="#9CCFEA" />,
+            title: isFr ? "Règle de consistance" : "Consistency Rule",
+            desc: isFr
+              ? `Votre meilleure journée ne doit pas représenter plus de ${consistencyPct}% de votre profit total.`
+              : `Your best day must not represent more than ${consistencyPct}% of your total profit.`,
+          });
+
+          // Durée contractuelle : Challenge limité à 30 jours calendaires,
+          // Reward Account sans limite de temps.
+          ruleCards.push({
+            icon: <Clock size={20} color="#9CCFEA" />,
+            title: isFunded
+              ? (isFr ? "Temps illimité" : "Unlimited Duration")
+              : (isFr ? "30 jours calendaires maximum" : "30 Calendar Days Maximum"),
+            desc: isFunded
+              ? (isFr
+                ? "Le Reward Account ne comporte aucune limite de temps pour atteindre le prochain seuil."
+                : "The Reward Account has no time limit for reaching the next threshold.")
+              : (isFr
+                ? "Le Challenge doit être validé dans les 30 jours calendaires suivant sa création."
+                : "The Challenge must be completed within 30 calendar days of its creation."),
           });
           ruleCards.push({
-            icon: <BarChart2 size={20} color="#69C5FD" />,
+            icon: <BarChart2 size={20} color="#9CCFEA" />,
             title: isFr ? "Tous styles de trading" : "Any Trading Style",
             desc: isFr
               ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées."
@@ -1064,16 +1068,24 @@ export default function DashboardClient({ user }: { user: User }) {
 
           return (
             <div>
-              <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rules}</h1>
+              <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rules}</h1>
               <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>
                 {contractRules?.hasSnapshot
                   ? (isFr ? "Règles contractuelles spécifiques à ce compte — issues du snapshot d'achat." : "Contractual rules specific to this account — from your purchase snapshot.")
                   : T.dash.tradingRulesSub}
               </p>
+              {activeChallenges.length > 1 && (
+                <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(156,207,234,.25)", borderRadius: 12, background: "rgba(156,207,234,.055)" }}>
+                  <span style={{ color: "#9CCFEA", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{isFr ? "COMPTE" : "ACCOUNT"}</span>
+                  <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
+                    {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "REWARD ACCOUNT" : "CHALLENGER"}</option>)}
+                  </select>
+                </label>
+              )}
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
                 {ruleCards.map((rule, i) => (
                   <div key={i} className="card" style={{ padding: 24 }}>
-                    <div style={{ backgroundColor: "rgba(105, 197, 253,0.12)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
+                    <div style={{ backgroundColor: "rgba(156,207,234,0.12)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
                     <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
                   </div>
@@ -1086,12 +1098,12 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Profile Tab */}
         {activeTab === "profile" && (
           <div style={{ maxWidth: 560 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.personalInfo}</h1>
+            <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.personalInfo}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.profileSub}</p>
 
             {/* Personal info form */}
             <div className="card" style={{ padding: 28, marginBottom: 20 }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#69C5FD" }}>{T.dash.personalInfo}</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, color: "#9CCFEA" }}>{T.dash.personalInfo}</div>
               <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginBottom: 20 }}>{T.dash.kycLocked}</div>
 
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 14, marginBottom: 14 }}>
@@ -1124,7 +1136,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.phone}</label>
                 <input value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+33 6 12 34 56 78"
                   style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                  onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
               </div>
 
@@ -1132,11 +1144,11 @@ export default function DashboardClient({ user }: { user: User }) {
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.address}</label>
                 <input value={profileAddress} onChange={e => setProfileAddress(e.target.value)} placeholder="123 Rue de la Paix"
                   style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                  onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
                 {[
                   { label: T.dash.city, value: profileCity, setter: setProfileCity, placeholder: "Paris" },
                   { label: T.dash.postalCode, value: profilePostalCode, setter: setProfilePostalCode, placeholder: "75001" },
@@ -1146,7 +1158,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{f.label}</label>
                     <input value={f.value} onChange={e => f.setter(e.target.value)} placeholder={f.placeholder}
                       style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                      onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                      onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                       onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
                   </div>
                 ))}
@@ -1158,7 +1170,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
               )}
               {profileSaved && (
-                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 10, padding: "12px 14px", color: "#69C5FD", fontSize: 13, marginBottom: 14 }}>
+                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(156,207,234,0.3)", borderRadius: 10, padding: "12px 14px", color: "#9CCFEA", fontSize: 13, marginBottom: 14 }}>
                   {T.dash.savedOk}
                 </div>
               )}
@@ -1171,20 +1183,20 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {/* Password change */}
             <div className="card" style={{ padding: 28 }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#69C5FD" }}>{T.dash.changePassword}</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 20, color: "#9CCFEA" }}>{T.dash.changePassword}</div>
               <div style={{ marginBottom: 14 }}>
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.newPassword}</label>
                 <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 8"
                   style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                  onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.08)")} />
               </div>
               <div style={{ marginBottom: 20 }}>
                 <label style={{ display: "block", color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: 6, fontWeight: 600 }}>{T.dash.confirmPassword}</label>
                 <input type="password" value={confirmNewPassword} onChange={e => setConfirmNewPassword(e.target.value)} placeholder="..."
-                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#69C5FD" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.target.style.borderColor = newPassword === confirmNewPassword && confirmNewPassword ? "#69C5FD" : "#69C5FD")}
-                  onBlur={e => (e.target.style.borderColor = confirmNewPassword && newPassword === confirmNewPassword ? "#69C5FD" : confirmNewPassword ? "#ef4444" : "#222")} />
+                  style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: `1px solid ${confirmNewPassword && newPassword === confirmNewPassword ? "#9CCFEA" : confirmNewPassword ? "#ef4444" : "#222"}`, borderRadius: 10, padding: "12px 14px", color: "#FFFFFF", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+                  onFocus={e => (e.target.style.borderColor = newPassword === confirmNewPassword && confirmNewPassword ? "#9CCFEA" : "#9CCFEA")}
+                  onBlur={e => (e.target.style.borderColor = confirmNewPassword && newPassword === confirmNewPassword ? "#9CCFEA" : confirmNewPassword ? "#ef4444" : "#222")} />
               </div>
 
               {passwordError && (
@@ -1193,7 +1205,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 </div>
               )}
               {passwordSaved && (
-                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 10, padding: "12px 14px", color: "#69C5FD", fontSize: 13, marginBottom: 14 }}>
+                <div style={{ backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(156,207,234,0.3)", borderRadius: 10, padding: "12px 14px", color: "#9CCFEA", fontSize: 13, marginBottom: 14 }}>
                   {T.dash.passwordOk}
                 </div>
               )}
@@ -1209,7 +1221,7 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Settings Tab */}
         {activeTab === "settings" && (
           <div style={{ maxWidth: 480 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.settings}</h1>
+            <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.settings}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.manageAccount}</p>
             <div className="card" style={{ padding: 28, marginBottom: 16 }}>
               <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 8 }}>{T.dash.emailAddress}</div>
@@ -1232,9 +1244,9 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Payouts Tab */}
         {activeTab === "payouts" && (
           <div style={{ maxWidth: 1100 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rewards}</h1>
+            <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rewards}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.rewardsSub}</p>
-            <div style={{ display: "grid", gridTemplateColumns: allPayouts.length > 0 ? "1fr 1fr" : "1fr", gap: 32, alignItems: "start" }}>
+            <div style={{ display: "grid", gridTemplateColumns: !isMobile && allPayouts.length > 0 ? "1fr 1fr" : "1fr", gap: 32, alignItems: "start" }}>
             {challenge?.phase !== "funded" ? (
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
@@ -1243,7 +1255,7 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             ) : kycStatus !== "approved" ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><ShieldCheck size={40} color="#69C5FD" /></div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><ShieldCheck size={40} color="#9CCFEA" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.kyc.gateTitle}</div>
                 <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 24 }}>
                   {kycStatus === "pending" ? T.kyc.gatePendingMsg : kycStatus === "rejected" ? T.kyc.gateRejectedMsg : T.kyc.gateMsg}
@@ -1266,17 +1278,17 @@ export default function DashboardClient({ user }: { user: User }) {
               <div className="card" style={{ padding: 32 }}>
                 {/* Montant auto = profit du compte */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#69C5FD", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
-                  <div style={{ width: "100%", backgroundColor: "rgba(105,197,253,0.08)", border: "1.5px solid rgba(105,197,253,0.25)", borderRadius: 10, padding: "14px 16px", color: "#69C5FD", fontSize: 18, fontWeight: 900 }}>
+                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
+                  <div style={{ width: "100%", backgroundColor: "rgba(156,207,234,0.08)", border: "1.5px solid rgba(156,207,234,0.25)", borderRadius: 10, padding: "14px 16px", color: "#9CCFEA", fontSize: 18, fontWeight: 900 }}>
                     ${Math.max(0, profitAmount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </div>
                 </div>
 
                 {/* Méthode de paiement */}
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#69C5FD", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
+                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
                   <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value, wallet_address: "" }))}
-                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(105, 197, 253,0.25)", borderRadius: 10, padding: "14px 16px", color: "#69C5FD", fontSize: 14, fontWeight: 700, outline: "none" }}>
+                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(156,207,234,0.25)", borderRadius: 10, padding: "14px 16px", color: "#9CCFEA", fontSize: 14, fontWeight: 700, outline: "none" }}>
                     <option value="bank">{isFr ? "Virement bancaire (RIB/IBAN)" : "Bank transfer (IBAN)"}</option>
                     <option value="crypto">Crypto — USDC réseau Solana</option>
                   </select>
@@ -1284,20 +1296,20 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Adresse selon méthode */}
                 <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#69C5FD", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
+                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
                     {payoutForm.payment_method === "crypto" ? (isFr ? "Adresse portefeuille USDC (Solana)" : "USDC wallet address (Solana)") : "IBAN"}
                   </label>
                   <input type="text"
                     placeholder={payoutForm.payment_method === "crypto" ? "Adresse Solana..." : "FR76..."}
                     value={payoutForm.wallet_address}
                     onChange={e => setPayoutForm(f => ({ ...f, wallet_address: e.target.value }))}
-                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(105, 197, 253,0.25)", borderRadius: 10, padding: "14px 16px", color: "#69C5FD", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
+                    style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(156,207,234,0.25)", borderRadius: 10, padding: "14px 16px", color: "#9CCFEA", fontSize: 14, outline: "none", boxSizing: "border-box" }} />
                 </div>
 
                 {payoutSuccess ? (
                   <div style={{ textAlign: "center", padding: "20px 0" }}>
-                    <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#69C5FD" /></div>
-                    <div style={{ fontWeight: 700, fontSize: 18, color: "#69C5FD" }}>{T.dash.requestSubmitted}</div>
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={40} color="#9CCFEA" /></div>
+                    <div style={{ fontWeight: 700, fontSize: 18, color: "#9CCFEA" }}>{T.dash.requestSubmitted}</div>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
                   </div>
                 ) : (
@@ -1312,7 +1324,7 @@ export default function DashboardClient({ user }: { user: User }) {
             {/* Historique des récompenses */}
             {allPayouts.length > 0 && (
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#69C5FD" }}>
+                <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#9CCFEA" }}>
                   {isFr ? "Historique des récompenses" : "Rewards history"}
                 </h2>
                 <div className="card" style={{ padding: 0, overflow: "hidden" }}>
@@ -1334,7 +1346,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         return (
                           <tr key={p.id} style={{ borderBottom: i < allPayouts.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
                             <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>{new Date(p.created_at).toLocaleDateString("fr-FR")}</td>
-                            <td style={{ padding: "13px 16px", fontWeight: 800, color: "#69C5FD" }}>${p.amount?.toLocaleString()}</td>
+                            <td style={{ padding: "13px 16px", fontWeight: 800, color: "#9CCFEA" }}>${p.amount?.toLocaleString()}</td>
                             <td style={{ padding: "13px 16px", color: "rgba(255,255,255,0.45)" }}>
                               {p.payment_method === "crypto" ? "🔶 Crypto" : p.payment_method === "bank" ? "🏦 Virement" : "—"}
                             </td>
@@ -1348,7 +1360,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             </td>
                             <td style={{ padding: "13px 16px" }}>
                               {p.status === "paid" && (
-                                <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 5, backgroundColor: "rgba(105, 197, 253,0.12)", color: "#69C5FD", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(105, 197, 253,0.25)", textDecoration: "none" }}>
+                                <a href={receiptUrl} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 5, backgroundColor: "rgba(156,207,234,0.12)", color: "#9CCFEA", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 8, border: "1px solid rgba(156,207,234,0.25)", textDecoration: "none" }}>
                                   📄 PDF
                                 </a>
                               )}
@@ -1368,14 +1380,14 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* KYC Tab */}
         {activeTab === "kyc" && (
           <div style={{ maxWidth: 600 }}>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.kyc.title}</h1>
+            <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.kyc.title}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.kyc.sub}</p>
 
             {kycStatus === "approved" && (
-              <div style={{ backgroundColor: "rgba(105, 197, 253,0.12)", border: "1px solid rgba(105, 197, 253,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
-                <CheckCircle size={20} color="#69C5FD" />
+              <div style={{ backgroundColor: "rgba(156,207,234,0.12)", border: "1px solid rgba(156,207,234,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
+                <CheckCircle size={20} color="#9CCFEA" />
                 <div>
-                  <div style={{ color: "#69C5FD", fontWeight: 700, marginBottom: 4 }}>{T.kyc.approved}</div>
+                  <div style={{ color: "#9CCFEA", fontWeight: 700, marginBottom: 4 }}>{T.kyc.approved}</div>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{T.kyc.approvedSub}</div>
                 </div>
               </div>
@@ -1383,9 +1395,9 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {kycStatus === "pending" && (
               <div style={{ backgroundColor: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 12, padding: "20px 24px", display: "flex", alignItems: "center", gap: 12 }}>
-                <Clock size={20} color="#69C5FD" />
+                <Clock size={20} color="#9CCFEA" />
                 <div>
-                  <div style={{ color: "#69C5FD", fontWeight: 700, marginBottom: 4 }}>{T.kyc.pending}</div>
+                  <div style={{ color: "#9CCFEA", fontWeight: 700, marginBottom: 4 }}>{T.kyc.pending}</div>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{T.kyc.pendingSub}</div>
                 </div>
               </div>
@@ -1408,7 +1420,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   <div style={{ display: "flex", gap: 10 }}>
                     {([["card", T.kyc.idCard], ["passport", T.kyc.passport]] as const).map(([val, label]) => (
                       <button key={val} onClick={() => { setKycIdType(val); if (val === "passport") setKycFiles(f => ({ ...f, id_back: null })); }}
-                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #69C5FD" : "1px solid rgba(255,255,255,0.1)", backgroundColor: kycIdType === val ? "rgba(105, 197, 253,0.12)" : "rgba(255,255,255,0.06)", color: kycIdType === val ? "#69C5FD" : "rgba(255,255,255,0.45)", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
+                        style={{ flex: 1, padding: "12px 16px", borderRadius: 10, border: kycIdType === val ? "2px solid #9CCFEA" : "1px solid rgba(255,255,255,0.1)", backgroundColor: kycIdType === val ? "rgba(156,207,234,0.12)" : "rgba(255,255,255,0.06)", color: kycIdType === val ? "#9CCFEA" : "rgba(255,255,255,0.45)", fontSize: 13, fontWeight: kycIdType === val ? 700 : 400, cursor: "pointer" }}>
                         {label}
                       </button>
                     ))}
@@ -1426,11 +1438,11 @@ export default function DashboardClient({ user }: { user: User }) {
                       {field.label} {field.required && <span style={{ color: "#ef4444" }}>*</span>}
                     </div>
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, marginBottom: 10 }}>{field.hint}</div>
-                    <label style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", backgroundColor: "rgba(255,255,255,0.06)", border: `1px dashed ${kycFiles[field.key] ? "#69C5FD" : "#2a2a2a"}`, borderRadius: 10, cursor: "pointer" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 18px", backgroundColor: "rgba(255,255,255,0.06)", border: `1px dashed ${kycFiles[field.key] ? "#9CCFEA" : "#2a2a2a"}`, borderRadius: 10, cursor: "pointer" }}>
                       <input type="file" accept="image/*,.pdf" style={{ display: "none" }}
                         onChange={e => setKycFiles(f => ({ ...f, [field.key]: e.target.files?.[0] || null }))} />
-                      <Upload size={16} color={kycFiles[field.key] ? "#69C5FD" : "#444"} />
-                      <span style={{ color: kycFiles[field.key] ? "#69C5FD" : "rgba(255,255,255,0.45)", fontSize: 13, flex: 1 }}>
+                      <Upload size={16} color={kycFiles[field.key] ? "#9CCFEA" : "#444"} />
+                      <span style={{ color: kycFiles[field.key] ? "#9CCFEA" : "rgba(255,255,255,0.45)", fontSize: 13, flex: 1 }}>
                         {kycFiles[field.key] ? (kycFiles[field.key] as File).name : T.kyc.selectFile}
                       </span>
                     </label>
@@ -1454,7 +1466,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
             {kycSubmitSuccess && (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={48} color="#69C5FD" /></div>
+                <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><CheckCircle size={48} color="#9CCFEA" /></div>
                 <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{T.kyc.successTitle}</div>
                 <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.kyc.successSub}</div>
               </div>
@@ -1465,8 +1477,16 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Certificates Tab */}
         {activeTab === "certificates" && (
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.certificates}</h1>
+            <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.certificates}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.certSub}</p>
+            {activeChallenges.length > 1 && (
+              <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(156,207,234,.25)", borderRadius: 12, background: "rgba(156,207,234,.055)" }}>
+                <span style={{ color: "#9CCFEA", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{isFr ? "COMPTE" : "ACCOUNT"}</span>
+                <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
+                  {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "REWARD ACCOUNT" : "CHALLENGER"}</option>)}
+                </select>
+              </label>
+            )}
 
             {(() => {
               const firstName = profileFirstName || challenge?.client_first_name || "";
@@ -1474,9 +1494,6 @@ export default function DashboardClient({ user }: { user: User }) {
               const name = firstName || lastName ? `${firstName} ${lastName}`.trim() : (user.email?.split("@")[0] || "Trader");
               const challengeDate = challenge ? new Date(challenge.created_at).toLocaleDateString("fr-FR") : new Date().toLocaleDateString("fr-FR");
 
-              const phase = challenge?.phase || "phase1";
-              const unlockedPhase1 = phase === "phase2" || phase === "funded";
-              const unlockedChallenge = phase === "funded";
               const paidPayouts = allPayouts.filter(p => p.status === "paid");
               const unlockedReward = paidPayouts.length > 0;
               const certificateFor = (certificateType: CertificateSummary["certificate_type"], payoutId?: string) =>
@@ -1486,30 +1503,23 @@ export default function DashboardClient({ user }: { user: User }) {
                 );
               const phase1Certificate = certificateFor("phase1");
               const phase2Certificate = certificateFor("phase2");
+              const validationCertificate = phase2Certificate ?? phase1Certificate;
+              const challengeValidated = challenge?.status === "passed" || challenge?.status === "funded" || challenge?.phase === "funded" || challenge?.phase === "phase2";
               const issuedDate = (cert?: CertificateSummary) =>
                 cert ? new Date(`${cert.issued_at}T00:00:00`).toLocaleDateString("fr-FR") : challengeDate;
 
               const baseCerts = [
                 {
-                  type: "phase1", label: "Phase 1", btnColor: "#69C5FD",
-                  title: "Phase 1", topLabel: "Traders Rewards — Certification",
-                  unlocked: unlockedPhase1,
+                  type: validationCertificate?.certificate_type ?? "phase2", label: "Challenge", btnColor: "#9CCFEA",
+                  title: isFr ? "CHALLENGE VALIDÉ" : "CHALLENGE PASSED", topLabel: "Traders Rewards — Certification",
+                  unlocked: challengeValidated,
                   amount: challenge?.account_size || "$100,000",
-                  date: issuedDate(phase1Certificate),
-                  token: phase1Certificate?.public_token,
-                  key: "phase1",
-                },
-                {
-                  type: "challenge", label: "Phase 2", btnColor: "#69C5FD",
-                  title: "Phase 2", topLabel: "Traders Rewards — Certification",
-                  unlocked: unlockedChallenge,
-                  amount: challenge?.account_size || "$100,000",
-                  date: issuedDate(phase2Certificate),
-                  token: phase2Certificate?.public_token,
+                  date: issuedDate(validationCertificate),
+                  token: validationCertificate?.public_token,
                   key: "challenge",
                 },
                 ...(!unlockedReward ? [{
-                  type: "reward", label: "Reward", btnColor: "#69C5FD",
+                  type: "reward", label: "Reward", btnColor: "#9CCFEA",
                   title: "REWARD", topLabel: "Traders Rewards — Versement",
                   unlocked: false,
                   amount: "$0",
@@ -1521,8 +1531,8 @@ export default function DashboardClient({ user }: { user: User }) {
 
               return (
                 <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-                  {/* Phase 1 + Challenge */}
-                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
+                  {/* Validation du Challenge + premier jalon Reward */}
+                  <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(2, minmax(0, 1fr))", gap: 20, maxWidth: 820 }}>
                     {baseCerts.map((cert) => {
                       const href = `/certificate?type=${cert.type}&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(cert.amount)}&date=${encodeURIComponent(cert.date)}${cert.token ? `&token=${encodeURIComponent(cert.token)}` : ""}`;
                       return (
@@ -1531,14 +1541,14 @@ export default function DashboardClient({ user }: { user: User }) {
                             {/* Mini preview new design */}
                             <div style={{ background: "#0e0e0e", border: "1px solid #222", padding: "16px 20px 14px", aspectRatio: "680/520", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
                               <svg style={{ position: "absolute", top: 0, right: 0, width: 70, height: 70 }} viewBox="0 0 160 160" fill="none">
-                                <polygon points="160,0 160,160 0,0" fill="#69C5FD08"/>
-                                <polygon points="160,0 160,100 60,0" fill="#69C5FD18"/>
-                                <polygon points="160,0 160,55 105,0" fill="#69C5FD30"/>
+                                <polygon points="160,0 160,160 0,0" fill="#9CCFEA08"/>
+                                <polygon points="160,0 160,100 60,0" fill="#9CCFEA18"/>
+                                <polygon points="160,0 160,55 105,0" fill="#9CCFEA30"/>
                               </svg>
-                              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#69C5FD", marginBottom: 3 }}>{cert.topLabel}</div>
+                              <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#9CCFEA", marginBottom: 3 }}>{cert.topLabel}</div>
                               <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1, textTransform: "uppercase" }}>{cert.title}</div>
-                              <div style={{ height: 1, background: "linear-gradient(to right, #69C5FD40, #69C5FD, #69C5FD40)", margin: "10px 0 8px" }} />
-                              <div style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD", marginBottom: 4 }}>{name}</div>
+                              <div style={{ height: 1, background: "linear-gradient(to right, #9CCFEA40, #9CCFEA, #9CCFEA40)", margin: "10px 0 8px" }} />
+                              <div style={{ fontSize: 13, fontWeight: 700, color: "#9CCFEA", marginBottom: 4 }}>{name}</div>
                               <div style={{ fontSize: 8, color: "#555", lineHeight: 1.5, flex: 1 }}>
                                 {cert.type === "reward" ? "Certificat de versement de récompense de trading accordée par Traders Rewards." : "Certificat de validation de challenge de trading — Traders Rewards."}
                               </div>
@@ -1571,7 +1581,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {/* Certificats Récompense — un par payout approuvé */}
                   {paidPayouts.length > 0 && (
                     <div>
-                      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#69C5FD" }}>
+                      <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#9CCFEA" }}>
                         {isFr ? "Mes Récompenses" : "My Rewards"}
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
@@ -1588,14 +1598,14 @@ export default function DashboardClient({ user }: { user: User }) {
                               <div style={{ borderRadius: 10, overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
                                 <div style={{ background: "#0e0e0e", border: "1px solid #222", padding: "16px 20px 14px", aspectRatio: "680/520", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
                                   <svg style={{ position: "absolute", top: 0, right: 0, width: 70, height: 70 }} viewBox="0 0 160 160" fill="none">
-                                    <polygon points="160,0 160,160 0,0" fill="#69C5FD08"/>
-                                    <polygon points="160,0 160,100 60,0" fill="#69C5FD18"/>
-                                    <polygon points="160,0 160,55 105,0" fill="#69C5FD30"/>
+                                    <polygon points="160,0 160,160 0,0" fill="#9CCFEA08"/>
+                                    <polygon points="160,0 160,100 60,0" fill="#9CCFEA18"/>
+                                    <polygon points="160,0 160,55 105,0" fill="#9CCFEA30"/>
                                   </svg>
-                                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#69C5FD", marginBottom: 3 }}>Traders Rewards — Versement</div>
+                                  <div style={{ fontSize: 8, fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: "#9CCFEA", marginBottom: 3 }}>Traders Rewards — Versement</div>
                                   <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>REWARD</div>
-                                  <div style={{ height: 1, background: "linear-gradient(to right, #69C5FD40, #69C5FD, #69C5FD40)", margin: "10px 0 8px" }} />
-                                  <div style={{ fontSize: 13, fontWeight: 700, color: "#69C5FD", marginBottom: 4 }}>{name}</div>
+                                  <div style={{ height: 1, background: "linear-gradient(to right, #9CCFEA40, #9CCFEA, #9CCFEA40)", margin: "10px 0 8px" }} />
+                                  <div style={{ fontSize: 13, fontWeight: 700, color: "#9CCFEA", marginBottom: 4 }}>{name}</div>
                                   <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{amt}</div>
                                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "auto" }}>
                                     <div style={{ fontSize: 9, fontWeight: 700, color: "#fff" }}>{dt}</div>
@@ -1603,7 +1613,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   </div>
                                 </div>
                               </div>
-                              <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: "#69C5FD", color: "#000" }}>
+                              <a href={href} target="_blank" style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, fontSize: 13, fontWeight: 700, textDecoration: "none", backgroundColor: "#9CCFEA", color: "#000" }}>
                                 {T.dash.openCert} Récompense →
                               </a>
                             </div>
@@ -1623,54 +1633,51 @@ export default function DashboardClient({ user }: { user: User }) {
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 32 }}>
               <div>
-                <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.challenges}</h1>
+                <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.challenges}</h1>
                 <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.dash.challengesSub}</p>
               </div>
               <div className="dash-new-challenges">
-                <Link href="/#pricing" className="dash-trader-btn">
-                  <span className="dash-trader-label">+ Nouveau</span>
-                  <span className="dash-trader-badge">TRADER</span>
+                <Link href="/#pricing" className="dash-trader-btn" style={{
+                  position: "relative", overflow: "hidden", padding: "10px 13px", borderRadius: 10,
+                  border: "1px solid rgba(255,255,255,.82)",
+                  background: "linear-gradient(115deg,#5f8ca4 0%,#d5f1ff 18%,#8fc4df 34%,#ecf9ff 48%,#74a9c4 62%,#c4e9fa 78%,#5f8ca4 100%)",
+                  boxShadow: "inset 0 1px rgba(255,255,255,.92), inset 0 -1px rgba(24,61,80,.3), 0 8px 30px rgba(156,207,234,.1)",
+                }}>
+                  <span className="dash-trader-shine" aria-hidden="true" />
+                  <span className="dash-trader-label">+ Nouveau challenge</span>
                 </Link>
-                {/* ALGO masqué */}
               </div>
             </div>
-            {/* Total cumulé */}
+            {/* Limites de comptes actifs — aucune limite de capital cumulé */}
             {activeChallenges.length > 0 && (() => {
-              const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
-              const traderChallenges = activeChallenges.filter(c => c.model !== "vip");
-              const algoChallenges   = activeChallenges.filter(c => c.model === "vip");
-              const traderTotal = traderChallenges.reduce((s, c) => s + (sizeMap[c.account_size] || 0), 0);
-              const algoTotal   = algoChallenges.reduce((s, c)   => s + (sizeMap[c.account_size] || 0), 0);
-              const pct = Math.min(100, (traderTotal / 200000) * 100);
-              const color = pct >= 100 ? "#ef4444" : pct >= 75 ? "#f59e0b" : "#69C5FD";
+              const challengeCount = activeChallenges.filter(c => c.status === "active" && c.phase !== "funded").length;
+              const rewardCount = activeChallenges.filter(c => c.status === "funded" || c.phase === "funded").length;
+              const counters = [
+                { label: isFr ? "Challenges actifs" : "Active Challenges", value: challengeCount, max: 10 },
+                { label: isFr ? "Reward Accounts actifs" : "Active Reward Accounts", value: rewardCount, max: 5 },
+              ];
               return (
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
-                  {traderChallenges.length > 0 && (
-                    <div className="card" style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 16 }}>
-                      <div style={{ flex: 1 }}>
+                <div className="card" style={{ padding: "14px 20px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 22, marginBottom: 16 }}>
+                  {counters.map(counter => {
+                    const pct = Math.min(100, counter.value / counter.max * 100);
+                    const color = pct >= 100 ? "#ef4444" : pct >= 80 ? "#f59e0b" : "#9CCFEA";
+                    return <div key={counter.label}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                          <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital Trader actif" : "Active Trader capital"}</span>
-                          <span style={{ fontWeight: 900, fontSize: 14, color }}>${traderTotal.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>/ $200,000</span></span>
+                          <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{counter.label}</span>
+                          <span style={{ fontWeight: 900, fontSize: 14, color }}>{counter.value} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>/ {counter.max}</span></span>
                         </div>
                         <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 100, height: 6, overflow: "hidden" }}>
                           <div style={{ width: `${pct}%`, height: "100%", background: color, borderRadius: 100, transition: "width 0.5s" }} />
                         </div>
-                      </div>
-                    </div>
-                  )}
-                  {algoChallenges.length > 0 && (
-                    <div className="card" style={{ padding: "14px 20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                      <span style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 700 }}>{isFr ? "Capital ALGO actif" : "Active ALGO capital"}</span>
-                      <span style={{ fontWeight: 900, fontSize: 14, color: "#69C5FD" }}>${algoTotal.toLocaleString()} <span style={{ color: "rgba(255,255,255,0.45)", fontWeight: 400, fontSize: 12 }}>{isFr ? "/ Illimité" : "/ Unlimited"}</span></span>
-                    </div>
-                  )}
+                      </div>;
+                  })}
                 </div>
               );
             })()}
 
             {activeChallenges.length === 0 ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
-                <Trophy size={48} color="#69C5FD" style={{ marginBottom: 16, opacity: 0.5 }} />
+                <Trophy size={48} color="#9CCFEA" style={{ marginBottom: 16, opacity: 0.5 }} />
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.noChallenge}</div>
                 <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.dash.noChallengeSub}</div>
               </div>
@@ -1682,18 +1689,17 @@ export default function DashboardClient({ user }: { user: User }) {
                   const isSelected = challenge?.id === c.id;
                   return (
                     <div key={c.id} onClick={() => { setChallenge(c); setActiveTab("dashboard"); }}
-                      className="card" style={{ padding: 24, cursor: "pointer", border: isSelected ? "1.5px solid #69C5FD" : "1.5px solid rgba(255,255,255,0.07)", transition: "border 0.2s" }}>
+                      className="card" style={{ padding: 24, cursor: "pointer", border: isSelected ? "1.5px solid #9CCFEA" : "1.5px solid rgba(255,255,255,0.07)", transition: "border 0.2s" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div>
-                          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.model === "vip" ? "Challenge ALGO" : c.model === "2step" ? "Challenge Trader 2-Step" : "Challenge Trader 1-Step"}</div>
+                          <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — Challenge</div>
                           <div style={{ display: "flex", gap: 8 }}>
-                            <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(105, 197, 253,0.12)", color: c.phase === "funded" ? "#69C5FD" : "#69C5FD", fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.phase === "funded" && <Trophy size={11} />}{PHASE_LABELS[c.phase] || c.phase}</span>
                             <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status === "funded" ? "Active" : STATUS_LABELS[c.status] || c.status}</span>
                           </div>
                         </div>
                         <div style={{ textAlign: "right" }}>
                           <div style={{ fontSize: 22, fontWeight: 800 }}>${c.balance.toLocaleString()}</div>
-                          <div style={{ color: Number(profitPct) >= 0 ? "#69C5FD" : "#ef4444", fontSize: 13, fontWeight: 700 }}>
+                          <div style={{ color: Number(profitPct) >= 0 ? "#9CCFEA" : "#ef4444", fontSize: 13, fontWeight: 700 }}>
                             {Number(profitPct) >= 0 ? "+" : ""}{profitPct}%
                           </div>
                         </div>
@@ -1731,12 +1737,12 @@ export default function DashboardClient({ user }: { user: User }) {
         {/* Dashboard Tab */}
         {(activeTab === "dashboard") && loading ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh" }}>
-            <div style={{ color: "#69C5FD", fontSize: 16 }}>Loading...</div>
+            <div style={{ color: "#9CCFEA", fontSize: 16 }}>Loading...</div>
           </div>
         ) : (activeTab === "dashboard") && !challenge ? (
           /* No challenge yet */
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "60vh", textAlign: "center" }}>
-            <Trophy size={64} color="#69C5FD" style={{ marginBottom: 24, opacity: 0.5 }} />
+            <Trophy size={64} color="#9CCFEA" style={{ marginBottom: 24, opacity: 0.5 }} />
             <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{T.dash.noChallengeTitle}</h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
             <div className="dash-new-challenges">
@@ -1751,12 +1757,12 @@ export default function DashboardClient({ user }: { user: User }) {
           <TraderCockpit
             challenge={challenge}
             activeChallenges={activeChallenges}
-            allChallengesCount={allChallenges.length}
             tradeHistory={tradeHistory}
             tradeHistoryLoading={tradeHistoryLoading}
             isFr={isFr}
             isMobile={isMobile}
             kycStatus={kycStatus}
+            approvedRewardsCount={allPayouts.filter(p => p.challenge_id === challenge.id && p.status === "paid").length}
             onSelectChallenge={selected => setChallenge(selected as Challenge)}
             onNavigate={tab => setActiveTab(tab)}
             onRefresh={handleRefresh}

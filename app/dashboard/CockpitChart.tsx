@@ -12,7 +12,7 @@ export type CockpitTrade = {
   date: Date | null;
 };
 
-const BLUE = "#69C5FD";
+const BLUE = "#9CCFEA";
 const GREEN = "#22c55e";
 const RED = "#ef4444";
 

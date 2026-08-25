@@ -45,7 +45,7 @@ export function getSyncFreshness(
       label:   "Sync pending",
       labelFr: "Synchronisation en attente",
       isStale: false,
-      color:   "#69C5FD",
+      color:   "#9CCFEA",
     };
   }
 
@@ -71,7 +71,7 @@ export function getSyncFreshness(
       label:   `Last sync: ${m} min`,
       labelFr: `Dernière synchronisation : ${m} min`,
       isStale: false,
-      color:   "#69C5FD",
+      color:   "#9CCFEA",
     };
   }
 

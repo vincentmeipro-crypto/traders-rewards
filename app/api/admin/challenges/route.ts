@@ -124,6 +124,20 @@ export async function POST(req: NextRequest) {
   const firstName = formFirstName || user.user_metadata?.first_name || "Trader";
   const lastName = formLastName || user.user_metadata?.last_name || "";
 
+  const { count: existingCount } = await admin
+    .from("challenges")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("status", isReward ? "funded" : "active")
+    .eq("phase", isReward ? "funded" : "phase1");
+  const accountLimit = isReward ? 5 : 10;
+  if ((existingCount ?? 0) >= accountLimit) {
+    return NextResponse.json(
+      { error: isReward ? "Limite de 5 Reward Accounts actifs atteinte." : "Limite de 10 Challenges actifs atteinte." },
+      { status: 409 },
+    );
+  }
+
   // Toujours générer un lien de création/reset de mot de passe (nouveau ET existant)
   let setupLink: string | undefined;
   try {
@@ -217,6 +231,19 @@ export async function PATCH(req: NextRequest) {
   const admin = createAdminClient();
 
   const { data: current } = await admin.from("challenges").select("*").eq("id", id).single();
+
+  if (updates.phase === "funded" && current?.phase !== "funded") {
+    const { count } = await admin
+      .from("challenges")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", current.user_id)
+      .eq("status", "funded")
+      .eq("phase", "funded")
+      .neq("id", id);
+    if ((count ?? 0) >= 5) {
+      return NextResponse.json({ error: "Limite de 5 Reward Accounts actifs atteinte." }, { status: 409 });
+    }
+  }
 
   // Auto-increment trading_days if balance changed — once per calendar day only
   // (skipped if admin explicitly provided a trading_days value)

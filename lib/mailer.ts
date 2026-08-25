@@ -322,7 +322,7 @@ export async function sendChallengeCertificateEmail(
 export async function sendRewardCertificateEmail(
   to: string, firstName: string, lastName: string, accountSize: string,
   grossAmount: number, model: string, date: string, netAmountEur?: number,
-  opts?: { userId?: string; challengeId?: string; publicToken?: string },
+  opts?: { userId?: string; challengeId?: string; publicToken?: string; splitPct?: number },
 ) {
   const [branding, splits] = await Promise.all([
     getBrandingConfig(),
@@ -330,7 +330,7 @@ export async function sendRewardCertificateEmail(
   ]);
   const { siteUrl, logoUrl } = branding;
   const is1Step = model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
-  const splitPct = is1Step ? splits.split1step : splits.split2step;
+  const splitPct = opts?.splitPct ?? (is1Step ? splits.split1step : splits.split2step);
   const { subject, html } = buildRewardCertificateEmail({
     firstName, lastName, accountSize, grossAmount, date, netAmountEur, splitPct, siteUrl, logoUrl,
     publicToken: opts?.publicToken,
@@ -483,6 +483,53 @@ export async function sendNewSupportTicketAdminNotification(params: {
     html,
     userId,
     eventKey,
+  });
+}
+
+// ── sendSupportReplyEmail ─────────────────────────────────────
+// Envoi systématique d'une réponse Support par email.
+// Un trader connecté reçoit également la réponse dans son Dashboard ;
+// un prospect (ticket sans user_id) reçoit uniquement cet email.
+export async function sendSupportReplyEmail(params: {
+  ticketId: string;
+  messageId: string;
+  to: string;
+  firstName: string;
+  subject: string;
+  message: string;
+  userId?: string;
+}): Promise<{ success: boolean; resendId: string | null; error?: string }> {
+  const { ticketId, messageId, to, firstName, subject, message, userId } = params;
+  const { siteUrl } = await getBrandingConfig();
+  const esc = (s: string) => s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+  const messageHtml = esc(message).replace(/\n/g, "<br/>");
+  const dashboardBlock = userId
+    ? `<a href="${siteUrl}/dashboard" style="display:inline-block;background:#9CCFEA;color:#02070b;text-decoration:none;padding:12px 22px;border-radius:9px;font-weight:800;font-size:14px;">Voir et répondre dans mon Dashboard →</a>`
+    : `<p style="color:#666;font-size:13px;line-height:1.6;margin:22px 0 0;">Vous pouvez répondre directement à cet e-mail si vous avez besoin d'aide complémentaire.</p>`;
+  const html = `
+<div style="background:#050505;font-family:Helvetica,Arial,sans-serif;padding:32px 16px;">
+  <div style="max-width:580px;margin:0 auto;background:#111518;border:1px solid #29323a;border-radius:14px;padding:32px 28px;color:#fff;">
+    <div style="color:#9CCFEA;font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:12px;">TRADERS REWARDS · SUPPORT</div>
+    <h2 style="font-size:21px;margin:0 0 10px;">Bonjour ${esc(firstName || "")},</h2>
+    <p style="color:#a8afb5;font-size:14px;line-height:1.6;margin:0 0 22px;">Notre équipe a répondu à votre demande « ${esc(subject)} ».</p>
+    <div style="background:#090b0d;border-left:3px solid #9CCFEA;border-radius:8px;padding:18px;color:#eef2f4;font-size:14px;line-height:1.7;margin-bottom:24px;">${messageHtml}</div>
+    ${dashboardBlock}
+    <p style="color:#596169;font-size:11px;margin:28px 0 0;padding-top:16px;border-top:1px solid #252b30;">Ticket ${esc(ticketId)} · Traders Rewards</p>
+  </div>
+</div>`;
+
+  return _loggedSend({
+    type: "support_reply",
+    to,
+    subject: `Réponse du Support — ${subject}`,
+    html,
+    userId,
+    eventKey: `support_reply:${messageId}`,
   });
 }
 

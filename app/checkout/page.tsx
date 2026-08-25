@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Bitcoin, Check, ChevronRight, CreditCard, LockKeyhole, ShieldCheck, Sparkles, X } from "lucide-react";
 
 type ModelKey = "2step" | "1step";
-type Challenge = { label: string; model: "2-Step" | "1-Step"; price: string; amount: number };
+type Challenge = { label: string; model: "Challenge"; price: string; amount: number };
 type CheckoutProduct = Challenge & { slug: string; sizeKey: string; modelKey: ModelKey };
 type PublicProduct = {
   slug: string;
@@ -17,37 +17,18 @@ type PublicProduct = {
 };
 
 const CHALLENGES: Record<string, Challenge> = {
-  "10k-2step":  { label: "$10,000",  model: "2-Step", price: "€89",  amount: 8900   },
-  "25k-2step":  { label: "$25,000",  model: "2-Step", price: "€199", amount: 19900  },
-  "50k-2step":  { label: "$50,000",  model: "2-Step", price: "€299", amount: 29900  },
-  "100k-2step": { label: "$100,000", model: "2-Step", price: "€439", amount: 43900  },
-  "200k-2step": { label: "$200,000", model: "2-Step", price: "€799", amount: 79900  },
-  "10k-1step":  { label: "$10,000",  model: "1-Step", price: "€79",  amount: 7900   },
-  "25k-1step":  { label: "$25,000",  model: "1-Step", price: "€169", amount: 16900  },
-  "50k-1step":  { label: "$50,000",  model: "1-Step", price: "€249", amount: 24900  },
-  "100k-1step": { label: "$100,000", model: "1-Step", price: "€429", amount: 42900  },
-  "200k-1step": { label: "$200,000", model: "1-Step", price: "€749", amount: 74900  },
+  "rewards-25k":  { label: "$25,000",  model: "Challenge", price: "€19", amount: 1900 },
+  "rewards-50k":  { label: "$50,000",  model: "Challenge", price: "€29", amount: 2900 },
+  "rewards-100k": { label: "$100,000", model: "Challenge", price: "€59", amount: 5900 },
 };
 
-const RULES_2STEP = [
-  { label: "Objectif Phase 1",       value: "10%" },
-  { label: "Objectif Phase 2",       value: "5%"  },
-  { label: "Perte journalière max",  value: "5%"  },
-  { label: "Perte totale max",       value: "10%" },
-  { label: "Jours de trading min",   value: "5 jours" },
-  { label: "Limite de temps",        value: "Illimitée" },
-  { label: "Partage des profits",    value: "Jusqu'à 80%" },
-];
-
-const RULES_1STEP = [
-  { label: "Objectif de profit",          value: "10%" },
-  { label: "Perte journalière max",        value: "3%" },
-  { label: "Perte totale max",            value: "10%" },
-  { label: "Règle meilleur jour",         value: "≤ 50%" },
-  { label: "Jours de trading min",        value: "5 jours" },
-  { label: "Limite de temps",             value: "Illimitée" },
-  { label: "Partage des profits",         value: "Jusqu'à 90%" },
-  { label: "Cumul comptes max",           value: "$200K" },
+const rulesFor = (sizeKey: string) => [
+  { label: "Étapes", value: "1" },
+  { label: "Objectif de profit", value: "+6%" },
+  { label: "Trailing Drawdown EOD", value: sizeKey === "100k" ? "3%" : "4%" },
+  { label: "Consistance", value: "≤ 50%" },
+  { label: "Jours de trading minimum", value: "2 jours" },
+  { label: "Durée maximale", value: "30 jours calendaires" },
 ];
 
 const DIAL_CODES = [
@@ -64,12 +45,11 @@ const FALLBACK_PRODUCTS: CheckoutProduct[] = Object.entries(CHALLENGES).map(([sl
   ...challenge,
   slug,
   sizeKey: slug.split("-")[0],
-  modelKey: slug.endsWith("2step") ? "2step" : "1step",
+  modelKey: "1step",
 }));
 
-const SIZES = ["10k", "25k", "50k", "100k", "200k"];
-const SIZE_LABELS: Record<string, string> = { "10k": "$10K", "25k": "$25K", "50k": "$50K", "100k": "$100K", "200k": "$200K" };
-const LOYALTY_PCT = 20;
+const SIZES = ["25k", "50k", "100k"];
+const SIZE_LABELS: Record<string, string> = { "25k": "$25K", "50k": "$50K", "100k": "$100K" };
 
 function EyeOpen() {
   return <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
@@ -86,21 +66,16 @@ function formatPrice(cents: number) {
 function CheckoutContent() {
   const params = useSearchParams();
   const router = useRouter();
-  const [selectedProduct, setSelectedProduct] = useState(params.get("product") || "50k-2step");
+  const requestedProduct = params.get("product");
+  const [selectedProduct, setSelectedProduct] = useState(requestedProduct?.startsWith("rewards-") ? requestedProduct : "rewards-50k");
   const [availableProducts, setAvailableProducts] = useState<CheckoutProduct[]>(FALLBACK_PRODUCTS);
   const challenge = availableProducts.find(product => product.slug === selectedProduct)
     ?? FALLBACK_PRODUCTS.find(product => product.slug === selectedProduct)
-    ?? FALLBACK_PRODUCTS.find(product => product.slug === "50k-2step")!;
-  const selectedModel = challenge.modelKey;
+    ?? FALLBACK_PRODUCTS.find(product => product.slug === "rewards-50k")!;
   const selectedSize  = challenge.sizeKey;
-  const rules = challenge.model === "2-Step" ? RULES_2STEP : RULES_1STEP;
-
-  const changeModel = (model: ModelKey) => {
-    const product = availableProducts.find(item => item.sizeKey === selectedSize && item.modelKey === model);
-    if (product) setSelectedProduct(product.slug);
-  };
+  const rules = rulesFor(selectedSize);
   const changeSize = (size: string) => {
-    const product = availableProducts.find(item => item.sizeKey === size && item.modelKey === selectedModel);
+    const product = availableProducts.find(item => item.sizeKey === size);
     if (product) setSelectedProduct(product.slug);
   };
 
@@ -130,13 +105,13 @@ function CheckoutContent() {
   const [promoError, setPromoError] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [discount, setDiscount] = useState(0);
-  const [loyaltyActive, setLoyaltyActive] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [refCode, setRefCode] = useState("");
 
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
   const isAdult = birthDate ? (() => { const b = new Date(birthDate); const min = new Date(); min.setFullYear(min.getFullYear() - 18); return b <= min; })() : false;
   const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
+  const totalAmount = discountedAmount;
   const isFree = discount === 100;
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && city.trim() && country.trim() && isAdult && (user || (password.length >= 8 && password === confirmPassword));
   const canPay = !!profileComplete && agreedToTerms;
@@ -156,13 +131,13 @@ function CheckoutContent() {
       .then((data: PublicProduct[]) => {
         if (!Array.isArray(data)) return;
         const products = data
-          .filter(product => product.slug && product.balance_usd && product.price_eur_cents)
+          .filter(product => product.slug?.startsWith("rewards-") && [25000, 50000, 100000].includes(product.balance_usd) && product.price_eur_cents)
           .map<CheckoutProduct>(product => ({
             slug: product.slug,
             sizeKey: `${Math.round(product.balance_usd / 1000)}k`,
             modelKey: product.model,
             label: `$${product.balance_usd.toLocaleString("en-US")}`,
-            model: product.model === "2step" ? "2-Step" : "1-Step",
+            model: "Challenge",
             price: formatPrice(product.price_eur_cents),
             amount: product.price_eur_cents,
           }));
@@ -173,7 +148,7 @@ function CheckoutContent() {
           if (products.some(product => product.slug === current)) return current;
           const fallback = FALLBACK_PRODUCTS.find(product => product.slug === current);
           const matchingProduct = fallback
-            ? products.find(product => product.sizeKey === fallback.sizeKey && product.modelKey === fallback.modelKey)
+            ? products.find(product => product.sizeKey === fallback.sizeKey)
             : undefined;
           return matchingProduct?.slug ?? current;
         });
@@ -202,8 +177,6 @@ function CheckoutContent() {
             if (match) { setDialCode(match[1]); setPhone(match[2]); }
           }
         }
-        const { count } = await supabase.from("challenges").select("id", { count: "exact", head: true }).eq("user_id", session.user.id);
-        if (count && count >= 1) { setLoyaltyActive(true); setDiscount(LOYALTY_PCT); }
       }
     });
   }, []);
@@ -222,14 +195,13 @@ function CheckoutContent() {
     const res = await fetch("/api/promo/validate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: promoInput }) });
     const data = await res.json();
     if (res.ok && data.discount) {
-      const best = loyaltyActive ? Math.max(data.discount, LOYALTY_PCT) : data.discount;
-      setDiscount(best); setAppliedCode(data.code); setPromoStatus("valid");
+      setDiscount(data.discount); setAppliedCode(data.code); setPromoStatus("valid");
     } else { setPromoStatus("error"); setPromoError(data.error || "Code invalide"); }
   };
 
   const removePromo = () => {
     setPromoInput(""); setAppliedCode(""); setPromoStatus("idle"); setPromoError("");
-    setDiscount(loyaltyActive ? LOYALTY_PCT : 0);
+    setDiscount(0);
   };
 
   const createAccountAndGetUser = async () => {
@@ -310,12 +282,12 @@ function CheckoutContent() {
         .co-page::before {
           content: ""; position: fixed; z-index: -1; inset: 0; pointer-events: none;
           background:
-            radial-gradient(circle at 76% 9%, rgba(105,197,253,0.13), transparent 26%),
-            radial-gradient(circle at 8% 44%, rgba(105,197,253,0.055), transparent 22%),
+            radial-gradient(circle at 76% 9%, rgba(156,207,234,0.13), transparent 26%),
+            radial-gradient(circle at 8% 44%, rgba(156,207,234,0.055), transparent 22%),
             linear-gradient(180deg, #020304 0%, #000 42%);
         }
         .co-input { transition: border-color .2s ease, box-shadow .2s ease, background .2s ease; }
-        .co-input:focus { border-color: rgba(105,197,253,0.7) !important; box-shadow: 0 0 0 3px rgba(105,197,253,0.08); background: rgba(105,197,253,0.035) !important; }
+        .co-input:focus { border-color: rgba(156,207,234,0.7) !important; box-shadow: 0 0 0 3px rgba(156,207,234,0.08); background: rgba(156,207,234,0.035) !important; }
         .co-input::placeholder { color: rgba(255,255,255,.25); }
         .co-select option { background: #111; color: #fff; }
         .co-border { border-radius: 12px; display: block; }
@@ -323,16 +295,16 @@ function CheckoutContent() {
           display: flex; align-items: center; justify-content: center; gap: 10px;
           width: 100%; min-height: 54px; padding: 15px 18px; border-radius: 10px;
           font-size: 13px; font-weight: 900; letter-spacing: 1.1px; text-transform: uppercase;
-          background: #69C5FD; color: #020304; border: 1px solid #69C5FD; cursor: pointer;
-          box-shadow: 0 14px 34px rgba(105,197,253,.18);
+          background: #9CCFEA; color: #020304; border: 1px solid #9CCFEA; cursor: pointer;
+          box-shadow: 0 14px 34px rgba(156,207,234,.18);
           transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
         }
-        .co-border-btn:hover:not(:disabled) { transform: translateY(-1px); background: #8dd4ff; box-shadow: 0 18px 40px rgba(105,197,253,.25); }
-        .co-border-btn.crypto { background: rgba(105,197,253,.055); color: #fff; border-color: rgba(105,197,253,.36); box-shadow: none; }
-        .co-border-btn.crypto:hover:not(:disabled) { background: rgba(105,197,253,.11); border-color: #69C5FD; box-shadow: 0 14px 34px rgba(105,197,253,.10); }
+        .co-border-btn:hover:not(:disabled) { transform: translateY(-1px); background: #8dd4ff; box-shadow: 0 18px 40px rgba(156,207,234,.25); }
+        .co-border-btn.crypto { background: rgba(156,207,234,.055); color: #fff; border-color: rgba(156,207,234,.36); box-shadow: none; }
+        .co-border-btn.crypto:hover:not(:disabled) { background: rgba(156,207,234,.11); border-color: #9CCFEA; box-shadow: 0 14px 34px rgba(156,207,234,.10); }
         .co-border-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .co-summary { position: sticky; top: 24px; }
-        .co-step-line { height: 1px; flex: 1; max-width: 72px; background: linear-gradient(90deg, rgba(105,197,253,.55), rgba(255,255,255,.12)); }
+        .co-step-line { height: 1px; flex: 1; max-width: 72px; background: linear-gradient(90deg, rgba(156,207,234,.55), rgba(255,255,255,.12)); }
         @media (max-width: 767px) {
           .co-summary { position: static; }
           .co-step-line { max-width: 34px; }
@@ -348,16 +320,16 @@ function CheckoutContent() {
           <Image src="/logo-blanc-transparent.png" alt="Traders Rewards" width={176} height={112} priority style={{ width: isMobile ? 145 : 176, height: isMobile ? 92 : 112, objectFit: "contain" }} />
         </Link>
         <div style={{ color: "rgba(255,255,255,.5)", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 7, letterSpacing: ".05em", textTransform: "uppercase" }}>
-          <LockKeyhole size={14} color="#69C5FD" /> {!isMobile && "Paiement sécurisé"}
+          <LockKeyhole size={14} color="#9CCFEA" /> {!isMobile && "Paiement sécurisé"}
         </div>
       </div>
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "30px 18px 18px" : "50px 24px 10px", textAlign: "center" }}>
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "#69C5FD", fontSize: 10, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", marginBottom: 14 }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "#9CCFEA", fontSize: 10, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", marginBottom: 14 }}>
           <Sparkles size={13} /> Votre parcours commence ici
         </div>
         <h1 style={{ margin: 0, fontSize: isMobile ? 34 : 50, lineHeight: 1.02, letterSpacing: "-.04em", fontWeight: 900 }}>
-          Finalisez votre <span style={{ color: "#69C5FD" }}>Challenge</span>
+          Finalisez votre <span style={{ color: "#9CCFEA" }}>Challenge</span>
         </h1>
         <p style={{ margin: "12px auto 20px", maxWidth: 610, color: "rgba(255,255,255,.48)", fontSize: isMobile ? 13 : 15, lineHeight: 1.6 }}>
           Choisissez votre compte, renseignez vos informations et accédez à votre espace trader en quelques minutes.
@@ -366,7 +338,7 @@ function CheckoutContent() {
           {["Challenge", "Informations", "Paiement"].map((step, index) => (
             <div key={step} style={{ display: "contents" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7, color: index === 0 ? "#fff" : "rgba(255,255,255,.4)", fontSize: 10, fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" }}>
-                <span style={{ width: 22, height: 22, borderRadius: "50%", display: "grid", placeItems: "center", background: index === 0 ? "#69C5FD" : "rgba(255,255,255,.06)", border: `1px solid ${index === 0 ? "#69C5FD" : "rgba(255,255,255,.12)"}`, color: index === 0 ? "#000" : "rgba(255,255,255,.5)" }}>{index + 1}</span>
+                <span style={{ width: 22, height: 22, borderRadius: "50%", display: "grid", placeItems: "center", background: index === 0 ? "#9CCFEA" : "rgba(255,255,255,.06)", border: `1px solid ${index === 0 ? "#9CCFEA" : "rgba(255,255,255,.12)"}`, color: index === 0 ? "#000" : "rgba(255,255,255,.5)" }}>{index + 1}</span>
                 {!isMobile && step}
               </div>
               {index < 2 && <div className="co-step-line" />}
@@ -380,11 +352,11 @@ function CheckoutContent() {
         <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
           <Image src="/MT5.png" alt="MT5" width={36} height={36} style={{ width: 36, height: 36, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
           <div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "1px" }}>Challenge {challenge.model}</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "1px" }}>Challenge Traders Rewards</div>
             <div style={{ fontWeight: 700, fontSize: 14 }}>{challenge.label}</div>
           </div>
           <div style={{ marginLeft: "auto", fontSize: 22, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
-            {isFree ? "GRATUIT" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
+            {isFree ? "GRATUIT" : formatPrice(totalAmount)}
           </div>
         </div>
       )}
@@ -396,24 +368,14 @@ function CheckoutContent() {
         <div style={{ flex: 1, padding: isMobile ? "16px" : "0", display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Sélecteur challenge */}
-          <div style={{ ...card, borderColor: "rgba(105,197,253,.23)", boxShadow: "0 22px 70px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03)" }}>
+          <div style={{ ...card, borderColor: "rgba(156,207,234,.23)", boxShadow: "0 22px 70px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03)" }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Challenge</div>
-            <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-              {([{ key: "2step", label: "2-Step" }, { key: "1step", label: "1-Step" }] as const).map(m => (
-                <button key={m.key} onClick={() => changeModel(m.key)} style={{
-                  flex: 1, padding: "9px 6px", fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border: selectedModel === m.key ? "1.5px solid #69C5FD" : "1.5px solid rgba(255,255,255,0.1)",
-                  background: selectedModel === m.key ? "rgba(105,197,253,0.1)" : "#111",
-                  color: selectedModel === m.key ? "#69C5FD" : "rgba(255,255,255,0.5)",
-                }}>{m.label}</button>
-              ))}
-            </div>
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
               {SIZES.map(size => (
                 <button key={size} onClick={() => changeSize(size)} style={{
                   flex: 1, padding: "8px 4px", fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border: selectedSize === size ? "1.5px solid #69C5FD" : "1.5px solid rgba(255,255,255,0.1)",
-                  background: selectedSize === size ? "#69C5FD" : "#111",
+                  border: selectedSize === size ? "1.5px solid #9CCFEA" : "1.5px solid rgba(255,255,255,0.1)",
+                  background: selectedSize === size ? "#9CCFEA" : "#111",
                   color: selectedSize === size ? "#000" : "rgba(255,255,255,0.5)",
                 }}>{SIZE_LABELS[size]}</button>
               ))}
@@ -421,10 +383,10 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 16 }}>Challenge {challenge.label}</div>
-                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginTop: 2 }}>{challenge.model} — Traders Rewards · MetaTrader 5</div>
+                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginTop: 2 }}>1 étape · MetaTrader 5 · Compte simulé</div>
               </div>
-              <span style={{ background: "rgba(105,197,253,0.1)", color: "#69C5FD", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 6, border: "1px solid rgba(105,197,253,0.3)" }}>
-                {challenge.model}
+              <span style={{ background: "rgba(156,207,234,0.1)", color: "#9CCFEA", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 6, border: "1px solid rgba(156,207,234,0.3)" }}>
+                CHALLENGER
               </span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 0 : "0 24px" }}>
@@ -488,7 +450,7 @@ function CheckoutContent() {
 
             {!user && (
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 16 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "#69C5FD", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Créer votre compte</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "#9CCFEA", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Créer votre compte</div>
                 <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
                   <div>
                     <label style={lbl}>Mot de passe *</label>
@@ -527,18 +489,18 @@ function CheckoutContent() {
 
           {/* Résumé desktop */}
           {!isMobile && (
-            <div style={{ ...card, borderColor: "rgba(105,197,253,.24)", boxShadow: "0 24px 80px rgba(0,0,0,.42), 0 0 50px rgba(105,197,253,.045)" }}>
+            <div style={{ ...card, borderColor: "rgba(156,207,234,.24)", boxShadow: "0 24px 80px rgba(0,0,0,.42), 0 0 50px rgba(156,207,234,.045)" }}>
               <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Résumé</div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                 <Image src="/MT5.png" alt="MT5" width={40} height={40} style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 14 }}>Traders Rewards Challenge</div>
-                  <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12 }}>{challenge.label} — {challenge.model}</div>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>MetaTrader 5</div>
+                  <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12 }}>{challenge.label} — 1 étape</div>
                   <div style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, marginTop: 2 }}>Standard MT5 · 1:100 · USD</div>
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                {[{ label: "Challenge", value: challenge.model }, { label: "Plateforme", value: "MetaTrader 5" }, { label: "Capital simulé", value: challenge.label }].map((row, i) => (
+                {[{ label: "Parcours", value: "CHALLENGER" }, { label: "Plateforme", value: "MetaTrader 5" }, { label: "Capital simulé", value: challenge.label }].map((row, i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>{row.label}</span>
                     <span style={{ fontWeight: 600, fontSize: 13 }}>{row.value}</span>
@@ -547,7 +509,7 @@ function CheckoutContent() {
                 {discount > 0 && <>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>Prix</span>
-                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "line-through" }}>{challenge.price}</span>
+                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "line-through" }}>{formatPrice(challenge.amount)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>Réduction −{discount}%</span>
@@ -559,21 +521,10 @@ function CheckoutContent() {
                 <span style={{ fontWeight: 700, fontSize: 15 }}>Total</span>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 32, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
-                    {isFree ? "GRATUIT" : discount > 0 ? formatPrice(discountedAmount) : challenge.price}
+                    {isFree ? "GRATUIT" : formatPrice(totalAmount)}
                   </div>
                   <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 11 }}>TVA incluse</div>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Loyalty */}
-          {loyaltyActive && promoStatus !== "valid" && (
-            <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "12px 14px" }}>
-              <span style={{ fontSize: 16 }}>🎖️</span>
-              <div>
-                <div style={{ color: "#22c55e", fontWeight: 800, fontSize: 13 }}>Remise fidélité −20% appliquée</div>
-                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 11 }}>Client existant — remise automatique à vie</div>
               </div>
             </div>
           )}
@@ -611,18 +562,18 @@ function CheckoutContent() {
                 <strong style={{ color: "rgba(255,255,255,0.6)" }}>Résumé des points clés :</strong><br />
                 • Le trading sur notre plateforme est <strong style={{ color: "rgba(255,255,255,0.7)" }}>100% simulé</strong> — aucun capital réel, aucun ordre exécuté sur les marchés.<br />
                 • Les Frais de Challenge sont <strong style={{ color: "rgba(255,255,255,0.7)" }}>non remboursables</strong> dès l&apos;ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).<br />
-                • La récompense est de <strong style={{ color: "rgba(255,255,255,0.7)" }}>80% (2 Étapes)</strong> ou <strong style={{ color: "rgba(255,255,255,0.7)" }}>90% (1 Étape)</strong> des profits simulés.<br />
-                • Le capital simulé total est limité à <strong style={{ color: "rgba(255,255,255,0.7)" }}>200 000 USD</strong> par client.<br />
+                • Le Challenge comporte <strong style={{ color: "rgba(255,255,255,0.7)" }}>une étape</strong>, un objectif de +6% et un Trailing Drawdown EOD de 3% ou 4% selon la taille choisie.<br />
+                • Après validation, l&apos;activation du Reward Account est soumise à des <strong style={{ color: "rgba(255,255,255,0.7)" }}>frais uniques distincts</strong> indiqués avant activation.<br />
                 • En cas de violation des règles, nous pouvons résilier votre compte sans indemnité.<br />
                 • Droit applicable : <strong style={{ color: "rgba(255,255,255,0.7)" }}>loi estonienne</strong>.
               </p>
             </div>
             <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
               <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
-                style={{ marginTop: 2, accentColor: "#69C5FD", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
+                style={{ marginTop: 2, accentColor: "#9CCFEA", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
               <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.5 }}>
                 J&apos;ai lu et j&apos;accepte les{" "}
-                <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#69C5FD", textDecoration: "underline", fontWeight: 700 }}>
+                <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#9CCFEA", textDecoration: "underline", fontWeight: 700 }}>
                   Conditions Générales de Vente et d&apos;Utilisation
                 </a>
               </span>
@@ -659,13 +610,13 @@ function CheckoutContent() {
             </>)}
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 4 }}>
-              <ShieldCheck size={13} color="#69C5FD" />
+              <ShieldCheck size={13} color="#9CCFEA" />
               <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 10, fontWeight: 600, letterSpacing: ".03em" }}>Sécurisé par Stripe · SSL · Aucun abonnement</span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 7, marginTop: 4 }}>
               {["Accès rapide", "Paiement unique", "Support humain"].map(item => (
                 <div key={item} style={{ minHeight: 48, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, padding: "7px 4px", border: "1px solid rgba(255,255,255,.07)", borderRadius: 9, background: "rgba(255,255,255,.025)", color: "rgba(255,255,255,.42)", fontSize: 9, fontWeight: 700, textAlign: "center" }}>
-                  <Check size={12} color="#69C5FD" /> {item}
+                  <Check size={12} color="#9CCFEA" /> {item}
                 </div>
               ))}
             </div>

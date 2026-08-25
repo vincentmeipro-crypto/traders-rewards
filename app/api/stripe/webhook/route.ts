@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const { userId, productId, accountSize, model, promoCode, refCode } = session.metadata!;
+    const quantity = session.metadata?.quantity === "5" ? 5 : 1;
 
     const admin = createAdminClient();
 
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
     const email     = userData?.user?.email || session.customer_details?.email || "";
 
     const amountPaidCents = session.amount_total || 0;
+    const amountPaidPerChallengeCents = Math.round(amountPaidCents / quantity);
 
     // ── Règles du challenge ────────────────────────────────────────────
     //
@@ -79,12 +81,12 @@ export async function POST(req: NextRequest) {
       try {
         const { product, phases, rules } = await loadProductFull(productId);
         const phase1    = getPhase1Defaults(phases);
-        const snapshot  = buildRulesSnapshot(product, phases, rules, amountPaidCents);
+        const snapshot  = buildRulesSnapshot(product, phases, rules, amountPaidPerChallengeCents);
 
         // Discount effectif calculé depuis le montant réellement facturé vs prix DB
         const baseAmount = getEffectivePrice(product, "card");
         if (baseAmount > 0) {
-          discountApplied = Math.max(0, Math.round((1 - amountPaidCents / baseAmount) * 100));
+          discountApplied = Math.max(0, Math.round((1 - amountPaidPerChallengeCents / baseAmount) * 100));
         }
 
         challengeProductId = product.id;
@@ -102,7 +104,7 @@ export async function POST(req: NextRequest) {
           total_drawdown_limit: phase1.total_drawdown_limit,
           trading_days:         0,
           stripe_session_id:    session.id,
-          amount_paid:          amountPaidCents / 100,
+          amount_paid:          amountPaidPerChallengeCents / 100,
           payment_method:       "card",
           product_id:           product.id,
           rules_snapshot:       snapshot,
@@ -123,7 +125,7 @@ export async function POST(req: NextRequest) {
           total_drawdown_limit: challengeDefaults.totalDdDefault,
           trading_days:         0,
           stripe_session_id:    session.id,
-          amount_paid:          amountPaidCents / 100,
+          amount_paid:          amountPaidPerChallengeCents / 100,
           payment_method:       "card",
         };
         // discountApplied reste null : produit non chargé, baseAmount inconnu
@@ -144,7 +146,7 @@ export async function POST(req: NextRequest) {
         total_drawdown_limit: challengeDefaults.totalDdDefault,
         trading_days:         0,
         stripe_session_id:    session.id,
-        amount_paid:          amountPaidCents / 100,
+        amount_paid:          amountPaidPerChallengeCents / 100,
         payment_method:       "card",
       };
       // discountApplied reste null : path legacy, baseAmount non disponible
@@ -178,13 +180,16 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Création du challenge ─────────────────────────────────────────
+    const challengeRows = Array.from({ length: quantity }, (_, index) => ({
+      ...challengeInsert,
+      stripe_session_id: index === 0 ? session.id : `${session.id}:${index + 1}`,
+    }));
     const { data: inserted } = await admin
       .from("challenges")
-      .insert(challengeInsert)
+      .insert(challengeRows)
       .select("id")
-      .single();
-
-    const challengeId = inserted?.id as string | undefined;
+    const challengeIds = (inserted ?? []).map(row => row.id as string);
+    const challengeId = challengeIds[0];
 
     // ── Répondre à Stripe immédiatement — MT5 + email + affiliation en arrière-plan ──
     // after() s'exécute après que la réponse HTTP a été envoyée, dans la même
@@ -203,7 +208,7 @@ export async function POST(req: NextRequest) {
       }
 
       // ── Provision MT5 ───────────────────────────────────────────────
-      if (challengeId) {
+      for (const currentChallengeId of challengeIds) {
         const challengeModel       = (challengeInsert.model       as string) || model;
         const challengeAccountSize = (challengeInsert.account_size as string) || accountSize;
         const challengeBalance     = (challengeInsert.balance      as number) || size;
@@ -213,7 +218,7 @@ export async function POST(req: NextRequest) {
             method: "POST",
             headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
             body: JSON.stringify({
-              challenge_id: challengeId,
+              challenge_id: currentChallengeId,
               first_name:   firstName,
               last_name:    lastName,
               email,
@@ -229,14 +234,14 @@ export async function POST(req: NextRequest) {
                 mt5_password:          mt5Data.password,
                 mt5_password_investor: mt5Data.password_investor,
                 mt5_server:            mt5Data.server,
-              }).eq("id", challengeId);
+              }).eq("id", currentChallengeId);
               if (email) {
                 try {
                   await sendWelcomeEmail(email, challengeAccountSize, challengeModel, {
                     login:    mt5Data.login,
                     password: mt5Data.password,
                     server:   mt5Data.server,
-                  }, undefined, { userId: userId as string, challengeId });
+                  }, undefined, { userId: userId as string, challengeId: currentChallengeId });
                 } catch (e) { console.error("[stripe/webhook] Welcome email failed:", e); }
               }
             }

@@ -38,13 +38,19 @@ export async function PATCH(req: NextRequest) {
       const lastName = profile?.last_name || "";
 
       const { data: challenge } = await admin.from("challenges")
-        .select("id, account_size, model, start_balance, mt5_login")
+        .select("id, account_size, model, start_balance, mt5_login, rules_snapshot")
         .eq("id", data.challenge_id).single();
 
       if (challenge) {
-        // Calcul automatique du profit sharing (90% 1-step, 80% 2-step)
+        // Nouveau modèle Rewards : 100% du profit éligible. Les pourcentages
+        // historiques restent uniquement applicables aux anciens contrats.
+        const snapshot = challenge.rules_snapshot && typeof challenge.rules_snapshot === "object"
+          ? challenge.rules_snapshot as { product_slug?: string; rules?: { dd_model?: string } }
+          : null;
+        const isRewardsV1 = snapshot?.rules?.dd_model === "trailing_eod_lock"
+          || snapshot?.product_slug?.startsWith("rewards-") === true;
         const is1Step = challenge.model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
-        const splitPct = is1Step ? 0.90 : 0.80;
+        const splitPct = isRewardsV1 ? 1 : is1Step ? 0.90 : 0.80;
         const grossAmount = data.amount;
         const netAmount = parseFloat((grossAmount * splitPct).toFixed(2));
         await admin.from("payouts").update({ amount: netAmount }).eq("id", id);
@@ -115,6 +121,7 @@ export async function PATCH(req: NextRequest) {
             userId: data.user_id as string,
             challengeId: challenge.id as string,
             publicToken: publicToken ?? undefined,
+            splitPct: Math.round(splitPct * 100),
           },
         ).catch((e) => console.error("Reward cert email error:", e));
       }

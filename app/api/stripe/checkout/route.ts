@@ -7,14 +7,13 @@ import { validatePromoCode } from "@/lib/promo";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// Remise fidélité — identique à la constante frontend, calculée côté serveur
-const LOYALTY_PCT = 20;
-
 export async function POST(req: NextRequest) {
   try {
     // `discount` n'est intentionnellement PAS destructuré : jamais trusté depuis le frontend.
     // La valeur réelle est recalculée exclusivement côté serveur ci-dessous.
-    const { productId, userId, userEmail, promoCode, refCode } = await req.json();
+    const { productId, userId, userEmail, promoCode, refCode, quantity: rawQuantity } = await req.json();
+    const quantity = Number(rawQuantity ?? 1);
+    if (quantity !== 1) return NextResponse.json({ error: "Un seul Challenge peut être acheté à la fois." }, { status: 400 });
 
     // Charger le produit depuis la DB par slug
     // loadProductBySlug lève une erreur si inactif ou introuvable
@@ -23,8 +22,23 @@ export async function POST(req: NextRequest) {
     const SITE_URL = await getStringConfig("branding.site_url");
     const admin = createAdminClient();
 
-    // ── Plafond de cumul (max_cumul_usd) ─────────────────────────────────────
-    if (product.max_cumul_usd) {
+    // Le nouveau modèle autorise jusqu'à 10 Challenges actifs, quelle que soit
+    // leur taille. L'ancien plafond de capital reste réservé aux produits legacy.
+    if (product.slug.startsWith("rewards-")) {
+      const { count } = await admin
+        .from("challenges")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .neq("phase", "funded");
+
+      if ((count ?? 0) + quantity > 10) {
+        return NextResponse.json(
+          { error: `Vous pouvez avoir au maximum 10 Challenges actifs. Il vous reste ${Math.max(0, 10 - (count ?? 0))} place(s).` },
+          { status: 400 }
+        );
+      }
+    } else if (product.max_cumul_usd) {
       const { data: activeChallenges } = await admin
         .from("challenges")
         .select("start_balance")
@@ -35,7 +49,7 @@ export async function POST(req: NextRequest) {
         (sum, c) => sum + (c.start_balance || 0),
         0
       );
-      if (currentTotal + product.balance_usd > product.max_cumul_usd) {
+      if (currentTotal + product.balance_usd * quantity > product.max_cumul_usd) {
         return NextResponse.json(
           {
             error: `Plafond de cumul atteint (max ${product.max_cumul_usd.toLocaleString()} USD)`,
@@ -44,13 +58,6 @@ export async function POST(req: NextRequest) {
         );
       }
     }
-
-    // ── Loyalty — calculé côté serveur, jamais depuis le frontend ────────────
-    const { count: challengeCount } = await admin
-      .from("challenges")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId);
-    const loyaltyDiscount = (challengeCount ?? 0) >= 1 ? LOYALTY_PCT : 0;
 
     // ── Validation promo code côté serveur ────────────────────────────────────
     let promoDiscount = 0;
@@ -70,8 +77,7 @@ export async function POST(req: NextRequest) {
       promoDiscount = promoResult.discountPercent;
     }
 
-    // ── Best discount (loyalty vs promo) — server-side ────────────────────────
-    const discountPct = Math.max(loyaltyDiscount, promoDiscount);
+    const discountPct = promoDiscount;
 
     // ── Les codes 100% passent exclusivement par /api/promo/free ─────────────
     if (discountPct === 100) {
@@ -104,18 +110,14 @@ export async function POST(req: NextRequest) {
             currency: "eur",
             product_data: {
               name: productName,
-              description: `Traders Rewards — ${
-                product.model === "2step"
-                  ? "2-Step Challenge"
-                  : product.model === "1step"
-                  ? "1-Step Challenge"
-                  : "Instant Reward Account"
-              }`,
+              description: product.slug.startsWith("rewards-")
+                ? "Traders Rewards — Challenge en 1 étape"
+                : `Traders Rewards — ${product.name}`,
               images: [],
             },
             unit_amount: finalAmount,
           },
-          quantity: 1,
+          quantity,
         },
       ],
       metadata: {
@@ -126,6 +128,7 @@ export async function POST(req: NextRequest) {
         model:       product.model,
         promoCode:   promoCode || "",
         refCode:     refCode   || "",
+        quantity:    String(quantity),
       },
       success_url: `${SITE_URL}/checkout/success`,
       cancel_url:  `${SITE_URL}/checkout/cancel`,

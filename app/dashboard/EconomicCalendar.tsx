@@ -20,7 +20,7 @@ type CurrencyFilter = "both" | "USD" | "EUR";
 const IMPACT_COLORS: Record<string, string> = {
   High: "#ef4444",
   Medium: "#f59e0b",
-  Low: "#69c5fd",
+  Low: "#9CCFEA",
   Holiday: "#64748b",
 };
 
@@ -87,6 +87,7 @@ export default function EconomicCalendar({ isFr }: { isFr: boolean }) {
 
   const visibleEvents = useMemo(() => {
     const filtered = events
+      .filter(event => event.impact === "High")                               // fort impact uniquement
       .filter(event => event.country === "USD" || event.country === "EUR")
       .filter(event => currency === "both" || event.country === currency)
       .map(event => ({ event, date: eventDate(event) }))
@@ -104,7 +105,10 @@ export default function EconomicCalendar({ isFr }: { isFr: boolean }) {
           <div className={styles.icon}><CalendarClock size={18} /></div>
           <div>
             <h2>{isFr ? "Calendrier économique" : "Economic calendar"}</h2>
-            <p>{isFr ? "Annonces USA et Zone Euro · heure de Paris" : "USA and Eurozone events · Paris time"}</p>
+            <p>
+              {isFr ? "Annonces à fort impact · heure de Paris" : "High-impact events · Paris time"}
+              <span className={styles.impactBadge}>★★★</span>
+            </p>
           </div>
         </div>
         <div className={styles.filters}>
@@ -118,8 +122,10 @@ export default function EconomicCalendar({ isFr }: { isFr: boolean }) {
 
       {loading ? (
         <div className={styles.state}>{isFr ? "Chargement des annonces…" : "Loading events…"}</div>
-      ) : failed || visibleEvents.length === 0 ? (
-        <div className={styles.state}>{isFr ? "Aucune annonce USD ou EUR disponible pour le moment." : "No USD or EUR event available right now."}</div>
+      ) : failed ? (
+        <div className={styles.state}>{isFr ? "Données indisponibles." : "Data unavailable."}</div>
+      ) : visibleEvents.length === 0 ? (
+        <div className={styles.state}>{isFr ? "Aucune annonce à fort impact prévue pour le moment." : "No high-impact event scheduled right now."}</div>
       ) : (
         <div className={styles.table}>
           <div className={styles.tableHeader}>

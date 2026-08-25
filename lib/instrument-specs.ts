@@ -861,6 +861,573 @@ export function runLotTests(): TestResult[] {
   });
 }
 
+// ─── Simulator pure function ──────────────────────────────────────────────────
+
+/**
+ * Résultat complet d'une simulation de trade (impact si SL touché).
+ * Calculé par calcSimTrade() — testable sans React.
+ */
+export interface SimTradeResult {
+  // ── Perte au SL ───────────────────────────────────────────────────────────
+  lossUsd:          number;  // montant perdu si SL touché
+  lossPct:          number;  // lossUsd / equity × 100
+  equityAfterSL:    number;  // equity - lossUsd
+  slDistPips:       number;  // distance SL en pips/points
+  pipValueForLots:  number;  // $ par pip au volume donné
+  // ── Capital du challenge ──────────────────────────────────────────────────
+  equity:           number;
+  isOneStep:        boolean;
+  // ── Marge journalière ─────────────────────────────────────────────────────
+  dailyBuffer:      number;  // marge dispo avant le trade
+  dailyFloor:       number;
+  dailyLimitUsd:    number;
+  dailyBufferAfter: number;  // marge dispo si SL touché
+  dailyViolation:   boolean; // equityAfterSL < dailyFloor
+  dailyUsedPct:     number;  // % de la limite consommée après SL
+  // ── Marge totale ──────────────────────────────────────────────────────────
+  totalBuffer:      number;
+  totalFloor:       number;
+  totalLimitUsd:    number;
+  totalBufferAfter: number;
+  totalViolation:   boolean;
+  totalUsedPct:     number;
+  // ── Statut global ─────────────────────────────────────────────────────────
+  worstUsedPct: number;
+  riskStatus:   "CONFORTABLE" | "MODÉRÉ" | "ATTENTION" | "CRITIQUE" | "LIMITE DÉPASSÉE";
+}
+
+/**
+ * Simule l'impact d'un trade sur le challenge si le Stop Loss est touché.
+ *
+ * Formule :
+ *   lossUsd       = calcTradeRisk(spec, lots, |entry - sl|).amountUsd
+ *   equityAfterSL = equity - lossUsd
+ *   dailyBufferAfter = max(0, equityAfterSL - dailyFloor)
+ *   dailyUsedPct  = (1 - dailyBufferAfter / dailyLimitUsd) × 100
+ *   (idem total)
+ *   worstUsedPct  = max(dailyUsedPct, totalUsedPct)
+ *
+ * Statut (basé sur worstUsedPct) :
+ *   < 50%   → CONFORTABLE
+ *   50–75%  → MODÉRÉ
+ *   75–90%  → ATTENTION
+ *   90–100% → CRITIQUE
+ *   ≥ 100%  → LIMITE DÉPASSÉE
+ */
+export function calcSimTrade(input: {
+  spec:      InstrumentSpec;
+  lots:      number;
+  entry:     number;
+  sl:        number;
+  challenge: ChallengeMarginInput;
+}): SimTradeResult {
+  const { spec, lots, entry, sl, challenge } = input;
+
+  const slDist = Math.abs(entry - sl);
+  const { pips: slDistPips, pipValueForLots, amountUsd: lossUsd } =
+    calcTradeRisk(spec, lots, slDist);
+
+  const {
+    equity, isOneStep,
+    dailyBuffer, dailyFloor, dailyLimitUsd,
+    totalBuffer, totalFloor, totalLimitUsd,
+  } = calcChallengeMargins(challenge);
+
+  const equityAfterSL    = equity - lossUsd;
+  const dailyBufferAfter = Math.max(0, equityAfterSL - dailyFloor);
+  const totalBufferAfter = Math.max(0, equityAfterSL - totalFloor);
+  const dailyViolation   = equityAfterSL < dailyFloor;
+  const totalViolation   = equityAfterSL < totalFloor;
+
+  // % de la limite DD consommée après SL
+  // (1 - bufferAfter/limitUsd) × 100 — peut être négatif si buffer > limit
+  const dailyUsedPct = dailyLimitUsd > 0
+    ? (1 - dailyBufferAfter / dailyLimitUsd) * 100
+    : 0;
+  const totalUsedPct = totalLimitUsd > 0
+    ? (1 - totalBufferAfter / totalLimitUsd) * 100
+    : 0;
+
+  const lossPct     = equity > 0 ? (lossUsd / equity) * 100 : 0;
+  const worstUsedPct = Math.max(dailyUsedPct, totalUsedPct);
+
+  const riskStatus: SimTradeResult["riskStatus"] =
+    worstUsedPct >= 100 ? "LIMITE DÉPASSÉE"
+    : worstUsedPct >= 90  ? "CRITIQUE"
+    : worstUsedPct >= 75  ? "ATTENTION"
+    : worstUsedPct >= 50  ? "MODÉRÉ"
+    : "CONFORTABLE";
+
+  return {
+    lossUsd, lossPct, equityAfterSL, slDistPips, pipValueForLots,
+    equity, isOneStep,
+    dailyBuffer, dailyFloor, dailyLimitUsd, dailyBufferAfter, dailyViolation, dailyUsedPct,
+    totalBuffer, totalFloor, totalLimitUsd, totalBufferAfter, totalViolation, totalUsedPct,
+    worstUsedPct, riskStatus,
+  };
+}
+
+// ─── Tests — Simulateur de Risque ─────────────────────────────────────────────
+
+export interface SimTestCase {
+  name:      string;
+  symbol:    string;
+  lots:      number;
+  entry:     number;
+  sl:        number;
+  challenge: ChallengeMarginInput;
+  expected: {
+    lossUsd?:         number;
+    lossPct?:         number;
+    equityAfterSL?:   number;
+    slDistPips?:      number;
+    dailyUsedPct?:    number;
+    totalUsedPct?:    number;
+    dailyBuffer?:     number;
+    totalFloor?:      number;
+    totalBuffer?:     number;
+    dailyViolation?:  boolean;
+    totalViolation?:  boolean;
+    worstUsedPct?:    number;
+    riskStatus?:      SimTradeResult["riskStatus"];
+    isOneStep?:       boolean;
+  };
+}
+
+/**
+ * Challenge 2-Step de référence pour les tests du simulateur.
+ * balance=100k, start=100k, daily 5% (5 000$), total 10% (10 000$)
+ *   → dailyFloor=95 000, totalFloor=90 000
+ *   → dailyBuffer=5 000, totalBuffer=10 000
+ */
+const SIM_CHALLENGE_2STEP: ChallengeMarginInput = {
+  balance:              100_000,
+  start_balance:        100_000,
+  daily_drawdown_limit: 5,
+  total_drawdown_limit: 10,
+  model:                "2step",
+  status:               "active",
+};
+
+/**
+ * Challenge 1-Step (trailing DD) pour les tests.
+ * balance=102k, start=100k, highest=103k
+ *   → trailingRef=max(103k,100k)=103k, totalFloor=93k, totalBuffer=9k
+ *   → dailyFloor=95k (sur start_balance), dailyBuffer=7k
+ */
+const SIM_CHALLENGE_1STEP: ChallengeMarginInput = {
+  balance:              102_000,
+  start_balance:        100_000,
+  highest_balance:      103_000,
+  daily_drawdown_limit: 5,
+  total_drawdown_limit: 10,
+  model:                "1step",
+  status:               "active",
+};
+
+/**
+ * 25 cas de test couvrant tous les scénarios du Simulateur de Risque.
+ *
+ * EURUSD 50 pips SL (slDist=0.0050) → riskPerLot=500 $/lot
+ * Statuts DD visés (worstUsedPct = dailyUsedPct car daily est le binding) :
+ *   lots=0.10 → loss=   50 → dailyUsedPct= 1 %  → CONFORTABLE
+ *   lots=5.00 → loss=2 500 → dailyUsedPct=50 %  → MODÉRÉ
+ *   lots=7.50 → loss=3 750 → dailyUsedPct=75 %  → ATTENTION
+ *   lots=9.00 → loss=4 500 → dailyUsedPct=90 %  → CRITIQUE
+ *   lots=10.0 → loss=5 000 → dailyUsedPct=100 % → LIMITE DÉPASSÉE
+ */
+export const SIM_TEST_CASES: SimTestCase[] = [
+
+  // ── S1 : CONFORTABLE (1 % d'utilisation) ────────────────────────────────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 0.10 lot → CONFORTABLE",
+    symbol:    "EURUSD", lots: 0.10, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:    50,
+      lossUsd:       50,
+      lossPct:       0.05,
+      equityAfterSL: 99_950,
+      dailyUsedPct:  1,
+      totalUsedPct:  0.5,
+      worstUsedPct:  1,
+      riskStatus:    "CONFORTABLE",
+      dailyViolation: false,
+      totalViolation: false,
+    },
+  },
+
+  // ── S2 : MODÉRÉ exactement à la borne 50 % ──────────────────────────────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 5.00 lots → MODÉRÉ (50 %)",
+    symbol:    "EURUSD", lots: 5.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:      2_500,
+      equityAfterSL: 97_500,
+      dailyUsedPct: 50,
+      riskStatus:   "MODÉRÉ",
+    },
+  },
+
+  // ── S3 : MODÉRÉ (60 %) ─────────────────────────────────────────────────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 6.00 lots → MODÉRÉ (60 %)",
+    symbol:    "EURUSD", lots: 6.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:      3_000,
+      dailyUsedPct: 60,
+      riskStatus:   "MODÉRÉ",
+    },
+  },
+
+  // ── S4 : ATTENTION exactement à la borne 75 % ──────────────────────────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 7.50 lots → ATTENTION (75 %)",
+    symbol:    "EURUSD", lots: 7.50, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:      3_750,
+      dailyUsedPct: 75,
+      riskStatus:   "ATTENTION",
+    },
+  },
+
+  // ── S5 : ATTENTION (80 %) ──────────────────────────────────────────────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 8.00 lots → ATTENTION (80 %)",
+    symbol:    "EURUSD", lots: 8.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:      4_000,
+      dailyUsedPct: 80,
+      riskStatus:   "ATTENTION",
+    },
+  },
+
+  // ── S6 : CRITIQUE exactement à la borne 90 % ───────────────────────────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 9.00 lots → CRITIQUE (90 %)",
+    symbol:    "EURUSD", lots: 9.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:      4_500,
+      dailyUsedPct: 90,
+      riskStatus:   "CRITIQUE",
+    },
+  },
+
+  // ── S7 : CRITIQUE (92 %) ───────────────────────────────────────────────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 9.20 lots → CRITIQUE (92 %)",
+    symbol:    "EURUSD", lots: 9.20, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:      4_600,
+      dailyUsedPct: 92,
+      riskStatus:   "CRITIQUE",
+    },
+  },
+
+  // ── S8 : LIMITE DÉPASSÉE — à la limite exacte (floating-point : la division
+  //         0.005/0.0001 peut donner 49.999… → perte légèrement > 5000 →
+  //         equityAfterSL légèrement < dailyFloor → violation=true)
+  {
+    name:      "EURUSD BUY — 50 pips SL, 10.00 lots → LIMITE DÉPASSÉE (100 %)",
+    symbol:    "EURUSD", lots: 10.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:       5_000,
+      equityAfterSL: 95_000,
+      dailyUsedPct:  100,
+      riskStatus:    "LIMITE DÉPASSÉE",
+      // dailyViolation intentionnellement non testée : cas limite floating-point
+    },
+  },
+
+  // ── S9 : LIMITE DÉPASSÉE — violation réelle (equity < dailyFloor) ───────
+  {
+    name:      "EURUSD BUY — 50 pips SL, 11.00 lots → LIMITE DÉPASSÉE + violation",
+    symbol:    "EURUSD", lots: 11.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:         5_500,
+      equityAfterSL:   94_500,
+      dailyViolation:  true,
+      dailyUsedPct:    100,    // clamped à 0 dans bufferAfter → usedPct=100%
+      riskStatus:      "LIMITE DÉPASSÉE",
+    },
+  },
+
+  // ── S10 : XAUUSD — vérification pips et pip value ──────────────────────
+  {
+    name:      "XAUUSD BUY — slDist=50 (500 pips), 0.10 lot → loss=$500",
+    symbol:    "XAUUSD", lots: 0.10, entry: 2500, sl: 2450,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:   500,           // 50 / 0.10 = 500 pips
+      lossUsd:      500,           // 500 pips × $1/pip (0.10 lot)
+      dailyUsedPct: 10,            // 500/5000 = 10 %
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+
+  // ── S11 : NAS100 — indice USD, points ──────────────────────────────────
+  {
+    name:      "NAS100 BUY — 100 points SL, 1.00 lot → loss=$100",
+    symbol:    "NAS100", lots: 1.00, entry: 18_000, sl: 17_900,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:   100,
+      lossUsd:      100,
+      dailyUsedPct: 2,
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+
+  // ── S12 : BTCUSD — crypto USD ──────────────────────────────────────────
+  {
+    name:      "BTCUSD BUY — $2000 SL, 0.10 lot → loss=$200",
+    symbol:    "BTCUSD", lots: 0.10, entry: 97_000, sl: 95_000,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:   2_000,
+      lossUsd:      200,
+      dailyUsedPct: 4,
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+
+  // ── S13 : USDJPY — cross-rate (approx) ─────────────────────────────────
+  {
+    name:      "USDJPY SELL — 100 pips SL, 0.50 lot → loss≈$335 (approx)",
+    symbol:    "USDJPY", lots: 0.50, entry: 150.000, sl: 151.000,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips: 100,
+      lossUsd:    335,            // 100 × $6.70 × 0.50 = $335
+      riskStatus: "CONFORTABLE",
+    },
+  },
+
+  // ── S14 : Direction SELL — SL au-dessus de l'entrée ────────────────────
+  {
+    name:      "EURUSD SELL — SL > entry (valid), 0.10 lot",
+    symbol:    "EURUSD", lots: 0.10, entry: 1.08000, sl: 1.08500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:   50,     // abs(1.08500-1.08000)/0.0001 = 50 pips
+      lossUsd:      50,
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+
+  // ── S15 : Direction BUY — SL en dessous de l'entrée ───────────────────
+  {
+    name:      "EURUSD BUY — SL < entry (valid), 0.10 lot",
+    symbol:    "EURUSD", lots: 0.10, entry: 1.09000, sl: 1.08500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:   50,
+      lossUsd:      50,
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+
+  // ── S16 : Challenge 1-Step — vérifier isOneStep=true ───────────────────
+  {
+    name:      "1-Step challenge → isOneStep=true, trailing DD",
+    symbol:    "EURUSD", lots: 0.10, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_1STEP,
+    expected:  {
+      isOneStep:  true,
+      lossUsd:    50,
+      riskStatus: "CONFORTABLE",
+    },
+  },
+
+  // ── S17 : Challenge 2-Step — vérifier isOneStep=false ──────────────────
+  {
+    name:      "2-Step challenge → isOneStep=false, fixed floor",
+    symbol:    "EURUSD", lots: 0.10, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      isOneStep:  false,
+      lossUsd:    50,
+      riskStatus: "CONFORTABLE",
+    },
+  },
+
+  // ── S18 : Vérification equityAfterSL ────────────────────────────────────
+  {
+    name:      "equityAfterSL = equity - lossUsd (EURUSD 0.10 lot)",
+    symbol:    "EURUSD", lots: 0.10, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      equityAfterSL: 99_950,  // 100000 - 50
+      lossUsd:       50,
+    },
+  },
+
+  // ── S19 : Vérification lossPct ──────────────────────────────────────────
+  {
+    name:      "lossPct = lossUsd / equity × 100 (XAUUSD $500 loss sur $100k)",
+    symbol:    "XAUUSD", lots: 0.10, entry: 2500, sl: 2450,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd: 500,
+      lossPct: 0.5,   // 500/100000 × 100 = 0.5 %
+    },
+  },
+
+  // ── S20 : Violation journalière explicite ───────────────────────────────
+  {
+    name:      "dailyViolation=true — equityAfterSL < dailyFloor",
+    symbol:    "EURUSD", lots: 11.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      dailyViolation:  true,
+      equityAfterSL:   94_500,  // < dailyFloor=95000
+      riskStatus:      "LIMITE DÉPASSÉE",
+    },
+  },
+
+  // ── S21 : Violation totale (Total DD plus contraignant) ─────────────────
+  {
+    name:      "totalViolation=true — EURUSD 21 lots sur challenge 2-step",
+    symbol:    "EURUSD", lots: 21.00, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    // loss = 21 × 500 = 10500 → equityAfterSL = 89500
+    // dailyFloor=95000 → dailyViolation=true
+    // totalFloor=90000 → totalViolation=true
+    expected:  {
+      lossUsd:         10_500,
+      equityAfterSL:   89_500,
+      dailyViolation:  true,
+      totalViolation:  true,
+      riskStatus:      "LIMITE DÉPASSÉE",
+    },
+  },
+
+  // ── S22 : Proportionnalité lots — 2× lots = 2× perte ───────────────────
+  {
+    name:      "Proportionnalité lots: 0.10 lot → $50, 0.20 lot → $100",
+    symbol:    "EURUSD", lots: 0.20, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      lossUsd:      100,   // 2 × 50
+      dailyUsedPct: 2,     // 2 × 1 %
+    },
+  },
+
+  // ── S23 : GBPUSD — vérification USD-quote autre paire ───────────────────
+  {
+    name:      "GBPUSD BUY — 30 pips SL, 2.50 lots → loss=$750",
+    symbol:    "GBPUSD", lots: 2.50, entry: 1.26000, sl: 1.25700,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:   30,
+      lossUsd:      750,   // 30 pips × $10 × 2.50 lots = $750
+      dailyUsedPct: 15,    // 750/5000 × 100 = 15 %
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+
+  // ── S24 : Solde en profit — balance > start_balance ─────────────────────
+  {
+    name:      "Balance > start_balance ($102k) — buffers corrects",
+    symbol:    "EURUSD", lots: 0.10, entry: 1.08000, sl: 1.07500,
+    challenge: SIM_CHALLENGE_1STEP,
+    // equity=102000, dailyFloor=95000, dailyBuffer=7000
+    // totalFloor=93000 (trailing: trailingRef=103000 - 10000), totalBuffer=9000
+    expected:  {
+      lossUsd:      50,
+      dailyBuffer:  7_000,
+      totalFloor:   93_000,
+      totalBuffer:  9_000,
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+
+  // ── S25 : EURUSD SELL — vérification SL symétrique ──────────────────────
+  {
+    name:      "EURUSD SELL — 100 pips SL, 2.00 lots → loss=$2000",
+    symbol:    "EURUSD", lots: 2.00, entry: 1.09000, sl: 1.10000,
+    challenge: SIM_CHALLENGE_2STEP,
+    expected:  {
+      slDistPips:   100,
+      lossUsd:      2_000,
+      dailyUsedPct: 40,
+      riskStatus:   "CONFORTABLE",
+    },
+  },
+];
+
+/** Exécute les 25 tests du Simulateur de Risque. */
+export function runSimTests(): TestResult[] {
+  return SIM_TEST_CASES.map(tc => {
+    const spec = getSpec(tc.symbol);
+    if (!spec || !hasMonetaryCalc(spec)) {
+      return {
+        name: tc.name, passed: false, got: {}, expected: {},
+        errors: [`Spec non trouvée ou calcul impossible pour ${tc.symbol}`],
+      };
+    }
+
+    const result = calcSimTrade({
+      spec,
+      lots:      tc.lots,
+      entry:     tc.entry,
+      sl:        tc.sl,
+      challenge: tc.challenge,
+    });
+
+    const errors: string[] = [];
+
+    const numFields: Array<[keyof SimTradeResult, number | undefined]> = [
+      ["lossUsd",          tc.expected.lossUsd],
+      ["lossPct",          tc.expected.lossPct],
+      ["equityAfterSL",    tc.expected.equityAfterSL],
+      ["slDistPips",       tc.expected.slDistPips],
+      ["dailyUsedPct",     tc.expected.dailyUsedPct],
+      ["totalUsedPct",     tc.expected.totalUsedPct],
+      ["worstUsedPct",     tc.expected.worstUsedPct],
+      ["dailyBuffer",      tc.expected.dailyBuffer],
+      ["totalFloor",       tc.expected.totalFloor],
+      ["totalBuffer",      tc.expected.totalBuffer],
+    ];
+    for (const [key, expectedVal] of numFields) {
+      if (expectedVal == null) continue;
+      const got = result[key] as number;
+      if (!approxEq(got, expectedVal)) {
+        errors.push(`${key}: attendu ${expectedVal}, obtenu ${got.toFixed(4)}`);
+      }
+    }
+
+    if (tc.expected.dailyViolation != null && result.dailyViolation !== tc.expected.dailyViolation) {
+      errors.push(`dailyViolation: attendu ${tc.expected.dailyViolation}, obtenu ${result.dailyViolation}`);
+    }
+    if (tc.expected.totalViolation != null && result.totalViolation !== tc.expected.totalViolation) {
+      errors.push(`totalViolation: attendu ${tc.expected.totalViolation}, obtenu ${result.totalViolation}`);
+    }
+    if (tc.expected.riskStatus != null && result.riskStatus !== tc.expected.riskStatus) {
+      errors.push(`riskStatus: attendu "${tc.expected.riskStatus}", obtenu "${result.riskStatus}"`);
+    }
+    if (tc.expected.isOneStep != null && result.isOneStep !== tc.expected.isOneStep) {
+      errors.push(`isOneStep: attendu ${tc.expected.isOneStep}, obtenu ${result.isOneStep}`);
+    }
+
+    return {
+      name:     tc.name,
+      passed:   errors.length === 0,
+      got:      { lossUsd: result.lossUsd, dailyUsedPct: result.dailyUsedPct },
+      expected: tc.expected as Partial<Record<string, number>>,
+      errors,
+    };
+  });
+}
+
 /** Exécute tous les tests et retourne les résultats. */
 export function runInstrumentTests(): TestResult[] {
   return TEST_CASES.map(tc => {

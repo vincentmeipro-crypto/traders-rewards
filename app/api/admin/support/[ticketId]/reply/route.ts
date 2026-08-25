@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendSupportReplyEmail } from "@/lib/mailer";
 
 // ── POST /api/admin/support/[ticketId]/reply ──────────────────────────────────
 //
@@ -20,7 +21,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 // Si INSERT échoue   → statut NON modifié, 500.
 // Si UPDATE échoue   → message déjà inséré, log + 500.
 //
-// Aucun email envoyé (client ou admin) — dashboard uniquement en V1.
+// Trader connecté : dashboard + email. Prospect : email uniquement.
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -52,7 +53,7 @@ export async function POST(
   // ── 2. Validation ticket (existence) ─────────────────────────────────────
   const { data: ticket, error: ticketErr } = await admin
     .from("support_tickets")
-    .select("id")
+    .select("id, user_id, email, first_name, subject")
     .eq("id", ticketId)
     .maybeSingle();
 
@@ -70,7 +71,7 @@ export async function POST(
       ticket_id:   ticketId,
       sender_type: "admin",      // forcé server-side — JAMAIS depuis le frontend
       content:     message,
-      channel:     "dashboard",  // forcé server-side
+      channel:     ticket.user_id ? "dashboard" : "email",
     })
     .select("id, sender_type, content, channel, created_at")
     .single();
@@ -97,6 +98,26 @@ export async function POST(
     return NextResponse.json({ error: "Erreur lors de la mise à jour du statut." }, { status: 500 });
   }
 
-  // ── 5. Réponse ────────────────────────────────────────────────────────────
-  return NextResponse.json({ message: msg }, { status: 201 });
+  // ── 5. Email client/prospect ─────────────────────────────────────────────
+  // L'email complète le Dashboard pour un trader connecté et constitue
+  // l'unique canal de réponse pour un prospect sans compte.
+  let emailSent = false;
+  try {
+    const emailResult = await sendSupportReplyEmail({
+      ticketId,
+      messageId: msg.id,
+      to: ticket.email,
+      firstName: ticket.first_name,
+      subject: ticket.subject || "Votre demande de support",
+      message,
+      userId: ticket.user_id || undefined,
+    });
+    emailSent = emailResult.success;
+    if (!emailResult.success) console.error("[admin/support/reply] email:", emailResult.error);
+  } catch (emailErr) {
+    console.error("[admin/support/reply] email exception:", String(emailErr).slice(0, 200));
+  }
+
+  // ── 6. Réponse ────────────────────────────────────────────────────────────
+  return NextResponse.json({ message: msg, emailSent }, { status: 201 });
 }

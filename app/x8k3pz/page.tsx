@@ -2,7 +2,7 @@
 import { useEffect, useState, useMemo, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import OverviewCockpit from "@/components/admin/OverviewCockpit";
+import OverviewCockpit from "@/components/admin/AdminCockpitV2";
 import RewardReviewPanel from "@/components/admin/RewardReviewPanel";
 import type { RewardReviewData } from "@/lib/reward-review";
 
@@ -334,7 +334,7 @@ function AdminPageInner() {
   const [ipMismatchShowAll, setIpMismatchShowAll] = useState(false);
 
   // Create challenge state
-  const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$10,000", model: "1step", amountPaid: "", createMT5: true, type: "challenge" as "challenge" | "reward" });
+  const [createForm, setCreateForm] = useState({ userEmail: "", firstName: "", lastName: "", accountSize: "$25,000", model: "1step", amountPaid: "", createMT5: true, type: "challenge" as "challenge" | "reward" });
   const [createLoading, setCreateLoading] = useState(false);
   const [createMsg, setCreateMsg] = useState("");
   const [createError, setCreateError] = useState("");
@@ -1063,7 +1063,7 @@ function AdminPageInner() {
           // ── KPI cards ──
           const kpiCards: { label: string; value: string | number; sub: string; tabId?: Tab; accent?: string }[] = [
             { label: "Challenges actifs",  value: activeCount,                           sub: `${kpis.phase1} Ph1 · ${kpis.oneStep} 1-Step · ${kpis.phase2} Ph2`, tabId: "pipeline" },
-            { label: "Comptes certifiés",  value: kpis.certified,                        sub: `${kpis.passed} en attente de certification`,                        tabId: "pipeline" },
+            { label: "Reward Accounts", value: kpis.certified, sub: `${kpis.passed} Challenge(s) à valider`, tabId: "pipeline" },
             { label: "Rewards à traiter",  value: kpis.pendingPayouts,                   sub: kpis.pendingPayouts > 0 ? `€${kpis.pendingAmt.toLocaleString()} en attente` : "Aucun reward en attente", tabId: "payouts", accent: kpis.pendingPayouts > 0 ? "#f59e0b" : undefined },
             { label: "CA du mois",         value: `€${kpis.caMonth.toLocaleString()}`,   sub: `€${kpis.caYear.toLocaleString()} sur l'année`,                      accent: "#22c55e" },
           ];
@@ -1271,11 +1271,11 @@ function AdminPageInner() {
             { id: "all",       label: "Tous",      cnt: challenges.filter(c => c.model !== "vip").length },
             { id: "active",    label: "Actifs",    cnt: kpis.phase1 + kpis.oneStep + kpis.phase2 },
             { id: "risk",      label: "À risque",  cnt: kpis.alerts.length },
-            { id: "phase1",    label: "Phase 1",   cnt: kpis.phase1 },
-            { id: "phase2",    label: "Phase 2",   cnt: kpis.phase2 },
-            { id: "certified", label: "Certifiés", cnt: kpis.certified },
+            { id: "phase1",    label: "Challengers actuels", cnt: kpis.phase1 },
+            { id: "phase2",    label: "Comptes historiques", cnt: kpis.phase2 },
+            { id: "certified", label: "Reward Accounts", cnt: kpis.certified },
             { id: "failed",    label: "Échoués",   cnt: kpis.failed },
-            { id: "1step",     label: "1-Step",    cnt: kpis.oneStep },
+            { id: "1step",     label: "Parcours actuel", cnt: kpis.oneStep },
           ];
 
           return (
@@ -1341,7 +1341,7 @@ function AdminPageInner() {
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                        {["Trader", "Compte", "Phase", "Statut", "Balance", "Jours", "Risk", "MT5", ""].map((h, i) => (
+                        {["Trader", "Compte", "Niveau", "Statut", "Balance", "Jours", "Risque", "MT5", ""].map((h, i) => (
                           <th key={i} style={{ padding: "10px 12px", textAlign: "left", color: "rgba(255,255,255,0.35)", fontWeight: 700, fontSize: 10, textTransform: "uppercase", letterSpacing: 1, whiteSpace: "nowrap" }}>{h}</th>
                         ))}
                       </tr>
@@ -1386,7 +1386,7 @@ function AdminPageInner() {
                                   {isEditing
                                     ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
                                     : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
-                                        {c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Phase 2" : c.model === "instant" ? "Instant" : "Phase 1"}
+                                        {c.phase === "funded" ? "Reward Account" : c.phase === "phase2" ? "Historique" : "Challenger"}
                                       </span>
                                   }
                                 </td>
@@ -1987,7 +1987,7 @@ function AdminPageInner() {
                                 </button>
                                 <button onClick={() => { setTab("pipeline"); setSearch(trader.email); }}
                                   style={{ padding: "8px 16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "rgba(255,255,255,0.65)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                                  Voir Pipeline
+                                  Voir les comptes
                                 </button>
                                 {traderId && (
                                   <a href={`/x8k3pz/traders/${traderId}`}
@@ -2005,10 +2005,10 @@ function AdminPageInner() {
                             {/* KPI strip */}
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 8 }}>
                               {([
-                                { label: "LTV",         value: `€${trader.totalSpent.toLocaleString()}`,   color: "#22c55e" },
+                                { label: "Total payé", value: `€${trader.totalSpent.toLocaleString()}`, color: "#22c55e" },
                                 { label: "Challenges",  value: String(trader.challenges.length),            color: "#fff"    },
                                 { label: "Actifs",      value: String(activeC),                             color: activeC > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
-                                { label: "Certifiés",   value: String(certC),                               color: certC > 0  ? "#3b82f6"  : "rgba(255,255,255,0.25)" },
+                                { label: "Reward Accounts", value: String(certC), color: certC > 0 ? "#9ccfea" : "rgba(255,255,255,0.25)" },
                                 { label: "Rewards",     value: `€${totalRewardsPaid.toLocaleString()}`,     color: totalRewardsPaid > 0 ? "#3b82f6" : "rgba(255,255,255,0.25)" },
                                 { label: "Marge brute", value: `€${margeBrute.toLocaleString()}`,           color: margeBrute >= 0 ? "#22c55e" : "#ef4444" },
                               ] as { label: string; value: string; color: string }[]).map((k, i) => (
@@ -3105,7 +3105,7 @@ function AdminPageInner() {
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Segmentation dynamique de votre base trader — disponible en Phase 3.</div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
-                    {["Tous les traders","Challenges actifs","Comptes certifiés","Challenges échoués","Clients VIP","Paiement Stripe","Paiement Crypto","France","Belgique","Jamais acheté"].map(seg => (
+                    {["Tous les traders","Challenges actifs","Reward Accounts","Challenges échoués","Clients VIP","Paiement Stripe","Paiement Crypto","France","Belgique","Jamais acheté"].map(seg => (
                       <div key={seg} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 22px" }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{seg}</div>
                         <div style={{ display: "inline-block", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1.2, border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>Coming Soon</div>
@@ -3335,7 +3335,7 @@ function AdminPageInner() {
 
               {createForm.type === "reward" && (
                 <div style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 8, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#fff" }}>
-                  Le client recevra directement un <strong>compte Trader Reward</strong> (phase funded) avec son email MT5 + certificat.
+                  Le client recevra directement un <strong>Reward Account</strong>. Cette action doit rester exceptionnelle et traçable.
                 </div>
               )}
 
@@ -3347,8 +3347,7 @@ function AdminPageInner() {
                 { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
                 { label: "Prénom", el: <input type="text" value={createForm.firstName} onChange={e => setCreateForm(f => ({ ...f, firstName: e.target.value }))} placeholder="Jean" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
                 { label: "Nom", el: <input type="text" value={createForm.lastName} onChange={e => setCreateForm(f => ({ ...f, lastName: e.target.value }))} placeholder="Dupont" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
-                { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none" }}><option>$10,000</option><option>$25,000</option><option>$50,000</option><option>$100,000</option><option>$200,000</option></select> },
-                { label: "Modèle", el: <select value={createForm.model} onChange={e => setCreateForm(f => ({ ...f, model: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none" }}><option value="1step">1-Step</option><option value="2step">2-Step</option>{/* vip masqué */}</select> },
+                { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(156,207,234,.28)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none" }}><option>$25,000</option><option>$50,000</option><option>$100,000</option></select> },
                 { label: "Montant payé (€)", el: <input type="number" value={createForm.amountPaid} onChange={e => setCreateForm(f => ({ ...f, amountPaid: e.target.value }))} placeholder="ex: 6.90" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
               ].map((f, i) => (
                 <div key={i} style={{ marginBottom: 16 }}>
@@ -3533,9 +3532,9 @@ function AdminPageInner() {
                     {([
                       { label: "CA annuel",         value: `€${Math.round(kpis.caYear).toLocaleString()}`,  color: "#fff"    },
                       { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#3b82f6" },
-                      { label: "Certifiés",         value: String(totalCert),                                 color: "#60a5fa" },
+                      { label: "Reward Accounts", value: String(totalCert), color: "#9ccfea" },
                       { label: "Échoués",           value: String(totalFailed),                               color: "#ef4444" },
-                      { label: "LTV moyenne",       value: `€${Math.round(kpis.ltv).toLocaleString()}`,      color: "#f59e0b" },
+                      { label: "Dépense moyenne client", value: `€${Math.round(kpis.ltv).toLocaleString()}`, color: "#f59e0b" },
                       { label: "KYC en attente",    value: String(kycPending),                                color: kycPending > 0 ? "#f59e0b" : "#6b7280" },
                     ] as { label: string; value: string; color: string }[]).map((k, i) => (
                       <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "14px 18px" }}>
@@ -3650,10 +3649,10 @@ function AdminPageInner() {
                       {([
                         { label: "Total",      value: String(total),        color: "#fff"    },
                         { label: "Actifs",     value: String(totalActive),   color: "#22c55e" },
-                        { label: "Certifiés",  value: String(totalCert),     color: "#3b82f6" },
+                        { label: "Reward Accounts", value: String(totalCert), color: "#9ccfea" },
                         { label: "Échoués",    value: String(totalFailed),   color: "#ef4444" },
-                        { label: "1-Step",     value: String(t1Count),       color: "#a78bfa" },
-                        { label: "2-Step",     value: String(t2Count),       color: "#60a5fa" },
+                        { label: "Parcours actuel", value: String(t1Count), color: "#9ccfea" },
+                        { label: "Comptes historiques", value: String(t2Count), color: "#788793" },
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
                         <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 18px" }}>
                           <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
@@ -3683,10 +3682,10 @@ function AdminPageInner() {
                       </div>
 
                       <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Modèle de challenge</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Répartition des parcours</div>
                         {([
-                          { label: "1-Step", count: t1Count, color: "#a78bfa" },
-                          { label: "2-Step", count: t2Count, color: "#60a5fa" },
+                          { label: "Parcours actuel", count: t1Count, color: "#9ccfea" },
+                          { label: "Historique", count: t2Count, color: "#788793" },
                         ] as { label: string; count: number; color: string }[]).map(m => (
                           <div key={m.label} style={{ marginBottom: 16 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -3700,9 +3699,8 @@ function AdminPageInner() {
                         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 8 }}>
                           <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>Taux clés</div>
                           {([
-                            { label: "P1 → P2 (2-Step)",   value: `${kpis.convP1P2}%`,     color: "#22c55e" },
-                            { label: "P2 → Reward",          value: `${kpis.convP2Fund}%`,   color: "#22c55e" },
-                            { label: "Taux reward global",   value: `${pct(totalCert)}%`,    color: "#3b82f6" },
+                            { label: "Challenge → Reward Start", value: `${kpis.convP2Fund}%`, color: "#9ccfea" },
+                            { label: "Taux d'accès Reward", value: `${pct(totalCert)}%`, color: "#9ccfea" },
                             { label: "Taux échec global",    value: `${pct(totalFailed)}%`,  color: "#ef4444" },
                           ] as { label: string; value: string; color: string }[]).map((r, i) => (
                             <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
@@ -3727,8 +3725,8 @@ function AdminPageInner() {
                       {([
                         { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#fff"    },
                         { label: "Traders actifs",    value: String(kpis.activeTraders),                       color: "#22c55e" },
-                        { label: "Certifiés",         value: String(certifiedTraders),                          color: "#3b82f6" },
-                        { label: "LTV moyenne",       value: `€${Math.round(kpis.ltv).toLocaleString()}`,      color: "#f59e0b" },
+                        { label: "Traders avec Reward Account", value: String(certifiedTraders), color: "#9ccfea" },
+                        { label: "Dépense moyenne client", value: `€${Math.round(kpis.ltv).toLocaleString()}`, color: "#f59e0b" },
                         { label: "Moy. challenges",   value: avgChallenges,                                     color: "#a78bfa" },
                         { label: "Paiement Crypto",   value: `${cryptoPct}%`,                                   color: "#f59e0b" },
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
@@ -3752,7 +3750,7 @@ function AdminPageInner() {
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                       <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.name || t.email}</div>
                                       <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
-                                        {t.challenges.length} challenge{t.challenges.length > 1 ? "s" : ""} · {certCount > 0 ? `${certCount} certifié${certCount > 1 ? "s" : ""}` : "Aucun certifié"}
+                                        {t.challenges.length} Challenge{t.challenges.length > 1 ? "s" : ""} · {certCount > 0 ? `${certCount} Reward Account${certCount > 1 ? "s" : ""}` : "Aucun Reward Account"}
                                       </div>
                                     </div>
                                     <div style={{ fontWeight: 900, fontSize: 13, color: "#f59e0b", flexShrink: 0, marginLeft: 12 }}>€{Math.round(t.totalSpent).toLocaleString()}</div>

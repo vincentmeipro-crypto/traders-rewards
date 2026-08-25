@@ -40,21 +40,21 @@ type PreviewData = {
 
 const TYPE_LABELS: Record<string, string> = {
   welcome:               "Accès Challenge",
-  phase2:                "Passage Phase 2",
+  phase2:                "Historique — ancien passage de phase",
   failed:                "Challenge échoué",
-  funded:                "Compte Reward",
+  funded:                "Activation Reward Account",
   daily_update:          "Récap journalier",
-  phase1_certificate:    "Certificat Phase 1",
+  phase1_certificate:    "Certificat Challenge validé",
   challenge_certificate: "Certificat Challenge",
   reward_certificate:    "Certificat Reward",
   apology:               "Compte rétabli",
   // Tests
   "test:welcome":               "Test — Accès Challenge",
-  "test:phase2":                "Test — Passage Phase 2",
+  "test:phase2":                "Test historique — ancien passage de phase",
   "test:failed":                "Test — Challenge échoué",
-  "test:funded":                "Test — Compte Reward",
+  "test:funded":                "Test — Activation Reward Account",
   "test:daily_update":          "Test — Récap journalier",
-  "test:phase1_certificate":    "Test — Certificat Phase 1",
+  "test:phase1_certificate":    "Test — Certificat Challenge validé",
   "test:challenge_certificate": "Test — Certificat Challenge",
   "test:reward_certificate":    "Test — Certificat Reward",
   "test:apology":               "Test — Compte rétabli",
@@ -63,11 +63,11 @@ const TYPE_LABELS: Record<string, string> = {
 const TYPE_OPTIONS = [
   { value: "all",                   label: "Tous les types" },
   { value: "welcome",               label: "Accès Challenge" },
-  { value: "phase2",                label: "Passage Phase 2" },
+  { value: "phase2",                label: "Historique — ancien passage de phase" },
   { value: "failed",                label: "Challenge échoué" },
-  { value: "funded",                label: "Compte Reward" },
+  { value: "funded",                label: "Activation Reward Account" },
   { value: "daily_update",          label: "Récap journalier" },
-  { value: "phase1_certificate",    label: "Certificat Phase 1" },
+  { value: "phase1_certificate",    label: "Certificat Challenge validé" },
   { value: "challenge_certificate", label: "Certificat Challenge" },
   { value: "reward_certificate",    label: "Certificat Reward" },
   { value: "apology",               label: "Compte rétabli" },
@@ -997,33 +997,7 @@ export default function EmailCenterPage() {
                     </div>
                   )}
 
-                  {/* Model picker — welcome preview only */}
-                  {entry.type === "welcome" && (
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1px", color: "rgba(255,255,255,0.25)", textTransform: "uppercase" as const }}>
-                        Modèle
-                      </span>
-                      {(["2step", "1step", "algo"] as const).map(m => {
-                        const active = (previewModel["welcome"] ?? "2step") === m;
-                        return (
-                          <button
-                            key={m}
-                            onClick={() => setPreviewModel(pm => ({ ...pm, welcome: m }))}
-                            style={{
-                              fontSize: 11, fontWeight: active ? 700 : 400,
-                              padding: "3px 10px", borderRadius: 4, cursor: "pointer",
-                              background: active ? "rgba(59,130,246,0.12)" : "transparent",
-                              border: `1px solid ${active ? "rgba(59,130,246,0.35)" : "rgba(255,255,255,0.1)"}`,
-                              color: active ? "#60a5fa" : "rgba(255,255,255,0.4)",
-                              transition: "all 0.15s",
-                            }}
-                          >
-                            {m === "2step" ? "2-Step" : m === "1step" ? "1-Step" : "ALGO"}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                  {entry.type === "welcome" && <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".12em", color: "#9ccfea" }}>PARCOURS ACTUEL · 25K / 50K / 100K</div>}
 
                   {/* Feedback */}
                   {msg && (

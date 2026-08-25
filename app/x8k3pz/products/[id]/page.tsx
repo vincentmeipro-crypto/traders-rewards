@@ -9,7 +9,7 @@ type Phase = {
   id:               string;
   phase_order:      number;
   phase_label:      string;
-  phase_type:       "challenge" | "funded";
+  phase_type:       "challenge" | "funded" | "reward_journey";
   profit_target:    number | null;
   daily_drawdown:   number;
   total_drawdown:   number;
@@ -244,8 +244,7 @@ export default function ProductEditorPage() {
   };
 
   const BALANCES: Record<string, string> = {
-    "$10,000": "10000", "$25,000": "25000", "$50,000": "50000",
-    "$100,000": "100000", "$200,000": "200000",
+    "$25,000": "25000", "$50,000": "50000", "$100,000": "100000",
   };
 
   const fetchProduct = useCallback(async () => {
@@ -377,6 +376,9 @@ export default function ProductEditorPage() {
   const hasAny = (cnt?.total ?? 0) > 0;
   const title  = isNew ? "Nouveau produit" : (product?.name ?? "—");
   const fieldRow = { marginBottom: 20 };
+
+  // V1 : masquer consistency_pct legacy (remplacé par consistency_challenge_pct + consistency_reward_pct)
+  const isV1Product = rules.some(r => r.rule_key === "dd_model" && r.rule_value === "trailing_eod_lock");
 
   // P3#25: Loading skeleton animé
   if (loading) {
@@ -516,7 +518,7 @@ export default function ProductEditorPage() {
             Ce produit est utilisé par{" "}
             <strong style={{ color: "rgba(245,158,11,0.95)" }}>{cnt!.total} challenge{cnt!.total > 1 ? "s" : ""}</strong>
             {cnt!.active > 0 ? ` (${cnt!.active} actif${cnt!.active > 1 ? "s" : ""})` : ""}
-            {cnt!.funded > 0 ? `, ${cnt!.funded} certifié${cnt!.funded > 1 ? "s" : ""}` : ""}
+            {cnt!.funded > 0 ? `, ${cnt!.funded} Reward Account${cnt!.funded > 1 ? "s" : ""}` : ""}
             {" "}— les modifications n&apos;affectent pas les challenges existants.
           </span>
         </div>
@@ -529,7 +531,7 @@ export default function ProductEditorPage() {
         {!isNew && (
           <>
             <button style={tabStyle("phases")} onClick={() => setActiveTab("phases")}>
-              Phases{phases.length > 0 && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginLeft: 6 }}>{phases.length}</span>}
+              Parcours{phases.length > 0 && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginLeft: 6 }}>{phases.length}</span>}
             </button>
             <button style={tabStyle("rules")} onClick={() => setActiveTab("rules")}>
               Règles{rules.length > 0 && (
@@ -589,8 +591,8 @@ export default function ProductEditorPage() {
                   <div>
                     <Label>Modèle</Label>
                     <Select value={form.model} onChange={pf("model")} options={[
-                      { value: "2step", label: "2-Step Challenge" },
-                      { value: "1step", label: "1-Step Challenge" },
+                      { value: "2step", label: "Historique — ancien parcours" },
+                      { value: "1step", label: "Challenge actuel" },
                       { value: "vip",   label: "VIP / Algo" },
                     ]} />
                   </div>
@@ -605,7 +607,7 @@ export default function ProductEditorPage() {
                     <Select
                       value={form.account_size}
                       onChange={v => setForm(prev => ({ ...prev, account_size: v, balance_usd: BALANCES[v] || prev.balance_usd }))}
-                      options={["$10,000","$25,000","$50,000","$100,000","$200,000"].map(s => ({ value: s, label: s }))}
+                      options={["$25,000","$50,000","$100,000"].map(s => ({ value: s, label: s }))}
                     />
                   </div>
                   <div>
@@ -616,8 +618,9 @@ export default function ProductEditorPage() {
                 {/* Prix + ordre — P3#31: Ordre d'affichage déplacé ici depuis Paramètres techniques */}
                 <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, ...fieldRow }}>
                   <div>
-                    <Label>Prix carte</Label>
+                    <Label>Prix promotionnel actuel</Label>
                     <Input value={form.price_eur} onChange={pf("price_eur")} type="number" suffix="€" />
+                    {form.slug.startsWith("rewards-") && <div style={{ fontSize: 10, color: "#9ccfea", marginTop: 5 }}>Remise de lancement −90% · prix standard : {form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</div>}
                   </div>
                   <div>
                     <Label>Prix crypto</Label>
@@ -659,7 +662,7 @@ export default function ProductEditorPage() {
                     <Input value={form.mt5_group_challenge} onChange={pf("mt5_group_challenge")} />
                   </div>
                   <div>
-                    <Label>Groupe MT5 (funded)</Label>
+                    <Label>Groupe MT5 (Reward Account)</Label>
                     <Input value={form.mt5_group_funded} onChange={pf("mt5_group_funded")} />
                   </div>
                 </div>
@@ -670,153 +673,311 @@ export default function ProductEditorPage() {
           {/* ── TAB PHASES ──────────────────────────────────────── */}
           {activeTab === "phases" && (
             <div>
-              {phases.length === 0 ? (
-                <div style={{ padding: "60px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>Aucune phase définie</div>
-              ) : (
-                phases.map((phase, idx) => {
-                  const isFunded  = phase.phase_type === "funded";
-                  const accent    = isFunded ? "#4ade80" : "#60a5fa";
-                  const isEditing = editingPhase === phase.phase_order;
+              {/* Détection produit V1 — routing du rendu par phase_type */}
+              {(() => {
+                const isV1 = rules.some(r => r.rule_key === "dd_model" && r.rule_value === "trailing_eod_lock");
+                const qualifyingMinUsd = (() => {
+                  const r = rules.find(r => r.rule_key === "qualifying_day_min_usd");
+                  return r ? Number(r.rule_value) : null;
+                })();
+                const balanceUsd = product?.balance_usd ?? 0;
+                const rewardThresholdUsd = Math.round(balanceUsd * 1.04);
 
-                  return (
-                    <div key={phase.phase_order}>
-                      {/* P2#8: Phase card — box-shadow pour l'état ouvert */}
-                      <div style={{
-                        border: `1px solid ${isEditing ? accent + "55" : "rgba(255,255,255,0.1)"}`,
-                        borderLeft: `3px solid ${accent}`,
-                        borderRadius: 8, overflow: "hidden",
-                        background: isEditing ? "#111" : "#0c0c0c",
-                        transition: "all 0.2s",
-                        boxShadow: isEditing ? `0 0 0 1px ${accent}20, inset 0 1px 0 ${accent}18` : "none",
-                      }}>
-                        {/* Résumé */}
-                        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                            <div style={{ width: 34, height: 34, borderRadius: 8, background: `${accent}15`, border: `1px solid ${accent}28`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: isFunded ? 15 : 14, fontWeight: 800, color: accent, flexShrink: 0 }}>
-                              {isFunded ? "✓" : phase.phase_order}
-                            </div>
-                            <div>
-                              <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{phase.phase_label}</div>
-                              {/* Sous-titre uniquement pour funded */}
-                              {isFunded && (
-                                <div style={{ fontSize: 10, color: accent, marginTop: 4, fontWeight: 600 }}>Compte Certifié</div>
-                              )}
-                            </div>
-                          </div>
+                // Labels et couleurs par phase_type (V1)
+                const V1_PHASE_ACCENT: Record<string, string> = {
+                  challenge:      "#60a5fa",
+                  funded:         "#c9a84c",
+                  reward_journey: "#4ade80",
+                };
+                const V1_PHASE_SUBLABEL: Record<string, string> = {
+                  challenge:      "CHALLENGER",
+                  funded:         "REWARD START",
+                  reward_journey: "TRADER REWARD",
+                };
 
-                          {/* Métriques */}
-                          <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
-                            {phase.profit_target !== null && (
-                              <div style={{ textAlign: "right" }}>
-                                <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_target}%</div>
-                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Objectif</div>
-                              </div>
-                            )}
-                            <div style={{ textAlign: "right" }}>
-                              <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.daily_drawdown}%</div>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>DD/jour</div>
-                            </div>
-                            <div style={{ textAlign: "right" }}>
-                              <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.total_drawdown}%</div>
-                              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>DD total</div>
-                            </div>
-                            {phase.min_trading_days > 0 && (
-                              <div style={{ textAlign: "right" }}>
-                                <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.min_trading_days}</div>
-                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>j. min</div>
-                              </div>
-                            )}
-                            {phase.profit_split !== null && (
-                              <div style={{ textAlign: "right" }}>
-                                <div style={{ fontSize: 16, fontWeight: 800, color: "#4ade80", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_split}%</div>
-                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Split</div>
-                              </div>
-                            )}
-                            {/* P2#10: séparateur vertical avant le bouton Modifier */}
-                            <div style={{ width: 1, height: 32, background: "rgba(255,255,255,0.1)", flexShrink: 0, alignSelf: "center" }} />
-                            <button
-                              onClick={() => {
-                                if (isEditing) { setEditingPhase(null); return; }
-                                setEditingPhase(phase.phase_order);
-                                setPhaseForm({
-                                  phase_label:      phase.phase_label,
-                                  profit_target:    phase.profit_target,
-                                  daily_drawdown:   phase.daily_drawdown,
-                                  total_drawdown:   phase.total_drawdown,
-                                  min_trading_days: phase.min_trading_days,
-                                  max_trading_days: phase.max_trading_days,
-                                  profit_split:     phase.profit_split,
-                                  mt5_group:        phase.mt5_group,
-                                });
-                              }}
-                              style={{
-                                fontSize: 12, fontWeight: 600,
-                                color: isEditing ? accent : "rgba(255,255,255,0.32)",
-                                background: isEditing ? `${accent}14` : "rgba(255,255,255,0.05)",
-                                border: `1px solid ${isEditing ? accent + "38" : "rgba(255,255,255,0.1)"}`,
-                                borderRadius: 5, padding: "6px 14px",
-                                cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s",
-                              }}
-                            >
-                              {isEditing ? (
-                                <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
-                                  {/* P3#30: chevron CSS, pas d'emoji */}
-                                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">
-                                    <path d="M1.5 6L5 2L8.5 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                                  </svg>
-                                  Fermer
-                                </span>
-                              ) : "Modifier"}
-                            </button>
-                          </div>
-                        </div>
+                return phases.length === 0 ? (
+                  <div style={{ padding: "60px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>Aucune phase définie</div>
+                ) : (
+                  phases.map((phase, idx) => {
+                    const isFunded        = phase.phase_type === "funded";
+                    const isRewardJourney = phase.phase_type === "reward_journey";
+                    const accent          = isV1
+                      ? (V1_PHASE_ACCENT[phase.phase_type] ?? "#60a5fa")
+                      : (isFunded ? "#4ade80" : "#60a5fa");
+                    const isEditing = editingPhase === phase.phase_order;
 
-                        {/* Accordéon */}
-                        {isEditing && (
-                          // P1#3: accordéon sur surface #111
-                          <div style={{ padding: "20px", borderTop: "1px solid rgba(255,255,255,0.1)", background: "#111" }}>
-                            <div style={{ marginBottom: 16 }}>
-                              <Label>Label de la phase</Label>
-                              <Input value={phaseForm.phase_label ?? ""} onChange={v => setPhaseForm(p => ({ ...p, phase_label: v }))} />
-                            </div>
-                            {/* P4: grids accordéon responsive isMobile */}
-                            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
-                              <div>
-                                <Label>Objectif profit</Label>
-                                <Input value={phaseForm.profit_target ?? ""} onChange={v => setPhaseForm(p => ({ ...p, profit_target: v === "" ? null : Number(v) }))} type="number" suffix="%" />
+                    return (
+                      <div key={phase.phase_order}>
+                        {/* Phase card */}
+                        <div style={{
+                          border: `1px solid ${isEditing ? accent + "55" : "rgba(255,255,255,0.1)"}`,
+                          borderLeft: `3px solid ${accent}`,
+                          borderRadius: 8, overflow: "hidden",
+                          background: isEditing ? "#111" : "#0c0c0c",
+                          transition: "all 0.2s",
+                          boxShadow: isEditing ? `0 0 0 1px ${accent}20, inset 0 1px 0 ${accent}18` : "none",
+                        }}>
+                          {/* Résumé */}
+                          <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                              <div style={{ width: 34, height: 34, borderRadius: 8, background: `${accent}15`, border: `1px solid ${accent}28`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 800, color: accent, flexShrink: 0 }}>
+                                {phase.phase_order}
                               </div>
                               <div>
-                                <Label>Drawdown journalier</Label>
-                                <Input value={phaseForm.daily_drawdown ?? ""} onChange={v => setPhaseForm(p => ({ ...p, daily_drawdown: Number(v) }))} type="number" suffix="%" />
-                              </div>
-                              <div>
-                                <Label>Drawdown total</Label>
-                                <Input value={phaseForm.total_drawdown ?? ""} onChange={v => setPhaseForm(p => ({ ...p, total_drawdown: Number(v) }))} type="number" suffix="%" />
-                              </div>
-                            </div>
-                            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
-                              <div>
-                                <Label>Jours min</Label>
-                                <Input value={phaseForm.min_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, min_trading_days: Number(v) }))} type="number" suffix="j" />
-                              </div>
-                              <div>
-                                <Label>Jours max</Label>
-                                <Input value={phaseForm.max_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, max_trading_days: v === "" ? null : Number(v) }))} type="number" />
-                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>Vide = illimité</div>
-                              </div>
-                              <div>
-                                <Label>Partage profits</Label>
-                                <Input value={phaseForm.profit_split ?? ""} onChange={v => setPhaseForm(p => ({ ...p, profit_split: v === "" ? null : Number(v) }))} type="number" suffix="%" />
+                                <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", lineHeight: 1 }}>{phase.phase_label}</div>
+                                {/* Sous-label métier V1 */}
+                                {isV1 && V1_PHASE_SUBLABEL[phase.phase_type] && (
+                                  <div style={{ fontSize: 10, color: accent, marginTop: 4, fontWeight: 600 }}>
+                                    {V1_PHASE_SUBLABEL[phase.phase_type]}
+                                  </div>
+                                )}
+                                {/* Legacy funded sous-label */}
+                                {!isV1 && isFunded && (
+                                  <div style={{ fontSize: 10, color: accent, marginTop: 4, fontWeight: 600 }}>REWARD ACCOUNT</div>
+                                )}
                               </div>
                             </div>
-                            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-                              <button onClick={() => setEditingPhase(null)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.45)", borderRadius: 6, padding: "8px 16px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
-                              <button onClick={() => savePhase(phase.phase_order)} disabled={saving} style={{ background: "#3B82F6", border: "none", color: "#fff", borderRadius: 6, padding: "8px 22px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                                {saving ? "…" : "Sauvegarder"}
+
+                            {/* ── Métriques par phase_type ── */}
+                            <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
+
+                              {/* NIVEAU 1 — CHALLENGE (V1 + legacy) */}
+                              {phase.phase_type === "challenge" && (<>
+                                {phase.profit_target !== null && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_target}%</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Objectif</div>
+                                  </div>
+                                )}
+                                <div style={{ textAlign: "right" }}>
+                                  <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.total_drawdown}%</div>
+                                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Trailing DD EOD</div>
+                                </div>
+                                {isV1 && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>50%</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Consistance</div>
+                                  </div>
+                                )}
+                                {phase.min_trading_days > 0 && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.min_trading_days}</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>j. min</div>
+                                  </div>
+                                )}
+                                {phase.max_trading_days !== null && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.max_trading_days}</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>j. max</div>
+                                  </div>
+                                )}
+                                {/* Profit split — legacy uniquement */}
+                                {!isV1 && phase.profit_split !== null && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#4ade80", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_split}%</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Profit éligible</div>
+                                  </div>
+                                )}
+                              </>)}
+
+                              {/* NIVEAU 2 — REWARD #1 / REWARD START (funded) */}
+                              {phase.phase_type === "funded" && (<>
+                                {phase.profit_target !== null && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_target}%</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Objectif</div>
+                                  </div>
+                                )}
+                                <div style={{ textAlign: "right" }}>
+                                  <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.total_drawdown}%</div>
+                                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Trailing DD EOD</div>
+                                </div>
+                                {isV1 && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>33%</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Consistance</div>
+                                  </div>
+                                )}
+                                {phase.min_trading_days > 0 && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.min_trading_days}</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>J. QUALIF.</div>
+                                  </div>
+                                )}
+                                {isV1 && qualifyingMinUsd !== null && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{qualifyingMinUsd}$</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Seuil/jour</div>
+                                  </div>
+                                )}
+                                {isV1 && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", lineHeight: 1 }}>∞</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Durée</div>
+                                  </div>
+                                )}
+                                {/* Profit split — legacy uniquement */}
+                                {!isV1 && phase.profit_split !== null && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#4ade80", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_split}%</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Profit éligible</div>
+                                  </div>
+                                )}
+                              </>)}
+
+                              {/* NIVEAU 3 — REWARDS #2-5 / TRADER REWARD (reward_journey) */}
+                              {phase.phase_type === "reward_journey" && (<>
+                                {balanceUsd > 0 && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{rewardThresholdUsd.toLocaleString("fr-FR")}$</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Seuil Reward</div>
+                                  </div>
+                                )}
+                                {balanceUsd > 0 && (
+                                  <div style={{ textAlign: "right" }}>
+                                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{balanceUsd.toLocaleString("fr-FR")}$</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Plancher fixe</div>
+                                  </div>
+                                )}
+                                <div style={{ textAlign: "right" }}>
+                                  <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>33%</div>
+                                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Consistance</div>
+                                </div>
+                                <div style={{ textAlign: "right" }}>
+                                  <div style={{ fontSize: 14, fontWeight: 800, color: "#4ade80", lineHeight: 1 }}>#2 → #5</div>
+                                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Progression</div>
+                                </div>
+                              </>)}
+
+                              {/* Séparateur + bouton Modifier */}
+                              <div style={{ width: 1, height: 32, background: "rgba(255,255,255,0.1)", flexShrink: 0, alignSelf: "center" }} />
+                              <button
+                                onClick={() => {
+                                  if (isEditing) { setEditingPhase(null); return; }
+                                  setEditingPhase(phase.phase_order);
+                                  setPhaseForm({
+                                    phase_label:      phase.phase_label,
+                                    profit_target:    phase.profit_target,
+                                    daily_drawdown:   phase.daily_drawdown,
+                                    total_drawdown:   phase.total_drawdown,
+                                    min_trading_days: phase.min_trading_days,
+                                    max_trading_days: phase.max_trading_days,
+                                    profit_split:     phase.profit_split,
+                                    mt5_group:        phase.mt5_group,
+                                  });
+                                }}
+                                style={{
+                                  fontSize: 12, fontWeight: 600,
+                                  color: isEditing ? accent : "rgba(255,255,255,0.32)",
+                                  background: isEditing ? `${accent}14` : "rgba(255,255,255,0.05)",
+                                  border: `1px solid ${isEditing ? accent + "38" : "rgba(255,255,255,0.1)"}`,
+                                  borderRadius: 5, padding: "6px 14px",
+                                  cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s",
+                                }}
+                              >
+                                {isEditing ? (
+                                  <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+                                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none" aria-hidden="true">
+                                      <path d="M1.5 6L5 2L8.5 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                    Fermer
+                                  </span>
+                                ) : "Modifier"}
                               </button>
                             </div>
                           </div>
-                        )}
+
+                          {/* Accordéon */}
+                          {isEditing && (
+                            <div style={{ padding: "20px", borderTop: "1px solid rgba(255,255,255,0.1)", background: "#111" }}>
+                              <div style={{ marginBottom: 16 }}>
+                                <Label>Label de la phase</Label>
+                                <Input value={phaseForm.phase_label ?? ""} onChange={v => setPhaseForm(p => ({ ...p, phase_label: v }))} />
+                              </div>
+
+                              {/* NIVEAU 1 & 2 : champs Objectif + Trailing DD EOD */}
+                              {phase.phase_type !== "reward_journey" && (
+                                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                                  <div>
+                                    <Label>Objectif profit</Label>
+                                    <Input value={phaseForm.profit_target ?? ""} onChange={v => setPhaseForm(p => ({ ...p, profit_target: v === "" ? null : Number(v) }))} type="number" suffix="%" />
+                                  </div>
+                                  <div>
+                                    <Label>Trailing DD EOD</Label>
+                                    <Input value={phaseForm.total_drawdown ?? ""} onChange={v => setPhaseForm(p => ({ ...p, total_drawdown: Number(v) }))} type="number" suffix="%" />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* NIVEAU 1 : Jours min + Jours max */}
+                              {phase.phase_type === "challenge" && (
+                                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 20 }}>
+                                  <div>
+                                    <Label>Jours min</Label>
+                                    <Input value={phaseForm.min_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, min_trading_days: Number(v) }))} type="number" suffix="j" />
+                                  </div>
+                                  <div>
+                                    <Label>Jours max</Label>
+                                    <Input value={phaseForm.max_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, max_trading_days: v === "" ? null : Number(v) }))} type="number" />
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>Vide = illimité</div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* NIVEAU 2 (V1) : Journées qualifiantes min (pas de j. max) */}
+                              {phase.phase_type === "funded" && isV1 && (
+                                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 20 }}>
+                                  <div>
+                                    <Label>Journées qualifiantes min</Label>
+                                    <Input value={phaseForm.min_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, min_trading_days: Number(v) }))} type="number" suffix="j" />
+                                  </div>
+                                  <div>
+                                    <Label>Durée max</Label>
+                                    <Input value="" readOnly />
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>Illimitée (non applicable)</div>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* NIVEAU 2 (legacy) : Jours min + Jours max + Profit split */}
+                              {phase.phase_type === "funded" && !isV1 && (
+                                <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
+                                  <div>
+                                    <Label>Jours min</Label>
+                                    <Input value={phaseForm.min_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, min_trading_days: Number(v) }))} type="number" suffix="j" />
+                                  </div>
+                                  <div>
+                                    <Label>Jours max</Label>
+                                    <Input value={phaseForm.max_trading_days ?? ""} onChange={v => setPhaseForm(p => ({ ...p, max_trading_days: v === "" ? null : Number(v) }))} type="number" />
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 5 }}>Vide = illimité</div>
+                                  </div>
+                                  <div>
+                                    <Label>Partage profits</Label>
+                                    <Input value={phaseForm.profit_split ?? ""} onChange={v => setPhaseForm(p => ({ ...p, profit_split: v === "" ? null : Number(v) }))} type="number" suffix="%" />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* NIVEAU 3 (reward_journey) : info readonly */}
+                              {phase.phase_type === "reward_journey" && (
+                                <div style={{ marginBottom: 20, padding: "12px 16px", background: "rgba(74,222,128,0.06)", border: "1px solid rgba(74,222,128,0.14)", borderRadius: 8 }}>
+                                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", lineHeight: 1.7 }}>
+                                    <div><strong style={{ color: "rgba(255,255,255,0.55)" }}>Seuil Reward :</strong> {rewardThresholdUsd.toLocaleString("fr-FR")} $ (start × 1.04)</div>
+                                    <div><strong style={{ color: "rgba(255,255,255,0.55)" }}>Plancher fixe :</strong> {balanceUsd.toLocaleString("fr-FR")} $ (capital initial permanent)</div>
+                                    <div><strong style={{ color: "rgba(255,255,255,0.55)" }}>Consistance :</strong> 33 % (best_day ≤ 33 % du profit requis)</div>
+                                    <div style={{ marginTop: 6, color: "rgba(255,255,255,0.28)", fontSize: 10 }}>Les caps Reward #2–#5 sont configurés dans l&apos;onglet Règles (reward_cap_2 à reward_cap_5).</div>
+                                  </div>
+                                </div>
+                              )}
+
+                              <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                                <button onClick={() => setEditingPhase(null)} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.45)", borderRadius: 6, padding: "8px 16px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
+                                <button onClick={() => savePhase(phase.phase_order)} disabled={saving} style={{ background: "#3B82F6", border: "none", color: "#fff", borderRadius: 6, padding: "8px 22px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                  {saving ? "…" : "Sauvegarder"}
+                                </button>
+                              </div>
+                            </div>
+                          )}
                       </div>
 
                       {/* Connecteur entre phases */}
@@ -829,8 +990,9 @@ export default function ProductEditorPage() {
                     </div>
                   );
                 })
-              )}
-            </div>
+              );
+            })()}
+          </div>
           )}
 
           {/* ── TAB RÈGLES ──────────────────────────────────────── */}
@@ -839,9 +1001,21 @@ export default function ProductEditorPage() {
               {rules.length === 0 ? (
                 <div style={{ padding: "40px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>Aucune règle définie</div>
               ) : (
-                rules.map(rule => {
+                rules.filter(r => !(isV1Product && r.rule_key === "consistency_pct")).map(rule => {
                   const isEditing    = editingRule === rule.rule_key;
                   const displayValue = typeof rule.rule_value === "object" ? JSON.stringify(rule.rule_value) : String(rule.rule_value);
+                  // Description dynamique pour les règles de drawdown — dérivée de la valeur réelle, jamais hardcodée
+                  const displayDescription = (() => {
+                    const v = Number(rule.rule_value);
+                    if (rule.rule_key === "trailing_dd_pct" && !isNaN(v)) {
+                      return `Trailing drawdown ${v}% EOD.`;
+                    }
+                    if (rule.rule_key === "trailing_lock_pct" && !isNaN(v)) {
+                      const threshold = (1 + v / 100).toFixed(2);
+                      return `Verrouillage du trailing (${v}%) : floor = start si highest_eod ≥ start × ${threshold} (permanent).`;
+                    }
+                    return rule.description;
+                  })();
                   return (
                     <div key={rule.rule_key} style={{
                       padding: "14px 20px",
@@ -856,7 +1030,7 @@ export default function ProductEditorPage() {
                             <span style={{ fontSize: 13, fontWeight: 600, color: rule.enabled ? "#fff" : "rgba(255,255,255,0.28)", fontFamily: "ui-monospace, 'Cascadia Code', monospace" }}>{rule.rule_key}</span>
                             <span style={{ fontSize: 12, fontWeight: 700, color: rule.enabled ? "#60a5fa" : "rgba(255,255,255,0.18)", fontVariantNumeric: "tabular-nums" }}>{displayValue}</span>
                           </div>
-                          {rule.description && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 2 }}>{rule.description}</div>}
+                          {displayDescription && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 2 }}>{displayDescription}</div>}
                         </div>
                         <button
                           onClick={() => {
@@ -955,12 +1129,14 @@ export default function ProductEditorPage() {
 
               <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", marginBottom: 3 }}>{form.name || "—"}</div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.38)", marginBottom: 16 }}>
-                {form.account_size} · {form.model === "2step" ? "2-Step" : form.model === "1step" ? "1-Step" : "VIP"}
+                {form.account_size} · {form.model === "2step" ? "HISTORIQUE" : form.model === "1step" ? "CHALLENGE ACTUEL" : "VIP"}
               </div>
 
               <div style={{ fontSize: 28, fontWeight: 900, color: "#fff", letterSpacing: "-1px", lineHeight: 1, marginBottom: 4, fontVariantNumeric: "tabular-nums" }}>
+                {form.slug.startsWith("rewards-") && <span style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,.32)", textDecoration: "line-through", letterSpacing: 0, marginBottom: 4 }}>{form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</span>}
                 {form.price_eur ? `€${form.price_eur}` : "—"}
               </div>
+              {form.slug.startsWith("rewards-") && <div style={{ color: "#9ccfea", fontSize: 9, fontWeight: 900, letterSpacing: ".12em", marginBottom: 6 }}>OFFRE DE LANCEMENT · −90%</div>}
               {form.price_crypto && (
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginBottom: 4 }}>
                   Crypto : €{form.price_crypto}
@@ -971,19 +1147,41 @@ export default function ProductEditorPage() {
 
               {phases.length > 0 ? (
                 <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Parcours</div>
-                  {phases.map((ph, idx) => (
-                    <div key={ph.phase_order} style={{ marginBottom: 12 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: ph.phase_type === "funded" ? "#4ade80" : "#60a5fa", marginBottom: 5 }}>{ph.phase_label}</div>
-                      <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", lineHeight: 1.7 }}>
-                        {ph.profit_target !== null && <div>Objectif {ph.profit_target}%</div>}
-                        <div>DD {ph.daily_drawdown}% / {ph.total_drawdown}%</div>
-                        {ph.min_trading_days > 0 && <div>{ph.min_trading_days} jours min</div>}
-                        {ph.profit_split !== null && <div>Split trader {ph.profit_split}%</div>}
-                      </div>
-                      {idx < phases.length - 1 && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.15)", marginTop: 8 }}>↓</div>}
-                    </div>
-                  ))}
+                  {/* Sidebar parcours — détection V1 */}
+                  {(() => {
+                    const isV1sb = rules.some(r => r.rule_key === "dd_model" && r.rule_value === "trailing_eod_lock");
+                    const phAccent: Record<string, string> = {
+                      challenge: "#60a5fa", funded: "#c9a84c", reward_journey: "#4ade80",
+                    };
+                    const phSublabel: Record<string, string> = {
+                      challenge: "CHALLENGER", funded: "REWARD START", reward_journey: "TRADER REWARD",
+                    };
+                    return (<>
+                      <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Parcours {phases.length}</div>
+                      {phases.map((ph, idx) => {
+                        const col = isV1sb ? (phAccent[ph.phase_type] ?? "#60a5fa") : (ph.phase_type === "funded" ? "#4ade80" : "#60a5fa");
+                        return (
+                          <div key={ph.phase_order} style={{ marginBottom: 12 }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: col, marginBottom: 2 }}>{ph.phase_label}</div>
+                            {isV1sb && phSublabel[ph.phase_type] && (
+                              <div style={{ fontSize: 9, fontWeight: 700, color: col, opacity: 0.65, letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: 4 }}>{phSublabel[ph.phase_type]}</div>
+                            )}
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", lineHeight: 1.7 }}>
+                              {ph.profit_target !== null && ph.phase_type !== "reward_journey" && <div>Objectif {ph.profit_target}%</div>}
+                              {ph.phase_type === "challenge" && <div>Trailing DD EOD {ph.total_drawdown}%</div>}
+                              {ph.phase_type === "funded"    && <div>Trailing DD EOD {ph.total_drawdown}% (avec lock)</div>}
+                              {ph.phase_type === "reward_journey" && product && <div>Seuil {Math.round(product.balance_usd * 1.04).toLocaleString("fr-FR")} $ | Plancher fixe {product.balance_usd.toLocaleString("fr-FR")} $</div>}
+                              {ph.phase_type === "challenge" && ph.min_trading_days > 0 && <div>{ph.min_trading_days} j. min · {ph.max_trading_days ?? "∞"} j. max</div>}
+                              {ph.phase_type === "funded"    && ph.min_trading_days > 0 && <div>{ph.min_trading_days} j. qualifiantes</div>}
+                              {/* Profit split — legacy uniquement */}
+                              {!isV1sb && ph.profit_split !== null && <div>Profit éligible {ph.profit_split}%</div>}
+                            </div>
+                            {idx < phases.length - 1 && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.15)", marginTop: 8 }}>↓</div>}
+                          </div>
+                        );
+                      })}
+                    </>);
+                  })()}
                 </div>
               ) : (
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.18)" }}>Aucune phase</div>
@@ -993,7 +1191,7 @@ export default function ProductEditorPage() {
                 <>
                   <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "16px 0" }} />
                   <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 10 }}>Règles actives</div>
-                  {rules.filter(r => r.enabled).map(r => (
+                  {rules.filter(r => r.enabled && !(isV1Product && r.rule_key === "consistency_pct")).map(r => (
                     <div key={r.rule_key} style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginBottom: 5, display: "flex", justifyContent: "space-between", gap: 8 }}>
                       <span style={{ fontFamily: "ui-monospace, 'Cascadia Code', monospace", color: "rgba(255,255,255,0.3)", wordBreak: "break-all" }}>{r.rule_key}</span>
                       <span style={{ color: "#60a5fa", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
@@ -1049,7 +1247,7 @@ export default function ProductEditorPage() {
               {form.name || "—"}
             </div>
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>
-              {form.account_size} · {form.model === "2step" ? "2-Step" : form.model === "1step" ? "1-Step" : "VIP"}
+              {form.account_size} · {form.model === "2step" ? "HISTORIQUE" : form.model === "1step" ? "CHALLENGE ACTUEL" : "VIP"}
             </div>
           </div>
           <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", letterSpacing: "-0.5px", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>

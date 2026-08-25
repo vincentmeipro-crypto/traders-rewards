@@ -23,7 +23,7 @@ export default function TermsPage() {
         "Lors de la finalisation d'une Commande, vous sélectionnez la version du Challenge Traders Rewards et le montant du Capital Simulé Initial. Ces options ne peuvent pas être modifiées une fois la Commande soumise.",
         "Les Frais de Challenge sont non remboursables une fois payés, sauf exercice du droit de rétractation dans les conditions définies à l'Article 11.",
         "Les remises et avantages promotionnels ne peuvent pas être cumulés, sauf mention expresse contraire de notre part.",
-        "Le Capital Simulé total ne peut pas excéder 200 000 USD par client, tous comptes confondus.",
+        "Les tailles de compte proposées sont 25 000 USD, 50 000 USD et 100 000 USD de capital simulé. Les limites de comptes actifs sont précisées dans les règles du programme.",
       ]
     },
     {
@@ -40,8 +40,8 @@ export default function TermsPage() {
       content: [
         "Le Trading Simulé reproduit les conditions des marchés financiers réels. Les données de marché sont utilisées uniquement pour reproduire ces conditions. Aucun ordre réel n'est exécuté sur les marchés financiers.",
         "Vous reconnaissez que le Trading Simulé est entièrement fictif, que le capital affiché n'a aucune valeur monétaire réelle, et que vous ne percevrez aucune rémunération lors de la phase d'Évaluation.",
-        "Challenge 2 Étapes — Phase 1 : Objectif +10%, Drawdown journalier max 5%, Drawdown global max 10%, 5 jours de trading minimum. Phase 2 : Objectif +5%, Drawdown journalier max 5%, Drawdown global max 10%, 5 jours de trading minimum.",
-        "Challenge 1 Étape : Objectif +10%, Drawdown journalier max 3% (trailing), Drawdown global max 10% (trailing), meilleure journée ≤ 50% du profit total, 5 jours de trading minimum.",
+        "Le Challenge comporte une seule étape : objectif de profit +6%, minimum de deux (2) journées de trading, consistance maximale de 50% et durée maximale de trente (30) jours calendaires.",
+        "La limite de perte est un Trailing Drawdown EOD de 4% pour les comptes 25K et 50K, et de 3% pour le compte 100K. Aucun Daily Drawdown séparé ne s'applique.",
         "Si vous n'activez pas une phase dans les trente (30) jours suivant sa mise à disposition, votre accès sera suspendu. Vous pouvez demander un renouvellement dans les six (6) mois, faute de quoi l'Accord sera résilié sans remboursement.",
       ]
     },
@@ -49,8 +49,9 @@ export default function TermsPage() {
       title: "6. Programme Traders Rewards",
       content: [
         "Si vous réussissez le Processus d'Évaluation, vous pourrez accéder au Programme Traders Rewards, qui vous donne accès à un Compte Trader et vous permet de percevoir une Récompense basée sur les performances générées.",
-        "La Récompense applicable est de 80% des profits simulés pour les traders issus du Challenge 2 Étapes, et de 90% des profits simulés pour les traders issus du Challenge 1 Étape.",
-        "Le Compte Trader ne comporte aucun objectif de profit, aucun nombre de jours minimum et aucune date d'expiration. Seules les règles de Drawdown restent applicables.",
+        "Après validation du Challenge et paiement des frais d'activation applicables, vous accédez au Reward Account et à un parcours composé de cinq (5) niveaux de Rewards successifs.",
+        "Le Reward Account requiert un seuil de +4% par rapport au capital initial, au moins cinq (5) journées qualifiantes, une consistance maximale de 33% et ne comporte pas de limite de durée.",
+        "Le montant de chaque Reward est limité au nouveau profit disponible depuis la Reward précédente et au plafond correspondant au niveau et à la taille du compte. Après versement, la Reward est déduite de la balance simulée.",
         "La réussite du Challenge ne garantit pas automatiquement l'accès au Programme Trader. Nous nous réservons le droit d'effectuer des vérifications complémentaires.",
         "Les Récompenses versées ne constituent pas un salaire, une rémunération professionnelle, ni un revenu issu d'opérations sur instruments financiers réels. Vous êtes seul responsable de vos obligations fiscales.",
       ]
@@ -161,16 +162,15 @@ export default function TermsPage() {
       content: [
         "« Accord » : le contrat conclu entre vous et nous lors de la confirmation de votre Commande.",
         "« Capital Simulé Initial » : le montant simulé choisi lors de la Commande, sans valeur monétaire réelle.",
-        "« Challenge Traders Rewards » : le service d'évaluation proposé en deux versions (1 Étape et 2 Étapes).",
-        "« Compte Trader » : le compte simulé accessible après réussite du Challenge, dans le cadre du Programme Trader.",
-        "« Drawdown journalier » : perte maximale autorisée sur une journée de trading, calculée par rapport au solde de début de journée.",
-        "« Drawdown global » : perte maximale autorisée sur l'ensemble du Challenge, calculée par rapport au Capital Simulé Initial.",
+        "« Challenge Traders Rewards » : le service d'évaluation en une étape avec objectif de profit de +6%.",
+        "« Reward Account » : le compte simulé accessible après réussite du Challenge et règlement des frais d'activation applicables.",
+        "« Trailing Drawdown EOD » : plancher de protection recalculé à partir des plus hauts de fin de journée, selon la taille et l'état du compte.",
         "« Frais de Challenge » : les frais associés au Challenge Traders Rewards, non remboursables sauf rétractation valide.",
         "« Juridictions Restreintes » : pays depuis lesquels nous n'acceptons pas de clients (liste disponible sur le Site).",
         "« Plateforme de Trading » : MetaTrader 5 (MT5), interface fournie par un tiers.",
         "« Pratiques de Trading Interdites » : pratiques, stratégies ou comportements strictement interdits, listés sur le Site.",
-        "« Programme Traders Rewards » : programme donnant accès à un Compte Trader et aux Récompenses.",
-        "« Récompense » : montant versé en proportion des profits simulés sur le Compte Trader (80% ou 90% selon le Challenge).",
+        "« Programme Traders Rewards » : programme donnant accès à un Reward Account et à cinq niveaux de Rewards successifs.",
+        "« Reward » : montant approuvé selon le nouveau profit disponible et le plafond correspondant au niveau et à la taille du compte.",
         "« Services » : l'ensemble des services fournis par Traders Rewards via le Site traders-rewards.eu.",
         "« Trading Simulé » : activité simulant des opérations sur marchés financiers, sans exécution réelle d'ordres.",
       ]

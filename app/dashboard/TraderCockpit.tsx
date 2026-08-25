@@ -12,7 +12,6 @@ import {
   CalendarDays,
   Check,
   CircleDollarSign,
-  ClipboardCheck,
   Clock3,
   Copy,
   Download,
@@ -20,8 +19,8 @@ import {
   EyeOff,
   Gauge,
   History,
+  KeyRound,
   LifeBuoy,
-  LineChart,
   RefreshCw,
   ShieldCheck,
   Sparkles,
@@ -31,14 +30,15 @@ import {
   Wallet,
   Zap,
 } from "lucide-react";
-import CockpitChart, { type CockpitTrade } from "./CockpitChart";
-import EconomicCalendar from "./EconomicCalendar";
-import CockpitTools from "./CockpitTools";
+import type { CockpitTrade } from "./CockpitChart";
+import CockpitTools, { type TradingSection } from "./CockpitTools";
 import styles from "./TraderCockpit.module.css";
 import { extractContractRules } from "@/lib/contract-rules";
 import { getSyncFreshness } from "@/lib/sync-freshness";
+import { QUAL_DAY_USD, REWARD_AMOUNTS } from "@/lib/rewardsData";
+import { getTraderV1Level } from "@/lib/v1-engine";
 
-export type CockpitSubTab = "cockpit" | "tools";
+export type CockpitSubTab = "cockpit" | "trading";
 
 export type CockpitTab = "challenges" | "payouts" | "rules" | "history" | "support" | "kyc";
 
@@ -75,18 +75,18 @@ export type CockpitChallenge = {
 type Props = {
   challenge: CockpitChallenge;
   activeChallenges: CockpitChallenge[];
-  allChallengesCount: number;
   tradeHistory: Record<string, unknown>[];
   tradeHistoryLoading: boolean;
   isFr: boolean;
   isMobile: boolean;
   kycStatus: string;
+  approvedRewardsCount: number;
   onSelectChallenge: (challenge: CockpitChallenge) => void;
   onNavigate: (tab: CockpitTab) => void;
   onRefresh?: () => void;
 };
 
-const BLUE  = "#69C5FD";
+const BLUE  = "#9CCFEA";
 const GREEN = "#22c55e";
 const AMBER = "#f59e0b";
 const RED   = "#ef4444";
@@ -145,10 +145,10 @@ function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
     .sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
 }
 
-function phaseLabel(phase: string, isFr: boolean): string {
-  if (phase === "phase1") return "Phase 1";
-  if (phase === "phase2") return "Phase 2";
-  if (phase === "funded") return isFr ? "Compte Reward" : "Reward Account";
+function phaseLabel(phase: string, approvedRewardsCount: number): string {
+  if (phase === "phase1") return "CHALLENGER";
+  if (phase === "phase2") return "CHALLENGER · LEGACY";
+  if (phase === "funded") return approvedRewardsCount > 0 ? "TRADER REWARD" : "REWARD START";
   return phase;
 }
 
@@ -181,6 +181,7 @@ type ObjectiveBlockProps = {
   tradingDays: number;
   minDays: number;
   daysRemaining: number;
+  levelLabel: string;
   isFr: boolean;
 };
 
@@ -194,6 +195,7 @@ function ObjectiveBlock({
   tradingDays,
   minDays,
   daysRemaining,
+  levelLabel,
   isFr,
 }: ObjectiveBlockProps) {
   const isFunded = phase === "funded";
@@ -203,15 +205,15 @@ function ObjectiveBlock({
       {/* Eyebrow */}
       <div className={styles.objectiveEyebrow}>
         {isFunded
-          ? (isFr ? "Compte Reward" : "Reward Account")
+          ? `${levelLabel} · SEUIL +4%`
           : phase === "phase1"
-            ? (isFr ? "Objectif — Phase 1" : "Objective — Phase 1")
+            ? "CHALLENGER · OBJECTIF +6%"
             : phase === "phase2"
-              ? (isFr ? "Objectif — Phase 2" : "Objective — Phase 2")
+              ? (isFr ? "CHALLENGER · OBJECTIF" : "CHALLENGER · TARGET")
               : (isFr ? "Objectif — Challenge" : "Objective — Challenge")}
       </div>
 
-      {!isFunded && (
+      {(
         <div className={styles.objectiveBody}>
           {/* Start → Target endpoints */}
           <div className={styles.objectiveEndpoints}>
@@ -254,7 +256,7 @@ function ObjectiveBlock({
       )}
 
       {/* Days row */}
-      <div className={styles.objectiveDaysRow}>
+      {minDays > 0 && <div className={styles.objectiveDaysRow}>
         <div className={styles.objectiveDaysLeft}>
           <span className={styles.objectiveDaysCount}>{tradingDays}</span>
           <span className={styles.objectiveDaysSep}> / </span>
@@ -274,7 +276,7 @@ function ObjectiveBlock({
             ✓ {isFr ? "Condition validée" : "Requirement met"}
           </span>
         )}
-      </div>
+      </div>}
     </div>
   );
 }
@@ -342,21 +344,22 @@ function ToolsPlaceholder({ isFr, isMobile }: { isFr: boolean; isMobile: boolean
 export default function TraderCockpit({
   challenge,
   activeChallenges,
-  allChallengesCount,
   tradeHistory,
   tradeHistoryLoading,
   isFr,
   isMobile,
   kycStatus,
+  approvedRewardsCount,
   onSelectChallenge,
   onNavigate,
   onRefresh,
 }: Props) {
-  const [subTab, setSubTab]                 = useState<CockpitSubTab>("cockpit");
+  const [subTab, setSubTab]                   = useState<CockpitSubTab>("cockpit");
+  const [tradingSection, setTradingSection]   = useState<TradingSection>("prepare");
   const [showCredentials, setShowCredentials] = useState(false);
-  const [copied, setCopied]                 = useState("");
-  const [planChecks, setPlanChecks]         = useState([false, false, false]);
-  const [journalNote, setJournalNote]       = useState("");
+  const [copied, setCopied]                   = useState("");
+  const [planChecks, setPlanChecks]           = useState<boolean[]>([false, false, false, false, false, false, false, false, false]);
+  const [journalNote, setJournalNote]         = useState("");
   const [loadedPlanKey, setLoadedPlanKey]   = useState("");
 
   // ── Contract rules ──────────────────────────────────────────────────────────
@@ -386,13 +389,27 @@ export default function TraderCockpit({
   const effectiveBalance = challenge.status === "failed" && challenge.breach_equity != null ? challenge.breach_equity : challenge.balance;
   const equity = effectiveBalance + floatingPnl;
   const profit = effectiveBalance - challenge.start_balance;
-  const profitTargetUsd = challenge.start_balance * challenge.profit_target / 100;
+  const accountSize = numeric(String(challenge.account_size).replace(/[^0-9.]/g, "")) * (String(challenge.account_size).toUpperCase().includes("K") ? 1000 : 1);
+  const isLegacyPhaseTwo = challenge.phase === "phase2";
+  const isRewardAccount = challenge.phase === "funded";
+  // Niveau V1 dérivé depuis la source canonique (payouts.status="paid")
+  const traderLevel = getTraderV1Level(challenge.phase, approvedRewardsCount);
+  const isTraderReward = traderLevel.level === 3;
+  const levelLabel = phaseLabel(challenge.phase, approvedRewardsCount);
+  const sizeIndex = accountSize >= 100_000 ? 2 : accountSize >= 50_000 ? 1 : 0;
+  const qualifyingDayUsd = QUAL_DAY_USD[sizeIndex];
+  // nextRewardNumber=null quand parcours terminé (≥5 Rewards) → fallback 5 pour l'affichage
+  const currentRewardNumber = traderLevel.nextRewardNumber ?? 5;
+  const currentRewardCap = REWARD_AMOUNTS[sizeIndex][currentRewardNumber - 1];
+  const displayProfitTargetPct = challenge.phase === "funded" ? 4 : isLegacyPhaseTwo ? challenge.profit_target : 6;
+  const displayDrawdownPct = accountSize >= 100_000 ? 3 : 4;
+  const profitTargetUsd = challenge.start_balance * displayProfitTargetPct / 100;
   const targetBalance = challenge.start_balance + profitTargetUsd;
   const profitRemaining = Math.max(0, targetBalance - effectiveBalance);
   const profitProgress = profitTargetUsd > 0 ? clamp(profit / profitTargetUsd * 100) : 100;
 
   // minDays from contract rules (snapshot → fallback)
-  const minDays = contractRules.minTradingDays;
+  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isLegacyPhaseTwo ? contractRules.minTradingDays : 2;
 
   const daysRemaining = Math.max(0, minDays - challenge.trading_days);
   const dailyReferenceBalance = challenge.daily_start_balance ?? challenge.start_balance;
@@ -402,11 +419,19 @@ export default function TraderCockpit({
   const dailyRiskUsed = clamp((1 - dailyBuffer / Math.max(dailyLimitUsd, 1)) * 100);
   const isOneStep = challenge.model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
   const trailingReference = isOneStep ? Math.max(challenge.highest_balance ?? challenge.start_balance, challenge.start_balance) : challenge.start_balance;
-  const totalLimitUsd = challenge.start_balance * challenge.total_drawdown_limit / 100;
-  const totalFloor = trailingReference - totalLimitUsd;
+  const totalLimitUsd = challenge.start_balance * displayDrawdownPct / 100;
+  const trailingFloor = trailingReference - totalLimitUsd;
+  const totalFloor = isTraderReward
+    ? challenge.start_balance
+    : isRewardAccount
+      ? Math.min(trailingFloor, challenge.start_balance)
+      : trailingFloor;
   const totalBuffer = Math.max(0, equity - totalFloor);
   const totalRiskUsed = clamp((1 - totalBuffer / Math.max(totalLimitUsd, 1)) * 100);
-  const maxRiskUsed = Math.max(dailyRiskUsed, totalRiskUsed);
+  // Le nouveau modèle n'a pas de Daily Drawdown séparé. Les anciennes valeurs
+  // restent calculées pour la rétrocompatibilité, mais le cockpit pilote la santé
+  // du compte uniquement depuis le Trailing Drawdown EOD.
+  const maxRiskUsed = totalRiskUsed;
 
   const health = challenge.status === "failed"
     ? { label: isFr ? "Compte arrêté" : "Account stopped", color: RED, icon: <AlertTriangle size={15} /> }
@@ -442,11 +467,20 @@ export default function TraderCockpit({
       const key = `${trade.date.getFullYear()}-${trade.date.getMonth()}-${trade.date.getDate()}`;
       pnlByDay.set(key, (pnlByDay.get(key) ?? 0) + trade.profit);
     }
-    return Array.from({ length: 14 }, (_, index) => {
-      const date = new Date();
-      date.setHours(12, 0, 0, 0);
-      date.setDate(date.getDate() - (13 - index));
-      return { date, pnl: pnlByDay.get(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`) ?? 0 };
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const firstDay = new Date(year, month, 1, 12);
+    const mondayOffset = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const cells = Math.ceil((mondayOffset + daysInMonth) / 7) * 7;
+    return Array.from({ length: cells }, (_, index) => {
+      const date = new Date(year, month, 1 - mondayOffset + index, 12);
+      return {
+        date,
+        isCurrentMonth: date.getMonth() === month,
+        pnl: pnlByDay.get(`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`) ?? 0,
+      };
     });
   }, [trades]);
 
@@ -459,14 +493,16 @@ export default function TraderCockpit({
         const stored = localStorage.getItem(planKey);
         if (stored) {
           const parsed = JSON.parse(stored) as { checks?: boolean[]; note?: string };
-          setPlanChecks(Array.isArray(parsed.checks) ? parsed.checks.slice(0, 3) : [false, false, false]);
+          // Pad to 9 — preserve old values (index 0-2), fill missing with false
+          const old = Array.isArray(parsed.checks) ? parsed.checks : [];
+          setPlanChecks(Array.from({ length: 9 }, (_, i) => Boolean(old[i])));
           setJournalNote(parsed.note ?? "");
         } else {
-          setPlanChecks([false, false, false]);
+          setPlanChecks([false, false, false, false, false, false, false, false, false]);
           setJournalNote("");
         }
       } catch {
-        setPlanChecks([false, false, false]);
+        setPlanChecks([false, false, false, false, false, false, false, false, false]);
         setJournalNote("");
       }
       setLoadedPlanKey(planKey);
@@ -483,13 +519,11 @@ export default function TraderCockpit({
     if (!challenge.mt5_login) return { icon: <Clock3 size={22} />, title: isFr ? "Ton compte est en préparation" : "Your account is being prepared", text: isFr ? "Tes identifiants apparaîtront automatiquement. Tu peux déjà installer MT5 et relire les règles." : "Credentials will appear automatically. You can already install MT5 and review the rules.", action: () => onNavigate("rules"), label: isFr ? "Préparer mon départ" : "Get ready", color: BLUE };
     if (challenge.phase === "funded") return { icon: <Wallet size={22} />, title: daysRemaining > 0 ? (isFr ? "Construis une performance régulière" : "Build consistent performance") : (isFr ? "Ta récompense se prépare ici" : "Your reward starts here"), text: daysRemaining > 0 ? (isFr ? `Encore ${daysRemaining} jour(s) avant l'éligibilité. Priorité à la régularité.` : `${daysRemaining} more day(s) before eligibility. Focus on consistency.`) : (isFr ? "Vérifie ton KYC puis contrôle ton éligibilité dans Récompenses." : "Check KYC, then review eligibility in Rewards."), action: () => onNavigate(kycStatus === "approved" ? "payouts" : "kyc"), label: kycStatus === "approved" ? (isFr ? "Mes récompenses" : "My rewards") : (isFr ? "Vérifier mon KYC" : "Check KYC"), color: GREEN };
     if (profitRemaining <= 0 && daysRemaining > 0) return { icon: <Trophy size={22} />, title: isFr ? "Objectif atteint — protège le résultat" : "Target reached — protect the result", text: isFr ? `Il reste ${daysRemaining} jour(s) minimum. La priorité est maintenant la discipline.` : `${daysRemaining} minimum day(s) remain. Discipline is now the priority.`, action: () => onNavigate("rules"), label: isFr ? "Revoir mes limites" : "Review limits", color: GREEN };
-    return { icon: <Sparkles size={22} />, title: isFr ? "Ton cap du jour" : "Today's focus", text: isFr ? `${money(profitRemaining)} restent pour l'objectif. Ton buffer le plus proche est ${money(Math.min(dailyBuffer, totalBuffer))}.` : `${money(profitRemaining)} remains to target. Your nearest buffer is ${money(Math.min(dailyBuffer, totalBuffer))}.`, action: () => document.getElementById("daily-plan")?.scrollIntoView({ behavior: "smooth" }), label: isFr ? "Préparer ma session" : "Prepare session", color: BLUE };
+    return { icon: <Sparkles size={22} />, title: isFr ? "Ton cap du jour" : "Today's focus", text: isFr ? `${money(profitRemaining)} restent pour l'objectif. Ta marge avant le plancher EOD est ${money(totalBuffer)}.` : `${money(profitRemaining)} remains to target. Your EOD floor buffer is ${money(totalBuffer)}.`, action: () => { setSubTab("trading"); setTradingSection("prepare"); }, label: isFr ? "Préparer ma session" : "Prepare session", color: BLUE };
   })();
 
-  const phaseSteps = isOneStep
-    ? ["Challenge", isFr ? "Compte Reward" : "Reward Account", isFr ? "1re récompense" : "First reward"]
-    : ["Phase 1", "Phase 2", isFr ? "Compte Reward" : "Reward Account", isFr ? "1re récompense" : "First reward"];
-  const phaseIndex = challenge.phase === "phase1" ? 0 : challenge.phase === "phase2" ? 1 : challenge.phase === "funded" ? (isOneStep ? 1 : 2) : 0;
+  const phaseSteps = ["CHALLENGER", "REWARD START", "TRADER REWARD"];
+  const phaseIndex = traderLevel.level - 1;  // 1→0 / 2→1 / 3→2
 
   const copyValue = async (label: string, value: string) => {
     if (!value || value === "—") return;
@@ -498,14 +532,7 @@ export default function TraderCockpit({
     window.setTimeout(() => setCopied(""), 1400);
   };
 
-  const planItems = isFr
-    ? ["Mon risque maximum par trade est défini", "Mon setup et mon invalidation sont clairs", "J'ai vérifié les annonces importantes"]
-    : ["My maximum risk per trade is defined", "My setup and invalidation are clear", "I checked important news"];
-
   const riskColor = (used: number) => used >= 85 ? RED : used >= 60 ? AMBER : BLUE;
-
-  // best day rule from contract (show only when contractually present)
-  const bestDayRule = contractRules.bestDayRule;
 
   return (
     <div className={styles.root} data-mobile={isMobile ? "true" : "false"}>
@@ -521,10 +548,10 @@ export default function TraderCockpit({
                 const selected = activeChallenges.find(item => item.id === event.target.value);
                 if (selected) onSelectChallenge(selected);
               }}>
-                {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.model === "2step" ? "2-Step" : item.model === "1step" ? "1-Step" : item.model}</option>)}
+                {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {phaseLabel(item.phase, 0)}</option>)}
               </select>
-            ) : <span className={styles.pill} style={{ color: BLUE, background: "rgba(105,197,253,.1)" }}>{challenge.account_size} · {challenge.model === "2step" ? "2-Step" : challenge.model === "1step" ? "1-Step" : challenge.model}</span>}
-            <span className={styles.pill} style={{ color: BLUE, background: "rgba(105,197,253,.08)" }}><Target size={13} />{phaseLabel(challenge.phase, isFr)}</span>
+            ) : <span className={styles.pill} style={{ color: BLUE, background: "rgba(156,207,234,.1)" }}>{challenge.account_size} · {phaseLabel(challenge.phase, approvedRewardsCount)}</span>}
+            <span className={styles.pill} style={{ color: BLUE, background: "rgba(156,207,234,.08)" }}><Target size={13} />{phaseLabel(challenge.phase, approvedRewardsCount)}</span>
             <span className={styles.pill} style={{ color: health.color, background: `${health.color}16` }}>{health.icon}{health.label}</span>
             {/* Freshness indicator — color-coded, never reveals infrastructure */}
             <span
@@ -537,9 +564,11 @@ export default function TraderCockpit({
           </div>
         </div>
         <div className={styles.headerActions}>
-          {allChallengesCount > 0 && <span className={styles.pill} style={{ color: BLUE, background: "rgba(105,197,253,.08)", alignSelf: "center" }}>🎖️ −20% {isFr ? "fidélité" : "loyalty"}</span>}
           <button className={styles.button} onClick={() => onRefresh ? onRefresh() : window.location.reload()}><RefreshCw size={14} />{isFr ? "Actualiser" : "Refresh"}</button>
-          <Link className={`${styles.button} ${styles.buttonPrimary}`} href="/#pricing">+ {isFr ? "Nouveau challenge" : "New challenge"}</Link>
+          <Link href="/#pricing" className="dash-trader-btn">
+            <span className="dash-trader-shine" aria-hidden="true" />
+            <span className="dash-trader-label">+ {isFr ? "Nouveau challenge" : "New challenge"}</span>
+          </Link>
         </div>
       </header>
 
@@ -552,10 +581,20 @@ export default function TraderCockpit({
           Cockpit
         </button>
         <button
-          className={`${styles.subTabBtn} ${subTab === "tools" ? styles.subTabBtnActive : ""}`}
-          onClick={() => setSubTab("tools")}
+          className={`${styles.subTabBtn} ${subTab === "trading" ? styles.subTabBtnActive : ""}`}
+          onClick={() => setSubTab("trading")}
         >
-          {isFr ? "Outils" : "Tools"}
+          Trading
+        </button>
+        <button
+          className={styles.accountIdBadge}
+          onClick={() => {
+            setSubTab("cockpit");
+            window.setTimeout(() => document.getElementById("account-credentials")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+          }}
+        >
+          <KeyRound size={11} />
+          {isFr ? "ID COMPTE" : "ACCOUNT ID"}
         </button>
       </div>
 
@@ -595,101 +634,67 @@ export default function TraderCockpit({
 
             {/* Objective remaining */}
             <div className={`${styles.card} ${styles.kpi}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Objectif restant" : "Remaining target"}</span><Target color={BLUE} size={17} /></div>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isTraderReward ? (isFr ? "Seuil +4% restant" : "+4% threshold left") : `${isFr ? "Objectif" : "Target"} +${displayProfitTargetPct.toFixed(0)}% ${isFr ? "restant" : "left"}`}</span><Target color={BLUE} size={17} /></div>
               <div>
-                <div className={styles.kpiValue}>{challenge.phase === "funded" ? "—" : money(profitRemaining)}</div>
+                <div className={styles.kpiValue}>{money(profitRemaining)}</div>
                 <div className={styles.kpiMeta}>
-                  <span>{challenge.phase === "funded" ? (isFr ? "Aucun objectif de profit" : "No profit target") : `${profitProgress.toFixed(0)}% ${isFr ? "accompli" : "complete"}`}</span>
-                  <span>{challenge.phase !== "funded" && money(targetBalance)}</span>
+                  <span>{profitProgress.toFixed(0)}% {isFr ? "accompli" : "complete"}</span>
+                  <span>{money(targetBalance)}</span>
                 </div>
-                {challenge.phase !== "funded" && <Meter value={profitProgress} color={GREEN} />}
+                <Meter value={profitProgress} color={GREEN} />
               </div>
             </div>
 
-            {/* Daily DD — now shows Plancher $ instead of "X% max" */}
+            {/* Trailing Drawdown EOD — unique limite de risque V1 */}
             <div className={`${styles.card} ${styles.kpi}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Marge journalière" : "Daily margin"}</span><Clock3 color={BLUE} size={17} /></div>
-              <div>
-                <div className={styles.kpiValue} style={{ color: dailyRiskUsed >= 60 ? riskColor(dailyRiskUsed) : "#fff" }}>{money(dailyBuffer)}</div>
-                <div className={styles.kpiMeta}>
-                  <span>{dailyRiskUsed.toFixed(0)}% {isFr ? "utilisé" : "used"}</span>
-                  <span>{isFr ? "Plancher" : "Floor"} {money(dailyFloor)}</span>
-                </div>
-                <Meter value={dailyRiskUsed} color={riskColor(dailyRiskUsed)} />
-              </div>
-            </div>
-
-            {/* Total DD */}
-            <div className={`${styles.card} ${styles.kpi}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Marge totale" : "Total margin"}</span><ShieldCheck color={BLUE} size={17} /></div>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>TRAILING DD EOD</span><ShieldCheck color={BLUE} size={17} /></div>
               <div>
                 <div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalBuffer)}</div>
                 <div className={styles.kpiMeta}>
-                  <span>{isOneStep ? (isFr ? "Plancher trailing EOD" : "EOD trailing floor") : (isFr ? "Plancher statique" : "Static floor")}</span>
-                  <span>{money(totalFloor)}</span>
+                  <span>{totalRiskUsed.toFixed(0)}% {isFr ? "utilisé" : "used"}</span>
+                  <span>{isFr ? "Plancher" : "Floor"} {money(totalFloor)}</span>
                 </div>
                 <Meter value={totalRiskUsed} color={riskColor(totalRiskUsed)} />
               </div>
             </div>
 
-          </div>
+            {/* Règle de consistance */}
+            <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Consistance" : "Consistency"}</span><Gauge color={BLUE} size={16} /></div>
+              <div><div className={styles.kpiValue}>≤ {isRewardAccount ? 33 : 50}%</div><div className={styles.kpiMeta}><span>{isFr ? "Meilleure journée" : "Best day"}</span><span>{isFr ? "du profit total" : "of total profit"}</span></div></div>
+            </div>
 
-          {/* ── Objective Block V2 ── */}
-          <ObjectiveBlock
-            phase={challenge.phase}
-            startBalance={challenge.start_balance}
-            targetBalance={targetBalance}
-            effectiveBalance={effectiveBalance}
-            profit={profit}
-            profitRemaining={profitRemaining}
-            profitProgress={profitProgress}
-            tradingDays={challenge.trading_days}
-            minDays={minDays}
-            daysRemaining={daysRemaining}
-            isFr={isFr}
-          />
+            {/* Condition de jours, adaptée au niveau */}
+            <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isTraderReward ? `REWARD #${currentRewardNumber}` : isRewardAccount ? (isFr ? "Jours qualifiants" : "Qualifying days") : (isFr ? "Jours minimum" : "Minimum days")}</span><CalendarDays color={BLUE} size={16} /></div>
+              <div>
+                <div className={styles.kpiValue}>{isTraderReward ? money(currentRewardCap) : isRewardAccount ? "5 MIN" : `${challenge.trading_days} / 2`}</div>
+                <div className={styles.kpiMeta}><span>{isTraderReward ? (isFr ? "Plafond maximum" : "Maximum cap") : isRewardAccount ? `${money(qualifyingDayUsd)} ${isFr ? "minimum / jour" : "minimum / day"}` : isFr ? "Jours tradés" : "Days traded"}</span></div>
+              </div>
+            </div>
+
+            {/* Durée contractuelle */}
+            <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Durée" : "Duration"}</span><Clock3 color={BLUE} size={16} /></div>
+              <div><div className={styles.kpiValue}>{isRewardAccount ? (isFr ? "ILLIMITÉE" : "UNLIMITED") : "30 J."}</div><div className={styles.kpiMeta}><span>{isRewardAccount ? (isFr ? "Aucune limite" : "No time limit") : isFr ? "Jours calendaires max" : "Maximum calendar days"}</span></div></div>
+            </div>
+
+          </div>
 
           {/* Journey stepper */}
           <div className={`${styles.card} ${styles.journey}`}>
-            <div className={styles.journeyHead}><strong style={{ color: "rgba(255,255,255,.72)" }}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{challenge.trading_days}/{minDays} {isFr ? "jours validés" : "days complete"}</span></div>
+            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{isTraderReward ? (traderLevel.terminated ? (isFr ? "PARCOURS COMPLÉTÉ ✓" : "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : `${challenge.trading_days}/${minDays} ${isFr ? "jours validés" : "days complete"}`}</span></div>
             <div className={styles.steps} style={{ gridTemplateColumns: `repeat(${phaseSteps.length},minmax(120px,1fr))` }}>
               {phaseSteps.map((step, index) => <div key={step} className={`${styles.step} ${index < phaseIndex ? styles.stepDone : index === phaseIndex ? styles.stepActive : ""}`}><span className={styles.stepDot}>{index < phaseIndex ? <Check size={12} /> : index + 1}</span><span className={styles.stepText}>{step}</span></div>)}
             </div>
           </div>
 
-          {/* Main grid */}
-          <div className={styles.mainGrid}>
-            <div className={`${styles.card} ${styles.panel}`}>
-              <SectionTitle icon={<LineChart size={17} />} title={isFr ? "Trajectoire du compte" : "Account trajectory"} subtitle={isFr ? "Courbe reconstruite uniquement avec tes résultats MT5 réels" : "Built only from your real MT5 results"} />
-              <CockpitChart trades={trades} startBalance={challenge.start_balance} currentBalance={effectiveBalance} targetBalance={targetBalance} floorBalance={totalFloor} isFr={isFr} />
+          <div className={`${styles.card} ${styles.performanceBand}`}>
+            <div className={styles.performanceBandTitle}>
+              <BarChart3 size={19} />
+              <div><span>{isFr ? "ANALYSE" : "ANALYSIS"}</span><strong>{isFr ? "SIGNATURE DE PERFORMANCE" : "PERFORMANCE SIGNATURE"}</strong><small>{tradeHistoryLoading ? (isFr ? "Analyse en cours…" : "Analyzing…") : `${stats.count} ${isFr ? "trades clôturés" : "closed trades"}`}</small></div>
             </div>
-            <div className={`${styles.card} ${styles.panel}`}>
-              <SectionTitle icon={<Gauge size={17} />} title={isFr ? "Limites en direct" : "Live limits"} subtitle={isFr ? "Les chiffres à connaître avant chaque trade" : "Know these before every trade"} />
-              <Rule label={isFr ? "Objectif de profit" : "Profit target"} value={challenge.phase === "funded" ? "—" : `${challenge.profit_target.toFixed(2)}%`} progress={challenge.phase === "funded" ? undefined : profitProgress} color={GREEN} help={challenge.phase === "funded" ? (isFr ? "Aucun objectif sur le compte Reward" : "No target on Reward account") : `${money(profitRemaining)} ${isFr ? "encore nécessaires" : "still required"}`} />
-              <Rule label={isFr ? "Jours minimum" : "Minimum days"} value={`${challenge.trading_days} / ${minDays}`} progress={challenge.trading_days / minDays * 100} color={BLUE} help={daysRemaining ? `${daysRemaining} ${isFr ? "jour(s) restant(s)" : "day(s) remaining"}` : isFr ? "Condition validée" : "Requirement met"} />
-              <Rule label={isFr ? "Perte journalière" : "Daily loss"} value={`${money(dailyBuffer)} ${isFr ? "disponibles" : "available"}`} progress={dailyRiskUsed} color={riskColor(dailyRiskUsed)} help={`${isFr ? "Plancher du jour" : "Today's floor"} : ${money(dailyFloor)}`} />
-              <Rule label={isFr ? "Perte totale" : "Total loss"} value={`${money(totalBuffer)} ${isFr ? "disponibles" : "available"}`} progress={totalRiskUsed} color={riskColor(totalRiskUsed)} help={`${isFr ? "Plancher du compte" : "Account floor"} : ${money(totalFloor)}`} />
-              {/* Best day rule — only shown when contractually present in snapshot */}
-              {bestDayRule != null && (
-                <Rule
-                  label={isFr ? "Meilleure journée" : "Best day"}
-                  value={money(challenge.best_day_profit ?? 0)}
-                  help={isFr
-                    ? `Limite : ${bestDayRule} du profit total requis par journée`
-                    : `Limit: ${bestDayRule} of required total profit per day`}
-                />
-              )}
-            </div>
-          </div>
-
-          <div className={styles.twoGrid}>
-            <div className={`${styles.card} ${styles.panel}`}>
-              <SectionTitle icon={<CalendarDays size={17} />} title={isFr ? "Calendrier P&L" : "P&L calendar"} subtitle={isFr ? "Deux semaines de régularité en un regard" : "Two weeks at a glance"} />
-              <div className={styles.calendar}>{calendarDays.map(({ date, pnl }) => <div key={date.toISOString()} className={styles.day} style={pnl > 0 ? { background: "rgba(34,197,94,.08)", borderColor: "rgba(34,197,94,.18)" } : pnl < 0 ? { background: "rgba(239,68,68,.08)", borderColor: "rgba(239,68,68,.18)" } : undefined}><div className={styles.dayName}>{date.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { weekday: "short" })}</div><div className={styles.dayNumber}>{date.getDate()}</div><div className={styles.dayPnl} style={{ color: pnl > 0 ? GREEN : pnl < 0 ? RED : "rgba(255,255,255,.25)" }}>{pnl ? `${pnl > 0 ? "+" : ""}${money(pnl)}` : "—"}</div></div>)}</div>
-            </div>
-            <div className={`${styles.card} ${styles.panel}`}>
-              <SectionTitle icon={<BarChart3 size={17} />} title={isFr ? "Signature de performance" : "Performance signature"} subtitle={tradeHistoryLoading ? (isFr ? "Analyse en cours…" : "Analyzing…") : `${stats.count} ${isFr ? "trades clôturés analysés" : "closed trades analyzed"}`} />
-              <div className={styles.stats}>{[
+            <div className={styles.performanceStats}>{[
                 { label: isFr ? "Taux de réussite" : "Win rate", value: `${stats.winRate.toFixed(0)}%`, note: isFr ? "Trades gagnants" : "Winning trades" },
                 { label: "Profit factor", value: Number.isFinite(stats.profitFactor) ? stats.profitFactor.toFixed(2) : "∞", note: isFr ? "Gains / pertes" : "Wins / losses" },
                 { label: isFr ? "Espérance" : "Expectancy", value: money(stats.expectancy, 2), note: isFr ? "Par trade" : "Per trade" },
@@ -697,10 +702,12 @@ export default function TraderCockpit({
                 { label: isFr ? "Perte moyenne" : "Average loss", value: money(stats.averageLoss), note: isFr ? "Trade perdant" : "Losing trade" },
                 { label: isFr ? "Meilleur symbole" : "Best symbol", value: stats.bestSymbol?.[0] ?? "—", note: stats.bestSymbol ? money(stats.bestSymbol[1]) : (isFr ? "Pas assez de données" : "Not enough data") },
               ].map(item => <div key={item.label} className={styles.stat}><div className={styles.statLabel}>{item.label}</div><div className={styles.statValue}>{item.value}</div><div className={styles.statNote}>{item.note}</div></div>)}</div>
-            </div>
           </div>
 
-          <EconomicCalendar isFr={isFr} />
+          <div className={`${styles.card} ${styles.panel} ${styles.monthCalendar}`}>
+            <SectionTitle icon={<CalendarDays size={17} />} title={`${isFr ? "Calendrier P&L" : "P&L calendar"} · ${new Date().toLocaleDateString(isFr ? "fr-FR" : "en-GB", { month: "long", year: "numeric" }).toUpperCase()}`} subtitle={isFr ? "Le mois complet, journée par journée" : "The complete month, day by day"} />
+            <div className={styles.calendar}>{calendarDays.map(({ date, pnl, isCurrentMonth }) => <div key={date.toISOString()} className={`${styles.day} ${!isCurrentMonth ? styles.dayOutside : ""}`} style={pnl > 0 ? { background: "rgba(34,197,94,.08)", borderColor: "rgba(34,197,94,.18)" } : pnl < 0 ? { background: "rgba(239,68,68,.08)", borderColor: "rgba(239,68,68,.18)" } : undefined}><div className={styles.dayName}>{date.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { weekday: "short" })}</div><div className={styles.dayNumber}>{date.getDate()}</div><div className={styles.dayPnl} style={{ color: pnl > 0 ? GREEN : pnl < 0 ? RED : "rgba(255,255,255,.25)" }}>{pnl ? `${pnl > 0 ? "+" : ""}${money(pnl)}` : "—"}</div></div>)}</div>
+          </div>
 
           <div className={styles.twoGrid}>
             <div className={`${styles.card} ${styles.panel}`}>
@@ -713,51 +720,55 @@ export default function TraderCockpit({
                 return <div className={styles.position} key={String(position.ticket ?? index)}><div><b>{String(position.symbol ?? "—")}</b><span style={{ marginLeft: 7, color: side === "BUY" ? GREEN : RED, fontSize: 9, fontWeight: 850 }}>{side}</span></div><span>{volume.toFixed(2)} lot</span><span className={styles.muted}>{String(position.open_price ?? position.price_open ?? "—")}</span><strong style={{ color: pnl >= 0 ? GREEN : RED, textAlign: "right" }}>{pnl >= 0 ? "+" : ""}{money(pnl, 2)}</strong></div>;
               })}</div>}
             </div>
-            <div className={`${styles.card} ${styles.panel}`} id="daily-plan">
-              <SectionTitle icon={<ClipboardCheck size={17} />} title={isFr ? "Plan de session" : "Session plan"} subtitle={isFr ? "Sauvegardé automatiquement sur cet appareil" : "Auto-saved on this device"} />
-              {planItems.map((item, index) => <div key={item} className={styles.planItem} onClick={() => setPlanChecks(current => current.map((checked, itemIndex) => itemIndex === index ? !checked : checked))}><span className={`${styles.check} ${planChecks[index] ? styles.checkOn : ""}`}>{planChecks[index] && <Check size={13} />}</span><span className={styles.planText} style={planChecks[index] ? { textDecoration: "line-through", color: "rgba(255,255,255,.32)" } : undefined}>{item}</span></div>)}
-              <textarea className={styles.note} value={journalNote} onChange={event => setJournalNote(event.target.value)} placeholder={isFr ? "Mon setup, mon état d'esprit et la règle que je veux respecter aujourd'hui…" : "My setup, mindset and the rule I want to respect today…"} />
-            </div>
-          </div>
-
-          <div className={styles.twoGrid}>
-            <div className={`${styles.card} ${styles.panel}`}>
-              <SectionTitle icon={<Zap size={17} />} title={isFr ? "Accès rapide" : "Quick access"} subtitle={challenge.mt5_login ? (isFr ? "Tes accès restent masqués par défaut" : "Credentials stay hidden by default") : (isFr ? "Disponible dès la création du compte" : "Available once the account is created")} />
-              {challenge.mt5_login ? <>
-                <div className={styles.credentials}>{[
-                  { label: "Login", value: String(challenge.mt5_login), secret: false },
-                  { label: isFr ? "Mot de passe" : "Password", value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) ?? "—", secret: true },
-                  { label: isFr ? "Serveur" : "Server", value: challenge.mt5_server ?? "—", secret: false },
-                  { label: isFr ? "Plateforme" : "Platform", value: "MetaTrader 5", secret: false },
-                ].map(item => <div className={styles.credential} key={item.label} onClick={() => item.secret && !showCredentials ? setShowCredentials(true) : copyValue(item.label, item.value)}><div className={styles.credentialLabel}>{item.label} {copied === item.label ? <span style={{ color: GREEN }}>✓ {isFr ? "copié" : "copied"}</span> : <Copy size={9} style={{ marginLeft: 4 }} />}</div><div className={styles.credentialValue}>{item.secret && !showCredentials ? "••••••••••" : item.value}</div></div>)}</div>
-                <div className={styles.quickActions}><button className={styles.button} onClick={() => setShowCredentials(value => !value)}>{showCredentials ? <EyeOff size={14} /> : <Eye size={14} />}{showCredentials ? (isFr ? "Masquer" : "Hide") : (isFr ? "Révéler" : "Reveal")}</button><button className={styles.button} onClick={() => onNavigate("rules")}><BookOpen size={14} />{isFr ? "Règles" : "Rules"}</button><button className={styles.button} onClick={() => onNavigate("support")}><LifeBuoy size={14} />Support</button></div>
-              </> : <Empty icon={<Clock3 size={20} />} text={isFr ? "Le compte est en cours de configuration. Les identifiants apparaîtront ici automatiquement." : "The account is being configured. Credentials will appear here automatically."} />}
-              <div className={styles.platformBlock}>
-                <div className={styles.platformHeading}>
-                  <Image className={styles.platformLogo} src="/MT5.png" alt="MetaTrader 5" width={40} height={40} />
-                  <div><strong>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</strong><span>{isFr ? "Installe MT5 puis connecte-toi avec les accès affichés ci-dessus." : "Install MT5, then sign in with the credentials shown above."}</span></div>
-                </div>
-                <div className={styles.platformGrid}>{[
-                  { label: "Windows", icon: "🖥️", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
-                  { label: "Mac", icon: "🍎", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
-                  { label: "iPhone / iPad", icon: "📱", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
-                  { label: "Android", icon: "🤖", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
-                ].map(platform => <a className={styles.platformButton} href={platform.href} key={platform.label} target="_blank" rel="noopener noreferrer"><span>{platform.icon}</span><b>{platform.label}</b><Download size={13} /></a>)}</div>
-              </div>
-            </div>
             <div className={`${styles.card} ${styles.panel}`}>
               <SectionTitle icon={<History size={17} />} title={isFr ? "Derniers trades" : "Recent trades"} subtitle={isFr ? "Lecture rapide de ta session" : "Quick session review"} />
               {trades.length === 0 ? <Empty icon={<CircleDollarSign size={20} />} text={isFr ? "Les trades clôturés apparaîtront ici automatiquement." : "Closed trades will appear here automatically."} /> : <div>{[...trades].reverse().slice(0, 5).map(trade => <div className={styles.trade} key={trade.id}><span><b>{trade.symbol}</b><small style={{ color: trade.side === "BUY" ? GREEN : RED, marginLeft: 6 }}>{trade.side}</small></span><span className={styles.muted}>{trade.date?.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "short" }) ?? "—"}</span><strong style={{ color: trade.profit >= 0 ? GREEN : RED, textAlign: "right" }}>{trade.profit >= 0 ? "+" : ""}{money(trade.profit, 2)}</strong></div>)}<button className={styles.button} style={{ width: "100%", marginTop: 9 }} onClick={() => onNavigate("history")}>{isFr ? "Ouvrir tout l'historique" : "Open full history"}<ArrowRight size={14} /></button></div>}
             </div>
           </div>
+
+          <div id="account-credentials" className={`${styles.card} ${styles.panel} ${styles.credentialsAnchor}`}>
+            <SectionTitle icon={<Zap size={17} />} title={isFr ? "Accès rapide" : "Quick access"} subtitle={challenge.mt5_login ? (isFr ? "Tes accès restent masqués par défaut" : "Credentials stay hidden by default") : (isFr ? "Disponible dès la création du compte" : "Available once the account is created")} />
+            {challenge.mt5_login ? <>
+              <div className={styles.credentials}>{[
+                { label: "Login", value: String(challenge.mt5_login), secret: false },
+                { label: isFr ? "Mot de passe" : "Password", value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) ?? "—", secret: true },
+                { label: isFr ? "Serveur" : "Server", value: challenge.mt5_server ?? "—", secret: false },
+                { label: isFr ? "Plateforme" : "Platform", value: "MetaTrader 5", secret: false },
+              ].map(item => <div className={styles.credential} key={item.label} onClick={() => item.secret && !showCredentials ? setShowCredentials(true) : copyValue(item.label, item.value)}><div className={styles.credentialLabel}>{item.label} {copied === item.label ? <span style={{ color: GREEN }}>✓ {isFr ? "copié" : "copied"}</span> : <Copy size={9} style={{ marginLeft: 4 }} />}</div><div className={styles.credentialValue}>{item.secret && !showCredentials ? "••••••••••" : item.value}</div></div>)}</div>
+              <div className={styles.quickActions}><button className={styles.button} onClick={() => setShowCredentials(value => !value)}>{showCredentials ? <EyeOff size={14} /> : <Eye size={14} />}{showCredentials ? (isFr ? "Masquer" : "Hide") : (isFr ? "Révéler" : "Reveal")}</button><button className={styles.button} onClick={() => onNavigate("rules")}><BookOpen size={14} />{isFr ? "Règles" : "Rules"}</button><button className={styles.button} onClick={() => onNavigate("support")}><LifeBuoy size={14} />Support</button></div>
+            </> : <Empty icon={<Clock3 size={20} />} text={isFr ? "Le compte est en cours de configuration. Les identifiants apparaîtront ici automatiquement." : "The account is being configured. Credentials will appear here automatically."} />}
+            <div className={styles.platformBlock}>
+              <div className={styles.platformHeading}>
+                <Image className={styles.platformLogo} src="/MT5.png" alt="MetaTrader 5" width={40} height={40} />
+                <div><strong>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</strong><span>{isFr ? "Installe MT5 puis connecte-toi avec les accès affichés ci-dessus." : "Install MT5, then sign in with the credentials shown above."}</span></div>
+              </div>
+              <div className={styles.platformGrid}>{[
+                { label: "Windows", icon: "🖥️", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
+                { label: "Mac", icon: "🍎", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
+                { label: "iPhone / iPad", icon: "📱", href: "https://apps.apple.com/us/app/metatrader-5/id413251709" },
+                { label: "Android", icon: "🤖", href: "https://play.google.com/store/apps/details?id=net.metaquotes.metatrader5&hl=fr" },
+              ].map(platform => <a className={styles.platformButton} href={platform.href} key={platform.label} target="_blank" rel="noopener noreferrer"><span>{platform.icon}</span><b>{platform.label}</b><Download size={13} /></a>)}</div>
+            </div>
+          </div>
+
         </>
       )}
 
       {/* ══════════════════════════════════════════════════════════════
-          TOOLS TAB
+          TRADING TAB
       ══════════════════════════════════════════════════════════════ */}
-      {subTab === "tools" && (
-        <CockpitTools challenge={challenge} isFr={isFr} isMobile={isMobile} />
+      {subTab === "trading" && (
+        <CockpitTools
+          challenge={challenge}
+          isFr={isFr}
+          isMobile={isMobile}
+          section={tradingSection}
+          onSection={setTradingSection}
+          planChecks={planChecks}
+          setPlanChecks={setPlanChecks}
+          journalNote={journalNote}
+          setJournalNote={setJournalNote}
+        />
       )}
 
     </div>
@@ -765,10 +776,6 @@ export default function TraderCockpit({
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
-
-function Rule({ label, value, progress, color = BLUE, help }: { label: string; value: string; progress?: number; color?: string; help?: string }) {
-  return <div className={styles.rule}><div className={styles.ruleTop}><span className={styles.ruleLabel}>{label}</span><span className={styles.ruleValue}>{value}</span></div>{progress != null && <Meter value={progress} color={color} />}{help && <div className={styles.ruleHelp}>{help}</div>}</div>;
-}
 
 function Empty({ icon, text }: { icon: React.ReactNode; text: string }) {
   return <div className={styles.empty}>{icon}{text}</div>;

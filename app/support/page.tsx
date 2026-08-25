@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -60,7 +60,7 @@ export default function SupportPage() {
             <div style={{ fontSize: 48, marginBottom: 20 }}>✅</div>
             <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: "#ffffff" }}>Message envoyé !</h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, lineHeight: 1.7, marginBottom: 28 }}>
-              Notre équipe vous répondra dans les plus brefs délais à <strong style={{ color: "#69C5FD" }}>{email || "votre adresse email"}</strong>.
+              Notre équipe vous répondra dans les plus brefs délais à <strong style={{ color: "#9CCFEA" }}>{email || "votre adresse email"}</strong>.
             </p>
             <button onClick={() => setSuccess(false)}
               style={{ background: "none", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "12px 28px", color: "rgba(255,255,255,0.6)", fontSize: 14, cursor: "pointer" }}>
@@ -74,13 +74,13 @@ export default function SupportPage() {
               <div>
                 <label style={lbl}>Prénom *</label>
                 <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" required style={inp}
-                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                  onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
               </div>
               <div>
                 <label style={lbl}>Nom *</label>
                 <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" required style={inp}
-                  onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                  onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function SupportPage() {
             <div>
               <label style={lbl}>Email *</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com" required style={inp}
-                onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                 onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
             </div>
 
@@ -96,7 +96,7 @@ export default function SupportPage() {
               <label style={lbl}>Message *</label>
               <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Décrivez votre problème ou question..." required rows={6}
                 style={{ ...inp, resize: "vertical", lineHeight: 1.6, colorScheme: "dark" } as React.CSSProperties}
-                onFocus={e => (e.target.style.borderColor = "#69C5FD")}
+                onFocus={e => (e.target.style.borderColor = "#9CCFEA")}
                 onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
             </div>
 
@@ -107,13 +107,13 @@ export default function SupportPage() {
             )}
 
             <button type="submit" disabled={loading}
-              style={{ width: "100%", padding: "15px", fontSize: 14, fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, background: "#69C5FD", color: "#000", border: "none", borderRadius: 10, transition: "opacity 0.2s" }}>
+              style={{ width: "100%", padding: "15px", fontSize: 14, fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, background: "#9CCFEA", color: "#000", border: "none", borderRadius: 10, transition: "opacity 0.2s" }}>
               {loading ? "Envoi en cours..." : "ENVOYER LE MESSAGE"}
             </button>
 
             <p style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 13, margin: 0 }}>
               Vous pouvez aussi nous écrire directement à{" "}
-              <a href="mailto:contact@traders-rewards.eu" style={{ color: "#69C5FD", textDecoration: "none" }}>
+              <a href="mailto:contact@traders-rewards.eu" style={{ color: "#9CCFEA", textDecoration: "none" }}>
                 contact@traders-rewards.eu
               </a>
             </p>

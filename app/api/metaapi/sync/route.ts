@@ -232,8 +232,20 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await changeMT5Password(oldLogin).catch((e) => console.error(`[${oldLogin}] pwd change failed:`, e));
   };
 
+  const rewardSlotAvailable = async () => {
+    const { count } = await admin
+      .from("challenges")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("status", "funded")
+      .eq("phase", "funded")
+      .neq("id", id);
+    return (count ?? 0) < 5;
+  };
+
   // 1-Step: phase1 -> certified
   if (is1Step && phase === "phase1" && targetMet && daysMet) {
+    if (!(await rewardSlotAvailable())) return { status: "blocked", reason: "reward_account_limit_5" };
     const newAcc = await makeMT5(FUNDED_GROUP["1step"]);
     if (!newAcc) return { status: "error", reason: "mt5_creation_failed_1step_funded" };
     await disableOldAccount(login);
@@ -266,6 +278,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 
   // 2-Step: phase2 -> certified
   if (!is1Step && phase === "phase2" && targetMet && daysMet) {
+    if (!(await rewardSlotAvailable())) return { status: "blocked", reason: "reward_account_limit_5" };
     const newAcc = await makeMT5(FUNDED_GROUP["2step"]);
     if (!newAcc) return { status: "error", reason: "mt5_creation_failed_funded" };
     await disableOldAccount(login);

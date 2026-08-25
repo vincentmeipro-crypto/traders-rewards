@@ -48,23 +48,10 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
     ],
   },
   {
-    type:        "phase2",
-    label:       "Passage Phase 2",
-    description: "Envoyé quand un trader valide la Phase 1 et passe en Phase 2 avec un nouveau compte MT5.",
-    trigger:     "MetaAPI sync — objectif Phase 1 atteint",
-    sensitive:   true,
-    variables: [
-      { name: "accountSize",   sensitive: false },
-      { name: "mt5.login",     sensitive: true  },
-      { name: "mt5.password",  sensitive: true  },
-      { name: "mt5.server",    sensitive: true  },
-    ],
-  },
-  {
     type:        "failed",
     label:       "Challenge échoué",
     description: "Envoyé quand un challenge est automatiquement arrêté suite à un dépassement de drawdown.",
-    trigger:     "MetaAPI sync — drawdown journalier ou total dépassé",
+    trigger:     "Synchronisation MT5 — Trailing DD EOD dépassé",
     sensitive:   false,
     variables: [
       { name: "accountSize", sensitive: false },
@@ -74,14 +61,13 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   },
   {
     type:        "funded",
-    label:       "Compte Reward",
-    description: "Envoyé quand un trader valide la Phase 2 et obtient son compte Reward avec un nouveau login MT5.",
-    trigger:     "MetaAPI sync — objectif Phase 2 atteint",
+    label:       "Activation Reward Account",
+    description: "Envoyé après validation du Challenge et activation du Reward Account. Contient les nouveaux identifiants MT5.",
+    trigger:     "Challenge validé + activation du Reward Account",
     sensitive:   true,
     variables: [
       { name: "accountSize",  sensitive: false },
       { name: "model",        sensitive: false },
-      { name: "splitPct",     sensitive: false },
       { name: "mt5.login",    sensitive: true  },
       { name: "mt5.password", sensitive: true  },
       { name: "mt5.server",   sensitive: true  },
@@ -91,8 +77,8 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   {
     type:        "daily_update",
     label:       "Récap journalier",
-    description: "Résumé de performance quotidien. Pour les comptes 1-Step, inclut le plancher trailing.",
-    trigger:     "Cron quotidien — pour chaque challenge actif",
+    description: "Résumé quotidien du compte : balance, performance, jours tradés et plancher Trailing DD EOD.",
+    trigger:     "Traitement quotidien — comptes actifs synchronisés",
     sensitive:   false,
     variables: [
       { name: "accountSize",     sensitive: false },
@@ -107,23 +93,10 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
     ],
   },
   {
-    type:        "phase1_certificate",
-    label:       "Certificat Phase 1",
-    description: "Certificat de validation de la Phase 1 avec lien de téléchargement personnalisé.",
-    trigger:     "MetaAPI sync — objectif Phase 1 atteint (simultané avec Passage Phase 2)",
-    sensitive:   false,
-    variables: [
-      { name: "firstName",   sensitive: false },
-      { name: "lastName",    sensitive: false },
-      { name: "accountSize", sensitive: false },
-      { name: "date",        sensitive: false },
-    ],
-  },
-  {
     type:        "challenge_certificate",
     label:       "Certificat Challenge",
-    description: "Certificat de validation du challenge complet (Phase 2 réussie).",
-    trigger:     "MetaAPI sync — objectif Phase 2 atteint (simultané avec Compte Reward)",
+    description: "Certificat confirmant la validation du Challenge et l'accès au niveau Reward Start.",
+    trigger:     "Challenge validé",
     sensitive:   false,
     variables: [
       { name: "firstName",   sensitive: false },
@@ -135,8 +108,8 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   {
     type:        "reward_certificate",
     label:       "Certificat Reward",
-    description: "Confirmation de versement de récompense avec montant net et certificat téléchargeable.",
-    trigger:     "Payout approuvé par l'admin",
+    description: "Confirmation d'une Reward approuvée avec son montant éligible à 100% et son justificatif.",
+    trigger:     "Reward approuvée par l'admin",
     sensitive:   false,
     variables: [
       { name: "firstName",    sensitive: false },
@@ -144,7 +117,6 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
       { name: "accountSize",  sensitive: false },
       { name: "grossAmount",  sensitive: false },
       { name: "model",        sensitive: false },
-      { name: "splitPct",     sensitive: false },
       { name: "date",         sensitive: false },
       { name: "netAmountEur", sensitive: false },
     ],

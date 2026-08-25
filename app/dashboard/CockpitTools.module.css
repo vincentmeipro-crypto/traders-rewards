@@ -1,10 +1,10 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    TRADERS REWARDS — CockpitTools styles
-   Dark design, #69C5FD accent, matches TraderCockpit visual language.
+   Dark design, #9CCFEA accent, matches TraderCockpit visual language.
 ───────────────────────────────────────────────────────────────────────────── */
 
 .root {
-  --blue:  #69C5FD;
+  --blue:  #9CCFEA;
   --green: #22c55e;
   --amber: #f59e0b;
   --red:   #ef4444;
@@ -38,20 +38,21 @@
 }
 
 .toolNavBtn:hover {
-  border-color: rgba(105, 197, 253, .35);
+  border-color: rgba(156,207,234, .35);
   color: #fff;
-  background: rgba(105, 197, 253, .06);
+  background: rgba(156,207,234, .06);
 }
 
 .toolNavBtnActive {
-  background: #69C5FD;
-  border-color: #69C5FD;
+  background: linear-gradient(112deg, #5f8ca4 0%, #d5f1ff 20%, #8fc4df 43%, #ecf9ff 62%, #74a9c4 82%, #c4e9fa 100%);
+  border-color: #9CCFEA;
   color: #02070b;
+  box-shadow: inset 0 1px rgba(255,255,255,.9), inset -1px 0 rgba(24,61,80,.3), 0 8px 24px rgba(156,207,234,.08);
 }
 
 .toolNavBtnActive:hover {
-  background: #7dcffe;
-  border-color: #7dcffe;
+  background: linear-gradient(112deg, #6796af 0%, #e0f5ff 20%, #9bcee7 43%, #f4fcff 62%, #7fb4ce 82%, #cceefd 100%);
+  border-color: #b9e7ff;
   color: #02070b;
 }
 
@@ -89,7 +90,7 @@
 .toolHeader { margin-bottom: 6px; }
 
 .toolEyebrow {
-  color: #69C5FD;
+  color: #9CCFEA;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1.8px;
@@ -144,8 +145,8 @@
 }
 
 .fieldWrap:focus-within {
-  border-color: rgba(105, 197, 253, .55);
-  background: rgba(105, 197, 253, .04);
+  border-color: rgba(156,207,234, .55);
+  background: rgba(156,207,234, .04);
 }
 
 .fieldInput {
@@ -193,13 +194,13 @@
 }
 
 .symbolSelect:hover {
-  border-color: rgba(105, 197, 253, .35);
-  background: rgba(105, 197, 253, .04);
+  border-color: rgba(156,207,234, .35);
+  background: rgba(156,207,234, .04);
 }
 
 .symbolSelect:focus {
-  border-color: rgba(105, 197, 253, .55);
-  background: rgba(105, 197, 253, .04);
+  border-color: rgba(156,207,234, .55);
+  background: rgba(156,207,234, .04);
 }
 
 .symbolSelect option {
@@ -286,8 +287,8 @@
 }
 
 .modeBtnActive {
-  background: rgba(105, 197, 253, .18);
-  color: #69C5FD;
+  background: rgba(156,207,234, .18);
+  color: #9CCFEA;
 }
 
 /* ── Warnings ────────────────────────────────────────────────────────────── */
@@ -398,8 +399,8 @@
   align-items: center;
   padding: 2px 6px;
   border-radius: 100px;
-  background: rgba(105, 197, 253, .1);
-  color: #69C5FD;
+  background: rgba(156,207,234, .1);
+  color: #9CCFEA;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .4px;
@@ -411,7 +412,7 @@
   font-size: 16px;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
-  color: #69C5FD;
+  color: #9CCFEA;
   letter-spacing: -.3px;
 }
 
@@ -423,8 +424,8 @@
   gap: 7px;
   padding: 15px;
   border-radius: 12px;
-  background: rgba(105, 197, 253, .04);
-  border: 1px solid rgba(105, 197, 253, .1);
+  background: rgba(156,207,234, .04);
+  border: 1px solid rgba(156,207,234, .1);
 }
 
 .impactTitle {
@@ -517,7 +518,7 @@
   width: 64px;
   height: 64px;
   border-radius: 18px;
-  background: rgba(105, 197, 253, .08);
+  background: rgba(156,207,234, .08);
 }
 
 .comingSoonTitle {
@@ -538,9 +539,9 @@
   align-items: center;
   padding: 7px 16px;
   border-radius: 100px;
-  background: rgba(105, 197, 253, .09);
-  border: 1px solid rgba(105, 197, 253, .2);
-  color: #69C5FD;
+  background: rgba(156,207,234, .09);
+  border: 1px solid rgba(156,207,234, .2);
+  color: #9CCFEA;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: .5px;
@@ -554,9 +555,9 @@
   gap: 7px;
   padding: 8px 12px;
   border-radius: 10px;
-  background: rgba(105, 197, 253, .07);
-  border: 1px solid rgba(105, 197, 253, .15);
-  color: rgba(105, 197, 253, .85);
+  background: rgba(156,207,234, .07);
+  border: 1px solid rgba(156,207,234, .15);
+  color: rgba(156,207,234, .85);
   font-size: 11px;
   line-height: 1.45;
 }
@@ -767,8 +768,8 @@
   gap: 12px;
   padding: 18px;
   border-radius: 14px;
-  border: 1px solid rgba(105, 197, 253, .12);
-  background: rgba(105, 197, 253, .03);
+  border: 1px solid rgba(156,207,234, .12);
+  background: rgba(156,207,234, .03);
 }
 
 .impactAreaTitle {
@@ -788,8 +789,8 @@
   align-items: center;
   padding: 2px 8px;
   border-radius: 100px;
-  background: rgba(105, 197, 253, .12);
-  color: #69C5FD;
+  background: rgba(156,207,234, .12);
+  color: #9CCFEA;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: .4px;
@@ -990,13 +991,13 @@
 }
 
 .riskToggleBtn:hover {
-  background: rgba(105, 197, 253, .08);
+  background: rgba(156,207,234, .08);
   color: rgba(255, 255, 255, .7);
 }
 
 .riskToggleBtnActive {
-  background: rgba(105, 197, 253, .18);
-  color: #69C5FD;
+  background: rgba(156,207,234, .18);
+  color: #9CCFEA;
 }
 
 /* ── Capital reference ────────────────────────────────────────────────────── */
@@ -1017,6 +1018,294 @@
   border-top: 1px solid rgba(255, 255, 255, .055);
   padding-top: 10px;
   margin-top: 2px;
+}
+
+/* ── Préparer ma session ─────────────────────────────────────────────────── */
+
+.prepProgress {
+  padding: 18px;
+  border: 1px solid rgba(156,207,234, .14);
+  border-radius: 14px;
+  background: rgba(156,207,234, .03);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prepProgressTop {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.prepProgressEyebrow {
+  color: rgba(255, 255, 255, .35);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.prepProgressCount {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.prepProgressSlash {
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .45);
+}
+
+.prepProgressUnit {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, .4);
+  letter-spacing: 0;
+}
+
+.prepProgressStatus {
+  font-size: 12px;
+  font-weight: 800;
+  text-align: right;
+  transition: color .3s ease;
+  white-space: nowrap;
+  align-self: flex-end;
+}
+
+.prepChecklist {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.prepItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  transition: background .15s ease;
+}
+
+.prepItem:hover {
+  background: rgba(255, 255, 255, .04);
+}
+
+.prepItemMain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.prepCheck {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 6px;
+  border: 1.5px solid rgba(255, 255, 255, .22);
+  background: transparent;
+  transition: background .2s ease, border-color .2s ease;
+  color: #02070b;
+}
+
+.prepCheckOn {
+  background: #22c55e;
+  border-color: #22c55e;
+}
+
+.prepItemText {
+  font-size: 13px;
+  line-height: 1.4;
+  transition: color .2s;
+}
+
+.prepItemLink {
+  background: transparent;
+  border: 1px solid rgba(156,207,234, .22);
+  border-radius: 8px;
+  padding: 4px 9px;
+  color: #9CCFEA;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .18s ease, border-color .18s ease;
+  flex: 0 0 auto;
+  font-family: inherit;
+}
+
+.prepItemLink:hover {
+  background: rgba(156,207,234, .10);
+  border-color: rgba(156,207,234, .40);
+}
+
+.prepNoteSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prepNoteLabel {
+  color: rgba(255, 255, 255, .38);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.prepNote {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px;
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 11px;
+  color: #fff;
+  font-size: 13.5px;
+  font-family: inherit;
+  resize: vertical;
+  outline: none;
+  transition: border-color .18s ease, background .18s ease;
+  line-height: 1.55;
+  box-sizing: border-box;
+}
+
+.prepNote:focus {
+  border-color: rgba(156,207,234, .45);
+  background: rgba(156,207,234, .03);
+}
+
+.prepNote::placeholder {
+  color: rgba(255, 255, 255, .25);
+}
+
+/* ── Simulateur de Risque ────────────────────────────────────────────────── */
+
+.simLossBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 20px 22px;
+  border: 1px solid rgba(239, 68, 68, .22);
+  border-radius: 16px;
+  background: rgba(239, 68, 68, .05);
+  text-align: center;
+}
+
+.simLossEyebrow {
+  color: rgba(255, 255, 255, .35);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.simBigLoss {
+  font-size: 52px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.simLossMeta {
+  color: rgba(255, 255, 255, .42);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.simLossMeta strong {
+  color: rgba(255, 255, 255, .8);
+  font-weight: 800;
+}
+
+.simStatusBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid;
+  text-align: center;
+}
+
+.simStatusLabel {
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -.4px;
+}
+
+.simStatusSub {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: .75;
+}
+
+/* ── Impact area subtitle & equity summary ───────────────────────────────── */
+
+.impactAreaSub {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .35);
+  margin-top: 1px;
+}
+
+.simEquitySummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  margin-top: 6px;
+  background: rgba(255, 255, 255, .03);
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 12px;
+}
+
+.simEquityItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+}
+
+.simEquityLabel {
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .4);
+}
+
+.simEquityValue {
+  font-size: 14px;
+  font-weight: 850;
+  letter-spacing: -.3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.simEquityArrow {
+  font-size: 16px;
+  color: rgba(255, 255, 255, .25);
+  flex: 0 0 auto;
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */

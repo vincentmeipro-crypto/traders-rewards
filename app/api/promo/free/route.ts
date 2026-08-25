@@ -10,10 +10,11 @@ import { consumePromoCode } from "@/lib/promo";
 
 export async function POST(req: NextRequest) {
   try {
-    const { productId, userId, promoCode } = await req.json();
+    const { productId, userId, promoCode, quantity: rawQuantity } = await req.json();
     if (!productId || !userId || !promoCode) {
       return NextResponse.json({ error: "Missing params" }, { status: 400 });
     }
+    if (Number(rawQuantity ?? 1) !== 1) return NextResponse.json({ error: "Les codes 100% sont limités à un seul Challenge" }, { status: 400 });
 
     // Normaliser le code AVANT de construire la référence (idempotence)
     const normalizedCode = (promoCode as string).toUpperCase().trim();
@@ -23,8 +24,20 @@ export async function POST(req: NextRequest) {
 
     const admin = createAdminClient();
 
-    // Vérifier le plafond de cumul (max_cumul_usd depuis la DB)
-    if (product.max_cumul_usd) {
+    if (product.slug.startsWith("rewards-")) {
+      const { count } = await admin
+        .from("challenges")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .neq("phase", "funded");
+      if ((count ?? 0) >= 10) {
+        return NextResponse.json(
+          { error: "Vous avez déjà atteint la limite de 10 Challenges actifs." },
+          { status: 400 }
+        );
+      }
+    } else if (product.max_cumul_usd) {
       const { data: activeChallenges } = await admin
         .from("challenges")
         .select("start_balance")

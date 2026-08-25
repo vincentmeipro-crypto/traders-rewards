@@ -47,9 +47,9 @@ export async function POST(
       { status: 400 }
     );
 
-  if (!["challenge", "funded"].includes(phase_type))
+  if (!["challenge", "funded", "reward_journey"].includes(phase_type))
     return NextResponse.json(
-      { error: "phase_type doit être 'challenge' ou 'funded'" },
+      { error: "phase_type doit être 'challenge', 'funded' ou 'reward_journey'" },
       { status: 400 }
     );
 

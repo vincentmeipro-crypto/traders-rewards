@@ -12,8 +12,9 @@
  *   - Formules DD identiques à TraderCockpit.tsx.
  */
 
-import { useMemo, useState } from "react";
-import { AlertTriangle, Info, ShieldCheck, Target } from "lucide-react";
+import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { AlertTriangle, Check, Info } from "lucide-react";
+import EconomicCalendar from "./EconomicCalendar";
 import type { CockpitChallenge } from "./TraderCockpit";
 import {
   INSTRUMENT_SPECS,
@@ -26,15 +27,24 @@ import {
 } from "@/lib/instrument-specs";
 import styles from "./CockpitTools.module.css";
 
-type ToolTab = "rr" | "lot" | "simulator";
+export type TradingSection = "prepare" | "rr" | "lot" | "calendar";
+
+/** Statuts de risque — partagés entre RRCalculator et RISK_STATUS_CONFIG. */
+type RiskStatus = "CONFORTABLE" | "MODÉRÉ" | "ATTENTION" | "CRITIQUE" | "LIMITE DÉPASSÉE";
 
 type Props = {
-  challenge: CockpitChallenge;
-  isFr:      boolean;
-  isMobile:  boolean;
+  challenge:      CockpitChallenge;
+  isFr:           boolean;
+  isMobile:       boolean;
+  section:        TradingSection;
+  onSection:      (s: TradingSection) => void;
+  planChecks:     boolean[];
+  setPlanChecks:  Dispatch<SetStateAction<boolean[]>>;
+  journalNote:    string;
+  setJournalNote: Dispatch<SetStateAction<string>>;
 };
 
-const BLUE  = "#69C5FD";
+const BLUE  = "#9CCFEA";
 const GREEN = "#22c55e";
 const AMBER = "#f59e0b";
 const RED   = "#ef4444";
@@ -199,18 +209,36 @@ function RRCalculator({
     let totalBufferAfterSL: number | null = null;
     let dailyImpactPct:     number | null = null;
     let totalImpactPct:     number | null = null;
-    let dailyViolation  = false;
-    let totalViolation  = false;
+    let dailyViolation    = false;
+    let totalViolation    = false;
+    // ── Statut de risque (formule simulateur : % de la limite DD consommée) ──
+    let equityAfterSL:    number | null = null;
+    let dailyUsedAfterSL: number | null = null;
+    let totalUsedAfterSL: number | null = null;
+    let worstUsedPct:     number | null = null;
+    let riskStatus:       RiskStatus | null = null;
 
     if (lossUsd != null) {
-      const equityAfterSL = equity - lossUsd;
-      dailyBufferAfterSL  = Math.max(0, equityAfterSL - dailyFloor);
-      totalBufferAfterSL  = Math.max(0, equityAfterSL - totalFloor);
+      equityAfterSL      = equity - lossUsd;
+      dailyBufferAfterSL = Math.max(0, equityAfterSL - dailyFloor);
+      totalBufferAfterSL = Math.max(0, equityAfterSL - totalFloor);
       // Impact = part de la marge RESTANTE consommée par ce trade
-      dailyImpactPct      = dailyBuffer > 0 ? lossUsd / dailyBuffer * 100 : 0;
-      totalImpactPct      = totalBuffer > 0 ? lossUsd / totalBuffer * 100 : 0;
-      dailyViolation      = equityAfterSL < dailyFloor;
-      totalViolation      = equityAfterSL < totalFloor;
+      dailyImpactPct     = dailyBuffer > 0 ? lossUsd / dailyBuffer * 100 : 0;
+      totalImpactPct     = totalBuffer > 0 ? lossUsd / totalBuffer * 100 : 0;
+      dailyViolation     = equityAfterSL < dailyFloor;
+      totalViolation     = equityAfterSL < totalFloor;
+      // % de la limite DD totale consommée après SL
+      dailyUsedAfterSL   = dailyLimitUsd > 0
+        ? (1 - dailyBufferAfterSL / dailyLimitUsd) * 100 : 0;
+      totalUsedAfterSL   = totalLimitUsd > 0
+        ? (1 - totalBufferAfterSL / totalLimitUsd) * 100 : 0;
+      worstUsedPct       = Math.max(dailyUsedAfterSL, totalUsedAfterSL);
+      riskStatus         =
+        worstUsedPct >= 100 ? "LIMITE DÉPASSÉE"
+        : worstUsedPct >= 90  ? "CRITIQUE"
+        : worstUsedPct >= 75  ? "ATTENTION"
+        : worstUsedPct >= 50  ? "MODÉRÉ"
+        : "CONFORTABLE";
     }
 
     return {
@@ -229,6 +257,8 @@ function RRCalculator({
       dailyBufferAfterSL, totalBufferAfterSL,
       dailyImpactPct, totalImpactPct,
       dailyViolation, totalViolation,
+      equityAfterSL, dailyUsedAfterSL, totalUsedAfterSL,
+      worstUsedPct, riskStatus,
       slOnWrongSide, tpOnWrongSide,
     };
   }, [symbol, direction, entry, sl, tp, lots, challenge]);
@@ -536,10 +566,40 @@ function RRCalculator({
             <div className={styles.impactArea}>
               <div className={styles.impactAreaTitle}>
                 {isFr ? "Impact sur ton challenge" : "Impact on your challenge"}
+                <span className={styles.impactAreaSub}>
+                  {isFr ? "· Si le Stop Loss est touché" : "· If the Stop Loss is hit"}
+                </span>
                 {calc.isOneStep && (
-                  <span className={styles.impactModelBadge}>1-Step · Trailing DD</span>
+                  <span className={styles.impactModelBadge}>CHALLENGE · TRAILING DD EOD</span>
                 )}
               </div>
+
+              {/* ── Statut synthétique ─────────────────────────────── */}
+              {calc.riskStatus != null && (
+                <div
+                  className={styles.simStatusBadge}
+                  style={{
+                    color:       RISK_STATUS_CONFIG[calc.riskStatus].color,
+                    background:  RISK_STATUS_CONFIG[calc.riskStatus].bg,
+                    borderColor: RISK_STATUS_CONFIG[calc.riskStatus].border,
+                  }}
+                >
+                  <div className={styles.simStatusLabel}>
+                    {isFr
+                      ? RISK_STATUS_CONFIG[calc.riskStatus].label
+                      : RISK_STATUS_CONFIG[calc.riskStatus].labelEn}
+                  </div>
+                  <div className={styles.simStatusSub}>
+                    {calc.riskStatus === "LIMITE DÉPASSÉE"
+                      ? (isFr
+                          ? "Ce scénario atteindrait ou dépasserait une limite de drawdown de ton challenge."
+                          : "This scenario would reach or exceed a drawdown limit of your challenge.")
+                      : (isFr
+                          ? `Utilisation max des marges DD après SL : ${pct(Math.max(0, calc.worstUsedPct ?? 0), 1)}`
+                          : `Max DD margin usage after SL: ${pct(Math.max(0, calc.worstUsedPct ?? 0), 1)}`)}
+                  </div>
+                </div>
+              )}
 
               {/* Daily DD */}
               <DDBlock
@@ -571,10 +631,39 @@ function RRCalculator({
                 isFr={isFr}
               />
 
+              {/* ── Valeur après SL ──────────────────────────────────── */}
+              {calc.equityAfterSL != null && (
+                <div className={styles.simEquitySummary}>
+                  <div className={styles.simEquityItem}>
+                    <div className={styles.simEquityLabel}>{isFr ? "Valeur actuelle" : "Current equity"}</div>
+                    <div className={styles.simEquityValue}>{money(calc.equity)}</div>
+                  </div>
+                  <div className={styles.simEquityArrow}>→</div>
+                  <div className={styles.simEquityItem}>
+                    <div className={styles.simEquityLabel}>{isFr ? "Perte au SL" : "SL loss"}</div>
+                    <div className={styles.simEquityValue} style={{ color: RED }}>
+                      {isApprox ? "≈ " : ""}-{money(calc.lossUsd)}
+                    </div>
+                  </div>
+                  <div className={styles.simEquityArrow}>→</div>
+                  <div className={styles.simEquityItem}>
+                    <div className={styles.simEquityLabel}>{isFr ? "Valeur après SL" : "Equity after SL"}</div>
+                    <div
+                      className={styles.simEquityValue}
+                      style={{
+                        color: (calc.riskStatus === "LIMITE DÉPASSÉE" || calc.riskStatus === "CRITIQUE") ? RED : undefined,
+                      }}
+                    >
+                      {money(calc.equityAfterSL)}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className={styles.impactDisclaimer}>
                 {isFr
-                  ? "Simulation basée sur le solde actuel. Les positions ouvertes peuvent modifier ces chiffres."
-                  : "Simulation based on current balance. Open positions may affect these figures."}
+                  ? "Simulation basée sur le solde actuel. Les positions ouvertes et la variation du highest balance peuvent modifier ces chiffres."
+                  : "Simulation based on current balance. Open positions and highest balance changes may affect these figures."}
               </div>
             </div>
           )}
@@ -967,7 +1056,7 @@ function LotCalculator({
               <div className={styles.impactAreaTitle}>
                 {isFr ? "Impact sur ton challenge" : "Impact on your challenge"}
                 {calc.isOneStep && (
-                  <span className={styles.impactModelBadge}>1-Step · Trailing DD</span>
+                  <span className={styles.impactModelBadge}>CHALLENGE · TRAILING DD EOD</span>
                 )}
               </div>
 
@@ -1024,6 +1113,20 @@ function LotCalculator({
     </div>
   );
 }
+
+// ─── Configuration statut de risque (partagée par RRCalculator) ──────────────
+
+const RISK_STATUS_CONFIG: Record<
+  RiskStatus,
+  { color: string; bg: string; border: string; label: string; labelEn: string }
+> = {
+  "CONFORTABLE":     { color: GREEN,  bg: "rgba(34,197,94,.09)",   border: "rgba(34,197,94,.22)",   label: "✓ Confortable",     labelEn: "✓ Comfortable"    },
+  "MODÉRÉ":         { color: BLUE,   bg: "rgba(156,207,234,.09)", border: "rgba(156,207,234,.22)", label: "◆ Modéré",          labelEn: "◆ Moderate"       },
+  "ATTENTION":      { color: AMBER,  bg: "rgba(245,158,11,.09)",  border: "rgba(245,158,11,.22)",  label: "⚠ Attention",       labelEn: "⚠ Caution"        },
+  "CRITIQUE":       { color: RED,    bg: "rgba(239,68,68,.09)",   border: "rgba(239,68,68,.22)",   label: "✖ Critique",        labelEn: "✖ Critical"       },
+  "LIMITE DÉPASSÉE":{ color: "#fff", bg: "rgba(239,68,68,.22)",   border: "rgba(239,68,68,.55)",   label: "⛔ Limite dépassée", labelEn: "⛔ Limit exceeded"},
+};
+
 
 // ── Composant DD block (daily + total) ────────────────────────────────────────
 
@@ -1119,16 +1222,168 @@ function ComingSoonStub({
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
+//  PRÉPARER MA SESSION
+// ═════════════════════════════════════════════════════════════════════════════
+
+const PLAN_ITEMS_FR = [
+  "J'ai vérifié les annonces économiques",
+  "Mon setup et mon invalidation sont clairs",
+  "Mon Stop Loss est défini",
+  "Mon Take Profit est défini",
+  "J'ai vérifié mon ratio Risque / Rendement",
+  "J'ai calculé mon lot",
+  "J'ai vérifié ma marge Daily DD disponible",
+  "J'ai vérifié ma marge Total DD disponible",
+  "Mon risque maximum par trade est défini",
+] as const;
+
+const PLAN_ITEMS_EN = [
+  "I checked economic announcements",
+  "My setup and invalidation are clear",
+  "My Stop Loss is defined",
+  "My Take Profit is defined",
+  "I checked my Risk / Reward ratio",
+  "I calculated my lot size",
+  "I checked my Daily DD margin",
+  "I checked my Total DD margin",
+  "My maximum risk per trade is defined",
+] as const;
+
+// Index → shortcut link (labelFr, labelEn, destination section)
+const ITEM_LINKS: Record<number, { labelFr: string; labelEn: string; section: TradingSection }> = {
+  0: { labelFr: "Consulter →", labelEn: "View →",        section: "calendar"  },
+  4: { labelFr: "Vérifier →",  labelEn: "Check →",       section: "rr"        },
+  5: { labelFr: "Calculer →",  labelEn: "Calculate →",   section: "lot"       },
+  6: { labelFr: "Vérifier →",  labelEn: "Check →",        section: "rr"        },
+  7: { labelFr: "Vérifier →",  labelEn: "Check →",        section: "rr"        },
+};
+
+function PrepareSession({
+  planChecks, setPlanChecks,
+  journalNote, setJournalNote,
+  onSection, isFr,
+}: {
+  planChecks:     boolean[];
+  setPlanChecks:  Dispatch<SetStateAction<boolean[]>>;
+  journalNote:    string;
+  setJournalNote: Dispatch<SetStateAction<string>>;
+  onSection:      (s: TradingSection) => void;
+  isFr:           boolean;
+  isMobile:       boolean;
+}) {
+  const items     = isFr ? PLAN_ITEMS_FR : PLAN_ITEMS_EN;
+  const checked   = planChecks.filter(Boolean).length;
+  const total     = 9;
+  const pct9      = (checked / total) * 100;
+  const allDone   = checked === total;
+  const almost    = checked >= 7;
+
+  const statusColor = allDone ? GREEN : almost ? BLUE : AMBER;
+  const statusText  = allDone
+    ? (isFr ? "✓ Session prête" : "✓ Session ready")
+    : almost
+      ? (isFr ? "Session presque prête" : "Session almost ready")
+      : (isFr ? "Complète ta préparation" : "Complete your preparation");
+
+  const toggle = (i: number) =>
+    setPlanChecks(prev => prev.map((v, idx) => idx === i ? !v : v));
+
+  return (
+    <div className={styles.toolSection}>
+
+      {/* ── Barre de progression ─────────────────────────────────────── */}
+      <div className={styles.prepProgress}>
+        <div className={styles.prepProgressTop}>
+          <div>
+            <div className={styles.prepProgressEyebrow}>
+              {isFr ? "PRÉPARATION DE SESSION" : "SESSION PREPARATION"}
+            </div>
+            <div className={styles.prepProgressCount}>
+              <span style={{ fontVariantNumeric: "tabular-nums" }}>
+                {checked}
+              </span>
+              <span className={styles.prepProgressSlash}> / {total}</span>
+              <span className={styles.prepProgressUnit}>
+                {isFr ? " vérifications" : " checks"}
+              </span>
+            </div>
+          </div>
+          <div className={styles.prepProgressStatus} style={{ color: statusColor }}>
+            {statusText}
+          </div>
+        </div>
+        <MiniMeter value={pct9} color={statusColor} />
+      </div>
+
+      {/* ── Checklist ────────────────────────────────────────────────── */}
+      <div className={styles.prepChecklist}>
+        {items.map((item, idx) => {
+          const link = ITEM_LINKS[idx];
+          return (
+            <div key={idx} className={styles.prepItem}>
+              <div className={styles.prepItemMain} onClick={() => toggle(idx)}>
+                <span
+                  className={`${styles.prepCheck} ${planChecks[idx] ? styles.prepCheckOn : ""}`}
+                >
+                  {planChecks[idx] && <Check size={11} />}
+                </span>
+                <span
+                  className={styles.prepItemText}
+                  style={planChecks[idx]
+                    ? { textDecoration: "line-through", color: "rgba(255,255,255,.32)" }
+                    : undefined}
+                >
+                  {item}
+                </span>
+              </div>
+              {link && (
+                <button
+                  className={styles.prepItemLink}
+                  onClick={() => onSection(link.section)}
+                >
+                  {isFr ? link.labelFr : link.labelEn}
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Note de session ──────────────────────────────────────────── */}
+      <div className={styles.prepNoteSection}>
+        <div className={styles.prepNoteLabel}>
+          {isFr ? "Plan de session / Notes" : "Session plan / Notes"}
+        </div>
+        <textarea
+          className={styles.prepNote}
+          value={journalNote}
+          onChange={e => setJournalNote(e.target.value)}
+          placeholder={isFr
+            ? "Mon setup, mon état d'esprit et la règle que je veux respecter aujourd'hui…"
+            : "My setup, mindset and the rule I want to respect today…"}
+          rows={4}
+        />
+      </div>
+
+    </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 //  MAIN EXPORT
 // ═════════════════════════════════════════════════════════════════════════════
 
-export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
-  const [activeTool, setActiveTool] = useState<ToolTab>("rr");
+export default function CockpitTools({
+  challenge, isFr, isMobile,
+  section, onSection,
+  planChecks, setPlanChecks, journalNote, setJournalNote,
+}: Props) {
 
-  const tabs: { id: ToolTab; label: string; live: boolean }[] = [
-    { id: "rr",        label: isFr ? "Risque / Rendement" : "Risk / Reward",  live: true  },
-    { id: "lot",       label: isFr ? "Calculateur de lot"  : "Lot Calculator", live: true  },
-    { id: "simulator", label: isFr ? "Simulateur de risque" : "Risk Simulator", live: false },
+  const tabs: { id: TradingSection; labelFr: string; labelEn: string; live: boolean }[] = [
+    { id: "prepare",   labelFr: isMobile ? "Préparer"   : "Préparer ma session",  labelEn: isMobile ? "Prepare"   : "Prepare session",  live: true  },
+    { id: "rr",        labelFr: isMobile ? "R:R"        : "Risque / Rendement",   labelEn: isMobile ? "R:R"       : "Risk / Reward",    live: true  },
+    { id: "lot",       labelFr: isMobile ? "Lot"        : "Calculateur de lot",   labelEn: isMobile ? "Lot"       : "Lot Calculator",   live: true  },
+{ id: "calendar",  labelFr: isMobile ? "Annonces"   : "Calendrier éco",       labelEn: isMobile ? "Calendar"  : "Eco Calendar",     live: true  },
   ];
 
   return (
@@ -1138,10 +1393,10 @@ export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
         {tabs.map(tab => (
           <button
             key={tab.id}
-            className={`${styles.toolNavBtn} ${activeTool === tab.id ? styles.toolNavBtnActive : ""}`}
-            onClick={() => setActiveTool(tab.id)}
+            className={`${styles.toolNavBtn} ${section === tab.id ? styles.toolNavBtnActive : ""}`}
+            onClick={() => onSection(tab.id)}
           >
-            {tab.label}
+            {isFr ? tab.labelFr : tab.labelEn}
             {!tab.live && (
               <span className={styles.toolNavSoon}>
                 {isFr ? "bientôt" : "soon"}
@@ -1153,7 +1408,35 @@ export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
 
       <div className={styles.toolCard}>
 
-        {activeTool === "rr" && (
+        {section === "prepare" && (
+          <>
+            <div className={styles.toolHeader}>
+              <div className={styles.toolEyebrow}>
+                {isFr ? "Trading · Session du jour" : "Trading · Today's session"}
+              </div>
+              <h2 className={styles.toolTitle}>
+                {isFr ? "Préparer ma session" : "Prepare my session"}
+              </h2>
+              <p className={styles.toolSub}>
+                {isFr
+                  ? "Valide chaque point avant d'entrer en position. Les raccourcis te renvoient directement aux outils concernés."
+                  : "Check each point before entering a position. Shortcuts take you directly to the relevant tools."}
+              </p>
+            </div>
+            <div className={styles.toolDivider} />
+            <PrepareSession
+              planChecks={planChecks}
+              setPlanChecks={setPlanChecks}
+              journalNote={journalNote}
+              setJournalNote={setJournalNote}
+              onSection={onSection}
+              isFr={isFr}
+              isMobile={isMobile}
+            />
+          </>
+        )}
+
+        {section === "rr" && (
           <>
             <div className={styles.toolHeader}>
               <div className={styles.toolEyebrow}>
@@ -1164,8 +1447,8 @@ export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
               </h2>
               <p className={styles.toolSub}>
                 {isFr
-                  ? "Saisis ton trade tel que tu l'envisages — le risque, le gain et l'impact propfirm sont calculés automatiquement."
-                  : "Enter your trade as you envision it — risk, gain, and propfirm impact are calculated automatically."}
+                  ? "Saisis ton trade tel que tu l'envisages — risque, gain, impact drawdown et analyse challenge sont calculés automatiquement."
+                  : "Enter your trade as you envision it — risk, gain, drawdown impact, and challenge analysis are calculated automatically."}
               </p>
             </div>
             <div className={styles.toolDivider} />
@@ -1173,7 +1456,7 @@ export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
           </>
         )}
 
-        {activeTool === "lot" && (
+        {section === "lot" && (
           <>
             <div className={styles.toolHeader}>
               <div className={styles.toolEyebrow}>
@@ -1193,15 +1476,24 @@ export default function CockpitTools({ challenge, isFr, isMobile }: Props) {
           </>
         )}
 
-        {activeTool === "simulator" && (
-          <ComingSoonStub
-            icon={<ShieldCheck size={36} color={BLUE} />}
-            title={isFr ? "Simulateur de risque" : "Risk Simulator"}
-            desc={isFr
-              ? "Simule l'impact d'un stop-loss sur ton drawdown journalier et total avant de passer le trade."
-              : "Simulate a stop-loss impact on your daily and total drawdown before placing the trade."}
-            isFr={isFr}
-          />
+{section === "calendar" && (
+          <>
+            <div className={styles.toolHeader}>
+              <div className={styles.toolEyebrow}>
+                {isFr ? "Anticipation · Avant la session" : "Anticipation · Before the session"}
+              </div>
+              <h2 className={styles.toolTitle}>
+                {isFr ? "Calendrier économique" : "Economic Calendar"}
+              </h2>
+              <p className={styles.toolSub}>
+                {isFr
+                  ? "Identifie les annonces à fort impact avant d'entrer en position."
+                  : "Identify high-impact announcements before entering a position."}
+              </p>
+            </div>
+            <div className={styles.toolDivider} />
+            <EconomicCalendar isFr={isFr} />
+          </>
         )}
 
       </div>

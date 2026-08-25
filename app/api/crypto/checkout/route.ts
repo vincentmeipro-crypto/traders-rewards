@@ -15,23 +15,15 @@ const VIP_PRODUCTS: Record<
   "200k-vip": { name: "Challenge Algo $200,000", amount: 1000000, accountSize: "$200,000", model: "vip" },
 };
 
-// Remise fidélité — identique à la constante frontend, calculée côté serveur
-const LOYALTY_PCT = 20;
-
 export async function POST(req: NextRequest) {
   try {
     // `discount` n'est intentionnellement PAS destructuré : jamais trusté depuis le frontend.
-    const { productId, userId, promoCode, refCode } = await req.json();
+    const { productId, userId, promoCode, refCode, quantity: rawQuantity } = await req.json();
+    const quantity = Number(rawQuantity ?? 1);
+    if (quantity !== 1) return NextResponse.json({ error: "Un seul Challenge peut être acheté à la fois." }, { status: 400 });
 
     const admin   = createAdminClient();
     const siteUrl = await getStringConfig("branding.site_url");
-
-    // ── Loyalty — calculé côté serveur avant toute décision de prix ──────────
-    const { count: challengeCount } = await admin
-      .from("challenges")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId);
-    const loyaltyDiscount = (challengeCount ?? 0) >= 1 ? LOYALTY_PCT : 0;
 
     // ── Charger le produit depuis la DB (new path) ────────────────────────────
     //
@@ -76,8 +68,7 @@ export async function POST(req: NextRequest) {
       promoDiscount = promoResult.discountPercent;
     }
 
-    // ── Best discount (loyalty vs promo) — server-side ────────────────────────
-    const discountPct = Math.max(loyaltyDiscount, promoDiscount);
+    const discountPct = promoDiscount;
 
     // ── Les codes 100% passent exclusivement par /api/promo/free ─────────────
     if (discountPct === 100) {
@@ -97,8 +88,22 @@ export async function POST(req: NextRequest) {
     if (productFromDB) {
       // ── Nouveau chemin : produit en DB ────────────────────────────────────
 
-      // Vérifier le plafond de cumul (max_cumul_usd depuis la DB)
-      if (productFromDB.max_cumul_usd) {
+      // Nouveau modèle : 10 Challenges actifs maximum. Le plafond de capital
+      // reste uniquement appliqué aux anciens produits.
+      if (productFromDB.slug.startsWith("rewards-")) {
+        const { count } = await admin
+          .from("challenges")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("status", "active")
+          .neq("phase", "funded");
+        if ((count ?? 0) + quantity > 10) {
+          return NextResponse.json(
+            { error: `Vous pouvez avoir au maximum 10 Challenges actifs. Il vous reste ${Math.max(0, 10 - (count ?? 0))} place(s).` },
+            { status: 400 }
+          );
+        }
+      } else if (productFromDB.max_cumul_usd) {
         const { data: activeChallenges } = await admin
           .from("challenges")
           .select("start_balance")
@@ -108,7 +113,7 @@ export async function POST(req: NextRequest) {
           (sum, c) => sum + (c.start_balance || 0),
           0
         );
-        if (currentTotal + productFromDB.balance_usd > productFromDB.max_cumul_usd) {
+        if (currentTotal + productFromDB.balance_usd * quantity > productFromDB.max_cumul_usd) {
           return NextResponse.json(
             {
               error: `Plafond de cumul atteint (max ${productFromDB.max_cumul_usd.toLocaleString()} USD)`,
@@ -119,13 +124,13 @@ export async function POST(req: NextRequest) {
       }
 
       const baseAmount = getEffectivePrice(productFromDB, "crypto");
-      finalAmount = discountPct > 0
+      finalAmount = (discountPct > 0
         ? Math.round(baseAmount * (100 - discountPct) / 100)
-        : baseAmount;
+        : baseAmount) * quantity;
       productName = productFromDB.name;
 
       // Encode UUID dans l'orderId → webhook détecte new path via isUUID()
-      orderId = `elysium~${userId}~${productFromDB.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}`;
+      orderId = `elysium~${userId}~${productFromDB.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${quantity}`;
     } else {
       // ── Fallback : produit VIP / legacy non en DB ─────────────────────────
       //
@@ -139,13 +144,13 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      finalAmount = discountPct > 0
+      finalAmount = (discountPct > 0
         ? Math.round(legacy.amount * (100 - discountPct) / 100)
-        : legacy.amount;
+        : legacy.amount) * quantity;
       productName = legacy.name;
 
       // Slug dans l'orderId → webhook détecte legacy path
-      orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}`;
+      orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${quantity}`;
     }
 
     const amountEur = parseFloat((finalAmount / 100).toFixed(6));

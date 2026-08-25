@@ -54,7 +54,7 @@ export default function HowItWorks() {
           height: 390px;
           transform: translateX(-50%);
           border-radius: 50%;
-          background: radial-gradient(ellipse, rgba(105, 197, 253, 0.055), transparent 68%);
+          background: radial-gradient(ellipse, rgba(156,207,234, 0.055), transparent 68%);
           filter: blur(14px);
           pointer-events: none;
         }
@@ -74,7 +74,7 @@ export default function HowItWorks() {
 
         .how-label {
           margin-bottom: 15px;
-          color: #69c5fd;
+          color: #9CCFEA;
           font-size: 11px;
           font-weight: 800;
           letter-spacing: 2.4px;
@@ -91,7 +91,7 @@ export default function HowItWorks() {
         }
 
         h2 span {
-          color: #69c5fd;
+          color: #9CCFEA;
         }
 
         .how-heading > p {
@@ -124,34 +124,34 @@ export default function HowItWorks() {
 
         .how-card:hover {
           transform: translateY(-4px);
-          border-color: rgba(105, 197, 253, 0.26);
-          box-shadow: 0 36px 86px rgba(0, 0, 0, 0.88), 0 0 25px rgba(105, 197, 253, 0.08), 0 14px 34px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.045);
+          border-color: rgba(156,207,234, 0.26);
+          box-shadow: 0 36px 86px rgba(0, 0, 0, 0.88), 0 0 25px rgba(156,207,234, 0.08), 0 14px 34px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 255, 255, 0.045);
         }
 
         .how-card-featured {
           z-index: 2;
           transform: translateY(-8px);
-          border-color: rgba(105, 197, 253, 0.4);
+          border-color: rgba(156,207,234, 0.4);
           background: linear-gradient(155deg, #181a1c 0%, #101315 54%, #090b0d 100%);
-          box-shadow: 0 38px 94px rgba(0, 0, 0, 0.9), 0 0 38px rgba(105, 197, 253, 0.14), 0 14px 36px rgba(0, 0, 0, 0.66), inset 0 1px 0 rgba(255, 255, 255, 0.055);
+          box-shadow: 0 38px 94px rgba(0, 0, 0, 0.9), 0 0 38px rgba(156,207,234, 0.14), 0 14px 36px rgba(0, 0, 0, 0.66), inset 0 1px 0 rgba(255, 255, 255, 0.055);
         }
 
         .how-card-featured:hover {
           transform: translateY(-11px);
-          border-color: rgba(105, 197, 253, 0.56);
-          box-shadow: 0 42px 102px rgba(0, 0, 0, 0.92), 0 0 44px rgba(105, 197, 253, 0.18), 0 16px 38px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+          border-color: rgba(156,207,234, 0.56);
+          box-shadow: 0 42px 102px rgba(0, 0, 0, 0.92), 0 0 44px rgba(156,207,234, 0.18), 0 16px 38px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.06);
         }
 
         .how-card-glow {
           position: absolute;
           inset: 0;
           border-radius: inherit;
-          background: radial-gradient(circle at 50% 0%, rgba(105, 197, 253, 0.055), transparent 49%);
+          background: radial-gradient(circle at 50% 0%, rgba(156,207,234, 0.055), transparent 49%);
           pointer-events: none;
         }
 
         .how-card-featured .how-card-glow {
-          background: radial-gradient(circle at 50% 0%, rgba(105, 197, 253, 0.15), transparent 54%);
+          background: radial-gradient(circle at 50% 0%, rgba(156,207,234, 0.15), transparent 54%);
         }
 
         .how-card-top {
@@ -172,7 +172,7 @@ export default function HowItWorks() {
         }
 
         .how-card-featured .how-number {
-          color: rgba(105, 197, 253, 0.11);
+          color: rgba(156,207,234, 0.11);
         }
 
         .how-icon {
@@ -189,10 +189,10 @@ export default function HowItWorks() {
         }
 
         .how-card-featured .how-icon {
-          border-color: rgba(105, 197, 253, 0.72);
+          border-color: rgba(156,207,234, 0.72);
           color: #061018;
-          background: linear-gradient(145deg, #8dd5ff, #69c5fd);
-          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 24px rgba(105, 197, 253, 0.22);
+          background: linear-gradient(145deg, #8dd5ff, #9CCFEA);
+          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45), 0 0 24px rgba(156,207,234, 0.22);
         }
 
         .how-icon span {
@@ -253,7 +253,7 @@ export default function HowItWorks() {
           }
 
           .how-card-featured {
-            border-color: rgba(105, 197, 253, 0.42);
+            border-color: rgba(156,207,234, 0.42);
           }
 
           .how-card-top {

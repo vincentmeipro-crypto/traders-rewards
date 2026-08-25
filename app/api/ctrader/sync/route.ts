@@ -68,6 +68,14 @@ async function checkAndTransition(challenge: Record<string, unknown>, userEmail:
   }
 
   if (phase === "phase2" && profitPct >= profitTarget && tradingDays >= 4) {
+    const { count } = await admin
+      .from("challenges")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", challenge.user_id as string)
+      .eq("status", "funded")
+      .eq("phase", "funded")
+      .neq("id", id);
+    if ((count ?? 0) >= 5) return "blocked_reward_account_limit_5";
     await admin.from("challenges").update({
       phase: "funded", status: "funded",
     }).eq("id", id);

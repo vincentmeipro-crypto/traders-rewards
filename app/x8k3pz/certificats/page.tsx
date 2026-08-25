@@ -81,9 +81,9 @@ function Row({ cert }: { cert: Cert }) {
   const amountStr  = cert.amount || cert.account_size || "—";
   const previewUrl = certPreviewUrl(cert, amountStr, issuedStr);
   const typeLabel = cert.certificate_type === "phase1"
-    ? "Phase 1"
+    ? "Challenge validé"
     : cert.certificate_type === "phase2"
-      ? "Phase 2"
+      ? "Historique"
       : "Reward";
   // "Vérifier →" ouvert par l'admin = source='link', distingué des scans QR physiques
   const verifyUrl  = `/verify/${cert.public_token}?source=link`;
@@ -105,7 +105,7 @@ function Row({ cert }: { cert: Cert }) {
             </div>
             <span style={{
               fontSize: 9, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "#69C5FD", border: "1px solid #69C5FD35", background: "#69C5FD0d",
+              color: "#9CCFEA", border: "1px solid #9CCFEA35", background: "#9CCFEA0d",
               borderRadius: 999, padding: "3px 7px",
             }}>
               {typeLabel}
