@@ -1409,7 +1409,17 @@ function AdminPageInner() {
                                 {/* Niveau */}
                                 <td style={{ padding: "11px 12px" }}>
                                   {isEditing
-                                    ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Challenge" }, { value: "phase2", label: "Historique" }, { value: "funded", label: "Reward" }]} />
+                                    ? <CustomSelect
+                                        small
+                                        value={editData.phase || c.phase}
+                                        onChange={v => setEditData(d => ({ ...d, phase: v }))}
+                                        options={isV1c
+                                          // V1 Apex EOD : phase2 / Historique interdit comme niveau de parcours
+                                          ? [{ value: "phase1", label: "Challenge" }, { value: "funded", label: "Reward" }]
+                                          // Legacy : Phase 1 / Phase 2 / Reward
+                                          : [{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]
+                                        }
+                                      />
                                     : isV1c
                                       ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
                                           {v1Level}
