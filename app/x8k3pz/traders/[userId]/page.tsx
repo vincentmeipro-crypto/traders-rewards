@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import NotesSection from "./NotesSection";
+import { isV1Product, getV1LevelLabel } from "@/lib/v1-display";
 
 // ── Types locaux ─────────────────────────────────────────────────────────────
 
@@ -46,6 +47,9 @@ type Challenge = {
   total_drawdown_limit: number | null;
   breach_reason:        string | null;
   breach_at:            string | null;
+  // V1 Apex EOD fields
+  dd_model?:           string | null;
+  terminated_at?:      string | null;
 };
 
 type Payout = {
@@ -392,6 +396,10 @@ export default async function TraderPage({
                     ? ((c.balance - c.start_balance) / c.start_balance * 100)
                     : 0;
                   const gainClr = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "rgba(255,255,255,0.3)";
+                  const isV1c  = isV1Product(c.dd_model);
+                  // paidCount = rewards payés sur ce challenge spécifique
+                  const cPaidCount = payouts.filter(p => p.challenge_id === c.id && p.status === "paid").length;
+                  const v1LevelLabel = isV1c ? getV1LevelLabel(c.phase, cPaidCount, c.terminated_at) : null;
                   return (
                     <tr
                       key={c.id}
@@ -407,9 +415,14 @@ export default async function TraderPage({
                         {c.account_size}
                       </td>
                       <td style={{ padding: "10px 10px" }}>
-                        <span style={{ fontSize: 10, background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>
-                          {c.phase === "funded" ? "Reward Account" : c.phase === "phase2" ? "Historique" : "Challenger"}
-                        </span>
+                        {isV1c
+                          ? <span style={{ fontSize: 10, background: "rgba(59,130,246,0.12)", color: "#60a5fa", padding: "2px 6px", borderRadius: 4, fontWeight: 700 }}>
+                              {v1LevelLabel}
+                            </span>
+                          : <span style={{ fontSize: 10, background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>
+                              {c.phase === "funded" ? "Reward Account" : c.phase === "phase2" ? "Historique" : "Challenger"}
+                            </span>
+                        }
                       </td>
                       <td style={{ padding: "10px 10px" }}>
                         {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}

@@ -5,6 +5,13 @@ import Link from "next/link";
 import OverviewCockpit from "@/components/admin/AdminCockpitV2";
 import RewardReviewPanel from "@/components/admin/RewardReviewPanel";
 import type { RewardReviewData } from "@/lib/reward-review";
+import {
+  isV1Product,
+  getV1DdUsd,
+  getV1SafetyNetUsd,
+  getV1DdDisplay,
+  getV1LevelLabel,
+} from "@/lib/v1-display";
 
 // Clé admin statique — accès sans connexion Supabase
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
@@ -39,6 +46,7 @@ type Challenge = {
   daily_low_equity?: number;
   daily_dd?: number;
   highest_balance?: number;
+  highest_eod?: number;
   breach_equity?: number;
   breach_reason?: string;
   breach_value?: number;
@@ -46,6 +54,11 @@ type Challenge = {
   open_positions?: Record<string, unknown>[];
   positions_synced_at?: string;
   reward_review?: RewardReviewData;
+  // V1 Apex EOD fields
+  dd_model?: string;
+  challenge_passed_at?: string | null;
+  reward_converted_at?: string | null;
+  terminated_at?: string | null;
 };
 
 type PromoCode = {
@@ -1357,6 +1370,18 @@ function AdminPageInner() {
                           const risk       = calcRisk(c);
                           const gainPct    = c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100) : 0;
                           const gainColor  = gainPct > 0 ? "#22c55e" : gainPct < 0 ? "#ef4444" : "rgba(255,255,255,0.4)";
+                          // ── V1 Apex EOD ───────────────────────────────────
+                          const isV1c      = isV1Product(c.dd_model);
+                          const paidCount  = payouts.filter(p => p.challenge_id === c.id && p.status === "paid").length;
+                          const v1Level    = isV1c ? getV1LevelLabel(c.phase, paidCount, c.terminated_at) : null;
+                          const v1DdUsd    = isV1c && c.start_balance ? getV1DdUsd(c.start_balance) : 0;
+                          const v1SafetyNet = isV1c && c.start_balance ? getV1SafetyNetUsd(c.start_balance) : 0;
+                          const v1HighestEod = c.highest_eod ?? c.start_balance;
+                          const v1Floor    = isV1c
+                            ? (c.phase === "funded" && v1HighestEod >= v1SafetyNet
+                                ? c.start_balance
+                                : v1HighestEod - v1DdUsd)
+                            : 0;
 
                           return (
                             <tbody key={c.id}>
@@ -1381,13 +1406,17 @@ function AdminPageInner() {
                                   </span>
                                 </td>
 
-                                {/* Phase */}
+                                {/* Niveau */}
                                 <td style={{ padding: "11px 12px" }}>
                                   {isEditing
-                                    ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]} />
-                                    : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
-                                        {c.phase === "funded" ? "Reward Account" : c.phase === "phase2" ? "Historique" : "Challenger"}
-                                      </span>
+                                    ? <CustomSelect small value={editData.phase || c.phase} onChange={v => setEditData(d => ({ ...d, phase: v }))} options={[{ value: "phase1", label: "Challenge" }, { value: "phase2", label: "Historique" }, { value: "funded", label: "Reward" }]} />
+                                    : isV1c
+                                      ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                          {v1Level}
+                                        </span>
+                                      : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                          {c.phase === "funded" ? "Reward Account" : c.phase === "phase2" ? "Historique" : "Challenger"}
+                                        </span>
                                   }
                                 </td>
 
@@ -1420,13 +1449,25 @@ function AdminPageInner() {
                                 <td style={{ padding: "11px 12px" }} onClick={e => e.stopPropagation()}>
                                   {isEditing
                                     ? <input type="number" min={0} value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
-                                    : <span style={{ color: (c.trading_days ?? 0) >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontSize: 12, fontVariantNumeric: "tabular-nums" }}>{c.trading_days ?? 0}</span>
+                                    : <span style={{ color: (isV1c && c.phase !== "funded") ? "#22c55e" : (c.trading_days ?? 0) >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontSize: 12, fontVariantNumeric: "tabular-nums" }}>{c.trading_days ?? 0}</span>
                                   }
                                 </td>
 
                                 {/* Risk */}
                                 <td style={{ padding: "11px 12px", minWidth: 110 }}>
-                                  {risk ? (
+                                  {isV1c && c.status === "active" ? (
+                                    // V1 Apex EOD : affiche DD$ fixe + floor
+                                    <div style={{ display: "flex", flexDirection: "column", gap: 2, fontVariantNumeric: "tabular-nums" }}>
+                                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)" }}>
+                                        <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 10 }}>DD </span>
+                                        {getV1DdDisplay(c.start_balance)}
+                                      </div>
+                                      <div style={{ fontSize: 11, color: c.balance <= v1Floor ? "#ef4444" : c.balance <= v1Floor * 1.05 ? "#f59e0b" : "rgba(255,255,255,0.4)" }}>
+                                        <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 10 }}>Floor </span>
+                                        ${Math.round(v1Floor).toLocaleString()}
+                                      </div>
+                                    </div>
+                                  ) : risk ? (
                                     <div style={{ display: "flex", flexDirection: "column", gap: 2, fontVariantNumeric: "tabular-nums" }}>
                                       <div style={{ fontSize: 11, color: risk.dCol }}>
                                         <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 10 }}>J </span>{risk.dailyUsed.toFixed(1)}% / {risk.maxDaily}%
@@ -1501,33 +1542,82 @@ function AdminPageInner() {
                                           <span style={{ fontSize: 10, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.4)", padding: "2px 7px", borderRadius: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>
                                             {c.model === "instant" ? "INSTANT" : c.model?.toUpperCase() || "—"}
                                           </span>
-                                          <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
-                                            {c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Phase 2" : c.model === "instant" ? "Instant" : "Phase 1"}
-                                          </span>
+                                          {isV1c
+                                            ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                                {v1Level} · V1 Apex EOD
+                                              </span>
+                                            : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                                {c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Historique" : c.model === "instant" ? "Instant" : "Challenge"}
+                                              </span>
+                                          }
                                           {badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                                           <div style={{ flex: 1 }} />
                                           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.28)" }}>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
                                         </div>
 
-                                        <RewardReviewPanel data={c.reward_review} />
+                                        <RewardReviewPanel
+                                          data={c.reward_review}
+                                          isV1={isV1c}
+                                          phase={c.phase}
+                                          startBalance={c.start_balance}
+                                          paidRewardsCount={paidCount}
+                                        />
 
                                         {/* DD bars — comptes actifs uniquement */}
-                                        {c.status === "active" && risk && (
+                                        {c.status === "active" && (
                                           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                                            {([
-                                              { label: "DD Jour", used: risk.dailyUsed, max: risk.maxDaily, col: risk.dCol },
-                                              { label: "DD Max",  used: risk.totalUsed, max: risk.maxTotal, col: risk.tCol },
-                                            ] as { label: string; used: number; max: number; col: string }[]).map((d, i) => (
-                                              <div key={i}>
-                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-                                                  <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1 }}>{d.label}</span>
-                                                  <span style={{ fontSize: 13, fontWeight: 800, color: d.col, fontVariantNumeric: "tabular-nums" }}>{d.used.toFixed(1)}<span style={{ fontSize: 11, fontWeight: 400 }}>% / {d.max}%</span></span>
+                                            {isV1c ? (
+                                              // V1 Apex EOD : barre DD EOD $ (equity vs floor)
+                                              (() => {
+                                                const equity = c.balance;
+                                                const maxDD = v1DdUsd;
+                                                const used = Math.max(0, v1Floor + maxDD - equity); // perte depuis highest_eod
+                                                const pct = maxDD > 0 ? Math.min(used / maxDD * 100, 100) : 0;
+                                                const col = pct >= 85 ? "#ef4444" : pct >= 60 ? "#f59e0b" : "rgba(255,255,255,0.4)";
+                                                return (
+                                                  <>
+                                                    <div>
+                                                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+                                                        <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1 }}>DD EOD</span>
+                                                        <span style={{ fontSize: 13, fontWeight: 800, color: col, fontVariantNumeric: "tabular-nums" }}>
+                                                          ${Math.round(used).toLocaleString()}<span style={{ fontSize: 11, fontWeight: 400 }}> / ${maxDD.toLocaleString()}</span>
+                                                        </span>
+                                                      </div>
+                                                      <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99, overflow: "hidden" }}>
+                                                        <div style={{ width: `${pct}%`, height: "100%", background: col, borderRadius: 99 }} />
+                                                      </div>
+                                                    </div>
+                                                    <div>
+                                                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+                                                        <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1 }}>Safety Net</span>
+                                                        <span style={{ fontSize: 11, color: v1HighestEod >= v1SafetyNet ? "#22c55e" : "rgba(255,255,255,0.4)", fontVariantNumeric: "tabular-nums" }}>
+                                                          {v1HighestEod >= v1SafetyNet ? "✓ Atteinte" : `$${Math.round(v1HighestEod).toLocaleString()} / $${v1SafetyNet.toLocaleString()}`}
+                                                        </span>
+                                                      </div>
+                                                      <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99, overflow: "hidden" }}>
+                                                        <div style={{ width: `${Math.min(v1HighestEod / v1SafetyNet * 100, 100)}%`, height: "100%", background: v1HighestEod >= v1SafetyNet ? "#22c55e" : "rgba(255,255,255,0.3)", borderRadius: 99 }} />
+                                                      </div>
+                                                    </div>
+                                                  </>
+                                                );
+                                              })()
+                                            ) : risk ? (
+                                              // Legacy : DD % jour + max
+                                              ([
+                                                { label: "DD Jour", used: risk.dailyUsed, max: risk.maxDaily, col: risk.dCol },
+                                                { label: "DD Max",  used: risk.totalUsed, max: risk.maxTotal, col: risk.tCol },
+                                              ] as { label: string; used: number; max: number; col: string }[]).map((d, i) => (
+                                                <div key={i}>
+                                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: 1 }}>{d.label}</span>
+                                                    <span style={{ fontSize: 13, fontWeight: 800, color: d.col, fontVariantNumeric: "tabular-nums" }}>{d.used.toFixed(1)}<span style={{ fontSize: 11, fontWeight: 400 }}>% / {d.max}%</span></span>
+                                                  </div>
+                                                  <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99, overflow: "hidden" }}>
+                                                    <div style={{ width: `${Math.min(d.used / d.max * 100, 100)}%`, height: "100%", background: d.col, borderRadius: 99 }} />
+                                                  </div>
                                                 </div>
-                                                <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 99, overflow: "hidden" }}>
-                                                  <div style={{ width: `${Math.min(d.used / d.max * 100, 100)}%`, height: "100%", background: d.col, borderRadius: 99 }} />
-                                                </div>
-                                              </div>
-                                            ))}
+                                              ))
+                                            ) : null}
                                           </div>
                                         )}
 
@@ -1548,7 +1638,7 @@ function AdminPageInner() {
                                         {/* Métadonnées secondaires */}
                                         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
                                           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                            <span style={{ color: c.trading_days >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>{c.trading_days}</span> j. tradés
+                                            <span style={{ color: (isV1c && c.phase !== "funded") ? "#22c55e" : c.trading_days >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>{c.trading_days}</span> j. tradés
                                           </span>
                                           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
                                             Départ <span style={{ color: "rgba(255,255,255,0.6)", fontVariantNumeric: "tabular-nums" }}>${c.start_balance?.toLocaleString()}</span>
@@ -1557,7 +1647,10 @@ function AdminPageInner() {
                                             Payé <span style={{ color: "rgba(255,255,255,0.6)", fontVariantNumeric: "tabular-nums" }}>€{c.amount_paid}</span>
                                           </span>
                                           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                            Limites <span style={{ color: "rgba(255,255,255,0.45)" }}>{c.daily_drawdown_limit || 5}% J / {c.total_drawdown_limit || 10}% max</span>
+                                            {isV1c
+                                              ? <>DD EOD <span style={{ color: "rgba(255,255,255,0.45)" }}>{getV1DdDisplay(c.start_balance)} · Floor ${Math.round(v1Floor).toLocaleString()} · SN ${v1SafetyNet.toLocaleString()}</span></>
+                                              : <>Limites <span style={{ color: "rgba(255,255,255,0.45)" }}>{c.daily_drawdown_limit || 5}% J / {c.total_drawdown_limit || 10}% max</span></>
+                                            }
                                           </span>
                                         </div>
                                       </div>

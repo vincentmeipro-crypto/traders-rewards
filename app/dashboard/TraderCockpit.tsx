@@ -37,6 +37,12 @@ import { extractContractRules } from "@/lib/contract-rules";
 import { getSyncFreshness } from "@/lib/sync-freshness";
 import { QUAL_DAY_USD, REWARD_AMOUNTS } from "@/lib/rewardsData";
 import { getTraderV1Level } from "@/lib/v1-engine";
+import {
+  isV1Product,
+  getV1DdUsd,
+  getV1SafetyNetUsd,
+  getV1ConsistencyDisplay,
+} from "@/lib/v1-display";
 
 export type CockpitSubTab = "cockpit" | "trading";
 
@@ -70,6 +76,10 @@ export type CockpitChallenge = {
   open_positions?: Record<string, unknown>[];
   positions_synced_at?: string;
   rules_snapshot?: unknown;
+  // V1 Apex EOD fields
+  dd_model?: string;
+  highest_eod?: number;
+  terminated_at?: string;
 };
 
 type Props = {
@@ -392,6 +402,8 @@ export default function TraderCockpit({
   const accountSize = numeric(String(challenge.account_size).replace(/[^0-9.]/g, "")) * (String(challenge.account_size).toUpperCase().includes("K") ? 1000 : 1);
   const isLegacyPhaseTwo = challenge.phase === "phase2";
   const isRewardAccount = challenge.phase === "funded";
+  // Modèle V1 Apex EOD
+  const isV1 = isV1Product(challenge.dd_model);
   // Niveau V1 dérivé depuis la source canonique (payouts.status="paid")
   const traderLevel = getTraderV1Level(challenge.phase, approvedRewardsCount);
   const isTraderReward = traderLevel.level === 3;
@@ -419,14 +431,26 @@ export default function TraderCockpit({
   const dailyBuffer = Math.max(0, equity - dailyFloor);
   const dailyRiskUsed = clamp((1 - dailyBuffer / Math.max(dailyLimitUsd, 1)) * 100);
   const isOneStep = challenge.model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
+  // V1 : floor = highest_eod - DD$ (ou start si Safety Net atteinte)
+  // Legacy : floor = highest_balance * (1 - ddPct/100)
+  const v1DdUsd        = isV1 ? getV1DdUsd(challenge.start_balance) : 0;
+  const v1SafetyNet    = isV1 ? getV1SafetyNetUsd(challenge.start_balance) : 0;
+  const v1HighestEod   = challenge.highest_eod ?? challenge.start_balance;
+  const v1TrailingFloor = isV1
+    ? (isRewardAccount && v1HighestEod >= v1SafetyNet
+        ? challenge.start_balance                        // Safety Net atteinte → floor = capital initial
+        : v1HighestEod - v1DdUsd)                        // Trailing : highest_eod - DD$
+    : 0;
   const trailingReference = isOneStep ? Math.max(challenge.highest_balance ?? challenge.start_balance, challenge.start_balance) : challenge.start_balance;
   const totalLimitUsd = challenge.start_balance * displayDrawdownPct / 100;
   const trailingFloor = trailingReference - totalLimitUsd;
-  const totalFloor = isTraderReward
-    ? challenge.start_balance
-    : isRewardAccount
-      ? Math.min(trailingFloor, challenge.start_balance)
-      : trailingFloor;
+  const totalFloor = isV1
+    ? v1TrailingFloor                                    // V1 : floor Apex EOD exact
+    : isTraderReward
+      ? challenge.start_balance
+      : isRewardAccount
+        ? Math.min(trailingFloor, challenge.start_balance)
+        : trailingFloor;
   const totalBuffer = Math.max(0, equity - totalFloor);
   const totalRiskUsed = clamp((1 - totalBuffer / Math.max(totalLimitUsd, 1)) * 100);
   // Le nouveau modèle n'a pas de Daily Drawdown séparé. Les anciennes valeurs
@@ -662,15 +686,60 @@ export default function TraderCockpit({
             {/* Règle de consistance */}
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
               <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Consistance" : "Consistency"}</span><Gauge color={BLUE} size={16} /></div>
-              <div><div className={styles.kpiValue}>≤ {isRewardAccount ? 33 : 50}%</div><div className={styles.kpiMeta}><span>{isFr ? "Meilleure journée" : "Best day"}</span><span>{isFr ? "du profit total" : "of total profit"}</span></div></div>
+              <div>
+                <div className={styles.kpiValue}>
+                  {isV1
+                    ? getV1ConsistencyDisplay(challenge.phase)         // Challenge → "AUCUNE" / Reward → "≤ 50%"
+                    : `≤ ${isRewardAccount ? 33 : 50}%`}               // Legacy : 33% funded / 50% challenge
+                </div>
+                <div className={styles.kpiMeta}>
+                  <span>
+                    {isV1 && !isRewardAccount
+                      ? (isFr ? "Apex EOD — aucune règle" : "Apex EOD — no rule")
+                      : (isFr ? "Meilleure journée" : "Best day")}
+                  </span>
+                  <span>
+                    {isV1 && !isRewardAccount
+                      ? (isFr ? "Challenge sans consistance" : "Challenge — no consistency")
+                      : (isFr ? "du profit total" : "of total profit")}
+                  </span>
+                </div>
+              </div>
             </div>
 
             {/* Condition de jours, adaptée au niveau */}
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isTraderReward ? `REWARD #${currentRewardNumber}` : isRewardAccount ? (isFr ? "Jours qualifiants" : "Qualifying days") : (isFr ? "Jours minimum" : "Minimum days")}</span><CalendarDays color={BLUE} size={16} /></div>
+              <div className={styles.kpiTop}>
+                <span className={styles.kpiLabel}>
+                  {isTraderReward
+                    ? `REWARD #${currentRewardNumber}`
+                    : isRewardAccount
+                      ? (isFr ? "Jours qualifiants" : "Qualifying days")
+                      : isV1
+                        ? (isFr ? "Jours tradés" : "Days traded")          // V1 Challenge : aucun minimum
+                        : (isFr ? "Jours minimum" : "Minimum days")}
+                </span>
+                <CalendarDays color={BLUE} size={16} />
+              </div>
               <div>
-                <div className={styles.kpiValue}>{isTraderReward ? money(currentRewardCap) : isRewardAccount ? "5 MIN" : `${challenge.trading_days}${minDays > 0 ? ` / ${minDays}` : ""}`}</div>
-                <div className={styles.kpiMeta}><span>{isTraderReward ? (isFr ? "Plafond maximum" : "Maximum cap") : isRewardAccount ? `${money(qualifyingDayUsd)} ${isFr ? "minimum / jour" : "minimum / day"}` : isFr ? "Jours tradés" : "Days traded"}</span></div>
+                <div className={styles.kpiValue}>
+                  {isTraderReward
+                    ? money(currentRewardCap)
+                    : isRewardAccount
+                      ? "5 MIN"
+                      : challenge.trading_days}
+                </div>
+                <div className={styles.kpiMeta}>
+                  <span>
+                    {isTraderReward
+                      ? (isFr ? "Plafond maximum" : "Maximum cap")
+                      : isRewardAccount
+                        ? `${money(qualifyingDayUsd)} ${isFr ? "minimum / jour" : "minimum / day"}`
+                        : isV1
+                          ? (isFr ? "Apex EOD · 0 minimum" : "Apex EOD · 0 minimum")
+                          : (isFr ? "Jours tradés" : "Days traded")}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -684,7 +753,7 @@ export default function TraderCockpit({
 
           {/* Journey stepper */}
           <div className={`${styles.card} ${styles.journey}`}>
-            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{isTraderReward ? (traderLevel.terminated ? (isFr ? "PARCOURS COMPLÉTÉ ✓" : "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : `${challenge.trading_days}/${minDays} ${isFr ? "jours validés" : "days complete"}`}</span></div>
+            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{isTraderReward ? (traderLevel.terminated ? (isFr ? "PARCOURS COMPLÉTÉ ✓" : "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : isV1 && !isRewardAccount ? `${challenge.trading_days} ${isFr ? "jour(s) tradé(s)" : "day(s) traded"}` : `${challenge.trading_days}/${minDays} ${isFr ? "jours validés" : "days complete"}`}</span></div>
             <div className={styles.steps} style={{ gridTemplateColumns: `repeat(${phaseSteps.length},minmax(120px,1fr))` }}>
               {phaseSteps.map((step, index) => <div key={step} className={`${styles.step} ${index < phaseIndex ? styles.stepDone : index === phaseIndex ? styles.stepActive : ""}`}><span className={styles.stepDot}>{index < phaseIndex ? <Check size={12} /> : index + 1}</span><span className={styles.stepText}>{step}</span></div>)}
             </div>
