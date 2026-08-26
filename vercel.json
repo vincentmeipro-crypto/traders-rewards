@@ -1,13 +1,14 @@
 {
   "functions": {
-    "app/api/promo/free/route.ts":         { "maxDuration": 60 },
-    "app/api/crypto/webhook/route.ts":     { "maxDuration": 60 },
-    "app/api/stripe/webhook/route.ts":     { "maxDuration": 60 },
-    "app/api/admin/challenges/route.ts":   { "maxDuration": 60 },
-    "app/api/metaapi/sync/route.ts":       { "maxDuration": 60 },
-    "app/api/cron/mt5-snapshot/route.ts":  { "maxDuration": 60 },
-    "app/api/cron/mt5-watchdog/route.ts":  { "maxDuration": 60 },
-    "app/api/admin/restore-challenges/route.ts": { "maxDuration": 60 }
+    "app/api/promo/free/route.ts":                    { "maxDuration": 60 },
+    "app/api/crypto/webhook/route.ts":                { "maxDuration": 60 },
+    "app/api/stripe/webhook/route.ts":                { "maxDuration": 60 },
+    "app/api/admin/challenges/route.ts":              { "maxDuration": 60 },
+    "app/api/metaapi/sync/route.ts":                  { "maxDuration": 60 },
+    "app/api/cron/mt5-snapshot/route.ts":             { "maxDuration": 60 },
+    "app/api/cron/mt5-watchdog/route.ts":             { "maxDuration": 60 },
+    "app/api/cron/v1-reward-conversion/route.ts":     { "maxDuration": 60 },
+    "app/api/admin/restore-challenges/route.ts":      { "maxDuration": 60 }
   },
   "crons": [
     {
@@ -20,6 +21,10 @@
     },
     {
       "path": "/api/cron/mt5-watchdog",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/v1-reward-conversion",
       "schedule": "* * * * *"
     }
   ]

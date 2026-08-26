@@ -4,6 +4,16 @@ import { getMT5Account, getMT5Positions, getMT5History, changeMT5Group, disableM
 import { sendFailedEmail } from "@/lib/mailer";
 import { syncTradeRiskSnapshots } from "@/lib/trade-risk-store";
 import { summarizeTradeHistory } from "@/lib/trade-performance";
+import {
+  isV1Challenge,
+  isV1ProfitTargetMet,
+  V1_DISABLED_MT5_GROUP,
+} from "@/lib/v1-lifecycle";
+import {
+  getV1DdUsdByBalance,
+  getV1SafetyNet,
+  computeV1TrailingFloor,
+} from "@/lib/v1-engine";
 
 // Vercel Cron — toutes les minutes
 // Double vérification : equity temps réel + historique deals du jour
@@ -17,7 +27,7 @@ export async function GET(req: NextRequest) {
 
   const { data: challenges, error } = await admin
     .from("challenges")
-    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, daily_low_equity, last_synced_at")
+    .select("id, mt5_login, user_id, account_size, model, status, balance, start_balance, daily_drawdown_limit, total_drawdown_limit, daily_start_balance, daily_low_equity, last_synced_at, dd_model, highest_eod, challenge_passed_at")
     .not("mt5_login", "is", null)
     .in("status", ["active", "funded"]);
 
@@ -98,6 +108,182 @@ export async function GET(req: NextRequest) {
 
       let breachReason: string | null = null;
       let breachEquity = equity;
+
+      // ── V1 Apex EOD — Breach et Pass spécifiques ──────────────────────────────
+      // Uniquement pour les challenges avec dd_model = 'trailing_eod_lock'
+      // On bypass les checks legacy (daily_drawdown_limit %, total_drawdown_limit %)
+      // et on utilise le trailing floor EOD fixe en $.
+      if (isV1Challenge(challenge.dd_model as string | null)) {
+        const v1Start = startBalance;
+        const v1DdUsd = getV1DdUsdByBalance(v1Start);
+
+        // Phase du challenge (challenge vs reward account)
+        const isRewardPhase = (challenge.status as string) === "funded";
+        const safetyNet     = isRewardPhase ? getV1SafetyNet(v1Start) : null;
+
+        // highest_eod : mis à jour au rollover EOD (22:00 UTC)
+        // Fallback sur start_balance si pas encore de valeur
+        const storedHighestEod = (challenge.highest_eod as number | null) ?? v1Start;
+
+        // Au rollover EOD : mettre à jour highest_eod si la balance actuelle est plus haute
+        let effectiveHighestEod = storedHighestEod;
+        const highestEodUpdates: Record<string, unknown> = {};
+        if (effectiveNewDay) {
+          effectiveHighestEod = Math.max(storedHighestEod, curBalance);
+          if (effectiveHighestEod !== storedHighestEod) {
+            highestEodUpdates.highest_eod = effectiveHighestEod;
+          }
+        }
+
+        // Floor EOD V1
+        const v1Floor = computeV1TrailingFloor(v1Start, effectiveHighestEod, v1DdUsd, safetyNet);
+
+        // Breach V1 : equity intraday < floor EOD (convention strict <)
+        if (equity < v1Floor) {
+          breachReason = "total_drawdown";
+          breachEquity = equity;
+          console.error(
+            `[V1 BREACH] ${challenge.mt5_login} | equity=${equity.toFixed(2)} < floor=${v1Floor.toFixed(2)} ` +
+            `| highestEod=${effectiveHighestEod.toFixed(2)} | ddUsd=${v1DdUsd}`
+          );
+        }
+
+        // ── V1 Pass detection — Challenge uniquement ──────────────────────────
+        // Si le challenge est en cours ('active') et que le profit cible est atteint
+        // ET qu'il n'est pas encore marqué comme passed → le marquer maintenant.
+        if (!breachReason && challenge.status === "active" && !challenge.challenge_passed_at) {
+          if (isV1ProfitTargetMet(curBalance, v1Start)) {
+            const passedNow = new Date().toISOString();
+            console.info(
+              `[V1 PASS] ${challenge.mt5_login} | balance=${curBalance} | ` +
+              `start=${v1Start} | profit=${(((curBalance - v1Start) / v1Start) * 100).toFixed(2)}%`
+            );
+
+            // Claim atomique : uniquement si encore 'active' (évite double-pass)
+            const { data: passClaimed } = await admin
+              .from("challenges")
+              .update({
+                status:                   "passed",
+                challenge_passed_at:      passedNow,
+                challenge_passed_balance: curBalance,
+                challenge_passed_equity:  equity,
+                last_synced_at:           passedNow,
+                ...highestEodUpdates,
+              })
+              .eq("id", challenge.id)
+              .eq("status", "active")
+              .select("id")
+              .maybeSingle();
+
+            if (passClaimed) {
+              // Enregistrement permanent dans v1_challenge_history
+              const { error: histPassErr } = await admin.from("v1_challenge_history").upsert(
+                {
+                  challenge_id:   challenge.id,
+                  user_id:        challenge.user_id,
+                  account_size:   challenge.account_size,
+                  start_balance:  v1Start,
+                  mt5_login:      challenge.mt5_login,
+                  passed_at:      passedNow,
+                  passed_balance: curBalance,
+                  passed_equity:  equity,
+                  dd_model:       "trailing_eod_lock",
+                },
+                { onConflict: "challenge_id", ignoreDuplicates: true }
+              );
+              if (histPassErr) console.error(`[V1 PASS] history upsert failed:`, histPassErr);
+
+              console.info(`[V1 PASS] ✅ challenge ${challenge.id} marqué 'passed'`);
+            } else {
+              console.info(`[V1 PASS] challenge ${challenge.id} déjà traité par un autre tick`);
+            }
+
+            // Snapshot normal ensuite (le compte reste vivant — pas de désactivation)
+            synced++;
+            continue;
+          }
+        }
+
+        // Mettre à jour highest_eod si nécessaire (hors breach et hors pass)
+        if (!breachReason && Object.keys(highestEodUpdates).length > 0) {
+          await admin.from("challenges").update(highestEodUpdates).eq("id", challenge.id);
+        }
+
+        // Si breach V1, traiter immédiatement (même logique que legacy ci-dessous)
+        if (breachReason) {
+          const breachPct = parseFloat(((v1Start - breachEquity) / v1Start * 100).toFixed(2));
+          console.error(`[V1 BREACH] ${challenge.mt5_login} ${breachReason} — pct: ${breachPct}%`);
+
+          const { data: claimedFailure, error: claimError } = await admin.from("challenges").update({
+            status:         "failed",
+            balance:        breachEquity,
+            breach_equity:  breachEquity,
+            breach_at:      new Date().toISOString(),
+            breach_reason:  breachReason,
+            breach_value:   breachPct,
+            last_synced_at: new Date().toISOString(),
+          })
+            .eq("id", challenge.id)
+            .in("status", ["active", "funded"])
+            .select("id")
+            .maybeSingle();
+
+          if (claimError) throw claimError;
+          if (!claimedFailure) { console.info(`[V1 BREACH] déjà traité`); continue; }
+
+          try { await changeMT5Group(challenge.mt5_login, V1_DISABLED_MT5_GROUP); } catch (e) { console.error("V1 changeMT5Group failed:", e); }
+          try { await disableMT5Account(challenge.mt5_login); }                     catch (e) { console.error("V1 disableMT5Account failed:", e); }
+
+          const userEmail = userEmailMap[challenge.user_id] ?? "";
+          if (userEmail) {
+            try { await sendFailedEmail(userEmail, challenge.account_size, "total_drawdown", undefined, { userId: challenge.user_id as string, challengeId: challenge.id as string }); } catch {}
+          }
+          breaches++;
+          continue;
+        }
+
+        // V1 sans breach : snapshot normal (le reste du code snapshot s'exécute ensuite)
+        // (Pas de daily_drawdown ni total_drawdown legacy pour V1 — on saute les checks ci-dessous)
+        await admin.from("challenges").update({
+          equity:              equity,
+          balance:             curBalance,
+          open_positions:      positions,
+          positions_synced_at: new Date().toISOString(),
+          last_synced_at:      new Date().toISOString(),
+          daily_low_equity:    dailyLowEquity,
+          daily_dd:            parseFloat(dailyDDDisplay.toFixed(2)),
+          ...(effectiveNewDay && { daily_start_balance: curBalance }),
+        }).eq("id", challenge.id);
+
+        if (prefetchedHistory) {
+          await admin.from("challenges").update({
+            trade_metrics: summarizeTradeHistory(prefetchedHistory),
+            trade_metrics_synced_at: new Date().toISOString(),
+          }).eq("id", challenge.id).then(({ error: metricsError }) => {
+            if (metricsError && !["42703", "PGRST204"].includes(metricsError.code ?? "")) {
+              console.warn(`[${challenge.mt5_login}] trade metrics cache failed:`, metricsError.message);
+            }
+          });
+        }
+
+        await admin.from("mt5_snapshots").insert({
+          challenge_id:    challenge.id,
+          mt5_login:       challenge.mt5_login,
+          balance:         curBalance ?? null,
+          equity:          equity,
+          margin:          account.margin      ?? null,
+          free_margin:     account.margin_free ?? null,
+          profit:          account.profit      ?? null,
+          positions_count: positions.length,
+          positions:       positions,
+        }).then(({ error: snapErr }) => {
+          if (snapErr) console.warn(`[V1] snapshot insert failed: ${snapErr.message}`);
+        });
+
+        synced++;
+        continue;  // Sauter les checks legacy DD% (ne s'appliquent pas au V1)
+      }
+      // ── Fin bloc V1 ───────────────────────────────────────────────────────────
 
       // Worst equity du jour (day-reset) pour le check de breach
       const worstEquity = Math.min(equity, dailyLowEquity);

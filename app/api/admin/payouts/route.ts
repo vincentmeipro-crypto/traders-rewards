@@ -3,7 +3,9 @@ import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendRewardCertificateEmail } from "@/lib/mailer";
 import { ensureCertificateRecord } from "@/lib/certificates";
-import { getMT5Account, withdrawMT5Balance } from "@/lib/mt5";
+import { getMT5Account, withdrawMT5Balance, changeMT5Group, disableMT5Account } from "@/lib/mt5";
+import { isV1Challenge, isV1Terminated, V1_DISABLED_MT5_GROUP, computeV1RewardWithdrawal } from "@/lib/v1-lifecycle";
+import { V1_MAX_REWARDS } from "@/lib/v1-engine";
 
 
 
@@ -38,16 +40,17 @@ export async function PATCH(req: NextRequest) {
       const lastName = profile?.last_name || "";
 
       const { data: challenge } = await admin.from("challenges")
-        .select("id, account_size, model, start_balance, mt5_login, rules_snapshot")
+        .select("id, account_size, model, start_balance, mt5_login, rules_snapshot, dd_model")
         .eq("id", data.challenge_id).single();
 
       if (challenge) {
-        // Nouveau modèle Rewards : 100% du profit éligible. Les pourcentages
-        // historiques restent uniquement applicables aux anciens contrats.
+        // Nouveau modèle Rewards V1 : 100% du profit éligible (pas de split).
+        // Les pourcentages historiques restent applicables aux anciens contrats.
         const snapshot = challenge.rules_snapshot && typeof challenge.rules_snapshot === "object"
           ? challenge.rules_snapshot as { product_slug?: string; rules?: { dd_model?: string } }
           : null;
-        const isRewardsV1 = snapshot?.rules?.dd_model === "trailing_eod_lock"
+        const isRewardsV1 = isV1Challenge(challenge.dd_model as string | null)
+          || snapshot?.rules?.dd_model === "trailing_eod_lock"
           || snapshot?.product_slug?.startsWith("rewards-") === true;
         const is1Step = challenge.model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
         const splitPct = isRewardsV1 ? 1 : is1Step ? 0.90 : 0.80;
@@ -55,28 +58,90 @@ export async function PATCH(req: NextRequest) {
         const netAmount = parseFloat((grossAmount * splitPct).toFixed(2));
         await admin.from("payouts").update({ amount: netAmount }).eq("id", id);
 
-        // 1. Reset DB en premier (avant withdrawal) pour éviter que le sync restore l'ancien high
-        const resetNow = new Date().toISOString();
-        await admin.from("challenges").update({
-          balance: challenge.start_balance,
-          trading_days: 0,
-          highest_balance: challenge.start_balance,
-          daily_dd: 0,
-          best_day_profit: 0,
-          status: "funded",
-          last_synced_at: resetNow, // bloque le sync immédiat
-        }).eq("id", challenge.id);
+        if (isRewardsV1) {
+          // ── V1 Apex EOD — Comportement payout ────────────────────────────────
+          // PAS de reset au capital initial entre les Rewards.
+          // postBalance = preBalance − rewardAmount (logique engine V1).
+          // On retire uniquement le montant de la Reward depuis MT5, pas tout le profit.
+          //
+          // Le cron mt5-snapshot sync la balance MT5 réelle dans la DB automatiquement.
+          // Pas besoin de mettre à jour manuellement la balance dans la DB ici.
 
-        // 2. MT5 : retrait du profit après le reset DB
-        if (challenge.mt5_login) {
-          try {
-            const mt5Info = await getMT5Account(challenge.mt5_login);
-            const profit = parseFloat((mt5Info.balance - challenge.start_balance).toFixed(2));
-            if (profit > 0) {
-              await withdrawMT5Balance(challenge.mt5_login, profit, "Profit Withdrawal — Traders Rewards");
+          if (challenge.mt5_login) {
+            try {
+              const withdrawalAmount = computeV1RewardWithdrawal(netAmount);
+              if (withdrawalAmount > 0) {
+                await withdrawMT5Balance(
+                  challenge.mt5_login,
+                  withdrawalAmount,
+                  `Reward V1 — Traders Rewards`
+                );
+              }
+            } catch (e) {
+              console.error("MT5 V1 reward withdrawal error:", e);
             }
-          } catch (e) {
-            console.error("MT5 auto-withdraw error:", e);
+          }
+
+          // Vérifier si c'est le Reward #5 (termination)
+          const { count: paidCount } = await admin
+            .from("payouts")
+            .select("id", { count: "exact", head: true })
+            .eq("challenge_id", challenge.id)
+            .eq("status", "paid");
+
+          const totalPaid = (paidCount ?? 0); // inclut le payout courant (déjà mis à 'paid')
+
+          if (isV1Terminated(totalPaid)) {
+            // ── Reward #5 payée → Termination du compte ─────────────────────
+            console.info(
+              `[V1 Termination] ${challenge.id} | login=${challenge.mt5_login} | ` +
+              `${V1_MAX_REWARDS} Rewards payées → compte terminé`
+            );
+
+            const terminatedAt = new Date().toISOString();
+            await admin.from("challenges").update({
+              terminated_at: terminatedAt,
+              status: "funded", // conserve 'funded' — le compte est terminé, pas failed
+              last_synced_at: terminatedAt,
+            }).eq("id", challenge.id);
+
+            // Désactivation MT5 (compte ne peut plus trader)
+            if (challenge.mt5_login) {
+              try {
+                await changeMT5Group(challenge.mt5_login, V1_DISABLED_MT5_GROUP);
+              } catch (e) { console.error("V1 termination changeMT5Group failed:", e); }
+              try {
+                await disableMT5Account(challenge.mt5_login);
+              } catch (e) { console.error("V1 termination disableMT5Account failed:", e); }
+            }
+          }
+        } else {
+          // ── Legacy (1-Step / 2-Step) — Comportement existant ─────────────
+          // Reset au capital initial + retrait de tout le profit.
+
+          // 1. Reset DB en premier (avant withdrawal) pour éviter que le sync restore l'ancien high
+          const resetNow = new Date().toISOString();
+          await admin.from("challenges").update({
+            balance: challenge.start_balance,
+            trading_days: 0,
+            highest_balance: challenge.start_balance,
+            daily_dd: 0,
+            best_day_profit: 0,
+            status: "funded",
+            last_synced_at: resetNow, // bloque le sync immédiat
+          }).eq("id", challenge.id);
+
+          // 2. MT5 : retrait du profit après le reset DB
+          if (challenge.mt5_login) {
+            try {
+              const mt5Info = await getMT5Account(challenge.mt5_login);
+              const profit = parseFloat((mt5Info.balance - challenge.start_balance).toFixed(2));
+              if (profit > 0) {
+                await withdrawMT5Balance(challenge.mt5_login, profit, "Profit Withdrawal — Traders Rewards");
+              }
+            } catch (e) {
+              console.error("MT5 auto-withdraw error:", e);
+            }
           }
         }
 

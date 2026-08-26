@@ -48,6 +48,15 @@ type Challenge = {
   daily_low_equity?: number;
   daily_start_balance?: number;
   rules_snapshot?: unknown;
+  // V1 Apex EOD lifecycle fields
+  dd_model?: string;
+  challenge_passed_at?: string;
+  challenge_passed_balance?: number;
+  challenge_passed_equity?: number;
+  reward_converted_at?: string;
+  reward_conversion_status?: string;
+  terminated_at?: string;
+  highest_eod?: number;
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -718,13 +727,17 @@ export default function DashboardClient({ user }: { user: User }) {
                   const phaseReached = c.phase === "funded" ? (isFr ? "REWARD ACCOUNT" : "REWARD ACCOUNT") : "CHALLENGER";
                   const isLast = idx === allChallenges.length - 1;
                   const dotColor = c.status === "funded" ? "#9CCFEA" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#9CCFEA" : "#9CCFEA";
-                  const relatedPayouts = allPayouts.filter(p => {
-                    const pd = new Date(p.created_at).getTime();
-                    const cd = new Date(c.created_at).getTime();
-                    const nextChallenge = allChallenges[idx - 1];
-                    const nd = nextChallenge ? new Date(nextChallenge.created_at).getTime() : Date.now() + 1;
-                    return pd >= cd && pd < nd;
-                  });
+                  const isV1 = c.dd_model === "trailing_eod_lock";
+                  const relatedPayouts = isV1
+                    ? allPayouts.filter(p => p.challenge_id === c.id)
+                    : allPayouts.filter(p => {
+                        const pd = new Date(p.created_at).getTime();
+                        const cd = new Date(c.created_at).getTime();
+                        const nextChallenge = allChallenges[idx - 1];
+                        const nd = nextChallenge ? new Date(nextChallenge.created_at).getTime() : Date.now() + 1;
+                        return pd >= cd && pd < nd;
+                      });
+                  const v1PaidCount = relatedPayouts.filter(p => p.status === "paid").length;
 
                   const isSelectedHist = selectedHistChallenge?.id === c.id;
                   return (
@@ -754,7 +767,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         </div>
 
                         {/* Stats */}
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 12, marginBottom: relatedPayouts.length > 0 ? 16 : 0 }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 12, marginBottom: (relatedPayouts.length > 0 || (isV1 && (c.challenge_passed_at || c.reward_converted_at || c.terminated_at))) ? 16 : 0 }}>
                           {[
                             { label: T.dash.startBalance, value: `$${c.start_balance?.toLocaleString()}` },
                             { label: T.dash.finalBalance, value: `$${finalBalance?.toLocaleString()}` },
@@ -769,6 +782,86 @@ export default function DashboardClient({ user }: { user: User }) {
                             </div>
                           ))}
                         </div>
+
+                        {/* Parcours V1 Apex EOD */}
+                        {isV1 && (c.challenge_passed_at || c.reward_converted_at || c.terminated_at) && (
+                          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 14, marginTop: 4, marginBottom: relatedPayouts.length > 0 ? 14 : 0 }}>
+                            <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 10 }}>
+                              {isFr ? "Parcours V1 Apex EOD" : "V1 Apex EOD Journey"}
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+
+                              {/* Étape 1 — Challenge réussi */}
+                              {c.challenge_passed_at && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "rgba(156,207,234,0.06)", borderRadius: 8 }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                    <CheckCircle size={14} color="#9CCFEA" />
+                                    <span style={{ fontSize: 13, fontWeight: 700, color: "#9CCFEA" }}>
+                                      {isFr ? "Challenge réussi" : "Challenge passed"}
+                                    </span>
+                                    {c.challenge_passed_balance != null && (
+                                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
+                                        ${c.challenge_passed_balance.toLocaleString()}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
+                                    {new Date(c.challenge_passed_at).toLocaleDateString("fr-FR")}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Étape 2 — Reward Account activé */}
+                              {c.reward_converted_at && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "rgba(201,168,76,0.08)", borderRadius: 8 }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                    <Award size={14} color="#C9A84C" />
+                                    <span style={{ fontSize: 13, fontWeight: 700, color: "#C9A84C" }}>
+                                      {isFr ? "Reward Account activé" : "Reward Account live"}
+                                    </span>
+                                    {c.mt5_login && (
+                                      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>#{c.mt5_login}</span>
+                                    )}
+                                  </div>
+                                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
+                                    {new Date(c.reward_converted_at).toLocaleDateString("fr-FR")}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Niveau Reward courant */}
+                              {c.reward_converted_at && !c.terminated_at && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "rgba(255,255,255,0.04)", borderRadius: 8 }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                    <Trophy size={14} color="#9CCFEA" />
+                                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.75)" }}>
+                                      {isFr ? "Niveau Reward" : "Reward Level"}
+                                    </span>
+                                  </div>
+                                  <span style={{ fontSize: 13, fontWeight: 800, color: "#9CCFEA", letterSpacing: 0.5 }}>
+                                    {v1PaidCount}/5
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* Parcours terminé après R#5 */}
+                              {c.terminated_at && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "rgba(156,207,234,0.05)", borderRadius: 8, border: "1px solid rgba(156,207,234,0.18)" }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                    <Shield size={14} color="#9CCFEA" />
+                                    <span style={{ fontSize: 13, fontWeight: 700, color: "#9CCFEA" }}>
+                                      {isFr ? "Parcours terminé — 5/5 Rewards" : "Journey completed — 5/5 Rewards"}
+                                    </span>
+                                  </div>
+                                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
+                                    {new Date(c.terminated_at).toLocaleDateString("fr-FR")}
+                                  </span>
+                                </div>
+                              )}
+
+                            </div>
+                          </div>
+                        )}
 
                         {/* Récompenses liées */}
                         {relatedPayouts.length > 0 && (
