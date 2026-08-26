@@ -50,7 +50,7 @@ export default function TermsPage() {
       content: [
         "Si vous réussissez le Processus d'Évaluation, vous pourrez accéder au Programme Traders Rewards, qui vous donne accès à un Compte Trader et vous permet de percevoir une Récompense basée sur les performances générées.",
         "Après validation du Challenge et paiement des frais d'activation applicables, vous accédez au Reward Account et à un parcours composé de cinq (5) niveaux de Rewards successifs.",
-        "Le Reward Account requiert un seuil de +4% par rapport au capital initial, au moins cinq (5) journées qualifiantes, une consistance maximale de 33% et ne comporte pas de limite de durée.",
+        "Le Reward Account requiert d'atteindre le seuil Safety Net + cap du niveau demandé, au moins cinq (5) journées qualifiantes, une consistance maximale de 50% et ne comporte pas de limite de durée.",
         "Le montant de chaque Reward est limité au nouveau profit disponible depuis la Reward précédente et au plafond correspondant au niveau et à la taille du compte. Après versement, la Reward est déduite de la balance simulée.",
         "La réussite du Challenge ne garantit pas automatiquement l'accès au Programme Trader. Nous nous réservons le droit d'effectuer des vérifications complémentaires.",
         "Les Récompenses versées ne constituent pas un salaire, une rémunération professionnelle, ni un revenu issu d'opérations sur instruments financiers réels. Vous êtes seul responsable de vos obligations fiscales.",

@@ -345,9 +345,9 @@ export function buildWelcomeEmail(p: {
           { label: "Profit éligible", value: "100%" },
         ]
       : [
-          { label: "Trailing DD EOD", value: accountSize.includes("100") ? "3%" : "4%" },
-          { label: "Consistance", value: "50% maximum" },
-          { label: "Durée", value: "2 jours minimum · 30 jours maximum" },
+          { label: "Trailing DD EOD", value: accountSize.includes("100") ? "3 000 $" : accountSize.includes("50") ? "2 000 $" : "1 000 $" },
+          { label: "Consistance", value: "Aucune (Challenge Apex EOD)" },
+          { label: "Durée", value: "0 jour minimum · 30 jours maximum" },
         ]
     ),
   ];

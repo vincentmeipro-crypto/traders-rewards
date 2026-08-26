@@ -24,7 +24,7 @@ const faqData = {
     // 02
     {
       q: "Comment fonctionne le Challenge ?",
-      a: "Le Challenge se déroule en une seule étape avec un objectif de +6 %. Vous devez trader au minimum 2 journées, respecter une consistance maximale de 50 % et rester dans votre limite de Trailing Drawdown EOD : 4 % sur les comptes 25K et 50K, 3 % sur le 100K. Vous disposez de 30 jours calendaires maximum pour valider votre Challenge.",
+      a: "Le Challenge se déroule en une seule étape avec un objectif de +6 %. Il n'y a aucun minimum de jours de trading et aucune règle de consistance. Vous devez rester dans votre limite de Trailing Drawdown EOD fixe : 1 000 $ sur le 25K, 2 000 $ sur le 50K, 3 000 $ sur le 100K. Vous disposez de 30 jours calendaires maximum pour valider votre Challenge.",
     },
     // 03
     {
@@ -39,12 +39,12 @@ const faqData = {
     // 05
     {
       q: "Quelles sont toutes les règles du Challenge ?",
-      a: "Le Challenge comporte une seule étape avec un objectif de +6 %. Le Trailing Drawdown EOD est de 4 % sur les comptes 25K et 50K, et de 3 % sur le 100K. La règle de consistance impose que votre meilleure journée ne représente pas plus de 50 % de votre profit total au moment de la validation. Vous devez trader au minimum 2 journées et disposez de 30 jours calendaires maximum pour réussir votre Challenge.",
+      a: "Le Challenge comporte une seule étape avec un objectif de +6 % (1 500 $ sur le 25K / 3 000 $ sur le 50K / 6 000 $ sur le 100K). Il n'y a aucun minimum de jours et aucune règle de consistance. Votre seule limite de risque est le Trailing Drawdown EOD fixe : 1 000 $ sur le 25K, 2 000 $ sur le 50K, 3 000 $ sur le 100K. Vous disposez de 30 jours calendaires maximum.",
     },
     // 06
     {
       q: "Qu'est-ce que le Reward Account ?",
-      a: "Le Reward Account est votre compte long terme, accessible après avoir validé votre Challenge et réglé les frais d'activation. Vous devez atteindre +4 % de profit avec au minimum 5 journées qualifiantes pour accéder à votre première Reward. Ce seuil de +4 % par rapport au capital initial est permanent : il s'applique à chaque Reward tout au long de votre parcours. La consistance maximale est de 33 % et vous disposez d'un temps illimité.",
+      a: "Le Reward Account est votre compte long terme, accessible après avoir validé votre Challenge et réglé les frais d'activation. Vous devez atteindre le seuil Safety Net + cap du niveau demandé (ex. Reward #1 : 26 400 $ sur le 25K / 52 600 $ sur le 50K / 103 850 $ sur le 100K) avec au minimum 5 journées qualifiantes. La règle de consistance exige que votre meilleure journée représente moins de 50 % de votre profit total. Vous disposez d'un temps illimité.",
     },
     // 07
     {
@@ -54,12 +54,12 @@ const faqData = {
     // 08
     {
       q: "Qu'est-ce qu'une journée qualifiante ?",
-      a: "Une journée qualifiante est une journée de trading clôturée avec un profit net minimum correspondant à la taille de votre compte : 50 $ sur le 25K, 100 $ sur le 50K et 150 $ sur le 100K. Vous devez valider au minimum 5 journées qualifiantes pour remplir les conditions de votre Reward Account. Ces montants correspondent uniquement au profit minimum requis par journée, et non au montant de vos Rewards.",
+      a: "Une journée qualifiante est une journée de trading clôturée avec un profit net minimum correspondant à la taille de votre compte : 100 $ sur le 25K, 250 $ sur le 50K et 300 $ sur le 100K. Vous devez valider au minimum 5 journées qualifiantes pour remplir les conditions de votre Reward Account. Ces montants correspondent uniquement au profit minimum requis par journée, et non au montant de vos Rewards.",
     },
     // 09
     {
       q: "Comment sont calculées et versées les Rewards ?",
-      a: "Pour demander une Reward, votre balance doit d'abord atteindre le seuil de +4 % du capital initial (26 000 $ sur le 25K, 52 000 $ sur le 50K, 104 000 $ sur le 100K).\n\nLe montant versé est le minimum entre :\n— votre nouveau profit depuis la dernière Reward\n— le plafond correspondant à votre niveau\n\nAprès versement, le montant de la Reward est déduit de votre balance. Le plancher de protection reste verrouillé au capital initial — aucun reset automatique. Vous reconstruisez ensuite votre progression vers la Reward suivante.",
+      a: "Pour demander une Reward, votre balance doit atteindre le seuil Safety Net + cap du niveau demandé (ex. 26 400 $ sur le 25K pour Reward #1, 52 600 $ sur le 50K, 103 850 $ sur le 100K).\n\nLe montant versé est le minimum entre :\n— votre nouveau profit depuis la dernière Reward\n— le plafond correspondant à votre niveau\n\nAprès versement, le montant de la Reward est déduit de votre balance. Le plancher de protection reste verrouillé au capital initial — aucun reset automatique. Vous reconstruisez ensuite votre progression vers la Reward suivante.",
     },
     // 10
     {
@@ -177,7 +177,7 @@ const faqData = {
     // 02
     {
       q: "¿Cómo funciona el Challenge?",
-      a: "El Challenge se desarrolla en una sola etapa con un objetivo de +6 % de beneficio. Debes operar un mínimo de 2 días, respetar una consistencia máxima del 50 % y mantenerte dentro de tu límite de Trailing Drawdown EOD: 4 % en las cuentas 25K y 50K, 3 % en el 100K. Dispones de un máximo de 30 días calendario para validar tu Challenge.",
+      a: "El Challenge se desarrolla en una sola etapa con un objetivo de +6 % de beneficio. No hay mínimo de días ni regla de consistencia en el Challenge. Debes mantenerte dentro de tu límite de Trailing Drawdown EOD fijo: 1 000 $ en el 25K, 2 000 $ en el 50K, 3 000 $ en el 100K. Dispones de un máximo de 30 días calendario para validar tu Challenge.",
     },
     // 03
     {
@@ -192,12 +192,12 @@ const faqData = {
     // 05
     {
       q: "¿Cuáles son todas las reglas del Challenge?",
-      a: "El Challenge consta de una sola etapa con un objetivo de +6 % de beneficio. El Trailing Drawdown EOD es del 4 % en las cuentas 25K y 50K, y del 3 % en el 100K. La regla de consistencia exige que tu mejor día no represente más del 50 % de tu beneficio total en el momento de la validación. Debes operar un mínimo de 2 días y dispones de un máximo de 30 días calendario para superar tu Challenge.",
+      a: "El Challenge consta de una sola etapa con un objetivo de +6 % de beneficio (1 500 $ en el 25K / 3 000 $ en el 50K / 6 000 $ en el 100K). No hay mínimo de días ni regla de consistencia. Tu único límite de riesgo es el Trailing Drawdown EOD fijo: 1 000 $ en el 25K, 2 000 $ en el 50K, 3 000 $ en el 100K. Dispones de un máximo de 30 días calendario.",
     },
     // 06
     {
       q: "¿Qué es el Reward Account?",
-      a: "El Reward Account es tu cuenta a largo plazo, accesible tras validar tu Challenge y abonar los gastos de activación. Debes alcanzar +4 % de beneficio con un mínimo de 5 días calificados para acceder a tu primera Reward. La consistencia máxima es del 33 % y dispones de tiempo ilimitado para alcanzar este objetivo.",
+      a: "El Reward Account es tu cuenta a largo plazo, accesible tras validar tu Challenge y abonar los gastos de activación. Debes alcanzar el umbral Safety Net + tope del nivel (ej. Reward #1: 26 400 $ en el 25K / 52 600 $ en el 50K / 103 850 $ en el 100K) con un mínimo de 5 días calificados. La consistencia máxima es del 50 % y dispones de tiempo ilimitado.",
     },
     // 07
     {
@@ -207,7 +207,7 @@ const faqData = {
     // 08
     {
       q: "¿Qué es un día calificado?",
-      a: "Un día calificado es un día de trading cerrado con un beneficio neto mínimo correspondiente al tamaño de tu cuenta: 50 $ en el 25K, 100 $ en el 50K y 150 $ en el 100K. Debes validar un mínimo de 5 días calificados para cumplir las condiciones de tu Reward Account. Estos importes corresponden únicamente al beneficio mínimo exigido por día, y no al importe de tus Rewards.",
+      a: "Un día calificado es un día de trading cerrado con un beneficio neto mínimo correspondiente al tamaño de tu cuenta: 100 $ en el 25K, 250 $ en el 50K y 300 $ en el 100K. Debes validar un mínimo de 5 días calificados para cumplir las condiciones de tu Reward Account. Estos importes corresponden únicamente al beneficio mínimo exigido por día, y no al importe de tus Rewards.",
     },
     // 09
     {
@@ -249,13 +249,13 @@ const faqData = {
   // ── Traders Rewards — 15 questions — PT ───────────────────────
   pt: [
     { q: "O que é Traders Rewards?", a: "Traders Rewards transforma a performance do seu trading simulado em Rewards. Começa com um Challenge de uma etapa com um objetivo de +6 %. Uma vez validado, ativa o seu Reward Account e entra num percurso progressivo de 5 níveis de Rewards, até ao estatuto Trader Reward." },
-    { q: "Como funciona o Challenge?", a: "O Challenge é de uma única etapa: alcance +6 % de lucro, com um mínimo de 2 dias de trading, respeitando a consistência máxima de 50 %. Trailing Drawdown EOD: 4 % nas contas 25K e 50K, 3 % na conta 100K. Duração máxima: 30 dias calendário." },
+    { q: "Como funciona o Challenge?", a: "O Challenge é de uma única etapa: alcance +6 % de lucro. Sem mínimo de dias nem regra de consistência. Trailing Drawdown EOD fixo: 1 000 $ na conta 25K, 2 000 $ na conta 50K, 3 000 $ na conta 100K. Duração máxima: 30 dias calendário." },
     { q: "O que é o Trailing Drawdown EOD?", a: "O Trailing Drawdown EOD é um piso de proteção recalculado com base na progressão da conta no final de cada dia. Sempre que é registado um novo máximo EOD, o piso sobe com ele e nunca desce.\n\nNo Challenge, este piso evolui durante toda a duração do Challenge em função dos máximos EOD.\n\nNo Reward Account, quando o Trailing Drawdown atinge o capital inicial da conta, deixa de subir e fica definitivamente fixado nesse nível.\n\nO limite é 4 % nas contas 25K e 50K, e 3 % na conta 100K. Se o equity cair abaixo do piso aplicável à sua conta, esta é considerada falhada." },
     { q: "Existe um limite de perda diária?", a: "Não. Traders Rewards não aplica um Daily Drawdown separado. O único limite de perda é o Trailing Drawdown EOD: 4 % nas contas 25K e 50K, e 3 % na conta 100K." },
-    { q: "Quais são todas as regras do Challenge?", a: "Objetivo: +6 %. Trailing Drawdown EOD: 4 % (25K/50K) ou 3 % (100K). Regra de consistência: o seu melhor dia não deve representar mais de 50 % do lucro total no momento da validação. Mínimo 2 dias de trading. Máximo 30 dias calendário." },
-    { q: "O que é a Reward Account?", a: "A Reward Account é a conta a longo prazo, acessível após validar o Challenge e pagar a taxa de ativação. Deve atingir +4 % de lucro com pelo menos 5 dias qualificados para aceder à primeira Reward. Consistência máxima: 33 %. Tempo ilimitado." },
+    { q: "Quais são todas as regras do Challenge?", a: "Objetivo: +6 % (1 500 $ no 25K / 3 000 $ no 50K / 6 000 $ no 100K). Sem mínimo de dias, sem regra de consistência. Trailing Drawdown EOD fixo: 1 000 $ (25K), 2 000 $ (50K), 3 000 $ (100K). Máximo 30 dias calendário." },
+    { q: "O que é a Reward Account?", a: "A Reward Account é a conta a longo prazo, acessível após validar o Challenge e pagar a taxa de ativação. Deve atingir o limiar Safety Net + tope do nível (ex. Reward #1: 26 400 $ no 25K / 52 600 $ no 50K / 103 850 $ no 100K) com pelo menos 5 dias qualificados. Consistência máxima: 50 %. Tempo ilimitado." },
     { q: "Como ativar a Reward Account?", a: "Taxa de ativação única: 99 € para as contas 25K e 50K, 149 € para a conta 100K. Esta taxa ativa a Reward Account e é cobrada apenas uma vez." },
-    { q: "O que é um dia qualificado?", a: "Um dia qualificado é um dia de trading fechado com um lucro líquido mínimo: 50 $ na conta 25K, 100 $ na conta 50K e 150 $ na conta 100K. São necessários pelo menos 5 dias qualificados para cumprir as condições da Reward Account. Estes valores são apenas o mínimo de lucro diário exigido — não o valor das Rewards." },
+    { q: "O que é um dia qualificado?", a: "Um dia qualificado é um dia de trading fechado com um lucro líquido mínimo: 100 $ na conta 25K, 250 $ na conta 50K e 300 $ na conta 100K. São necessários pelo menos 5 dias qualificados para cumprir as condições da Reward Account. Estes valores são apenas o mínimo de lucro diário exigido — não o valor das Rewards." },
     { q: "Como são calculados e pagos os Rewards?", a: "O valor da Reward depende do lucro disponível na Reward Account, dentro do limite máximo correspondente ao nível e tamanho de conta. Estes limites aumentam progressivamente do Reward #1 ao Reward #5. Após validação do pedido, o valor aprovado é pago e o percurso continua para o nível seguinte." },
     { q: "Existe um limite no número de Rewards?", a: "Sim. O percurso Traders Rewards inclui 5 Rewards sucessivas, com limites que aumentam a cada nível.\n\nConta 25K :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\nConta 50K :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\nConta 100K :\nReward #1 : 750 $\nReward #2 : 1.000 $\nReward #3 : 1.250 $\nReward #4 : 1.500 $\nReward #5 : 1.750 $\n\nO Reward #5 é o nível final e concede o estatuto Trader Reward." },
     { q: "Posso ter vários Challenges simultaneamente?", a: "Sim. Independentemente do tamanho das contas, pode ter até 10 Challenges ativos e até 5 Reward Accounts ativas em simultâneo." },
@@ -268,13 +268,13 @@ const faqData = {
   // ── Traders Rewards — 15 questions — DE ───────────────────────
   de: [
     { q: "Was ist Traders Rewards?", a: "Traders Rewards verwandelt Ihre simulierte Trading-Performance in Rewards. Sie beginnen mit einer einstufigen Challenge mit einem Ziel von +6 %. Nach der Validierung aktivieren Sie Ihr Reward Account und durchlaufen einen progressiven Weg mit 5 Reward-Stufen bis zum Trader Reward Status." },
-    { q: "Wie funktioniert die Challenge?", a: "Die Challenge besteht aus einer einzigen Stufe mit +6 % Gewinnziel. Sie müssen mindestens 2 Handelstage absolvieren, eine maximale Konsistenz von 50 % einhalten und innerhalb Ihres Trailing Drawdown EOD bleiben: 4 % für 25K- und 50K-Konten, 3 % für das 100K-Konto. Maximum: 30 Kalendertage." },
+    { q: "Wie funktioniert die Challenge?", a: "Die Challenge besteht aus einer einzigen Stufe mit +6 % Gewinnziel. Kein Mindesttagehandel, keine Konsistenzregel. Sie müssen innerhalb Ihres fixen Trailing Drawdown EOD bleiben: 1 000 $ für das 25K-Konto, 2 000 $ für 50K, 3 000 $ für 100K. Maximum: 30 Kalendertage." },
     { q: "Was ist der Trailing Drawdown EOD?", a: "Der Trailing Drawdown EOD ist ein Schutz-Floor, der basierend auf der Kontoentwicklung am Tagesende neu berechnet wird. Jedes Mal, wenn ein neues EOD-Hoch erreicht wird, steigt der Floor mit und sinkt nie wieder.\n\nBei der Challenge entwickelt sich dieser Floor während der gesamten Challenge basierend auf den EOD-Hochs.\n\nBeim Reward Account hört der Trailing Drawdown auf zu steigen, sobald er das Startkapital des Kontos erreicht, und bleibt dauerhaft auf diesem Niveau fixiert.\n\nDas Limit beträgt 4 % für 25K- und 50K-Konten und 3 % für das 100K-Konto. Fällt das Equity unter den für das Konto geltenden Floor, gilt das Konto als gescheitert." },
     { q: "Gibt es ein tägliches Verlustlimit?", a: "Nein. Traders Rewards wendet keinen separaten Daily Drawdown an. Ihr einziges Verlustlimit ist der Trailing Drawdown EOD: 4 % für 25K- und 50K-Konten, 3 % für das 100K-Konto." },
-    { q: "Was sind alle Challenge-Regeln?", a: "Gewinnziel: +6 %. Trailing Drawdown EOD: 4 % (25K/50K) oder 3 % (100K). Konsistenzregel: Ihr bester Tag darf nicht mehr als 50 % Ihres Gesamtgewinns zum Zeitpunkt der Validierung ausmachen. Mindestens 2 Handelstage. Maximum 30 Kalendertage." },
-    { q: "Was ist das Reward Account?", a: "Das Reward Account ist Ihr Langzeitkonto nach bestandener Challenge. Ziel: +4 % Gewinn mit mindestens 5 qualifizierenden Tagen. Maximale Konsistenz: 33 %. Unbegrenzte Zeit." },
+    { q: "Was sind alle Challenge-Regeln?", a: "Gewinnziel: +6 % (1 500 $ beim 25K / 3 000 $ beim 50K / 6 000 $ beim 100K). Kein Mindesttagehandel, keine Konsistenzregel. Einziges Risikolimit: fixer Trailing Drawdown EOD (1 000 $ / 2 000 $ / 3 000 $). Maximum 30 Kalendertage." },
+    { q: "Was ist das Reward Account?", a: "Das Reward Account ist Ihr Langzeitkonto nach bestandener Challenge. Ziel: Safety Net + Cap des Levels (Reward #1: 26 400 $ beim 25K / 52 600 $ beim 50K / 103 850 $ beim 100K) mit mindestens 5 qualifizierenden Tagen. Maximale Konsistenz: 50 %. Unbegrenzte Zeit." },
     { q: "Wie aktiviere ich das Reward Account?", a: "Einmalige Aktivierungsgebühr: 99 € für 25K- und 50K-Konten, 149 € für das 100K-Konto. Diese Gebühr wird nur einmal berechnet." },
-    { q: "Was ist ein qualifizierender Tag?", a: "Ein qualifizierender Tag ist ein Handelstag mit einem Mindest-Nettogewinn: 50 $ (25K), 100 $ (50K), 150 $ (100K). Sie benötigen mindestens 5 qualifizierende Tage. Diese Beträge sind nur der Mindesttagesgewinn — nicht der Reward-Betrag." },
+    { q: "Was ist ein qualifizierender Tag?", a: "Ein qualifizierender Tag ist ein Handelstag mit einem Mindest-Nettogewinn: 100 $ (25K), 250 $ (50K), 300 $ (100K). Sie benötigen mindestens 5 qualifizierende Tage. Diese Beträge sind nur der Mindesttagesgewinn — nicht der Reward-Betrag." },
     { q: "Wie werden Rewards berechnet und ausgezahlt?", a: "Der Reward-Betrag hängt vom verfügbaren Gewinn im Reward Account ab, begrenzt durch den Cap Ihres Kontoniveaus. Diese Caps steigen progressiv von Reward #1 bis Reward #5. Nach Validierung wird der Betrag ausgezahlt und Sie setzen die Journey zur nächsten Stufe fort." },
     { q: "Gibt es eine Begrenzung der Rewards?", a: "Ja. Die Traders Rewards Journey umfasst 5 aufeinanderfolgende Rewards, mit steigenden Caps je Stufe.\n\n25K-Konto :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\n50K-Konto :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\n100K-Konto :\nReward #1 : 750 $\nReward #2 : 1.000 $\nReward #3 : 1.250 $\nReward #4 : 1.500 $\nReward #5 : 1.750 $\n\nReward #5 ist die finale Stufe und verleiht den Trader Reward Status." },
     { q: "Kann ich mehrere Challenges gleichzeitig haben?", a: "Ja. Unabhängig von der Kontogröße können Sie gleichzeitig bis zu 10 aktive Challenges und bis zu 5 aktive Reward Accounts haben." },
@@ -287,13 +287,13 @@ const faqData = {
   // ── Traders Rewards — 15 questions — TR ───────────────────────
   tr: [
     { q: "Traders Rewards nedir?", a: "Traders Rewards, simüle trading performansınızı Rewards'a dönüştürür. +6 % hedefli tek aşamalı bir Challenge ile başlarsınız. Tamamlandığında Reward Account'unuzu aktive eder ve Trader Reward statüsüne kadar 5 seviyeli bir yolculuğa girersiniz." },
-    { q: "Challenge nasıl çalışır?", a: "Challenge tek bir aşamadan oluşur: +6 % kâr hedefi, minimum 2 işlem günü, maksimum %50 tutarlılık ve Trailing Drawdown EOD limitiniz içinde kalmak. 25K ve 50K hesaplar için %4, 100K için %3. Maksimum süre: 30 takvim günü." },
+    { q: "Challenge nasıl çalışır?", a: "Challenge tek bir aşamadan oluşur: +6 % kâr hedefi. Minimum işlem günü ve tutarlılık kuralı yoktur. Sabit Trailing Drawdown EOD limitiniz içinde kalmanız yeterli: 25K için 1 000 $, 50K için 2 000 $, 100K için 3 000 $. Maksimum süre: 30 takvim günü." },
     { q: "Trailing Drawdown EOD nedir?", a: "Trailing Drawdown EOD, hesabın gün sonu performansına göre yeniden hesaplanan bir koruma tabanıdır. Yeni bir EOD zirvesi kaydedildiğinde bu taban onunla birlikte yükselir ve asla düşmez.\n\nChallenge süresince bu taban, EOD zirvelerinize göre Challenge boyunca gelişmeye devam eder.\n\nReward Account'ta ise Trailing Drawdown hesabın başlangıç sermayesine ulaştığında yükselmeyi durdurur ve kalıcı olarak bu seviyede sabitlenir.\n\nLimit 25K ve 50K hesaplar için %4, 100K hesap için %3'tür. Equity, hesabınıza uygulanan tabanın altına düşerse hesap başarısız sayılır." },
     { q: "Günlük kayıp limiti var mı?", a: "Hayır. Traders Rewards ayrı bir Daily Drawdown uygulamaz. Tek kayıp limitiniz Trailing Drawdown EOD'dur: 25K ve 50K hesaplar için %4, 100K için %3." },
-    { q: "Challenge'ın tüm kuralları nelerdir?", a: "Hedef: +6 %. Trailing Drawdown EOD: 4 % (25K/50K) veya 3 % (100K). Tutarlılık kuralı: en iyi gününüz, validasyon anındaki toplam kârın %50'sinden fazlasını oluşturmamalıdır. Minimum 2 işlem günü. Maksimum 30 takvim günü." },
-    { q: "Reward Account nedir?", a: "Reward Account, Challenge'ı geçtikten ve aktivasyon ücretini ödedikten sonra erişilen uzun vadeli hesaptır. İlk Reward'a ulaşmak için minimum 5 nitelikli gün ile +4 % kâr elde etmelisiniz. Maksimum tutarlılık: %33. Süre sınırsızdır." },
+    { q: "Challenge'ın tüm kuralları nelerdir?", a: "Hedef: +6 % (25K: 1 500 $ / 50K: 3 000 $ / 100K: 6 000 $). Minimum işlem günü yok, tutarlılık kuralı yok. Tek risk limiti: sabit Trailing Drawdown EOD (1 000 $ / 2 000 $ / 3 000 $). Maksimum 30 takvim günü." },
+    { q: "Reward Account nedir?", a: "Reward Account, Challenge'ı geçtikten ve aktivasyon ücretini ödedikten sonra erişilen uzun vadeli hesaptır. İlk Reward için Safety Net + seviye tavan eşiğine (Reward #1: 25K: 26 400 $, 50K: 52 600 $, 100K: 103 850 $) minimum 5 nitelikli gün ile ulaşmanız gerekir. Maksimum tutarlılık: %50. Süre sınırsızdır." },
     { q: "Reward Account nasıl aktive edilir?", a: "Challenge başarıyla tamamlandıktan sonra tek seferlik aktivasyon ücreti ödenir: 25K ve 50K hesaplar için 99 €, 100K hesap için 149 €. Bu ücret yalnızca bir kez alınır." },
-    { q: "Nitelikli gün nedir?", a: "Nitelikli gün, hesap büyüklüğüne göre minimum net kâr eşiğini aşan bir işlem günüdür: 25K için 50 $, 50K için 100 $, 100K için 150 $. Reward Account koşullarını karşılamak için en az 5 nitelikli gün gereklidir. Bu tutarlar yalnızca günlük minimum kâr eşiğidir — Reward miktarı değildir." },
+    { q: "Nitelikli gün nedir?", a: "Nitelikli gün, hesap büyüklüğüne göre minimum net kâr eşiğini aşan bir işlem günüdür: 25K için 100 $, 50K için 250 $, 100K için 300 $. Reward Account koşullarını karşılamak için en az 5 nitelikli gün gereklidir. Bu tutarlar yalnızca günlük minimum kâr eşiğidir — Reward miktarı değildir." },
     { q: "Rewards nasıl hesaplanır ve ödenir?", a: "Reward miktarı, Reward Account'taki mevcut kâra bağlıdır; hesap büyüklüğüne ve seviyeye göre belirlenen tavan ile sınırlıdır. Bu tavanlar Reward #1'den Reward #5'e kadar artar. Onaylandıktan sonra tutar ödenir ve bir sonraki seviyeye devam edilir." },
     { q: "Rewards sayısında sınır var mı?", a: "Evet. Traders Rewards yolculuğu, her seviyede artan tavanlarla 5 ardışık Reward içerir.\n\n25K hesap :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\n50K hesap :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\n100K hesap :\nReward #1 : 750 $\nReward #2 : 1.000 $\nReward #3 : 1.250 $\nReward #4 : 1.500 $\nReward #5 : 1.750 $\n\nReward #5 son seviyedir ve Trader Reward statüsünü verir." },
     { q: "Birden fazla Challenge'ım olabilir mi?", a: "Evet. Hesap büyüklüğünden bağımsız olarak aynı anda en fazla 10 aktif Challenge ve 5 aktif Reward Account sahibi olabilirsiniz." },
@@ -306,13 +306,13 @@ const faqData = {
   // ── Traders Rewards — 15 questions — AR ───────────────────────
   ar: [
     { q: "ما هو Traders Rewards؟", a: "Traders Rewards يحوّل أداء تداولك المحاكى إلى Rewards. تبدأ بـ Challenge من خطوة واحدة بهدف +6 %. بعد التحقق، تُفعّل Reward Account وتدخل مساراً تدريجياً من 5 مستويات Rewards حتى تصل إلى مستوى Trader Reward." },
-    { q: "كيف يعمل Challenge؟", a: "Challenge خطوة واحدة بهدف +6 %، بحد أدنى يومي تداول، وبحد أقصى 50 % للاتساق. Trailing Drawdown EOD: 4 % لحسابات 25K و50K، 3 % لحساب 100K. المدة القصوى: 30 يوماً تقويمياً." },
+    { q: "كيف يعمل Challenge؟", a: "Challenge خطوة واحدة بهدف +6 %. لا حد أدنى لأيام التداول ولا قاعدة اتساق. Trailing Drawdown EOD ثابت: 1 000 $ لحساب 25K، 2 000 $ لحساب 50K، 3 000 $ لحساب 100K. المدة القصوى: 30 يوماً تقويمياً." },
     { q: "ما هو Trailing Drawdown EOD؟", a: "Trailing Drawdown EOD هو سقف حماية يُعاد حسابه بناءً على تقدم حسابك في نهاية كل يوم. في كل مرة يُسجَّل فيها قمة EOD جديدة، يرتفع هذا السقف معها ولا ينخفض أبداً.\n\nفي Challenge، يتطور هذا السقف طوال مدة Challenge بناءً على قمم EOD الخاصة بك.\n\nفي Reward Account، بمجرد أن يصل Trailing Drawdown إلى رأس المال الأولي للحساب، يتوقف عن الارتفاع ويظل ثابتاً نهائياً عند ذلك المستوى.\n\nالحد هو 4 % لحسابات 25K و50K، و3 % لحساب 100K. إذا انخفض الرصيد تحت السقف المطبّق على حسابك، يُعدّ الحساب فاشلاً." },
     { q: "هل يوجد حدّ للخسارة اليومية؟", a: "لا. Traders Rewards لا يطبق Daily Drawdown منفصلاً. حدّ الخسارة الوحيد هو Trailing Drawdown EOD: 4 % لحسابات 25K و50K، و3 % لحساب 100K." },
-    { q: "ما هي جميع قواعد Challenge؟", a: "الهدف: +6 %. Trailing Drawdown EOD: 4 % (25K/50K) أو 3 % (100K). قاعدة الاتساق: أفضل يوم لك لا يتجاوز 50 % من إجمالي الربح وقت التحقق. حد أدنى يومان، وحد أقصى 30 يوماً تقويمياً." },
-    { q: "ما هو Reward Account؟", a: "Reward Account هو حسابك طويل الأمد، متاح بعد إتمام Challenge ودفع رسوم التفعيل. يجب أن تحقق +4 % ربح مع 5 أيام مؤهلة على الأقل. الاتساق الأقصى 33 %. الوقت غير محدود." },
+    { q: "ما هي جميع قواعد Challenge؟", a: "الهدف: +6 % (25K: 1 500 $ / 50K: 3 000 $ / 100K: 6 000 $). لا حد أدنى لأيام التداول ولا قاعدة اتساق. حد الخسارة الوحيد: Trailing Drawdown EOD ثابت (1 000 $ / 2 000 $ / 3 000 $). حد أقصى 30 يوماً تقويمياً." },
+    { q: "ما هو Reward Account؟", a: "Reward Account هو حسابك طويل الأمد، متاح بعد إتمام Challenge ودفع رسوم التفعيل. يجب الوصول إلى عتبة Safety Net + تابع المستوى (Reward #1: 26 400 $ للـ25K / 52 600 $ للـ50K / 103 850 $ للـ100K) مع 5 أيام مؤهلة على الأقل. الاتساق الأقصى 50 %. الوقت غير محدود." },
     { q: "كيف يتم تفعيل Reward Account؟", a: "رسوم تفعيل لمرة واحدة: 99 € لحسابات 25K و50K، و149 € لحساب 100K. تُحصّل هذه الرسوم مرة واحدة فقط." },
-    { q: "ما هو اليوم المؤهل؟", a: "اليوم المؤهل هو يوم تداول تحقق فيه ربحاً صافياً لا يقل عن: 50 $ (25K)، 100 $ (50K)، 150 $ (100K). تحتاج 5 أيام مؤهلة على الأقل. هذه المبالغ هي الحد الأدنى للربح اليومي، وليست قيمة Rewards." },
+    { q: "ما هو اليوم المؤهل؟", a: "اليوم المؤهل هو يوم تداول تحقق فيه ربحاً صافياً لا يقل عن: 100 $ (25K)، 250 $ (50K)، 300 $ (100K). تحتاج 5 أيام مؤهلة على الأقل. هذه المبالغ هي الحد الأدنى للربح اليومي، وليست قيمة Rewards." },
     { q: "كيف تُحسب وتُدفع Rewards؟", a: "يعتمد مبلغ Reward على الربح المتاح في Reward Account، بحدود أقصى تزداد تدريجياً من Reward #1 إلى Reward #5. بعد التحقق من الطلب يُصرف المبلغ، ثم تستمر في المستوى التالي." },
     { q: "هل هناك حدٌّ لعدد Rewards؟", a: "نعم. يتضمن مسار Traders Rewards 5 Rewards متتالية، بحدود قصوى تزداد في كل مستوى.\n\nحساب 25K :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\nحساب 50K :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\nحساب 100K :\nReward #1 : 750 $\nReward #2 : 1.000 $\nReward #3 : 1.250 $\nReward #4 : 1.500 $\nReward #5 : 1.750 $\n\nReward #5 هو المستوى النهائي ويمنح وضع Trader Reward." },
     { q: "هل يمكنني الحصول على عدة Challenges في وقت واحد؟", a: "نعم. بغض النظر عن حجم الحساب، يمكنك امتلاك ما يصل إلى 10 Challenges نشطة و5 Reward Accounts نشطة في الوقت نفسه." },

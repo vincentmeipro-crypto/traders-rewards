@@ -180,9 +180,9 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           {L("Débloquez votre première Reward","Desbloquee su primera Reward","Unlock your first Reward")}
         </h2>
         <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.36)", margin: 0 }}>
-          {L("Objectif +4% · 5 journées qualifiantes · Trailing DD EOD avec verrou",
-             "Objetivo +4% · 5 días calificados · Trailing DD EOD con bloqueo",
-             "Target +4% · 5 qualifying days · Trailing EOD DD with lock")}
+          {L("Safety Net + cap · 5 journées qualifiantes · Trailing DD EOD avec verrou",
+             "Safety Net + tope · 5 días calificados · Trailing DD EOD con bloqueo",
+             "Safety Net + cap · 5 qualifying days · Trailing EOD DD with lock")}
         </p>
       </div>
 
@@ -193,7 +193,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           <h3 style={modalSecTitle}>{L("Règles de qualification","Reglas de calificación","Qualification Rules")}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 8 }}>
             {[
-              { label: L("Objectif","Objetivo","Target"),                  val: "+4%",    note: L("Du capital initial","Del capital inicial","Of starting capital"), color: GREEN },
+              { label: L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold"), val: L("Safety Net + cap","Safety Net + tope","Safety Net + cap"), note: L("Verrou déclenché au Safety Net","Bloqueo en Safety Net","Lock triggers at Safety Net"), color: GREEN },
               { label: L("Jours qualifiants","Días calificados","Qualifying days"), val: L("5 min","5 mín","5 min"), note: L("Journées avec profit ≥ seuil","Días con beneficio ≥ umbral","Days with profit ≥ threshold"), color: ACCENT },
               { label: L("Consistance","Consistencia","Consistency"),       val: "≤ 50%",  note: L("Meilleure journée ≤ 50% du profit total","Mejor día ≤ 50% del beneficio","Best day ≤ 50% of total profit"), color: ACCENT },
               { label: L("Durée","Duración","Duration"),                    val: L("Illimitée","Ilimitada","Unlimited"), note: L("Pas d'expiration","Sin expiración","No expiration"), color: "rgba(255,255,255,0.35)" },
@@ -226,7 +226,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
               <div key={i} style={infoBox}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>{row.size}</div>
                 <div style={{ fontSize: 16, fontWeight: 900, color: "#FFF", marginBottom: 3 }}>+{fmt(row.min)}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 500 }}>/jour</span></div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>{L("Objectif +4%","Objetivo +4%","Target +4%")} : {fmt(row.target)}</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>{L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold")} : {fmt(row.target)}</div>
               </div>
             ))}
           </div>
@@ -251,7 +251,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
                   [L("Plancher de protection initial","Plancher inicial","Initial protection floor"), fmt(s.floorStart)],
                   [L("Verrou déclenché à","Bloqueo en","Lock triggers at"),   fmt(s.lockAt)],
                   [L("Plancher verrouillé à","Plancher bloqueado en","Protection floor locks to"), fmt(s.bal)],
-                  [L("Objectif +4%","Objetivo +4%","Target +4%"),             fmt(s.targetBal)],
+                  [L("Seuil Reward #1 (Safety Net + cap)","Umbral Reward #1 (Safety Net + tope)","Reward #1 threshold (Safety Net + cap)"), fmt(s.targetBal)],
                 ].map(([k, v], j) => (
                   <div key={j} style={{ display: "flex", justifyContent: "space-between", padding: "2.5px 0",
                     borderBottom: j < 4 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
@@ -298,9 +298,9 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
   );
 }
 
-// ── Modal 03 : Rewards #2 → #5 — nouvelle mécanique +4% ─────
+// ── Modal 03 : Rewards #2 → #5 — seuil = Safety Net + cap du niveau ─────
 function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: string, en: string) => string }) {
-  // Seuils de demande : capital × 1.04 (100K exception : +4% = 104K, plancher lock = 103K)
+  // Seuils de demande : Safety Net + cap du niveau. Tableau : seuil Reward #2 (= Safety Net + cap#2)
   const thresholds = [
     { size: "25K",  capital: "$25 000", threshold: "$26 400" },
     { size: "50K",  capital: "$50 000", threshold: "$52 600" },
@@ -358,9 +358,9 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
         </h2>
         <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.36)", margin: 0 }}>
           {L(
-            "Seuil +4% permanent · Montant = min(profit, plafond) · Pas de reset · Plancher fixe",
-            "Umbral +4% permanente · Importe = min(beneficio, tope) · Sin reset · Plancher fijo",
-            "Permanent +4% threshold · Amount = min(profit, cap) · No reset · Fixed floor"
+            "Seuil = Safety Net + cap du niveau · Montant = min(profit, plafond) · Pas de reset · DD fixe",
+            "Umbral = Safety Net + tope del nivel · Importe = min(beneficio, tope) · Sin reset · DD fijo",
+            "Threshold = Safety Net + level cap · Amount = min(profit, cap) · No reset · Fixed DD"
           )}
         </p>
       </div>
@@ -593,7 +593,8 @@ export default function JourneyThreeLevels() {
 
   const selectedSize = SIZES_DATA[selectedSizeIndex];
   const challengeTarget = selectedSize.bal * 1.06;
-  const rewardThreshold = selectedSize.targetBal;
+  const rewardThreshold = selectedSize.targetBal;              // Safety Net + cap#1 (seuil Reward #1)
+  const ddUsd = selectedSize.bal - selectedSize.floorStart;    // DD EOD en $ (1000/2000/3000)
   const rewardOne = selectedSize.rewardCaps[0];
   const cumulativeRewards = selectedSize.rewardCaps.reduce((sum, amount) => sum + amount, 0);
   const money = (value: number) => `${value.toLocaleString("fr-FR")} $`;
@@ -748,7 +749,7 @@ export default function JourneyThreeLevels() {
 
               {/* Règles */}
               <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px" }}>
-                DD EOD {selectedSize.ddPct}%
+                {L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} {money(ddUsd)}
               </div>
 
               {/* Spacer */}
@@ -819,14 +820,17 @@ export default function JourneyThreeLevels() {
                 </span>
               </div>
 
-              {/* +4% + progression */}
-              <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 12, position: "relative", flexWrap: "wrap" }}>
-                <span style={{ fontSize: 28, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1 }}>+4%</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.55)" }}>
-                  {money(selectedSize.bal)}
-                  <span style={{ color: "rgba(255,255,255,0.22)", margin: "0 5px" }}>→</span>
-                  {money(rewardThreshold)}
-                </span>
+              {/* Safety Net + seuil Reward #1 */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12, position: "relative" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(156,207,234,0.50)", letterSpacing: "1.5px", textTransform: "uppercase" }}>Safety Net</span>
+                  <span style={{ fontSize: 22, fontWeight: 900, color: ACCENT, letterSpacing: "-0.5px", lineHeight: 1 }}>{money(selectedSize.lockAt)}</span>
+                </div>
+                <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.42)" }}>
+                  {L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold")}{" → "}
+                  <span style={{ color: ACCENT, fontWeight: 800 }}>{money(rewardThreshold)}</span>
+                  {" "}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>({L("cap","tope","cap")} {money(rewardOne)})</span>
+                </div>
               </div>
 
               {/* Journées qualifiantes */}
@@ -836,7 +840,7 @@ export default function JourneyThreeLevels() {
 
               {/* Règles */}
               <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
-                DD EOD {selectedSize.ddPct}%
+                {L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} {money(ddUsd)}
                 <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
                 {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
                 <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
@@ -921,17 +925,17 @@ export default function JourneyThreeLevels() {
                 </div>
               </div>
 
-              {/* Seuil */}
+              {/* Safety Net */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, position: "relative" }}>
                 <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(184,168,216,0.62)", textTransform: "uppercase", letterSpacing: "1px" }}>
-                  {L("SEUIL REWARD","UMBRAL REWARD","REWARD THRESHOLD")}
+                  SAFETY NET
                 </span>
-                <span style={{ fontSize: 14, fontWeight: 900, color: VIOLET }}>{money(rewardThreshold)}</span>
+                <span style={{ fontSize: 14, fontWeight: 900, color: VIOLET }}>{money(selectedSize.lockAt)}</span>
               </div>
 
               {/* Règles */}
               <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
-                {L("DD fixe · Plancher","DD fijo · Plancher","Fixed DD · Floor")} {money(selectedSize.bal)}
+                {L("DD fixe","DD fijo","Fixed DD")}
                 <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
                 {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
               </div>
@@ -939,10 +943,10 @@ export default function JourneyThreeLevels() {
               {/* Phrase */}
               <div style={{ fontSize: 11, color: "rgba(255,255,255,0.72)", lineHeight: 1.6, position: "relative" }}>
                 {L(
-                  "Après chaque Reward, reconstruisez votre balance jusqu'à",
-                  "Tras cada Reward, reconstruya su balance hasta",
-                  "After each Reward, rebuild your balance to"
-                )} {money(rewardThreshold)} {L("pour débloquer la suivante.","para desbloquear la siguiente.","to unlock the next one.")}
+                  "Seuil de chaque Reward = Safety Net + cap du niveau demandé.",
+                  "Umbral de cada Reward = Safety Net + tope del nivel solicitado.",
+                  "Each Reward threshold = Safety Net + cap of the requested level."
+                )}
               </div>
 
               {/* Spacer */}

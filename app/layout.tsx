@@ -210,7 +210,7 @@ const jsonLd = {
           name: "Comment et quand suis-je payé ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "La première Reward est accessible après avoir atteint +4% et validé au moins 5 journées qualifiantes sur le Reward Account, sous réserve du respect des règles du programme.",
+            text: "La première Reward est accessible après avoir atteint le seuil Safety Net + cap et validé au moins 5 journées qualifiantes sur le Reward Account, sous réserve du respect des règles du programme.",
           },
         },
         {
