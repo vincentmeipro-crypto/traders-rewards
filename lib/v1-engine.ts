@@ -21,7 +21,6 @@
  *  NIVEAU 1 — CHALLENGER / CHALLENGE (phase_type="challenge") — APEX EOD MODEL :
  *   - Profit Target      = +6 % (25K=+1 500$ / 50K=+3 000$ / 100K=+6 000$)
  *   - Drawdown EOD fixe  = 1 000$ (25K) / 2 000$ (50K) / 3 000$ (100K) — montant fixe en $
- *   - DLL (Daily Loss)   = 500$ (25K) / 1 000$ (50K) / 1 500$ (100K)
  *   - Consistency Rule   = AUCUNE — Apex EOD supprime la consistency au Challenge
  *   - Min trading days   = 0 (aucun minimum — Apex EOD)
  *   - Max trading days   = 30 calendaires depuis created_at
@@ -30,7 +29,6 @@
  *  NIVEAU 2 — REWARD START / REWARD #1 (phase_type="funded") — APEX EOD MODEL :
  *   - Profit Target      = +4 %
  *   - Drawdown EOD fixe  = 1 000$ (25K) / 2 000$ (50K) / 3 000$ (100K) — montant fixe en $
- *   - DLL (Daily Loss)   = 500$ (25K) / 1 000$ (50K) / 1 750$ (100K)
  *   - Safety Net (lock)  : highest_eod ≥ Safety Net → floor = start (permanent)
  *                          25K = 26 100$ / 50K = 52 100$ / 100K = 103 100$
  *   - Consistency Rule   = 50 % (best_day < 50 % du profit total — was 33 %)
@@ -201,29 +199,6 @@ export const V1_SAFETY_NET: Record<number, number> = {
 };
 
 /**
- * Daily Loss Limit (DLL) en USD — APEX EOD MODEL.
- * Limite journalière de perte intraday.
- *
- * Challenge :
- *  25K → 500$ / 50K → 1 000$ / 100K → 1 500$
- * Reward Account :
- *  25K → 500$ / 50K → 1 000$ / 100K → 1 750$
- *
- * Note : le DLL du Reward Account diffère pour 100K.
- */
-export const V1_DAILY_LOSS_LIMIT_CHALLENGE: Record<number, number> = {
-  25000:   500,
-  50000:  1000,
-  100000: 1500,
-};
-
-export const V1_DAILY_LOSS_LIMIT_REWARD: Record<number, number> = {
-  25000:   500,
-  50000:  1000,
-  100000: 1750,
-};
-
-/**
  * Retourne le pourcentage de trailing drawdown EOD pour une balance initiale.
  * Usage : affichage legacy (ex: "4%"). Le CALCUL réel utilise getV1DdUsdByBalance().
  *  25K → 4 %
@@ -261,15 +236,6 @@ export function getV1DdUsdByBalance(startBalance: number): number {
  */
 export function getV1SafetyNet(startBalance: number): number {
   return V1_SAFETY_NET[startBalance] ?? (startBalance * 1.04);
-}
-
-/**
- * Retourne la limite journalière de perte (DLL) en $ pour une balance initiale.
- * @param phase  "challenge" ou "reward" (default "reward")
- */
-export function getV1DailyLossLimit(startBalance: number, phase: "challenge" | "reward" = "reward"): number {
-  const table = phase === "challenge" ? V1_DAILY_LOSS_LIMIT_CHALLENGE : V1_DAILY_LOSS_LIMIT_REWARD;
-  return table[startBalance] ?? 500;
 }
 
 /**

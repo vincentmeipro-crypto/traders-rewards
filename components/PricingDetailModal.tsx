@@ -113,12 +113,6 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
   const ddAmt     = balance * trailingDdPct / 100;
   const floorAmt  = balance - ddAmt;
 
-  // Valeurs consistance
-  const bestGood  = Math.round(targetAmt * 0.467);
-  const bestBad   = Math.round(targetAmt * 0.6);
-  const adjTarget = bestBad * 2;
-  const pct       = (v: number) => (v / targetAmt * 100).toFixed(1) + "%";
-
   return (
     <div
       ref={overlayRef}
@@ -335,55 +329,6 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
               )}
             </p>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-              {/* Conforme */}
-              <div style={{
-                background:   "rgba(71,220,136,0.05)",
-                border:       "1px solid rgba(71,220,136,0.18)",
-                borderRadius: 12, padding: "12px 14px",
-              }}>
-                <div style={{ fontSize: 9, fontWeight: 800, color: GREEN, letterSpacing: "1.5px", marginBottom: 8 }}>
-                  ✓ {L("CONFORME","CONFORME","COMPLIANT")}
-                </div>
-                {[
-                  [L("Profit total","Beneficio total","Total profit"), fmt(targetAmt)],
-                  [L("Meilleure journée","Mejor día","Best day"),       fmt(bestGood)],
-                  [L("Ratio","Ratio","Ratio"),                          pct(bestGood)],
-                ].map(([k, v], i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0",
-                    borderBottom: i < 2 ? "1px solid rgba(71,220,136,0.08)" : "none" }}>
-                    <span style={rowLbl}>{k}</span>
-                    <span style={{ ...rowVal, color: i === 2 ? GREEN : "#FFFFFF" }}>{v}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Objectif ajusté */}
-              <div style={{
-                background:   "rgba(255,83,100,0.05)",
-                border:       "1px solid rgba(255,83,100,0.18)",
-                borderRadius: 12, padding: "12px 14px",
-              }}>
-                <div style={{ fontSize: 9, fontWeight: 800, color: RED, letterSpacing: "1px", marginBottom: 8 }}>
-                  ✗ {L("OBJECTIF AJUSTÉ","OBJETIVO AJUSTADO","TARGET ADJUSTED")}
-                </div>
-                {[
-                  [L("Profit total","Beneficio total","Total profit"), fmt(targetAmt)],
-                  [L("Meilleure journée","Mejor día","Best day"),       fmt(bestBad)],
-                  [L("Ratio","Ratio","Ratio"),                          pct(bestBad)],
-                ].map(([k, v], i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "3px 0",
-                    borderBottom: i < 2 ? "1px solid rgba(255,83,100,0.08)" : "none" }}>
-                    <span style={rowLbl}>{k}</span>
-                    <span style={{ ...rowVal, color: i === 2 ? RED : "#FFFFFF" }}>{v}</span>
-                  </div>
-                ))}
-                <div style={{ fontSize: 10, color: "rgba(255,83,100,0.65)", marginTop: 6, lineHeight: 1.4 }}>
-                  → {L("Objectif ajusté à","Objetivo ajustado a","Target adjusted to")} {fmt(adjTarget)}
-                  {" "}(= 2 × {L("meilleure journée","mejor día","best day")})
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* ── 4. DURÉE ── */}

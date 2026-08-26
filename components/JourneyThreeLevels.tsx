@@ -195,7 +195,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
             {[
               { label: L("Objectif","Objetivo","Target"),                  val: "+4%",    note: L("Du capital initial","Del capital inicial","Of starting capital"), color: GREEN },
               { label: L("Jours qualifiants","Días calificados","Qualifying days"), val: L("5 min","5 mín","5 min"), note: L("Journées avec profit ≥ seuil","Días con beneficio ≥ umbral","Days with profit ≥ threshold"), color: ACCENT },
-              { label: L("Consistance","Consistencia","Consistency"),       val: "≤ 33%",  note: L("Meilleure journée ≤ 33% du profit total","Mejor día ≤ 33% del beneficio","Best day ≤ 33% of total profit"), color: ACCENT },
+              { label: L("Consistance","Consistencia","Consistency"),       val: "≤ 50%",  note: L("Meilleure journée ≤ 50% du profit total","Mejor día ≤ 50% del beneficio","Best day ≤ 50% of total profit"), color: ACCENT },
               { label: L("Durée","Duración","Duration"),                    val: L("Illimitée","Ilimitada","Unlimited"), note: L("Pas d'expiration","Sin expiración","No expiration"), color: "rgba(255,255,255,0.35)" },
             ].map((r, i) => (
               <div key={i} style={{ ...infoBox, borderLeft: `2px solid ${r.color}33` }}>
@@ -302,40 +302,42 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
 function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: string, en: string) => string }) {
   // Seuils de demande : capital × 1.04 (100K exception : +4% = 104K, plancher lock = 103K)
   const thresholds = [
-    { size: "25K",  capital: "$25 000", threshold: "$26 000" },
-    { size: "50K",  capital: "$50 000", threshold: "$52 000" },
-    { size: "100K", capital: "$100 000",threshold: "$104 000" },
+    { size: "25K",  capital: "$25 000", threshold: "$26 400" },
+    { size: "50K",  capital: "$50 000", threshold: "$52 600" },
+    { size: "100K", capital: "$100 000",threshold: "$103 850" },
   ];
 
-  // Cas exemples 50K — post-Reward #1 (balance après R#1 = 51 500$)
-  const PREV_BALANCE = 51_500;
+  // Cas exemples 50K — post-Reward #1 (balance après R#1 = 52 100$, Safety Net 50K)
+  // Threshold R#2 = Safety Net + cap#2 = 52 100 + 650 = 52 750
+  const PREV_BALANCE = 52_100;
   const CAP_R2 = 650; // plafond Reward #2 — 50K
+  const THRESHOLD_R2 = 52_750; // Safety Net 52 100 + cap#2 650
   const cases = [
     {
       label:   L("CAS A","CASO A","CASE A"),
-      balance: 52_000,
-      profit:  52_000 - PREV_BALANCE, // 500
-      reward:  Math.min(52_000 - PREV_BALANCE, CAP_R2), // 500
-      after:   52_000 - Math.min(52_000 - PREV_BALANCE, CAP_R2), // 51 500
-      note:    L("Limité par le profit (< plafond)","Limitado por el beneficio","Capped by profit (< cap)"),
+      balance: 52_400,
+      profit:  52_400 - PREV_BALANCE, // 300
+      reward:  0, // seuil 52 750 non atteint
+      after:   52_400,
+      note:    L("Seuil non atteint — Reward indisponible","Umbral no alcanzado — Reward no disponible","Threshold not reached — Reward unavailable"),
       noteColor: ORANGE,
     },
     {
       label:   L("CAS B","CASO B","CASE B"),
-      balance: 52_150,
-      profit:  52_150 - PREV_BALANCE, // 650
-      reward:  Math.min(52_150 - PREV_BALANCE, CAP_R2), // 650
-      after:   52_150 - Math.min(52_150 - PREV_BALANCE, CAP_R2), // 51 500
+      balance: THRESHOLD_R2,
+      profit:  THRESHOLD_R2 - PREV_BALANCE, // 650
+      reward:  Math.min(THRESHOLD_R2 - PREV_BALANCE, CAP_R2), // 650
+      after:   THRESHOLD_R2 - Math.min(THRESHOLD_R2 - PREV_BALANCE, CAP_R2), // 52 100
       note:    L("Exactement le plafond","Exactamente el tope","Exactly at the cap"),
       noteColor: GREEN,
     },
     {
       label:   L("CAS C","CASO C","CASE C"),
-      balance: 52_400,
-      profit:  52_400 - PREV_BALANCE, // 900
-      reward:  Math.min(52_400 - PREV_BALANCE, CAP_R2), // 650
-      after:   52_400 - Math.min(52_400 - PREV_BALANCE, CAP_R2), // 51 750
-      note:    L("Limité par le plafond — 250$ conservés","Limitado por el tope — 250$ conservados","Capped — $250 stays in account"),
+      balance: 53_200,
+      profit:  53_200 - PREV_BALANCE, // 1 100
+      reward:  Math.min(53_200 - PREV_BALANCE, CAP_R2), // 650
+      after:   53_200 - Math.min(53_200 - PREV_BALANCE, CAP_R2), // 52 550
+      note:    L("Limité par le plafond — 450$ conservés","Limitado por el tope — 450$ conservados","Capped — $450 stays in account"),
       noteColor: ACCENT,
     },
   ];
@@ -372,9 +374,9 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           </h3>
           <p style={modalBodyTxt}>
             {L(
-              "Pour demander une Reward (quelle que soit son numéro), votre balance doit être au minimum à +4% du capital initial du compte. Ce seuil est permanent et s'applique à chaque Reward.",
-              "Para solicitar una Reward (cualquiera que sea su número), su balance debe estar al menos en +4% del capital inicial. Este umbral es permanente y se aplica a cada Reward.",
-              "To request any Reward, your balance must be at least +4% above the account's starting capital. This threshold is permanent and applies to every Reward."
+              "Pour demander une Reward, votre balance doit atteindre le seuil de demande : Safety Net + cap du niveau de Reward. Ce seuil augmente légèrement à chaque niveau en fonction du plafond associé.",
+              "Para solicitar una Reward, su balance debe alcanzar el umbral de solicitud: Safety Net + tope del nivel de Reward. Este umbral aumenta ligeramente con cada nivel según el tope asociado.",
+              "To request a Reward, your balance must reach the request threshold: Safety Net + cap of the Reward level. The threshold increases slightly at each level based on the associated cap."
             )}
           </p>
           <div style={{ overflowX: "auto" }}>
@@ -384,7 +386,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
                   {[
                     L("Taille","Tamaño","Size"),
                     L("Capital initial","Capital inicial","Starting capital"),
-                    L("Seuil de demande (+4%)","Umbral de solicitud (+4%)","Request threshold (+4%)"),
+                    L("Seuil de demande (Safety Net + cap)","Umbral de solicitud (Safety Net + tope)","Request threshold (Safety Net + cap)"),
                   ].map((h, i) => (
                     <th key={i} style={{
                       textAlign: i === 0 ? "left" : "center",
@@ -445,9 +447,9 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           </h3>
           <p style={{ fontSize: 11.5, color: "rgba(255,255,255,0.35)", margin: "0 0 12px", lineHeight: 1.5 }}>
             {L(
-              "Balance après Reward #1 : 51 500 $ · Seuil de demande : 52 000 $ · Plafond Reward #2 : 650 $",
-              "Balance tras Reward #1 : 51 500 $ · Umbral de solicitud : 52 000 $ · Tope Reward #2 : 650 $",
-              "Balance after Reward #1: $51,500 · Request threshold: $52,000 · Reward #2 cap: $650"
+              "Balance après Reward #1 : 52 100 $ · Seuil de demande : 52 750 $ · Plafond Reward #2 : 650 $",
+              "Balance tras Reward #1 : 52 100 $ · Umbral de solicitud : 52 750 $ · Tope Reward #2 : 650 $",
+              "Balance after Reward #1: $52,100 · Request threshold: $52,750 · Reward #2 cap: $650"
             )}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -591,7 +593,7 @@ export default function JourneyThreeLevels() {
 
   const selectedSize = SIZES_DATA[selectedSizeIndex];
   const challengeTarget = selectedSize.bal * 1.06;
-  const rewardThreshold = selectedSize.bal * 1.04;
+  const rewardThreshold = selectedSize.targetBal;
   const rewardOne = selectedSize.rewardCaps[0];
   const cumulativeRewards = selectedSize.rewardCaps.reduce((sum, amount) => sum + amount, 0);
   const money = (value: number) => `${value.toLocaleString("fr-FR")} $`;
@@ -739,7 +741,7 @@ export default function JourneyThreeLevels() {
 
               {/* Durée */}
               <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.72)", marginBottom: 8, position: "relative", lineHeight: 1.5 }}>
-                {L("2 jours minimum","2 días mínimo","2 days minimum")}
+                {L("0 jour minimum","0 días mínimo","0 days minimum")}
                 <span style={{ color: "rgba(255,255,255,0.30)", margin: "0 6px" }}>→</span>
                 {L("30 jours maximum","30 días máximo","30 days maximum")}
               </div>
@@ -747,8 +749,6 @@ export default function JourneyThreeLevels() {
               {/* Règles */}
               <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px" }}>
                 DD EOD {selectedSize.ddPct}%
-                <span style={{ margin: "0 6px", opacity: 0.5 }}>•</span>
-                {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
               </div>
 
               {/* Spacer */}
@@ -838,7 +838,7 @@ export default function JourneyThreeLevels() {
               <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
                 DD EOD {selectedSize.ddPct}%
                 <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                {L("Consistance 33%","Consistencia 33%","Consistency 33%")}
+                {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
                 <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
                 {L("Temps illimité","Tiempo ilimitado","Unlimited duration")}
               </div>
@@ -933,7 +933,7 @@ export default function JourneyThreeLevels() {
               <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
                 {L("DD fixe · Plancher","DD fijo · Plancher","Fixed DD · Floor")} {money(selectedSize.bal)}
                 <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                {L("Consistance 33%","Consistencia 33%","Consistency 33%")}
+                {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
               </div>
 
               {/* Phrase */}

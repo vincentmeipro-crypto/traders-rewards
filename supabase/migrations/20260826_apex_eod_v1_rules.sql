@@ -24,7 +24,7 @@
 --  Reward Account (phase 2 — Reward #1)
 --    profit_target     : 4 %
 --    min_trading_days  : 5 (jours qualifiants)
---    daily_drawdown    : 0.0 (non applicable — géré par engine via DLL)
+--    daily_drawdown    : 0.0 (non applicable — géré par engine)
 --    total_drawdown    : 4/4/3 % (= trailing_dd_pct)
 --    consistency       : 50 % (best_day < 50 % du profit requis)
 --
@@ -36,16 +36,11 @@
 -- ============================================================
 -- RÈGLES ENGINE-ONLY — non stockées en DB (lib/v1-engine.ts) :
 -- ─────────────────────────────────────────────────────────────
---  DLL Challenge (V1_DAILY_LOSS_LIMIT_CHALLENGE) :
---    25K=500$ / 50K=1 000$ / 100K=1 500$
---  DLL Reward Account (V1_DAILY_LOSS_LIMIT_REWARD) :
---    25K=500$ / 50K=1 000$ / 100K=1 750$
 --  Safety Net — seuil de verrouillage absolu (V1_SAFETY_NET) :
 --    25K=26 100$ / 50K=52 100$ / 100K=103 100$
 --  DD EOD fixe en $ (V1_DD_USD_BY_BALANCE) :
---    25K=1 000$ (= balance×trailing_dd_pct) /
---    50K=2 000$ / 100K=3 000$
---  → Ces 4 valeurs ne sont PAS dans challenge_product_rules.
+--    25K=1 000$ / 50K=2 000$ / 100K=3 000$
+--  → Ces 2 valeurs ne sont PAS dans challenge_product_rules.
 --    Elles sont hardcodées dans lib/v1-engine.ts et non lues depuis la DB.
 --    Cette migration ne les crée PAS pour ne pas inventer des règles fictives.
 -- ============================================================
@@ -66,7 +61,7 @@ WHERE phase_order = 1
 
 -- §1b — Phase 2 (funded = Reward #1) :
 --   • label "Reward Account" → "Reward #1"
---   • daily_drawdown → 0.0 (DLL géré par engine, pas par cette colonne)
+--   • daily_drawdown → 0.0 (non applicable sur Reward Account)
 --   • profit_split   → NULL (pas de profit split sur Rewards)
 UPDATE challenge_product_phases
 SET phase_label    = 'Reward #1',
@@ -90,7 +85,7 @@ SELECT
   'reward_journey',
   'Rewards #2 à #5',
   4.0,   -- threshold = Safety Net + cap du niveau (calculé par engine)
-  0.0,   -- DLL géré par engine
+  0.0,   -- non applicable (pas de DLL sur reward_journey)
   0.0,   -- plancher FIXE = start_balance (engine), pas de trailing
   0,     -- aucun minimum de jours (Niveau 3)
   NULL,  -- illimité

@@ -103,22 +103,17 @@ const faqData = {
     // 02
     {
       q: "How does the Challenge work?",
-      a: "The Challenge is a single step with a +6% profit target. There is no minimum number of trading days and no consistency rule. You must stay within your Trailing Drawdown EOD limit ($1,000 on the 25K, $2,000 on the 50K, $3,000 on the 100K) and your Daily Loss Limit ($500 on the 25K, $1,000 on the 50K, $1,500 on the 100K). You have a maximum of 30 calendar days to validate your Challenge.",
+      a: "The Challenge is a single step with a +6% profit target. There is no minimum number of trading days and no consistency rule. You must stay within your Trailing Drawdown EOD limit ($1,000 on the 25K, $2,000 on the 50K, $3,000 on the 100K). You have a maximum of 30 calendar days to validate your Challenge.",
     },
     // 03
     {
       q: "What is the Trailing Drawdown EOD?",
       a: "The Trailing Drawdown EOD is a protection floor recalculated based on your account's progression at end of day. Each time a new EOD high is recorded, the floor rises with it and never comes back down.\n\nDuring the Challenge, this floor evolves throughout the entire Challenge based on your EOD highs.\n\nOn the Reward Account, once the Trailing Drawdown reaches the account's starting capital, it stops rising and remains permanently fixed at that level.\n\nThe limit is 4% on 25K and 50K accounts, and 3% on the 100K. If your equity falls below the floor applicable to your account, the account is considered failed.",
     },
-    // 04 — NEW
-    {
-      q: "Is there a daily loss limit?",
-      a: "Yes. In addition to the Trailing Drawdown EOD, Traders Rewards applies a Daily Loss Limit (DLL). During the Challenge: $500 on the 25K, $1,000 on the 50K, $1,500 on the 100K. On the Reward Account: $500 on the 25K, $1,000 on the 50K, $1,750 on the 100K. These are two distinct limits — your equity must not breach either one on any given day.",
-    },
     // 05
     {
       q: "What are all the Challenge rules?",
-      a: "The Challenge is a single step with a +6% profit target ($1,500 on the 25K / $3,000 on the 50K / $6,000 on the 100K). There is no minimum trading days and no consistency rule. Your two risk limits are: Trailing Drawdown EOD ($1,000 / $2,000 / $3,000) and Daily Loss Limit ($500 / $1,000 / $1,500). You have a maximum of 30 calendar days.",
+      a: "The Challenge is a single step with a +6% profit target ($1,500 on the 25K / $3,000 on the 50K / $6,000 on the 100K). There is no minimum trading days and no consistency rule. Your only risk limit is the Trailing Drawdown EOD ($1,000 / $2,000 / $3,000). You have a maximum of 30 calendar days.",
     },
     // 06
     {

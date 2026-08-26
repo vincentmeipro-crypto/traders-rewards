@@ -31,8 +31,6 @@ import {
   V1_DD_PCT_BY_BALANCE,
   V1_DD_USD_BY_BALANCE,
   V1_SAFETY_NET,
-  V1_DAILY_LOSS_LIMIT_CHALLENGE,
-  V1_DAILY_LOSS_LIMIT_REWARD,
   V1_CONSISTENCY_PCT,
   V1_CHALLENGE,
   V1_REWARD_CAPS,
@@ -40,7 +38,6 @@ import {
   getV1DdPctByBalance,
   getV1DdUsdByBalance,
   getV1SafetyNet,
-  getV1DailyLossLimit,
   getV1LockPctByBalance,
   getV1RewardCap,
   getV1RewardThresholdUsd,
@@ -125,8 +122,7 @@ test("V1_DD_USD_BY_BALANCE[100000] = 3 000", V1_DD_USD_BY_BALANCE[100000], 3000)
 // ════════════════════════════════════════════════════════════════
 
 section("E. Apex EOD — floor = highest − ddUsd (montant fixe $)");
-// Apex EOD : floor = highest_eod − ddUsd (pas de %). Le DLL existe mais
-// est géré en dehors de ce moteur (paramètre externe, pas dans checkV1DDBreach).
+// Apex EOD : floor = highest_eod − ddUsd (pas de %). Pas de DLL — supprimé du modèle.
 {
   // 50K : floor = 50 000 − 2 000 = 48 000 (même résultat qu'avant au départ)
   const floor50K = computeV1TrailingFloor(50000, 50000, 2000, null);
@@ -312,27 +308,6 @@ test("V1_CONSISTENCY_PCT.reward = 50 (was 33)", V1_CONSISTENCY_PCT.reward, 50);
   // 1001 / 0.50 / 50000 × 100 = 4.004 → cible = 4.01% (arrondi au centième supérieur)
   const raised = computeV1EffectiveProfitTarget(50000, 4, 1001, 50);
   test("50K Reward: best_day 1001$ > 50% → cible monte au-delà de 4%", raised > 4, true);
-}
-
-// ════════════════════════════════════════════════════════════════
-// L2. Daily Loss Limit (DLL) — Apex EOD
-// ════════════════════════════════════════════════════════════════
-
-section("L2. DLL — Challenge et Reward Account (Apex EOD)");
-{
-  // Challenge DLL
-  test("DLL Challenge 25K  =    500$", V1_DAILY_LOSS_LIMIT_CHALLENGE[25000],   500);
-  test("DLL Challenge 50K  =  1 000$", V1_DAILY_LOSS_LIMIT_CHALLENGE[50000],  1000);
-  test("DLL Challenge 100K =  1 500$", V1_DAILY_LOSS_LIMIT_CHALLENGE[100000], 1500);
-  // Reward Account DLL
-  test("DLL Reward   25K  =    500$", V1_DAILY_LOSS_LIMIT_REWARD[25000],   500);
-  test("DLL Reward   50K  =  1 000$", V1_DAILY_LOSS_LIMIT_REWARD[50000],  1000);
-  test("DLL Reward   100K =  1 750$", V1_DAILY_LOSS_LIMIT_REWARD[100000], 1750);
-  // Helpers
-  test("getV1DailyLossLimit(25000, 'challenge') = 500",    getV1DailyLossLimit(25000, "challenge"),   500);
-  test("getV1DailyLossLimit(100000, 'challenge') = 1500",  getV1DailyLossLimit(100000, "challenge"), 1500);
-  test("getV1DailyLossLimit(100000, 'reward') = 1750",     getV1DailyLossLimit(100000, "reward"),    1750);
-  test("getV1DailyLossLimit(50000) = 1000 (default=reward)", getV1DailyLossLimit(50000),             1000);
 }
 
 // ════════════════════════════════════════════════════════════════
