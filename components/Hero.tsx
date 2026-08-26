@@ -418,16 +418,20 @@ export default function Hero() {
 
             {/* ── CTAs ── */}
             <div style={{
-              display:    "flex",
-              gap:        isMobile ? 10 : 12,
-              flexWrap:   "nowrap",
-              alignItems: "center",
-              animation:  "heroFadeUp 0.52s ease 0.15s both",
+              display:       "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap:           isMobile ? 8 : 12,
+              alignItems:    isMobile ? "stretch" : "center",
+              animation:     "heroFadeUp 0.52s ease 0.15s both",
             }}>
               <a
                 href="#pricing"
                 className="h-cta-main"
-                style={{ fontSize: isMobile ? 11 : 12, padding: isMobile ? "13px 22px" : "15px 32px" }}
+                style={{
+                  fontSize:       isMobile ? 13 : 12,
+                  padding:        isMobile ? "17px 28px" : "15px 32px",
+                  justifyContent: isMobile ? "center" : undefined,
+                }}
               >
                 {ctaMain}
                 <svg
@@ -443,7 +447,12 @@ export default function Hero() {
               <a
                 href="#parcours-3-niveaux"
                 className="h-cta-ghost"
-                style={{ fontSize: isMobile ? 11 : 12, padding: isMobile ? "13px 22px" : "15px 32px" }}
+                style={{
+                  fontSize:  isMobile ? 10 : 12,
+                  padding:   isMobile ? "9px 18px" : "15px 32px",
+                  alignSelf: isMobile ? "flex-start" : undefined,
+                  opacity:   isMobile ? 0.8 : 1,
+                }}
               >
                 {ctaSub}
               </a>
@@ -459,19 +468,19 @@ export default function Hero() {
             display:        "flex",
             flexDirection:  "column",
             justifyContent: "center",
-            padding:        isMobile ? "0 0 40px" : "52px 0",
+            padding:        isMobile ? "0 0 20px" : "52px 0",
           }}>
 
             {/* Parcours — fond noir, pas de carte */}
             <div style={{
-              padding:  isMobile ? "28px 22px 22px" : "34px 32px 26px",
+              padding:  isMobile ? "16px 18px 12px" : "34px 32px 26px",
               position: "relative",
             }}>
 
               {/* ── Header : JUSQU'À / 6 250 $ / DE REWARDS CUMULÉES ── */}
               <div style={{
                 textAlign:    "center",
-                marginBottom: isMobile ? 14 : 18,
+                marginBottom: isMobile ? 8 : 18,
                 animation:    "heroFadeUp 0.52s ease 0.20s both",
               }}>
                 <div style={{
@@ -482,10 +491,10 @@ export default function Hero() {
                   textTransform: "uppercase",
                   marginBottom:  8,
                 }}>
-                  {L("JUSQU'À","HASTA","UP TO")}
+                  {L("GAGNEZ JUSQU'À","GANA HASTA","EARN UP TO")}
                 </div>
                 <div style={{
-                  fontSize:          isMobile ? "clamp(2.8rem,10vw,3.8rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
+                  fontSize:          isMobile ? "clamp(2.2rem,8vw,3rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
                   fontWeight:        900,
                   letterSpacing:     "-1.5px",
                   lineHeight:        0.90,
@@ -502,7 +511,7 @@ export default function Hero() {
                   textTransform: "uppercase",
                   marginTop:     9,
                 }}>
-                  {L("DE REWARDS CUMULÉES","DE REWARDS ACUMULADAS","IN CUMULATIVE REWARDS")}
+                  {L("AVEC 1 SEUL COMPTE","CON 1 SOLA CUENTA","WITH 1 ACCOUNT")}
                 </div>
               </div>
 
@@ -510,7 +519,7 @@ export default function Hero() {
               <div style={{
                 height:       1,
                 background:   "rgba(105,197,253,0.09)",
-                marginBottom: isMobile ? 10 : 14,
+                marginBottom: isMobile ? 6 : 14,
               }} />
 
               {/* ── Progression verticale 05 → 00 ── */}
@@ -534,7 +543,7 @@ export default function Hero() {
                         gap:        0,
                         position:   "relative",
                         zIndex:     1,
-                        height:     isMobile ? 42 : 46,
+                        height:     isMobile ? 36 : 46,
                       }}
                     >
                       {/* Label gauche */}
