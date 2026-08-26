@@ -103,7 +103,7 @@ const faqData = {
     // 02
     {
       q: "How does the Challenge work?",
-      a: "The Challenge is a single step with a +6% profit target. You must trade a minimum of 2 days, respect a maximum consistency of 50%, and stay within your Trailing Drawdown EOD limit: 4% on 25K and 50K accounts, 3% on the 100K. You have a maximum of 30 calendar days to validate your Challenge.",
+      a: "The Challenge is a single step with a +6% profit target. There is no minimum number of trading days and no consistency rule. You must stay within your Trailing Drawdown EOD limit ($1,000 on the 25K, $2,000 on the 50K, $3,000 on the 100K) and your Daily Loss Limit ($500 on the 25K, $1,000 on the 50K, $1,500 on the 100K). You have a maximum of 30 calendar days to validate your Challenge.",
     },
     // 03
     {
@@ -113,17 +113,17 @@ const faqData = {
     // 04 — NEW
     {
       q: "Is there a daily loss limit?",
-      a: "No. Traders Rewards does not apply a separate Daily Drawdown. Your only loss limit is the Trailing Drawdown EOD: 4% on 25K and 50K accounts, and 3% on the 100K. This lets you focus on a single, clear and easy-to-track risk limit.",
+      a: "Yes. In addition to the Trailing Drawdown EOD, Traders Rewards applies a Daily Loss Limit (DLL). During the Challenge: $500 on the 25K, $1,000 on the 50K, $1,500 on the 100K. On the Reward Account: $500 on the 25K, $1,000 on the 50K, $1,750 on the 100K. These are two distinct limits — your equity must not breach either one on any given day.",
     },
     // 05
     {
       q: "What are all the Challenge rules?",
-      a: "The Challenge is a single step with a +6% profit target. The Trailing Drawdown EOD is 4% on 25K and 50K accounts, and 3% on the 100K. The consistency rule requires that your best day must not represent more than 50% of your total profit at the time of validation. You must trade a minimum of 2 days and have a maximum of 30 calendar days to pass your Challenge.",
+      a: "The Challenge is a single step with a +6% profit target ($1,500 on the 25K / $3,000 on the 50K / $6,000 on the 100K). There is no minimum trading days and no consistency rule. Your two risk limits are: Trailing Drawdown EOD ($1,000 / $2,000 / $3,000) and Daily Loss Limit ($500 / $1,000 / $1,500). You have a maximum of 30 calendar days.",
     },
     // 06
     {
       q: "What is the Reward Account?",
-      a: "The Reward Account is your long-term account, accessible after validating your Challenge and paying the activation fee. You must reach +4% profit with at least 5 qualifying days to access your first Reward. This +4% threshold relative to starting capital is permanent: it applies to every Reward throughout your journey. The maximum consistency is 33% and you have unlimited time.",
+      a: "The Reward Account is your long-term account, accessible after validating your Challenge and paying the activation fee. You must accumulate at least 5 qualifying days and reach the Safety Net threshold to access each Reward. The Safety Net is $26,100 (25K) / $52,100 (50K) / $103,100 (100K). The consistency rule requires that your best day represents less than 50% of your total profit. You have unlimited time.",
     },
     // 07
     {
@@ -133,12 +133,12 @@ const faqData = {
     // 08
     {
       q: "What is a qualifying day?",
-      a: "A qualifying day is a trading day closed with a minimum net profit corresponding to your account size: $50 on the 25K, $100 on the 50K, and $150 on the 100K. You must validate at least 5 qualifying days to meet the conditions of your Reward Account. These amounts represent only the minimum daily profit required to count a qualifying day — not the amount of your Rewards.",
+      a: "A qualifying day is a trading day closed with a minimum net profit corresponding to your account size: $100 on the 25K, $250 on the 50K, and $300 on the 100K. You must validate at least 5 qualifying days to meet the conditions of your Reward Account. These amounts represent only the minimum daily profit required to count a qualifying day — not the amount of your Rewards.",
     },
     // 09
     {
       q: "How are Rewards calculated and paid?",
-      a: "To request a Reward, your balance must first reach the +4% threshold above starting capital ($26,000 on the 25K, $52,000 on the 50K, $104,000 on the 100K).\n\nThe amount paid is whichever is lower:\n— your new profit since the previous Reward\n— the cap for your current level\n\nAfter payment, the Reward amount is deducted from your balance. The protection floor stays locked at your starting capital — no automatic reset. You then rebuild your progress toward the next Reward.",
+      a: "To request a Reward, your balance must first reach the Reward Request Threshold: Safety Net + cap for that level. For example, on a 25K account, Reward #1 requires a balance of at least $26,400 ($26,100 Safety Net + $300 cap). The exact threshold varies by account size and Reward level.\n\nThe amount paid is whichever is lower:\n— your new profit since the previous Reward\n— the cap for your current level\n\nAfter payment, the Reward amount is deducted from your balance. The protection floor stays locked at your starting capital — no automatic reset. You then rebuild your progress toward the next Reward.",
     },
     // 10
     {

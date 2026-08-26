@@ -28,6 +28,7 @@ export const REWARD_AMOUNTS = [
   [ 750, 1000, 1250, 1500, 1750 ],  // 100K R1 → R5
 ] as const;
 
-// Seuils journée qualifiante (USD) — [25K, 50K, 100K]
+// Seuils journée qualifiante (USD) — [25K, 50K, 100K] — APEX EOD MODEL
 // ATTENTION : ce sont des SEUILS de qualification, PAS des montants de reward
-export const QUAL_DAY_USD = [50, 100, 150] as const;
+// Apex EOD : montants relevés (was [50, 100, 150])
+export const QUAL_DAY_USD = [100, 250, 300] as const;

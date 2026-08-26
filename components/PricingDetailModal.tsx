@@ -225,14 +225,14 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                 },
                 {
                   label: L("Consistance","Consistencia","Consistency"),
-                  pctStr: "≤ 50%", usd: "",
-                  note: L("Meilleure journée ≤ 50% du profit total","Mejor día ≤ 50% del beneficio total","Best day ≤ 50% of total profit"),
+                  pctStr: L("Aucune","Ninguna","None"), usd: "",
+                  note: L("Apex EOD : aucune règle de consistency au Challenge","Apex EOD: sin regla de consistencia","Apex EOD: no consistency rule for the Challenge"),
                   color: ACCENT,
                 },
                 {
                   label: L("Jours minimum","Días mínimos","Minimum days"),
-                  pctStr: L("2 jours","2 días","2 days"), usd: "",
-                  note: L("Journées avec activité de trading","Días con actividad de trading","Days with trading activity"),
+                  pctStr: L("0 jour","0 días","0 days"), usd: "",
+                  note: L("Aucun minimum — tradez à votre rythme","Sin mínimo — opere a su ritmo","No minimum — trade at your own pace"),
                   color: ACCENT,
                 },
                 {
@@ -329,9 +329,9 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             <h3 style={secTitle}>{L("Règle de Consistance","Regla de Consistencia","Consistency Rule")}</h3>
             <p style={bodyTxt}>
               {L(
-                "Votre meilleure journée ne doit pas représenter plus de 50% de votre profit total au moment de la validation. Si ce ratio est dépassé, l'objectif minimum s'ajuste automatiquement à la hausse — le compte ne passe pas en échec.",
-                "Su mejor día no debe representar más del 50% de su beneficio total al validar. Si se supera, el objetivo mínimo sube automáticamente — la cuenta no falla por esta regla.",
-                "Your best day must not represent more than 50% of your total profit at validation. If exceeded, the minimum target automatically increases — the account is not failed by this rule."
+                "Apex EOD : aucune règle de consistency au Challenge. Vous n'avez aucune contrainte sur la répartition de vos profits journaliers — seul l'objectif de +6% et les limites de risque s'appliquent.",
+                "Apex EOD: sin regla de consistencia en el Challenge. No hay restricciones sobre la distribución de sus ganancias diarias — solo se aplican el objetivo del +6% y los límites de riesgo.",
+                "Apex EOD: no consistency rule during the Challenge. There are no restrictions on the distribution of your daily profits — only the +6% target and the risk limits apply."
               )}
             </p>
 
@@ -392,8 +392,8 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <div style={infoBox}>
                 <div style={miniLabel}>{L("Minimum","Mínimo","Minimum")}</div>
-                <div style={bigVal}>{L("2 jours de trading","2 días de trading","2 trading days")}</div>
-                <div style={tinyNote}>{L("2 journées avec au moins une position détectée","2 días con al menos una posición","2 days with at least one detected trade")}</div>
+                <div style={bigVal}>{L("0 jour minimum","0 días mínimos","0 minimum days")}</div>
+                <div style={tinyNote}>{L("Aucun minimum — Apex EOD supprime cette contrainte","Sin mínimo — Apex EOD elimina esta restricción","No minimum — Apex EOD removes this requirement")}</div>
               </div>
               <div style={infoBox}>
                 <div style={miniLabel}>{L("Maximum","Máximo","Maximum")}</div>

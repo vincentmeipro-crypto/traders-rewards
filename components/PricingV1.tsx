@@ -19,9 +19,9 @@ import PricingDetailModal from "./PricingDetailModal";
 //  100K → 590€ = 59 000 cts
 // Ne PAS modifier challenge_products.price_eur_cents (toujours 19/29/59€)
 const V1_FALLBACK = [
-  { slug: "rewards-25k",  balance: 25000,  priceCents: 1900, qualDayUsd: 50,  activFeeEur: 99,  refPriceCents: 19000, trailingDdPct: 4 },
-  { slug: "rewards-50k",  balance: 50000,  priceCents: 2900, qualDayUsd: 100, activFeeEur: 99,  refPriceCents: 29000, trailingDdPct: 4 },
-  { slug: "rewards-100k", balance: 100000, priceCents: 5900, qualDayUsd: 150, activFeeEur: 149, refPriceCents: 59000, trailingDdPct: 3 },
+  { slug: "rewards-25k",  balance: 25000,  priceCents: 1900, qualDayUsd: 100, activFeeEur: 99,  refPriceCents: 19000, trailingDdPct: 4 },
+  { slug: "rewards-50k",  balance: 50000,  priceCents: 2900, qualDayUsd: 250, activFeeEur: 99,  refPriceCents: 29000, trailingDdPct: 4 },
+  { slug: "rewards-100k", balance: 100000, priceCents: 5900, qualDayUsd: 300, activFeeEur: 149, refPriceCents: 59000, trailingDdPct: 3 },
 ];
 
 type V1Card = { slug: string; balance: number; priceCents: number; qualDayUsd: number; activFeeEur: number; refPriceCents: number; trailingDdPct: number };
@@ -100,8 +100,8 @@ export default function PricingV1() {
       { label: L("1 Étape","1 Paso","1 Step"),               value: "✓",                                                                                     accent: true  },
       { label: L("Objectif profit","Objetivo profit","Profit target"), value: showPct ? "+6%" : `+${fmtDollar(card.balance * 0.06)}`,                        accent: false },
       { label: L("Trailing DD EOD","Trailing DD EOD","Trailing DD EOD"), value: showPct ? `${card.trailingDdPct}%` : fmtDollar(card.balance * card.trailingDdPct / 100), accent: false },
-      { label: L("Consistance","Consistencia","Consistency"), value: "≤ 50%",                                                                                 accent: false },
-      { label: L("Jours min","Días mín","Min days"),          value: L("2 jours","2 días","2 days"),                                                           accent: false },
+      { label: L("Consistance","Consistencia","Consistency"), value: L("Aucune","Ninguna","None"),                                                              accent: false },
+      { label: L("Jours min","Días mín","Min days"),          value: L("0 jour","0 días","0 days"),                                                            accent: false },
       { label: L("Durée max","Duración máx","Max duration"),  value: L("30 j. cal.","30 d. cal.","30 cal. days"),                                              accent: false },
     ];
     const isPopular  = card.balance === 50000;

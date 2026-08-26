@@ -29,10 +29,18 @@
 
 import {
   V1_DD_PCT_BY_BALANCE,
+  V1_DD_USD_BY_BALANCE,
+  V1_SAFETY_NET,
+  V1_DAILY_LOSS_LIMIT_CHALLENGE,
+  V1_DAILY_LOSS_LIMIT_REWARD,
   V1_CONSISTENCY_PCT,
+  V1_CHALLENGE,
   V1_REWARD_CAPS,
   V1_QUALIFYING_DAY_MIN_USD,
   getV1DdPctByBalance,
+  getV1DdUsdByBalance,
+  getV1SafetyNet,
+  getV1DailyLossLimit,
   getV1LockPctByBalance,
   getV1RewardCap,
   getV1RewardThresholdUsd,
@@ -91,164 +99,240 @@ for (const balance of [25000, 50000, 100000]) {
 }
 
 // ════════════════════════════════════════════════════════════════
-// B-D. Challenge DD par balance
+// B-D. Challenge DD — Apex EOD : % legacy + $ fixe
 // ════════════════════════════════════════════════════════════════
 
-section("B. 25K Challenge DD = 4 %");
-test("getV1DdPctByBalance(25000) = 4", getV1DdPctByBalance(25000), 4);
+section("B. 25K DD — 4 % legacy, 1 000$ fixe (Apex EOD)");
+test("getV1DdPctByBalance(25000) = 4 (affichage legacy)", getV1DdPctByBalance(25000), 4);
 test("V1_DD_PCT_BY_BALANCE[25000] = 4", V1_DD_PCT_BY_BALANCE[25000], 4);
+test("getV1DdUsdByBalance(25000) = 1 000", getV1DdUsdByBalance(25000), 1000);
+test("V1_DD_USD_BY_BALANCE[25000] = 1 000", V1_DD_USD_BY_BALANCE[25000], 1000);
 
-section("C. 50K Challenge DD = 4 %");
-test("getV1DdPctByBalance(50000) = 4", getV1DdPctByBalance(50000), 4);
+section("C. 50K DD — 4 % legacy, 2 000$ fixe (Apex EOD)");
+test("getV1DdPctByBalance(50000) = 4 (affichage legacy)", getV1DdPctByBalance(50000), 4);
 test("V1_DD_PCT_BY_BALANCE[50000] = 4", V1_DD_PCT_BY_BALANCE[50000], 4);
+test("getV1DdUsdByBalance(50000) = 2 000", getV1DdUsdByBalance(50000), 2000);
+test("V1_DD_USD_BY_BALANCE[50000] = 2 000", V1_DD_USD_BY_BALANCE[50000], 2000);
 
-section("D. 100K Challenge DD = 3 %");
-test("getV1DdPctByBalance(100000) = 3", getV1DdPctByBalance(100000), 3);
+section("D. 100K DD — 3 % legacy, 3 000$ fixe (Apex EOD)");
+test("getV1DdPctByBalance(100000) = 3 (affichage legacy)", getV1DdPctByBalance(100000), 3);
 test("V1_DD_PCT_BY_BALANCE[100000] = 3", V1_DD_PCT_BY_BALANCE[100000], 3);
+test("getV1DdUsdByBalance(100000) = 3 000", getV1DdUsdByBalance(100000), 3000);
+test("V1_DD_USD_BY_BALANCE[100000] = 3 000", V1_DD_USD_BY_BALANCE[100000], 3000);
 
 // ════════════════════════════════════════════════════════════════
-// E. Aucun daily DD — le modèle V1 n'a pas de daily_drawdown séparé
+// E. Apex EOD — trailing fixe $, aucun DD journalier séparé dans le moteur
 // ════════════════════════════════════════════════════════════════
 
-section("E. Aucun daily DD — V1 = trailing EOD uniquement");
-// Le moteur ne contient aucune constante daily_drawdown.
-// Les phases de type challenge et funded stockent daily_drawdown dans la DB
-// uniquement pour compatibilité technique — la valeur miroir n'est pas utilisée
-// dans le calcul de breach (checkV1DDBreach ne prend aucun paramètre daily).
-// Vérifier que checkV1DDBreach utilise uniquement le floor trailing.
+section("E. Apex EOD — floor = highest − ddUsd (montant fixe $)");
+// Apex EOD : floor = highest_eod − ddUsd (pas de %). Le DLL existe mais
+// est géré en dehors de ce moteur (paramètre externe, pas dans checkV1DDBreach).
 {
-  const floor50K = computeV1TrailingFloor(50000, 50000, 4, null);
-  test("floor 50K start = 48 000 (4% trailing, no daily)", floor50K, 48000);
-  // Un equity à 47 999 est en breach (trailing floor), pas daily
-  const breach = checkV1DDBreach(50000, 50000, 47999, 4, null);
+  // 50K : floor = 50 000 − 2 000 = 48 000 (même résultat qu'avant au départ)
+  const floor50K = computeV1TrailingFloor(50000, 50000, 2000, null);
+  test("floor 50K start = 48 000 (2 000$ trailing, no lock)", floor50K, 48000);
+  // Breach (convention stricte <)
+  const breach = checkV1DDBreach(50000, 50000, 47999, 2000, null);
   test("breach 47 999 < floor 48 000", breach.breached, true);
-  // Un equity à 48 000 est au floor — PAS de breach (convention stricte <)
-  const atFloor = checkV1DDBreach(50000, 50000, 48000, 4, null);
+  // Au floor — PAS de breach
+  const atFloor = checkV1DDBreach(50000, 50000, 48000, 2000, null);
   test("no breach at floor (48 000 = floor)", atFloor.breached, false);
+  // floor croît de façon linéaire avec highest (montant fixe $)
+  const floor51K = computeV1TrailingFloor(50000, 51000, 2000, null);
+  test("floor 50K highest=51 000 → 51 000 − 2 000 = 49 000", floor51K, 49000);
+  const floor60K = computeV1TrailingFloor(50000, 60000, 2000, null);
+  test("floor 50K highest=60 000 → 60 000 − 2 000 = 58 000", floor60K, 58000);
 }
 
 // ════════════════════════════════════════════════════════════════
-// F. Challenge ne locke jamais (lockPct = null)
+// F. Challenge ne locke jamais (safetyNet = null)
 // ════════════════════════════════════════════════════════════════
 
-section("F. Challenge — aucun lock (lockPct = null)");
+section("F. Challenge — aucun lock (safetyNet = null), floor = highest − ddUsd$");
 {
-  // 50K : même si l'equity monte à 200 000, le trailing continue de suivre
-  const highMilestone = [50000, 51000, 52000, 53000, 54000, 60000];
-  for (const high of highMilestone) {
-    const floor = computeV1TrailingFloor(50000, high, 4, null);
-    const expectedFloor = high * 0.96;
-    test(`Challenge 50K floor à highest=${high} = ${expectedFloor.toFixed(0)}`, floor, expectedFloor);
+  // 50K ddUsd=2 000 : floor croît de façon linéaire, pas de lock
+  const cases: [number, number][] = [
+    [50000,  48000],  // 50 000 − 2 000
+    [51000,  49000],  // 51 000 − 2 000
+    [52000,  50000],  // 52 000 − 2 000
+    [53000,  51000],
+    [54000,  52000],
+    [60000,  58000],
+  ];
+  for (const [high, expectedFloor] of cases) {
+    const floor = computeV1TrailingFloor(50000, high, 2000, null);
+    test(`Challenge 50K floor à highest=${high} = ${expectedFloor}`, floor, expectedFloor);
   }
-  // Confirmer que isV1TrailingLocked n'est pas appelé avec lockPct null dans le challenge
-  // (le moteur force lockPct=null pour le challenge → computeV1TrailingFloor ne verrouille pas)
-  const floorAt200K = computeV1TrailingFloor(50000, 200000, 4, null);
-  test("Challenge pas de lock même à highest=200 000", floorAt200K, 200000 * 0.96);
+  // Même à 200 000 — pas de lock
+  const floorAt200K = computeV1TrailingFloor(50000, 200000, 2000, null);
+  test("Challenge pas de lock même à highest=200 000 → 198 000", floorAt200K, 198000);
+  // Apex EOD: 0 jour minimum de trading
+  test("V1_CHALLENGE.minTradingDays = 0 (Apex EOD)", V1_CHALLENGE.minTradingDays, 0);
 }
 
 // ════════════════════════════════════════════════════════════════
-// G. Reward #1 lock : floor verrouillé au capital initial
+// G. Reward #1 — Safety Net lock (Apex EOD)
 // ════════════════════════════════════════════════════════════════
 
-section("G. Reward #1 — lock au capital initial");
+section("G. Reward #1 — lock via Safety Net (Apex EOD)");
 {
-  // 25K : lock atteint quand highest_eod ≥ 25 000 × 1.04 = 26 000
-  // Avant le lock
-  const f25kPre = computeV1TrailingFloor(25000, 25500, 4, 4);
-  test("25K Reward#1 floor avant lock (highest=25 500)", f25kPre, 25500 * 0.96);
-  // Au lock
-  const f25kLock = computeV1TrailingFloor(25000, 26000, 4, 4);
-  test("25K Reward#1 floor au lock (highest=26 000) = 25 000", f25kLock, 25000);
-  // Après le lock
-  const f25kPost = computeV1TrailingFloor(25000, 27000, 4, 4);
+  // 25K : Safety Net = 26 100 (was 26 000 = start×1.04)
+  // Avant le lock (highest < 26 100) → floor = highest − 1 000
+  const f25kPre = computeV1TrailingFloor(25000, 25500, 1000, 26100);
+  test("25K Reward#1 floor avant lock (highest=25 500) → 24 500", f25kPre, 24500);
+  // Au lock exactement (highest = 26 100) → floor = 25 000
+  const f25kLock = computeV1TrailingFloor(25000, 26100, 1000, 26100);
+  test("25K Reward#1 floor au lock (highest=26 100) = 25 000", f25kLock, 25000);
+  // Juste avant le lock (highest = 26 099) → floor = 26 099 − 1 000 = 25 099
+  const f25kBefore = computeV1TrailingFloor(25000, 26099, 1000, 26100);
+  test("25K Reward#1 floor juste avant lock (highest=26 099) = 25 099", f25kBefore, 25099);
+  // Après le lock (highest > 26 100) → floor = 25 000
+  const f25kPost = computeV1TrailingFloor(25000, 27000, 1000, 26100);
   test("25K Reward#1 floor après lock (highest=27 000) = 25 000", f25kPost, 25000);
 
-  // 50K : lock à 52 000
-  const f50kPre  = computeV1TrailingFloor(50000, 51000, 4, 4);
-  test("50K Reward#1 floor avant lock (highest=51 000)", f50kPre, 51000 * 0.96);
-  const f50kLock = computeV1TrailingFloor(50000, 52000, 4, 4);
-  test("50K Reward#1 floor au lock (highest=52 000) = 50 000", f50kLock, 50000);
-  const f50kPost = computeV1TrailingFloor(50000, 54000, 4, 4);
+  // 50K : Safety Net = 52 100
+  const f50kPre  = computeV1TrailingFloor(50000, 51000, 2000, 52100);
+  test("50K Reward#1 floor avant lock (highest=51 000) → 49 000", f50kPre, 49000);
+  const f50kLock = computeV1TrailingFloor(50000, 52100, 2000, 52100);
+  test("50K Reward#1 floor au lock (highest=52 100) = 50 000", f50kLock, 50000);
+  const f50kPost = computeV1TrailingFloor(50000, 54000, 2000, 52100);
   test("50K Reward#1 floor après lock = 50 000", f50kPost, 50000);
 
-  // 100K : lock à 103 000 (lockPct = 3)
-  const f100kPre  = computeV1TrailingFloor(100000, 102000, 3, 3);
-  test("100K Reward#1 floor avant lock (highest=102 000)", f100kPre, 102000 * 0.97);
-  const f100kLock = computeV1TrailingFloor(100000, 103000, 3, 3);
-  test("100K Reward#1 floor au lock (highest=103 000) = 100 000", f100kLock, 100000);
+  // 100K : Safety Net = 103 100
+  const f100kPre  = computeV1TrailingFloor(100000, 102000, 3000, 103100);
+  test("100K Reward#1 floor avant lock (highest=102 000) → 99 000", f100kPre, 99000);
+  const f100kLock = computeV1TrailingFloor(100000, 103100, 3000, 103100);
+  test("100K Reward#1 floor au lock (highest=103 100) = 100 000", f100kLock, 100000);
+  const f100kPost = computeV1TrailingFloor(100000, 110000, 3000, 103100);
+  test("100K Reward#1 floor après lock = 100 000", f100kPost, 100000);
 }
 
 // ════════════════════════════════════════════════════════════════
-// H. 100K lock atteint à haut EOD 103 000
+// H. Safety Net — seuil de lock par balance (Apex EOD)
 // ════════════════════════════════════════════════════════════════
 
-section("H. 100K — lock atteint exactement à 103 000");
+section("H. Safety Net — seuil de lock Apex EOD (26 100 / 52 100 / 103 100)");
 {
-  test("isV1TrailingLocked(100000, 102999, 3) = false", isV1TrailingLocked(100000, 102999, 3), false);
-  test("isV1TrailingLocked(100000, 103000, 3) = true",  isV1TrailingLocked(100000, 103000, 3), true);
-  test("isV1TrailingLocked(100000, 110000, 3) = true",  isV1TrailingLocked(100000, 110000, 3), true);
-  // Lock et objectif Reward #1 sont DIFFÉRENTS
-  const lockThreshold   = 100000 * 1.03;  // 103 000
-  const rewardThreshold = 100000 * 1.04;  // 104 000
-  test("Lock 100K ≠ Reward threshold 100K", lockThreshold === rewardThreshold, false);
-  test("Lock 100K = 103 000", lockThreshold, 103000);
-  test("Reward threshold 100K = 104 000", rewardThreshold, 104000);
+  // isV1TrailingLocked prend maintenant (highestEod, safetyNet) — 2 args
+  test("isV1TrailingLocked(103099, 103100) = false", isV1TrailingLocked(103099, 103100), false);
+  test("isV1TrailingLocked(103100, 103100) = true",  isV1TrailingLocked(103100, 103100), true);
+  test("isV1TrailingLocked(110000, 103100) = true",  isV1TrailingLocked(110000, 103100), true);
+
+  // Safety Net vs ancien seuil start×1.03
+  const oldLock  = 100000 * 1.03;  // 103 000 (ancien)
+  const newSN    = V1_SAFETY_NET[100000];  // 103 100 (Apex EOD)
+  test("Safety Net 100K = 103 100 (was 103 000)", newSN, 103100);
+  test("Safety Net 100K > ancien lock start×1.03", newSN > oldLock, true);
+
+  // Safety Net 25K / 50K / 100K
+  test("getV1SafetyNet(25000)  = 26 100", getV1SafetyNet(25000),  26100);
+  test("getV1SafetyNet(50000)  = 52 100", getV1SafetyNet(50000),  52100);
+  test("getV1SafetyNet(100000) = 103 100", getV1SafetyNet(100000), 103100);
+  test("V1_SAFETY_NET[25000]  = 26 100", V1_SAFETY_NET[25000],  26100);
+  test("V1_SAFETY_NET[50000]  = 52 100", V1_SAFETY_NET[50000],  52100);
+  test("V1_SAFETY_NET[100000] = 103 100", V1_SAFETY_NET[100000], 103100);
 }
 
 // ════════════════════════════════════════════════════════════════
-// I. Reward threshold : 26 000 / 52 000 / 104 000
+// I. Reward threshold — Apex EOD : Safety Net + cap du niveau
 // ════════════════════════════════════════════════════════════════
 
-section("I. Reward request threshold (start × 1.04)");
-test("25K threshold = 26 000",  computeRewardRequestThreshold(25000),  26000);
-test("50K threshold = 52 000",  computeRewardRequestThreshold(50000),  52000);
-test("100K threshold = 104 000",computeRewardRequestThreshold(100000), 104000);
-test("REWARD_REQUEST_PROFIT_PCT = 4", REWARD_REQUEST_PROFIT_PCT, 4);
-// getV1RewardThresholdUsd est alias de computeRewardRequestThreshold
-test("getV1RewardThresholdUsd(25000) = 26 000",  getV1RewardThresholdUsd(25000),  26000);
-test("getV1RewardThresholdUsd(100000) = 104 000",getV1RewardThresholdUsd(100000), 104000);
+section("I. Reward request threshold = Safety Net + cap (Apex EOD)");
+// 25K R#1 : 26 100 + 300 = 26 400
+test("25K R#1 threshold = 26 400", computeRewardRequestThreshold(25000, 1), 26400);
+// 50K R#1 : 52 100 + 500 = 52 600
+test("50K R#1 threshold = 52 600", computeRewardRequestThreshold(50000, 1), 52600);
+// 100K R#1 : 103 100 + 750 = 103 850
+test("100K R#1 threshold = 103 850", computeRewardRequestThreshold(100000, 1), 103850);
+// 25K R#2 : 26 100 + 400 = 26 500
+test("25K R#2 threshold = 26 500", computeRewardRequestThreshold(25000, 2), 26500);
+// 50K R#5 : 52 100 + 1 250 = 53 350
+test("50K R#5 threshold = 53 350", computeRewardRequestThreshold(50000, 5), 53350);
+// 100K R#5 : 103 100 + 1 750 = 104 850
+test("100K R#5 threshold = 104 850", computeRewardRequestThreshold(100000, 5), 104850);
+// getV1RewardThresholdUsd = alias
+test("getV1RewardThresholdUsd(25000, 1) = 26 400", getV1RewardThresholdUsd(25000, 1), 26400);
+test("getV1RewardThresholdUsd(100000, 1) = 103 850", getV1RewardThresholdUsd(100000, 1), 103850);
+// REWARD_REQUEST_PROFIT_PCT conservé (deprecated) = 4
+test("REWARD_REQUEST_PROFIT_PCT = 4 (deprecated)", REWARD_REQUEST_PROFIT_PCT, 4);
 
 // ════════════════════════════════════════════════════════════════
-// J. Qualifying day : 50 / 100 / 150 USD
+// J. Qualifying day — Apex EOD : 100 / 250 / 300 USD (was 50/100/150)
 // ════════════════════════════════════════════════════════════════
 
-section("J. Qualifying day min USD");
-test("25K  = 50 USD",  V1_QUALIFYING_DAY_MIN_USD[25000],  50);
-test("50K  = 100 USD", V1_QUALIFYING_DAY_MIN_USD[50000],  100);
-test("100K = 150 USD", V1_QUALIFYING_DAY_MIN_USD[100000], 150);
+section("J. Qualifying day min USD — Apex EOD");
+test("25K  = 100 USD (was  50)", V1_QUALIFYING_DAY_MIN_USD[25000],  100);
+test("50K  = 250 USD (was 100)", V1_QUALIFYING_DAY_MIN_USD[50000],  250);
+test("100K = 300 USD (was 150)", V1_QUALIFYING_DAY_MIN_USD[100000], 300);
 
 // ════════════════════════════════════════════════════════════════
-// K. Consistency Challenge = 50 %
+// K. Consistency Challenge — AUCUNE (Apex EOD supprime la consistency)
 // ════════════════════════════════════════════════════════════════
 
-section("K. Consistency Challenge = 50 %");
-test("V1_CONSISTENCY_PCT.challenge = 50", V1_CONSISTENCY_PCT.challenge, 50);
+section("K. Challenge — Apex EOD : aucune consistency (consistencyPct = 0)");
 {
-  // best_day ≤ 50% du profit requis → cible = baseTarget
-  const noAdjust = computeV1EffectiveProfitTarget(50000, 6, 1000, 50);  // 1000/50000=2% < 50% of 6%=3%
-  test("50K Challenge: best_day 1000$ (2%) ≤ 50% × 6% → cible = 6%", noAdjust, 6);
+  // V1_CONSISTENCY_PCT.challenge n'existe plus — le Challenge Apex EOD n'a pas de consistency
+  // computeV1EffectiveProfitTarget avec consistencyPct=0 → retourne toujours baseTargetPct
+  const noAdjust1 = computeV1EffectiveProfitTarget(50000, 6, 1000, 0);
+  test("50K Challenge (Apex): best_day 1000$ → cible = 6% (pas d'ajustement)", noAdjust1, 6);
 
-  // best_day > 50% du profit requis → cible monte
-  // 50K × 6% = 3000$ profit requis. best_day = 2000$ > 1500$ (50% × 3000)
-  const raised = computeV1EffectiveProfitTarget(50000, 6, 2000, 50);  // 2000 × 2 / 50000 × 100 = 8%
-  test("50K Challenge: best_day 2000$ > 50% × 6% → cible monte à 8%", raised, 8);
+  const noAdjust2 = computeV1EffectiveProfitTarget(50000, 6, 2000, 0);
+  test("50K Challenge (Apex): best_day 2000$ → cible = 6% (pas d'ajustement)", noAdjust2, 6);
+
+  const noAdjust3 = computeV1EffectiveProfitTarget(50000, 6, 5000, 0);
+  test("50K Challenge (Apex): best_day 5000$ → cible = 6% (pas d'ajustement)", noAdjust3, 6);
+
+  // Même une meilleure journée qui représente 99% du profit → pas d'ajustement
+  const extreme = computeV1EffectiveProfitTarget(25000, 6, 1485, 0);  // ≈ 99% de 1500$
+  test("25K Challenge (Apex): best_day 1485$ (99%) → cible = 6% (pas d'ajustement)", extreme, 6);
 }
 
 // ════════════════════════════════════════════════════════════════
-// L. Consistency Reward = 33 %
+// L. Consistency Reward = 50 % — Apex EOD (was 33 %)
 // ════════════════════════════════════════════════════════════════
 
-section("L. Consistency Reward = 33 %");
-test("V1_CONSISTENCY_PCT.reward = 33", V1_CONSISTENCY_PCT.reward, 33);
+section("L. Consistency Reward = 50 % (Apex EOD — was 33 %)");
+test("V1_CONSISTENCY_PCT.reward = 50 (was 33)", V1_CONSISTENCY_PCT.reward, 50);
 {
-  // 50K Reward #1 : profit requis = 4% × 50000 = 2000$. best_day = 500$ = 25% < 33% → cible inchangée
-  const noAdjust = computeV1EffectiveProfitTarget(50000, 4, 500, 33);
-  test("50K Reward: best_day 500$ (25%) ≤ 33% × 4% → cible = 4%", noAdjust, 4);
+  // 50K Reward #1 : profit requis = 4% × 50000 = 2000$. best_day = 500$ = 25% < 50% → cible inchangée
+  const noAdjust = computeV1EffectiveProfitTarget(50000, 4, 500, 50);
+  test("50K Reward: best_day 500$ (25%) < 50% × profit → cible = 4%", noAdjust, 4);
 
-  // best_day = 1000$ > 33% of 2000$ (= 660$) → cible monte
-  // 1000 / 0.33 / 50000 × 100 = 6.06%
-  const raised = computeV1EffectiveProfitTarget(50000, 4, 1000, 33);
-  test("50K Reward: best_day 1000$ > 33% × 4% → cible monte", raised > 4, true);
+  // best_day = 999$ = 49.95% < 50% de 2000$ → cible inchangée
+  const nearLimit = computeV1EffectiveProfitTarget(50000, 4, 999, 50);
+  test("50K Reward: best_day 999$ (49.95%) < 50% → cible = 4%", nearLimit, 4);
+
+  // best_day = 1000$ = exactement 50% de 2000$ → cible monte (règle strict <)
+  // 1000 / 0.50 / 50000 × 100 = 4% → Math.max(4, 4) = 4 (exactement au seuil = cible inchangée si ≤ arrondi)
+  // Précision : 1000 / 0.50 / 50000 * 100 = 4. Math.ceil(4*100)/100 = 4. max(4,4) = 4.
+  const atLimit = computeV1EffectiveProfitTarget(50000, 4, 1000, 50);
+  test("50K Reward: best_day 1000$ = 50% → cible = 4% (exactement au seuil)", atLimit, 4);
+
+  // best_day = 1001$ > 50% de 2000$ → cible monte
+  // 1001 / 0.50 / 50000 × 100 = 4.004 → cible = 4.01% (arrondi au centième supérieur)
+  const raised = computeV1EffectiveProfitTarget(50000, 4, 1001, 50);
+  test("50K Reward: best_day 1001$ > 50% → cible monte au-delà de 4%", raised > 4, true);
+}
+
+// ════════════════════════════════════════════════════════════════
+// L2. Daily Loss Limit (DLL) — Apex EOD
+// ════════════════════════════════════════════════════════════════
+
+section("L2. DLL — Challenge et Reward Account (Apex EOD)");
+{
+  // Challenge DLL
+  test("DLL Challenge 25K  =    500$", V1_DAILY_LOSS_LIMIT_CHALLENGE[25000],   500);
+  test("DLL Challenge 50K  =  1 000$", V1_DAILY_LOSS_LIMIT_CHALLENGE[50000],  1000);
+  test("DLL Challenge 100K =  1 500$", V1_DAILY_LOSS_LIMIT_CHALLENGE[100000], 1500);
+  // Reward Account DLL
+  test("DLL Reward   25K  =    500$", V1_DAILY_LOSS_LIMIT_REWARD[25000],   500);
+  test("DLL Reward   50K  =  1 000$", V1_DAILY_LOSS_LIMIT_REWARD[50000],  1000);
+  test("DLL Reward   100K =  1 750$", V1_DAILY_LOSS_LIMIT_REWARD[100000], 1750);
+  // Helpers
+  test("getV1DailyLossLimit(25000, 'challenge') = 500",    getV1DailyLossLimit(25000, "challenge"),   500);
+  test("getV1DailyLossLimit(100000, 'challenge') = 1500",  getV1DailyLossLimit(100000, "challenge"), 1500);
+  test("getV1DailyLossLimit(100000, 'reward') = 1750",     getV1DailyLossLimit(100000, "reward"),    1750);
+  test("getV1DailyLossLimit(50000) = 1000 (default=reward)", getV1DailyLossLimit(50000),             1000);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -283,14 +367,17 @@ section("M. Reward caps #1 à #5");
 // N. Level 3 — plancher fixe = capital initial
 // ════════════════════════════════════════════════════════════════
 
-section("N. Niveau 3 — plancher fixe = capital initial");
+section("N. Niveau 3 — plancher fixe = capital initial (Safety Net atteinte)");
 test("25K  : getV1FixedFloor = 25 000",  getV1FixedFloor(25000),  25000);
 test("50K  : getV1FixedFloor = 50 000",  getV1FixedFloor(50000),  50000);
 test("100K : getV1FixedFloor = 100 000", getV1FixedFloor(100000), 100000);
 {
-  // Confirmer que le floor fixe correspond au computeV1TrailingFloor avec lockPct atteint
-  const floorLocked50K = computeV1TrailingFloor(50000, 60000, 4, 4);  // highest=60K > 52K = locked
-  test("50K floor verrouillé après lock = 50 000 (= start)", floorLocked50K, 50000);
+  // Apex EOD : floor verrouillé quand highest ≥ Safety Net (52 100 pour 50K)
+  const floorLocked50K = computeV1TrailingFloor(50000, 60000, 2000, 52100);  // highest=60K > 52 100 = locked
+  test("50K floor verrouillé (highest=60K > safetyNet 52 100) = 50 000", floorLocked50K, 50000);
+  // Exactement à la Safety Net
+  const floorAtSN = computeV1TrailingFloor(50000, 52100, 2000, 52100);
+  test("50K floor à safetyNet exacte (highest=52 100) = 50 000", floorAtSN, 50000);
 }
 
 // ════════════════════════════════════════════════════════════════

@@ -1034,14 +1034,26 @@ export default function DashboardClient({ user }: { user: User }) {
           });
 
           // Règle de consistance : meilleure journée / profit total.
-          const consistencyPct = isFunded ? 33 : 50;
-          ruleCards.push({
-            icon: <Percent size={20} color="#9CCFEA" />,
-            title: isFr ? "Règle de consistance" : "Consistency Rule",
-            desc: isFr
-              ? `Votre meilleure journée ne doit pas représenter plus de ${consistencyPct}% de votre profit total.`
-              : `Your best day must not represent more than ${consistencyPct}% of your total profit.`,
-          });
+          // Apex EOD : aucune consistency au Challenge (null) / 50 % au Reward Account.
+          const consistencyPct = isFunded ? 50 : null;  // null = pas de règle (Challenge Apex EOD)
+          if (consistencyPct !== null) {
+            ruleCards.push({
+              icon: <Percent size={20} color="#9CCFEA" />,
+              title: isFr ? "Règle de consistance" : "Consistency Rule",
+              desc: isFr
+                ? `Votre meilleure journée ne doit pas représenter plus de ${consistencyPct}% de votre profit total.`
+                : `Your best day must not represent more than ${consistencyPct}% of your total profit.`,
+            });
+          } else {
+            // Challenge Apex EOD : pas de consistency
+            ruleCards.push({
+              icon: <Percent size={20} color="#9CCFEA" />,
+              title: isFr ? "Consistance" : "Consistency",
+              desc: isFr
+                ? "Aucune règle de consistance au Challenge — concentrez-vous sur votre objectif de +6%."
+                : "No consistency rule during the Challenge — focus on your +6% target.",
+            });
+          }
 
           // Durée contractuelle : Challenge limité à 30 jours calendaires,
           // Reward Account sans limite de temps.

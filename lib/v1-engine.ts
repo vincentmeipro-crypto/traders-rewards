@@ -18,31 +18,34 @@
  *
  * STRUCTURE 3 NIVEAUX MÉTIER :
  *
- *  NIVEAU 1 — STARTER / CHALLENGE (phase_type="challenge") :
- *   - Profit Target      = +6 %
- *   - Drawdown unique    = 4 % EOD (25K/50K) / 3 % EOD (100K) — pas de DD journalier séparé
- *   - Consistency Rule   = 50 % (best_day ≤ 50 % du profit total requis)
- *   - Min trading days   = 2
+ *  NIVEAU 1 — CHALLENGER / CHALLENGE (phase_type="challenge") — APEX EOD MODEL :
+ *   - Profit Target      = +6 % (25K=+1 500$ / 50K=+3 000$ / 100K=+6 000$)
+ *   - Drawdown EOD fixe  = 1 000$ (25K) / 2 000$ (50K) / 3 000$ (100K) — montant fixe en $
+ *   - DLL (Daily Loss)   = 500$ (25K) / 1 000$ (50K) / 1 500$ (100K)
+ *   - Consistency Rule   = AUCUNE — Apex EOD supprime la consistency au Challenge
+ *   - Min trading days   = 0 (aucun minimum — Apex EOD)
  *   - Max trading days   = 30 calendaires depuis created_at
  *   - AUCUN verrou (trailing continue pendant tout le challenge)
  *
- *  NIVEAU 2 — REWARD START / REWARD #1 (phase_type="funded") :
+ *  NIVEAU 2 — REWARD START / REWARD #1 (phase_type="funded") — APEX EOD MODEL :
  *   - Profit Target      = +4 %
- *   - Drawdown trailing  = 4 % EOD (25K/50K) / 3 % EOD (100K) — avec verrouillage
- *   - Trailing lock      : 25K/50K : highest_eod ≥ start × 1.04 → floor = start
- *                          100K    : highest_eod ≥ start × 1.03 → floor = start (permanent)
- *   - Consistency Rule   = 33 % (best_day ≤ 33 % du profit requis)
- *   - Qualifying days    = 5 jours profitables qualifiants
- *   - Seuil qualifiant   : 25K = 50 USD / 50K = 100 USD / 100K = 150 USD / journée
+ *   - Drawdown EOD fixe  = 1 000$ (25K) / 2 000$ (50K) / 3 000$ (100K) — montant fixe en $
+ *   - DLL (Daily Loss)   = 500$ (25K) / 1 000$ (50K) / 1 750$ (100K)
+ *   - Safety Net (lock)  : highest_eod ≥ Safety Net → floor = start (permanent)
+ *                          25K = 26 100$ / 50K = 52 100$ / 100K = 103 100$
+ *   - Consistency Rule   = 50 % (best_day < 50 % du profit total — was 33 %)
+ *   - Qualifying days    = 5 jours profitables qualifiants (inchangé)
+ *   - Seuil qualifiant   : 25K = 100 USD / 50K = 250 USD / 100K = 300 USD / journée
  *   - Durée              = ILLIMITÉE
- *   - Caps Reward #1     : 25K = 300 $ / 50K = 500 $ / 100K = 750 $
+ *   - Caps Reward #1     : 25K = 300 $ / 50K = 500 $ / 100K = 750 $ (INCHANGÉS)
  *
  *  NIVEAU 3 — TRADER REWARD / REWARDS #2 À #5 (phase_type="reward_journey") :
- *   - Reward threshold   = start × 1.04 (25K=26K / 50K=52K / 100K=104K)
+ *   - Reward threshold   = Safety Net + cap du niveau (ex 25K R#1 : 26 100+300 = 26 400$)
  *   - Plancher FIXE      = start_balance (immuable, pas de trailing)
- *   - Consistency Rule   = 33 %
- *   - Caps Rewards #2-5  : voir V1_REWARD_CAPS
+ *   - Consistency Rule   = 50 %
+ *   - Caps Rewards #2-5  : voir V1_REWARD_CAPS (INCHANGÉS)
  *   - Après chaque Reward : postBalance = preBalance − rewardAmount (PAS de reset)
+ *   - Max 5 Rewards — pas de Reward #6
  *
  *  Frais d'activation (activation_fee_eur) :
  *   - 25K = 99 EUR / 50K = 99 EUR / 100K = 149 EUR
@@ -85,41 +88,45 @@
 /** Valeur du discriminant de version dans rules_snapshot.rules et challenges.dd_model */
 export const V1_DD_MODEL = "trailing_eod_lock" as const;
 
-/** Règles contractuelles du Challenge V1 (en %) */
+/** Règles contractuelles du Challenge V1 — APEX EOD MODEL */
 export const V1_CHALLENGE = {
   profitTargetPct:  6,
-  trailingDdPct:    4,
-  consistencyPct:   50,
-  minTradingDays:   2,
+  trailingDdPct:    4,   // Gardé pour l'affichage % legacy — calcul réel via V1_DD_USD_BY_BALANCE
+  // consistencyPct : SUPPRIMÉ — Apex EOD : aucune règle de consistency au Challenge
+  minTradingDays:   0,   // Apex EOD : 0 jours minimum (was 2)
   maxTradingDays:   30,
 } as const;
 
-/** Règles du Reward Account — qualification avant Reward #1 (en %) */
+/** Règles du Reward Account — qualification avant Reward #1 */
 export const V1_REWARD_QUAL = {
   profitTargetPct:   4,
-  trailingDdPct:     4,
-  trailingLockPct:   4,   // Valeur par défaut (25K/50K). Pour 100K → 3%. Utiliser getV1LockPctByBalance().
+  trailingDdPct:     4,   // Legacy % — calcul réel via V1_DD_USD_BY_BALANCE
+  trailingLockPct:   4,   // Legacy % — lock réel via V1_SAFETY_NET. Utiliser getV1SafetyNet().
   minQualifyingDays: 5,
 } as const;
 
-/** Seuil USD minimum pour un jour qualifiant, indexé par balance initiale */
+/**
+ * Seuil USD minimum pour un jour qualifiant, indexé par balance initiale.
+ * Apex EOD : montants relevés (was 50/100/150).
+ */
 export const V1_QUALIFYING_DAY_MIN_USD: Record<number, number> = {
-  25000:   50,
-  50000:  100,
-  100000: 150,
+  25000:  100,   // was  50
+  50000:  250,   // was 100
+  100000: 300,   // was 150
 };
 
 /**
- * Pourcentage de consistency par type de phase.
+ * Pourcentage de consistency par type de phase — APEX EOD MODEL.
  *
- *  Challenge (Niveau 1) : best_day ≤ 50 % du profit requis
- *  Reward #1–5 (Niveaux 2 & 3) : best_day ≤ 33 % du profit requis
+ *  Challenge (Niveau 1) : AUCUNE règle de consistency (Apex EOD)
+ *  Reward #1–5 (Niveaux 2 & 3) : best_day < 50 % du profit requis (was 33 %)
  *
- * Source unique — ne pas hardcoder 50 ou 33 ailleurs dans le code.
+ * Source unique — ne pas hardcoder ces valeurs ailleurs dans le code.
+ * Pour le Challenge, passer consistencyPct = 0 aux fonctions concernées.
  */
 export const V1_CONSISTENCY_PCT = {
-  challenge: 50,
-  reward:    33,
+  // challenge : SUPPRIMÉ — Apex EOD ne requiert aucune consistency au Challenge
+  reward: 50,   // was 33
 } as const;
 
 /**
@@ -152,14 +159,11 @@ export const V1_ACTIVATION_FEE_EUR: Record<number, number> = {
 
 /**
  * Trailing drawdown EOD par balance initiale (en %).
+ * Gardé pour l'affichage legacy — le CALCUL réel utilise V1_DD_USD_BY_BALANCE.
  *
- *  25K → 4 %  (règle standard)
- *  50K → 4 %  (règle standard)
- * 100K → 3 %  (réduit — décision commerciale 2026-08-20)
- *
- * Utiliser getV1DdPctByBalance() dans metaapi/sync et cron/mt5-snapshot
- * pour router le bon pourcentage avant d'appeler computeV1TrailingFloor().
- * Le trailing_lock_pct suit la même valeur que trailing_dd_pct.
+ *  25K → 4 %  (= 1 000$ fixe)
+ *  50K → 4 %  (= 2 000$ fixe)
+ * 100K → 3 %  (= 3 000$ fixe)
  */
 export const V1_DD_PCT_BY_BALANCE: Record<number, number> = {
   25000:   4,
@@ -168,29 +172,104 @@ export const V1_DD_PCT_BY_BALANCE: Record<number, number> = {
 };
 
 /**
+ * Drawdown EOD fixe en USD — APEX EOD MODEL.
+ * Le floor est calculé par : floor = highest_eod − ddUsd (montant fixe, non relatif).
+ *
+ *  25K  → 1 000 $
+ *  50K  → 2 000 $
+ * 100K  → 3 000 $
+ */
+export const V1_DD_USD_BY_BALANCE: Record<number, number> = {
+  25000:   1000,
+  50000:   2000,
+  100000:  3000,
+};
+
+/**
+ * Safety Net : seuil absolu de verrouillage du trailing EOD — APEX EOD MODEL.
+ * Lorsque highest_eod ≥ Safety Net, le floor se verrouille définitivement
+ * sur start_balance (immuable).
+ *
+ *  25K  → 26 100 $  (was start × 1.04 = 26 000)
+ *  50K  → 52 100 $  (was start × 1.04 = 52 000)
+ * 100K  → 103 100 $ (was start × 1.03 = 103 000)
+ */
+export const V1_SAFETY_NET: Record<number, number> = {
+  25000:    26100,
+  50000:    52100,
+  100000:  103100,
+};
+
+/**
+ * Daily Loss Limit (DLL) en USD — APEX EOD MODEL.
+ * Limite journalière de perte intraday.
+ *
+ * Challenge :
+ *  25K → 500$ / 50K → 1 000$ / 100K → 1 500$
+ * Reward Account :
+ *  25K → 500$ / 50K → 1 000$ / 100K → 1 750$
+ *
+ * Note : le DLL du Reward Account diffère pour 100K.
+ */
+export const V1_DAILY_LOSS_LIMIT_CHALLENGE: Record<number, number> = {
+  25000:   500,
+  50000:  1000,
+  100000: 1500,
+};
+
+export const V1_DAILY_LOSS_LIMIT_REWARD: Record<number, number> = {
+  25000:   500,
+  50000:  1000,
+  100000: 1750,
+};
+
+/**
  * Retourne le pourcentage de trailing drawdown EOD pour une balance initiale.
+ * Usage : affichage legacy (ex: "4%"). Le CALCUL réel utilise getV1DdUsdByBalance().
  *  25K → 4 %
  *  50K → 4 %
  * 100K → 3 %
- *
- * Fallback sur V1_CHALLENGE.trailingDdPct (4) si la balance n'est pas reconnue.
  */
 export function getV1DdPctByBalance(startBalance: number): number {
   return V1_DD_PCT_BY_BALANCE[startBalance] ?? V1_CHALLENGE.trailingDdPct;
 }
 
 /**
- * Retourne le pourcentage de verrouillage du trailing pour une balance initiale.
- * Par conception, trailing_lock_pct = trailing_dd_pct (même valeur, même règle par balance).
- *  25K → 4 %
- *  50K → 4 %
- * 100K → 3 %
- *
- * Passer cette valeur comme lockPct dans checkV1RewardQualification()
- * au lieu de la constante V1_REWARD_QUAL.trailingLockPct (défaut 4, incorrect pour 100K).
+ * @deprecated Utiliser getV1SafetyNet() pour le seuil de lock Apex EOD.
+ * Gardé pour rétrocompatibilité affichage.
  */
 export function getV1LockPctByBalance(startBalance: number): number {
   return getV1DdPctByBalance(startBalance);
+}
+
+/**
+ * Retourne le drawdown fixe en USD pour une balance initiale — APEX EOD MODEL.
+ * Utiliser dans computeV1TrailingFloor() à la place de ddPct.
+ *  25K  → 1 000 $
+ *  50K  → 2 000 $
+ * 100K  → 3 000 $
+ */
+export function getV1DdUsdByBalance(startBalance: number): number {
+  return V1_DD_USD_BY_BALANCE[startBalance] ?? 1000;
+}
+
+/**
+ * Retourne le Safety Net (seuil de verrouillage absolu) en $ pour une balance initiale.
+ *  25K  → 26 100 $
+ *  50K  → 52 100 $
+ * 100K  → 103 100 $
+ */
+export function getV1SafetyNet(startBalance: number): number {
+  return V1_SAFETY_NET[startBalance] ?? (startBalance * 1.04);
+}
+
+/**
+ * Retourne la limite journalière de perte (DLL) en $ pour une balance initiale.
+ * @param phase  "challenge" ou "reward" (default "reward")
+ */
+export function getV1DailyLossLimit(startBalance: number, phase: "challenge" | "reward" = "reward"): number {
+  const table = phase === "challenge" ? V1_DAILY_LOSS_LIMIT_CHALLENGE : V1_DAILY_LOSS_LIMIT_REWARD;
+  return table[startBalance] ?? 500;
 }
 
 /**
@@ -212,16 +291,19 @@ export function getV1RewardCap(startBalance: number, rewardLevel: number): numbe
 }
 
 /**
- * Retourne le seuil USD de demande de Reward (= start × 1.04).
- * Identique pour Reward #1, #2, #3, #4, #5 — condition de balance permanente.
+ * Retourne le seuil USD de demande de Reward — APEX EOD MODEL.
+ * threshold = Safety Net + cap du niveau de Reward.
  *
  * Exemples :
- *   getV1RewardThresholdUsd(25000)  → 26 000
- *   getV1RewardThresholdUsd(50000)  → 52 000
- *   getV1RewardThresholdUsd(100000) → 104 000
+ *   getV1RewardThresholdUsd(25000,  1) → 26 100 + 300  = 26 400
+ *   getV1RewardThresholdUsd(50000,  1) → 52 100 + 500  = 52 600
+ *   getV1RewardThresholdUsd(100000, 1) → 103 100 + 750 = 103 850
+ *   getV1RewardThresholdUsd(25000,  2) → 26 100 + 400  = 26 500
+ *
+ * @param rewardLevel  Numéro de Reward (1 à 5), default 1
  */
-export function getV1RewardThresholdUsd(startBalance: number): number {
-  return computeRewardRequestThreshold(startBalance);  // startBalance × 1.04
+export function getV1RewardThresholdUsd(startBalance: number, rewardLevel: number = 1): number {
+  return computeRewardRequestThreshold(startBalance, rewardLevel);
 }
 
 /**
@@ -304,42 +386,43 @@ export interface V1RewardQualCheck {
  *
  * @param startBalance  Capital initial (ex: 50 000)
  * @param highestEod    Plus haut EOD atteint — monotone non-décroissant
- * @param ddPct         Pourcentage de trailing (4.0)
- * @param lockPct       Seuil de déclenchement du verrou en %. null = pas de verrou (phase challenge)
+ * @param ddUsd         Montant fixe de drawdown en $ (Apex EOD) — ex: 2000 pour 50K
+ * @param safetyNet     Safety Net : seuil absolu de verrouillage en $ (null = pas de verrou)
+ *                      Passer getV1SafetyNet(startBalance) pour le Reward Account.
+ *                      null pour le Challenge (trailing libre sans verrou).
  *
- * Exemples Reward Account (lockPct = 4) :
- *   50K, highest=50 000 → floor = 50 000 × 0.96 = 48 000
- *   50K, highest=51 000 → floor = 51 000 × 0.96 = 48 960
- *   50K, highest=52 000 (≥ 50 000×1.04) → floor = 50 000 (verrouillé)
- *   50K, highest=54 000 (au-delà du verrou) → floor = 50 000 (toujours verrouillé)
+ * Exemples Reward Account (50K, safetyNet=52 100, ddUsd=2 000) :
+ *   highest=50 000 → floor = 50 000 − 2 000 = 48 000
+ *   highest=51 000 → floor = 51 000 − 2 000 = 49 000
+ *   highest=52 100 (≥ 52 100) → floor = 50 000 (verrouillé au capital initial)
+ *   highest=54 000 (au-delà du verrou) → floor = 50 000 (toujours verrouillé)
  */
 export function computeV1TrailingFloor(
   startBalance: number,
   highestEod:   number,
-  ddPct:        number,
-  lockPct:      number | null,
+  ddUsd:        number,        // Montant fixe en $ (Apex EOD) — was: ddPct en %
+  safetyNet:    number | null, // Seuil de lock absolu en $ — was: lockPct en %
 ): number {
-  if (lockPct !== null) {
-    const lockThreshold = startBalance * (1 + lockPct / 100);
-    if (highestEod >= lockThreshold) {
-      // Floor définitivement verrouillé au capital initial
-      return startBalance;
-    }
+  if (safetyNet !== null && highestEod >= safetyNet) {
+    // Floor définitivement verrouillé au capital initial (Safety Net atteint)
+    return startBalance;
   }
-  // Trailing normal : highest - dd%
-  return highestEod * (1 - ddPct / 100);
+  // Trailing fixe : highest − montant$ (Apex EOD — was: highest × (1 - ddPct/100))
+  return highestEod - ddUsd;
 }
 
 /**
- * Retourne true si le trailing est actuellement verrouillé.
- * (highest_eod a atteint ou dépassé le seuil de lock)
+ * Retourne true si le trailing est verrouillé (Safety Net atteinte).
+ * Apex EOD : compare highest_eod à la Safety Net absolue en $.
+ *
+ * @param highestEod  Plus haut EOD atteint
+ * @param safetyNet   Safety Net en $ (passer getV1SafetyNet(startBalance))
  */
 export function isV1TrailingLocked(
-  startBalance: number,
-  highestEod:   number,
-  lockPct:      number,
+  highestEod: number,
+  safetyNet:  number,  // was: (startBalance, highestEod, lockPct)
 ): boolean {
-  return highestEod >= startBalance * (1 + lockPct / 100);
+  return highestEod >= safetyNet;
 }
 
 // ── DD Breach ─────────────────────────────────────────────────
@@ -357,17 +440,17 @@ export function isV1TrailingLocked(
  *    Si breached = true, l'état du compte doit passer à "failed" de manière
  *    permanente, indépendamment de toute recovery equity ultérieure.
  *
- * @param lockPct  null = challenge (pas de verrou) / number = Reward Account
+ * @param safetyNet  null = challenge (pas de verrou) / number = Safety Net $ pour Reward Account
  */
 export function checkV1DDBreach(
   startBalance: number,
   highestEod:   number,
   equity:       number,
-  ddPct:        number,
-  lockPct:      number | null,
+  ddUsd:        number,         // Montant fixe en $ (was: ddPct en %)
+  safetyNet:    number | null,  // Safety Net en $ (was: lockPct en %)
 ): V1DDResult {
-  const floor  = computeV1TrailingFloor(startBalance, highestEod, ddPct, lockPct);
-  const locked = lockPct !== null && isV1TrailingLocked(startBalance, highestEod, lockPct);
+  const floor  = computeV1TrailingFloor(startBalance, highestEod, ddUsd, safetyNet);
+  const locked = safetyNet !== null && isV1TrailingLocked(highestEod, safetyNet);
   return {
     breached: equity < floor,  // strict < : equity == floor est toléré
     floor,
@@ -382,34 +465,33 @@ export function checkV1DDBreach(
 /**
  * Calcule le profit cible effectif après application de la Consistency Rule.
  *
- * Challenge (consistencyPct=50) :
- *   Règle : best_day ≤ 50 % du profit requis.
- *   Si best_day > 50 % → cible monte à best_day / 0.50 = best_day × 2.
+ * Apex EOD — Challenge : aucune consistency (passer consistencyPct = 0).
  *
- * Rewards #1–5 (consistencyPct=33) :
- *   Règle : best_day ≤ 33 % du profit requis.
- *   Si best_day > 33 % → cible monte à best_day / 0.33 ≈ best_day × 3.03.
+ * Rewards #1–5 (consistencyPct=50 — Apex EOD, was 33) :
+ *   Règle : best_day < 50 % du profit requis.
+ *   Si best_day ≥ 50 % → cible monte à best_day / 0.50 = best_day × 2.
  *
  * Formule générale :
  *   consistencyTargetPct = Math.ceil((bestDay / (consistencyPct/100) / start × 100) × 100) / 100
  *   effectiveTarget      = Math.max(baseTarget, consistencyTargetPct)
  *
- * Note : le challenge ne FAIL jamais à cause de la consistency.
- *        La cible monte simplement jusqu'à ce que bestDay ≤ consistencyPct % du nouveau profit requis.
+ * Note : la consistency ne fait jamais échouer le compte.
+ *        La cible monte simplement jusqu'à ce que bestDay < consistencyPct % du profit requis.
  *
- * @param consistencyPct  Pourcentage de consistency (50 pour Challenge, 33 pour Rewards).
- *                        Défaut : V1_CONSISTENCY_PCT.challenge (50) — rétrocompatible.
+ * @param consistencyPct  0 = aucune règle (Challenge Apex EOD). 50 = Rewards Apex EOD.
+ *                        Défaut : 0 (aucune règle).
  */
 export function computeV1EffectiveProfitTarget(
   startBalance:     number,
   baseTargetPct:    number,
   bestDayProfitUsd: number,
-  consistencyPct:   number = V1_CONSISTENCY_PCT.challenge,
+  consistencyPct:   number = 0,  // 0 = aucune règle (Apex EOD Challenge)
 ): number {
   if (startBalance <= 0) return baseTargetPct;
-  if (bestDayProfitUsd <= 0) return baseTargetPct;
+  // consistencyPct = 0 → aucune règle de consistency (Challenge Apex EOD)
+  if (bestDayProfitUsd <= 0 || consistencyPct <= 0) return baseTargetPct;
   // consistencyTargetPct = bestDay / (consistencyPct/100) / start × 100
-  const divisor = consistencyPct / 100;   // 0.50 (challenge) ou 0.33 (rewards)
+  const divisor = consistencyPct / 100;
   const consistencyTargetPct = Math.ceil((bestDayProfitUsd / divisor / startBalance * 100) * 100) / 100;
   return Math.max(baseTargetPct, consistencyTargetPct);
 }
@@ -417,13 +499,18 @@ export function computeV1EffectiveProfitTarget(
 // ── Profit Check ──────────────────────────────────────────────
 
 /**
- * Vérifie si le profit cible (avec consistency) est atteint.
+ * Vérifie si le profit cible (avec consistency optionnelle) est atteint.
+ *
+ * @param consistencyPct  0 = aucune règle (Challenge Apex EOD).
+ *                        V1_CONSISTENCY_PCT.reward (50) pour les Rewards.
+ *                        Défaut : 0 (challenge, aucune consistency).
  */
 export function checkV1ProfitTarget(
   startBalance:     number,
   currentBalance:   number,
   baseTargetPct:    number,
   bestDayProfitUsd: number,
+  consistencyPct:   number = 0,  // 0 = aucune règle
 ): V1ProfitCheck {
   const profitPct = startBalance > 0
     ? ((currentBalance - startBalance) / startBalance) * 100
@@ -432,6 +519,7 @@ export function checkV1ProfitTarget(
     startBalance,
     baseTargetPct,
     bestDayProfitUsd,
+    consistencyPct,
   );
   return {
     met:                profitPct >= effectiveTargetPct,
@@ -488,17 +576,17 @@ export function isV1MaxCalendarDaysExceeded(
 // ── Qualifying Days (Reward Account) ─────────────────────────
 
 /**
- * Retourne le seuil USD minimum pour un jour qualifiant.
- * Lookup exact sur balance ronde, sinon seuil du palier inférieur.
+ * Retourne le seuil USD minimum pour un jour qualifiant — APEX EOD MODEL.
+ * Délègue à V1_QUALIFYING_DAY_MIN_USD (source unique).
  *
- *   25K → 50 USD
- *   50K → 100 USD
- *   100K → 150 USD
+ *   25K  → 100 USD  (was  50)
+ *   50K  → 250 USD  (was 100)
+ *  100K  → 300 USD  (was 150)
  */
 export function getV1QualifyingDayMinUsd(startBalance: number): number {
-  if (startBalance >= 100_000) return 150;
-  if (startBalance >= 50_000)  return 100;
-  return 50; // 25K
+  if (startBalance >= 100_000) return V1_QUALIFYING_DAY_MIN_USD[100000];
+  if (startBalance >= 50_000)  return V1_QUALIFYING_DAY_MIN_USD[50000];
+  return V1_QUALIFYING_DAY_MIN_USD[25000];
 }
 
 /**
@@ -506,10 +594,10 @@ export function getV1QualifyingDayMinUsd(startBalance: number): number {
  * Une journée positive inférieure au seuil NE compte PAS.
  * Convention : ≥ seuil (exact = qualifiant).
  *
- * Exemples :
- *   25K : +49.99 USD → NON / +50.00 USD → OUI
- *   50K : +99.99 USD → NON / +100.00 USD → OUI
- *  100K : +149.99 USD → NON / +150.00 USD → OUI
+ * Exemples (Apex EOD) :
+ *   25K : +99.99 USD → NON / +100.00 USD → OUI
+ *   50K : +249.99 USD → NON / +250.00 USD → OUI
+ *  100K : +299.99 USD → NON / +300.00 USD → OUI
  */
 export function isV1QualifyingDay(
   dayProfitUsd:     number,
@@ -521,16 +609,16 @@ export function isV1QualifyingDay(
 // ── Challenge Transition Check ────────────────────────────────
 
 /**
- * Vérifie les conditions de transition challenge → Reward Account.
+ * Vérifie les conditions de transition challenge → Reward Account — APEX EOD MODEL.
  *
  * Toutes ces conditions doivent être simultanément vraies :
- *  1. Profit ≥ target effectif (avec consistency 50 %)
- *  2. Min trading days ≥ 2
+ *  1. Profit ≥ +6 % (AUCUNE consistency — Apex EOD supprime la consistency au Challenge)
+ *  2. Min trading days ≥ 0 (Apex EOD : aucun minimum)
  *  3. Max trading days ≤ 30 (non dépassé)
  *  4. Aucune breach DD (redondant — détectée en amont par le moteur DD)
  *
- * Paramètres par défaut = règles V1 contractuelles.
- * Les surcharges permettent les tests avec des valeurs custom.
+ * @param ddUsd  Montant fixe de drawdown en $ — passer getV1DdUsdByBalance(startBalance).
+ *               Défaut 1000 (25K). TOUJOURS calculer depuis la balance réelle.
  */
 export function checkV1ChallengeTransition(
   startBalance:     number,
@@ -539,13 +627,14 @@ export function checkV1ChallengeTransition(
   currentEquity:    number,
   tradingDays:      number,
   bestDayProfitUsd: number,
-  ddPct:            number  = V1_CHALLENGE.trailingDdPct,
+  ddUsd:            number  = 1000,   // Défaut 25K — passer getV1DdUsdByBalance(startBalance)
   baseTargetPct:    number  = V1_CHALLENGE.profitTargetPct,
-  minDays:          number  = V1_CHALLENGE.minTradingDays,
+  minDays:          number  = V1_CHALLENGE.minTradingDays,  // 0
   maxDays:          number  = V1_CHALLENGE.maxTradingDays,
 ): V1ChallengeCheck {
-  const profitCheck     = checkV1ProfitTarget(startBalance, currentBalance, baseTargetPct, bestDayProfitUsd);
-  const ddResult        = checkV1DDBreach(startBalance, highestEod, currentEquity, ddPct, null);
+  // Apex EOD : aucune consistency au Challenge (consistencyPct = 0)
+  const profitCheck     = checkV1ProfitTarget(startBalance, currentBalance, baseTargetPct, bestDayProfitUsd, 0);
+  const ddResult        = checkV1DDBreach(startBalance, highestEod, currentEquity, ddUsd, null);
   const minDaysMet      = isV1MinDaysMet(tradingDays, minDays);
   const maxDaysExceeded = isV1MaxDaysExceeded(tradingDays, maxDays);
 
@@ -561,14 +650,15 @@ export function checkV1ChallengeTransition(
 // ── Reward Account Qualification Check ───────────────────────
 
 /**
- * Vérifie les conditions de qualification Reward Account (avant Reward #1).
+ * Vérifie les conditions de qualification Reward Account (avant Reward #1) — APEX EOD MODEL.
  *
  * Conditions simultanées requises :
- *  1. Profit ≥ +4 % (avec consistency 50 %)
- *  2. DD trailing 4 % EOD non violé (avec verrouillage au seuil +4 %)
- *  3. ≥ 5 jours profitables qualifiants
+ *  1. Profit ≥ +4 % (avec consistency 50 % — Apex EOD, was 33 %)
+ *  2. DD trailing EOD (montant fixe $) non violé — avec Safety Net lock
+ *  3. ≥ 5 jours profitables qualifiants (seuil qualifiant Apex EOD: 100/250/300$)
  *
- * @param qualifyingDays  Nombre de jours ≥ seuil USD accumulés
+ * @param ddUsd      Drawdown fixe $ — passer getV1DdUsdByBalance(startBalance)
+ * @param safetyNet  Safety Net en $ — passer getV1SafetyNet(startBalance)
  */
 export function checkV1RewardQualification(
   startBalance:     number,
@@ -577,13 +667,14 @@ export function checkV1RewardQualification(
   currentEquity:    number,
   bestDayProfitUsd: number,
   qualifyingDays:   number,
-  ddPct:            number = V1_REWARD_QUAL.trailingDdPct,
-  lockPct:          number = V1_REWARD_QUAL.trailingLockPct,
+  ddUsd:            number = 1000,          // Défaut 25K — passer getV1DdUsdByBalance()
+  safetyNet:        number = 26100,         // Défaut 25K — passer getV1SafetyNet()
   profitTargetPct:  number = V1_REWARD_QUAL.profitTargetPct,
   minQualDays:      number = V1_REWARD_QUAL.minQualifyingDays,
 ): V1RewardQualCheck {
-  const profitCheck       = checkV1ProfitTarget(startBalance, currentBalance, profitTargetPct, bestDayProfitUsd);
-  const ddResult          = checkV1DDBreach(startBalance, highestEod, currentEquity, ddPct, lockPct);
+  // Apex EOD : consistency 50 % pour les Rewards (was 33 %)
+  const profitCheck       = checkV1ProfitTarget(startBalance, currentBalance, profitTargetPct, bestDayProfitUsd, V1_CONSISTENCY_PCT.reward);
+  const ddResult          = checkV1DDBreach(startBalance, highestEod, currentEquity, ddUsd, safetyNet);
   const qualifyingDaysMet = qualifyingDays >= minQualDays;
 
   return {
@@ -921,39 +1012,45 @@ export function computeRewardImpact(
 // ═══════════════════════════════════════════════════════════════
 
 /**
- * Pourcentage de profit minimum requis (sur le capital initial)
- * pour qu'une demande de Reward soit recevable.
- * S'applique à toutes les Rewards : #1, #2, #3, #4, #5.
- * Source unique — ne pas hardcoder 4 ailleurs.
+ * @deprecated Remplacé par le modèle Apex EOD — Safety Net + cap.
+ * Gardé pour rétrocompatibilité (tests existants, affichage legacy).
+ * NE PAS utiliser pour de nouveaux calculs.
  */
 export const REWARD_REQUEST_PROFIT_PCT = 4 as const;
 
 /**
- * Calcule le seuil de balance minimum requis pour une demande de Reward.
+ * Calcule le seuil de balance minimum requis pour une demande de Reward — APEX EOD MODEL.
  *
- * requestThreshold = startBalance × (1 + REWARD_REQUEST_PROFIT_PCT / 100)
+ * requestThreshold = Safety Net + cap du niveau de Reward
  *
  * Exemples :
- *   25K  → $26 000
- *   50K  → $52 000
- *   100K → $104 000
+ *   computeRewardRequestThreshold(25000,  1) → 26 100 + 300  = 26 400
+ *   computeRewardRequestThreshold(50000,  1) → 52 100 + 500  = 52 600
+ *   computeRewardRequestThreshold(100000, 1) → 103 100 + 750 = 103 850
+ *   computeRewardRequestThreshold(25000,  2) → 26 100 + 400  = 26 500
+ *
+ * @param rewardLevel  Numéro de Reward demandé (1 à 5), default 1
  */
-export function computeRewardRequestThreshold(startBalance: number): number {
-  return startBalance * (1 + REWARD_REQUEST_PROFIT_PCT / 100);
+export function computeRewardRequestThreshold(startBalance: number, rewardLevel: number = 1): number {
+  const safetyNet = getV1SafetyNet(startBalance);
+  const cap       = getV1RewardCap(startBalance, rewardLevel) ?? 0;
+  return safetyNet + cap;
 }
 
 /**
  * Retourne true si la balance courante atteint le seuil de demande de Reward.
  * Convention >= (atteindre exactement le seuil = éligible).
  *
- * @param currentBalance          Balance courante du Reward Account (USD)
- * @param startBalance            Capital initial du Reward Account (USD)
+ * @param currentBalance  Balance courante du Reward Account (USD)
+ * @param startBalance    Capital initial du Reward Account (USD)
+ * @param rewardLevel     Numéro de Reward demandé (1 à 5), default 1
  */
 export function isRewardRequestEligible(
   currentBalance: number,
   startBalance:   number,
+  rewardLevel:    number = 1,
 ): boolean {
-  return currentBalance >= computeRewardRequestThreshold(startBalance);
+  return currentBalance >= computeRewardRequestThreshold(startBalance, rewardLevel);
 }
 
 /**

@@ -61,10 +61,11 @@ const DD_PCT: Record<V1Slug, number> = {
   "rewards-100k": 3,
 };
 
+// Apex EOD : seuils journée qualifiante relevés
 const QUALIFYING_MIN_USD: Record<V1Slug, number> = {
-  "rewards-25k":   50,
-  "rewards-50k":  100,
-  "rewards-100k": 150,
+  "rewards-25k":  100,   // was  50
+  "rewards-50k":  250,   // was 100
+  "rewards-100k": 300,   // was 150
 };
 
 const ACTIVATION_FEE_EUR: Record<V1Slug, number> = {
@@ -217,10 +218,10 @@ function getRules(slug: V1Slug): RuleRow[] {
       description: `Seuil USD minimum par journée qualifiante (Reward Account) : ${qMin} USD.` },
     { rule_key: "activation_fee_eur",      rule_value: fee,     enabled: true,
       description: `Frais d'activation Reward Account : ${fee} EUR.` },
-    { rule_key: "consistency_challenge_pct", rule_value: 50,    enabled: true,
-      description: "Consistency Niveau 1 (Challenge) : best_day ≤ 50 % du profit requis." },
-    { rule_key: "consistency_reward_pct",    rule_value: 33,    enabled: true,
-      description: "Consistency Niveaux 2 & 3 (Rewards) : best_day ≤ 33 % du profit requis." },
+    { rule_key: "consistency_challenge_pct", rule_value: 0,     enabled: false,
+      description: "Apex EOD : aucune consistency au Challenge (désactivé, valeur 0)." },
+    { rule_key: "consistency_reward_pct",    rule_value: 50,    enabled: true,
+      description: "Apex EOD — Consistency Rewards : best_day < 50 % du profit requis (was 33 %)." },
     ...Object.entries(caps).map(([key, val]) => ({
       rule_key:    key,
       rule_value:  val,

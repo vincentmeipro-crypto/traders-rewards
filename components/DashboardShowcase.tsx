@@ -18,7 +18,7 @@ export default function DashboardShowcase() {
   const cards = [
     { icon: <Target size={17}/>, label: L("OBJECTIF", "OBJETIVO", "TARGET"), value: "+6%", sub: L("Progression en direct", "Progreso en directo", "Live progress") },
     { icon: <ShieldCheck size={17}/>, label: "TRAILING DD EOD", value: "4%", sub: L("Plancher clairement affiché", "Suelo claramente visible", "Clear protection floor") },
-    { icon: <BarChart3 size={17}/>, label: L("CONSISTANCE", "CONSISTENCIA", "CONSISTENCY"), value: "≤50%", sub: L("Calcul automatique", "Cálculo automático", "Automatic calculation") },
+    { icon: <BarChart3 size={17}/>, label: "DLL", value: "$500", sub: L("Limite journalière", "Límite diario", "Daily limit") },
     { icon: <Trophy size={17}/>, label: "REWARD", value: "#1", sub: L("Votre prochaine étape", "Tu próximo nivel", "Your next milestone") },
   ];
 

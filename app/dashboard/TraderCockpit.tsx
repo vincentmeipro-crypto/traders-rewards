@@ -409,7 +409,8 @@ export default function TraderCockpit({
   const profitProgress = profitTargetUsd > 0 ? clamp(profit / profitTargetUsd * 100) : 100;
 
   // minDays from contract rules (snapshot → fallback)
-  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isLegacyPhaseTwo ? contractRules.minTradingDays : 2;
+  // Apex EOD : Challenge V1 = 0 jours minimum (was 2)
+  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isLegacyPhaseTwo ? contractRules.minTradingDays : 0;
 
   const daysRemaining = Math.max(0, minDays - challenge.trading_days);
   const dailyReferenceBalance = challenge.daily_start_balance ?? challenge.start_balance;
@@ -668,7 +669,7 @@ export default function TraderCockpit({
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
               <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isTraderReward ? `REWARD #${currentRewardNumber}` : isRewardAccount ? (isFr ? "Jours qualifiants" : "Qualifying days") : (isFr ? "Jours minimum" : "Minimum days")}</span><CalendarDays color={BLUE} size={16} /></div>
               <div>
-                <div className={styles.kpiValue}>{isTraderReward ? money(currentRewardCap) : isRewardAccount ? "5 MIN" : `${challenge.trading_days} / 2`}</div>
+                <div className={styles.kpiValue}>{isTraderReward ? money(currentRewardCap) : isRewardAccount ? "5 MIN" : `${challenge.trading_days}${minDays > 0 ? ` / ${minDays}` : ""}`}</div>
                 <div className={styles.kpiMeta}><span>{isTraderReward ? (isFr ? "Plafond maximum" : "Maximum cap") : isRewardAccount ? `${money(qualifyingDayUsd)} ${isFr ? "minimum / jour" : "minimum / day"}` : isFr ? "Jours tradés" : "Days traded"}</span></div>
               </div>
             </div>

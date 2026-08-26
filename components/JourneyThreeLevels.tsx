@@ -25,17 +25,18 @@ const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 // Source : lib/rewardsData.ts + lib/v1-engine.ts (sans l'importer côté client)
 const DD_PCT: Record<number, number>    = { 25000: 4, 50000: 4, 100000: 3 };
 const ACTIV_FEE: Record<number, number> = { 25000: 99, 50000: 99, 100000: 149 };
-const QUAL_MIN: Record<number, number>  = { 25000: 50, 50000: 100, 100000: 150 };
-// Seuil EOD déclenchant le verrou (per spec §24 : 25K/50K = +4%, 100K = +3%)
+// APEX EOD : seuils journée qualifiante relevés (was 50/100/150)
+const QUAL_MIN: Record<number, number>  = { 25000: 100, 50000: 250, 100000: 300 };
+// Safety Net (seuil de lock Apex EOD)
 const LOCK_AT: Record<number, number> = {
-  25000:  25000 * 1.04,  // $26 000
-  50000:  50000 * 1.04,  // $52 000
-  100000: 100000 * 1.03, // $103 000 — note : V1_REWARD_QUAL.trailingLockPct=4 dans le moteur
+  25000:   26100,  // Safety Net 25K (was 26 000 = start×1.04)
+  50000:   52100,  // Safety Net 50K (was 52 000 = start×1.04)
+  100000: 103100,  // Safety Net 100K (was 103 000 = start×1.03)
 };
 const SIZES_DATA = [
-  { bal: 25000,  label: "25K",  ddPct: 4, floorStart: 24000,  lockAt: 26000,  targetBal: 26000, rewardCaps: REWARD_AMOUNTS[0] },
-  { bal: 50000,  label: "50K",  ddPct: 4, floorStart: 48000,  lockAt: 52000,  targetBal: 52000, rewardCaps: REWARD_AMOUNTS[1] },
-  { bal: 100000, label: "100K", ddPct: 3, floorStart: 97000,  lockAt: 103000, targetBal: 104000, rewardCaps: REWARD_AMOUNTS[2] },
+  { bal: 25000,  label: "25K",  ddPct: 4, floorStart: 24000,  lockAt: 26100,  targetBal: 26400,  rewardCaps: REWARD_AMOUNTS[0] },
+  { bal: 50000,  label: "50K",  ddPct: 4, floorStart: 48000,  lockAt: 52100,  targetBal: 52600,  rewardCaps: REWARD_AMOUNTS[1] },
+  { bal: 100000, label: "100K", ddPct: 3, floorStart: 97000,  lockAt: 103100, targetBal: 103850, rewardCaps: REWARD_AMOUNTS[2] },
 ];
 
 // ── Styles partagés ───────────────────────────────────────────
@@ -218,9 +219,9 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             {[
-              { size: "25K",  min: 50,  floorStart: 24000, lockAt: 26000,  target: 26000 },
-              { size: "50K",  min: 100, floorStart: 48000, lockAt: 52000,  target: 52000 },
-              { size: "100K", min: 150, floorStart: 97000, lockAt: 103000, target: 104000 },
+              { size: "25K",  min: 100, floorStart: 24000, lockAt: 26100,  target: 26400 },
+              { size: "50K",  min: 250, floorStart: 48000, lockAt: 52100,  target: 52600 },
+              { size: "100K", min: 300, floorStart: 97000, lockAt: 103100, target: 103850 },
             ].map((row, i) => (
               <div key={i} style={infoBox}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>{row.size}</div>
