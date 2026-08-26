@@ -51,10 +51,12 @@ export default function RewardReviewPanel({
   const v1SafetyNet   = isV1 && startBalance > 0 ? getV1SafetyNetUsd(startBalance) : 0;
   const v1FloorProxy  = startBalance > 0 ? startBalance - v1DdUsd : 0;
   // Seuil Reward courant = Safety Net + cap du prochain Reward
-  const rewardLevel       = paidRewardsCount + 1;
-  const v1RewardThreshold = isV1Reward && startBalance > 0
+  const rewardLevel         = paidRewardsCount + 1;
+  const v1RewardThreshold   = isV1Reward && startBalance > 0
     ? getV1RewardThresholdUsd(startBalance, rewardLevel)
     : 0;
+  // Label canonique du niveau Compte Reward / Trader Reward #N
+  const compteRewardLabel   = rewardLevel === 1 ? "Compte Reward" : `Trader Reward #${rewardLevel}`;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CHECKS — deux ensembles selon produit (V1 strict / Legacy)
@@ -122,7 +124,7 @@ export default function RewardReviewPanel({
       detail: `${data.account.profitPercent >= 0 ? "+" : ""}${data.account.profitPercent.toFixed(2)}% · objectif ${V1_REWARD_PROFIT_PCT}%`,
     },
     {
-      label: `Seuil Reward #${rewardLevel} atteint`,
+      label: `Seuil ${compteRewardLabel} atteint`,
       ok: v1RewardThreshold > 0 && data.account.equity >= v1RewardThreshold,
       unknown: v1RewardThreshold === 0,
       detail: v1RewardThreshold > 0
@@ -203,16 +205,17 @@ export default function RewardReviewPanel({
   // Titre et sous-titre du panneau
   // ═══════════════════════════════════════════════════════════════════════════
 
+  // ── Titre du panneau ─────────────────────────────────────────────────────────
   const panelTitle = isV1Challenge
-    ? "Dossier Challenge V1 — Apex EOD"
+    ? "Dossier Challenger — Apex EOD"
     : isV1Reward
-      ? `Dossier Validation Reward V1 (Reward #${rewardLevel})`
+      ? `Dossier Validation — ${compteRewardLabel}`
       : "Dossier de validation Reward";
 
   const panelSub = isV1Challenge
     ? "Challenge Apex EOD · 0 jour min · Aucune consistance · DD EOD fixe $ · Pas de Stop Loss obligatoire."
     : isV1Reward
-      ? `Qualifying days · Consistance 50% · Safety Net · Seuil Reward #${rewardLevel} · DD EOD fixe $.`
+      ? `Qualifying days · Consistance 50% · Safety Net · Seuil ${compteRewardLabel} · DD EOD fixe $.`
       : "Performance, limites, positions et premier Stop Loss observé réunis pour ce compte.";
 
   return (

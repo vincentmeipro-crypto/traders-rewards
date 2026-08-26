@@ -167,7 +167,7 @@ function ModalShell({ isOpen, onClose, titleId, children }: {
   );
 }
 
-// ── Modal 02 : Reward Account ─────────────────────────────────
+// ── Modal 02 : Compte Reward ──────────────────────────────────
 function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: string, en: string) => string }) {
   return (
     <div>
@@ -266,7 +266,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
 
         {/* Rewards disponibles */}
         <div>
-          <h3 style={modalSecTitle}>{L("Première Reward disponible","Primera Reward disponible","First Reward Available")}</h3>
+          <h3 style={modalSecTitle}>{L("Première Reward disponible","Primera Reward disponible","First Reward")}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             {SIZES_DATA.map((s, i) => (
               <div key={i} style={{ ...infoBox, textAlign: "center" }}>
@@ -803,7 +803,7 @@ export default function JourneyThreeLevels() {
                 <InfoBtn
                   btnRef={triggerRefs[1] as InfoBtnRef}
                   onClick={() => openModal(1)}
-                  label={L("Détails du Reward Account","Detalles del Reward Account","Reward Account details")}
+                  label={L("Détails du Compte Reward","Detalles del Compte Reward","Compte Reward details")}
                 />
               </div>
 
@@ -996,7 +996,7 @@ export default function JourneyThreeLevels() {
         onClose={closeModal}
       />
 
-      {/* ── Modal 02 : Reward Account ── */}
+      {/* ── Modal 02 : Compte Reward ── */}
       <ModalShell isOpen={activeModal === 1} onClose={closeModal} titleId="m2-title">
         <Modal02 onClose={closeModal} L={L} />
       </ModalShell>

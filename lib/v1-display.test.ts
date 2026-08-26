@@ -23,6 +23,7 @@
 
 import {
   isV1Product,
+  isV1Challenge,
   getV1LevelLabel,
   getV1DdDisplay,
   getV1DdUsd,
@@ -85,10 +86,10 @@ function section(title: string) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// A. isV1Product — détection du modèle V1
+// A. isV1Product + isV1Challenge — détection du modèle V1
 // ═══════════════════════════════════════════════════════════════
 
-section("A. isV1Product");
+section("A. isV1Product (string seul)");
 
 test("trailing_eod_lock → true",   isV1Product("trailing_eod_lock"), true);
 test("null → false",               isV1Product(null),                false);
@@ -97,27 +98,48 @@ test("'' → false",                 isV1Product(""),                  false);
 test("trailing_balance → false",   isV1Product("trailing_balance"),  false);
 test("2step → false",              isV1Product("2step"),             false);
 
+section("A2. isV1Challenge (détection robuste tri-source)");
+
+// Via dd_model
+test("dd_model=trailing_eod_lock → true",
+  isV1Challenge({ dd_model: "trailing_eod_lock" }), true);
+// Via rules_snapshot.rules.dd_model
+test("rules_snapshot.rules.dd_model=trailing_eod_lock → true",
+  isV1Challenge({ rules_snapshot: { rules: { dd_model: "trailing_eod_lock" } } }), true);
+// Via model slug
+test("model=rewards-50k → true",    isV1Challenge({ model: "rewards-50k" }),   true);
+test("model=rewards-25k → true",    isV1Challenge({ model: "rewards-25k" }),   true);
+test("model=rewards-100k → true",   isV1Challenge({ model: "rewards-100k" }),  true);
+// Legacy slugs → false
+test("model=2step → false",         isV1Challenge({ model: "2step" }),          false);
+test("model=1step → false",         isV1Challenge({ model: "1step" }),          false);
+// All null/undefined → false
+test("tout null → false",           isV1Challenge({ dd_model: null, model: null }), false);
+test("tout vide → false",           isV1Challenge({}),                          false);
+
 // ═══════════════════════════════════════════════════════════════
-// B. getV1LevelLabel — label de niveau V1
+// B. getV1LevelLabel — labels canoniques V1
 // ═══════════════════════════════════════════════════════════════
 
-section("B. getV1LevelLabel");
+section("B. getV1LevelLabel (labels canoniques)");
 
-// Challenge
-test("phase1 / 0 rewards  → Challenge",        getV1LevelLabel("phase1", 0), "Challenge");
-test("phase1 / 3 rewards  → Challenge",        getV1LevelLabel("phase1", 3), "Challenge");  // paidCount ignoré en challenge
+// Challenge → "Challenger"
+test("phase1 / 0 rewards  → Challenger",       getV1LevelLabel("phase1", 0), "Challenger");
+test("phase1 / 3 rewards  → Challenger",       getV1LevelLabel("phase1", 3), "Challenger");  // paidCount ignoré en challenge
 
-// Rewards 1→5
-test("funded / 0 rewards  → Reward #1",        getV1LevelLabel("funded", 0), "Reward #1");
-test("funded / 1 reward   → Reward #2",        getV1LevelLabel("funded", 1), "Reward #2");
-test("funded / 2 rewards  → Reward #3",        getV1LevelLabel("funded", 2), "Reward #3");
-test("funded / 3 rewards  → Reward #4",        getV1LevelLabel("funded", 3), "Reward #4");
-test("funded / 4 rewards  → Reward #5",        getV1LevelLabel("funded", 4), "Reward #5");
+// Compte Reward (Reward #1 en cours)
+test("funded / 0 rewards  → Compte Reward",    getV1LevelLabel("funded", 0), "Compte Reward");
+
+// Trader Reward #2 → #5
+test("funded / 1 reward   → Trader Reward #2", getV1LevelLabel("funded", 1), "Trader Reward #2");
+test("funded / 2 rewards  → Trader Reward #3", getV1LevelLabel("funded", 2), "Trader Reward #3");
+test("funded / 3 rewards  → Trader Reward #4", getV1LevelLabel("funded", 3), "Trader Reward #4");
+test("funded / 4 rewards  → Trader Reward #5", getV1LevelLabel("funded", 4), "Trader Reward #5");
 
 // Terminé
-test("funded / 5 rewards  → Terminé (5/5)",    getV1LevelLabel("funded", 5),  "Terminé (5/5)");
-test("terminatedAt fourni → Terminé (5/5)",    getV1LevelLabel("funded", 4, "2026-01-01T00:00:00Z"), "Terminé (5/5)");
-test("phase1 + terminatedAt → Terminé (5/5)",  getV1LevelLabel("phase1", 0, "2026-01-01T00:00:00Z"), "Terminé (5/5)");
+test("funded / 5 rewards  → Terminé",          getV1LevelLabel("funded", 5),  "Terminé");
+test("terminatedAt fourni → Terminé",          getV1LevelLabel("funded", 4, "2026-01-01T00:00:00Z"), "Terminé");
+test("phase1 + terminatedAt → Terminé",        getV1LevelLabel("phase1", 0, "2026-01-01T00:00:00Z"), "Terminé");
 
 // ═══════════════════════════════════════════════════════════════
 // C. DD EOD fixe $ — getV1DdUsd + getV1DdDisplay

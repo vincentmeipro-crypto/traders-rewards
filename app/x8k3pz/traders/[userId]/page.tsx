@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import NotesSection from "./NotesSection";
-import { isV1Product, getV1LevelLabel } from "@/lib/v1-display";
+import { isV1Challenge, getV1LevelLabel } from "@/lib/v1-display";
 
 // ── Types locaux ─────────────────────────────────────────────────────────────
 
@@ -49,6 +49,7 @@ type Challenge = {
   breach_at:            string | null;
   // V1 Apex EOD fields
   dd_model?:           string | null;
+  rules_snapshot?:     unknown;
   terminated_at?:      string | null;
 };
 
@@ -86,7 +87,7 @@ const STATUS_LABELS: Record<string, string> = {
   active:   "Actif",
   failed:   "Échoué",
   passed:   "Validé",
-  funded:   "Reward Account",
+  funded:   "Compte Reward",
   pending:  "En attente",
   paid:     "Versé",
   rejected: "Refusé",
@@ -334,7 +335,7 @@ export default async function TraderPage({
             { label: "Total payé", value: `€${totalSpent.toLocaleString()}`, color: "#22c55e" },
             { label: "Challenges", value: String(challenges.length),             color: "#fff" },
             { label: "Actifs",   value: String(activeCount),                     color: activeCount > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
-            { label: "Reward Accounts", value: String(certifCount), color: certifCount > 0 ? "#9ccfea" : "rgba(255,255,255,0.25)" },
+            { label: "Comptes Reward", value: String(certifCount), color: certifCount > 0 ? "#9ccfea" : "rgba(255,255,255,0.25)" },
             { label: "Échoués",  value: String(failedCount),                     color: failedCount > 0 ? "#ef4444" : "rgba(255,255,255,0.25)" },
             { label: "Rewards",  value: `€${rewardsPaid.toLocaleString()}`,      color: rewardsPaid > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
             { label: "En attente", value: rewardsPending > 0 ? `€${rewardsPending.toLocaleString()}` : "—", color: rewardsPending > 0 ? "#f59e0b" : "rgba(255,255,255,0.2)" },
@@ -396,7 +397,7 @@ export default async function TraderPage({
                     ? ((c.balance - c.start_balance) / c.start_balance * 100)
                     : 0;
                   const gainClr = gain > 0 ? "#22c55e" : gain < 0 ? "#ef4444" : "rgba(255,255,255,0.3)";
-                  const isV1c  = isV1Product(c.dd_model);
+                  const isV1c  = isV1Challenge(c);
                   // paidCount = rewards payés sur ce challenge spécifique
                   const cPaidCount = payouts.filter(p => p.challenge_id === c.id && p.status === "paid").length;
                   const v1LevelLabel = isV1c ? getV1LevelLabel(c.phase, cPaidCount, c.terminated_at) : null;
@@ -420,7 +421,7 @@ export default async function TraderPage({
                               {v1LevelLabel}
                             </span>
                           : <span style={{ fontSize: 10, background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>
-                              {c.phase === "funded" ? "Reward Account" : c.phase === "phase2" ? "Historique" : "Challenger"}
+                              {c.phase === "funded" ? "Compte Reward" : c.phase === "phase2" ? "Historique" : "Challenger"}
                             </span>
                         }
                       </td>

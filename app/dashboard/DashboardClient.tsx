@@ -12,6 +12,7 @@ import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDas
 import SupportTab from "./SupportTab";
 import TraderCockpit from "./TraderCockpit";
 import { extractContractRules } from "@/lib/contract-rules";
+import { isV1Challenge } from "@/lib/v1-display";
 
 type Challenge = {
   id: string;
@@ -724,10 +725,11 @@ export default function DashboardClient({ user }: { user: User }) {
                   const profit = (c.status === "failed" && c.breach_reason === "daily_drawdown" && c.daily_drawdown_limit != null)
                     ? (-c.daily_drawdown_limit).toFixed(1)
                     : (finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null);
-                  const phaseReached = c.phase === "funded" ? (isFr ? "REWARD ACCOUNT" : "REWARD ACCOUNT") : "CHALLENGER";
+                  // Détection V1 robuste (dd_model OU rules_snapshot OU slug)
+                  const isV1 = isV1Challenge(c);
+                  const phaseReached = c.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER";
                   const isLast = idx === allChallenges.length - 1;
                   const dotColor = c.status === "funded" ? "#9CCFEA" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "#9CCFEA" : "#9CCFEA";
-                  const isV1 = c.dd_model === "trailing_eod_lock";
                   const relatedPayouts = isV1
                     ? allPayouts.filter(p => p.challenge_id === c.id)
                     : allPayouts.filter(p => {
@@ -754,7 +756,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         {/* Header */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.phase === "funded" ? "Reward Account" : "Challenge"}</div>
+                            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.phase === "funded" ? "Compte Reward" : "Challenge"}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                               <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{STATUS_LABELS[c.status] || c.status}</span>
                               <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(156,207,234,0.08)", color: c.phase === "funded" ? "#9CCFEA" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
@@ -811,13 +813,13 @@ export default function DashboardClient({ user }: { user: User }) {
                                 </div>
                               )}
 
-                              {/* Étape 2 — Reward Account activé */}
+                              {/* Étape 2 — Compte Reward activé */}
                               {c.reward_converted_at && (
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", backgroundColor: "rgba(201,168,76,0.08)", borderRadius: 8 }}>
                                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                     <Award size={14} color="#C9A84C" />
                                     <span style={{ fontSize: 13, fontWeight: 700, color: "#C9A84C" }}>
-                                      {isFr ? "Reward Account activé" : "Reward Account live"}
+                                      {isFr ? "Compte Reward activé" : "Compte Reward actif"}
                                     </span>
                                     {c.mt5_login && (
                                       <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>#{c.mt5_login}</span>
@@ -1092,7 +1094,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
           const ruleCards: { title: string; desc: string; icon: React.ReactNode }[] = [];
 
-          // Objectif du niveau : +6% sur le Challenge, puis +4% sur le Reward Account.
+          // Objectif du niveau : +6% sur le Challenge, puis +4% sur le Compte Reward.
           if (pt != null || isFunded) {
             const displayedTarget = isFunded ? 4 : (pt ?? 6);
             ruleCards.push({
@@ -1127,7 +1129,7 @@ export default function DashboardClient({ user }: { user: User }) {
           });
 
           // Règle de consistance : meilleure journée / profit total.
-          // Apex EOD : aucune consistency au Challenge (null) / 50 % au Reward Account.
+          // Apex EOD : aucune consistency au Challenge (null) / 50 % au Compte Reward.
           const consistencyPct = isFunded ? 50 : null;  // null = pas de règle (Challenge Apex EOD)
           if (consistencyPct !== null) {
             ruleCards.push({
@@ -1149,7 +1151,7 @@ export default function DashboardClient({ user }: { user: User }) {
           }
 
           // Durée contractuelle : Challenge limité à 30 jours calendaires,
-          // Reward Account sans limite de temps.
+          // Compte Reward sans limite de temps.
           ruleCards.push({
             icon: <Clock size={20} color="#9CCFEA" />,
             title: isFunded
@@ -1157,8 +1159,8 @@ export default function DashboardClient({ user }: { user: User }) {
               : (isFr ? "30 jours calendaires maximum" : "30 Calendar Days Maximum"),
             desc: isFunded
               ? (isFr
-                ? "Le Reward Account ne comporte aucune limite de temps pour atteindre le prochain seuil."
-                : "The Reward Account has no time limit for reaching the next threshold.")
+                ? "Le Compte Reward ne comporte aucune limite de temps pour atteindre le prochain seuil."
+                : "The Compte Reward has no time limit for reaching the next threshold.")
               : (isFr
                 ? "Le Challenge doit être validé dans les 30 jours calendaires suivant sa création."
                 : "The Challenge must be completed within 30 calendar days of its creation."),
@@ -1183,7 +1185,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(156,207,234,.25)", borderRadius: 12, background: "rgba(156,207,234,.055)" }}>
                   <span style={{ color: "#9CCFEA", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{isFr ? "COMPTE" : "ACCOUNT"}</span>
                   <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
-                    {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "REWARD ACCOUNT" : "CHALLENGER"}</option>)}
+                    {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER"}</option>)}
                   </select>
                 </label>
               )}
@@ -1588,7 +1590,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(156,207,234,.25)", borderRadius: 12, background: "rgba(156,207,234,.055)" }}>
                 <span style={{ color: "#9CCFEA", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{isFr ? "COMPTE" : "ACCOUNT"}</span>
                 <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
-                  {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "REWARD ACCOUNT" : "CHALLENGER"}</option>)}
+                  {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER"}</option>)}
                 </select>
               </label>
             )}
@@ -1759,7 +1761,7 @@ export default function DashboardClient({ user }: { user: User }) {
               const rewardCount = activeChallenges.filter(c => c.status === "funded" || c.phase === "funded").length;
               const counters = [
                 { label: isFr ? "Challenges actifs" : "Active Challenges", value: challengeCount, max: 10 },
-                { label: isFr ? "Reward Accounts actifs" : "Active Reward Accounts", value: rewardCount, max: 5 },
+                { label: isFr ? "Comptes Reward actifs" : "Active Comptes Reward", value: rewardCount, max: 5 },
               ];
               return (
                 <div className="card" style={{ padding: "14px 20px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 22, marginBottom: 16 }}>

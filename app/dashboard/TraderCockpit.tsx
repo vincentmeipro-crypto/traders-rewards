@@ -38,7 +38,7 @@ import { getSyncFreshness } from "@/lib/sync-freshness";
 import { QUAL_DAY_USD, REWARD_AMOUNTS } from "@/lib/rewardsData";
 import { getTraderV1Level } from "@/lib/v1-engine";
 import {
-  isV1Product,
+  isV1Challenge,
   getV1DdUsd,
   getV1SafetyNetUsd,
   getV1ConsistencyDisplay,
@@ -158,7 +158,7 @@ function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
 function phaseLabel(phase: string, approvedRewardsCount: number): string {
   if (phase === "phase1") return "CHALLENGER";
   if (phase === "phase2") return "CHALLENGER · LEGACY";
-  if (phase === "funded") return approvedRewardsCount > 0 ? "TRADER REWARD" : "REWARD START";
+  if (phase === "funded") return approvedRewardsCount > 0 ? "TRADER REWARD" : "COMPTE REWARD";
   return phase;
 }
 
@@ -402,8 +402,8 @@ export default function TraderCockpit({
   const accountSize = numeric(String(challenge.account_size).replace(/[^0-9.]/g, "")) * (String(challenge.account_size).toUpperCase().includes("K") ? 1000 : 1);
   const isLegacyPhaseTwo = challenge.phase === "phase2";
   const isRewardAccount = challenge.phase === "funded";
-  // Modèle V1 Apex EOD
-  const isV1 = isV1Product(challenge.dd_model);
+  // Modèle V1 Apex EOD — détection robuste (dd_model OU rules_snapshot OU slug)
+  const isV1 = isV1Challenge(challenge);
   // Niveau V1 dérivé depuis la source canonique (payouts.status="paid")
   const traderLevel = getTraderV1Level(challenge.phase, approvedRewardsCount);
   const isTraderReward = traderLevel.level === 3;

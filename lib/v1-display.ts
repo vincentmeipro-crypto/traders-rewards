@@ -23,30 +23,78 @@ import {
   getTraderV1Level,
 } from "./v1-engine";
 
+// ── Slugs produit V1 ──────────────────────────────────────────
+// Ces slugs correspondent aux colonnes challenges.model pour les
+// produits Apex EOD (rewards-25k / rewards-50k / rewards-100k).
+const V1_PRODUCT_SLUGS = new Set(["rewards-25k", "rewards-50k", "rewards-100k"]);
+
 // ── Détection V1 ──────────────────────────────────────────────
 
-/** Retourne true si le compte est un produit V1 Apex EOD */
+/**
+ * Retourne true si le compte est un produit V1 Apex EOD.
+ * Accepte uniquement la valeur dd_model string.
+ * Préférer isV1Challenge() quand l'objet complet est disponible.
+ */
 export function isV1Product(ddModel: string | null | undefined): boolean {
   return ddModel === V1_DD_MODEL;
+}
+
+/**
+ * Détection V1 robuste — lit dans l'ordre :
+ *  1. challenges.dd_model        (colonne directe, présente si peuplée)
+ *  2. rules_snapshot.rules.dd_model  (snapshot JSON de l'achat — toujours présent
+ *     pour les achats Produit Engine ; c'est ici qu'est l'info réelle)
+ *  3. challenges.model           (slug produit — fallback garanti)
+ *
+ * ROOT CAUSE historique : challenges.dd_model était NULL pour les
+ * challenges créés avant que le POST /api/admin/challenges ne le peuple.
+ * Utiliser cette fonction partout à la place de isV1Product(c.dd_model).
+ */
+export function isV1Challenge(c: {
+  dd_model?:       string | null | undefined;
+  rules_snapshot?: unknown;
+  model?:          string | null | undefined;
+}): boolean {
+  if (c.dd_model === V1_DD_MODEL) return true;
+
+  // Lire depuis le snapshot JSON (path Product Engine)
+  const snap  = c.rules_snapshot as Record<string, unknown> | null | undefined;
+  const rules = snap?.rules as Record<string, unknown> | undefined;
+  if (rules?.dd_model === V1_DD_MODEL) return true;
+
+  // Fallback sur le slug modèle (toujours fiable)
+  if (c.model != null && V1_PRODUCT_SLUGS.has(c.model)) return true;
+
+  return false;
 }
 
 // ── Niveau métier ─────────────────────────────────────────────
 
 /**
- * Label court du niveau V1 pour affichage admin/dashboard.
- * Exemples : "Challenge", "Reward #1", "Reward #3", "Terminé (5/5)"
+ * Label canonique du niveau V1 (admin + dashboard).
+ *
+ * Mapping :
+ *   phase1                           → "Challenger"
+ *   phase=funded, paid=0             → "Compte Reward"   (en cours vers R#1)
+ *   phase=funded, paid=1             → "Trader Reward #2"
+ *   …
+ *   phase=funded, paid=4             → "Trader Reward #5"
+ *   paidCount ≥ 5 ou terminatedAt    → "Terminé"
+ *   (status=failed géré en amont par l'appelant)
  */
 export function getV1LevelLabel(
   phase: string,
   paidRewardsCount: number,
   terminatedAt?: string | null,
 ): string {
-  if (terminatedAt) return "Terminé (5/5)";
+  if (terminatedAt) return "Terminé";
   const level = getTraderV1Level(phase, paidRewardsCount);
-  if (level.terminated) return "Terminé (5/5)";
-  if (phase !== "funded") return "Challenge";
+  if (level.terminated) return "Terminé";
+  if (phase !== "funded") return "Challenger";
   const rn = level.nextRewardNumber;
-  return rn != null ? `Reward #${rn}` : "Terminé";
+  if (rn == null) return "Terminé";
+  if (rn === 1)   return "Compte Reward";
+  return `Trader Reward #${rn}`;
 }
 
 // ── DD EOD ────────────────────────────────────────────────────
@@ -112,8 +160,8 @@ export function getV1QualDayUsd(startBalance: number): number {
 /**
  * Retourne le label de consistency pour un compte V1.
  *
- * Challenge V1  → "AUCUNE"  (Apex EOD supprime la consistency)
- * Reward V1     → "≤ 50%"   (was 33% pour les anciens contrats)
+ * Challenger V1  → "AUCUNE"  (Apex EOD supprime la consistency)
+ * Compte Reward  → "≤ 50%"   (was 33% pour les anciens contrats)
  */
 export function getV1ConsistencyDisplay(phase: string): string {
   return phase === "funded"
@@ -123,7 +171,7 @@ export function getV1ConsistencyDisplay(phase: string): string {
 
 // ── Constantes utiles ─────────────────────────────────────────
 
-/** Nombre minimum de jours qualifiants pour le Reward Account */
+/** Nombre minimum de jours qualifiants pour le Compte Reward */
 export const V1_QUAL_DAYS_MIN = V1_REWARD_QUAL.minQualifyingDays as number;
 
 /** Nombre minimum de jours de trading pour le Challenge V1 */
@@ -135,7 +183,7 @@ export const V1_CHALLENGE_MAX_DAYS = V1_CHALLENGE.maxTradingDays as number;
 /** Objectif de profit Challenge V1 en % */
 export const V1_CHALLENGE_PROFIT_PCT = V1_CHALLENGE.profitTargetPct as number;
 
-/** Objectif de profit Reward V1 en % */
+/** Objectif de profit Compte Reward V1 en % */
 export const V1_REWARD_PROFIT_PCT = V1_REWARD_QUAL.profitTargetPct as number;
 
 /** Nombre maximum de Rewards dans le parcours V1 */

@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     "challenge trading 25K",
     "challenge trading 50K",
     "challenge trading 100K",
-    "reward account",
+    "compte reward",
     "trader reward",
   ],
   authors: [{ name: "Traders Rewards", url: SITE_URL }],
@@ -178,7 +178,7 @@ const jsonLd = {
           name: "Comment fonctionne le parcours Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Après validation du Challenge, vous activez votre Reward Account et progressez à travers 5 Rewards successives jusqu'au statut Trader Reward.",
+            text: "Après validation du Challenge, vous activez votre Compte Reward et progressez à travers 5 Rewards successives jusqu'au statut Trader Reward.",
           },
         },
         {
@@ -186,7 +186,7 @@ const jsonLd = {
           name: "Y a-t-il une limite de temps pour passer le challenge ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Le Challenge doit être validé dans un délai maximum de 30 jours calendaires. Le Reward Account dispose ensuite d'un temps illimité.",
+            text: "Le Challenge doit être validé dans un délai maximum de 30 jours calendaires. Le Compte Reward dispose ensuite d'un temps illimité.",
           },
         },
         {
@@ -210,7 +210,7 @@ const jsonLd = {
           name: "Comment et quand suis-je payé ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "La première Reward est accessible après avoir atteint le seuil Safety Net + cap et validé au moins 5 journées qualifiantes sur le Reward Account, sous réserve du respect des règles du programme.",
+            text: "La première Reward est accessible après avoir atteint le seuil Safety Net + cap et validé au moins 5 journées qualifiantes sur le Compte Reward, sous réserve du respect des règles du programme.",
           },
         },
         {

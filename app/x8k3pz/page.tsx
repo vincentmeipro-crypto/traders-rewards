@@ -6,7 +6,7 @@ import OverviewCockpit from "@/components/admin/AdminCockpitV2";
 import RewardReviewPanel from "@/components/admin/RewardReviewPanel";
 import type { RewardReviewData } from "@/lib/reward-review";
 import {
-  isV1Product,
+  isV1Challenge,
   getV1DdUsd,
   getV1SafetyNetUsd,
   getV1DdDisplay,
@@ -1076,7 +1076,7 @@ function AdminPageInner() {
           // ── KPI cards ──
           const kpiCards: { label: string; value: string | number; sub: string; tabId?: Tab; accent?: string }[] = [
             { label: "Challenges actifs",  value: activeCount,                           sub: `${kpis.phase1} Ph1 · ${kpis.oneStep} 1-Step · ${kpis.phase2} Ph2`, tabId: "pipeline" },
-            { label: "Reward Accounts", value: kpis.certified, sub: `${kpis.passed} Challenge(s) à valider`, tabId: "pipeline" },
+            { label: "Comptes Reward", value: kpis.certified, sub: `${kpis.passed} Challenge(s) à valider`, tabId: "pipeline" },
             { label: "Rewards à traiter",  value: kpis.pendingPayouts,                   sub: kpis.pendingPayouts > 0 ? `€${kpis.pendingAmt.toLocaleString()} en attente` : "Aucun reward en attente", tabId: "payouts", accent: kpis.pendingPayouts > 0 ? "#f59e0b" : undefined },
             { label: "CA du mois",         value: `€${kpis.caMonth.toLocaleString()}`,   sub: `€${kpis.caYear.toLocaleString()} sur l'année`,                      accent: "#22c55e" },
           ];
@@ -1286,7 +1286,7 @@ function AdminPageInner() {
             { id: "risk",      label: "À risque",  cnt: kpis.alerts.length },
             { id: "phase1",    label: "Challengers actuels", cnt: kpis.phase1 },
             { id: "phase2",    label: "Comptes historiques", cnt: kpis.phase2 },
-            { id: "certified", label: "Reward Accounts", cnt: kpis.certified },
+            { id: "certified", label: "Comptes Reward", cnt: kpis.certified },
             { id: "failed",    label: "Échoués",   cnt: kpis.failed },
             { id: "1step",     label: "Parcours actuel", cnt: kpis.oneStep },
           ];
@@ -1371,7 +1371,7 @@ function AdminPageInner() {
                           const gainPct    = c.start_balance ? ((c.balance - c.start_balance) / c.start_balance * 100) : 0;
                           const gainColor  = gainPct > 0 ? "#22c55e" : gainPct < 0 ? "#ef4444" : "rgba(255,255,255,0.4)";
                           // ── V1 Apex EOD ───────────────────────────────────
-                          const isV1c      = isV1Product(c.dd_model);
+                          const isV1c      = isV1Challenge(c);
                           const paidCount  = payouts.filter(p => p.challenge_id === c.id && p.status === "paid").length;
                           const v1Level    = isV1c ? getV1LevelLabel(c.phase, paidCount, c.terminated_at) : null;
                           const v1DdUsd    = isV1c && c.start_balance ? getV1DdUsd(c.start_balance) : 0;
@@ -1415,7 +1415,7 @@ function AdminPageInner() {
                                         onChange={v => setEditData(d => ({ ...d, phase: v }))}
                                         options={isV1c
                                           // V1 Apex EOD : phase2 / Historique interdit comme niveau de parcours
-                                          ? [{ value: "phase1", label: "Challenge" }, { value: "funded", label: "Reward" }]
+                                          ? [{ value: "phase1", label: "Challenger" }, { value: "funded", label: "Compte Reward" }]
                                           // Legacy : Phase 1 / Phase 2 / Reward
                                           : [{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]
                                         }
@@ -1425,7 +1425,7 @@ function AdminPageInner() {
                                           {v1Level}
                                         </span>
                                       : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
-                                          {c.phase === "funded" ? "Reward Account" : c.phase === "phase2" ? "Historique" : "Challenger"}
+                                          {c.phase === "funded" ? "Compte Reward" : c.phase === "phase2" ? "Historique" : "Challenger"}
                                         </span>
                                   }
                                 </td>
@@ -2111,7 +2111,7 @@ function AdminPageInner() {
                                 { label: "Total payé", value: `€${trader.totalSpent.toLocaleString()}`, color: "#22c55e" },
                                 { label: "Challenges",  value: String(trader.challenges.length),            color: "#fff"    },
                                 { label: "Actifs",      value: String(activeC),                             color: activeC > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
-                                { label: "Reward Accounts", value: String(certC), color: certC > 0 ? "#9ccfea" : "rgba(255,255,255,0.25)" },
+                                { label: "Comptes Reward", value: String(certC), color: certC > 0 ? "#9ccfea" : "rgba(255,255,255,0.25)" },
                                 { label: "Rewards",     value: `€${totalRewardsPaid.toLocaleString()}`,     color: totalRewardsPaid > 0 ? "#3b82f6" : "rgba(255,255,255,0.25)" },
                                 { label: "Marge brute", value: `€${margeBrute.toLocaleString()}`,           color: margeBrute >= 0 ? "#22c55e" : "#ef4444" },
                               ] as { label: string; value: string; color: string }[]).map((k, i) => (
@@ -3438,7 +3438,7 @@ function AdminPageInner() {
 
               {createForm.type === "reward" && (
                 <div style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 8, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#fff" }}>
-                  Le client recevra directement un <strong>Reward Account</strong>. Cette action doit rester exceptionnelle et traçable.
+                  Le client recevra directement un <strong>Compte Reward</strong>. Cette action doit rester exceptionnelle et traçable.
                 </div>
               )}
 
@@ -3635,7 +3635,7 @@ function AdminPageInner() {
                     {([
                       { label: "CA annuel",         value: `€${Math.round(kpis.caYear).toLocaleString()}`,  color: "#fff"    },
                       { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#3b82f6" },
-                      { label: "Reward Accounts", value: String(totalCert), color: "#9ccfea" },
+                      { label: "Comptes Reward", value: String(totalCert), color: "#9ccfea" },
                       { label: "Échoués",           value: String(totalFailed),                               color: "#ef4444" },
                       { label: "Dépense moyenne client", value: `€${Math.round(kpis.ltv).toLocaleString()}`, color: "#f59e0b" },
                       { label: "KYC en attente",    value: String(kycPending),                                color: kycPending > 0 ? "#f59e0b" : "#6b7280" },
@@ -3752,7 +3752,7 @@ function AdminPageInner() {
                       {([
                         { label: "Total",      value: String(total),        color: "#fff"    },
                         { label: "Actifs",     value: String(totalActive),   color: "#22c55e" },
-                        { label: "Reward Accounts", value: String(totalCert), color: "#9ccfea" },
+                        { label: "Comptes Reward", value: String(totalCert), color: "#9ccfea" },
                         { label: "Échoués",    value: String(totalFailed),   color: "#ef4444" },
                         { label: "Parcours actuel", value: String(t1Count), color: "#9ccfea" },
                         { label: "Comptes historiques", value: String(t2Count), color: "#788793" },
@@ -3828,7 +3828,7 @@ function AdminPageInner() {
                       {([
                         { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#fff"    },
                         { label: "Traders actifs",    value: String(kpis.activeTraders),                       color: "#22c55e" },
-                        { label: "Traders avec Reward Account", value: String(certifiedTraders), color: "#9ccfea" },
+                        { label: "Traders avec Compte Reward", value: String(certifiedTraders), color: "#9ccfea" },
                         { label: "Dépense moyenne client", value: `€${Math.round(kpis.ltv).toLocaleString()}`, color: "#f59e0b" },
                         { label: "Moy. challenges",   value: avgChallenges,                                     color: "#a78bfa" },
                         { label: "Paiement Crypto",   value: `${cryptoPct}%`,                                   color: "#f59e0b" },
@@ -3853,7 +3853,7 @@ function AdminPageInner() {
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                       <div style={{ fontSize: 12, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.name || t.email}</div>
                                       <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>
-                                        {t.challenges.length} Challenge{t.challenges.length > 1 ? "s" : ""} · {certCount > 0 ? `${certCount} Reward Account${certCount > 1 ? "s" : ""}` : "Aucun Reward Account"}
+                                        {t.challenges.length} Challenge{t.challenges.length > 1 ? "s" : ""} · {certCount > 0 ? `${certCount} Compte${certCount > 1 ? "s" : ""} Reward` : "Aucun Compte Reward"}
                                       </div>
                                     </div>
                                     <div style={{ fontWeight: 900, fontSize: 13, color: "#f59e0b", flexShrink: 0, marginLeft: 12 }}>€{Math.round(t.totalSpent).toLocaleString()}</div>

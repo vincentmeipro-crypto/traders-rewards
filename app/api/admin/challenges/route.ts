@@ -175,6 +175,10 @@ export async function POST(req: NextRequest) {
     } catch (e) { console.error("MT5 error:", e); }
   }
 
+  // Détection V1 Apex EOD par slug modèle
+  const V1_SLUGS = new Set(["rewards-25k", "rewards-50k", "rewards-100k"]);
+  const isV1Model = V1_SLUGS.has(model);
+
   const { data, error } = await admin.from("challenges").insert({
     user_id: user.id,
     account_size: accountSize,
@@ -192,6 +196,8 @@ export async function POST(req: NextRequest) {
     mt5_password: mt5Password,
     mt5_password_investor: mt5PasswordInvestor,
     mt5_server: mt5Server,
+    // Peuple dd_model pour les produits V1 Apex EOD créés manuellement
+    ...(isV1Model ? { dd_model: "trailing_eod_lock" } : {}),
   }).select().single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

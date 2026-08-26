@@ -19,7 +19,7 @@ const faqData = {
     // 01
     {
       q: "Qu'est-ce que Traders Rewards ?",
-      a: "Traders Rewards transforme la performance de votre trading simulé en Rewards. Vous commencez par un Challenge en une seule étape avec un objectif de +6 %. Une fois validé, vous activez votre Reward Account et entrez dans un parcours progressif composé de 5 niveaux de Rewards, jusqu'au statut Trader Reward.",
+      a: "Traders Rewards transforme la performance de votre trading simulé en Rewards. Vous commencez par un Challenge en une seule étape avec un objectif de +6 %. Une fois validé, vous activez votre Compte Reward et entrez dans un parcours progressif composé de 5 niveaux de Rewards, jusqu'au statut Trader Reward.",
     },
     // 02
     {
@@ -29,7 +29,7 @@ const faqData = {
     // 03
     {
       q: "Qu'est-ce que le Trailing Drawdown EOD ?",
-      a: "Le Trailing Drawdown EOD est un plancher de protection recalculé selon la progression de votre compte en fin de journée. Lorsqu'un nouveau plus haut EOD est enregistré, ce plancher remonte avec lui et ne redescend jamais.\n\nSur le Challenge, ce plancher évolue pendant toute la durée du Challenge en fonction de vos plus hauts EOD.\n\nSur le Reward Account, une fois que le Trailing Drawdown atteint le capital initial du compte, il cesse de monter et reste définitivement fixé à ce niveau.\n\nLa limite est de 4 % sur les comptes 25K et 50K, et de 3 % sur le 100K. Si votre equity passe sous le plancher applicable à votre compte, celui-ci est considéré en échec.",
+      a: "Le Trailing Drawdown EOD est un plancher de protection recalculé selon la progression de votre compte en fin de journée. Lorsqu'un nouveau plus haut EOD est enregistré, ce plancher remonte avec lui et ne redescend jamais.\n\nSur le Challenge, ce plancher évolue pendant toute la durée du Challenge en fonction de vos plus hauts EOD.\n\nSur le Compte Reward, une fois que le Trailing Drawdown atteint le capital initial du compte, il cesse de monter et reste définitivement fixé à ce niveau.\n\nLa limite est de 4 % sur les comptes 25K et 50K, et de 3 % sur le 100K. Si votre equity passe sous le plancher applicable à votre compte, celui-ci est considéré en échec.",
     },
     // 04 — NOUVELLE
     {
@@ -43,18 +43,18 @@ const faqData = {
     },
     // 06
     {
-      q: "Qu'est-ce que le Reward Account ?",
-      a: "Le Reward Account est votre compte long terme, accessible après avoir validé votre Challenge et réglé les frais d'activation. Vous devez atteindre le seuil Safety Net + cap du niveau demandé (ex. Reward #1 : 26 400 $ sur le 25K / 52 600 $ sur le 50K / 103 850 $ sur le 100K) avec au minimum 5 journées qualifiantes. La règle de consistance exige que votre meilleure journée représente moins de 50 % de votre profit total. Vous disposez d'un temps illimité.",
+      q: "Qu'est-ce que le Compte Reward ?",
+      a: "Le Compte Reward est votre compte long terme, accessible après avoir validé votre Challenge et réglé les frais d'activation. Vous devez atteindre le seuil Safety Net + cap du niveau demandé (ex. Reward #1 : 26 400 $ sur le 25K / 52 600 $ sur le 50K / 103 850 $ sur le 100K) avec au minimum 5 journées qualifiantes. La règle de consistance exige que votre meilleure journée représente moins de 50 % de votre profit total. Vous disposez d'un temps illimité.",
     },
     // 07
     {
-      q: "Comment activer le Reward Account ?",
-      a: "Une fois votre Challenge validé, vous devez régler des frais d'activation uniques : 99 € pour les comptes 25K et 50K, et 149 € pour le compte 100K. Ces frais activent votre Reward Account et ne sont facturés qu'une seule fois.",
+      q: "Comment activer le Compte Reward ?",
+      a: "Une fois votre Challenge validé, vous devez régler des frais d'activation uniques : 99 € pour les comptes 25K et 50K, et 149 € pour le compte 100K. Ces frais activent votre Compte Reward et ne sont facturés qu'une seule fois.",
     },
     // 08
     {
       q: "Qu'est-ce qu'une journée qualifiante ?",
-      a: "Une journée qualifiante est une journée de trading clôturée avec un profit net minimum correspondant à la taille de votre compte : 100 $ sur le 25K, 250 $ sur le 50K et 300 $ sur le 100K. Vous devez valider au minimum 5 journées qualifiantes pour remplir les conditions de votre Reward Account. Ces montants correspondent uniquement au profit minimum requis par journée, et non au montant de vos Rewards.",
+      a: "Une journée qualifiante est une journée de trading clôturée avec un profit net minimum correspondant à la taille de votre compte : 100 $ sur le 25K, 250 $ sur le 50K et 300 $ sur le 100K. Vous devez valider au minimum 5 journées qualifiantes pour remplir les conditions de votre Compte Reward. Ces montants correspondent uniquement au profit minimum requis par journée, et non au montant de vos Rewards.",
     },
     // 09
     {
@@ -69,7 +69,7 @@ const faqData = {
     // 11
     {
       q: "Puis-je avoir plusieurs Challenges simultanément ?",
-      a: "Oui. Quelle que soit la taille des comptes, vous pouvez avoir jusqu'à 10 Challenges actifs et jusqu'à 5 Reward Accounts actifs simultanément sur votre profil.",
+      a: "Oui. Quelle que soit la taille des comptes, vous pouvez avoir jusqu'à 10 Challenges actifs et jusqu'à 5 Comptes Reward actifs simultanément sur votre profil.",
     },
     // 12
     {
@@ -117,18 +117,18 @@ const faqData = {
     },
     // 06
     {
-      q: "What is the Reward Account?",
-      a: "The Reward Account is your long-term account, accessible after validating your Challenge and paying the activation fee. You must accumulate at least 5 qualifying days and reach the Safety Net threshold to access each Reward. The Safety Net is $26,100 (25K) / $52,100 (50K) / $103,100 (100K). The consistency rule requires that your best day represents less than 50% of your total profit. You have unlimited time.",
+      q: "What is the Compte Reward?",
+      a: "The Compte Reward is your long-term account, accessible after validating your Challenge and paying the activation fee. You must accumulate at least 5 qualifying days and reach the Safety Net threshold to access each Reward. The Safety Net is $26,100 (25K) / $52,100 (50K) / $103,100 (100K). The consistency rule requires that your best day represents less than 50% of your total profit. You have unlimited time.",
     },
     // 07
     {
-      q: "How do I activate the Reward Account?",
-      a: "Once your Challenge is validated, you pay a one-time activation fee: €99 for 25K and 50K accounts, and €149 for the 100K account. This fee activates your Reward Account and is charged only once.",
+      q: "How do I activate the Compte Reward?",
+      a: "Once your Challenge is validated, you pay a one-time activation fee: €99 for 25K and 50K accounts, and €149 for the 100K account. This fee activates your Compte Reward and is charged only once.",
     },
     // 08
     {
       q: "What is a qualifying day?",
-      a: "A qualifying day is a trading day closed with a minimum net profit corresponding to your account size: $100 on the 25K, $250 on the 50K, and $300 on the 100K. You must validate at least 5 qualifying days to meet the conditions of your Reward Account. These amounts represent only the minimum daily profit required to count a qualifying day — not the amount of your Rewards.",
+      a: "A qualifying day is a trading day closed with a minimum net profit corresponding to your account size: $100 on the 25K, $250 on the 50K, and $300 on the 100K. You must validate at least 5 qualifying days to meet the conditions of your Compte Reward. These amounts represent only the minimum daily profit required to count a qualifying day — not the amount of your Rewards.",
     },
     // 09
     {
@@ -143,7 +143,7 @@ const faqData = {
     // 11
     {
       q: "Can I have multiple Challenges simultaneously?",
-      a: "Yes. Regardless of account size, you can have up to 10 active Challenges and up to 5 active Reward Accounts simultaneously on your profile.",
+      a: "Yes. Regardless of account size, you can have up to 10 active Challenges and up to 5 active Comptes Reward simultaneously on your profile.",
     },
     // 12
     {

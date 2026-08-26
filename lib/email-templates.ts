@@ -452,12 +452,12 @@ export function buildFundedEmail(p: {
   const { accountSize, mt5, setupLink, siteUrl, logoUrl } = p;
   const ctaHref = setupLink || `${siteUrl}/dashboard`;
   const ctaText = setupLink ? "Créer mon mot de passe et accéder au Dashboard" : "Accéder à mon Dashboard";
-  const subject = "Votre Reward Account est prêt";
+  const subject = "Votre Compte Reward est prêt";
   const html = buildEmail({
-    title: "Bienvenue au niveau Reward Start",
-    eyebrow: "REWARD ACCOUNT ACTIVÉ",
+    title: "Bienvenue sur votre Compte Reward",
+    eyebrow: "COMPTE REWARD ACTIVÉ",
     preheader: subject,
-    body: `Votre Challenge est validé. Votre Reward Account ${accountSize} est prêt : vous pouvez maintenant progresser à travers les Rewards #1 à #5.`,
+    body: `Votre Challenge est validé. Votre Compte Reward ${accountSize} est prêt : vous pouvez maintenant progresser à travers les Rewards #1 à #5.`,
     details: [
       { label: "Taille du compte", value: accountSize },
       { label: "Niveau", value: "Reward Start · Reward #1" },
@@ -495,7 +495,7 @@ export function buildDailyUpdateEmail(p: {
     model, highestBalance, totalLimit, startBalance,
     siteUrl, logoUrl,
   } = p;
-  const phaseLabel = phase === "funded" ? "Reward Account" : "Challenger";
+  const phaseLabel = phase === "funded" ? "Compte Reward" : "Challenger";
   const profitSign = profitPct >= 0 ? "+" : "";
 
   const details: EmailDetail[] = [
@@ -550,7 +550,7 @@ export function buildPhase1CertificateEmail(p: {
     heroTitle: "CHALLENGE VALIDÉ",
     name,
     title: `Challenge validé — ${firstName}`,
-    body: `Vous avez validé votre Challenge <strong>${accountSize}</strong> le <strong>${date}</strong>. Vous pouvez désormais activer votre Reward Account et accéder au niveau Reward Start.`,
+    body: `Vous avez validé votre Challenge <strong>${accountSize}</strong> le <strong>${date}</strong>. Vous pouvez désormais activer votre Compte Reward et commencer le parcours des Rewards.`,
     details: [
       { label: "Trader", value: name },
       { label: "Compte", value: accountSize },
@@ -584,7 +584,7 @@ export function buildChallengeCertificateEmail(p: {
     heroTitle: "CHALLENGE VALIDÉ",
     name,
     title: "Votre challenge est validé",
-    body: `${firstName}, vous avez validé votre Challenge <strong>${accountSize}</strong>. Votre accès au Reward Account et au niveau Reward Start est maintenant débloqué.`,
+    body: `${firstName}, vous avez validé votre Challenge <strong>${accountSize}</strong>. Votre accès au Compte Reward est maintenant débloqué. Le parcours des Rewards commence.`,
     details: [
       { label: "Trader", value: name },
       { label: "Compte", value: accountSize },
@@ -650,7 +650,7 @@ export function buildApologyEmail(p: {
   logoUrl:     string;
 }): { subject: string; html: string } {
   const { firstName, accountSize, phase, mt5, siteUrl, logoUrl } = p;
-  const phaseLabel = phase === "funded" ? "Reward Account" : "Challenger";
+  const phaseLabel = phase === "funded" ? "Compte Reward" : "Challenger";
   const subject = "Votre compte Traders Rewards est rétabli";
   const html = buildEmail({
     title: `Compte rétabli — ${phaseLabel}`,

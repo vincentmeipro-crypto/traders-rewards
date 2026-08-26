@@ -61,9 +61,9 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   },
   {
     type:        "funded",
-    label:       "Activation Reward Account",
-    description: "Envoyé après validation du Challenge et activation du Reward Account. Contient les nouveaux identifiants MT5.",
-    trigger:     "Challenge validé + activation du Reward Account",
+    label:       "Activation Compte Reward",
+    description: "Envoyé après validation du Challenge et activation du Compte Reward. Contient les nouveaux identifiants MT5.",
+    trigger:     "Challenge validé + activation du Compte Reward",
     sensitive:   true,
     variables: [
       { name: "accountSize",  sensitive: false },
