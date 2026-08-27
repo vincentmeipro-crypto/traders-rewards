@@ -402,17 +402,10 @@ export default function Hero() {
                 flexShrink: 0,
               }} />
 
-              {/* Colonne Pack ×3 — -90% · BEST */}
+              {/* Colonne Pack ×3 — -90% · BEST DEAL */}
               <div>
-                <div style={{ fontSize:9, fontWeight:700, color:"rgba(156,207,234,0.70)", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3, display:"flex", alignItems:"center", gap:6 }}>
-                  PACK ×3
-                  <span style={{
-                    fontSize:9, fontWeight:900, color:"#9CCFEA",
-                    background:"rgba(156,207,234,0.14)", border:"1px solid rgba(156,207,234,0.35)",
-                    borderRadius:4, padding:"1px 5px", letterSpacing:"0.8px", lineHeight:1.5,
-                  }}>
-                    BEST
-                  </span>
+                <div style={{ fontSize:9, fontWeight:700, color:"#FF8A00", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3 }}>
+                  PACK ×3 BEST DEAL
                 </div>
                 <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"#9CCFEA" }}>
                   -90%
