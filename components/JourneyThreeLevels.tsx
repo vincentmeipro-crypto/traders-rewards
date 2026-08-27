@@ -705,7 +705,7 @@ export default function JourneyThreeLevels() {
             <div style={cardBase(false)}>
               {/* Glow */}
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-                background: "radial-gradient(circle at 50% 0%, rgba(143,201,163,0.035), transparent 50%)" }} />
+                background: "radial-gradient(circle at 50% 0%, rgba(156,207,234,0.035), transparent 50%)" }} />
 
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
@@ -724,7 +724,7 @@ export default function JourneyThreeLevels() {
 
               {/* Validation */}
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18, position: "relative" }}>
-                <CircleCheck size={15} color={GREEN} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                <CircleCheck size={15} color={ACCENT} strokeWidth={2.5} style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
                   {L("Validez votre Challenge","Valide su Challenge","Pass your Challenge")}
                 </span>
@@ -732,7 +732,7 @@ export default function JourneyThreeLevels() {
 
               {/* +6% + progression */}
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 12, position: "relative", flexWrap: "wrap" }}>
-                <span style={{ fontSize: 28, fontWeight: 900, color: GREEN, letterSpacing: "-1px", lineHeight: 1 }}>+6%</span>
+                <span style={{ fontSize: 28, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1 }}>+6%</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.55)" }}>
                   {money(selectedSize.bal)}
                   <span style={{ color: "rgba(255,255,255,0.22)", margin: "0 5px" }}>→</span>
@@ -742,7 +742,7 @@ export default function JourneyThreeLevels() {
 
               {/* Durée */}
               <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.72)", marginBottom: 8, position: "relative", lineHeight: 1.5 }}>
-                {L("0 jour minimum","0 días mínimo","0 days minimum")}
+                {L("2 jours minimum","2 días mínimo","2 days minimum")}
                 <span style={{ color: "rgba(255,255,255,0.30)", margin: "0 6px" }}>→</span>
                 {L("30 jours maximum","30 días máximo","30 days maximum")}
               </div>
@@ -757,22 +757,22 @@ export default function JourneyThreeLevels() {
               {/* Spacer */}
               <div style={{ flex: 1, minHeight: 20 }} />
 
-              {/* Bénéfice final — bloc premium vert */}
+              {/* Bénéfice final — bloc premium bleu */}
               <div style={{
                 position:     "relative",
-                background:   "linear-gradient(135deg, rgba(143,201,163,0.055), rgba(143,201,163,0.012))",
-                border:       "1px solid rgba(143,201,163,0.20)",
+                background:   "linear-gradient(135deg, rgba(156,207,234,0.055), rgba(156,207,234,0.012))",
+                border:       "1px solid rgba(156,207,234,0.20)",
                 borderRadius: 12,
                 padding:      "11px 14px",
                 minHeight:    150,
                 boxSizing:    "border-box",
-                boxShadow:    "inset 0 0 24px rgba(143,201,163,0.018), 0 0 18px rgba(143,201,163,0.025)",
+                boxShadow:    "inset 0 0 24px rgba(156,207,234,0.018), 0 0 18px rgba(156,207,234,0.025)",
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(143,201,163,0.68)", letterSpacing: "2px", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(156,207,234,0.68)", letterSpacing: "2px", textTransform: "uppercase" }}>
                     CHALLENGE
                   </div>
-                  <CircleCheck size={16} color="rgba(143,201,163,0.58)" strokeWidth={1.8} />
+                  <CircleCheck size={16} color="rgba(156,207,234,0.58)" strokeWidth={1.8} />
                 </div>
                 <div aria-hidden="true" style={{ fontSize: 9, fontWeight: 700, visibility: "hidden", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
                   {L("JUSQU'À","HASTA","UP TO")}
@@ -780,10 +780,10 @@ export default function JourneyThreeLevels() {
                 <div style={{
                   fontSize:      "clamp(36px, 3.6vw, 50px)",
                   fontWeight:    900,
-                  color:         GREEN,
+                  color:         "#FFFFFF",
                   letterSpacing: "-1.5px",
                   lineHeight:    1,
-                  textShadow:    "0 0 8px rgba(143,201,163,0.16), 0 0 16px rgba(143,201,163,0.07)",
+                  textShadow:    "0 0 8px rgba(156,207,234,0.16), 0 0 16px rgba(156,207,234,0.07)",
                 }}>
                   {L("VALIDÉ !","¡VALIDADO!","PASSED!")}
                 </div>
@@ -851,9 +851,9 @@ export default function JourneyThreeLevels() {
 
               {/* Patch premium : Reward auto 48H */}
               <div style={{ marginTop: 10, position: "relative" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "4px 12px" }}>
-                  <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.8px" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(156,207,234,0.07)", border: "1px solid rgba(156,207,234,0.20)", borderRadius: 100, padding: "4px 12px" }}>
+                  <span style={{ fontSize: 10, color: ACCENT, fontWeight: 900, lineHeight: 1 }}>✓</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: ACCENT, letterSpacing: "0.8px" }}>
                     {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
                   </span>
                 </span>
@@ -900,9 +900,9 @@ export default function JourneyThreeLevels() {
 
             {/* ── CARTE 03 : REWARDS SUIVANTES ── */}
             <div style={cardBase(false)}>
-              {/* Glow violet */}
+              {/* Glow bleu */}
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-                background: "radial-gradient(circle at 50% 0%, rgba(184,168,216,0.035), transparent 50%)" }} />
+                background: "radial-gradient(circle at 50% 0%, rgba(156,207,234,0.035), transparent 50%)" }} />
 
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
@@ -915,13 +915,13 @@ export default function JourneyThreeLevels() {
               </div>
 
               {/* Nom du niveau */}
-              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: VIOLET, letterSpacing: "-1px", lineHeight: 1, marginBottom: 10, position: "relative" }}>
+              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1, marginBottom: 10, position: "relative" }}>
                 TRADER REWARD
               </div>
 
               {/* Sous-titre */}
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, position: "relative" }}>
-                <Award size={15} color={VIOLET} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                <Award size={15} color={ACCENT} strokeWidth={2.5} style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
                   {L("Multipliez vos Rewards","Multiplique sus Rewards","Multiply your Rewards")}
                 </span>
@@ -932,7 +932,7 @@ export default function JourneyThreeLevels() {
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(184,168,216,0.62)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
                   REWARDS
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: VIOLET, letterSpacing: "-1px", lineHeight: 1 }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1 }}>
                   #2 → #5
                 </div>
               </div>
@@ -942,7 +942,7 @@ export default function JourneyThreeLevels() {
                 <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(184,168,216,0.62)", textTransform: "uppercase", letterSpacing: "1px" }}>
                   SAFETY NET
                 </span>
-                <span style={{ fontSize: 14, fontWeight: 900, color: VIOLET }}>{money(selectedSize.lockAt)}</span>
+                <span style={{ fontSize: 14, fontWeight: 900, color: ACCENT }}>{money(selectedSize.lockAt)}</span>
               </div>
 
               {/* Règles */}
@@ -954,9 +954,9 @@ export default function JourneyThreeLevels() {
 
               {/* Patch premium : Reward auto 48H */}
               <div style={{ marginBottom: 8, position: "relative" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "4px 12px" }}>
-                  <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.8px" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(156,207,234,0.07)", border: "1px solid rgba(156,207,234,0.20)", borderRadius: 100, padding: "4px 12px" }}>
+                  <span style={{ fontSize: 10, color: ACCENT, fontWeight: 900, lineHeight: 1 }}>✓</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: ACCENT, letterSpacing: "0.8px" }}>
                     {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
                   </span>
                 </span>
@@ -974,33 +974,33 @@ export default function JourneyThreeLevels() {
               {/* Spacer */}
               <div style={{ flex: 1, minHeight: 12 }} />
 
-              {/* Bloc final violet */}
+              {/* Bloc final bleu */}
               <div style={{
                 position:     "relative",
-                background:   "linear-gradient(135deg, rgba(184,168,216,0.055), rgba(184,168,216,0.012))",
-                border:       "1px solid rgba(184,168,216,0.22)",
+                background:   "linear-gradient(135deg, rgba(156,207,234,0.055), rgba(156,207,234,0.012))",
+                border:       "1px solid rgba(156,207,234,0.22)",
                 borderRadius: 12,
                 padding:      "11px 14px",
                 minHeight:    150,
                 boxSizing:    "border-box",
-                boxShadow:    "inset 0 0 24px rgba(184,168,216,0.018), 0 0 18px rgba(184,168,216,0.025)",
+                boxShadow:    "inset 0 0 24px rgba(156,207,234,0.018), 0 0 18px rgba(156,207,234,0.025)",
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(184,168,216,0.68)", letterSpacing: "2px", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(156,207,234,0.68)", letterSpacing: "2px", textTransform: "uppercase" }}>
                     STATUT
                   </div>
-                  <Award size={16} color="rgba(184,168,216,0.58)" strokeWidth={1.8} />
+                  <Award size={16} color="rgba(156,207,234,0.58)" strokeWidth={1.8} />
                 </div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(184,168,216,0.44)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(156,207,234,0.44)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
                   {L("JUSQU'À","HASTA","UP TO")}
                 </div>
                 <div style={{
                   fontSize:      "clamp(40px, 4vw, 56px)",
                   fontWeight:    900,
-                  color:         VIOLET,
+                  color:         ACCENT,
                   letterSpacing: "-2px",
                   lineHeight:    1,
-                  textShadow:    "0 0 8px rgba(184,168,216,0.16), 0 0 16px rgba(184,168,216,0.07)",
+                  textShadow:    "0 0 8px rgba(156,207,234,0.16), 0 0 16px rgba(156,207,234,0.07)",
                   marginBottom:  4,
                 }}>
                   {money(cumulativeRewards)}
