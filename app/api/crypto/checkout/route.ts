@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStringConfig } from "@/lib/config";
-import { loadProductBySlug, getEffectivePrice } from "@/lib/product-engine";
+import { loadProductBySlug } from "@/lib/product-engine";
 import { validatePromoCode } from "@/lib/promo";
+import { getPriceForSlug, isPricingSlug } from "@/lib/pricing";
 
 // VIP/legacy products non en DB — conservés pour rétrocompatibilité
 const VIP_PRODUCTS: Record<
@@ -18,18 +19,23 @@ const VIP_PRODUCTS: Record<
 export async function POST(req: NextRequest) {
   try {
     // `discount` n'est intentionnellement PAS destructuré : jamais trusté depuis le frontend.
+    // Le prix est recalculé exclusivement côté serveur via getPriceForSlug().
     const { productId, userId, promoCode, refCode, quantity: rawQuantity } = await req.json();
+
+    // Quantité autorisée : 1 (challenge unique) ou 3 (pack ×3).
     const quantity = Number(rawQuantity ?? 1);
-    if (quantity !== 1) return NextResponse.json({ error: "Un seul Challenge peut être acheté à la fois." }, { status: 400 });
+    if (quantity !== 1 && quantity !== 3) {
+      return NextResponse.json(
+        { error: "La quantité doit être 1 (challenge unique) ou 3 (pack ×3)." },
+        { status: 400 }
+      );
+    }
+    const qty = quantity as 1 | 3;
 
     const admin   = createAdminClient();
     const siteUrl = await getStringConfig("branding.site_url");
 
     // ── Charger le produit depuis la DB (new path) ────────────────────────────
-    //
-    // Tenté en premier pour obtenir le UUID réel du produit.
-    // Si le produit n'est pas en DB (VIP legacy) → productFromDB = null.
-    // Le slug reste disponible dans productId pour le fallback VIP ci-dessous.
     type DbProduct = Awaited<ReturnType<typeof loadProductBySlug>>;
     let productFromDB: DbProduct | null = null;
     try {
@@ -39,19 +45,6 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Validation promo code côté serveur ────────────────────────────────────
-    //
-    // productId transmis = UUID réel si produit en DB, null sinon.
-    //
-    // Comportement pour produits legacy sans UUID :
-    //   targeting_mode = 'all'
-    //     → pas de restriction produit → OK
-    //   targeting_mode = 'specific'
-    //     → validatePromoCode retourne product_required (fail closed)
-    //     → Le client doit utiliser une promo universelle pour les produits VIP legacy.
-    //
-    // Race checkout/webhook : ces checks sont non-atomiques.
-    // L'enforcement final atomique reste consumePromoCode (RPC webhook).
-    //
     let promoDiscount = 0;
     if (promoCode) {
       const promoResult = await validatePromoCode({
@@ -73,23 +66,27 @@ export async function POST(req: NextRequest) {
     // ── Les codes 100% passent exclusivement par /api/promo/free ─────────────
     if (discountPct === 100) {
       return NextResponse.json(
-        {
-          error: "Utilisez le formulaire d'accès gratuit.",
-          code: "USE_FREE_PATH",
-        },
+        { error: "Utilisez le formulaire d'accès gratuit.", code: "USE_FREE_PATH" },
         { status: 400 }
       );
     }
 
-    let orderId: string;
-    let finalAmount: number;
+    let orderId:     string;
+    let finalAmount: number; // centimes EUR
     let productName: string;
 
     if (productFromDB) {
       // ── Nouveau chemin : produit en DB ────────────────────────────────────
 
-      // Nouveau modèle : 10 Challenges actifs maximum. Le plafond de capital
-      // reste uniquement appliqué aux anciens produits.
+      // Vérifier que le slug est dans le calendrier promotionnel
+      if (!isPricingSlug(productFromDB.slug)) {
+        return NextResponse.json(
+          { error: "Ce produit n'est pas disponible à la vente actuellement." },
+          { status: 400 }
+        );
+      }
+
+      // Limite : 10 Challenges actifs maximum
       if (productFromDB.slug.startsWith("rewards-")) {
         const { count } = await admin
           .from("challenges")
@@ -97,7 +94,7 @@ export async function POST(req: NextRequest) {
           .eq("user_id", userId)
           .eq("status", "active")
           .neq("phase", "funded");
-        if ((count ?? 0) + quantity > 10) {
+        if ((count ?? 0) + qty > 10) {
           return NextResponse.json(
             { error: `Vous pouvez avoir au maximum 10 Challenges actifs. Il vous reste ${Math.max(0, 10 - (count ?? 0))} place(s).` },
             { status: 400 }
@@ -113,29 +110,29 @@ export async function POST(req: NextRequest) {
           (sum, c) => sum + (c.start_balance || 0),
           0
         );
-        if (currentTotal + productFromDB.balance_usd * quantity > productFromDB.max_cumul_usd) {
+        if (currentTotal + productFromDB.balance_usd * qty > productFromDB.max_cumul_usd) {
           return NextResponse.json(
-            {
-              error: `Plafond de cumul atteint (max ${productFromDB.max_cumul_usd.toLocaleString()} USD)`,
-            },
+            { error: `Plafond de cumul atteint (max ${productFromDB.max_cumul_usd.toLocaleString()} USD)` },
             { status: 400 }
           );
         }
       }
 
-      const baseAmount = getEffectivePrice(productFromDB, "crypto");
-      finalAmount = (discountPct > 0
+      // ── Prix depuis le calendrier promotionnel (server-side) ──────────────
+      // qty=1 → prix unitaire ; qty=3 → prix pack ×3 propre (≠ 3 × unitaire)
+      const baseAmount = getPriceForSlug(productFromDB.slug, qty);
+      finalAmount = discountPct > 0
         ? Math.round(baseAmount * (100 - discountPct) / 100)
-        : baseAmount) * quantity;
-      productName = productFromDB.name;
+        : baseAmount;
 
-      // Encode UUID dans l'orderId → webhook détecte new path via isUUID()
-      orderId = `elysium~${userId}~${productFromDB.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${quantity}`;
+      const baseLabel = qty === 3
+        ? `Pack ×3 — ${productFromDB.name}`
+        : productFromDB.name;
+      productName = discountPct > 0 ? `${baseLabel} (${discountPct}% off)` : baseLabel;
+
+      orderId = `elysium~${userId}~${productFromDB.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${qty}`;
     } else {
       // ── Fallback : produit VIP / legacy non en DB ─────────────────────────
-      //
-      // Note : les promos targeting_mode='specific' ont été rejetées ci-dessus
-      // par validatePromoCode (product_required) — seules les promos 'all' arrivent ici.
       const legacy = VIP_PRODUCTS[productId as keyof typeof VIP_PRODUCTS];
       if (!legacy) {
         return NextResponse.json(
@@ -144,13 +141,12 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      finalAmount = (discountPct > 0
+      finalAmount = discountPct > 0
         ? Math.round(legacy.amount * (100 - discountPct) / 100)
-        : legacy.amount) * quantity;
+        : legacy.amount;
       productName = legacy.name;
 
-      // Slug dans l'orderId → webhook détecte legacy path
-      orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${quantity}`;
+      orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${qty}`;
     }
 
     const amountEur = parseFloat((finalAmount / 100).toFixed(6));

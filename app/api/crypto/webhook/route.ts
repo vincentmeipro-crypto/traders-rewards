@@ -86,7 +86,9 @@ export async function POST(req: NextRequest) {
     const productId = parts[2];  // UUID (new path) ou slug (legacy path)
     const promoCode = parts[4] || "";
     const refCode   = parts[5] || "";
-    const quantity  = parts[6] === "5" ? 5 : 1;
+    // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (legacy VIP).
+    const rawQty   = parseInt(parts[6] ?? "1", 10);
+    const quantity = ([1, 3, 5] as number[]).includes(rawQty) ? rawQty : 1;
 
     if (!userId || !productId) return NextResponse.json({ received: true });
 

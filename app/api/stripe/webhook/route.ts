@@ -32,7 +32,9 @@ export async function POST(req: NextRequest) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const { userId, productId, accountSize, model, promoCode, refCode } = session.metadata!;
-    const quantity = session.metadata?.quantity === "5" ? 5 : 1;
+    // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (legacy VIP).
+    const rawQty  = parseInt(session.metadata?.quantity ?? "1", 10);
+    const quantity = ([1, 3, 5] as number[]).includes(rawQty) ? rawQty : 1;
 
     const admin = createAdminClient();
 

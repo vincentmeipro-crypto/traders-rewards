@@ -5,7 +5,7 @@
 //  3 cartes : rewards-25k / rewards-50k / rewards-100k
 //  Données : /api/products (filter rewards-*) + fallback hardcodé
 //  50K = "LE PLUS POPULAIRE"
-//  CTA "DÉMARRER" → /checkout?product=rewards-{size}
+//  CTA "DÉMARRER" → /checkout?product=rewards-{size}[&qty=3]
 // ════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef } from "react";
@@ -13,20 +13,53 @@ import { useLanguage } from "@/lib/LanguageContext";
 import PricingDetailModal from "./PricingDetailModal";
 
 // ── Source de vérité fallback ──────────────────────────────────
-// refPriceCents : prix de référence affiché barré (affichage -90% offre lancement)
-//   25K → 190€ = 19 000 cts
-//   50K → 290€ = 29 000 cts
-//  100K → 590€ = 59 000 cts
-// Ne PAS modifier challenge_products.price_eur_cents (toujours 19/29/59€)
+// Période 1 (oct 1-15) — prix d'entrée les plus bas.
+// Le frontend recharge depuis /api/products et surcharge ces valeurs
+// avec les prix de la période active. Ce fallback évite un flash vide
+// au premier rendu.
+//
+// refPriceCents / refPack3Cents : prix de référence barrés (affichage uniquement).
+//   25K  → 190€ / 570€
+//   50K  → 290€ / 870€
+//  100K  → 590€ / 1 770€
 const V1_FALLBACK = [
-  { slug: "rewards-25k",  balance: 25000,  priceCents: 1900, qualDayUsd: 100, activFeeEur: 99,  refPriceCents: 19000, trailingDdPct: 4 },
-  { slug: "rewards-50k",  balance: 50000,  priceCents: 2900, qualDayUsd: 250, activFeeEur: 99,  refPriceCents: 29000, trailingDdPct: 4 },
-  { slug: "rewards-100k", balance: 100000, priceCents: 5900, qualDayUsd: 300, activFeeEur: 149, refPriceCents: 59000, trailingDdPct: 3 },
+  {
+    slug: "rewards-25k",  balance: 25000,  priceCents: 3800,  pack3Cents: 5700,
+    qualDayUsd: 100, activFeeEur: 99,
+    refPriceCents: 19000, refPack3Cents: 57000,  trailingDdPct: 4,
+  },
+  {
+    slug: "rewards-50k",  balance: 50000,  priceCents: 5800,  pack3Cents: 8700,
+    qualDayUsd: 250, activFeeEur: 99,
+    refPriceCents: 29000, refPack3Cents: 87000,  trailingDdPct: 4,
+  },
+  {
+    slug: "rewards-100k", balance: 100000, priceCents: 11800, pack3Cents: 17700,
+    qualDayUsd: 300, activFeeEur: 99,
+    refPriceCents: 59000, refPack3Cents: 177000, trailingDdPct: 3,
+  },
 ];
 
-type V1Card = { slug: string; balance: number; priceCents: number; qualDayUsd: number; activFeeEur: number; refPriceCents: number; trailingDdPct: number };
+type V1Card = {
+  slug:          string;
+  balance:       number;
+  priceCents:    number;   // prix unitaire période active
+  pack3Cents:    number;   // prix pack ×3 période active
+  qualDayUsd:    number;
+  activFeeEur:   number;
+  refPriceCents:  number;  // prix de référence barré (unitaire)
+  refPack3Cents:  number;  // prix de référence barré (×3)
+  trailingDdPct: number;
+};
+
 type ApiProduct = {
-  slug: string; balance_usd: number; effective_price_cents: number;
+  slug:                 string;
+  balance_usd:          number;
+  effective_price_cents: number;
+  unit_price_cents?:    number | null;
+  pack3_price_cents?:   number | null;
+  ref_price_cents?:     number | null;
+  ref_pack3_price_cents?: number | null;
   rules?: { rule_key: string; rule_value: unknown }[];
 };
 
@@ -51,6 +84,8 @@ export default function PricingV1() {
   const [hovIdx,  setHovIdx]    = useState<number | null>(null);
   const [showPct,  setShowPct]  = useState(true);
   const [activeModal, setActiveModal] = useState<number | null>(null);
+  // Ensemble des indices de cartes avec le pack ×3 sélectionné
+  const [pack3Set, setPack3Set] = useState<Set<number>>(new Set());
   const triggerElRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -74,16 +109,17 @@ export default function PricingV1() {
           const qualDay    = p.rules ? (getRuleNum(p.rules, "qualifying_day_min_usd") ?? fb.qualDayUsd)  : fb.qualDayUsd;
           const activFee   = p.rules ? (getRuleNum(p.rules, "activation_fee_eur")     ?? fb.activFeeEur) : fb.activFeeEur;
           // trailingDdPct : toujours depuis V1_FALLBACK (source contractuelle)
-          // La DB n'a pas encore été migrée (100K = 4% en DB, contractuel = 3%)
           const trailingDd = fb.trailingDdPct;
           return {
-            slug:           p.slug,
-            balance:        p.balance_usd,
-            priceCents:     p.effective_price_cents || fb.priceCents,
-            qualDayUsd:     qualDay,
-            activFeeEur:    activFee,
-            refPriceCents:  fb.refPriceCents,  // toujours depuis le fallback (affichage uniquement)
-            trailingDdPct:  trailingDd,
+            slug:          p.slug,
+            balance:       p.balance_usd,
+            priceCents:    p.unit_price_cents  ?? p.effective_price_cents ?? fb.priceCents,
+            pack3Cents:    p.pack3_price_cents  ?? fb.pack3Cents,
+            qualDayUsd:    qualDay,
+            activFeeEur:   activFee,
+            refPriceCents:  p.ref_price_cents        ?? fb.refPriceCents,
+            refPack3Cents:  p.ref_pack3_price_cents   ?? fb.refPack3Cents,
+            trailingDdPct: trailingDd,
           };
         });
         setCards(merged);
@@ -95,7 +131,16 @@ export default function PricingV1() {
   const fmtPrice   = (c: number) => `€${Math.round(c / 100)}`;
   const fmtDollar  = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 
+  const togglePack3 = (idx: number, enable: boolean) => {
+    setPack3Set(prev => {
+      const next = new Set(prev);
+      enable ? next.add(idx) : next.delete(idx);
+      return next;
+    });
+  };
+
   const renderCard = (card: V1Card, idx: number) => {
+    const isPack3    = pack3Set.has(idx);
     const RULES = [
       { label: L("1 Étape","1 Paso","1 Step"),               value: "✓",                                                                                     accent: true  },
       { label: L("Objectif profit","Objetivo profit","Profit target"), value: showPct ? "+6%" : `+${fmtDollar(card.balance * 0.06)}`,                        accent: false },
@@ -108,8 +153,12 @@ export default function PricingV1() {
     const isActive   = selIdx === idx;
     const isHovered  = hovIdx === idx && !isActive && !isMobile;
     const label      = fmtBalance(card.balance);
-    const price      = fmtPrice(card.priceCents);
-    const refPrice   = `€${Math.round(card.refPriceCents / 100)}`;
+
+    // Prix affichés selon la sélection pack
+    const displayPrice    = isPack3 ? fmtPrice(card.pack3Cents)   : fmtPrice(card.priceCents);
+    const displayRefPrice = isPack3
+      ? `€${Math.round(card.refPack3Cents / 100)}`
+      : `€${Math.round(card.refPriceCents / 100)}`;
 
     return (
       <div
@@ -192,16 +241,52 @@ export default function PricingV1() {
           </div>
         </div>
 
+        {/* ── Sélecteur 1 Challenge / Pack ×3 ── */}
+        <div style={{ display: "flex", gap: 5, marginBottom: 10 }}>
+          {[false, true].map(is3 => (
+            <button
+              key={String(is3)}
+              onClick={e => { e.stopPropagation(); togglePack3(idx, is3); }}
+              style={{
+                flex:       1,
+                padding:    "5px 0",
+                borderRadius: 8,
+                fontSize:   10,
+                fontWeight: 800,
+                border:     (isPack3 === is3)
+                  ? "1.5px solid rgba(156,207,234,0.65)"
+                  : "1.5px solid rgba(255,255,255,0.10)",
+                background: (isPack3 === is3)
+                  ? "rgba(156,207,234,0.13)"
+                  : "transparent",
+                color:      (isPack3 === is3)
+                  ? "#9CCFEA"
+                  : "rgba(255,255,255,0.30)",
+                cursor:     "pointer",
+                fontFamily: "inherit",
+                letterSpacing: "0.3px",
+                transition: "all 0.16s ease",
+              }}
+            >
+              {is3
+                ? L("Pack ×3","Pack ×3","Pack ×3")
+                : L("1 Challenge","1 Challenge","1 Challenge")}
+            </button>
+          ))}
+        </div>
+
         {/* Prix */}
         <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.09)" }}>
           <div style={{
             fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)",
             letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6,
           }}>
-            {L("Accès challenge","Acceso challenge","Challenge access")}
+            {isPack3
+              ? L("Pack ×3 Challenges","Pack ×3 Challenges","Pack ×3 Challenges")
+              : L("Accès challenge","Acceso challenge","Challenge access")}
           </div>
 
-          {/* Prix de référence barré — affichage uniquement, ne pas modifier en DB */}
+          {/* Prix de référence barré */}
           <div style={{
             fontSize:       15,
             fontWeight:     500,
@@ -211,15 +296,17 @@ export default function PricingV1() {
             lineHeight:     1,
             marginBottom:   4,
           }}>
-            {refPrice}
+            {displayRefPrice}
           </div>
 
           {/* Prix de lancement — dominant */}
           <div style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", letterSpacing: "0px", lineHeight: 1 }}>
-            {price}
+            {displayPrice}
           </div>
           <div style={{ fontSize: 10, color: "rgba(255,255,255,0.26)", marginTop: 4, fontWeight: 500 }}>
-            {L("Paiement unique · non remboursable","Pago único · no reembolsable","One-time · non-refundable")}
+            {isPack3
+              ? L("3 Challenges · Paiement unique","3 Challenges · Pago único","3 Challenges · One-time")
+              : L("Paiement unique · non remboursable","Pago único · no reembolsable","One-time · non-refundable")}
           </div>
         </div>
 
@@ -254,7 +341,7 @@ export default function PricingV1() {
 
         {/* CTA */}
         <a
-          href={`/checkout?product=${card.slug}`}
+          href={`/checkout?product=${card.slug}${isPack3 ? "&qty=3" : ""}`}
           className="pricing-chrome-cta"
           onClick={e => e.stopPropagation()}
           style={{
@@ -271,7 +358,9 @@ export default function PricingV1() {
             textDecoration: "none",
           }}
         >
-          {L("DÉMARRER","EMPEZAR","GET STARTED")}
+          {isPack3
+            ? L("DÉMARRER ×3","EMPEZAR ×3","GET STARTED ×3")
+            : L("DÉMARRER","EMPEZAR","GET STARTED")}
         </a>
       </div>
     );

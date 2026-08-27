@@ -7,19 +7,21 @@ import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Bitcoin, Check, ChevronRight, CreditCard, LockKeyhole, ShieldCheck, Sparkles, X } from "lucide-react";
 
 type ModelKey = "2step" | "1step";
-type Challenge = { label: string; model: "Challenge"; price: string; amount: number };
+type Challenge = { label: string; model: "Challenge"; price: string; amount: number; pack3Amount: number };
 type CheckoutProduct = Challenge & { slug: string; sizeKey: string; modelKey: ModelKey };
 type PublicProduct = {
   slug: string;
   model: ModelKey;
   balance_usd: number;
   price_eur_cents: number;
+  unit_price_cents?:  number | null;
+  pack3_price_cents?: number | null;
 };
 
 const CHALLENGES: Record<string, Challenge> = {
-  "rewards-25k":  { label: "$25,000",  model: "Challenge", price: "€19", amount: 1900 },
-  "rewards-50k":  { label: "$50,000",  model: "Challenge", price: "€29", amount: 2900 },
-  "rewards-100k": { label: "$100,000", model: "Challenge", price: "€59", amount: 5900 },
+  "rewards-25k":  { label: "$25,000",  model: "Challenge", price: "€38", amount: 3800,  pack3Amount: 5700  },
+  "rewards-50k":  { label: "$50,000",  model: "Challenge", price: "€58", amount: 5800,  pack3Amount: 8700  },
+  "rewards-100k": { label: "$100,000", model: "Challenge", price: "€118", amount: 11800, pack3Amount: 17700 },
 };
 
 const rulesFor = (sizeKey: string) => [
@@ -44,7 +46,7 @@ const DIAL_CODES = [
 const FALLBACK_PRODUCTS: CheckoutProduct[] = Object.entries(CHALLENGES).map(([slug, challenge]) => ({
   ...challenge,
   slug,
-  sizeKey: slug.split("-")[0],
+  sizeKey: slug.split("-")[1],
   modelKey: "1step",
 }));
 
@@ -67,6 +69,11 @@ function CheckoutContent() {
   const params = useSearchParams();
   const router = useRouter();
   const requestedProduct = params.get("product");
+
+  // Quantité initiale depuis l'URL : ?qty=3 → pack ×3, sinon 1 challenge.
+  const initialQty = params.get("qty") === "3" ? 3 : 1;
+  const [quantity, setQuantity] = useState<1 | 3>(initialQty as 1 | 3);
+
   const [selectedProduct, setSelectedProduct] = useState(requestedProduct?.startsWith("rewards-") ? requestedProduct : "rewards-50k");
   const [availableProducts, setAvailableProducts] = useState<CheckoutProduct[]>(FALLBACK_PRODUCTS);
   const challenge = availableProducts.find(product => product.slug === selectedProduct)
@@ -110,9 +117,14 @@ function CheckoutContent() {
 
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
   const isAdult = birthDate ? (() => { const b = new Date(birthDate); const min = new Date(); min.setFullYear(min.getFullYear() - 18); return b <= min; })() : false;
-  const discountedAmount = discount > 0 ? Math.round(challenge.amount * (100 - discount) / 100) : challenge.amount;
-  const totalAmount = discountedAmount;
-  const isFree = discount === 100;
+
+  // ── Prix selon la quantité sélectionnée ─────────────────────────────────
+  // quantity=1 → prix unitaire ; quantity=3 → prix pack ×3
+  const baseAmount      = quantity === 3 ? challenge.pack3Amount : challenge.amount;
+  const discountedAmount = discount > 0 ? Math.round(baseAmount * (100 - discount) / 100) : baseAmount;
+  const totalAmount     = discountedAmount;
+  const isFree          = discount === 100;
+
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && city.trim() && country.trim() && isAdult && (user || (password.length >= 8 && password === confirmPassword));
   const canPay = !!profileComplete && agreedToTerms;
   const anyLoading = loadingStripe || loadingCrypto || loadingFree;
@@ -131,16 +143,23 @@ function CheckoutContent() {
       .then((data: PublicProduct[]) => {
         if (!Array.isArray(data)) return;
         const products = data
-          .filter(product => product.slug?.startsWith("rewards-") && [25000, 50000, 100000].includes(product.balance_usd) && product.price_eur_cents)
-          .map<CheckoutProduct>(product => ({
-            slug: product.slug,
-            sizeKey: `${Math.round(product.balance_usd / 1000)}k`,
-            modelKey: product.model,
-            label: `$${product.balance_usd.toLocaleString("en-US")}`,
-            model: "Challenge",
-            price: formatPrice(product.price_eur_cents),
-            amount: product.price_eur_cents,
-          }));
+          .filter(product => product.slug?.startsWith("rewards-") && [25000, 50000, 100000].includes(product.balance_usd))
+          .map<CheckoutProduct>(product => {
+            const unitCents  = product.unit_price_cents  ?? product.price_eur_cents;
+            const pack3Cents = product.pack3_price_cents ?? Math.round(unitCents * 3 * 0.5); // fallback rough
+            const sizeKey    = `${Math.round(product.balance_usd / 1000)}k`;
+            const fb         = FALLBACK_PRODUCTS.find(f => f.sizeKey === sizeKey);
+            return {
+              slug:        product.slug,
+              sizeKey,
+              modelKey:    product.model,
+              label:       `$${product.balance_usd.toLocaleString("en-US")}`,
+              model:       "Challenge",
+              price:       formatPrice(unitCents),
+              amount:      unitCents,
+              pack3Amount: pack3Cents || fb?.pack3Amount || 0,
+            };
+          });
 
         if (!products.length) return;
         setAvailableProducts(products);
@@ -229,7 +248,12 @@ function CheckoutContent() {
     setLoadingStripe(true);
     await saveProfile(u.token);
     // `discount` intentionnellement absent : le serveur recalcule le montant réel.
-    const res = await fetch("/api/stripe/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, refCode }) });
+    // `quantity` envoyé pour que le backend sache s'il faut créer 1 ou 3 challenges.
+    const res = await fetch("/api/stripe/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, refCode, quantity }),
+    });
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
     if (data.code === "USE_FREE_PATH") { setLoadingStripe(false); await handleFree(); return; }
@@ -242,7 +266,11 @@ function CheckoutContent() {
     setLoadingCrypto(true);
     await saveProfile(u.token);
     // `discount` intentionnellement absent : le serveur recalcule le montant réel.
-    const res = await fetch("/api/crypto/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode }) });
+    const res = await fetch("/api/crypto/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode, quantity }),
+    });
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
     if (data.code === "USE_FREE_PATH") { setLoadingCrypto(false); await handleFree(); return; }
@@ -352,8 +380,10 @@ function CheckoutContent() {
         <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "16px", display: "flex", alignItems: "center", gap: 12 }}>
           <Image src="/MT5.png" alt="MT5" width={36} height={36} style={{ width: 36, height: 36, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
           <div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "1px" }}>Challenge Traders Rewards</div>
-            <div style={{ fontWeight: 700, fontSize: 14 }}>{challenge.label}</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "1px" }}>
+              {quantity === 3 ? "Pack ×3 Challenges" : "Challenge Traders Rewards"}
+            </div>
+            <div style={{ fontWeight: 700, fontSize: 14 }}>{challenge.label}{quantity === 3 ? " × 3" : ""}</div>
           </div>
           <div style={{ marginLeft: "auto", fontSize: 22, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
             {isFree ? "GRATUIT" : formatPrice(totalAmount)}
@@ -370,7 +400,9 @@ function CheckoutContent() {
           {/* Sélecteur challenge */}
           <div style={{ ...card, borderColor: "rgba(156,207,234,.23)", boxShadow: "0 22px 70px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03)" }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Challenge</div>
-            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+
+            {/* Sélecteur taille */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
               {SIZES.map(size => (
                 <button key={size} onClick={() => changeSize(size)} style={{
                   flex: 1, padding: "8px 4px", fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
@@ -380,13 +412,39 @@ function CheckoutContent() {
                 }}>{SIZE_LABELS[size]}</button>
               ))}
             </div>
+
+            {/* Sélecteur quantité : 1 Challenge / Pack ×3 */}
+            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+              {([1, 3] as const).map(q => (
+                <button
+                  key={q}
+                  onClick={() => setQuantity(q)}
+                  style={{
+                    flex: 1, padding: "7px 4px", fontSize: 11, fontWeight: 800, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
+                    border:     quantity === q ? "1.5px solid rgba(156,207,234,0.65)" : "1.5px solid rgba(255,255,255,0.1)",
+                    background: quantity === q ? "rgba(156,207,234,0.12)" : "#111",
+                    color:      quantity === q ? "#9CCFEA" : "rgba(255,255,255,0.4)",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {q === 3 ? "Pack ×3" : "1 Challenge"}
+                </button>
+              ))}
+            </div>
+
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <div>
-                <div style={{ fontWeight: 800, fontSize: 16 }}>Challenge {challenge.label}</div>
-                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginTop: 2 }}>1 étape · MetaTrader 5 · Compte simulé</div>
+                <div style={{ fontWeight: 800, fontSize: 16 }}>
+                  {quantity === 3 ? `Pack ×3 — ${challenge.label}` : `Challenge ${challenge.label}`}
+                </div>
+                <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginTop: 2 }}>
+                  {quantity === 3
+                    ? "3 comptes MT5 · 1 étape chacun"
+                    : "1 étape · MetaTrader 5 · Compte simulé"}
+                </div>
               </div>
-              <span style={{ background: "rgba(156,207,234,0.1)", color: "#9CCFEA", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 6, border: "1px solid rgba(156,207,234,0.3)" }}>
-                CHALLENGER
+              <span style={{ background: "rgba(156,207,234,0.1)", color: "#9CCFEA", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 6, border: "1px solid rgba(156,207,234,0.3)", whiteSpace: "nowrap" }}>
+                {quantity === 3 ? "PACK ×3" : "CHALLENGER"}
               </span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: isMobile ? 0 : "0 24px" }}>
@@ -495,12 +553,21 @@ function CheckoutContent() {
                 <Image src="/MT5.png" alt="MT5" width={40} height={40} style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14 }}>MetaTrader 5</div>
-                  <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12 }}>{challenge.label} — 1 étape</div>
+                  <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12 }}>
+                    {quantity === 3
+                      ? `Pack ×3 — ${challenge.label}`
+                      : `${challenge.label} — 1 étape`}
+                  </div>
                   <div style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, marginTop: 2 }}>Standard MT5 · 1:100 · USD</div>
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                {[{ label: "Parcours", value: "CHALLENGER" }, { label: "Plateforme", value: "MetaTrader 5" }, { label: "Capital simulé", value: challenge.label }].map((row, i) => (
+                {[
+                  { label: "Parcours", value: quantity === 3 ? "PACK ×3" : "CHALLENGER" },
+                  { label: "Plateforme", value: "MetaTrader 5" },
+                  { label: "Capital simulé", value: challenge.label },
+                  ...(quantity === 3 ? [{ label: "Comptes créés", value: "3 comptes" }] : []),
+                ].map((row, i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>{row.label}</span>
                     <span style={{ fontWeight: 600, fontSize: 13 }}>{row.value}</span>
@@ -509,11 +576,11 @@ function CheckoutContent() {
                 {discount > 0 && <>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>Prix</span>
-                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "line-through" }}>{formatPrice(challenge.amount)}</span>
+                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "line-through" }}>{formatPrice(baseAmount)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>Réduction −{discount}%</span>
-                    <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>−{formatPrice(challenge.amount - discountedAmount)}</span>
+                    <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>−{formatPrice(baseAmount - discountedAmount)}</span>
                   </div>
                 </>}
               </div>
