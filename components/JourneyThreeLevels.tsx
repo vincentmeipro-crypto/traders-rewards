@@ -953,22 +953,13 @@ export default function JourneyThreeLevels() {
               </div>
 
               {/* Patch premium : Reward auto 48H */}
-              <div style={{ marginBottom: 8, position: "relative" }}>
+              <div style={{ marginTop: 10, position: "relative" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "4px 12px" }}>
                   <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
                   <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.8px" }}>
                     {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
                   </span>
                 </span>
-              </div>
-
-              {/* Phrase */}
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.72)", lineHeight: 1.6, position: "relative" }}>
-                {L(
-                  "Seuil de chaque Reward = Safety Net + cap du niveau demandé.",
-                  "Umbral de cada Reward = Safety Net + tope del nivel solicitado.",
-                  "Each Reward threshold = Safety Net + cap of the requested level."
-                )}
               </div>
 
               {/* Spacer */}
