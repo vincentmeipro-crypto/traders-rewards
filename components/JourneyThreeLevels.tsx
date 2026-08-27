@@ -913,7 +913,7 @@ export default function JourneyThreeLevels() {
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, position: "relative" }}>
                 <Award size={15} color={VIOLET} strokeWidth={2.5} style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
-                  {L("Passez au niveau supérieur","Pase al nivel superior","Level up your trading")}
+                  {L("Multipliez vos rewards","Multiplique sus rewards","Multiply your rewards")}
                 </span>
               </div>
 
