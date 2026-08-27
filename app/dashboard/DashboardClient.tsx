@@ -1370,17 +1370,40 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>
-                {/* Montant auto = profit du compte */}
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Montant (USD)" : "Amount (USD)"}</label>
-                  <div style={{ width: "100%", backgroundColor: "rgba(156,207,234,0.08)", border: "1.5px solid rgba(156,207,234,0.25)", borderRadius: 10, padding: "14px 16px", color: "#9CCFEA", fontSize: 18, fontWeight: 900 }}>
-                    ${Math.max(0, profitAmount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </div>
+                {/* ── 5 étapes de validation automatique ── */}
+                <div style={{ fontSize: 10, fontWeight: 800, color: "rgba(156,207,234,0.55)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 18 }}>
+                  {isFr ? "VALIDATION AUTOMATIQUE" : "AUTOMATIC VALIDATION"}
+                </div>
+                <div style={{ marginBottom: 28 }}>
+                  {([
+                    isFr ? "KYC validé" : "KYC verified",
+                    isFr ? "Moyen de paiement validé" : "Payment method validated",
+                    isFr ? "Règles du compte respectées" : "Account rules respected",
+                    isFr ? "Montant Reward validé" : "Reward amount validated",
+                    isFr ? "Paiement automatique en 48H" : "Automatic payment in 48H",
+                  ] as string[]).map((label, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < 4 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                      <div style={{
+                        width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
+                        background: i === 4 ? "rgba(156,207,234,0.12)" : "rgba(34,197,94,0.12)",
+                        border: `1px solid ${i === 4 ? "rgba(156,207,234,0.28)" : "rgba(34,197,94,0.28)"}`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        <CheckCircle size={12} color={i === 4 ? "#9CCFEA" : "#22c55e"} />
+                      </div>
+                      <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: i === 4 ? "#9CCFEA" : "#FFFFFF" }}>{label}</span>
+                      {i === 3 && (
+                        <span style={{ fontWeight: 900, fontSize: 15, color: "#9CCFEA", fontVariantNumeric: "tabular-nums" }}>
+                          ${Math.max(0, profitAmount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </span>
+                      )}
+                    </div>
+                  ))}
                 </div>
 
                 {/* Méthode de paiement */}
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
                   <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value, wallet_address: "" }))}
                     style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(156,207,234,0.25)", borderRadius: 10, padding: "14px 16px", color: "#9CCFEA", fontSize: 14, fontWeight: 700, outline: "none" }}>
                     <option value="bank">{isFr ? "Virement bancaire (RIB/IBAN)" : "Bank transfer (IBAN)"}</option>
@@ -1390,7 +1413,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Adresse selon méthode */}
                 <div style={{ marginBottom: 28 }}>
-                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 14, fontWeight: 700, marginBottom: 10 }}>
+                  <label style={{ display: "block", color: "#9CCFEA", fontSize: 13, fontWeight: 700, marginBottom: 8 }}>
                     {payoutForm.payment_method === "crypto" ? (isFr ? "Adresse portefeuille USDC (Solana)" : "USDC wallet address (Solana)") : "IBAN"}
                   </label>
                   <input type="text"

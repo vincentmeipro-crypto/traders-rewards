@@ -82,7 +82,7 @@ export const t = {
       gateBtn: 'Complete KYC →', gateBtnPending: 'View KYC status',
     },
     dash: {
-      dashboard: 'Dashboard', challenges: 'My Challenges', rewards: 'Rewards',
+      dashboard: 'Dashboard', challenges: 'My Challenges', rewards: 'REWARDS AUTO 48H',
       kyc: 'KYC', certificates: 'Certificates', history: 'History', invoices: 'Invoices',
       rules: 'Rules', profile: 'My Profile', settings: 'Settings', myChallenge: 'My Challenge',
       balance: 'Current Balance', tradingDays: 'Trading days', minDays: 'min',
@@ -201,7 +201,7 @@ export const t = {
       gateBtn: 'Compléter le KYC →', gateBtnPending: 'Voir le statut KYC',
     },
     dash: {
-      dashboard: 'Dashboard', challenges: 'Mes Challenges', rewards: 'Récompenses',
+      dashboard: 'Dashboard', challenges: 'Mes Challenges', rewards: 'REWARDS AUTO 48H',
       kyc: 'KYC', certificates: 'Certificats', history: 'Historique', invoices: 'Factures',
       rules: 'Règles', profile: 'Mon Profil', settings: 'Paramètres', myChallenge: 'Mon Challenge',
       balance: 'Balance actuelle', tradingDays: 'Jours tradés', minDays: 'min',
@@ -320,7 +320,7 @@ export const t = {
       gateBtn: 'Completar KYC →', gateBtnPending: 'Ver estado KYC',
     },
     dash: {
-      dashboard: 'Dashboard', challenges: 'Mis Desafíos', rewards: 'Recompensas',
+      dashboard: 'Dashboard', challenges: 'Mis Desafíos', rewards: 'REWARDS AUTO 48H',
       kyc: 'KYC', certificates: 'Certificados', history: 'Historial', invoices: 'Facturas',
       rules: 'Reglas', profile: 'Mi Perfil', settings: 'Ajustes', myChallenge: 'Mi Desafío',
       balance: 'Balance actual', tradingDays: 'Días operados', minDays: 'mín',

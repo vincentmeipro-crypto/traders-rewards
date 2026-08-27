@@ -458,6 +458,31 @@ export default function Hero() {
               </a>
             </div>
 
+            {/* ── Patch premium : Reward auto 48H ── */}
+            <div style={{ marginTop: isMobile ? 14 : 20, animation: "heroFadeUp 0.52s ease 0.20s both" }}>
+              <span style={{
+                display:      "inline-flex",
+                alignItems:   "center",
+                gap:          7,
+                background:   "rgba(34,197,94,0.07)",
+                border:       "1px solid rgba(34,197,94,0.20)",
+                borderRadius: 100,
+                padding:      isMobile ? "5px 12px" : "6px 14px",
+              }}>
+                <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
+                <span style={{
+                  fontSize:      10,
+                  fontWeight:    800,
+                  color:         "#22c55e",
+                  letterSpacing: "1.2px",
+                  textTransform: "uppercase",
+                  whiteSpace:    "nowrap",
+                }}>
+                  {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
+                </span>
+              </span>
+            </div>
+
           </div>{/* fin colonne gauche */}
 
           {/* ════════════════════════════════════════════════
