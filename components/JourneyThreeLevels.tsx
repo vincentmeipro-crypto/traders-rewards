@@ -799,55 +799,60 @@ export default function JourneyThreeLevels() {
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.015), transparent 52%)" }} />
 
-              {/* Header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
-                <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 02</div>
-                <InfoBtn
-                  btnRef={triggerRefs[1] as InfoBtnRef}
-                  onClick={() => openModal(1)}
-                  label={L("Détails du Compte Reward","Detalles del Compte Reward","Compte Reward details")}
-                />
-              </div>
+              {/* Zone supérieure — minHeight identique carte 02/03 pour aligner les badges verts */}
+              <div style={{ minHeight: isMobile ? undefined : 220 }}>
 
-              {/* Nom du niveau */}
-              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1, marginBottom: 14, position: "relative" }}>
-                COMPTE REWARD
-              </div>
-
-              {/* Sous-titre */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18, position: "relative" }}>
-                <DollarSign size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
-                  {L("Débloquez votre première Reward","Desbloquee su primera Reward","Unlock your first Reward")}
-                </span>
-              </div>
-
-              {/* Safety Net + seuil Reward #1 */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12, position: "relative" }}>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase" }}>Safety Net</span>
-                  <span style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-0.5px", lineHeight: 1 }}>{money(selectedSize.lockAt)}</span>
+                {/* Header */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
+                  <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 02</div>
+                  <InfoBtn
+                    btnRef={triggerRefs[1] as InfoBtnRef}
+                    onClick={() => openModal(1)}
+                    label={L("Détails du Compte Reward","Detalles del Compte Reward","Compte Reward details")}
+                  />
                 </div>
-                <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.42)" }}>
-                  {L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold")}{" → "}
-                  <span style={{ color: "rgba(255,255,255,0.72)", fontWeight: 800 }}>{money(rewardThreshold)}</span>
-                  {" "}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>({L("cap","tope","cap")} {money(rewardOne)})</span>
+
+                {/* Nom du niveau */}
+                <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1, marginBottom: 14, position: "relative" }}>
+                  COMPTE REWARD
                 </div>
-              </div>
 
-              {/* Journées qualifiantes */}
-              <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.72)", marginBottom: 8, position: "relative", lineHeight: 1.5 }}>
-                {L("5 journées qualifiantes minimum","5 días calificados mínimo","5 qualifying days minimum")} · +{money(QUAL_MIN[selectedSize.bal])} / {L("jour","día","day")}
-              </div>
+                {/* Sous-titre */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18, position: "relative" }}>
+                  <DollarSign size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
+                    {L("Débloquez votre première Reward","Desbloquee su primera Reward","Unlock your first Reward")}
+                  </span>
+                </div>
 
-              {/* Règles */}
-              <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
-                {L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} {money(ddUsd)}
-                <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
-                <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                {L("Temps illimité","Tiempo ilimitado","Unlimited duration")}
-              </div>
+                {/* Safety Net + seuil Reward #1 */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12, position: "relative" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase" }}>Safety Net</span>
+                    <span style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-0.5px", lineHeight: 1 }}>{money(selectedSize.lockAt)}</span>
+                  </div>
+                  <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.42)" }}>
+                    {L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold")}{" → "}
+                    <span style={{ color: "rgba(255,255,255,0.72)", fontWeight: 800 }}>{money(rewardThreshold)}</span>
+                    {" "}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>({L("cap","tope","cap")} {money(rewardOne)})</span>
+                  </div>
+                </div>
+
+                {/* Journées qualifiantes */}
+                <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.72)", marginBottom: 8, position: "relative", lineHeight: 1.5 }}>
+                  {L("5 journées qualifiantes minimum","5 días calificados mínimo","5 qualifying days minimum")} · +{money(QUAL_MIN[selectedSize.bal])} / {L("jour","día","day")}
+                </div>
+
+                {/* Règles */}
+                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
+                  {L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} {money(ddUsd)}
+                  <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
+                  {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
+                  <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
+                  {L("Temps illimité","Tiempo ilimitado","Unlimited duration")}
+                </div>
+
+              </div>{/* /zone supérieure */}
 
               {/* Patch premium : Reward auto 48H */}
               <div style={{ marginTop: 10, position: "relative" }}>
@@ -904,8 +909,8 @@ export default function JourneyThreeLevels() {
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.012), transparent 50%)" }} />
 
-              {/* Zone supérieure — minHeight cale le badge vert au même niveau que la carte 02 */}
-              <div style={{ minHeight: isMobile ? undefined : 200 }}>
+              {/* Zone supérieure — minHeight identique carte 02/03 pour aligner les badges verts */}
+              <div style={{ minHeight: isMobile ? undefined : 220 }}>
 
                 {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
