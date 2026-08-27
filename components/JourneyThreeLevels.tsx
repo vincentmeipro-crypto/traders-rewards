@@ -705,11 +705,11 @@ export default function JourneyThreeLevels() {
             <div style={cardBase(false)}>
               {/* Glow */}
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-                background: "radial-gradient(circle at 50% 0%, rgba(156,207,234,0.035), transparent 50%)" }} />
+                background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.012), transparent 50%)" }} />
 
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
-                <div style={{ ...secLabel, marginBottom: 0 }}>NIVEAU 01</div>
+                <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 01</div>
                 <InfoBtn
                   btnRef={triggerRefs[0] as InfoBtnRef}
                   onClick={() => openModal(0)}
@@ -724,7 +724,7 @@ export default function JourneyThreeLevels() {
 
               {/* Validation */}
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18, position: "relative" }}>
-                <CircleCheck size={15} color={ACCENT} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                <CircleCheck size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
                   {L("Validez votre Challenge","Valide su Challenge","Pass your Challenge")}
                 </span>
@@ -732,7 +732,7 @@ export default function JourneyThreeLevels() {
 
               {/* +6% + progression */}
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 12, position: "relative", flexWrap: "wrap" }}>
-                <span style={{ fontSize: 28, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1 }}>+6%</span>
+                <span style={{ fontSize: 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1 }}>+6%</span>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.55)" }}>
                   {money(selectedSize.bal)}
                   <span style={{ color: "rgba(255,255,255,0.22)", margin: "0 5px" }}>→</span>
@@ -757,22 +757,22 @@ export default function JourneyThreeLevels() {
               {/* Spacer */}
               <div style={{ flex: 1, minHeight: 20 }} />
 
-              {/* Bénéfice final — bloc premium bleu */}
+              {/* Bénéfice final — bloc premium */}
               <div style={{
                 position:     "relative",
-                background:   "linear-gradient(135deg, rgba(156,207,234,0.055), rgba(156,207,234,0.012))",
-                border:       "1px solid rgba(156,207,234,0.20)",
+                background:   "linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
+                border:       "1px solid rgba(255,255,255,0.12)",
                 borderRadius: 12,
                 padding:      "11px 14px",
                 minHeight:    150,
                 boxSizing:    "border-box",
-                boxShadow:    "inset 0 0 24px rgba(156,207,234,0.018), 0 0 18px rgba(156,207,234,0.025)",
+                boxShadow:    "0 2px 12px rgba(0,0,0,0.30)",
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(156,207,234,0.68)", letterSpacing: "2px", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.30)", letterSpacing: "2px", textTransform: "uppercase" }}>
                     CHALLENGE
                   </div>
-                  <CircleCheck size={16} color="rgba(156,207,234,0.58)" strokeWidth={1.8} />
+                  <CircleCheck size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
                 </div>
                 <div aria-hidden="true" style={{ fontSize: 9, fontWeight: 700, visibility: "hidden", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
                   {L("JUSQU'À","HASTA","UP TO")}
@@ -780,7 +780,7 @@ export default function JourneyThreeLevels() {
                 <div style={{
                   fontSize:      "clamp(36px, 3.6vw, 50px)",
                   fontWeight:    900,
-                  color:         "#FFFFFF",
+                  color:         ACCENT,
                   letterSpacing: "-1.5px",
                   lineHeight:    1,
                   textShadow:    "0 0 8px rgba(156,207,234,0.16), 0 0 16px rgba(156,207,234,0.07)",
@@ -794,14 +794,14 @@ export default function JourneyThreeLevels() {
             {!isMobile && <Arrow />}
 
             {/* ── CARTE 02 : PREMIÈRE REWARD ── */}
-            <div style={cardBase(true)}>
+            <div style={cardBase(false)}>
               {/* Glow */}
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-                background: "radial-gradient(circle at 50% 0%, rgba(156,207,234,0.14), transparent 52%)" }} />
+                background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.015), transparent 52%)" }} />
 
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
-                <div style={{ ...secLabel, marginBottom: 0 }}>NIVEAU 02</div>
+                <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 02</div>
                 <InfoBtn
                   btnRef={triggerRefs[1] as InfoBtnRef}
                   onClick={() => openModal(1)}
@@ -810,13 +810,13 @@ export default function JourneyThreeLevels() {
               </div>
 
               {/* Nom du niveau */}
-              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1, marginBottom: 14, position: "relative" }}>
+              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1, marginBottom: 14, position: "relative" }}>
                 COMPTE REWARD
               </div>
 
               {/* Sous-titre */}
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18, position: "relative" }}>
-                <DollarSign size={15} color={ACCENT} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                <DollarSign size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
                   {L("Débloquez votre première Reward","Desbloquee su primera Reward","Unlock your first Reward")}
                 </span>
@@ -825,12 +825,12 @@ export default function JourneyThreeLevels() {
               {/* Safety Net + seuil Reward #1 */}
               <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12, position: "relative" }}>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(156,207,234,0.50)", letterSpacing: "1.5px", textTransform: "uppercase" }}>Safety Net</span>
-                  <span style={{ fontSize: 22, fontWeight: 900, color: ACCENT, letterSpacing: "-0.5px", lineHeight: 1 }}>{money(selectedSize.lockAt)}</span>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase" }}>Safety Net</span>
+                  <span style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-0.5px", lineHeight: 1 }}>{money(selectedSize.lockAt)}</span>
                 </div>
                 <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.42)" }}>
                   {L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold")}{" → "}
-                  <span style={{ color: ACCENT, fontWeight: 800 }}>{money(rewardThreshold)}</span>
+                  <span style={{ color: "rgba(255,255,255,0.72)", fontWeight: 800 }}>{money(rewardThreshold)}</span>
                   {" "}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>({L("cap","tope","cap")} {money(rewardOne)})</span>
                 </div>
               </div>
@@ -865,21 +865,21 @@ export default function JourneyThreeLevels() {
               {/* Bénéfice final */}
               <div style={{
                 position:     "relative",
-                background:   "linear-gradient(135deg, rgba(156,207,234,0.08), rgba(156,207,234,0.02))",
-                border:       "1px solid rgba(156,207,234,0.25)",
+                background:   "linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
+                border:       "1px solid rgba(255,255,255,0.12)",
                 borderRadius: 12,
                 padding:      "11px 14px",
                 minHeight:    150,
                 boxSizing:    "border-box",
-                boxShadow:    "inset 0 0 30px rgba(156,207,234,0.03), 0 0 24px rgba(156,207,234,0.05)",
+                boxShadow:    "0 2px 12px rgba(0,0,0,0.30)",
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(156,207,234,0.60)", letterSpacing: "2px", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.30)", letterSpacing: "2px", textTransform: "uppercase" }}>
                     REWARD #1
                   </div>
-                  <BadgeDollarSign size={16} color="rgba(156,207,234,0.45)" strokeWidth={1.8} />
+                  <BadgeDollarSign size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
                 </div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(156,207,234,0.35)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
                   {L("JUSQU'À","HASTA","UP TO")}
                 </div>
                 <div style={{
@@ -900,13 +900,13 @@ export default function JourneyThreeLevels() {
 
             {/* ── CARTE 03 : REWARDS SUIVANTES ── */}
             <div style={cardBase(false)}>
-              {/* Glow bleu */}
+              {/* Glow */}
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-                background: "radial-gradient(circle at 50% 0%, rgba(156,207,234,0.035), transparent 50%)" }} />
+                background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.012), transparent 50%)" }} />
 
               {/* Header */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
-                <div style={{ ...secLabel, marginBottom: 0 }}>NIVEAU 03</div>
+                <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 03</div>
                 <InfoBtn
                   btnRef={triggerRefs[2] as InfoBtnRef}
                   onClick={() => openModal(2)}
@@ -915,13 +915,13 @@ export default function JourneyThreeLevels() {
               </div>
 
               {/* Nom du niveau */}
-              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1, marginBottom: 10, position: "relative" }}>
+              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1, marginBottom: 10, position: "relative" }}>
                 TRADER REWARD
               </div>
 
               {/* Sous-titre */}
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, position: "relative" }}>
-                <Award size={15} color={ACCENT} strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                <Award size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
                 <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
                   {L("Multipliez vos Rewards","Multiplique sus Rewards","Multiply your Rewards")}
                 </span>
@@ -929,20 +929,20 @@ export default function JourneyThreeLevels() {
 
               {/* Progression secondaire */}
               <div style={{ marginBottom: 8, position: "relative" }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(156,207,234,0.50)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
                   REWARDS
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1 }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-1px", lineHeight: 1 }}>
                   #2 → #5
                 </div>
               </div>
 
               {/* Safety Net */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, position: "relative" }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(156,207,234,0.50)", textTransform: "uppercase", letterSpacing: "1px" }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", textTransform: "uppercase", letterSpacing: "1px" }}>
                   SAFETY NET
                 </span>
-                <span style={{ fontSize: 14, fontWeight: 900, color: ACCENT }}>{money(selectedSize.lockAt)}</span>
+                <span style={{ fontSize: 14, fontWeight: 900, color: "rgba(255,255,255,0.72)" }}>{money(selectedSize.lockAt)}</span>
               </div>
 
               {/* Règles */}
@@ -974,24 +974,24 @@ export default function JourneyThreeLevels() {
               {/* Spacer */}
               <div style={{ flex: 1, minHeight: 12 }} />
 
-              {/* Bloc final bleu */}
+              {/* Bloc final */}
               <div style={{
                 position:     "relative",
-                background:   "linear-gradient(135deg, rgba(156,207,234,0.055), rgba(156,207,234,0.012))",
-                border:       "1px solid rgba(156,207,234,0.22)",
+                background:   "linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
+                border:       "1px solid rgba(255,255,255,0.12)",
                 borderRadius: 12,
                 padding:      "11px 14px",
                 minHeight:    150,
                 boxSizing:    "border-box",
-                boxShadow:    "inset 0 0 24px rgba(156,207,234,0.018), 0 0 18px rgba(156,207,234,0.025)",
+                boxShadow:    "0 2px 12px rgba(0,0,0,0.30)",
               }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(156,207,234,0.68)", letterSpacing: "2px", textTransform: "uppercase" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.30)", letterSpacing: "2px", textTransform: "uppercase" }}>
                     STATUT
                   </div>
-                  <Award size={16} color="rgba(156,207,234,0.58)" strokeWidth={1.8} />
+                  <Award size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
                 </div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(156,207,234,0.44)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
                   {L("JUSQU'À","HASTA","UP TO")}
                 </div>
                 <div style={{
