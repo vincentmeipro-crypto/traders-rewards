@@ -1573,9 +1573,6 @@ function AdminPageInner() {
                                         {/* En-tête : taille · modèle · phase · statut · date */}
                                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
                                           <span style={{ fontSize: 16, fontWeight: 900, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{c.account_size}</span>
-                                          <span style={{ fontSize: 10, background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.4)", padding: "2px 7px", borderRadius: 4, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>
-                                            {c.model === "instant" ? "INSTANT" : c.model?.toUpperCase() || "—"}
-                                          </span>
                                           {isV1c
                                             ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
                                                 {v1Level}
