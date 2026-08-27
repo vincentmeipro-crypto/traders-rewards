@@ -45,6 +45,7 @@ import {
   computeV1TrailingFloor,
   isV1TrailingLocked,
   checkV1DDBreach,
+  checkV1ChallengeTransition,
   computeV1EffectiveProfitTarget,
   computeRewardRequestThreshold,
   computeRewardImpact,
@@ -162,8 +163,8 @@ section("F. Challenge — aucun lock (safetyNet = null), floor = highest − ddU
   // Même à 200 000 — pas de lock
   const floorAt200K = computeV1TrailingFloor(50000, 200000, 2000, null);
   test("Challenge pas de lock même à highest=200 000 → 198 000", floorAt200K, 198000);
-  // Apex EOD: 0 jour minimum de trading
-  test("V1_CHALLENGE.minTradingDays = 0 (Apex EOD)", V1_CHALLENGE.minTradingDays, 0);
+  // V1.2 : 2 jours minimum de trading
+  test("V1_CHALLENGE.minTradingDays = 2 (V1.2 — minimum requis)", V1_CHALLENGE.minTradingDays, 2);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -262,25 +263,40 @@ test("50K  = 250 USD (was 100)", V1_QUALIFYING_DAY_MIN_USD[50000],  250);
 test("100K = 300 USD (was 150)", V1_QUALIFYING_DAY_MIN_USD[100000], 300);
 
 // ════════════════════════════════════════════════════════════════
-// K. Consistency Challenge — AUCUNE (Apex EOD supprime la consistency)
+// K. Consistency Challenge = 50 % (V1.2 — identique Reward)
 // ════════════════════════════════════════════════════════════════
 
-section("K. Challenge — Apex EOD : aucune consistency (consistencyPct = 0)");
+section("K. Challenge — Consistency 50 % (V1.2)");
 {
-  // V1_CONSISTENCY_PCT.challenge n'existe plus — le Challenge Apex EOD n'a pas de consistency
-  // computeV1EffectiveProfitTarget avec consistencyPct=0 → retourne toujours baseTargetPct
-  const noAdjust1 = computeV1EffectiveProfitTarget(50000, 6, 1000, 0);
-  test("50K Challenge (Apex): best_day 1000$ → cible = 6% (pas d'ajustement)", noAdjust1, 6);
+  test("V1_CONSISTENCY_PCT.challenge = 50", V1_CONSISTENCY_PCT.challenge, 50);
 
-  const noAdjust2 = computeV1EffectiveProfitTarget(50000, 6, 2000, 0);
-  test("50K Challenge (Apex): best_day 2000$ → cible = 6% (pas d'ajustement)", noAdjust2, 6);
+  // 50K Challenge : profit requis = 6% × 50000 = 3000$. best_day = 500$ = 16.7% < 50% → cible inchangée
+  const noAdjust = computeV1EffectiveProfitTarget(50000, 6, 500, V1_CONSISTENCY_PCT.challenge);
+  test("50K Challenge: best_day 500$ (16.7%) < 50% → cible = 6%", noAdjust, 6);
 
-  const noAdjust3 = computeV1EffectiveProfitTarget(50000, 6, 5000, 0);
-  test("50K Challenge (Apex): best_day 5000$ → cible = 6% (pas d'ajustement)", noAdjust3, 6);
+  // best_day = 1499$ = 49.97% < 50% de 3000$ → cible inchangée
+  const nearLimit = computeV1EffectiveProfitTarget(50000, 6, 1499, V1_CONSISTENCY_PCT.challenge);
+  test("50K Challenge: best_day 1499$ (49.97%) < 50% → cible = 6%", nearLimit, 6);
 
-  // Même une meilleure journée qui représente 99% du profit → pas d'ajustement
-  const extreme = computeV1EffectiveProfitTarget(25000, 6, 1485, 0);  // ≈ 99% de 1500$
-  test("25K Challenge (Apex): best_day 1485$ (99%) → cible = 6% (pas d'ajustement)", extreme, 6);
+  // best_day = 1501$ > 50% de 3000$ → cible monte
+  const raised = computeV1EffectiveProfitTarget(50000, 6, 1501, V1_CONSISTENCY_PCT.challenge);
+  test("50K Challenge: best_day 1501$ > 50% → cible monte au-delà de 6%", raised > 6, true);
+
+  // 1 seul jour tradé → minDaysMet = false (minDays = 2)
+  const check1Day = checkV1ChallengeTransition(
+    50000, 53100, 53100, 53100, 1, 500,
+    getV1DdUsdByBalance(50000),
+  );
+  test("50K Challenge 1 jour tradé → canTransition = false (minDays=2)", check1Day.canTransition, false);
+  test("50K Challenge 1 jour tradé → minDaysMet = false", check1Day.minDaysMet, false);
+
+  // 2 jours tradés + profit OK + consistency OK → validé
+  const check2Days = checkV1ChallengeTransition(
+    50000, 53100, 53100, 53100, 2, 500,
+    getV1DdUsdByBalance(50000),
+  );
+  test("50K Challenge 2 jours + profit 6.2% + best_day OK → canTransition = true", check2Days.canTransition, true);
+  test("50K Challenge 2 jours → minDaysMet = true", check2Days.minDaysMet, true);
 }
 
 // ════════════════════════════════════════════════════════════════

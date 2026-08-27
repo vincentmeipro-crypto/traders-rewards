@@ -145,8 +145,8 @@ export default function PricingV1() {
       { label: L("1 Étape","1 Paso","1 Step"),               value: "✓",                                                                                     accent: true  },
       { label: L("Objectif profit","Objetivo profit","Profit target"), value: showPct ? "+6%" : `+${fmtDollar(card.balance * 0.06)}`,                        accent: false },
       { label: L("Trailing DD EOD","Trailing DD EOD","Trailing DD EOD"), value: showPct ? `${card.trailingDdPct}%` : fmtDollar(card.balance * card.trailingDdPct / 100), accent: false },
-      { label: L("Consistance","Consistencia","Consistency"), value: L("Aucune","Ninguna","None"),                                                              accent: false },
-      { label: L("Jours min","Días mín","Min days"),          value: L("0 jour","0 días","0 days"),                                                            accent: false },
+      { label: L("Consistance","Consistencia","Consistency"), value: "≤ 50%",                                                                                   accent: false },
+      { label: L("Jours min","Días mín","Min days"),          value: L("2 jours","2 días","2 days"),                                                           accent: false },
       { label: L("Durée max","Duración máx","Max duration"),  value: L("30 j. cal.","30 d. cal.","30 cal. days"),                                              accent: false },
     ];
     const isPopular  = card.balance === 50000;

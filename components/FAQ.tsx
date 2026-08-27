@@ -24,7 +24,7 @@ const faqData = {
     // 02
     {
       q: "Comment fonctionne le Challenge ?",
-      a: "Le Challenge se déroule en une seule étape avec un objectif de +6 %. Il n'y a aucun minimum de jours de trading et aucune règle de consistance. Vous devez rester dans votre limite de Trailing Drawdown EOD fixe : 1 000 $ sur le 25K, 2 000 $ sur le 50K, 3 000 $ sur le 100K. Vous disposez de 30 jours calendaires maximum pour valider votre Challenge.",
+      a: "Le Challenge se déroule en une seule étape avec un objectif de +6 %. Il y a un minimum de 2 jours de trading et une règle de consistance à 50 % (votre meilleure journée ne doit pas représenter plus de 50 % de votre profit total). Vous devez rester dans votre limite de Trailing Drawdown EOD fixe : 1 000 $ sur le 25K, 2 000 $ sur le 50K, 3 000 $ sur le 100K. Vous disposez de 30 jours calendaires maximum pour valider votre Challenge.",
     },
     // 03
     {
@@ -39,7 +39,7 @@ const faqData = {
     // 05
     {
       q: "Quelles sont toutes les règles du Challenge ?",
-      a: "Le Challenge comporte une seule étape avec un objectif de +6 % (1 500 $ sur le 25K / 3 000 $ sur le 50K / 6 000 $ sur le 100K). Il n'y a aucun minimum de jours et aucune règle de consistance. Votre seule limite de risque est le Trailing Drawdown EOD fixe : 1 000 $ sur le 25K, 2 000 $ sur le 50K, 3 000 $ sur le 100K. Vous disposez de 30 jours calendaires maximum.",
+      a: "Le Challenge comporte une seule étape avec un objectif de +6 % (1 500 $ sur le 25K / 3 000 $ sur le 50K / 6 000 $ sur le 100K). Il y a un minimum de 2 jours de trading et une règle de consistance à 50 % (meilleure journée < 50 % du profit total). Votre seule limite de risque est le Trailing Drawdown EOD fixe : 1 000 $ sur le 25K, 2 000 $ sur le 50K, 3 000 $ sur le 100K. Vous disposez de 30 jours calendaires maximum.",
     },
     // 06
     {
@@ -103,7 +103,7 @@ const faqData = {
     // 02
     {
       q: "How does the Challenge work?",
-      a: "The Challenge is a single step with a +6% profit target. There is no minimum number of trading days and no consistency rule. You must stay within your Trailing Drawdown EOD limit ($1,000 on the 25K, $2,000 on the 50K, $3,000 on the 100K). You have a maximum of 30 calendar days to validate your Challenge.",
+      a: "The Challenge is a single step with a +6% profit target. There is a minimum of 2 trading days and a 50% consistency rule (your best day must not exceed 50% of your total profit). You must stay within your Trailing Drawdown EOD limit ($1,000 on the 25K, $2,000 on the 50K, $3,000 on the 100K). You have a maximum of 30 calendar days to validate your Challenge.",
     },
     // 03
     {
@@ -113,7 +113,7 @@ const faqData = {
     // 05
     {
       q: "What are all the Challenge rules?",
-      a: "The Challenge is a single step with a +6% profit target ($1,500 on the 25K / $3,000 on the 50K / $6,000 on the 100K). There is no minimum trading days and no consistency rule. Your only risk limit is the Trailing Drawdown EOD ($1,000 / $2,000 / $3,000). You have a maximum of 30 calendar days.",
+      a: "The Challenge is a single step with a +6% profit target ($1,500 on the 25K / $3,000 on the 50K / $6,000 on the 100K). There is a minimum of 2 trading days and a 50% consistency rule (best day < 50% of total profit). Your only risk limit is the Trailing Drawdown EOD ($1,000 / $2,000 / $3,000). You have a maximum of 30 calendar days.",
     },
     // 06
     {
@@ -177,7 +177,7 @@ const faqData = {
     // 02
     {
       q: "¿Cómo funciona el Challenge?",
-      a: "El Challenge se desarrolla en una sola etapa con un objetivo de +6 % de beneficio. No hay mínimo de días ni regla de consistencia en el Challenge. Debes mantenerte dentro de tu límite de Trailing Drawdown EOD fijo: 1 000 $ en el 25K, 2 000 $ en el 50K, 3 000 $ en el 100K. Dispones de un máximo de 30 días calendario para validar tu Challenge.",
+      a: "El Challenge se desarrolla en una sola etapa con un objetivo de +6 % de beneficio. Hay un mínimo de 2 días de trading y una regla de consistencia del 50 % (tu mejor día no debe superar el 50 % de tu beneficio total). Debes mantenerte dentro de tu límite de Trailing Drawdown EOD fijo: 1 000 $ en el 25K, 2 000 $ en el 50K, 3 000 $ en el 100K. Dispones de un máximo de 30 días calendario para validar tu Challenge.",
     },
     // 03
     {
@@ -192,7 +192,7 @@ const faqData = {
     // 05
     {
       q: "¿Cuáles son todas las reglas del Challenge?",
-      a: "El Challenge consta de una sola etapa con un objetivo de +6 % de beneficio (1 500 $ en el 25K / 3 000 $ en el 50K / 6 000 $ en el 100K). No hay mínimo de días ni regla de consistencia. Tu único límite de riesgo es el Trailing Drawdown EOD fijo: 1 000 $ en el 25K, 2 000 $ en el 50K, 3 000 $ en el 100K. Dispones de un máximo de 30 días calendario.",
+      a: "El Challenge consta de una sola etapa con un objetivo de +6 % de beneficio (1 500 $ en el 25K / 3 000 $ en el 50K / 6 000 $ en el 100K). Hay un mínimo de 2 días de trading y una regla de consistencia del 50 % (mejor día < 50 % del beneficio total). Tu único límite de riesgo es el Trailing Drawdown EOD fijo: 1 000 $ en el 25K, 2 000 $ en el 50K, 3 000 $ en el 100K. Dispones de un máximo de 30 días calendario.",
     },
     // 06
     {

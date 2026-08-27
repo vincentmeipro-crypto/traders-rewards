@@ -226,8 +226,8 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                 },
                 {
                   label: L("Jours minimum","Días mínimos","Minimum days"),
-                  pctStr: L("0 jour","0 días","0 days"), usd: "",
-                  note: L("Aucun minimum — tradez à votre rythme","Sin mínimo — opere a su ritmo","No minimum — trade at your own pace"),
+                  pctStr: L("2 jours","2 días","2 days"), usd: "",
+                  note: L("2 jours de trading minimum pour valider le Challenge","2 días de trading mínimo para validar el Challenge","2 minimum trading days to validate the Challenge"),
                   color: ACCENT,
                 },
                 {
@@ -374,8 +374,8 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
               <div style={infoBox}>
                 <div style={miniLabel}>{L("Minimum","Mínimo","Minimum")}</div>
-                <div style={bigVal}>{L("0 jour minimum","0 días mínimos","0 minimum days")}</div>
-                <div style={tinyNote}>{L("Aucun minimum — tradez à votre rythme","Sin mínimo — opere a su ritmo","No minimum — trade at your own pace")}</div>
+                <div style={bigVal}>{L("2 jours minimum","2 días mínimos","2 minimum days")}</div>
+                <div style={tinyNote}>{L("2 jours de trading minimum pour valider","2 días de trading mínimo para validar","2 minimum trading days to validate")}</div>
               </div>
               <div style={infoBox}>
                 <div style={miniLabel}>{L("Maximum","Máximo","Maximum")}</div>

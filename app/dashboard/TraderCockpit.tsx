@@ -41,6 +41,7 @@ import {
   isV1Challenge,
   getV1DdUsd,
   getV1SafetyNetUsd,
+  V1_CHALLENGE_MIN_DAYS,
 } from "@/lib/v1-display";
 
 export type CockpitSubTab = "cockpit" | "trading";
@@ -420,8 +421,8 @@ export default function TraderCockpit({
   const profitProgress = profitTargetUsd > 0 ? clamp(profit / profitTargetUsd * 100) : 100;
 
   // minDays from contract rules (snapshot → fallback)
-  // Apex EOD : Challenge V1 = 0 jours minimum (was 2)
-  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isLegacyPhaseTwo ? contractRules.minTradingDays : 0;
+  // V1 Challenge : 2 jours minimum (V1.2)
+  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isV1 ? V1_CHALLENGE_MIN_DAYS : isLegacyPhaseTwo ? contractRules.minTradingDays : 0;
 
   const daysRemaining = Math.max(0, minDays - challenge.trading_days);
   const dailyReferenceBalance = challenge.daily_start_balance ?? challenge.start_balance;
@@ -703,7 +704,7 @@ export default function TraderCockpit({
                     : isRewardAccount
                       ? (isFr ? "Jours qualifiants" : "Qualifying days")
                       : isV1
-                        ? (isFr ? "Jours tradés" : "Days traded")          // V1 Challenge : aucun minimum
+                        ? (isFr ? "Jours minimum" : "Minimum days")         // V1 Challenge : 2 jours minimum (V1.2)
                         : (isFr ? "Jours minimum" : "Minimum days")}
                 </span>
                 <CalendarDays color={BLUE} size={16} />
@@ -714,7 +715,9 @@ export default function TraderCockpit({
                     ? money(currentRewardCap)
                     : isRewardAccount
                       ? "5 MIN"
-                      : challenge.trading_days}
+                      : isV1
+                        ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS}`
+                        : challenge.trading_days}
                 </div>
                 <div className={styles.kpiMeta}>
                   <span>
@@ -723,7 +726,7 @@ export default function TraderCockpit({
                       : isRewardAccount
                         ? `${money(qualifyingDayUsd)} ${isFr ? "minimum / jour" : "minimum / day"}`
                         : isV1
-                          ? (isFr ? "0 jour minimum" : "0 day minimum")
+                          ? (isFr ? "2 jours minimum" : "2 days minimum")
                           : (isFr ? "Jours tradés" : "Days traded")}
                   </span>
                 </div>
@@ -740,7 +743,7 @@ export default function TraderCockpit({
 
           {/* Journey stepper */}
           <div className={`${styles.card} ${styles.journey}`}>
-            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{isTraderReward ? (traderLevel.terminated ? (isFr ? "PARCOURS COMPLÉTÉ ✓" : "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : isV1 && !isRewardAccount ? `${challenge.trading_days} ${isFr ? "jour(s) tradé(s)" : "day(s) traded"}` : `${challenge.trading_days}/${minDays} ${isFr ? "jours validés" : "days complete"}`}</span></div>
+            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{isTraderReward ? (traderLevel.terminated ? (isFr ? "PARCOURS COMPLÉTÉ ✓" : "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : isV1 && !isRewardAccount ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS} ${isFr ? "jour(s) tradé(s)" : "day(s) traded"}` : `${challenge.trading_days}/${minDays} ${isFr ? "jours validés" : "days complete"}`}</span></div>
             <div className={styles.steps} style={{ gridTemplateColumns: `repeat(${phaseSteps.length},minmax(120px,1fr))` }}>
               {phaseSteps.map((step, index) => <div key={step} className={`${styles.step} ${index < phaseIndex ? styles.stepDone : index === phaseIndex ? styles.stepActive : ""}`}><span className={styles.stepDot}>{index < phaseIndex ? <Check size={12} /> : index + 1}</span><span className={styles.stepText}>{step}</span></div>)}
             </div>

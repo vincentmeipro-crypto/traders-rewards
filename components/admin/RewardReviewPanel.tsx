@@ -148,7 +148,7 @@ export default function RewardReviewPanel({
       : "Dossier de validation Reward";
 
   const panelSub = isV1Challenge
-    ? "0 jour minimum · Aucune consistance · DD EOD fixe $ · Pas de Stop Loss obligatoire."
+    ? "2 jours minimum · Consistance ≤ 50% · DD EOD fixe $ · Pas de Stop Loss obligatoire."
     : isV1Reward
       ? `Qualifying days · Consistance 50% · Safety Net · Seuil ${compteRewardLabel} · DD EOD fixe $.`
       : "Performance, limites, positions et premier Stop Loss observé réunis pour ce compte.";
@@ -199,10 +199,10 @@ export default function RewardReviewPanel({
               },
               {
                 label:   "Jours tradés",
-                ok:      isV1Challenge || data.account.tradingDays >= V1_QUAL_DAYS_MIN,
+                ok:      isV1Challenge ? data.account.tradingDays >= 2 : data.account.tradingDays >= V1_QUAL_DAYS_MIN,
                 unknown: false,
-                value:   `${data.account.tradingDays}j`,
-                sub:     isV1Challenge ? "0 minimum" : `/${V1_QUAL_DAYS_MIN} qualifiants`,
+                value:   isV1Challenge ? `${data.account.tradingDays}/2j` : `${data.account.tradingDays}j`,
+                sub:     isV1Challenge ? "2 minimum" : `/${V1_QUAL_DAYS_MIN} qualifiants`,
               },
               {
                 label:   "Limite 30j",

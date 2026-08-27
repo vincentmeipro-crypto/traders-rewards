@@ -160,8 +160,7 @@ export function getV1QualDayUsd(startBalance: number): number {
 /**
  * Retourne le label de consistency pour un compte V1.
  *
- * Challenger V1  → "AUCUNE"  (Apex EOD supprime la consistency)
- * Compte Reward  → "≤ 50%"   (was 33% pour les anciens contrats)
+ * Challenge et Reward V1.2 → "≤ 50%"  (identique toutes phases — V1.2)
  */
 export function getV1ConsistencyDisplay(_phase: string): string {
   return `≤ ${V1_CONSISTENCY_PCT.reward}%`;

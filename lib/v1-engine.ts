@@ -21,8 +21,8 @@
  *  NIVEAU 1 — CHALLENGER / CHALLENGE (phase_type="challenge") — APEX EOD MODEL :
  *   - Profit Target      = +6 % (25K=+1 500$ / 50K=+3 000$ / 100K=+6 000$)
  *   - Drawdown EOD fixe  = 1 000$ (25K) / 2 000$ (50K) / 3 000$ (100K) — montant fixe en $
- *   - Consistency Rule   = AUCUNE — Apex EOD supprime la consistency au Challenge
- *   - Min trading days   = 0 (aucun minimum — Apex EOD)
+ *   - Consistency Rule   = 50 % — best_day < 50 % du profit requis (V1.2)
+ *   - Min trading days   = 2 jours minimum (V1.2)
  *   - Max trading days   = 30 calendaires depuis created_at
  *   - AUCUN verrou (trailing continue pendant tout le challenge)
  *
@@ -90,8 +90,8 @@ export const V1_DD_MODEL = "trailing_eod_lock" as const;
 export const V1_CHALLENGE = {
   profitTargetPct:  6,
   trailingDdPct:    4,   // Gardé pour l'affichage % legacy — calcul réel via V1_DD_USD_BY_BALANCE
-  // consistencyPct : SUPPRIMÉ — Apex EOD : aucune règle de consistency au Challenge
-  minTradingDays:   0,   // Apex EOD : 0 jours minimum (was 2)
+  // consistencyPct : 50 % — identique Reward (V1.2 — même règle toutes phases)
+  minTradingDays:   2,   // V1.2 : 2 jours minimum
   maxTradingDays:   30,
 } as const;
 
@@ -114,13 +114,12 @@ export const V1_QUALIFYING_DAY_MIN_USD: Record<number, number> = {
 };
 
 /**
- * Pourcentage de consistency par type de phase — APEX EOD MODEL.
+ * Pourcentage de consistency par type de phase — APEX EOD MODEL V1.2.
  *
- *  Challenge (Niveau 1) : AUCUNE règle de consistency (Apex EOD)
- *  Reward #1–5 (Niveaux 2 & 3) : best_day < 50 % du profit requis (was 33 %)
+ *  Challenge (Niveau 1) : 50 % — best_day < 50 % du profit requis (V1.2)
+ *  Reward #1–5 (Niveaux 2 & 3) : 50 % — best_day < 50 % du profit requis (was 33 %)
  *
  * Source unique — ne pas hardcoder ces valeurs ailleurs dans le code.
- * Pour le Challenge, passer consistencyPct = 0 aux fonctions concernées.
  */
 export const V1_CONSISTENCY_PCT = {
   challenge: 50,
@@ -578,8 +577,8 @@ export function isV1QualifyingDay(
  * Vérifie les conditions de transition challenge → Reward Account — APEX EOD MODEL.
  *
  * Toutes ces conditions doivent être simultanément vraies :
- *  1. Profit ≥ +6 % (AUCUNE consistency — Apex EOD supprime la consistency au Challenge)
- *  2. Min trading days ≥ 0 (Apex EOD : aucun minimum)
+ *  1. Profit ≥ +6 % avec consistency 50 % (best_day < 50 % du profit requis — V1.2)
+ *  2. Min trading days ≥ 2 (V1.2)
  *  3. Max trading days ≤ 30 (non dépassé)
  *  4. Aucune breach DD (redondant — détectée en amont par le moteur DD)
  *
@@ -595,11 +594,11 @@ export function checkV1ChallengeTransition(
   bestDayProfitUsd: number,
   ddUsd:            number  = 1000,   // Défaut 25K — passer getV1DdUsdByBalance(startBalance)
   baseTargetPct:    number  = V1_CHALLENGE.profitTargetPct,
-  minDays:          number  = V1_CHALLENGE.minTradingDays,  // 0
+  minDays:          number  = V1_CHALLENGE.minTradingDays,  // 2
   maxDays:          number  = V1_CHALLENGE.maxTradingDays,
 ): V1ChallengeCheck {
-  // Apex EOD : aucune consistency au Challenge (consistencyPct = 0)
-  const profitCheck     = checkV1ProfitTarget(startBalance, currentBalance, baseTargetPct, bestDayProfitUsd, 0);
+  // V1.2 : consistency 50 % au Challenge (identique Reward)
+  const profitCheck     = checkV1ProfitTarget(startBalance, currentBalance, baseTargetPct, bestDayProfitUsd, V1_CONSISTENCY_PCT.challenge);
   const ddResult        = checkV1DDBreach(startBalance, highestEod, currentEquity, ddUsd, null);
   const minDaysMet      = isV1MinDaysMet(tradingDays, minDays);
   const maxDaysExceeded = isV1MaxDaysExceeded(tradingDays, maxDays);
