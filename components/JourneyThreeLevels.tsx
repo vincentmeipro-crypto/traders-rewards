@@ -904,53 +904,58 @@ export default function JourneyThreeLevels() {
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.012), transparent 50%)" }} />
 
-              {/* Header */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
-                <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 03</div>
-                <InfoBtn
-                  btnRef={triggerRefs[2] as InfoBtnRef}
-                  onClick={() => openModal(2)}
-                  label={L("Détails du parcours Rewards","Detalles del recorrido Rewards","Rewards journey details")}
-                />
-              </div>
+              {/* Zone supérieure — minHeight cale le badge vert au même niveau que la carte 02 */}
+              <div style={{ minHeight: isMobile ? undefined : 200 }}>
 
-              {/* Nom du niveau */}
-              <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1, marginBottom: 10, position: "relative" }}>
-                TRADER REWARD
-              </div>
-
-              {/* Sous-titre */}
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, position: "relative" }}>
-                <Award size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
-                  {L("Multipliez vos Rewards","Multiplique sus Rewards","Multiply your Rewards")}
-                </span>
-              </div>
-
-              {/* Progression secondaire */}
-              <div style={{ marginBottom: 8, position: "relative" }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
-                  REWARDS
+                {/* Header */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
+                  <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 03</div>
+                  <InfoBtn
+                    btnRef={triggerRefs[2] as InfoBtnRef}
+                    onClick={() => openModal(2)}
+                    label={L("Détails du parcours Rewards","Detalles del recorrido Rewards","Rewards journey details")}
+                  />
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-1px", lineHeight: 1 }}>
-                  #2 → #5
+
+                {/* Nom du niveau */}
+                <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1, marginBottom: 10, position: "relative" }}>
+                  TRADER REWARD
                 </div>
-              </div>
 
-              {/* Safety Net */}
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, position: "relative" }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", textTransform: "uppercase", letterSpacing: "1px" }}>
-                  SAFETY NET
-                </span>
-                <span style={{ fontSize: 14, fontWeight: 900, color: "rgba(255,255,255,0.72)" }}>{money(selectedSize.lockAt)}</span>
-              </div>
+                {/* Sous-titre */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, position: "relative" }}>
+                  <Award size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
+                    {L("Multipliez vos Rewards","Multiplique sus Rewards","Multiply your Rewards")}
+                  </span>
+                </div>
 
-              {/* Règles */}
-              <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
-                {L("DD fixe","DD fijo","Fixed DD")}
-                <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
-              </div>
+                {/* Progression secondaire */}
+                <div style={{ marginBottom: 8, position: "relative" }}>
+                  <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
+                    REWARDS
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-1px", lineHeight: 1 }}>
+                    #2 → #5
+                  </div>
+                </div>
+
+                {/* Safety Net */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, position: "relative" }}>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", textTransform: "uppercase", letterSpacing: "1px" }}>
+                    SAFETY NET
+                  </span>
+                  <span style={{ fontSize: 14, fontWeight: 900, color: "rgba(255,255,255,0.72)" }}>{money(selectedSize.lockAt)}</span>
+                </div>
+
+                {/* Règles */}
+                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
+                  {L("DD fixe","DD fijo","Fixed DD")}
+                  <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
+                  {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
+                </div>
+
+              </div>{/* /zone supérieure */}
 
               {/* Patch premium : Reward auto 48H */}
               <div style={{ marginTop: 10, position: "relative" }}>
