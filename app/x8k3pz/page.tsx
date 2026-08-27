@@ -1604,7 +1604,9 @@ function AdminPageInner() {
                                         {c.status === "active" && (
                                           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16, marginBottom: 16 }}>
                                             {isV1c ? (
-                                              // V1 Apex EOD : barre DD EOD $ (equity vs floor)
+                                              // V1 : barres uniquement pour Compte Reward / Trader Reward (pas Challenger)
+                                              c.phase !== "funded" ? null : (
+                                              // Compte Reward / Trader Reward : barre DD EOD $ (equity vs floor)
                                               (() => {
                                                 const equity = c.balance;
                                                 const maxDD = v1DdUsd;
@@ -1638,6 +1640,7 @@ function AdminPageInner() {
                                                   </>
                                                 );
                                               })()
+                                              )
                                             ) : risk ? (
                                               // Legacy : DD % jour + max
                                               ([
