@@ -120,13 +120,6 @@ export default function RewardReviewPanel({
   // MÉTRIQUES — V1 supprime les métriques liées au Stop Loss
   // ═══════════════════════════════════════════════════════════════════════════
 
-  const perfMetrics = [
-    { label: "Win rate",       value: data.performance.trades ? `${data.performance.winRate.toFixed(0)}%` : "—", note: `${data.performance.trades} trades` },
-    { label: "Profit factor",  value: data.performance.profitFactorInfinite ? "∞" : (data.performance.profitFactor?.toFixed(2) ?? "—"), note: "Gains / pertes" },
-    { label: "P&L analysé",    value: money(data.performance.totalPnl), note: `${data.account.profitPercent >= 0 ? "+" : ""}${data.account.profitPercent.toFixed(2)}% compte` },
-    { label: "Espérance",      value: money(data.performance.expectancy), note: "Par trade" },
-  ];
-
   const slMetrics = [
     {
       label: "Risque initial max",
@@ -140,8 +133,8 @@ export default function RewardReviewPanel({
     },
   ];
 
-  // V1 : aucune métrique SL / Legacy : métriques SL incluses
-  const metrics = isV1 ? perfMetrics : [...perfMetrics, ...slMetrics];
+  // Legacy uniquement : métriques SL
+  const metrics = isV1 ? [] : slMetrics;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Titre et sous-titre du panneau
@@ -271,16 +264,18 @@ export default function RewardReviewPanel({
         </div>
       )}
 
-      {/* Métriques de performance */}
-      <div className={styles.metrics}>
-        {metrics.map(metric => (
-          <div className={styles.metric} key={metric.label}>
-            <span>{metric.label}</span>
-            <strong>{metric.value}</strong>
-            <small>{metric.note}</small>
-          </div>
-        ))}
-      </div>
+      {/* Métriques SL — Legacy uniquement */}
+      {metrics.length > 0 && (
+        <div className={styles.metrics}>
+          {metrics.map(metric => (
+            <div className={styles.metric} key={metric.label}>
+              <span>{metric.label}</span>
+              <strong>{metric.value}</strong>
+              <small>{metric.note}</small>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Section Stop Loss — Legacy UNIQUEMENT (non affiché pour V1) */}
       {!isV1 && (
