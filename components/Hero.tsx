@@ -43,9 +43,9 @@ export default function Hero() {
 
   // ── i18n ────────────────────────────────────────────────────
   const pill    = L("OFFRE DE LANCEMENT",    "OFERTA DE LANZAMIENTO", "LAUNCH OFFER");
-  const h1L1    = L("UN SEUL CHALLENGE",     "UN SOLO CHALLENGE",     "ONE SINGLE CHALLENGE");
-  const h1L2pre = L("DEVENEZ ",             "CONVIÉRTETE EN ",       "BECOME A ");
-  const h1L2acc = "TRADER REWARD";
+  const h1L1    = "1 SEUL CHALLENGE";
+  const h1L2pre = "5 ";
+  const h1L2acc = "REWARDS";
   const ctaMain = L("CHOISIR MON CHALLENGE","ELEGIR MI CHALLENGE",   "CHOOSE MY CHALLENGE");
   const ctaSub  = L("DÉCOUVRIR LE PARCOURS","DESCUBRIR EL CAMINO",   "EXPLORE THE JOURNEY");
 
