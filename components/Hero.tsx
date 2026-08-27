@@ -380,12 +380,12 @@ export default function Hero() {
               WebkitBackdropFilter: "blur(10px)",
             } as React.CSSProperties}>
 
-              {/* Colonne 1 Challenge — -80% vert */}
+              {/* Colonne 1 Challenge — -80% */}
               <div>
                 <div style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.44)", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3 }}>
                   1 CHALLENGE
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"#22c55e" }}>
+                <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"rgba(255,255,255,0.82)" }}>
                   -80%
                 </div>
                 <div style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.44)", letterSpacing:"1.5px", textTransform:"uppercase" }}>
@@ -397,27 +397,27 @@ export default function Hero() {
               <div style={{
                 width:      1,
                 alignSelf:  "stretch",
-                background: "linear-gradient(to bottom, transparent, rgba(34,197,94,0.28) 20%, rgba(34,197,94,0.28) 80%, transparent)",
+                background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.22) 80%, transparent)",
                 margin:     isMobile ? "0 16px" : "0 24px",
                 flexShrink: 0,
               }} />
 
-              {/* Colonne Pack ×3 — -90% vert · BEST */}
+              {/* Colonne Pack ×3 — -90% · BEST */}
               <div>
-                <div style={{ fontSize:9, fontWeight:700, color:"rgba(34,197,94,0.80)", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3, display:"flex", alignItems:"center", gap:6 }}>
+                <div style={{ fontSize:9, fontWeight:700, color:"rgba(156,207,234,0.70)", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3, display:"flex", alignItems:"center", gap:6 }}>
                   PACK ×3
                   <span style={{
-                    fontSize:8, fontWeight:900, color:"#050505",
-                    background:"#22c55e", border:"1px solid rgba(34,197,94,0.60)",
+                    fontSize:9, fontWeight:900, color:"#9CCFEA",
+                    background:"rgba(156,207,234,0.14)", border:"1px solid rgba(156,207,234,0.35)",
                     borderRadius:4, padding:"1px 5px", letterSpacing:"0.8px", lineHeight:1.5,
                   }}>
                     BEST
                   </span>
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"#22c55e" }}>
+                <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"#9CCFEA" }}>
                   -90%
                 </div>
-                <div style={{ fontSize:9, fontWeight:700, color:"rgba(34,197,94,0.60)", letterSpacing:"1.5px", textTransform:"uppercase" }}>
+                <div style={{ fontSize:9, fontWeight:700, color:"rgba(156,207,234,0.55)", letterSpacing:"1.5px", textTransform:"uppercase" }}>
                   {L("PAIEMENT UNIQUE","PAGO ÚNICO","ONE-TIME")}
                 </div>
               </div>
