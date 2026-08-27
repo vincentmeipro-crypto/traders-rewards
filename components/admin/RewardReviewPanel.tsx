@@ -82,64 +82,6 @@ export default function RewardReviewPanel({
     detail: `${data.account.openPositions} ouverte(s)`,
   };
 
-  // ── Checks V1 Challenge ───────────────────────────────────────────────────
-  const v1ChallengeChecks: CheckRow[] = [
-    checkMt5Fresh,
-    checkKyc,
-    {
-      label: `Objectif de profit atteint (${V1_CHALLENGE_PROFIT_PCT}%)`,
-      ok: data.account.profitPercent >= V1_CHALLENGE_PROFIT_PCT,
-      unknown: false,
-      detail: `${data.account.profitPercent >= 0 ? "+" : ""}${data.account.profitPercent.toFixed(2)}% · objectif ${V1_CHALLENGE_PROFIT_PCT}%`,
-    },
-    {
-      label: `DD EOD respecté (max ${money(v1DdUsd)})`,
-      ok: data.account.status !== "failed" && data.account.equity >= v1FloorProxy,
-      unknown: false,
-      detail: `Equity ${money(data.account.equity)} · Floor ~${money(v1FloorProxy)}`,
-    },
-    {
-      label: `Jours minimum (${V1_CHALLENGE_MIN_DAYS})`,
-      ok: true,   // V1 Challenge : 0 jours minimum → toujours OK
-      unknown: false,
-      detail: `${data.account.tradingDays} jour(s) tradé(s) · min. ${V1_CHALLENGE_MIN_DAYS}`,
-    },
-    checkNoPositions,
-  ];
-
-  // ── Checks V1 Reward ──────────────────────────────────────────────────────
-  const v1RewardChecks: CheckRow[] = [
-    checkMt5Fresh,
-    checkKyc,
-    {
-      label: `Qualifying days (min. ${V1_QUAL_DAYS_MIN})`,
-      ok: data.account.tradingDays >= V1_QUAL_DAYS_MIN,
-      unknown: false,
-      detail: `${data.account.tradingDays} / ${V1_QUAL_DAYS_MIN}`,
-    },
-    {
-      label: `Objectif de profit atteint (${V1_REWARD_PROFIT_PCT}%)`,
-      ok: data.account.profitPercent >= V1_REWARD_PROFIT_PCT,
-      unknown: false,
-      detail: `${data.account.profitPercent >= 0 ? "+" : ""}${data.account.profitPercent.toFixed(2)}% · objectif ${V1_REWARD_PROFIT_PCT}%`,
-    },
-    {
-      label: `Seuil ${compteRewardLabel} atteint`,
-      ok: v1RewardThreshold > 0 && data.account.equity >= v1RewardThreshold,
-      unknown: v1RewardThreshold === 0,
-      detail: v1RewardThreshold > 0
-        ? `Equity ${money(data.account.equity)} ≥ seuil ${money(v1RewardThreshold)}`
-        : "Seuil non calculable",
-    },
-    {
-      label: "Compte au-dessus du plancher",
-      ok: data.account.status !== "failed" && data.account.equity >= v1FloorProxy,
-      unknown: false,
-      detail: `Equity ${money(data.account.equity)} · Floor ~${money(v1FloorProxy)} · Safety Net ${money(v1SafetyNet)}`,
-    },
-    checkNoPositions,
-  ];
-
   // ── Checks Legacy (inchangés) ─────────────────────────────────────────────
   const legacyLimitsOk =
     data.account.status !== "failed" &&
@@ -172,7 +114,7 @@ export default function RewardReviewPanel({
     checkNoPositions,
   ];
 
-  const checks = isV1Challenge ? v1ChallengeChecks : isV1Reward ? v1RewardChecks : legacyChecks;
+  const checks = legacyChecks;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MÉTRIQUES — V1 supprime les métriques liées au Stop Loss
@@ -228,20 +170,106 @@ export default function RewardReviewPanel({
         </div>
       </div>
 
-      {/* Checks */}
-      <div className={styles.checks}>
-        {checks.map(check => (
-          <div className={styles.check} key={check.label}>
-            <span className={check.unknown ? styles.unknown : check.ok ? styles.ok : styles.bad}>
-              {check.unknown ? "?" : check.ok ? <CheckCircle2 size={13} /> : <AlertTriangle size={13} />}
-            </span>
-            <div>
-              <strong>{check.label}</strong>
-              <small>{check.detail}</small>
+      {/* Checks — V1 : 6 cartes horizontales / Legacy : liste */}
+      {isV1 ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, margin: "14px 0" }}>
+          {((): Array<{ label: string; ok: boolean; unknown: boolean; value: string; sub: string }> => {
+            const profitTarget = isV1Challenge ? V1_CHALLENGE_PROFIT_PCT : V1_REWARD_PROFIT_PCT;
+            return [
+              {
+                label:   "KYC validé",
+                ok:      data.account.kycStatus === "approved",
+                unknown: false,
+                value:   data.account.kycStatus === "approved" ? "Approuvé" : "À vérifier",
+                sub:     "",
+              },
+              {
+                label:   "Objectif",
+                ok:      data.account.profitPercent >= profitTarget,
+                unknown: false,
+                value:   `+${profitTarget}%`,
+                sub:     `${data.account.profitPercent >= 0 ? "+" : ""}${data.account.profitPercent.toFixed(2)}% actuel`,
+              },
+              {
+                label:   "DD EOD",
+                ok:      data.account.status !== "failed" && data.account.equity >= v1FloorProxy,
+                unknown: false,
+                value:   money(v1DdUsd),
+                sub:     `Floor ~${money(v1FloorProxy)}`,
+              },
+              {
+                label:   "Consistance",
+                ok:      isV1Challenge,
+                unknown: isV1Reward,
+                value:   isV1Challenge ? "Aucune" : "≤ 50%",
+                sub:     isV1Challenge ? "Pas de règle" : "Meilleure journée",
+              },
+              {
+                label:   "Jours tradés",
+                ok:      isV1Challenge || data.account.tradingDays >= V1_QUAL_DAYS_MIN,
+                unknown: false,
+                value:   `${data.account.tradingDays}j`,
+                sub:     isV1Challenge ? "0 minimum" : `/${V1_QUAL_DAYS_MIN} qualifiants`,
+              },
+              {
+                label:   "Limite 30j",
+                ok:      isV1Reward,
+                unknown: isV1Challenge,
+                value:   isV1Reward ? "Illimitée" : "30j max",
+                sub:     isV1Challenge ? `${data.account.tradingDays}j tradés` : "Aucune limite",
+              },
+            ];
+          })().map(card => {
+            const iconColor = card.unknown ? "#f59e0b" : card.ok ? "#22c55e" : "#ef4444";
+            const valColor  = card.unknown ? "#f59e0b" : card.ok ? "#ffffff" : "#ef4444";
+            return (
+              <div key={card.label} style={{
+                background: "rgba(255,255,255,0.03)",
+                border: `1px solid ${card.unknown ? "rgba(245,158,11,0.18)" : card.ok ? "rgba(34,197,94,0.14)" : "rgba(239,68,68,0.18)"}`,
+                borderRadius: 10,
+                padding: "14px 12px",
+                display: "flex",
+                flexDirection: "column",
+                gap: 5,
+              }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.7, color: "rgba(255,255,255,0.38)" }}>
+                    {card.label}
+                  </span>
+                  {card.unknown
+                    ? <span style={{ fontSize: 12, color: iconColor, fontWeight: 700 }}>?</span>
+                    : card.ok
+                      ? <CheckCircle2 size={13} color={iconColor} />
+                      : <AlertTriangle size={13} color={iconColor} />
+                  }
+                </div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: valColor, lineHeight: 1.1 }}>
+                  {card.value}
+                </div>
+                {card.sub && (
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.32)", lineHeight: 1.3 }}>
+                    {card.sub}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className={styles.checks}>
+          {checks.map(check => (
+            <div className={styles.check} key={check.label}>
+              <span className={check.unknown ? styles.unknown : check.ok ? styles.ok : styles.bad}>
+                {check.unknown ? "?" : check.ok ? <CheckCircle2 size={13} /> : <AlertTriangle size={13} />}
+              </span>
+              <div>
+                <strong>{check.label}</strong>
+                <small>{check.detail}</small>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Métriques de performance */}
       <div className={styles.metrics}>
