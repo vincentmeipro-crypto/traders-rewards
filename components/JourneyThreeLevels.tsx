@@ -929,7 +929,7 @@ export default function JourneyThreeLevels() {
 
               {/* Progression secondaire */}
               <div style={{ marginBottom: 8, position: "relative" }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(184,168,216,0.62)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(156,207,234,0.50)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 3 }}>
                   REWARDS
                 </div>
                 <div style={{ fontSize: 22, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1 }}>
@@ -939,7 +939,7 @@ export default function JourneyThreeLevels() {
 
               {/* Safety Net */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, position: "relative" }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(184,168,216,0.62)", textTransform: "uppercase", letterSpacing: "1px" }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(156,207,234,0.50)", textTransform: "uppercase", letterSpacing: "1px" }}>
                   SAFETY NET
                 </span>
                 <span style={{ fontSize: 14, fontWeight: 900, color: ACCENT }}>{money(selectedSize.lockAt)}</span>
