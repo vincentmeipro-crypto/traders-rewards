@@ -382,7 +382,7 @@ export default function Hero() {
 
               {/* Colonne 1 Challenge — -80% */}
               <div>
-                <div style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.44)", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3 }}>
+                <div style={{ fontSize:9, fontWeight:700, color:"#22c55e", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3 }}>
                   1 CHALLENGE
                 </div>
                 <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"rgba(255,255,255,0.82)" }}>
