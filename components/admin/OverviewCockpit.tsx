@@ -236,7 +236,7 @@ export default function OverviewCockpit() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const, marginBottom: 2 }}>{r.user_email}</div>
                   <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                    {r.account_size} · {r.phase === "phase2" ? "Phase 2" : r.phase === "phase1" ? "Phase 1" : r.model?.toUpperCase() ?? "—"}
+                    {r.account_size} · {r.phase === "phase2" ? "Étape 2" : r.phase === "phase1" ? "Étape 1" : r.model?.toUpperCase() ?? "—"}
                   </div>
                 </div>
                 <div style={{ textAlign: "right" as const, flexShrink: 0 }}>

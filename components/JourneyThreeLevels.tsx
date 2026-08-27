@@ -266,7 +266,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
 
         {/* Rewards disponibles */}
         <div>
-          <h3 style={modalSecTitle}>{L("Première Reward disponible","Primera Reward disponible","First Reward")}</h3>
+          <h3 style={modalSecTitle}>{L("Première Reward disponible","Primera Reward disponible","Compte Reward")}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             {SIZES_DATA.map((s, i) => (
               <div key={i} style={{ ...infoBox, textAlign: "center" }}>

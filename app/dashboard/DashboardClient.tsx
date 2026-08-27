@@ -789,7 +789,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         {isV1 && (c.challenge_passed_at || c.reward_converted_at || c.terminated_at) && (
                           <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 14, marginTop: 4, marginBottom: relatedPayouts.length > 0 ? 14 : 0 }}>
                             <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 10 }}>
-                              {isFr ? "Parcours V1 Apex EOD" : "V1 Apex EOD Journey"}
+                              {isFr ? "Parcours Traders Rewards" : "Traders Rewards Journey"}
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
 

@@ -150,8 +150,8 @@ export default function Pricing() {
       { label: L("Max cumulé","Máx acumulado","Max cumulated"),               value: "$200K", ruleKey: "maxAllocation" },
     ];
     if (!showSteps) return [
-      { label: L("Étape 1 — Objectif","Fase 1 — Objetivo","Phase 1 — Target"), value: "10%", pct: 0.10, ruleKey: "profitTarget" },
-      { label: L("Étape 2 — Objectif","Fase 2 — Objetivo","Phase 2 — Target"), value: "5%",  pct: 0.05, ruleKey: "phaseTwoTarget" },
+      { label: L("Étape 1 — Objectif","Fase 1 — Objetivo","Step 1 — Target"), value: "10%", pct: 0.10, ruleKey: "profitTarget" },
+      { label: L("Étape 2 — Objectif","Fase 2 — Objetivo","Step 2 — Target"), value: "5%",  pct: 0.05, ruleKey: "phaseTwoTarget" },
       { label: L("Perte journalière","Pérdida diaria","Daily loss"),            value: "5%",  pct: 0.05, ruleKey: "dailyLoss" },
       { label: L("Perte totale","Pérdida total","Total loss"),                  value: "10%", pct: 0.10, ruleKey: "totalLoss" },
       { label: L("Jours min","Días mín","Min days"),                            value: L("5 jours","5 días","5 days"), ruleKey: "minimumDays" },
@@ -159,9 +159,9 @@ export default function Pricing() {
       { label: L("Partage profits","Reparto profits","Profit split"),           value: "80%", ruleKey: "profitSplit" },
     ];
     return [
-      { label: L("ÉTAPE 1","FASE 1","PHASE 1"),   value: "", isPhaseHeader: true },
+      { label: L("ÉTAPE 1","FASE 1","STEP 1"),   value: "", isPhaseHeader: true },
       { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "10%", pct: 0.10, ruleKey: "profitTarget" },
-      { label: L("ÉTAPE 2","FASE 2","PHASE 2"),   value: "", isPhaseHeader: true },
+      { label: L("ÉTAPE 2","FASE 2","STEP 2"),   value: "", isPhaseHeader: true },
       { label: L("Objectif profit","Objetivo profit","Profit target"),         value: "5%",  pct: 0.05, ruleKey: "phaseTwoTarget" },
       { label: L("COMMUN","COMÚN","COMMON"),       value: "", isPhaseHeader: true },
       { label: L("Perte journalière","Pérdida diaria","Daily loss"),           value: "5%",  pct: 0.05, ruleKey: "dailyLoss" },

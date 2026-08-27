@@ -695,7 +695,7 @@ export default function TraderCockpit({
                 <div className={styles.kpiMeta}>
                   <span>
                     {isV1 && !isRewardAccount
-                      ? (isFr ? "Apex EOD — aucune règle" : "Apex EOD — no rule")
+                      ? (isFr ? "Aucune contrainte" : "No constraint")
                       : (isFr ? "Meilleure journée" : "Best day")}
                   </span>
                   <span>
@@ -736,7 +736,7 @@ export default function TraderCockpit({
                       : isRewardAccount
                         ? `${money(qualifyingDayUsd)} ${isFr ? "minimum / jour" : "minimum / day"}`
                         : isV1
-                          ? (isFr ? "Apex EOD · 0 minimum" : "Apex EOD · 0 minimum")
+                          ? (isFr ? "0 jour minimum" : "0 day minimum")
                           : (isFr ? "Jours tradés" : "Days traded")}
                   </span>
                 </div>

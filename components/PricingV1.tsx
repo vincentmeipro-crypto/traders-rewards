@@ -244,7 +244,7 @@ export default function PricingV1() {
             padding: "4px 0",
           }}>
             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.50)", fontWeight: 500 }}>
-              {L("Activation Reward Acct","Activación Reward Acct","Reward Acct activation")}
+              {L("Activation Compte Reward","Activación Compte Reward","Compte Reward activation")}
             </span>
             <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.55)" }}>
               {card.activFeeEur}€

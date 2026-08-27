@@ -99,7 +99,7 @@ export default function RewardReviewPanel({
       detail: `Equity ${money(data.account.equity)} · Floor ~${money(v1FloorProxy)}`,
     },
     {
-      label: `Jours minimum — Apex EOD (${V1_CHALLENGE_MIN_DAYS})`,
+      label: `Jours minimum (${V1_CHALLENGE_MIN_DAYS})`,
       ok: true,   // V1 Challenge : 0 jours minimum → toujours OK
       unknown: false,
       detail: `${data.account.tradingDays} jour(s) tradé(s) · min. ${V1_CHALLENGE_MIN_DAYS}`,
@@ -207,13 +207,13 @@ export default function RewardReviewPanel({
 
   // ── Titre du panneau ─────────────────────────────────────────────────────────
   const panelTitle = isV1Challenge
-    ? "Dossier Challenger — Apex EOD"
+    ? "Dossier Challenger"
     : isV1Reward
       ? `Dossier Validation — ${compteRewardLabel}`
       : "Dossier de validation Reward";
 
   const panelSub = isV1Challenge
-    ? "Challenge Apex EOD · 0 jour min · Aucune consistance · DD EOD fixe $ · Pas de Stop Loss obligatoire."
+    ? "0 jour minimum · Aucune consistance · DD EOD fixe $ · Pas de Stop Loss obligatoire."
     : isV1Reward
       ? `Qualifying days · Consistance 50% · Safety Net · Seuil ${compteRewardLabel} · DD EOD fixe $.`
       : "Performance, limites, positions et premier Stop Loss observé réunis pour ce compte.";

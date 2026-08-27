@@ -518,7 +518,7 @@ export default function ProductEditorPage() {
             Ce produit est utilisé par{" "}
             <strong style={{ color: "rgba(245,158,11,0.95)" }}>{cnt!.total} challenge{cnt!.total > 1 ? "s" : ""}</strong>
             {cnt!.active > 0 ? ` (${cnt!.active} actif${cnt!.active > 1 ? "s" : ""})` : ""}
-            {cnt!.funded > 0 ? `, ${cnt!.funded} Reward Account${cnt!.funded > 1 ? "s" : ""}` : ""}
+            {cnt!.funded > 0 ? `, ${cnt!.funded} Compte${cnt!.funded > 1 ? "s" : ""} Reward` : ""}
             {" "}— les modifications n&apos;affectent pas les challenges existants.
           </span>
         </div>
@@ -662,7 +662,7 @@ export default function ProductEditorPage() {
                     <Input value={form.mt5_group_challenge} onChange={pf("mt5_group_challenge")} />
                   </div>
                   <div>
-                    <Label>Groupe MT5 (Reward Account)</Label>
+                    <Label>Groupe MT5 (Compte Reward)</Label>
                     <Input value={form.mt5_group_funded} onChange={pf("mt5_group_funded")} />
                   </div>
                 </div>

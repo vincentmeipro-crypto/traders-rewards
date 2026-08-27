@@ -124,9 +124,9 @@ function getCopy(key: PricingRuleKey, model: Props["model"], lang: string): Copy
       callout: tr("Capital initial × objectif = profit requis", "Capital inicial × objetivo = beneficio requerido", "Initial capital × target = required profit"), visual: "up", tone: "green",
     },
     phaseTwoTarget: {
-      eyebrow: tr("Confirmation", "Confirmación", "Confirmation"), title: tr("Objectif de la Phase 2", "Objetivo de la Fase 2", "Phase 2 target"),
+      eyebrow: tr("Confirmation", "Confirmación", "Confirmation"), title: tr("Objectif de l’Étape 2", "Objetivo de la Etapa 2", "Step 2 target"),
       short: tr("Une seconde validation, avec un objectif réduit à 5%.", "Una segunda validación con un objetivo reducido al 5%.", "A second validation with a reduced 5% target."),
-      detail: tr("La Phase 2 confirme que la performance de la première étape est reproductible. Les règles de perte restent actives et l’objectif est ramené à 5% du capital initial du nouveau compte de Phase 2.", "La Fase 2 confirma que el rendimiento es reproducible. Las reglas de pérdida siguen activas y el objetivo baja al 5%.", "Phase 2 confirms that the first-stage performance is repeatable. Loss rules remain active and the target is reduced to 5% of the new Phase 2 account's initial capital."),
+      detail: tr("L’Étape 2 confirme que la performance de la première étape est reproductible. Les règles de perte restent actives et l’objectif est ramené à 5% du capital initial du nouveau compte.", "La Etapa 2 confirma que el rendimiento es reproducible. Las reglas de pérdida siguen activas y el objetivo baja al 5%.", "Step 2 confirms that the first-stage performance is repeatable. Loss rules remain active and the target is reduced to 5% of the new account’s initial capital."),
       callout: tr("Même discipline, objectif de confirmation à 5%", "Misma disciplina, objetivo de confirmación del 5%", "Same discipline, 5% confirmation target"), visual: "up", tone: "blue",
     },
     dailyLoss: {

@@ -220,7 +220,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                 {
                   label: L("Consistance","Consistencia","Consistency"),
                   pctStr: L("Aucune","Ninguna","None"), usd: "",
-                  note: L("Apex EOD : aucune règle de consistency au Challenge","Apex EOD: sin regla de consistencia","Apex EOD: no consistency rule for the Challenge"),
+                  note: L("Aucune contrainte sur la répartition des profits journaliers","Sin restricción en la distribución de ganancias diarias","No constraint on daily profit distribution"),
                   color: ACCENT,
                 },
                 {
@@ -323,9 +323,9 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             <h3 style={secTitle}>{L("Règle de Consistance","Regla de Consistencia","Consistency Rule")}</h3>
             <p style={bodyTxt}>
               {L(
-                "Apex EOD : aucune règle de consistency au Challenge. Vous n'avez aucune contrainte sur la répartition de vos profits journaliers — seul l'objectif de +6% et les limites de risque s'appliquent.",
-                "Apex EOD: sin regla de consistencia en el Challenge. No hay restricciones sobre la distribución de sus ganancias diarias — solo se aplican el objetivo del +6% y los límites de riesgo.",
-                "Apex EOD: no consistency rule during the Challenge. There are no restrictions on the distribution of your daily profits — only the +6% target and the risk limits apply."
+                "Aucune contrainte sur la répartition de vos profits journaliers au Challenge — seul l'objectif de +6% et les limites de risque s'appliquent.",
+                "Sin restricciones sobre la distribución de sus ganancias diarias en el Challenge — solo se aplican el objetivo del +6% y los límites de riesgo.",
+                "No constraints on daily profit distribution during the Challenge — only the +6% target and the risk limits apply."
               )}
             </p>
 
@@ -338,7 +338,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
               <div style={infoBox}>
                 <div style={miniLabel}>{L("Minimum","Mínimo","Minimum")}</div>
                 <div style={bigVal}>{L("0 jour minimum","0 días mínimos","0 minimum days")}</div>
-                <div style={tinyNote}>{L("Aucun minimum — Apex EOD supprime cette contrainte","Sin mínimo — Apex EOD elimina esta restricción","No minimum — Apex EOD removes this requirement")}</div>
+                <div style={tinyNote}>{L("Aucun minimum — tradez à votre rythme","Sin mínimo — opere a su ritmo","No minimum — trade at your own pace")}</div>
               </div>
               <div style={infoBox}>
                 <div style={miniLabel}>{L("Maximum","Máximo","Maximum")}</div>

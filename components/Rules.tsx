@@ -21,7 +21,7 @@ export default function Rules() {
 
   const labels = {
     tabChallenge: L("Règles Compte Challenge","Reglas Cuenta Desafío","Challenge Account Rules"),
-    tabFunded:    L("Règles Compte Reward","Reglas Cuenta Reward","Reward Account Rules"),
+    tabFunded:    L("Règles Compte Reward","Reglas Cuenta Reward","Compte Reward Rules"),
     phase1: "Phase 1", phase2: "Phase 2",
     oneStep: L("1 Étape","1 Paso","1-Step"),
     twoStep: L("2 Étapes","2 Pasos","2-Step"),

@@ -563,7 +563,7 @@ function CheckoutContent() {
                 • Le trading sur notre plateforme est <strong style={{ color: "rgba(255,255,255,0.7)" }}>100% simulé</strong> — aucun capital réel, aucun ordre exécuté sur les marchés.<br />
                 • Les Frais de Challenge sont <strong style={{ color: "rgba(255,255,255,0.7)" }}>non remboursables</strong> dès l&apos;ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).<br />
                 • Le Challenge comporte <strong style={{ color: "rgba(255,255,255,0.7)" }}>une étape</strong>, un objectif de +6% et un Trailing Drawdown EOD de 3% ou 4% selon la taille choisie.<br />
-                • Après validation, l&apos;activation du Reward Account est soumise à des <strong style={{ color: "rgba(255,255,255,0.7)" }}>frais uniques distincts</strong> indiqués avant activation.<br />
+                • Après validation, l&apos;activation du Compte Reward est soumise à des <strong style={{ color: "rgba(255,255,255,0.7)" }}>frais uniques distincts</strong> indiqués avant activation.<br />
                 • En cas de violation des règles, nous pouvons résilier votre compte sans indemnité.<br />
                 • Droit applicable : <strong style={{ color: "rgba(255,255,255,0.7)" }}>loi estonienne</strong>.
               </p>

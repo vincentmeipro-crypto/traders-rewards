@@ -1045,7 +1045,7 @@ function AdminPageInner() {
               .map(c => ({ at: c.created_at, label: "Nouveau challenge", sub: `${c.account_size} · ${c.user_email}`, color: "#3b82f6" })),
             ...challenges
               .filter(c => c.phase === "phase2" && c.status !== "failed")
-              .map(c => ({ at: c.created_at, label: "Phase 1 réussie", sub: `${c.account_size} · ${c.user_email}`, color: "#22c55e" })),
+              .map(c => ({ at: c.created_at, label: "Challenge validé", sub: `${c.account_size} · ${c.user_email}`, color: "#22c55e" })),
             ...payouts.map(p => ({
               at: p.created_at,
               label: p.status === "paid" ? "Reward validé" : "Reward demandé",
@@ -1164,7 +1164,7 @@ function AdminPageInner() {
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ fontSize: 12, fontWeight: 600, color: "#fff", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.user_email}</div>
                           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>
-                            {c.account_size} · {c.phase === "phase2" ? "Phase 2" : c.phase === "phase1" ? "Phase 1" : (c.model?.toUpperCase() || "—")}
+                            {c.account_size} · {isV1Challenge(c) ? getV1LevelLabel(c.phase, payouts.filter(p => p.challenge_id === c.id && p.status === "paid").length, c.terminated_at) : c.phase === "phase2" ? "Étape 2" : c.phase === "phase1" ? "Étape 1" : (c.model?.toUpperCase() || "—")}
                           </div>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2, flexShrink: 0 }}>
@@ -1409,17 +1409,27 @@ function AdminPageInner() {
                                 {/* Niveau */}
                                 <td style={{ padding: "11px 12px" }}>
                                   {isEditing
-                                    ? <CustomSelect
-                                        small
-                                        value={editData.phase || c.phase}
-                                        onChange={v => setEditData(d => ({ ...d, phase: v }))}
-                                        options={isV1c
-                                          // V1 Apex EOD : phase2 / Historique interdit comme niveau de parcours
-                                          ? [{ value: "phase1", label: "Challenger" }, { value: "funded", label: "Compte Reward" }]
-                                          // Legacy : Phase 1 / Phase 2 / Reward
-                                          : [{ value: "phase1", label: "Phase 1" }, { value: "phase2", label: "Phase 2" }, { value: "funded", label: "Reward" }]
-                                        }
-                                      />
+                                    ? isV1c
+                                      ? <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>
+                                            Niveau&nbsp;: <strong style={{ color: "#fff" }}>{v1Level}</strong>
+                                          </span>
+                                          <CustomSelect
+                                            small
+                                            value={editData.phase || c.phase}
+                                            onChange={v => setEditData(d => ({ ...d, phase: v }))}
+                                            options={[
+                                              { value: "phase1", label: "Challenger" },
+                                              { value: "funded", label: "Compte Reward +" },
+                                            ]}
+                                          />
+                                        </div>
+                                      : <CustomSelect
+                                          small
+                                          value={editData.phase || c.phase}
+                                          onChange={v => setEditData(d => ({ ...d, phase: v }))}
+                                          options={[{ value: "phase1", label: "Étape 1" }, { value: "phase2", label: "Étape 2" }, { value: "funded", label: "Reward" }]}
+                                        />
                                     : isV1c
                                       ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
                                           {v1Level}
@@ -1554,7 +1564,7 @@ function AdminPageInner() {
                                           </span>
                                           {isV1c
                                             ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
-                                                {v1Level} · V1 Apex EOD
+                                                {v1Level}
                                               </span>
                                             : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
                                                 {c.phase === "funded" ? "Reward" : c.phase === "phase2" ? "Historique" : c.model === "instant" ? "Instant" : "Challenge"}
@@ -3208,7 +3218,7 @@ function AdminPageInner() {
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Segmentation dynamique de votre base trader — disponible en Phase 3.</div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
-                    {["Tous les traders","Challenges actifs","Reward Accounts","Challenges échoués","Clients VIP","Paiement Stripe","Paiement Crypto","France","Belgique","Jamais acheté"].map(seg => (
+                    {["Tous les traders","Challenges actifs","Comptes Reward","Challenges échoués","Clients VIP","Paiement Stripe","Paiement Crypto","France","Belgique","Jamais acheté"].map(seg => (
                       <div key={seg} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 22px" }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 8 }}>{seg}</div>
                         <div style={{ display: "inline-block", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: 1.2, border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, padding: "3px 8px" }}>Coming Soon</div>
@@ -4519,7 +4529,7 @@ function AdminPageInner() {
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: "#ef4444" }}>Zone dangereuse</span>
-                    <span style={{ fontSize: 10, color: "rgba(239,68,68,0.55)", background: "rgba(239,68,68,0.08)", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>Legacy</span>
+                    <span style={{ fontSize: 10, color: "rgba(239,68,68,0.55)", background: "rgba(239,68,68,0.08)", padding: "2px 8px", borderRadius: 100, fontWeight: 700 }}>Anciens produits</span>
                   </div>
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)" }}>{maintenanceDangerOpen ? "Fermer" : "Afficher"}</span>
                 </button>

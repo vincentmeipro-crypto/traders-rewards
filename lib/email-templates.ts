@@ -346,7 +346,7 @@ export function buildWelcomeEmail(p: {
         ]
       : [
           { label: "Trailing DD EOD", value: accountSize.includes("100") ? "3 000 $" : accountSize.includes("50") ? "2 000 $" : "1 000 $" },
-          { label: "Consistance", value: "Aucune (Challenge Apex EOD)" },
+          { label: "Consistance", value: "Aucune" },
           { label: "Durée", value: "0 jour minimum · 30 jours maximum" },
         ]
     ),

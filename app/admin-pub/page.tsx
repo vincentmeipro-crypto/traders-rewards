@@ -91,8 +91,8 @@ export default async function AdminPubPage({ searchParams }: Props) {
 
   const statusLabel: Record<string, string> = {
     active: "Actif",
-    phase2: "Phase 2",
-    funded: "Funded",
+    phase2: "Étape 2",
+    funded: "Compte Reward",
     passed: "Passé",
     failed: "Échoué",
     breached: "Breach",
@@ -120,7 +120,7 @@ export default async function AdminPubPage({ searchParams }: Props) {
         {[
           { label: "Total challenges", value: challenges?.length ?? 0, color: "#3B82F6" },
           { label: "Actifs", value: active, color: "#3B82F6" },
-          { label: "Funded", value: funded, color: "#10B981" },
+          { label: "Comptes Reward", value: funded, color: "#10B981" },
           { label: "Breach / Échoués", value: (breached + failed), color: "#EF4444" },
           { label: "Passés", value: passed, color: "#F59E0B" },
           { label: "Aujourd'hui", value: todayCount, color: "#8B5CF6" },
