@@ -1672,24 +1672,7 @@ function AdminPageInner() {
                                           </div>
                                         )}
 
-                                        {/* Métadonnées secondaires */}
-                                        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                            <span style={{ color: (isV1c && c.phase !== "funded") ? "#22c55e" : c.trading_days >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>{c.trading_days}</span> j. tradés
-                                          </span>
-                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                            Départ <span style={{ color: "rgba(255,255,255,0.6)", fontVariantNumeric: "tabular-nums" }}>${c.start_balance?.toLocaleString()}</span>
-                                          </span>
-                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                            Payé <span style={{ color: "rgba(255,255,255,0.6)", fontVariantNumeric: "tabular-nums" }}>€{c.amount_paid}</span>
-                                          </span>
-                                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                                            {isV1c
-                                              ? <>DD EOD <span style={{ color: "rgba(255,255,255,0.45)" }}>{getV1DdDisplay(c.start_balance)} · Floor ${Math.round(v1Floor).toLocaleString()} · SN ${v1SafetyNet.toLocaleString()}</span></>
-                                              : <>Limites <span style={{ color: "rgba(255,255,255,0.45)" }}>{c.daily_drawdown_limit || 5}% J / {c.total_drawdown_limit || 10}% max</span></>
-                                            }
-                                          </span>
-                                        </div>
+
                                       </div>
 
                                       {/* P3/P4 — Identité | MT5 & Actions (2 cols desktop/tablette, 1 col mobile) */}
