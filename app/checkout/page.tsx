@@ -413,57 +413,51 @@ function CheckoutContent() {
               ))}
             </div>
 
-            {/* Sélecteur quantité : 1 Challenge / Pack ×3 — avec badges de remise visibles d'emblée */}
+            {/* Sélecteur quantité : 1 Challenge / Pack ×3 — pourcentages en vert voyant */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
 
-              {/* ── 1 Challenge · -80% ── */}
+              {/* ── 1 Challenge · -80% vert ── */}
               <button
                 onClick={() => setQuantity(1)}
                 style={{
                   flex: 1, padding: "10px 6px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border:     quantity === 1 ? "1.5px solid rgba(156,207,234,0.55)" : "1.5px solid rgba(255,255,255,0.1)",
-                  background: quantity === 1 ? "rgba(156,207,234,0.10)" : "#111",
+                  border:     quantity === 1 ? "1.5px solid rgba(34,197,94,0.55)" : "1.5px solid rgba(255,255,255,0.10)",
+                  background: quantity === 1 ? "rgba(34,197,94,0.08)" : "#111",
                   fontFamily: "inherit", textAlign: "center" as const,
                 }}
               >
-                <div style={{ fontSize:11, fontWeight:800, color: quantity === 1 ? "#9CCFEA" : "rgba(255,255,255,0.45)", marginBottom:3 }}>
+                <div style={{ fontSize:11, fontWeight:800, color: quantity === 1 ? "#FFFFFF" : "rgba(255,255,255,0.45)", marginBottom:3 }}>
                   1 Challenge
                 </div>
-                <div style={{
-                  fontSize:10, fontWeight:900, letterSpacing:"0.3px",
-                  color: quantity === 1 ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.30)",
-                }}>
+                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color:"#22c55e" }}>
                   −80%
                 </div>
               </button>
 
-              {/* ── Pack ×3 · -90% · MEILLEURE OFFRE ── */}
+              {/* ── Pack ×3 · -90% vert · MEILLEURE OFFRE ── */}
               <button
                 onClick={() => setQuantity(3)}
                 style={{
                   flex: 1, padding: "10px 6px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border:     quantity === 3 ? "1.5px solid rgba(156,207,234,0.80)" : "1.5px solid rgba(156,207,234,0.22)",
-                  background: quantity === 3 ? "rgba(156,207,234,0.13)" : "rgba(156,207,234,0.04)",
+                  border:     quantity === 3 ? "1.5px solid rgba(34,197,94,0.80)" : "1.5px solid rgba(34,197,94,0.30)",
+                  background: quantity === 3 ? "rgba(34,197,94,0.12)" : "rgba(34,197,94,0.05)",
                   fontFamily: "inherit", textAlign: "center" as const, position: "relative" as const,
                 }}
               >
-                {/* Badge "MEILLEURE OFFRE" au-dessus */}
+                {/* Badge "MEILLEURE OFFRE" */}
                 <div style={{
                   position:"absolute", top:-9, left:"50%", transform:"translateX(-50%)",
                   fontSize:7, fontWeight:900, color:"#050505",
-                  background:"#9CCFEA", borderRadius:4,
+                  background:"#22c55e", borderRadius:4,
                   padding:"2px 6px", letterSpacing:"0.8px", textTransform:"uppercase" as const,
                   whiteSpace:"nowrap",
                 }}>
                   MEILLEURE OFFRE
                 </div>
-                <div style={{ fontSize:11, fontWeight:800, color: quantity === 3 ? "#9CCFEA" : "rgba(156,207,234,0.65)", marginBottom:3 }}>
+                <div style={{ fontSize:11, fontWeight:800, color:"#22c55e", marginBottom:3 }}>
                   Pack ×3
                 </div>
-                <div style={{
-                  fontSize:10, fontWeight:900, letterSpacing:"0.3px",
-                  color: quantity === 3 ? "#9CCFEA" : "rgba(156,207,234,0.55)",
-                }}>
+                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color:"#22c55e" }}>
                   −90%
                 </div>
               </button>
