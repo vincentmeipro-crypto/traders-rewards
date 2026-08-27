@@ -1,6 +1,6 @@
-/**
+﻿/**
  * ============================================================
- * EMAIL TEMPLATES — Traders Rewards V1.2
+ * EMAIL TEMPLATES — Traders Rewards V1.3
  * ============================================================
  * Builders purs (synchrones, sans IO) pour les emails
  * transactionnels.
@@ -30,7 +30,9 @@ import {
 
 export const TRANSACTIONAL_EMAIL_TYPES = [
   "welcome",
-  "phase2",
+  "challenger_validated",   // Compte Challenger validé
+  "challenger_expired",     // 30 jours expirés (distinct du DD)
+  "phase2",                 // alias legacy → challenger_validated
   "failed",
   "funded",
   "daily_update",
@@ -76,9 +78,8 @@ function parseBalance(s: string): number {
   return isNaN(n) ? 0 : n;
 }
 
-/** Formate un montant USD en style français : "52 100 $"
- *  Normalise les espaces insécables ( ,  ) → espace normale
- *  pour la compatibilité email HTML et les tests de contenu. */
+/** Formate un montant en style français "52 100 $"
+ *  Normalise les espaces insécables → espace normale. */
 function fmtUsd(n: number): string {
   return n.toLocaleString("fr-FR").replace(/[  ]/g, " ") + " $";
 }
@@ -97,11 +98,46 @@ function profitTargetStr(bal: number): string {
   return "+6 % = 1 500 $";
 }
 
+/** Montant cible du profit en USD */
+function profitTargetUsd(bal: number): number {
+  if (bal >= 100_000) return 6_000;
+  if (bal >= 50_000)  return 3_000;
+  return 1_500;
+}
+
+/** Label du niveau basé sur la phase et le rewardLevel */
+function levelLabel(phase: string, rewardLevel?: number): string {
+  const p = phase?.toLowerCase();
+  if (p === "challenge" || p === "challenger")  return "Compte Challenger";
+  if (p === "funded" || p === "compte_reward")  return rewardLevel && rewardLevel > 1 ? `Trader Reward #${rewardLevel}` : "Compte Reward";
+  if (p?.startsWith("trader_reward_")) {
+    const lvl = parseInt(p.replace("trader_reward_", ""), 10);
+    return isNaN(lvl) ? "Compte Reward" : `Trader Reward #${lvl}`;
+  }
+  return rewardLevel && rewardLevel > 1 ? `Trader Reward #${rewardLevel}` : "Compte Reward";
+}
+
+/** Signe + ou vide pour l'affichage des profits */
+function sign(n: number): string { return n >= 0 ? "+" : ""; }
+
+/** Formate un entier avec séparateurs français — "1 800"
+ *  Normalise tous les espaces insécables (U+00A0, U+202F) en espace ordinaire. */
+function fmtNum(n: number): string {
+  return Math.round(n).toLocaleString("fr-FR").replace(/[  ]/g, " ");
+}
+
+/** Formate "$" + entier avec séparateurs français — "$1 800" */
+function fmtDollar(n: number): string {
+  return "$" + fmtNum(n);
+}
+
 // ── Types communs ─────────────────────────────────────────────
 
+/** Un détail est soit une ligne label/valeur, soit un titre de section */
 type EmailDetail = {
-  label: string;
-  value: string;
+  label:     string;
+  value:     string;
+  isHeader?: true;   // Si true → rendu comme titre de section dans le tableau
 };
 
 type EmailAction = {
@@ -110,10 +146,10 @@ type EmailAction = {
 };
 
 type EmailHighlight = {
-  icon: string;
+  icon:   string;
   eyebrow: string;
-  title: string;
-  text: string;
+  title:  string;
+  text:   string;
 };
 
 // ── Generic email builder (internal — non exporté) ────────────
@@ -128,28 +164,43 @@ function buildEmail({
   preheader,
   footerNote,
   highlight,
+  note,
 }: {
-  title: string;
-  body: string;
-  details: EmailDetail[];
-  cta: EmailAction;
-  logoUrl: string;
-  eyebrow?: string;
-  preheader?: string;
+  title:       string;
+  body:        string;
+  details:     EmailDetail[];
+  cta:         EmailAction;
+  logoUrl:     string;
+  eyebrow?:    string;
+  preheader?:  string;
   footerNote?: string;
-  highlight?: EmailHighlight;
+  highlight?:  EmailHighlight;
+  /** Boîte d'information légère (texte seul, sans icône) avant le CTA */
+  note?:       string;
 }) {
   const formattedBody = body.replace(/\n/g, "<br/>");
-  const detailRows = details.map((detail, index) => `
-    <tr>
-      <td class="detail-label" style="padding:14px 16px;${index < details.length - 1 ? "border-bottom:1px solid #e5e5e2;" : ""}color:#686864;font-size:13px;line-height:1.4;width:52%;vertical-align:top;">
-        ${detail.label}
-      </td>
-      <td class="detail-value" style="padding:14px 16px;${index < details.length - 1 ? "border-bottom:1px solid #e5e5e2;" : ""}color:#111111;font-family:'Courier New',Courier,monospace;font-size:14px;font-weight:700;line-height:1.4;text-align:right;vertical-align:top;">
-        ${detail.value}
-      </td>
-    </tr>
-  `).join("");
+
+  const detailRows = details.map((detail, index) => {
+    if (detail.isHeader) {
+      return `
+        <tr>
+          <td colspan="2" style="padding:9px 16px 7px;color:#86867e;font-family:Arial,Helvetica,sans-serif;font-size:10px;font-weight:800;letter-spacing:2px;line-height:1.4;text-transform:uppercase;background:#efefe d;${index > 0 ? "border-top:1px solid #e2e2df;" : ""}">
+            ${detail.label}
+          </td>
+        </tr>`;
+    }
+    // Last real (non-header) row: no bottom border
+    const isLastNonHeader = !details.slice(index + 1).some(d => !d.isHeader);
+    return `
+      <tr>
+        <td class="detail-label" style="padding:13px 16px;${!isLastNonHeader ? "border-bottom:1px solid #e5e5e2;" : ""}color:#686864;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.4;width:52%;vertical-align:top;">
+          ${detail.label}
+        </td>
+        <td class="detail-value" style="padding:13px 16px;${!isLastNonHeader ? "border-bottom:1px solid #e5e5e2;" : ""}color:#111111;font-family:'Courier New',Courier,monospace;font-size:14px;font-weight:700;line-height:1.4;text-align:right;vertical-align:top;">
+          ${detail.value}
+        </td>
+      </tr>`;
+  }).join("");
 
   return `<!doctype html>
 <html lang="fr">
@@ -167,7 +218,6 @@ function buildEmail({
       .detail-label { padding:13px 14px 3px !important;border-bottom:0 !important; }
       .detail-value { padding:0 14px 13px !important; }
       .email-title { font-size:26px !important; }
-      .certificate-title { font-size:38px !important; }
     }
   </style>
 </head>
@@ -200,7 +250,7 @@ function buildEmail({
               </div>
 
               ${details.length ? `
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:0 0 30px;background:#f7f7f5;border:1px solid #e2e2df;border-radius:10px;border-collapse:separate;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:0 0 30px;background:#f7f7f5;border:1px solid #e2e2df;border-radius:10px;border-collapse:separate;overflow:hidden;">
                 ${detailRows}
               </table>` : ""}
 
@@ -215,6 +265,11 @@ function buildEmail({
                   </td>
                 </tr>
               </table>` : ""}
+
+              ${note ? `
+              <div style="background:#f4f4f1;border-left:3px solid #9CCFEA;border-radius:0 6px 6px 0;padding:12px 16px;margin:0 0 22px;color:#555551;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;">
+                ${note}
+              </div>` : ""}
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
@@ -267,15 +322,15 @@ function buildCertificateEmail({
   preheader,
   qrDataUrl,
 }: {
-  label: string;
-  heroTitle: string;
-  name: string;
-  title: string;
-  body: string;
-  details: EmailDetail[];
-  certUrl: string;
-  logoUrl: string;
-  preheader: string;
+  label:      string;
+  heroTitle:  string;
+  name:       string;
+  title:      string;
+  body:       string;
+  details:    EmailDetail[];
+  certUrl:    string;
+  logoUrl:    string;
+  preheader:  string;
   qrDataUrl?: string;
 }) {
   const detailRows = details.map((detail, index) => `
@@ -365,7 +420,7 @@ function buildCertificateEmail({
 `;
 }
 
-// ── 1. buildWelcomeEmail — Création du Challenger ─────────────
+// ── 1. buildWelcomeEmail — Activation Compte Challenger ───────
 
 export function buildWelcomeEmail(p: {
   accountSize: string;
@@ -377,21 +432,19 @@ export function buildWelcomeEmail(p: {
 }): { subject: string; html: string } {
   const { accountSize, model, mt5, setupLink, siteUrl, logoUrl } = p;
   const isAlgo = model === "vip";
-  const bal     = parseBalance(accountSize);
+  const bal    = parseBalance(accountSize);
 
   const details: EmailDetail[] = [
-    { label: "Taille du compte",    value: accountSize },
-    { label: "Niveau",              value: isAlgo ? "Challenge ALGO" : "Challenger" },
-    { label: "Objectif de profit",  value: isAlgo ? "+6%" : profitTargetStr(bal) },
+    { label: "Taille du compte",   value: accountSize },
+    { label: "Niveau",             value: isAlgo ? "Challenge ALGO" : "Challenger" },
+    { label: "Objectif de profit", value: isAlgo ? "+6%" : profitTargetStr(bal) },
     ...(isAlgo
-      ? [
-          { label: "Profit éligible", value: "100%" },
-        ]
+      ? [{ label: "Profit éligible", value: "100%" }]
       : [
-          { label: "DD EOD fixe",      value: ddEodStr(bal) },
-          { label: "Consistance",       value: "≤ 50%" },
-          { label: "Jours minimum",     value: "2 jours" },
-          { label: "Durée maximum",     value: "30 jours calendaires" },
+          { label: "DD EOD fixe",    value: ddEodStr(bal) },
+          { label: "Consistance",    value: "≤ 50%" },
+          { label: "Jours minimum",  value: "2 jours" },
+          { label: "Durée maximum",  value: "30 jours calendaires" },
         ]
     ),
   ];
@@ -409,23 +462,23 @@ export function buildWelcomeEmail(p: {
     ? "Créer mon mot de passe et accéder au Dashboard"
     : "Accéder à mon Dashboard";
 
-  const levelLabel = isAlgo ? "Challenge ALGO" : "Challenger";
-  const bodyText = setupLink
+  const levelLabel = isAlgo ? "Challenge ALGO" : "Compte Challenger";
+  const body = setupLink
     ? `Votre ${levelLabel} ${accountSize} est prêt. Définissez votre mot de passe pour accéder à votre espace et retrouver toutes les informations de votre compte.`
-    : `Votre ${levelLabel} ${accountSize} est prêt. Utilisez les identifiants ci-dessous pour vous connecter à MT5 et commencer votre évaluation.`;
+    : `Votre ${levelLabel} ${accountSize} est prêt. Utilisez les identifiants ci-dessous pour vous connecter à MT5 et commencer votre Challenge.`;
 
   const subject = isAlgo
     ? "Votre Challenge ALGO est prêt"
-    : "Votre Challenger Traders Rewards est prêt";
+    : "Votre Compte Challenger Traders Rewards est prêt";
   const title = isAlgo
     ? "Votre Challenge ALGO est actif"
-    : "Votre Challenger Traders Rewards est actif";
+    : "Votre Compte Challenger Traders Rewards est actif";
 
   const html = buildEmail({
     title,
-    eyebrow:   isAlgo ? "CHALLENGE ALGO" : "ACCÈS AU CHALLENGER",
+    eyebrow:   isAlgo ? "CHALLENGE ALGO" : "ACTIVATION COMPTE CHALLENGER",
     preheader: subject,
-    body:      bodyText,
+    body,
     details,
     cta:       { text: ctaText, href: ctaHref },
     logoUrl,
@@ -434,65 +487,136 @@ export function buildWelcomeEmail(p: {
   return { subject, html };
 }
 
-// ── 2. buildPhase2Email — Challenger validé (ancien 2-step) ───
+// ── 2. buildChallengerValidatedEmail ─────────────────────────
+//
+// Envoyé quand le Compte Challenger a atteint son objectif (+6%).
+// Confirme la validation SANS annoncer de nouveaux identifiants
+// (le même compte MT5 est conservé jusqu'au Reward #5).
 
+export function buildChallengerValidatedEmail(p: {
+  accountSize:      string;
+  mt5Login?:        number;
+  date?:            string;
+  profitTargetUsd?: number;   // ex: 3000 pour 50K
+  siteUrl:          string;
+  logoUrl:          string;
+}): { subject: string; html: string } {
+  const { accountSize, mt5Login, date, siteUrl, logoUrl } = p;
+  const bal         = parseBalance(accountSize);
+  const targetUsd   = p.profitTargetUsd ?? profitTargetUsd(bal);
+  const subject     = "Votre Compte Challenger est validé";
+
+  const details: EmailDetail[] = [
+    { label: "Taille du compte",     value: accountSize },
+    ...(mt5Login ? [{ label: "Login MT5", value: String(mt5Login) }] : []),
+    ...(date     ? [{ label: "Date de validation", value: date }] : []),
+    { label: "Objectif atteint",     value: `+6 % = ${fmtUsd(targetUsd)}` },
+    { label: "Consistance",          value: "≤ 50% respectée" },
+    { label: "DD EOD",               value: `${ddEodStr(bal)} respecté` },
+    { label: "Jours minimum",        value: "2 jours respectés" },
+    { label: "Prochaine étape",      value: "Compte Reward" },
+  ];
+
+  const html = buildEmail({
+    title:     "Votre Compte Challenger est validé",
+    eyebrow:   "CHALLENGER VALIDÉ",
+    preheader: subject,
+    body:      `Votre Compte Challenger ${accountSize} est validé. Votre compte sera ensuite activé au niveau Compte Reward.`,
+    details,
+    note:      "Vous conserverez exactement le même login MT5 lors de l'activation du Compte Reward.",
+    cta:       { text: "Voir mon Dashboard", href: `${siteUrl}/dashboard` },
+    logoUrl,
+  });
+  return { subject, html };
+}
+
+/** Alias legacy — utilise buildChallengerValidatedEmail en interne */
 export function buildPhase2Email(p: {
   accountSize: string;
   mt5?:        { login: number; password: string; server: string };
   siteUrl:     string;
   logoUrl:     string;
 }): { subject: string; html: string } {
-  const { accountSize, mt5, siteUrl, logoUrl } = p;
-  const subject = "Votre Challenger est validé";
+  return buildChallengerValidatedEmail({
+    accountSize: p.accountSize,
+    mt5Login:    p.mt5?.login,
+    siteUrl:     p.siteUrl,
+    logoUrl:     p.logoUrl,
+  });
+}
+
+// ── 3. buildChallengerExpiredEmail — 30 jours expirés ─────────
+//
+// Distinct de buildFailedEmail (violation DD).
+// Aucune mention de drawdown — la raison est uniquement la durée.
+// Anti-double-envoi géré dans mailer.ts via event_key.
+
+export function buildChallengerExpiredEmail(p: {
+  accountSize:   string;
+  mt5Login?:     number;
+  creationDate?: string;
+  endDate?:      string;
+  siteUrl:       string;
+  logoUrl:       string;
+}): { subject: string; html: string } {
+  const { accountSize, mt5Login, creationDate, endDate, siteUrl, logoUrl } = p;
+  const subject = "Votre Compte Challenger Traders Rewards est terminé";
+
+  const details: EmailDetail[] = [
+    { label: "Taille du compte",  value: accountSize },
+    { label: "Niveau",            value: "Challenger" },
+    ...(mt5Login      ? [{ label: "Login MT5",         value: String(mt5Login) }]  : []),
+    ...(creationDate  ? [{ label: "Date de création",  value: creationDate }]       : []),
+    ...(endDate       ? [{ label: "Date de fin",       value: endDate }]            : []),
+    { label: "Durée maximale",    value: "30 jours calendaires" },
+    { label: "Statut",            value: "Terminé" },
+  ];
+
   const html = buildEmail({
-    title:     "Votre Challenger est validé",
-    eyebrow:   "VALIDATION DU CHALLENGER",
+    title:     "Votre Compte Challenger est terminé",
+    eyebrow:   "INFORMATION DE COMPTE",
     preheader: subject,
-    body: `Votre Challenger ${accountSize} est validé. Un nouveau compte a été préparé pour votre Compte Reward. Retrouvez ci-dessous vos nouvelles informations de connexion.`,
-    details: [
-      { label: "Taille du compte", value: accountSize },
-      { label: "Niveau suivant",   value: "Compte Reward" },
-      ...(mt5 ? [
-        { label: "Nouveau Login MT5", value: String(mt5.login) },
-        { label: "Mot de passe",      value: mt5.password },
-        { label: "Serveur",           value: mt5.server },
-      ] : []),
-    ],
-    cta:     { text: "Voir mon Dashboard", href: `${siteUrl}/dashboard` },
+    body:      `Votre Compte Challenger Traders Rewards ${accountSize} a atteint la limite de 30 jours calendaires prévue pour le Challenge.\n\nLe Challenge n'a pas été validé dans le délai imparti. Votre Compte Challenger est donc clôturé.`,
+    details,
+    cta:       { text: "Choisir un nouveau Challenge", href: `${siteUrl}/#pricing` },
     logoUrl,
   });
   return { subject, html };
 }
 
-// ── 3. buildFailedEmail — Challenger ou Reward terminé ────────
+// ── 4. buildFailedEmail — Violation DD (distinct de l'expiration) ──
 
 export function buildFailedEmail(p: {
-  accountSize: string;
-  reason:      "daily_drawdown" | "total_drawdown";
-  mt5Login?:   number;
-  phase?:      string;   // "funded" → parcours Reward, sinon Challenger
-  siteUrl:     string;
-  logoUrl:     string;
+  accountSize:  string;
+  reason:       "daily_drawdown" | "total_drawdown";
+  mt5Login?:    number;
+  /** "funded" → Compte Reward / Trader Reward terminé ; sinon Challenger */
+  phase?:       string;
+  rewardLevel?: number;
+  siteUrl:      string;
+  logoUrl:      string;
 }): { subject: string; html: string } {
-  const { accountSize, mt5Login, phase, siteUrl, logoUrl } = p;
-  const isFunded     = phase === "funded";
+  const { accountSize, mt5Login, phase, rewardLevel, siteUrl, logoUrl } = p;
+  const isFunded     = phase === "funded" || phase?.includes("reward");
+  const currentLevel = isFunded ? levelLabel(phase ?? "funded", rewardLevel) : "Compte Challenger";
   const reasonLabel  = "Trailing Drawdown EOD dépassé";
   const reasonDetail = "Le plancher de votre Trailing Drawdown EOD a été franchi. Il s'agit de l'unique limite de drawdown de ce parcours.";
-  const title        = isFunded ? "Votre parcours Reward est terminé" : "Votre Challenger est terminé";
+  const title        = isFunded ? "Votre parcours Reward est terminé" : "Votre Compte Challenger est terminé";
   const subject      = isFunded
-    ? "Votre parcours Reward Traders Rewards a été clôturé"
-    : "Votre Challenger Traders Rewards a été clôturé";
+    ? `Votre parcours Reward Traders Rewards a été clôturé — ${currentLevel}`
+    : "Votre Compte Challenger Traders Rewards a été clôturé";
 
   const html = buildEmail({
     title,
     eyebrow:   "INFORMATION DE COMPTE",
     preheader: subject,
-    body:      `Nous vous informons que votre compte ${accountSize} a été automatiquement arrêté. ${reasonDetail}`,
+    body:      `Nous vous informons que votre compte ${accountSize} a été automatiquement arrêté.\n\n${reasonDetail}`,
     details: [
       { label: "Taille du compte", value: accountSize },
-      ...(mt5Login ? [{ label: "ID du compte MT5", value: String(mt5Login) }] : []),
+      { label: "Niveau",           value: currentLevel },
+      ...(mt5Login ? [{ label: "Login MT5",  value: String(mt5Login) }] : []),
       { label: "Raison",  value: reasonLabel },
-      { label: "Statut",  value: isFunded ? "Parcours clôturé" : "Challenger clôturé" },
+      { label: "Statut",  value: "Clôturé" },
     ],
     cta:     { text: "Choisir un nouveau Challenge", href: `${siteUrl}/#pricing` },
     logoUrl,
@@ -500,7 +624,11 @@ export function buildFailedEmail(p: {
   return { subject, html };
 }
 
-// ── 4. buildFundedEmail — Compte Reward activé ────────────────
+// ── 5. buildFundedEmail — Activation Compte Reward ────────────
+//
+// IMPORTANT : Le Compte Reward conserve exactement les mêmes
+// identifiants MT5 que le Challenger (même login, même mot de passe,
+// même serveur). Ne jamais écrire "nouveaux identifiants".
 
 export function buildFundedEmail(p: {
   accountSize: string;
@@ -511,134 +639,281 @@ export function buildFundedEmail(p: {
   logoUrl:     string;
 }): { subject: string; html: string } {
   const { accountSize, mt5, setupLink, siteUrl, logoUrl } = p;
-  const bal            = parseBalance(accountSize);
-  const snUsd          = getV1SafetyNet(bal);
-  const thresholdUsd   = computeRewardRequestThreshold(bal, 1);
-  const capUsd         = getV1RewardCap(bal, 1) ?? 0;
-  const qualMinUsd     = getV1QualifyingDayMinUsd(bal);
+  const bal          = parseBalance(accountSize);
+  const snUsd        = getV1SafetyNet(bal);
+  const thresholdUsd = computeRewardRequestThreshold(bal, 1);
+  const capUsd       = getV1RewardCap(bal, 1) ?? 0;
+  const qualMinUsd   = getV1QualifyingDayMinUsd(bal);
 
   const ctaHref = setupLink || `${siteUrl}/dashboard`;
   const ctaText = setupLink
     ? "Créer mon mot de passe et accéder au Dashboard"
     : "Accéder à mon Dashboard";
 
-  const subject = "Votre Compte Reward est prêt";
+  const details: EmailDetail[] = [
+    { label: "Taille du compte",       value: accountSize },
+    { label: "Niveau",                  value: "Compte Reward" },
+    { label: "Reward actuel",           value: "Reward #1" },
+    { label: "Temps illimité",          value: "Aucune limite de durée" },
+    { label: "RÈGLES REWARD #1",        value: "", isHeader: true },
+    { label: "Safety Net",             value: fmtUsd(snUsd) },
+    { label: "Seuil Reward #1",        value: fmtUsd(thresholdUsd) },
+    { label: "Cap Reward #1",          value: fmtUsd(capUsd) },
+    { label: "Journées qualifiantes",  value: "5 minimum" },
+    { label: "Jour qualifiant min.",   value: `${fmtUsd(qualMinUsd)}/jour` },
+    { label: "Consistance",            value: "≤ 50%" },
+    { label: "DD EOD fixe",           value: ddEodStr(bal) },
+    ...(mt5 ? [
+      { label: "IDENTIFIANTS MT5 (INCHANGÉS)", value: "", isHeader: true  as const },
+      { label: "Login MT5",                     value: String(mt5.login) },
+      { label: "Mot de passe MT5",              value: mt5.password },
+      { label: "Serveur MT5",                   value: mt5.server },
+    ] : []),
+  ];
+
+  const subject = "Votre Compte Reward est actif";
   const html = buildEmail({
     title:     "Votre Compte Reward est actif",
-    eyebrow:   "COMPTE REWARD ACTIVÉ",
+    eyebrow:   "ACTIVATION COMPTE REWARD",
     preheader: subject,
-    body:      `Votre Challenger est validé. Votre Compte Reward ${accountSize} est prêt : vous pouvez maintenant progresser vers vos 5 Rewards.`,
-    details: [
-      { label: "Taille du compte",           value: accountSize },
-      { label: "Niveau",                      value: "Compte Reward" },
-      { label: "Reward actuel",               value: "Reward #1" },
-      { label: "Safety Net",                  value: fmtUsd(snUsd) },
-      { label: "Seuil Reward #1",             value: fmtUsd(thresholdUsd) },
-      { label: "Cap Reward #1",               value: fmtUsd(capUsd) },
-      { label: "Journées qualifiantes",       value: "5 minimum" },
-      { label: "Jour qualifiant minimum",     value: `${fmtUsd(qualMinUsd)}/jour` },
-      { label: "Consistance",                 value: "≤ 50%" },
-      { label: "DD EOD fixe",                 value: ddEodStr(bal) },
-      ...(mt5 ? [
-        { label: "Login MT5",        value: String(mt5.login) },
-        { label: "Mot de passe MT5", value: mt5.password },
-        { label: "Serveur MT5",      value: mt5.server },
-      ] : []),
-    ],
+    body:      `Votre Challenger a été validé. Votre même compte MT5 poursuit maintenant son parcours au niveau Compte Reward. Vous pouvez progresser vers vos 5 Rewards.`,
+    details,
     highlight: {
       icon:    "✓",
       eyebrow: "PROMESSE TRADERS REWARDS",
       title:   "Reward Payé en Automatique en 48H",
       text:    "Dès que votre demande de Reward est validée, le paiement est effectué automatiquement dans les 48 heures.",
     },
-    cta:     { text: ctaText, href: ctaHref },
+    cta:       { text: ctaText, href: ctaHref },
     logoUrl,
-    footerNote: mt5 ? "Conservez ces identifiants dans un espace sécurisé." : undefined,
+    footerNote: mt5 ? "Ces identifiants sont identiques à ceux de votre Compte Challenger." : undefined,
   });
   return { subject, html };
 }
 
-// ── 5. buildDailyUpdateEmail ──────────────────────────────────
+// ── 6. buildDailyUpdateEmail — Récapitulatif enrichi ─────────
 
-export function buildDailyUpdateEmail(p: {
-  accountSize:     string;
-  phase:           string;
-  balance:         number;
-  profitPct:       number;
-  tradingDays:     number;
+export type DailyUpdateParams = {
+  // Requis
+  accountSize:  string;
+  phase:        string;
+  balance:      number;
+  profitPct:    number;
+  tradingDays:  number;
+  siteUrl:      string;
+  logoUrl:      string;
+
+  // Niveau (pour les Trader Reward #2-#5)
+  rewardLevel?: number;
+
+  // Base (existant)
   model?:          string;
-  highestBalance?: number;
-  totalLimit?:     number;
   startBalance?:   number;
-  siteUrl:         string;
-  logoUrl:         string;
-}): { subject: string; html: string } {
+  highestBalance?: number;
+  totalLimit?:     number;   // DD % (ex: 5 pour 5%)
+
+  // Données enrichies
+  equity?:          number;
+  dailyProfitUsd?:  number;  // P&L du jour en $
+  profitUsd?:       number;  // Profit total en $
+  consistency?:     number;  // Consistance actuelle en % (ex: 35)
+  bestDayUsd?:      number;  // Meilleure journée en $
+  tradesCount?:     number;  // Nombre de trades du jour
+  accountStatus?:   string;  // "conforme" | "à surveiller"
+
+  // Challenger
+  calendarDaysElapsed?: number;
+  calendarDaysMax?:     number;  // 30
+  profitTargetPct?:     number;  // 6
+  profitTargetUsdParam?: number; // ex: 3000 pour 50K
+  minTradingDays?:      number;  // 2
+
+  // Compte Reward / Trader Reward
+  safetyNetUsd?:          number;
+  rewardCapUsd?:          number;
+  rewardThresholdUsd?:    number;
+  qualifyingDays?:        number;  // jours qualifiants actuels
+  qualifyingDaysRequired?: number; // 5 pour Reward #1
+  qualMinDayUsd?:         number;
+};
+
+export function buildDailyUpdateEmail(p: DailyUpdateParams): { subject: string; html: string } {
   const {
     accountSize, phase, balance, profitPct, tradingDays,
     highestBalance, totalLimit, startBalance,
+    rewardLevel,
+    equity, dailyProfitUsd, profitUsd, consistency, bestDayUsd, tradesCount, accountStatus,
+    calendarDaysElapsed, calendarDaysMax, profitTargetPct, profitTargetUsdParam, minTradingDays,
+    safetyNetUsd, rewardCapUsd, rewardThresholdUsd, qualifyingDays, qualifyingDaysRequired, qualMinDayUsd,
     siteUrl, logoUrl,
   } = p;
-  const phaseLabel = phase === "funded" ? "Compte Reward" : "Challenger";
-  const profitSign = profitPct >= 0 ? "+" : "";
 
-  const details: EmailDetail[] = [
-    { label: "Balance actuelle",  value: `$${balance.toLocaleString()}` },
-    { label: "Profit / Perte",    value: `${profitSign}${profitPct.toFixed(2)}%` },
-    { label: "Niveau",            value: phaseLabel },
-    { label: "Jours de trading",  value: `${tradingDays}` },
-  ];
+  const isChallenger = phase === "challenge" || phase === "challenger" || phase === "phase1";
+  const lvlLabel     = levelLabel(phase, rewardLevel);
+  const profitSign   = profitPct >= 0 ? "+" : "";
 
-  if (highestBalance && totalLimit) {
-    const riskAmount = Math.round((startBalance ?? highestBalance) * totalLimit / 100);
-    const floor  = highestBalance - riskAmount;
-    const buffer = balance - floor;
-    details.push(
-      { label: "Plus haut EOD",             value: `$${Math.round(highestBalance).toLocaleString()}` },
-      { label: "Plancher trailing actuel",   value: `$${Math.round(floor).toLocaleString()}` },
-      { label: "Marge avant plancher",       value: `$${Math.round(buffer).toLocaleString()}` },
-    );
+  // Calculs dérivés
+  const startBal       = startBalance ?? balance;
+  const profitUsdCalc  = profitUsd ?? (startBalance ? Math.round(balance - startBalance) : null);
+  const ddUsdFixed     = totalLimit ? Math.round(startBal * totalLimit / 100) : null;
+  const floor          = (highestBalance != null && ddUsdFixed != null)
+    ? Math.round(highestBalance - ddUsdFixed) : null;
+  const distToFloor    = floor != null ? Math.max(0, Math.round(balance - floor)) : null;
+  const targetUsd      = profitTargetUsdParam ?? (profitTargetPct ? Math.round(startBal * profitTargetPct / 100) : null);
+  const distToTarget   = targetUsd != null && profitUsdCalc != null
+    ? Math.max(0, targetUsd - profitUsdCalc) : null;
+  const calDaysRem     = calendarDaysMax != null && calendarDaysElapsed != null
+    ? Math.max(0, calendarDaysMax - calendarDaysElapsed) : null;
+  const distToThreshold = rewardThresholdUsd != null
+    ? Math.max(0, Math.round(rewardThresholdUsd - balance)) : null;
+
+  // ── Tableau de détails ──────────────────────────────────────
+  const details: EmailDetail[] = [];
+
+  // Section : Compte
+  details.push({ label: "COMPTE", value: "", isHeader: true });
+  details.push({ label: "Balance actuelle",  value: fmtDollar(balance) });
+  if (equity != null)
+    details.push({ label: "Equity",           value: fmtDollar(equity) });
+  if (dailyProfitUsd != null)
+    details.push({ label: "P&L du jour",      value: `${sign(dailyProfitUsd)}${fmtDollar(Math.abs(dailyProfitUsd))}` });
+  if (profitUsdCalc != null)
+    details.push({ label: "Profit total",     value: `${sign(profitUsdCalc)}${fmtDollar(Math.abs(profitUsdCalc))} (${profitSign}${profitPct.toFixed(2)}%)` });
+  else
+    details.push({ label: "Profit total",     value: `${profitSign}${profitPct.toFixed(2)}%` });
+  details.push({ label: "Niveau",             value: lvlLabel });
+  details.push({ label: "Jours de trading",   value: `${tradingDays}` });
+  if (tradesCount != null)
+    details.push({ label: "Trades du jour",   value: `${tradesCount}` });
+  if (bestDayUsd != null)
+    details.push({ label: "Meilleure journée", value: fmtDollar(bestDayUsd) });
+  if (accountStatus)
+    details.push({ label: "Statut",           value: accountStatus });
+
+  // Section : Sécurité (plancher)
+  if (floor != null || distToFloor != null) {
+    details.push({ label: "SÉCURITÉ DD EOD", value: "", isHeader: true });
+    if (highestBalance != null)
+      details.push({ label: "Plus haut EOD",        value: fmtDollar(highestBalance) });
+    if (floor != null)
+      details.push({ label: "Plancher DD EOD",      value: fmtDollar(floor) });
+    if (distToFloor != null)
+      details.push({ label: "Marge avant plancher", value: fmtDollar(distToFloor) });
   }
 
-  const subject = `Récapitulatif journalier — ${phaseLabel} ${accountSize}`;
+  // Section : Objectif Challenger
+  if (isChallenger) {
+    details.push({ label: "OBJECTIF CHALLENGER", value: "", isHeader: true });
+    if (targetUsd != null)
+      details.push({ label: "Objectif profit",     value: `+${profitTargetPct ?? 6} % = ${fmtDollar(targetUsd)}` });
+    if (profitUsdCalc != null)
+      details.push({ label: "Profit actuel",       value: `${sign(profitUsdCalc)}${fmtDollar(Math.abs(profitUsdCalc))}` });
+    if (distToTarget != null && distToTarget > 0)
+      details.push({ label: "Distance restante",   value: `${fmtDollar(distToTarget)} restant` });
+    else if (distToTarget === 0)
+      details.push({ label: "Objectif",            value: "✓ Atteint" });
+    if (tradingDays != null && minTradingDays != null)
+      details.push({ label: "Jours tradés",        value: `${tradingDays} / ${minTradingDays} minimum` });
+    if (calendarDaysElapsed != null && calendarDaysMax != null)
+      details.push({ label: "Jours calendaires",   value: `${calendarDaysElapsed} / ${calendarDaysMax}` });
+    if (calDaysRem != null)
+      details.push({ label: "Jours restants",      value: `${calDaysRem} jour${calDaysRem !== 1 ? "s" : ""}` });
+    if (consistency != null)
+      details.push({ label: "Consistance actuelle", value: `${consistency.toFixed(1)}% ≤ 50%` });
+  }
+
+  // Section : Reward (Compte Reward / Trader Reward)
+  if (!isChallenger) {
+    const rwdLabel = rewardLevel && rewardLevel > 1 ? `Trader Reward #${rewardLevel}` : "Reward #1";
+    details.push({ label: `OBJECTIF ${rwdLabel.toUpperCase()}`, value: "", isHeader: true });
+    if (safetyNetUsd != null)
+      details.push({ label: "Safety Net",           value: fmtDollar(safetyNetUsd) });
+    if (rewardThresholdUsd != null)
+      details.push({ label: `Seuil ${rwdLabel}`,    value: fmtDollar(rewardThresholdUsd) });
+    if (distToThreshold != null && distToThreshold > 0)
+      details.push({ label: "Distance au seuil",    value: `${fmtDollar(distToThreshold)} restant` });
+    else if (distToThreshold === 0)
+      details.push({ label: "Seuil",                value: "✓ Atteint" });
+    if (rewardCapUsd != null)
+      details.push({ label: `Cap ${rwdLabel}`,      value: fmtDollar(rewardCapUsd) });
+    if (qualifyingDays != null && qualifyingDaysRequired != null)
+      details.push({ label: "Journées qualifiantes", value: `${qualifyingDays} / ${qualifyingDaysRequired}` });
+    if (qualMinDayUsd != null)
+      details.push({ label: "Min par jour qualifiant", value: fmtDollar(qualMinDayUsd) });
+    if (consistency != null)
+      details.push({ label: "Consistance actuelle", value: `${consistency.toFixed(1)}% ≤ 50%` });
+  }
+
+  // ── Prochaine étape ─────────────────────────────────────────
+  let highlight: EmailHighlight | undefined;
+  if (isChallenger && distToTarget != null && distToTarget > 0) {
+    highlight = {
+      icon:    "🎯",
+      eyebrow: "PROCHAINE ÉTAPE",
+      title:   `Il vous reste ${fmtDollar(distToTarget)} pour atteindre votre objectif`,
+      text:    calDaysRem != null
+        ? `Vous avez encore ${calDaysRem} jour${calDaysRem !== 1 ? "s" : ""} calendaire${calDaysRem !== 1 ? "s" : ""} pour valider votre Challenge.`
+        : "Continuez à respecter les règles de Consistance et de DD EOD.",
+    };
+  } else if (!isChallenger && distToThreshold != null && distToThreshold > 0) {
+    const rwdLabel = rewardLevel && rewardLevel > 1 ? `Reward #${rewardLevel}` : "Reward #1";
+    highlight = {
+      icon:    "🎯",
+      eyebrow: "PROCHAINE ÉTAPE",
+      title:   `Il vous reste ${fmtDollar(distToThreshold)} pour atteindre votre seuil ${rwdLabel}`,
+      text:    "Continuez à respecter les règles de Consistance, de journées qualifiantes et de DD EOD.",
+    };
+  } else if (isChallenger && distToTarget === 0) {
+    highlight = {
+      icon:    "🏆",
+      eyebrow: "OBJECTIF ATTEINT",
+      title:   "Objectif de profit validé",
+      text:    "Félicitations ! Votre Compte Challenger sera prochainement basculé au niveau Compte Reward.",
+    };
+  }
+
+  const subject = `Récapitulatif journalier — ${lvlLabel} ${accountSize}`;
   const html = buildEmail({
     title:     "Récapitulatif journalier",
     eyebrow:   "PERFORMANCE DU JOUR",
     preheader: subject,
-    body:      `Voici les principaux indicateurs de votre compte ${accountSize} à la clôture de la journée.`,
+    body:      `Voici les indicateurs de votre compte ${accountSize} à la clôture de la journée.`,
     details,
-    cta:     { text: "Voir mon Dashboard", href: `${siteUrl}/dashboard` },
+    highlight,
+    cta:     { text: "Voir mon Dashboard complet", href: `${siteUrl}/dashboard` },
     logoUrl,
   });
   return { subject, html };
 }
 
-// ── 6. buildPhase1CertificateEmail ────────────────────────────
+// ── 7. buildPhase1CertificateEmail ────────────────────────────
 
 export function buildPhase1CertificateEmail(p: {
-  firstName:   string;
-  lastName:    string;
-  accountSize: string;
-  date:        string;
-  siteUrl:     string;
-  logoUrl:     string;
+  firstName:    string;
+  lastName:     string;
+  accountSize:  string;
+  date:         string;
+  siteUrl:      string;
+  logoUrl:      string;
   publicToken?: string;
-  qrDataUrl?:  string;
+  qrDataUrl?:   string;
 }): { subject: string; html: string } {
   const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken, qrDataUrl } = p;
   const name    = `${firstName} ${lastName}`.trim();
   const certUrl = `${siteUrl}/certificate?type=phase1&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
-  const subject = `${firstName} — Votre Challenger est validé`;
+  const subject = `${firstName} — Votre Compte Challenger est validé`;
   const html    = buildCertificateEmail({
     label:     "CERTIFICATION TRADERS REWARDS",
     heroTitle: "CHALLENGER VALIDÉ",
     name,
-    title:     `Challenger validé — ${firstName}`,
-    body:      `Vous avez validé votre Challenger <strong>${accountSize}</strong> le <strong>${date}</strong>. Votre Compte Reward est maintenant débloqué et le parcours des Rewards commence.`,
+    title:     `Compte Challenger validé — ${firstName}`,
+    body:      `Vous avez validé votre Compte Challenger <strong>${accountSize}</strong> le <strong>${date}</strong>. Votre Compte Reward est maintenant débloqué et le parcours des Rewards commence.`,
     details: [
-      { label: "Trader",  value: name },
-      { label: "Compte",  value: accountSize },
-      { label: "Date",    value: date },
+      { label: "Trader",           value: name },
+      { label: "Compte",           value: accountSize },
+      { label: "Date",             value: date },
       { label: "Objectif atteint", value: "+6 %" },
+      { label: "Login MT5",        value: "Conservé identique" },
     ],
     certUrl,
     logoUrl,
@@ -648,32 +923,32 @@ export function buildPhase1CertificateEmail(p: {
   return { subject, html };
 }
 
-// ── 7. buildChallengeCertificateEmail ─────────────────────────
+// ── 8. buildChallengeCertificateEmail ─────────────────────────
 
 export function buildChallengeCertificateEmail(p: {
-  firstName:   string;
-  lastName:    string;
-  accountSize: string;
-  date:        string;
-  siteUrl:     string;
-  logoUrl:     string;
+  firstName:    string;
+  lastName:     string;
+  accountSize:  string;
+  date:         string;
+  siteUrl:      string;
+  logoUrl:      string;
   publicToken?: string;
-  qrDataUrl?:  string;
+  qrDataUrl?:   string;
 }): { subject: string; html: string } {
   const { firstName, lastName, accountSize, date, siteUrl, logoUrl, publicToken, qrDataUrl } = p;
   const name    = `${firstName} ${lastName}`.trim();
   const certUrl = `${siteUrl}/certificate?type=challenge&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(accountSize)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
-  const subject = `${firstName} — Votre Challenger est validé`;
+  const subject = `${firstName} — Votre Compte Challenger est validé`;
   const html    = buildCertificateEmail({
     label:     "CERTIFICATION TRADERS REWARDS",
     heroTitle: "CHALLENGER VALIDÉ",
     name,
-    title:     "Votre Challenger est validé",
-    body:      `${firstName}, vous avez validé votre Challenger <strong>${accountSize}</strong>. Votre Compte Reward est maintenant débloqué. Le parcours des Rewards commence.`,
+    title:     "Votre Compte Challenger est validé",
+    body:      `${firstName}, vous avez validé votre Compte Challenger <strong>${accountSize}</strong>. Votre Compte Reward est maintenant débloqué. Le parcours des Rewards commence.`,
     details: [
-      { label: "Trader",  value: name },
-      { label: "Compte",  value: accountSize },
-      { label: "Date",    value: date },
+      { label: "Trader",           value: name },
+      { label: "Compte",           value: accountSize },
+      { label: "Date",             value: date },
       { label: "Objectif atteint", value: "+6 %" },
     ],
     certUrl,
@@ -684,44 +959,44 @@ export function buildChallengeCertificateEmail(p: {
   return { subject, html };
 }
 
-// ── 8. buildRewardCertificateEmail ────────────────────────────
+// ── 9. buildRewardCertificateEmail ────────────────────────────
 
 export function buildRewardCertificateEmail(p: {
-  firstName:    string;
-  lastName:     string;
-  accountSize:  string;
-  grossAmount:  number;
-  date:         string;
-  rewardLevel?: number;   // 1-5 (optionnel, défaut = 1)
+  firstName:     string;
+  lastName:      string;
+  accountSize:   string;
+  grossAmount:   number;
+  date:          string;
+  rewardLevel?:  number;    // 1-5 (défaut = 1)
   netAmountEur?: number;
-  splitPct:     number;
-  siteUrl:      string;
-  logoUrl:      string;
-  publicToken?: string;
+  splitPct:      number;
+  siteUrl:       string;
+  logoUrl:       string;
+  publicToken?:  string;
+  mt5Login?:     number;
 }): { subject: string; html: string } {
-  const { firstName, lastName, accountSize, grossAmount, date, rewardLevel, netAmountEur, siteUrl, logoUrl, publicToken } = p;
-  const name         = `${firstName} ${lastName}`.trim();
-  const lvl          = rewardLevel ?? 1;
-  const rewardLabel  = lvl === 1 ? "Reward #1" : `Trader Reward #${lvl}`;
-  const netAmount    = Math.round(grossAmount);
-  const certUrl      = `${siteUrl}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
-  const subjectSuffix = netAmountEur != null ? ` (≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €)` : "";
-  const subject       = `${firstName} — ${rewardLabel} payé : $${netAmount.toLocaleString()}${subjectSuffix}`;
+  const { firstName, lastName, accountSize, grossAmount, date, rewardLevel, netAmountEur, siteUrl, logoUrl, publicToken, mt5Login } = p;
+  const name        = `${firstName} ${lastName}`.trim();
+  const lvl         = rewardLevel ?? 1;
+  const rewardLabel = lvl === 1 ? "Reward #1" : `Trader Reward #${lvl}`;
+  const netAmount   = Math.round(grossAmount);
+  const certUrl     = `${siteUrl}/certificate?type=reward&firstname=${encodeURIComponent(firstName)}&lastname=${encodeURIComponent(lastName)}&name=${encodeURIComponent(name)}&amount=${encodeURIComponent(`$${netAmount.toLocaleString()}`)}&date=${encodeURIComponent(date)}${publicToken ? `&token=${encodeURIComponent(publicToken)}` : ""}`;
+  const euSuffix    = netAmountEur != null ? ` (≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €)` : "";
+  const subject     = `${firstName} — ${rewardLabel} payé : $${netAmount.toLocaleString()}${euSuffix}`;
 
   const html = buildCertificateEmail({
     label:     `TRADERS REWARDS · ${rewardLabel.toUpperCase()}`,
     heroTitle: `$${netAmount.toLocaleString()}`,
     name,
     title:     `${rewardLabel} — ${firstName}`,
-    body:      `Votre ${rewardLabel} a été validée et payée. Le versement de <strong>$${netAmount.toLocaleString()}</strong> est effectué conformément aux conditions du programme.`,
+    body:      `Votre ${rewardLabel} a été validée et payée. Le versement de <strong>$${netAmount.toLocaleString()}</strong> est effectué conformément aux conditions du programme Traders Rewards.`,
     details: [
-      { label: "Trader",                 value: name },
-      { label: "Compte",                 value: accountSize },
-      { label: rewardLabel,              value: `$${netAmount.toLocaleString()}` },
-      ...(netAmountEur != null
-        ? [{ label: "Équivalent EUR", value: `≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` }]
-        : []),
-      { label: "Date", value: date },
+      { label: "Trader",   value: name },
+      { label: "Compte",   value: accountSize },
+      ...(mt5Login ? [{ label: "Login MT5", value: String(mt5Login) }] : []),
+      { label: rewardLabel, value: `$${netAmount.toLocaleString()}` },
+      ...(netAmountEur != null ? [{ label: "Équivalent EUR", value: `≈ ${netAmountEur.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` }] : []),
+      { label: "Date",     value: date },
     ],
     certUrl,
     logoUrl,
@@ -730,38 +1005,62 @@ export function buildRewardCertificateEmail(p: {
   return { subject, html };
 }
 
-// ── 9. buildRewardProgressionEmail — Reward #1→#5 payé ───────
+// ── 10. buildRewardProgressionEmail — Reward #1→#5 payé ──────
 //
 // Envoyé après le paiement de chaque Reward.
-// Indique le nouveau niveau et les règles pour le prochain Reward.
-// Pour rewardPaid = 5 : email "Parcours terminé".
+// Même compte MT5 — aucun reset d'identifiants.
+// Pour rewardPaid = 5 : email "Parcours terminé" avec tous les Rewards.
 
 export function buildRewardProgressionEmail(p: {
-  firstName:    string;
-  accountSize:  string;
-  rewardPaid:   number;   // Numéro du Reward qui vient d'être payé (1-5)
-  rewardAmount: string;   // Montant formaté ex: "$500"
-  mt5Login?:    number;
-  siteUrl:      string;
-  logoUrl:      string;
+  firstName:       string;
+  accountSize:     string;
+  rewardPaid:      number;    // Reward qui vient d'être payé (1-5)
+  rewardAmount:    string;    // Montant formaté ex: "$500"
+  mt5Login?:       number;
+  siteUrl:         string;
+  logoUrl:         string;
+  /** Pour Reward #5 : montants de chaque Reward (index 0=R#1 … 4=R#5) */
+  allRewardAmounts?: string[];
+  totalCumulatedUsd?: number;
+  endDate?:        string;
 }): { subject: string; html: string } {
-  const { firstName, accountSize, rewardPaid, rewardAmount, mt5Login, siteUrl, logoUrl } = p;
-  const bal      = parseBalance(accountSize);
-  const isFinal  = rewardPaid >= 5;
+  const { firstName, accountSize, rewardPaid, rewardAmount, mt5Login, siteUrl, logoUrl, allRewardAmounts, totalCumulatedUsd, endDate } = p;
+  const bal     = parseBalance(accountSize);
+  const isFinal = rewardPaid >= 5;
 
   if (isFinal) {
+    const details: EmailDetail[] = [
+      { label: "Taille du compte",   value: accountSize },
+      ...(mt5Login ? [{ label: "Login MT5", value: String(mt5Login) }] : []),
+      ...(endDate  ? [{ label: "Date de fin", value: endDate }] : []),
+    ];
+    if (allRewardAmounts?.length) {
+      details.push({ label: "REWARDS PAYÉS", value: "", isHeader: true });
+      allRewardAmounts.forEach((amt, i) => {
+        details.push({ label: `Reward #${i + 1}`, value: amt });
+      });
+      if (totalCumulatedUsd != null)
+        details.push({ label: "Total cumulé", value: fmtDollar(totalCumulatedUsd) });
+    } else {
+      details.push({ label: "Reward #5 payé", value: rewardAmount });
+    }
+    details.push({ label: "Statut du parcours", value: "Terminé" });
+
     const subject = `${firstName} — Parcours terminé — 5 Rewards accomplis`;
     const html = buildEmail({
       title:     "Parcours terminé — 5 Rewards",
       eyebrow:   "TRADERS REWARDS · PARCOURS COMPLET",
       preheader: subject,
-      body:      `${firstName}, félicitations ! Vous avez complété l'intégralité de votre parcours Traders Rewards en validant vos 5 Rewards. Statut : Terminé.`,
-      details: [
-        { label: "Taille du compte",   value: accountSize },
-        ...(mt5Login ? [{ label: "Login MT5", value: String(mt5Login) }] : []),
-        { label: "Reward #5 payé",     value: rewardAmount },
-        { label: "Statut du parcours", value: "Terminé" },
-      ],
+      body:      `${firstName}, félicitations ! Vous avez complété l'intégralité de votre parcours Traders Rewards en validant vos 5 Rewards.`,
+      details,
+      highlight: {
+        icon:    "🏆",
+        eyebrow: "STATUT FINAL",
+        title:   "Parcours Terminé",
+        text:    totalCumulatedUsd
+          ? `Vous avez reçu un total de ${fmtDollar(totalCumulatedUsd)} sur l'ensemble de votre parcours Traders Rewards.`
+          : "Vous avez complété les 5 niveaux du parcours Traders Rewards.",
+      },
       cta:     { text: "Voir mon Dashboard", href: `${siteUrl}/dashboard` },
       logoUrl,
     });
@@ -786,19 +1085,26 @@ export function buildRewardProgressionEmail(p: {
       ...(mt5Login ? [{ label: "Login MT5", value: String(mt5Login) }] : []),
       { label: `Reward #${rewardPaid} payé`, value: rewardAmount },
       { label: "Niveau suivant",             value: nextLevelLabel },
+      { label: `RÈGLES ${nextLevelLabel.toUpperCase()}`, value: "", isHeader: true },
       { label: "Safety Net",                 value: fmtUsd(snUsd) },
       { label: `Seuil ${nextLevelLabel}`,    value: fmtUsd(nextThreshold) },
       ...(nextCap != null ? [{ label: `Cap ${nextLevelLabel}`, value: fmtUsd(nextCap) }] : []),
       { label: "Consistance",                value: "≤ 50%" },
-      { label: "DD EOD fixe",                value: ddEodStr(bal) },
+      { label: "DD EOD fixe",               value: ddEodStr(bal) },
     ],
+    highlight: {
+      icon:    "✓",
+      eyebrow: "PROMESSE TRADERS REWARDS",
+      title:   "Reward Payé en Automatique en 48H",
+      text:    "Dès que votre prochaine demande de Reward est validée, le paiement est effectué automatiquement dans les 48 heures.",
+    },
     cta:     { text: "Voir mon Dashboard", href: `${siteUrl}/dashboard` },
     logoUrl,
   });
   return { subject, html };
 }
 
-// ── 10. buildApologyEmail ─────────────────────────────────────
+// ── 11. buildApologyEmail ─────────────────────────────────────
 
 export function buildApologyEmail(p: {
   firstName:   string;
@@ -809,16 +1115,16 @@ export function buildApologyEmail(p: {
   logoUrl:     string;
 }): { subject: string; html: string } {
   const { firstName, accountSize, phase, mt5, siteUrl, logoUrl } = p;
-  const phaseLabel = phase === "funded" ? "Compte Reward" : "Challenger";
-  const subject    = "Votre compte Traders Rewards est rétabli";
+  const lvlLabel = phase === "funded" ? "Compte Reward" : "Compte Challenger";
+  const subject  = "Votre compte Traders Rewards est rétabli";
   const html = buildEmail({
-    title:     `Compte rétabli — ${phaseLabel}`,
+    title:     `Compte rétabli — ${lvlLabel}`,
     eyebrow:   "INFORMATION DE COMPTE",
     preheader: subject,
     body:      `Bonjour ${firstName},\n\nNous nous excusons pour la gêne occasionnée suite à une erreur technique survenue récemment sur notre plateforme. Votre compte ${accountSize} a été entièrement restauré et est de nouveau actif. Toutes vos positions et votre historique de trading sont intacts.`,
     details: [
       { label: "Taille du compte", value: accountSize },
-      { label: "Niveau actuel",    value: phaseLabel },
+      { label: "Niveau actuel",    value: lvlLabel },
       { label: "Statut",           value: "Actif" },
       { label: "Serveur MT5",      value: mt5.server },
       { label: "Login MT5",        value: String(mt5.login) },
@@ -831,9 +1137,6 @@ export function buildApologyEmail(p: {
 }
 
 // ── Dispatch preview (fake data) ──────────────────────────────
-//
-// Utilisé par preview et test send.
-// Aucun client réel, aucun credential réel.
 
 export function buildPreviewFor(type: TransactionalEmailType, previewModel?: string): { subject: string; html: string } {
   const { siteUrl, logoUrl } = FAKE_BRANDING;
@@ -843,20 +1146,41 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
   switch (type) {
     case "welcome":
       return buildWelcomeEmail({ accountSize, model: previewModel ?? "rewards-100k", mt5: FAKE_MT5, siteUrl, logoUrl });
+    case "challenger_validated":
     case "phase2":
-      return buildPhase2Email({ accountSize, mt5: FAKE_MT5, siteUrl, logoUrl });
+      return buildChallengerValidatedEmail({ accountSize, mt5Login: FAKE_MT5.login, date: "27 août 2026", siteUrl, logoUrl });
+    case "challenger_expired":
+      return buildChallengerExpiredEmail({ accountSize, mt5Login: FAKE_MT5.login, creationDate: "28 juil. 2026", endDate: "27 août 2026", siteUrl, logoUrl });
     case "failed":
       return buildFailedEmail({ accountSize, reason: "total_drawdown", mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "funded":
       return buildFundedEmail({ accountSize, mt5: FAKE_MT5, splitPct: 100, siteUrl, logoUrl });
     case "daily_update":
-      return buildDailyUpdateEmail({ accountSize, phase: "phase1", balance: 103500, profitPct: 3.5, tradingDays: 4, siteUrl, logoUrl });
+      return buildDailyUpdateEmail({
+        accountSize,
+        phase:               "challenge",
+        balance:             103_500,
+        profitPct:           3.5,
+        tradingDays:         4,
+        startBalance:        100_000,
+        highestBalance:      104_200,
+        totalLimit:          3,
+        calendarDaysElapsed: 10,
+        calendarDaysMax:     30,
+        profitTargetPct:     6,
+        profitTargetUsdParam: 6_000,
+        minTradingDays:      2,
+        consistency:         34.2,
+        accountStatus:       "Conforme",
+        siteUrl,
+        logoUrl,
+      });
     case "phase1_certificate":
-      return buildPhase1CertificateEmail({ firstName, lastName, accountSize, date: "09 août 2026", siteUrl, logoUrl });
+      return buildPhase1CertificateEmail({ firstName, lastName, accountSize, date: "27 août 2026", siteUrl, logoUrl });
     case "challenge_certificate":
-      return buildChallengeCertificateEmail({ firstName, lastName, accountSize, date: "09 août 2026", siteUrl, logoUrl });
+      return buildChallengeCertificateEmail({ firstName, lastName, accountSize, date: "27 août 2026", siteUrl, logoUrl });
     case "reward_certificate":
-      return buildRewardCertificateEmail({ firstName, lastName, accountSize, grossAmount: 1750, rewardLevel: 5, date: "09 août 2026", netAmountEur: 1600, splitPct: 100, siteUrl, logoUrl });
+      return buildRewardCertificateEmail({ firstName, lastName, accountSize, grossAmount: 1_750, rewardLevel: 5, date: "27 août 2026", netAmountEur: 1_600, splitPct: 100, mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "reward_progression":
       return buildRewardProgressionEmail({ firstName, accountSize, rewardPaid: 2, rewardAmount: "$850", mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "apology":

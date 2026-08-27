@@ -38,6 +38,8 @@ async function generateQRDataUrl(url: string): Promise<string | undefined> {
 }
 import {
   buildWelcomeEmail,
+  buildChallengerValidatedEmail,
+  buildChallengerExpiredEmail,
   buildPhase2Email,
   buildFailedEmail,
   buildFundedEmail,
@@ -169,6 +171,31 @@ export async function sendWelcomeEmail(
   });
 }
 
+// ── sendChallengerValidatedEmail ─────────────────────────────
+// Envoyé quand le Challenger a atteint son objectif (+6%).
+// Ne doit PAS annoncer de nouveaux identifiants MT5.
+
+export async function sendChallengerValidatedEmail(
+  to: string,
+  accountSize: string,
+  mt5Login?: number,
+  date?: string,
+  opts?: { userId?: string; challengeId?: string },
+) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
+  const { subject, html } = buildChallengerValidatedEmail({ accountSize, mt5Login, date, siteUrl, logoUrl });
+  await _loggedSend({
+    type: "challenger_validated",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
+}
+
+// ── sendPhase2Email — alias legacy → sendChallengerValidatedEmail ──
+
 export async function sendPhase2Email(
   to: string,
   accountSize: string,
@@ -184,6 +211,68 @@ export async function sendPhase2Email(
     html,
     userId:      opts?.userId,
     challengeId: opts?.challengeId,
+  });
+}
+
+// ── sendChallengerExpiredEmail — 30 jours expirés ─────────────
+// Distinct de sendFailedEmail (violation DD).
+// Anti-double-envoi via event_key dans email_logs.
+
+export async function sendChallengerExpiredEmail(
+  to: string,
+  accountSize: string,
+  mt5Login?: number,
+  opts?: {
+    userId?:       string;
+    challengeId?:  string;
+    creationDate?: string;
+    endDate?:      string;
+  },
+) {
+  if (!opts?.challengeId) {
+    console.warn("[mailer] sendChallengerExpiredEmail: challengeId manquant — impossible de garantir l'idempotence");
+  }
+
+  const eventKey = opts?.challengeId ? `challenger_expired:${opts.challengeId}` : undefined;
+
+  // ── Idempotence : ne pas envoyer deux fois ─────────────────
+  if (eventKey) {
+    try {
+      const adminDb = createAdminClient();
+      const { data: existing } = await adminDb
+        .from("email_logs")
+        .select("id")
+        .eq("event_key", eventKey)
+        .maybeSingle();
+      if (existing) {
+        console.log(`[mailer] sendChallengerExpiredEmail déjà envoyé — event_key=${eventKey}`);
+        return;
+      }
+    } catch (checkErr) {
+      console.warn(
+        "[mailer] Idempotence check challenger_expired failed, sending anyway:",
+        String(checkErr).slice(0, 200),
+      );
+    }
+  }
+
+  const { siteUrl, logoUrl } = await getBrandingConfig();
+  const { subject, html } = buildChallengerExpiredEmail({
+    accountSize,
+    mt5Login,
+    creationDate: opts?.creationDate,
+    endDate:      opts?.endDate,
+    siteUrl,
+    logoUrl,
+  });
+  await _loggedSend({
+    type:        "challenger_expired",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+    eventKey,
   });
 }
 
