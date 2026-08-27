@@ -1282,7 +1282,7 @@ function AdminPageInner() {
           // Filtres rapides
           const pills = [
             { id: "all",       label: "Tous",      cnt: challenges.filter(c => c.model !== "vip").length },
-            { id: "active",    label: "Actifs",    cnt: kpis.phase1 + kpis.oneStep + kpis.phase2 },
+            { id: "active",    label: "Actifs",    cnt: challenges.filter(c => c.model !== "vip" && c.status === "active").length },
             { id: "risk",      label: "À risque",  cnt: kpis.alerts.length },
             { id: "phase1",    label: "Challengers actuels", cnt: kpis.phase1 },
             { id: "phase2",    label: "Comptes historiques", cnt: kpis.phase2 },
