@@ -239,6 +239,12 @@ export default function Hero() {
           color: rgba(105,197,253,0.68);
           animation: circleBreath 3.2s ease-in-out infinite;
         }
+        @media (max-width: 899px) {
+          .h-prog-circle {
+            width: 40px; height: 40px;
+            font-size: 10px;
+          }
+        }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            REDUCED MOTION
@@ -498,7 +504,7 @@ export default function Hero() {
 
             {/* Parcours — fond noir, pas de carte */}
             <div style={{
-              padding:  isMobile ? "16px 10px 12px" : "34px 32px 26px",
+              padding:  isMobile ? "20px 4px 16px" : "34px 32px 26px",
               position: "relative",
             }}>
 
@@ -519,7 +525,7 @@ export default function Hero() {
                   {L("GAGNEZ JUSQU'À","GANA HASTA","EARN UP TO")}
                 </div>
                 <div style={{
-                  fontSize:          isMobile ? "clamp(2.8rem,10vw,3.6rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
+                  fontSize:          isMobile ? "clamp(3.2rem,12vw,4.2rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
                   fontWeight:        900,
                   letterSpacing:     "-1.5px",
                   lineHeight:        0.90,
@@ -568,17 +574,17 @@ export default function Hero() {
                         gap:        0,
                         position:   "relative",
                         zIndex:     1,
-                        height:     isMobile ? 42 : 46,
+                        height:     isMobile ? 50 : 46,
                       }}
                     >
                       {/* Label gauche */}
                       <div style={{
                         flex:       1,
                         textAlign:  "right",
-                        paddingRight: isMobile ? 8 : 16,
+                        paddingRight: isMobile ? 10 : 16,
                       }}>
                         <div style={{
-                          fontSize:      isMobile ? 10 : 10,
+                          fontSize:      isMobile ? 11 : 10,
                           fontWeight:    900,
                           letterSpacing: "1.4px",
                           textTransform: "uppercase",
@@ -617,11 +623,11 @@ export default function Hero() {
                       <div style={{
                         flex:        1,
                         textAlign:   "left",
-                        paddingLeft: isMobile ? 8 : 16,
+                        paddingLeft: isMobile ? 10 : 16,
                       }}>
                         {step.amount != null && (
                           <div style={{
-                            fontSize:          isMobile ? 13 : 12,
+                            fontSize:          isMobile ? 15 : 12,
                             fontWeight:        900,
                             letterSpacing:     "0.5px",
                             color:             NEON,
