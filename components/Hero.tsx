@@ -498,7 +498,7 @@ export default function Hero() {
 
             {/* Parcours — fond noir, pas de carte */}
             <div style={{
-              padding:  isMobile ? "16px 18px 12px" : "34px 32px 26px",
+              padding:  isMobile ? "16px 10px 12px" : "34px 32px 26px",
               position: "relative",
             }}>
 
@@ -519,7 +519,7 @@ export default function Hero() {
                   {L("GAGNEZ JUSQU'À","GANA HASTA","EARN UP TO")}
                 </div>
                 <div style={{
-                  fontSize:          isMobile ? "clamp(2.2rem,8vw,3rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
+                  fontSize:          isMobile ? "clamp(2.8rem,10vw,3.6rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
                   fontWeight:        900,
                   letterSpacing:     "-1.5px",
                   lineHeight:        0.90,
@@ -568,17 +568,17 @@ export default function Hero() {
                         gap:        0,
                         position:   "relative",
                         zIndex:     1,
-                        height:     isMobile ? 36 : 46,
+                        height:     isMobile ? 42 : 46,
                       }}
                     >
                       {/* Label gauche */}
                       <div style={{
                         flex:       1,
                         textAlign:  "right",
-                        paddingRight: isMobile ? 11 : 16,
+                        paddingRight: isMobile ? 8 : 16,
                       }}>
                         <div style={{
-                          fontSize:      isMobile ? 9 : 10,
+                          fontSize:      isMobile ? 10 : 10,
                           fontWeight:    900,
                           letterSpacing: "1.4px",
                           textTransform: "uppercase",
@@ -617,11 +617,11 @@ export default function Hero() {
                       <div style={{
                         flex:        1,
                         textAlign:   "left",
-                        paddingLeft: isMobile ? 11 : 16,
+                        paddingLeft: isMobile ? 8 : 16,
                       }}>
                         {step.amount != null && (
                           <div style={{
-                            fontSize:          isMobile ? 11 : 12,
+                            fontSize:          isMobile ? 13 : 12,
                             fontWeight:        900,
                             letterSpacing:     "0.5px",
                             color:             NEON,
