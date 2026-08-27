@@ -1383,6 +1383,18 @@ function AdminPageInner() {
                                 : v1HighestEod - v1DdUsd)
                             : 0;
 
+                          // Clé unique représentant le niveau V1 courant en mode édition
+                          const v1EditKey = (() => {
+                            if (!isV1c) return editData.phase || c.phase;
+                            const ph = editData.phase || c.phase;
+                            const st = editData.status || c.status;
+                            if (st === "failed")  return "echoue";
+                            if (ph !== "funded")  return "challenger";
+                            if (c.terminated_at || paidCount >= 5) return "termine";
+                            if (paidCount === 0)  return "compte_reward";
+                            return `trader_reward_${paidCount + 1}`;
+                          })();
+
                           return (
                             <tbody key={c.id}>
                               {/* Ligne principale */}
@@ -1410,20 +1422,25 @@ function AdminPageInner() {
                                 <td style={{ padding: "11px 12px" }}>
                                   {isEditing
                                     ? isV1c
-                                      ? <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>
-                                            Niveau&nbsp;: <strong style={{ color: "#fff" }}>{v1Level}</strong>
-                                          </span>
-                                          <CustomSelect
-                                            small
-                                            value={editData.phase || c.phase}
-                                            onChange={v => setEditData(d => ({ ...d, phase: v }))}
-                                            options={[
-                                              { value: "phase1", label: "Challenger" },
-                                              { value: "funded", label: "Compte Reward +" },
-                                            ]}
-                                          />
-                                        </div>
+                                      ? <CustomSelect
+                                          small
+                                          value={v1EditKey}
+                                          onChange={(v: string) => {
+                                            if (v === "challenger")                          setEditData(d => ({ ...d, phase: "phase1" }));
+                                            else if (v === "echoue")                        setEditData(d => ({ ...d, status: "failed" }));
+                                            else /* compte_reward / trader_reward_N / termine */ setEditData(d => ({ ...d, phase: "funded" }));
+                                          }}
+                                          options={[
+                                            { value: "challenger",      label: "Challenger" },
+                                            { value: "compte_reward",   label: "Compte Reward" },
+                                            { value: "trader_reward_2", label: "Trader Reward #2" },
+                                            { value: "trader_reward_3", label: "Trader Reward #3" },
+                                            { value: "trader_reward_4", label: "Trader Reward #4" },
+                                            { value: "trader_reward_5", label: "Trader Reward #5" },
+                                            { value: "termine",         label: "Terminé" },
+                                            { value: "echoue",          label: "Échoué" },
+                                          ]}
+                                        />
                                       : <CustomSelect
                                           small
                                           value={editData.phase || c.phase}
