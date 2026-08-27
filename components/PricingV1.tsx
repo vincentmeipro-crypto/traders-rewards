@@ -278,11 +278,11 @@ export default function PricingV1() {
         {/* Prix */}
         <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.09)" }}>
           <div style={{
-            fontSize: 9, fontWeight: 700, color: "#22c55e",
+            fontSize: 9, fontWeight: 700, color: isPack3 ? "#ff6600" : "#22c55e",
             letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6,
           }}>
             {isPack3
-              ? L("Pack ×3 Challenges","Pack ×3 Challenges","Pack ×3 Challenges")
+              ? "PACK ×3 BEST DEAL"
               : L("Accès challenge","Acceso challenge","Challenge access")}
           </div>
 
