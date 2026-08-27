@@ -107,11 +107,12 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
   if (!card) return null;
 
   const { balance, trailingDdPct } = card;
-  const sizeK     = balance / 1000;
-  const sizeLabel = `$${sizeK}K`;
-  const targetAmt = balance * 0.06;
-  const ddAmt     = balance * trailingDdPct / 100;
-  const floorAmt  = balance - ddAmt;
+  const sizeK      = balance / 1000;
+  const sizeLabel  = `$${sizeK}K`;
+  const targetAmt  = balance * 0.06;
+  const ddAmt      = balance * trailingDdPct / 100;
+  const floorAmt   = balance - ddAmt;
+  const maxBestDay = targetAmt / 2;
 
   return (
     <div
@@ -219,8 +220,8 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                 },
                 {
                   label: L("Consistance","Consistencia","Consistency"),
-                  pctStr: L("Aucune","Ninguna","None"), usd: "",
-                  note: L("Aucune contrainte sur la répartition des profits journaliers","Sin restricción en la distribución de ganancias diarias","No constraint on daily profit distribution"),
+                  pctStr: "≤ 50%", usd: "",
+                  note: L("Votre meilleure journée ne doit pas dépasser 50% de votre profit total.","Su mejor día no debe superar el 50% de su beneficio total.","Your best day must not exceed 50% of your total profit."),
                   color: ACCENT,
                 },
                 {
@@ -323,12 +324,48 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             <h3 style={secTitle}>{L("Règle de Consistance","Regla de Consistencia","Consistency Rule")}</h3>
             <p style={bodyTxt}>
               {L(
-                "Aucune contrainte sur la répartition de vos profits journaliers au Challenge — seul l'objectif de +6% et les limites de risque s'appliquent.",
-                "Sin restricciones sobre la distribución de sus ganancias diarias en el Challenge — solo se aplican el objetivo del +6% y los límites de riesgo.",
-                "No constraints on daily profit distribution during the Challenge — only the +6% target and the risk limits apply."
+                "La meilleure journée profitable ne doit pas représenter plus de 50% du profit total réalisé sur le Challenge.",
+                "El mejor día lucrativo no debe representar más del 50% del beneficio total realizado en el Challenge.",
+                "Your best profitable day must not represent more than 50% of the total profit made during the Challenge."
               )}
             </p>
 
+            {/* Exemple dynamique selon la taille */}
+            <div style={{ ...infoBox, marginBottom: 12 }}>
+              <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "2px", textTransform: "uppercase", marginBottom: 12 }}>
+                {L(`Exemple — ${sizeLabel}`, `Ejemplo — ${sizeLabel}`, `Example — ${sizeLabel}`)}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                {([
+                  { lbl: L("Profit total (objectif +6%)","Beneficio total (objetivo +6%)","Total profit (target +6%)"), val: fmt(targetAmt),  color: GREEN  },
+                  { lbl: L("Meilleure journée max (50%)","Mejor día máx. (50%)","Best day max (50%)"),                 val: fmt(maxBestDay), color: ORANGE },
+                ] as { lbl: string; val: string; color: string }[]).map((row, i) => (
+                  <div key={i} style={{
+                    display: "flex", justifyContent: "space-between", padding: "3px 0",
+                    borderBottom: i < 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                  }}>
+                    <span style={rowLbl}>{row.lbl}</span>
+                    <span style={{ ...rowVal, color: row.color }}>{row.val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Note : pas d'échec si dépassement */}
+            <div style={{
+              background:   "rgba(71,220,136,0.05)",
+              border:       "1px solid rgba(71,220,136,0.14)",
+              borderRadius: 10, padding: "10px 14px",
+            }}>
+              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", margin: 0, lineHeight: 1.65 }}>
+                <span style={{ color: GREEN, fontWeight: 900, marginRight: 5 }}>✓</span>
+                {L(
+                  "Si votre meilleure journée dépasse 50%, le Challenge n'est pas échoué : continuez simplement à trader jusqu'à ce que votre profit total permette de respecter la règle de consistance.",
+                  "Si su mejor día supera el 50%, el Challenge no ha fallado: continúe operando hasta que su beneficio total permita cumplir la regla de consistencia.",
+                  "If your best day exceeds 50%, the Challenge is not failed: simply keep trading until your total profit allows the consistency rule to be met."
+                )}
+              </p>
+            </div>
           </div>
 
           {/* ── 4. DURÉE ── */}
