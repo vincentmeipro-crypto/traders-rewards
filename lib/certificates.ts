@@ -106,7 +106,7 @@ export async function findCertificateByToken(
 }
 
 export function certificateTypeLabel(type: CertificateKind): string {
-  if (type === "phase1") return "Validation Phase 1";
-  if (type === "phase2") return "Validation Phase 2";
+  if (type === "phase1") return "Challenger Validé";
+  if (type === "phase2") return "Challenger Validé";
   return "Versement Reward";
 }

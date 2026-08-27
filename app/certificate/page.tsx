@@ -27,17 +27,17 @@ function BodySegments({ html }: { html: string }): ReactNode {
 }
 
 const BODY: Record<string, string> = {
-  phase1: `Le trader a réussi la <b>Phase 1 du Challenge Traders Rewards</b> en atteignant les objectifs requis. En maintenant une gestion rigoureuse du risque et en générant les performances attendues, le trader a validé ses compétences et sa discipline. Ce certificat confirme l'accès à la <b>Phase 2</b> du programme.`,
-  phase2: `Le trader a réussi la <b>Phase 2 du Challenge Traders Rewards</b>. Après avoir validé la Phase 1, le trader a confirmé sa régularité et sa maîtrise du risque sur une seconde période d'évaluation. Ce certificat atteste la réussite complète du processus de certification et l'accès au statut de <b>Trader Récompensé</b>.`,
-  challenge: `Le trader a réussi la <b>Phase 2 du Challenge Traders Rewards</b>. Après avoir validé la Phase 1, le trader a confirmé sa régularité et sa maîtrise du risque sur une seconde période d'évaluation. Ce certificat atteste la réussite complète du processus de certification et l'accès au statut de <b>Trader Récompensé</b>.`,
-  reward: `Le présent certificat atteste le versement d'une <b>récompense de trading</b> accordée par Traders Rewards, en reconnaissance des performances réalisées sur le compte reward. Ce paiement est effectué conformément aux conditions du programme.`,
+  phase1:    `Le trader a réussi son <b>Challenger Traders Rewards</b> en atteignant l'objectif de performance requis. En maintenant une gestion rigoureuse du risque et en générant les performances attendues, le trader a validé ses compétences et sa discipline. Ce certificat confirme l'accès au <b>Compte Reward</b>.`,
+  phase2:    `Le trader a réussi son <b>Challenger Traders Rewards</b> en atteignant l'objectif de performance requis. Ce certificat atteste la réussite complète du processus de validation et l'accès au <b>Compte Reward</b>.`,
+  challenge: `Le trader a réussi son <b>Challenger Traders Rewards</b> en atteignant l'objectif de performance requis. Ce certificat atteste la réussite complète du processus de validation et l'accès au <b>Compte Reward</b>.`,
+  reward:    `Le présent certificat atteste le versement d'une <b>Reward</b> accordée par Traders Rewards, en reconnaissance des performances réalisées sur le Compte Reward. Ce paiement est effectué conformément aux conditions du programme.`,
 };
 
 const TITLE: Record<string, { top: string; main: string }> = {
-  phase1:    { top: "Traders Rewards — Certification", main: "Phase 1" },
-  phase2:    { top: "Traders Rewards — Certification", main: "Phase 2" },
-  challenge: { top: "Traders Rewards — Certification", main: "Phase 2" },
-  reward:    { top: "Traders Rewards — Versement",     main: "REWARD"  },
+  phase1:    { top: "Traders Rewards — Certification", main: "CHALLENGER VALIDÉ" },
+  phase2:    { top: "Traders Rewards — Certification", main: "CHALLENGER VALIDÉ" },
+  challenge: { top: "Traders Rewards — Certification", main: "CHALLENGER VALIDÉ" },
+  reward:    { top: "Traders Rewards — Versement",     main: "REWARD"             },
 };
 
 function CertContent() {

@@ -1,8 +1,8 @@
 /**
  * ============================================================
- * EMAIL CATALOG — Traders Rewards Phase 3B-1b
+ * EMAIL CATALOG — Traders Rewards V1.2
  * ============================================================
- * Metadata pure des 9 templates transactionnels.
+ * Metadata pure des templates transactionnels.
  * Aucune logique Resend, aucune logique métier, aucun credential.
  *
  * Utilisé par :
@@ -34,8 +34,8 @@ export type EmailCatalogEntry = {
 export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   {
     type:        "welcome",
-    label:       "Accès Challenge",
-    description: "Envoyé après la création d'un challenge. Contient les identifiants MT5 si un compte a été provisionné.",
+    label:       "Accès Challenger",
+    description: "Envoyé après la création d'un Challenger. Contient les identifiants MT5 si un compte a été provisionné.",
     trigger:     "Achat validé (Stripe / Crypto / Free) ou provisioning manuel",
     sensitive:   true,
     variables: [
@@ -49,14 +49,15 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   },
   {
     type:        "failed",
-    label:       "Challenge échoué",
-    description: "Envoyé quand un challenge est automatiquement arrêté suite à un dépassement de drawdown.",
+    label:       "Challenger ou Reward clôturé",
+    description: "Envoyé quand un Challenger ou un Compte Reward est automatiquement arrêté suite à un dépassement de drawdown.",
     trigger:     "Synchronisation MT5 — Trailing DD EOD dépassé",
     sensitive:   false,
     variables: [
       { name: "accountSize", sensitive: false },
       { name: "reason",      sensitive: false },
       { name: "mt5Login",    sensitive: false },
+      { name: "phase",       sensitive: false },
     ],
   },
   {
@@ -94,8 +95,8 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   },
   {
     type:        "challenge_certificate",
-    label:       "Certificat Challenge",
-    description: "Certificat confirmant la validation du Challenge et l'accès au niveau Reward Start.",
+    label:       "Certificat Challenger",
+    description: "Certificat confirmant la validation du Challenger et l'accès au Compte Reward.",
     trigger:     "Challenge validé",
     sensitive:   false,
     variables: [
@@ -106,9 +107,23 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
     ],
   },
   {
+    type:        "reward_progression",
+    label:       "Reward payé — Progression",
+    description: "Envoyé après chaque paiement de Reward (#1–#4). Confirme le paiement et affiche les règles du niveau suivant. Pour Reward #5 : email 'Parcours terminé'.",
+    trigger:     "Reward approuvée et paiement confirmé",
+    sensitive:   false,
+    variables: [
+      { name: "firstName",    sensitive: false },
+      { name: "accountSize",  sensitive: false },
+      { name: "rewardPaid",   sensitive: false },
+      { name: "rewardAmount", sensitive: false },
+      { name: "mt5Login",     sensitive: false },
+    ],
+  },
+  {
     type:        "reward_certificate",
     label:       "Certificat Reward",
-    description: "Confirmation d'une Reward approuvée avec son montant éligible à 100% et son justificatif.",
+    description: "Confirmation d'une Reward approuvée avec son montant et son numéro de Reward (#1 à #5).",
     trigger:     "Reward approuvée par l'admin",
     sensitive:   false,
     variables: [
@@ -116,7 +131,7 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
       { name: "lastName",     sensitive: false },
       { name: "accountSize",  sensitive: false },
       { name: "grossAmount",  sensitive: false },
-      { name: "model",        sensitive: false },
+      { name: "rewardLevel",  sensitive: false },
       { name: "date",         sensitive: false },
       { name: "netAmountEur", sensitive: false },
     ],

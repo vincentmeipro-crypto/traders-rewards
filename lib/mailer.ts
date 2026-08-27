@@ -45,6 +45,7 @@ import {
   buildPhase1CertificateEmail,
   buildChallengeCertificateEmail,
   buildRewardCertificateEmail,
+  buildRewardProgressionEmail,
   buildApologyEmail,
   buildPreviewFor,
   type TransactionalEmailType,
@@ -191,10 +192,10 @@ export async function sendFailedEmail(
   accountSize: string,
   reason: "daily_drawdown" | "total_drawdown",
   mt5Login?: number,
-  opts?: { userId?: string; challengeId?: string },
+  opts?: { userId?: string; challengeId?: string; phase?: string },
 ) {
   const { siteUrl, logoUrl } = await getBrandingConfig();
-  const { subject, html } = buildFailedEmail({ accountSize, reason, mt5Login, siteUrl, logoUrl });
+  const { subject, html } = buildFailedEmail({ accountSize, reason, mt5Login, phase: opts?.phase, siteUrl, logoUrl });
   await _loggedSend({
     type: "failed",
     to,
@@ -322,7 +323,7 @@ export async function sendChallengeCertificateEmail(
 export async function sendRewardCertificateEmail(
   to: string, firstName: string, lastName: string, accountSize: string,
   grossAmount: number, model: string, date: string, netAmountEur?: number,
-  opts?: { userId?: string; challengeId?: string; publicToken?: string; splitPct?: number },
+  opts?: { userId?: string; challengeId?: string; publicToken?: string; splitPct?: number; rewardLevel?: number },
 ) {
   const [branding, splits] = await Promise.all([
     getBrandingConfig(),
@@ -332,11 +333,32 @@ export async function sendRewardCertificateEmail(
   const is1Step = model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
   const splitPct = opts?.splitPct ?? (is1Step ? splits.split1step : splits.split2step);
   const { subject, html } = buildRewardCertificateEmail({
-    firstName, lastName, accountSize, grossAmount, date, netAmountEur, splitPct, siteUrl, logoUrl,
+    firstName, lastName, accountSize, grossAmount, rewardLevel: opts?.rewardLevel, date, netAmountEur, splitPct, siteUrl, logoUrl,
     publicToken: opts?.publicToken,
   });
   await _loggedSend({
     type: "reward_certificate",
+    to,
+    subject,
+    html,
+    userId:      opts?.userId,
+    challengeId: opts?.challengeId,
+  });
+}
+
+export async function sendRewardProgressionEmail(
+  to: string,
+  firstName: string,
+  accountSize: string,
+  rewardPaid: number,
+  rewardAmount: string,
+  mt5Login?: number,
+  opts?: { userId?: string; challengeId?: string },
+) {
+  const { siteUrl, logoUrl } = await getBrandingConfig();
+  const { subject, html } = buildRewardProgressionEmail({ firstName, accountSize, rewardPaid, rewardAmount, mt5Login, siteUrl, logoUrl });
+  await _loggedSend({
+    type: "reward_progression",
     to,
     subject,
     html,
