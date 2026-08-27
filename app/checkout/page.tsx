@@ -434,30 +434,30 @@ function CheckoutContent() {
                 </div>
               </button>
 
-              {/* ── Pack ×3 · -90% vert · MEILLEURE OFFRE ── */}
+              {/* ── Pack ×3 · -90% orange · MEILLEURE OFFRE ── */}
               <button
                 onClick={() => setQuantity(3)}
                 style={{
                   flex: 1, padding: "10px 6px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border:     quantity === 3 ? "1.5px solid rgba(34,197,94,0.80)" : "1.5px solid rgba(34,197,94,0.30)",
-                  background: quantity === 3 ? "rgba(34,197,94,0.12)" : "rgba(34,197,94,0.05)",
+                  border:     quantity === 3 ? "1.5px solid rgba(255,102,0,0.80)" : "1.5px solid rgba(255,102,0,0.30)",
+                  background: quantity === 3 ? "rgba(255,102,0,0.12)" : "rgba(255,102,0,0.05)",
                   fontFamily: "inherit", textAlign: "center" as const, position: "relative" as const,
                 }}
               >
                 {/* Badge "MEILLEURE OFFRE" */}
                 <div style={{
                   position:"absolute", top:-9, left:"50%", transform:"translateX(-50%)",
-                  fontSize:7, fontWeight:900, color:"#050505",
-                  background:"#22c55e", borderRadius:4,
+                  fontSize:7, fontWeight:900, color:"#ffffff",
+                  background:"#ff6600", borderRadius:4,
                   padding:"2px 6px", letterSpacing:"0.8px", textTransform:"uppercase" as const,
                   whiteSpace:"nowrap",
                 }}>
                   MEILLEURE OFFRE
                 </div>
-                <div style={{ fontSize:11, fontWeight:800, color:"#22c55e", marginBottom:3 }}>
+                <div style={{ fontSize:11, fontWeight:800, color:"#ff6600", marginBottom:3 }}>
                   Pack ×3
                 </div>
-                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color:"#22c55e" }}>
+                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color:"#ff6600" }}>
                   −90%
                 </div>
               </button>
