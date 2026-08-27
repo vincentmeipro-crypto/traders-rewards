@@ -192,10 +192,10 @@ export default function RewardReviewPanel({
               },
               {
                 label:   "Consistance",
-                ok:      isV1Challenge,
-                unknown: isV1Reward,
-                value:   isV1Challenge ? "Aucune" : "≤ 50%",
-                sub:     isV1Challenge ? "Pas de règle" : "Meilleure journée",
+                ok:      false,
+                unknown: true,
+                value:   "≤ 50%",
+                sub:     "Meilleure journée",
               },
               {
                 label:   "Jours tradés",

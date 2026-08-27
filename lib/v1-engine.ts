@@ -123,8 +123,8 @@ export const V1_QUALIFYING_DAY_MIN_USD: Record<number, number> = {
  * Pour le Challenge, passer consistencyPct = 0 aux fonctions concernées.
  */
 export const V1_CONSISTENCY_PCT = {
-  // challenge : SUPPRIMÉ — Apex EOD ne requiert aucune consistency au Challenge
-  reward: 50,   // was 33
+  challenge: 50,
+  reward: 50,
 } as const;
 
 /**

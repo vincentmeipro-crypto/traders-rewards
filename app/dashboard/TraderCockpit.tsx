@@ -693,16 +693,8 @@ export default function TraderCockpit({
                     : `≤ ${isRewardAccount ? 33 : 50}%`}               // Legacy : 33% funded / 50% challenge
                 </div>
                 <div className={styles.kpiMeta}>
-                  <span>
-                    {isV1 && !isRewardAccount
-                      ? (isFr ? "Aucune contrainte" : "No constraint")
-                      : (isFr ? "Meilleure journée" : "Best day")}
-                  </span>
-                  <span>
-                    {isV1 && !isRewardAccount
-                      ? (isFr ? "Challenge sans consistance" : "Challenge — no consistency")
-                      : (isFr ? "du profit total" : "of total profit")}
-                  </span>
+                  <span>{isFr ? "Meilleure journée" : "Best day"}</span>
+                  <span>{isFr ? "du profit total" : "of total profit"}</span>
                 </div>
               </div>
             </div>

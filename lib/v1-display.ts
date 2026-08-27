@@ -163,10 +163,8 @@ export function getV1QualDayUsd(startBalance: number): number {
  * Challenger V1  → "AUCUNE"  (Apex EOD supprime la consistency)
  * Compte Reward  → "≤ 50%"   (was 33% pour les anciens contrats)
  */
-export function getV1ConsistencyDisplay(phase: string): string {
-  return phase === "funded"
-    ? `≤ ${V1_CONSISTENCY_PCT.reward}%`
-    : "AUCUNE";
+export function getV1ConsistencyDisplay(_phase: string): string {
+  return `≤ ${V1_CONSISTENCY_PCT.reward}%`;
 }
 
 // ── Constantes utiles ─────────────────────────────────────────
