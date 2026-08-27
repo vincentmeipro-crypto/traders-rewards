@@ -1413,9 +1413,6 @@ function AdminPageInner() {
                                 {/* Compte */}
                                 <td style={{ padding: "11px 12px", whiteSpace: "nowrap" }}>
                                   <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{c.account_size}</div>
-                                  <span style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", fontSize: 10, padding: "1px 5px", borderRadius: 4, fontWeight: 700, textTransform: "uppercase" }}>
-                                    {c.model === "instant" ? "INSTANT" : c.model?.toUpperCase() || "—"}
-                                  </span>
                                 </td>
 
                                 {/* Niveau */}
