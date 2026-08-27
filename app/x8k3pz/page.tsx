@@ -571,7 +571,7 @@ function AdminPageInner() {
 
     const totalTraders  = new Set(challenges.map(c => c.user_email)).size;
     const activeTraders = new Set(challenges.filter(c => c.status === "active").map(c => c.user_email)).size;
-    const phase1    = challenges.filter(c => c.phase === "phase1" && c.status === "active" && !is1Step(c.model)).length;
+    const phase1    = challenges.filter(c => isV1Challenge(c) && c.phase !== "funded" && c.status === "active").length;
     const oneStep   = challenges.filter(c => c.status === "active" && is1Step(c.model)).length;
     const phase2    = challenges.filter(c => c.phase === "phase2" && c.status === "active").length;
     const passed    = challenges.filter(c => c.status === "passed").length;
@@ -1253,7 +1253,7 @@ function AdminPageInner() {
             switch (pipelineFilter) {
               case "active":    return c.status === "active";
               case "risk":      return riskIds.has(c.id);
-              case "phase1":    return c.phase === "phase1" && !is1StepM(c.model) && c.status !== "failed";
+              case "phase1":    return isV1Challenge(c) && c.phase !== "funded" && c.status !== "failed";
               case "phase2":    return c.phase === "phase2" && c.status !== "failed";
               case "certified": return c.status === "funded";
               case "failed":    return c.status === "failed";
