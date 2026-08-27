@@ -748,8 +748,10 @@ export default function JourneyThreeLevels() {
               </div>
 
               {/* Règles */}
-              <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px" }}>
+              <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
                 {L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} {money(ddUsd)}
+                <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
+                {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
               </div>
 
               {/* Spacer */}
@@ -809,7 +811,7 @@ export default function JourneyThreeLevels() {
 
               {/* Nom du niveau */}
               <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1, marginBottom: 14, position: "relative" }}>
-                REWARD START
+                COMPTE REWARD
               </div>
 
               {/* Sous-titre */}
