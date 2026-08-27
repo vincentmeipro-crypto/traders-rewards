@@ -1460,7 +1460,7 @@ function AdminPageInner() {
                                 {/* Statut */}
                                 <td style={{ padding: "11px 12px" }}>
                                   {isEditing
-                                    ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
+                                    ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Actif" }, { value: "passed", label: "Réussi" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Échoué" }]} />
                                     : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                                 </td>
 
@@ -1912,7 +1912,7 @@ function AdminPageInner() {
                             <td style={{ padding: "13px 14px", fontWeight: 800, color: "#fff" }}>{c.account_size}</td>
                             <td style={{ padding: "13px 14px" }}>
                               {editing === c.id
-                                ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Active" }, { value: "passed", label: "Passed" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Failed" }]} />
+                                ? <CustomSelect small value={editData.status || c.status} onChange={v => setEditData(d => ({ ...d, status: v }))} options={[{ value: "active", label: "Actif" }, { value: "passed", label: "Réussi" }, { value: "funded", label: "Reward" }, { value: "failed", label: "Échoué" }]} />
                                 : badge(STATUS_LABELS[c.status] || c.status, STATUS_COLORS[c.status] || "#888")}
                             </td>
                             <td style={{ padding: "9px 8px", fontWeight: 700 }}>
