@@ -394,19 +394,24 @@ function AdminPageInner() {
   const [maintenanceDangerOpen, setMaintenanceDangerOpen] = useState(false);
 
   const loadAdminData = async () => {
-    const headers = { "x-admin-key": ADMIN_KEY };
-    const [cRes, pRes, kRes, prRes] = await Promise.all([
-      fetch("/api/admin/challenges?include=review", { headers }),
-      fetch("/api/admin/payouts",    { headers }),
-      fetch("/api/admin/kyc",        { headers }),
-      fetch("/api/admin/profiles",   { headers }),
-    ]);
-    const [cData, pData, kData, prData] = await Promise.all([cRes.json(), pRes.json(), kRes.json(), prRes.json()]);
-    if (Array.isArray(cData)) setChallenges(cData); else setError(JSON.stringify(cData));
-    if (Array.isArray(pData)) setPayouts(pData);
-    if (Array.isArray(kData)) setKycSubmissions(kData);
-    if (Array.isArray(prData)) setProfiles(prData);
-    setLoading(false);
+    try {
+      const headers = { "x-admin-key": ADMIN_KEY };
+      const [cRes, pRes, kRes, prRes] = await Promise.all([
+        fetch("/api/admin/challenges?include=review", { headers }),
+        fetch("/api/admin/payouts",    { headers }),
+        fetch("/api/admin/kyc",        { headers }),
+        fetch("/api/admin/profiles",   { headers }),
+      ]);
+      const [cData, pData, kData, prData] = await Promise.all([cRes.json(), pRes.json(), kRes.json(), prRes.json()]);
+      if (Array.isArray(cData)) setChallenges(cData); else setError(JSON.stringify(cData));
+      if (Array.isArray(pData)) setPayouts(pData);
+      if (Array.isArray(kData)) setKycSubmissions(kData);
+      if (Array.isArray(prData)) setProfiles(prData);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Erreur de chargement des données admin");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { loadAdminData(); }, []);
