@@ -269,9 +269,8 @@ export default function PricingV1() {
               }}
             >
               {is3
-                ? <><span>{L("Pack ×3","Pack ×3","Pack ×3")}</span><span style={{ color:"#22c55e", fontWeight:900 }}> -90%</span></>
-                : <><span>{L("1 Challenge","1 Challenge","1 Challenge")}</span><span style={{ color:"#22c55e", fontWeight:900 }}> -80%</span></>
-              }
+                ? L("Pack ×3","Pack ×3","Pack ×3")
+                : L("1 Challenge","1 Challenge","1 Challenge")}
             </button>
           ))}
         </div>
@@ -279,7 +278,7 @@ export default function PricingV1() {
         {/* Prix */}
         <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.09)" }}>
           <div style={{
-            fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)",
+            fontSize: 9, fontWeight: 700, color: "#22c55e",
             letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6,
           }}>
             {isPack3
