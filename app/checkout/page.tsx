@@ -413,23 +413,61 @@ function CheckoutContent() {
               ))}
             </div>
 
-            {/* Sélecteur quantité : 1 Challenge / Pack ×3 */}
+            {/* Sélecteur quantité : 1 Challenge / Pack ×3 — avec badges de remise visibles d'emblée */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-              {([1, 3] as const).map(q => (
-                <button
-                  key={q}
-                  onClick={() => setQuantity(q)}
-                  style={{
-                    flex: 1, padding: "7px 4px", fontSize: 11, fontWeight: 800, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                    border:     quantity === q ? "1.5px solid rgba(156,207,234,0.65)" : "1.5px solid rgba(255,255,255,0.1)",
-                    background: quantity === q ? "rgba(156,207,234,0.12)" : "#111",
-                    color:      quantity === q ? "#9CCFEA" : "rgba(255,255,255,0.4)",
-                    fontFamily: "inherit",
-                  }}
-                >
-                  {q === 3 ? "Pack ×3" : "1 Challenge"}
-                </button>
-              ))}
+
+              {/* ── 1 Challenge · -80% ── */}
+              <button
+                onClick={() => setQuantity(1)}
+                style={{
+                  flex: 1, padding: "10px 6px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
+                  border:     quantity === 1 ? "1.5px solid rgba(156,207,234,0.55)" : "1.5px solid rgba(255,255,255,0.1)",
+                  background: quantity === 1 ? "rgba(156,207,234,0.10)" : "#111",
+                  fontFamily: "inherit", textAlign: "center" as const,
+                }}
+              >
+                <div style={{ fontSize:11, fontWeight:800, color: quantity === 1 ? "#9CCFEA" : "rgba(255,255,255,0.45)", marginBottom:3 }}>
+                  1 Challenge
+                </div>
+                <div style={{
+                  fontSize:10, fontWeight:900, letterSpacing:"0.3px",
+                  color: quantity === 1 ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.30)",
+                }}>
+                  −80%
+                </div>
+              </button>
+
+              {/* ── Pack ×3 · -90% · MEILLEURE OFFRE ── */}
+              <button
+                onClick={() => setQuantity(3)}
+                style={{
+                  flex: 1, padding: "10px 6px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
+                  border:     quantity === 3 ? "1.5px solid rgba(156,207,234,0.80)" : "1.5px solid rgba(156,207,234,0.22)",
+                  background: quantity === 3 ? "rgba(156,207,234,0.13)" : "rgba(156,207,234,0.04)",
+                  fontFamily: "inherit", textAlign: "center" as const, position: "relative" as const,
+                }}
+              >
+                {/* Badge "MEILLEURE OFFRE" au-dessus */}
+                <div style={{
+                  position:"absolute", top:-9, left:"50%", transform:"translateX(-50%)",
+                  fontSize:7, fontWeight:900, color:"#050505",
+                  background:"#9CCFEA", borderRadius:4,
+                  padding:"2px 6px", letterSpacing:"0.8px", textTransform:"uppercase" as const,
+                  whiteSpace:"nowrap",
+                }}>
+                  MEILLEURE OFFRE
+                </div>
+                <div style={{ fontSize:11, fontWeight:800, color: quantity === 3 ? "#9CCFEA" : "rgba(156,207,234,0.65)", marginBottom:3 }}>
+                  Pack ×3
+                </div>
+                <div style={{
+                  fontSize:10, fontWeight:900, letterSpacing:"0.3px",
+                  color: quantity === 3 ? "#9CCFEA" : "rgba(156,207,234,0.55)",
+                }}>
+                  −90%
+                </div>
+              </button>
+
             </div>
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
