@@ -166,7 +166,7 @@ export default function RewardReviewPanel({
         <div>
           <div className={styles.eyebrow}>Contrôle avant paiement</div>
           <h3><ShieldCheck size={17} />{panelTitle}</h3>
-          <p>{panelSub}</p>
+          {!isV1 && <p>{panelSub}</p>}
         </div>
       </div>
 
