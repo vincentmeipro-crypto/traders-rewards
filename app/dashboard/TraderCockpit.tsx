@@ -41,7 +41,6 @@ import {
   isV1Challenge,
   getV1DdUsd,
   getV1SafetyNetUsd,
-  getV1ConsistencyDisplay,
 } from "@/lib/v1-display";
 
 export type CockpitSubTab = "cockpit" | "trading";
@@ -687,11 +686,7 @@ export default function TraderCockpit({
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
               <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Consistance" : "Consistency"}</span><Gauge color={BLUE} size={16} /></div>
               <div>
-                <div className={styles.kpiValue}>
-                  {isV1
-                    ? getV1ConsistencyDisplay(challenge.phase)         // Challenge → "AUCUNE" / Reward → "≤ 50%"
-                    : `≤ ${isRewardAccount ? 33 : 50}%`}               // Legacy : 33% funded / 50% challenge
-                </div>
+                <div className={styles.kpiValue}>≤ 50%</div>
                 <div className={styles.kpiMeta}>
                   <span>{isFr ? "Meilleure journée" : "Best day"}</span>
                   <span>{isFr ? "du profit total" : "of total profit"}</span>
