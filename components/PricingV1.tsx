@@ -199,28 +199,26 @@ export default function PricingV1() {
           </div>
         )}
 
-        {/* Patch promo -90% — visible uniquement en mode Pack ×3 */}
-        {isPack3 && (
-          <div style={{
-            position:      "absolute",
-            top:           -6,
-            right:         20,
-            transform:     "rotate(12deg)",
-            zIndex:        3,
-            pointerEvents: "none",
-            background:    "linear-gradient(135deg, #ff6600 0%, #ff9900 100%)",
-            color:         "#ffffff",
-            fontSize:      10,
-            fontWeight:    900,
-            letterSpacing: "0.5px",
-            padding:       "2px 9px",
-            borderRadius:  5,
-            border:        "1px solid rgba(255,180,0,0.50)",
-            boxShadow:     "0 0 12px rgba(255,138,0,0.80), 0 0 5px rgba(255,138,0,0.50)",
-          }}>
-            -90%
-          </div>
-        )}
+        {/* Patch promo -90% — toujours visible, à cheval sur le bouton Pack ×3 */}
+        <div style={{
+          position:      "absolute",
+          top:           88,
+          right:         -6,
+          transform:     "rotate(12deg)",
+          zIndex:        3,
+          pointerEvents: "none",
+          background:    "linear-gradient(135deg, #ff6600 0%, #ff9900 100%)",
+          color:         "#ffffff",
+          fontSize:      10,
+          fontWeight:    900,
+          letterSpacing: "0.5px",
+          padding:       "2px 9px",
+          borderRadius:  5,
+          border:        "1px solid rgba(255,180,0,0.50)",
+          boxShadow:     "0 0 12px rgba(255,138,0,0.80), 0 0 5px rgba(255,138,0,0.50)",
+        }}>
+          -90%
+        </div>
 
         {/* En-tête — taille de compte + bouton "i" */}
         <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.09)" }}>
