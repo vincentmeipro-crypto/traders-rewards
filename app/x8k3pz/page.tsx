@@ -223,7 +223,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 const card = (children: React.ReactNode, style?: React.CSSProperties) => (
-  <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
+  <div className="admin-card" style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "20px 24px", ...style }}>{children}</div>
 );
 
 const badge = (label: string, color: string) => (
@@ -914,9 +914,9 @@ function AdminPageInner() {
   return (
     <>
       {/* ── MAIN ── */}
-      <div style={{ flex: 1, backgroundColor: "#050505", color: "#fff", paddingBottom: isMobile ? 70 : 0 }}>
+      <div className="admin-workspace" style={{ flex: 1, backgroundColor: "#050505", color: "#fff", paddingBottom: isMobile ? 70 : 0 }}>
         {/* Header */}
-        <div style={{ backgroundColor: "#0c0c0c", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
+        <div className="admin-topbar" style={{ backgroundColor: "#0c0c0c", borderBottom: "1px solid rgba(255,255,255,0.08)", padding: isMobile ? "12px 16px" : "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10 }}>
           <div>
             <div style={{ fontSize: isMobile ? 16 : 20, fontWeight: 800, color: "#fff" }}>{TAB_LABELS[tab] ?? tab}</div>
           </div>

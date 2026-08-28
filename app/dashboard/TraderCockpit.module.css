@@ -11,10 +11,10 @@
 .root * { box-sizing: border-box; }
 
 .card {
-  background: linear-gradient(145deg, rgba(17, 21, 25, .98), rgba(8, 11, 14, .98));
+  background: #1d2024;
   border: 1px solid rgba(255, 255, 255, .085);
   border-radius: 18px;
-  box-shadow: 0 22px 50px rgba(0, 0, 0, .22);
+  box-shadow: none;
   overflow: hidden;
 }
 
@@ -24,10 +24,8 @@
   margin: 5px 0 0;
   font-size: 30px;
   letter-spacing: -1px;
-  color: transparent;
-  background: linear-gradient(105deg, #71757a 0%, #fff 30%, #9da1a5 62%, #f2f3f4 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: #f7f8fa;
+  background: none;
 }
 .accountRow { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-top: 9px; }
 .accountSelect { appearance: none; background: #111820; color: #fff; border: 1px solid rgba(156,207,234, .3); border-radius: 10px; padding: 9px 13px; font: 700 12px inherit; cursor: pointer; }
@@ -51,7 +49,7 @@
   transition: .18s ease;
 }
 .button:hover { border-color: rgba(156,207,234, .45); background: rgba(156,207,234, .08); transform: translateY(-1px); }
-.buttonPrimary { background: var(--blue); border-color: var(--blue); color: #02070b; box-shadow: 0 8px 24px rgba(156,207,234, .18); }
+.buttonPrimary { background: #b9dceb; border-color: rgba(255,255,255,.28); color: #071014; box-shadow: none; }
 .coach { display: flex; align-items: center; gap: 14px; padding: 16px 18px; margin-bottom: 14px; border-radius: 16px; border: 1px solid rgba(156,207,234, .22); background: linear-gradient(90deg, rgba(156,207,234, .115), rgba(156,207,234, .035) 65%, transparent); }
 .coachIcon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 13px; color: var(--blue); background: rgba(156,207,234, .12); flex: 0 0 auto; }
 .coachCopy { flex: 1; min-width: 0; }
@@ -60,7 +58,7 @@
 
 .kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
 .kpi { padding: 14px; min-height: 112px; display: flex; flex-direction: column; justify-content: flex-start; }
-.kpiRule { background: linear-gradient(145deg, rgba(22, 27, 31, .98), rgba(9, 12, 14, .98)); border-color: rgba(156, 207, 234, .15); }
+.kpiRule { background: #202428; border-color: rgba(156, 207, 234, .15); }
 .kpiTop { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; min-height: 28px; }
 .kpiLabel { color: #9CCFEA; font-size: 10px; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; }
 .kpiValue { font-size: 22px; font-weight: 920; letter-spacing: -.8px; margin: 9px 0 4px; }
@@ -79,18 +77,16 @@
 .stepText { position: relative; z-index: 1; }
 .stepActive, .stepDone { color: #eef0f2; }
 .stepActive .stepText, .stepDone .stepText {
-  color: transparent;
-  background: linear-gradient(105deg, #777b80, #fff 34%, #a2a5a8 68%, #f0f1f2);
-  background-clip: text;
-  -webkit-background-clip: text;
+  color: #f7f8fa;
+  background: none;
 }
 .stepActive .stepDot, .stepDone .stepDot {
   color: #07090a;
-  background: linear-gradient(125deg, #71757a, #fff 38%, #9b9fa3 67%, #eceeef);
+  background: #b9dceb;
   border-color: rgba(255,255,255,.7);
-  box-shadow: 0 0 18px rgba(255,255,255,.13), inset 0 1px rgba(255,255,255,.75);
+  box-shadow: none;
 }
-.stepDone::after { background: linear-gradient(90deg, #8a8e92, #f5f6f7 45%, #767a7e); box-shadow: 0 0 8px rgba(255,255,255,.1); }
+.stepDone::after { background: rgba(185,220,235,.48); box-shadow: none; }
 
 .mainGrid { display: grid; grid-template-columns: minmax(0, 1.72fr) minmax(300px, .78fr); gap: 10px; margin-bottom: 10px; }
 .mainGridSingle { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin-bottom: 10px; }
@@ -121,8 +117,8 @@
   gap: 11px;
   padding: 16px 18px;
   color: #070809;
-  background: linear-gradient(112deg, #5f8ca4 0%, #d5f1ff 20%, #8fc4df 43%, #ecf9ff 62%, #74a9c4 82%, #c4e9fa 100%);
-  box-shadow: inset 0 1px rgba(255,255,255,.9), inset -1px 0 rgba(24,61,80,.3), 0 8px 24px rgba(156,207,234,.1);
+  background: #b9dceb;
+  box-shadow: none;
 }
 .performanceBandTitle > svg { flex: 0 0 auto; }
 .performanceBandTitle span, .performanceBandTitle strong, .performanceBandTitle small { display: block; }
@@ -201,15 +197,15 @@
 
 .subTabBtnActive {
   color: #02070b;
-  background: linear-gradient(112deg, #5f8ca4 0%, #d5f1ff 20%, #8fc4df 43%, #ecf9ff 62%, #74a9c4 82%, #c4e9fa 100%);
+  background: #b9dceb;
   border-bottom-color: #9CCFEA;
   border-radius: 8px 8px 0 0;
-  box-shadow: inset 0 1px rgba(255,255,255,.9), inset -1px 0 rgba(24,61,80,.3);
+  box-shadow: none;
 }
 
 .subTabBtnActive:hover {
   color: #02070b;
-  background: linear-gradient(112deg, #6796af 0%, #e0f5ff 20%, #9bcee7 43%, #f4fcff 62%, #7fb4ce 82%, #cceefd 100%);
+  background: #c9e8f5;
 }
 
 .accountIdBadge {

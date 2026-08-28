@@ -44,14 +44,14 @@
 }
 
 .toolNavBtnActive {
-  background: linear-gradient(112deg, #5f8ca4 0%, #d5f1ff 20%, #8fc4df 43%, #ecf9ff 62%, #74a9c4 82%, #c4e9fa 100%);
+  background: #b9dceb;
   border-color: #9CCFEA;
   color: #02070b;
-  box-shadow: inset 0 1px rgba(255,255,255,.9), inset -1px 0 rgba(24,61,80,.3), 0 8px 24px rgba(156,207,234,.08);
+  box-shadow: none;
 }
 
 .toolNavBtnActive:hover {
-  background: linear-gradient(112deg, #6796af 0%, #e0f5ff 20%, #9bcee7 43%, #f4fcff 62%, #7fb4ce 82%, #cceefd 100%);
+  background: #c9e8f5;
   border-color: #b9e7ff;
   color: #02070b;
 }
@@ -77,10 +77,10 @@
 /* ── Tool card ───────────────────────────────────────────────────────────── */
 
 .toolCard {
-  background: linear-gradient(145deg, rgba(17, 21, 25, .98), rgba(8, 11, 14, .98));
+  background: #1d2024;
   border: 1px solid rgba(255, 255, 255, .085);
   border-radius: 18px;
-  box-shadow: 0 22px 50px rgba(0, 0, 0, .22);
+  box-shadow: none;
   overflow: hidden;
   padding: 22px;
 }

@@ -175,7 +175,7 @@ function SidebarInner() {
 // ── Shell layout ──────────────────────────────────────────────
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{
+    <div className="admin-shell" style={{
       display: "flex", minHeight: "100vh",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       color: "#fff", background: "#050505",

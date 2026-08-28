@@ -720,3 +720,227 @@ body {
     transition: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   PREMIUM SYSTEM 2026 — site public · cockpit trader · admin
+   Surfaces charbon, lignes fines, typographie éditoriale, bleu calme.
+   ══════════════════════════════════════════════════════════════════ */
+:root {
+  --premium-canvas: #0a0c0f;
+  --premium-canvas-deep: #07090b;
+  --premium-surface: #1d2024;
+  --premium-surface-soft: #171a1e;
+  --premium-surface-raised: #22262a;
+  --premium-line: rgba(255,255,255,.085);
+  --premium-line-strong: rgba(255,255,255,.14);
+  --premium-text: #f7f8fa;
+  --premium-text-soft: rgba(247,248,250,.68);
+  --premium-text-muted: rgba(247,248,250,.42);
+  --premium-blue: #b9dceb;
+  --premium-blue-strong: #9ccfea;
+  --premium-radius: 18px;
+  --premium-shadow: 0 22px 60px rgba(0,0,0,.24);
+}
+
+body {
+  background: var(--premium-canvas) !important;
+  color: var(--premium-text);
+  font-family: var(--font-sans), var(--font-outfit), system-ui, -apple-system, sans-serif;
+}
+
+/* Public website */
+.page-main,
+.page-main > section,
+.page-main > div,
+.page-main > footer {
+  background-color: var(--premium-canvas) !important;
+}
+
+.page-main h1,
+.page-main h2,
+.page-main h3 {
+  letter-spacing: -.035em !important;
+  text-transform: none !important;
+}
+
+.page-main h2 { font-weight: 650 !important; }
+.page-main h3 { font-weight: 620 !important; }
+
+.page-main .card,
+.page-main .rules-surface,
+.page-main .faq-item,
+.page-main .pwa-stage {
+  background: var(--premium-surface) !important;
+  border: 1px solid var(--premium-line) !important;
+  border-radius: var(--premium-radius) !important;
+  box-shadow: none !important;
+}
+
+.page-main .card:hover,
+.page-main .faq-item:hover,
+.page-main .rules-surface:hover {
+  background: var(--premium-surface-raised) !important;
+  border-color: var(--premium-line-strong) !important;
+  transform: none !important;
+}
+
+.page-main .btn-primary,
+.page-main a.btn-primary {
+  background: var(--premium-blue) !important;
+  color: #071014 !important;
+  border: 1px solid rgba(255,255,255,.28) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;
+  letter-spacing: .1px !important;
+  text-transform: none !important;
+}
+
+.page-main .btn-primary:hover,
+.page-main a.btn-primary:hover {
+  background: #c9e8f5 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Trader dashboard */
+.dashboard-shell {
+  background: var(--premium-canvas) !important;
+  color: var(--premium-text);
+  font-family: var(--font-sans), var(--font-outfit), system-ui, sans-serif !important;
+}
+
+.dashboard-shell .dash-chrome-title {
+  width: auto;
+  color: var(--premium-text);
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  letter-spacing: -.035em;
+  font-weight: 650 !important;
+}
+
+.dashboard-shell .card {
+  background: var(--premium-surface) !important;
+  border: 1px solid var(--premium-line) !important;
+  border-radius: var(--premium-radius) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-shell .card:hover {
+  background: var(--premium-surface-raised) !important;
+  border-color: var(--premium-line-strong) !important;
+  transform: none !important;
+}
+
+.dashboard-shell .btn-primary,
+.dashboard-shell .dash-trader-btn {
+  background: var(--premium-blue) !important;
+  color: #071014 !important;
+  border: 1px solid rgba(255,255,255,.28) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  text-transform: none !important;
+  letter-spacing: .1px !important;
+}
+
+.dashboard-shell .dash-trader-shine { display: none; }
+.dashboard-shell .dash-trader-btn:hover,
+.dashboard-shell .btn-primary:hover {
+  background: #c9e8f5 !important;
+  filter: none !important;
+  transform: translateY(-1px);
+  box-shadow: none !important;
+}
+
+.dashboard-shell input:not([type="file"]),
+.dashboard-shell select,
+.dashboard-shell textarea {
+  background: var(--premium-surface-soft) !important;
+  border-color: var(--premium-line) !important;
+  border-radius: 10px !important;
+}
+
+/* Admin shell and every nested admin screen */
+.admin-shell {
+  background: var(--premium-canvas-deep) !important;
+  color: var(--premium-text);
+  font-family: var(--font-sans), var(--font-outfit), system-ui, sans-serif !important;
+}
+
+.admin-shell aside {
+  background: #0d1013 !important;
+  border-right: 1px solid var(--premium-line) !important;
+}
+
+.admin-workspace,
+.admin-shell main {
+  background: var(--premium-canvas) !important;
+}
+
+.admin-topbar {
+  background: rgba(13,16,19,.94) !important;
+  border-bottom: 1px solid var(--premium-line) !important;
+  backdrop-filter: blur(18px);
+}
+
+.admin-card {
+  background: var(--premium-surface) !important;
+  border: 1px solid var(--premium-line) !important;
+  border-radius: var(--premium-radius) !important;
+  box-shadow: none !important;
+}
+
+.admin-shell h1,
+.admin-shell h2,
+.admin-shell h3 {
+  color: var(--premium-text);
+  letter-spacing: -.03em !important;
+  text-transform: none !important;
+}
+
+.admin-shell h1 { font-weight: 650 !important; }
+
+.admin-shell input:not([type="file"]),
+.admin-shell select,
+.admin-shell textarea {
+  background: var(--premium-surface-soft) !important;
+  color: var(--premium-text) !important;
+  border-color: var(--premium-line) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+
+.admin-shell input:focus,
+.admin-shell select:focus,
+.admin-shell textarea:focus {
+  border-color: rgba(185,220,235,.52) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(185,220,235,.07) !important;
+}
+
+.admin-shell table,
+.admin-shell [role="table"] {
+  border-color: var(--premium-line) !important;
+}
+
+.admin-shell thead,
+.admin-shell [role="rowgroup"]:first-child {
+  background: rgba(255,255,255,.025) !important;
+}
+
+.admin-shell button:not([data-variant="danger"]),
+.admin-shell a[class*="button"] {
+  box-shadow: none !important;
+}
+
+.admin-shell ::-webkit-scrollbar,
+.dashboard-shell ::-webkit-scrollbar { width: 7px; height: 7px; }
+.admin-shell ::-webkit-scrollbar-thumb,
+.dashboard-shell ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.13);
+  border-radius: 99px;
+}
+
+@media (max-width: 767px) {
+  :root { --premium-radius: 15px; }
+  .page-main h2 { letter-spacing: -.025em !important; }
+}
