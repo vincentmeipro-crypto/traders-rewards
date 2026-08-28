@@ -674,9 +674,9 @@ export default function TraderCockpit({
             <div className={`${styles.card} ${styles.kpi}`}>
               <div className={styles.kpiTop}><span className={styles.kpiLabel}>TRAILING DD EOD</span><ShieldCheck color={BLUE} size={17} /></div>
               <div>
-                <div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalBuffer)}</div>
+                <div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalLimitUsd)}</div>
                 <div className={styles.kpiMeta}>
-                  <span>{totalRiskUsed.toFixed(0)}% {isFr ? "utilisé" : "used"}</span>
+                  <span>{isFr ? "Marge" : "Buffer"} {money(totalBuffer)}</span>
                   <span>{isFr ? "Plancher" : "Floor"} {money(totalFloor)}</span>
                 </div>
                 <Meter value={totalRiskUsed} color={riskColor(totalRiskUsed)} />
