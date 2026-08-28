@@ -41,7 +41,7 @@ export default function Hero() {
   if (!mounted) return null;
 
   // ── i18n ────────────────────────────────────────────────────
-  const pill    = L("Offre de lancement",    "Oferta de lanzamiento", "Launch offer");
+  const pill    = L("Programme éducatif trading simulé", "Programa educativo de trading simulado", "Simulated trading education program");
   const h1L1    = L("Un seul Challenge.", "Un solo Challenge.", "One Challenge.");
   const h1L2pre = "5 ";
   const h1L2acc = "Rewards.";
@@ -60,6 +60,11 @@ export default function Hero() {
           from { opacity: 0; transform: translateY(14px); }
           to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes heroDotTwinkle {
+          0%, 100% { opacity: 0.48; box-shadow: 0 0 0 rgba(156,207,234,0); transform: scale(0.82); }
+          50% { opacity: 1; box-shadow: 0 0 10px rgba(156,207,234,0.92), 0 0 18px rgba(156,207,234,0.42); transform: scale(1.12); }
+        }
+        .h-pill-dot { animation: heroDotTwinkle 1.8s ease-in-out infinite; }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            CTA PRINCIPAL — plaque métal chrome poli
@@ -245,7 +250,7 @@ export default function Hero() {
             paddingBottom:  isMobile ? 40 : 72,
           }}>
 
-            {/* ── Badge OFFRE DE LANCEMENT ── */}
+            {/* ── Badge programme éducatif français ── */}
             <div style={{ marginBottom: isMobile ? 16 : 22, animation: "heroFadeUp 0.44s ease both" }}>
               <span style={{
                 display:      "inline-flex",
@@ -256,7 +261,7 @@ export default function Hero() {
                 borderRadius: 100,
                 padding:      isMobile ? "6px 16px" : "7px 20px",
               }}>
-                <span style={{
+                <span className="h-pill-dot" style={{
                   display:      "inline-block",
                   width:        6,
                   height:       6,
@@ -264,6 +269,7 @@ export default function Hero() {
                   background:   ACCENT,
                   flexShrink:   0,
                 }} />
+                <span aria-hidden="true" style={{ fontSize: 13, lineHeight: 1 }}>🇫🇷</span>
                 <span style={{
                   fontSize:      10,
                   fontWeight:    600,
