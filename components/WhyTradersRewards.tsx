@@ -60,9 +60,9 @@ interface Feature {
 
 const FEATURES_FR: Feature[] = [
   {
-    num: "01", metric: "19€",
-    title: "PETIT PRIX",
-    desc:  "Accédez au Challenge Traders Rewards à partir de 19€ avec trois tailles de comptes simulés : 25K, 50K et 100K USD.",
+    num: "01", metric: "90%",
+    title: "SPLIT 90%",
+    desc:  "Conservez 90% de chaque Reward approuvée. Traders Rewards retient uniquement 10% du montant éligible.",
     icon: <IconTag />,
   },
   {
@@ -93,9 +93,9 @@ const FEATURES_FR: Feature[] = [
 
 const FEATURES_EN: Feature[] = [
   {
-    num: "01", metric: "€19",
-    title: "LOW ENTRY PRICE",
-    desc:  "Access the Traders Rewards Challenge from €19 with three simulated account sizes: 25K, 50K and 100K USD.",
+    num: "01", metric: "90%",
+    title: "90% SPLIT",
+    desc:  "Keep 90% of every approved Reward. Traders Rewards retains only 10% of the eligible amount.",
     icon: <IconTag />,
   },
   {
@@ -126,9 +126,9 @@ const FEATURES_EN: Feature[] = [
 
 const FEATURES_ES: Feature[] = [
   {
-    num: "01", metric: "19€",
-    title: "PRECIO ACCESIBLE",
-    desc:  "Accede al Challenge Traders Rewards desde 19€ con tres tamaños de cuenta simulados: 25K, 50K y 100K USD.",
+    num: "01", metric: "90%",
+    title: "SPLIT 90%",
+    desc:  "Conserva el 90% de cada Reward aprobada. Traders Rewards retiene únicamente el 10% del importe elegible.",
     icon: <IconTag />,
   },
   {

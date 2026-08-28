@@ -254,7 +254,7 @@ section("buildFundedEmail — Compte Reward 100K");
   const { subject, html } = buildFundedEmail({
     accountSize: "$100,000",
     mt5:         FAKE_MT5,
-    splitPct:    100,
+    splitPct:    90,
     siteUrl,
     logoUrl,
   });
@@ -278,7 +278,7 @@ section("buildFundedEmail — Compte Reward 50K");
 {
   const { html } = buildFundedEmail({
     accountSize: "$50,000",
-    splitPct:    100,
+    splitPct:    90,
     siteUrl,
     logoUrl,
   });
@@ -291,7 +291,7 @@ section("buildFundedEmail — Compte Reward 25K");
 {
   const { html } = buildFundedEmail({
     accountSize: "$25,000",
-    splitPct:    100,
+    splitPct:    90,
     siteUrl,
     logoUrl,
   });
@@ -443,7 +443,7 @@ section("buildRewardCertificateEmail — Reward #3");
     grossAmount: 700,
     rewardLevel: 3,
     date:        "27 août 2026",
-    splitPct:    100,
+    splitPct:    90,
     siteUrl,
     logoUrl,
   });
@@ -482,11 +482,11 @@ section("Vocabulaire interdit — scan global");
     buildPhase2Email({ accountSize: "$50,000", mt5: FAKE_MT5, siteUrl, logoUrl }),
     buildFailedEmail({ accountSize: "$50,000", reason: "total_drawdown", siteUrl, logoUrl }),
     buildFailedEmail({ accountSize: "$50,000", reason: "total_drawdown", phase: "funded", siteUrl, logoUrl }),
-    buildFundedEmail({ accountSize: "$50,000", mt5: FAKE_MT5, splitPct: 100, siteUrl, logoUrl }),
+    buildFundedEmail({ accountSize: "$50,000", mt5: FAKE_MT5, splitPct: 90, siteUrl, logoUrl }),
     buildDailyUpdateEmail({ accountSize: "$50,000", phase: "challenger", balance: 52000, profitPct: 4.0, tradingDays: 5, siteUrl, logoUrl }),
     buildDailyUpdateEmail({ accountSize: "$50,000", phase: "funded", balance: 52000, profitPct: 2.1, tradingDays: 8, siteUrl, logoUrl }),
     buildChallengeCertificateEmail({ firstName, lastName, accountSize: "$50,000", date: "27 août 2026", siteUrl, logoUrl }),
-    buildRewardCertificateEmail({ firstName, lastName, accountSize: "$50,000", grossAmount: 600, rewardLevel: 2, date: "27 août 2026", splitPct: 100, siteUrl, logoUrl }),
+    buildRewardCertificateEmail({ firstName, lastName, accountSize: "$50,000", grossAmount: 600, rewardLevel: 2, date: "27 août 2026", splitPct: 90, siteUrl, logoUrl }),
     buildRewardProgressionEmail({ firstName, accountSize: "$50,000", rewardPaid: 1, rewardAmount: "$500", siteUrl, logoUrl }),
     buildRewardProgressionEmail({ firstName, accountSize: "$50,000", rewardPaid: 5, rewardAmount: "$850", allRewardAmounts: ["$500","$600","$700","$750","$850"], totalCumulatedUsd: 3400, siteUrl, logoUrl }),
     buildApologyEmail({ firstName, accountSize: "$50,000", phase: "funded", mt5: FAKE_MT5, siteUrl, logoUrl }),

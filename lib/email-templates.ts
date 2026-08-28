@@ -1171,7 +1171,7 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
       });
     }
     case "funded":
-      return buildFundedEmail({ accountSize, mt5: FAKE_MT5, splitPct: 100, siteUrl, logoUrl });
+      return buildFundedEmail({ accountSize, mt5: FAKE_MT5, splitPct: 90, siteUrl, logoUrl });
     case "daily_update": {
       const variants: Record<string, { phase: string; rewardLevel?: number }> = {
         challenger:      { phase: "phase1" },
@@ -1222,7 +1222,7 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
     case "challenge_certificate":
       return buildChallengeCertificateEmail({ firstName, lastName, accountSize, date: "27 août 2026", siteUrl, logoUrl });
     case "reward_certificate":
-      return buildRewardCertificateEmail({ firstName, lastName, accountSize, grossAmount: 1_750, rewardLevel: 5, date: "27 août 2026", netAmountEur: 1_600, splitPct: 100, mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
+      return buildRewardCertificateEmail({ firstName, lastName, accountSize, grossAmount: 1_750, rewardLevel: 5, date: "27 août 2026", netAmountEur: 1_575, splitPct: 90, mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "reward_progression":
       return buildRewardProgressionEmail({ firstName, accountSize, rewardPaid: 2, rewardAmount: "$850", mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "apology":

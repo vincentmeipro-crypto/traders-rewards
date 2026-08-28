@@ -79,8 +79,8 @@ export default function HeroBenefits() {
     },
     {
       icon:  <IconAward />,
-      title: L("100% DE TES REWARDS","100% DE TUS REWARDS","100% OF YOUR REWARDS"),
-      sub:   L("Sur une Reward approuvée","En un Reward aprobado","On an approved Reward"),
+      title: L("SPLIT 90%","SPLIT 90%","90% SPLIT"),
+      sub:   L("Sur chaque Reward approuvée","En cada Reward aprobada","On every approved Reward"),
     },
     {
       icon:  <IconTag />,

@@ -44,7 +44,7 @@ export async function PATCH(req: NextRequest) {
         .eq("id", data.challenge_id).single();
 
       if (challenge) {
-        // Nouveau modèle Rewards V1 : 100% du profit éligible (pas de split).
+        // Modèle Rewards V1 : le trader conserve 90% du profit éligible.
         // Les pourcentages historiques restent applicables aux anciens contrats.
         const snapshot = challenge.rules_snapshot && typeof challenge.rules_snapshot === "object"
           ? challenge.rules_snapshot as { product_slug?: string; rules?: { dd_model?: string } }
@@ -53,7 +53,7 @@ export async function PATCH(req: NextRequest) {
           || snapshot?.rules?.dd_model === "trailing_eod_lock"
           || snapshot?.product_slug?.startsWith("rewards-") === true;
         const is1Step = challenge.model?.toLowerCase().replace(/[\s-]/g, "").includes("1step");
-        const splitPct = isRewardsV1 ? 1 : is1Step ? 0.90 : 0.80;
+        const splitPct = isRewardsV1 ? 0.90 : is1Step ? 0.90 : 0.80;
         const grossAmount = data.amount;
         const netAmount = parseFloat((grossAmount * splitPct).toFixed(2));
         await admin.from("payouts").update({ amount: netAmount }).eq("id", id);

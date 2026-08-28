@@ -159,12 +159,11 @@ export default function Hero() {
 
         /* Sceau de confiance — promesse Reward automatique */
         .h-reward-seal {
-          position: absolute;
-          right: 24px;
-          bottom: 22px;
+          position: relative;
           z-index: 4;
           width: 112px;
           height: 112px;
+          flex: 0 0 112px;
           border-radius: 50%;
           border: 1px solid rgba(185,220,235,0.46);
           background: #b9dceb;
@@ -185,13 +184,48 @@ export default function Hero() {
           border-radius: inherit;
           pointer-events: none;
         }
+        .h-seal-row {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 14px;
+          margin-top: 18px;
+        }
+        .h-split-seal {
+          position: relative;
+          z-index: 4;
+          width: 112px;
+          height: 112px;
+          flex: 0 0 112px;
+          border-radius: 50%;
+          border: 1px solid rgba(185,220,235,0.34);
+          background: #171b1f;
+          color: #f7f8fa;
+          box-shadow: 0 0 0 6px rgba(185,220,235,0.035);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          animation: heroFadeUp 0.52s ease 0.28s both;
+        }
+        .h-split-seal::before {
+          content: "";
+          position: absolute;
+          inset: 6px;
+          border: 1px solid rgba(185,220,235,0.18);
+          border-radius: inherit;
+          pointer-events: none;
+        }
+        .h-path-label { margin-right: auto; }
         @media (max-width: 899px) {
-          .h-reward-seal {
-            right: 10px;
-            bottom: 14px;
+          .h-reward-seal, .h-split-seal {
             width: 96px;
             height: 96px;
+            flex-basis: 96px;
           }
+          .h-seal-row { gap: 12px; padding: 0 10px; }
+          .h-path-label { display: none; }
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -590,38 +624,43 @@ export default function Hero() {
                 </div>
               </div>
 
-              {/* PARCOURS 100K — bas droite */}
-              <div style={{
-                textAlign:     "left",
-                marginTop:     isMobile ? 12 : 16,
-                fontSize:      8,
-                fontWeight:    900,
-                letterSpacing: "2.8px",
-                textTransform: "uppercase",
-                color:         "rgba(105,197,253,0.26)",
-              }}>
-                PARCOURS 100K
-              </div>
+              <div className="h-seal-row">
+                <div className="h-path-label" style={{
+                  fontSize: 8, fontWeight: 900, letterSpacing: "2.8px",
+                  textTransform: "uppercase", color: "rgba(105,197,253,0.26)",
+                }}>
+                  PARCOURS 100K
+                </div>
 
-              {/* Sceau prioritaire — promesse de paiement */}
-              <div
-                className="h-reward-seal"
-                aria-label={L(
-                  "Reward payé automatiquement sous 48 heures",
-                  "Reward pagada automáticamente en 48 horas",
-                  "Reward paid automatically within 48 hours"
-                )}
-              >
-                <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 850, lineHeight: 1, marginBottom: 4 }}>✓</span>
-                <span style={{ fontSize: isMobile ? 8 : 9, fontWeight: 750, lineHeight: 1.08, maxWidth: 78 }}>
-                  {L("Reward automatique", "Reward automática", "Automatic Reward")}
-                </span>
-                <span style={{ fontSize: isMobile ? 20 : 24, fontWeight: 760, letterSpacing: "-1px", lineHeight: 1, marginTop: 5 }}>
-                  48H
-                </span>
-                <span style={{ fontSize: 7, fontWeight: 700, opacity: 0.64, marginTop: 2 }}>
-                  {L("MAXIMUM", "MÁXIMO", "MAXIMUM")}
-                </span>
+                {/* Split trader */}
+                <div className="h-split-seal" aria-label={L("Split trader de 90 pour cent", "Split trader del 90 por ciento", "90 percent trader split")}>
+                  <span style={{ fontSize: isMobile ? 8 : 9, fontWeight: 750, lineHeight: 1 }}>SPLIT</span>
+                  <span style={{ fontSize: isMobile ? 24 : 29, fontWeight: 780, color: "#b9dceb", letterSpacing: "-1.4px", lineHeight: 1, marginTop: 5 }}>90%</span>
+                  <span style={{ fontSize: 7, fontWeight: 700, color: "rgba(247,248,250,0.48)", marginTop: 4 }}>
+                    {L("POUR LE TRADER", "PARA EL TRADER", "FOR THE TRADER")}
+                  </span>
+                </div>
+
+                {/* Promesse de paiement */}
+                <div
+                  className="h-reward-seal"
+                  aria-label={L(
+                    "Reward payé automatiquement sous 48 heures",
+                    "Reward pagada automáticamente en 48 horas",
+                    "Reward paid automatically within 48 hours"
+                  )}
+                >
+                  <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 850, lineHeight: 1, marginBottom: 4 }}>✓</span>
+                  <span style={{ fontSize: isMobile ? 8 : 9, fontWeight: 750, lineHeight: 1.08, maxWidth: 78 }}>
+                    {L("Reward automatique", "Reward automática", "Automatic Reward")}
+                  </span>
+                  <span style={{ fontSize: isMobile ? 20 : 24, fontWeight: 760, letterSpacing: "-1px", lineHeight: 1, marginTop: 5 }}>
+                    48H
+                  </span>
+                  <span style={{ fontSize: 7, fontWeight: 700, opacity: 0.64, marginTop: 2 }}>
+                    {L("MAXIMUM", "MÁXIMO", "MAXIMUM")}
+                  </span>
+                </div>
               </div>
 
             </div>{/* fin dark card */}
