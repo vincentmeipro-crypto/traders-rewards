@@ -350,9 +350,21 @@ export async function sendDailyUpdateEmail(
   balance: number,
   profitPct: number,
   tradingDays: number,
-  opts?: { model?: string; highestBalance?: number; totalLimit?: number; startBalance?: number },
-  log?: { userId?: string; challengeId?: string },
+  opts?: Omit<import("@/lib/email-templates").DailyUpdateParams, "accountSize" | "phase" | "balance" | "profitPct" | "tradingDays" | "siteUrl" | "logoUrl">,
+  log?: { userId?: string; challengeId?: string; tradingDayId?: string },
 ) {
+  const eventKey = log?.challengeId && log?.tradingDayId
+    ? `daily_update:${log.challengeId}:${log.tradingDayId}`
+    : undefined;
+  if (eventKey) {
+    const admin = createAdminClient();
+    const { data: existing } = await admin.from("email_logs")
+      .select("id")
+      .eq("event_key", eventKey)
+      .eq("status", "sent")
+      .limit(1);
+    if (existing?.length) return;
+  }
   const { siteUrl, logoUrl } = await getBrandingConfig();
   const { subject, html } = buildDailyUpdateEmail({
     accountSize,
@@ -360,10 +372,7 @@ export async function sendDailyUpdateEmail(
     balance,
     profitPct,
     tradingDays,
-    model:          opts?.model,
-    highestBalance: opts?.highestBalance,
-    totalLimit:     opts?.totalLimit,
-    startBalance:   opts?.startBalance,
+    ...opts,
     siteUrl,
     logoUrl,
   });
@@ -374,6 +383,7 @@ export async function sendDailyUpdateEmail(
     html,
     userId:      log?.userId,
     challengeId: log?.challengeId,
+    eventKey,
   });
 }
 

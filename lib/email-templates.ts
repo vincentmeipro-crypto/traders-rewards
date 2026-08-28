@@ -707,6 +707,7 @@ export type DailyUpdateParams = {
   startBalance?:   number;
   highestBalance?: number;
   totalLimit?:     number;   // DD % (ex: 5 pour 5%)
+  ddFloorUsd?:     number;   // plancher réel fourni par le moteur V1
 
   // Données enrichies
   equity?:          number;
@@ -736,7 +737,7 @@ export type DailyUpdateParams = {
 export function buildDailyUpdateEmail(p: DailyUpdateParams): { subject: string; html: string } {
   const {
     accountSize, phase, balance, profitPct, tradingDays,
-    highestBalance, totalLimit, startBalance,
+    highestBalance, totalLimit, ddFloorUsd, startBalance,
     rewardLevel,
     equity, dailyProfitUsd, profitUsd, consistency, bestDayUsd, tradesCount, accountStatus,
     calendarDaysElapsed, calendarDaysMax, profitTargetPct, profitTargetUsdParam, minTradingDays,
@@ -754,8 +755,8 @@ export function buildDailyUpdateEmail(p: DailyUpdateParams): { subject: string; 
   const startBal       = startBalance ?? balance;
   const profitUsdCalc  = profitUsd ?? (startBalance ? Math.round(balance - startBalance) : null);
   const ddUsdFixed     = totalLimit ? Math.round(startBal * totalLimit / 100) : null;
-  const floor          = (highestBalance != null && ddUsdFixed != null)
-    ? Math.round(highestBalance - ddUsdFixed) : null;
+  const floor          = ddFloorUsd ?? ((highestBalance != null && ddUsdFixed != null)
+    ? Math.round(highestBalance - ddUsdFixed) : null);
   const distToFloor    = floor != null ? Math.max(0, Math.round(balance - floor)) : null;
   const targetUsd      = profitTargetUsdParam ?? (profitTargetPct ? Math.round(startBal * profitTargetPct / 100) : null);
   const distToTarget   = targetUsd != null && profitUsdCalc != null
@@ -1171,26 +1172,51 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
     }
     case "funded":
       return buildFundedEmail({ accountSize, mt5: FAKE_MT5, splitPct: 100, siteUrl, logoUrl });
-    case "daily_update":
+    case "daily_update": {
+      const variants: Record<string, { phase: string; rewardLevel?: number }> = {
+        challenger:      { phase: "phase1" },
+        compte_reward:   { phase: "funded", rewardLevel: 1 },
+        trader_reward_2: { phase: "funded", rewardLevel: 2 },
+        trader_reward_3: { phase: "funded", rewardLevel: 3 },
+        trader_reward_4: { phase: "funded", rewardLevel: 4 },
+        trader_reward_5: { phase: "funded", rewardLevel: 5 },
+      };
+      const variant = variants[previewModel ?? "challenger"] ?? variants.challenger;
+      const isChallenger = variant.phase === "phase1";
       return buildDailyUpdateEmail({
         accountSize,
-        phase:               "challenge",
+        ...variant,
         balance:             103_500,
         profitPct:           3.5,
         tradingDays:         4,
+        equity:              103_420,
+        dailyProfitUsd:      650,
+        profitUsd:           3_500,
+        bestDayUsd:          1_200,
         startBalance:        100_000,
         highestBalance:      104_200,
+        ddFloorUsd:          isChallenger ? 101_200 : 100_000,
         totalLimit:          3,
-        calendarDaysElapsed: 10,
-        calendarDaysMax:     30,
-        profitTargetPct:     6,
-        profitTargetUsdParam: 6_000,
-        minTradingDays:      2,
         consistency:         34.2,
         accountStatus:       "Conforme",
+        ...(isChallenger ? {
+          calendarDaysElapsed: 10,
+          calendarDaysMax: 30,
+          profitTargetPct: 6,
+          profitTargetUsdParam: 6_000,
+          minTradingDays: 2,
+        } : {
+          safetyNetUsd: 103_100,
+          rewardCapUsd: getV1RewardCap(100_000, variant.rewardLevel ?? 1) ?? undefined,
+          rewardThresholdUsd: computeRewardRequestThreshold(100_000, variant.rewardLevel ?? 1),
+          qualifyingDays: variant.rewardLevel === 1 ? 4 : undefined,
+          qualifyingDaysRequired: variant.rewardLevel === 1 ? 5 : undefined,
+          qualMinDayUsd: variant.rewardLevel === 1 ? getV1QualifyingDayMinUsd(100_000) : undefined,
+        }),
         siteUrl,
         logoUrl,
       });
+    }
     case "phase1_certificate":
       return buildPhase1CertificateEmail({ firstName, lastName, accountSize, date: "27 août 2026", siteUrl, logoUrl });
     case "challenge_certificate":

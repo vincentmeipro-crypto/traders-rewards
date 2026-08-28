@@ -594,8 +594,8 @@ export default function EmailCenterPage() {
     try {
       const model = type === "welcome"
         ? (previewModel.welcome ?? "2step")
-        : type === "failed"
-          ? (previewModel.failed ?? "challenger")
+        : type === "failed" || type === "daily_update"
+          ? (previewModel[type] ?? "challenger")
           : undefined;
       const res = await fetch("/api/admin/emails/preview", {
         method: "POST",
@@ -1020,6 +1020,23 @@ export default function EmailCenterPage() {
                       <select
                         value={previewModel.failed ?? "challenger"}
                         onChange={event => setPreviewModel(current => ({ ...current, failed: event.target.value }))}
+                        style={{ width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, color: "rgba(255,255,255,0.8)", fontSize: 12, padding: "8px 10px" }}
+                      >
+                        {FAILURE_PREVIEW_VARIANTS.map(variant => (
+                          <option key={variant.value} value={variant.value}>{variant.label}</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+
+                  {entry.type === "daily_update" && (
+                    <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase" as const }}>
+                        Niveau du compte
+                      </span>
+                      <select
+                        value={previewModel.daily_update ?? "challenger"}
+                        onChange={event => setPreviewModel(current => ({ ...current, daily_update: event.target.value }))}
                         style={{ width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, color: "rgba(255,255,255,0.8)", fontSize: 12, padding: "8px 10px" }}
                       >
                         {FAILURE_PREVIEW_VARIANTS.map(variant => (

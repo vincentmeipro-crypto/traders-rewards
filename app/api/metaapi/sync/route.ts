@@ -10,6 +10,14 @@ import {
   sendChallengeCertificateEmail,
   sendWelcomeEmail,
 } from "@/lib/mailer";
+import {
+  computeRewardRequestThreshold,
+  computeV1TrailingFloor,
+  getV1DdUsdByBalance,
+  getV1QualifyingDayMinUsd,
+  getV1RewardCap,
+  getV1SafetyNet,
+} from "@/lib/v1-engine";
 
 const FUNDED_GROUP: Record<string, string> = {
   "2step": "HAR\\MAN32\\demoG3",
@@ -294,12 +302,55 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   }
 
 
-  // 8. Email rÃ©cap journalier
+  // 8. Récap quotidien à la clôture broker (21:55–22:00 UTC).
+  // La clé eventKey garantit au plus un envoi par compte et journée de trading.
   const createdAt = challenge.created_at as string | null;
-  const alreadySentToday = lastSyncedAt ? new Date(lastSyncedAt) >= tradingDayStart : false;
   const purchasedToday   = createdAt ? new Date(createdAt) >= tradingDayStart : false;
-  if (!alreadySentToday && !purchasedToday) {
-    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, { model, highestBalance: newHighest, totalLimit, startBalance }, { userId, challengeId: id }).catch(() => {});
+  const inDailyRecapWindow = now.getUTCHours() === 21 && now.getUTCMinutes() >= 55;
+  if (inDailyRecapWindow && !purchasedToday) {
+    const { count: paidRewardsCount } = await admin.from("payouts")
+      .select("id", { count: "exact", head: true })
+      .eq("challenge_id", id)
+      .eq("status", "paid");
+    const rewardLevel = phase === "funded" ? Math.min(5, (paidRewardsCount ?? 0) + 1) : undefined;
+    const ddFloorUsd = computeV1TrailingFloor(
+      startBalance,
+      newHighest,
+      getV1DdUsdByBalance(startBalance),
+      phase === "funded" ? getV1SafetyNet(startBalance) : null,
+    );
+    const profitUsd = newBalance - startBalance;
+    const consistency = profitUsd > 0 ? Math.min(999, newBestDay / profitUsd * 100) : undefined;
+    const createdMs = createdAt ? new Date(createdAt).getTime() : now.getTime();
+    const calendarDaysElapsed = Math.max(1, Math.floor((now.getTime() - createdMs) / 86_400_000) + 1);
+    await sendDailyUpdateEmail(userEmail, accountSize, phase, newBalance, profitPct, newTradingDays, {
+      model,
+      rewardLevel,
+      equity: newEquity,
+      dailyProfitUsd: newBalance - dailyStartBalance,
+      profitUsd,
+      highestBalance: newHighest,
+      ddFloorUsd,
+      totalLimit,
+      startBalance,
+      bestDayUsd: newBestDay,
+      consistency,
+      accountStatus: "Conforme",
+      ...(phase === "funded" ? {
+        safetyNetUsd: getV1SafetyNet(startBalance),
+        rewardCapUsd: getV1RewardCap(startBalance, rewardLevel ?? 1) ?? undefined,
+        rewardThresholdUsd: computeRewardRequestThreshold(startBalance, rewardLevel ?? 1),
+        qualifyingDays: newTradingDays,
+        qualifyingDaysRequired: rewardLevel === 1 ? 5 : undefined,
+        qualMinDayUsd: rewardLevel === 1 ? getV1QualifyingDayMinUsd(startBalance) : undefined,
+      } : {
+        calendarDaysElapsed,
+        calendarDaysMax: 30,
+        profitTargetPct: 6,
+        profitTargetUsdParam: startBalance * 0.06,
+        minTradingDays: 2,
+      }),
+    }, { userId, challengeId: id, tradingDayId }).catch(() => {});
   }
 
   return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), profitTarget: effectiveProfitTarget, tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2), rawBalance: info.balance, rawEquity: newEquity, rawProfit: info.profit, prevBalance };
