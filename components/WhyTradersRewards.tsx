@@ -72,7 +72,7 @@ const FEATURES_FR: Feature[] = [
     icon: <IconTrendUp />,
   },
   {
-    num: "03", metric: "3–4%",
+    num: "03", metric: "EOD",
     title: "RÈGLES SIMPLES",
     desc:  "Trailing drawdown EOD de 4% sur les comptes 25K et 50K, et de 3% sur le 100K.",
     icon: <IconShield />,
@@ -105,7 +105,7 @@ const FEATURES_EN: Feature[] = [
     icon: <IconTrendUp />,
   },
   {
-    num: "03", metric: "3–4%",
+    num: "03", metric: "EOD",
     title: "SIMPLE RULES",
     desc:  "4% trailing EOD drawdown on 25K and 50K accounts, and 3% on the 100K.",
     icon: <IconShield />,
@@ -138,7 +138,7 @@ const FEATURES_ES: Feature[] = [
     icon: <IconTrendUp />,
   },
   {
-    num: "03", metric: "3–4%",
+    num: "03", metric: "EOD",
     title: "REGLAS SIMPLES",
     desc:  "Trailing drawdown EOD del 4% en las cuentas 25K y 50K, y del 3% en la 100K.",
     icon: <IconShield />,
