@@ -10,7 +10,6 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const ACCENT = "#9CCFEA"; // badge dot (gauche)
-const NEON   = "#69C5FD"; // pulse neon + montants (droite) + H1 accent
 
 // Parcours 100K — rendu top→bottom (05 en haut visuellement)
 const STEPS = [
@@ -42,12 +41,12 @@ export default function Hero() {
   if (!mounted) return null;
 
   // ── i18n ────────────────────────────────────────────────────
-  const pill    = L("OFFRE DE LANCEMENT",    "OFERTA DE LANZAMIENTO", "LAUNCH OFFER");
-  const h1L1    = "1 SEUL CHALLENGE";
+  const pill    = L("Offre de lancement",    "Oferta de lanzamiento", "Launch offer");
+  const h1L1    = L("Un seul Challenge.", "Un solo Challenge.", "One Challenge.");
   const h1L2pre = "5 ";
-  const h1L2acc = "REWARDS";
-  const ctaMain = L("CHOISIR MON CHALLENGE","ELEGIR MI CHALLENGE",   "CHOOSE MY CHALLENGE");
-  const ctaSub  = L("DÉCOUVRIR LE PARCOURS","DESCUBRIR EL CAMINO",   "EXPLORE THE JOURNEY");
+  const h1L2acc = "Rewards.";
+  const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
+  const ctaSub  = L("Découvrir le parcours","Descubrir el camino",   "Explore the journey");
 
   const promoFS = isMobile
     ? "clamp(2.4rem, 10vw, 3.6rem)"
@@ -62,66 +61,20 @@ export default function Hero() {
           to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ── Dot pulsant dans le badge ── */
-        @keyframes pillDot {
-          0%, 100% { box-shadow: 0 0 6px rgba(156,207,234,0.90); }
-          50%       { box-shadow: 0 0 14px rgba(156,207,234,0.40); opacity: 0.55; }
-        }
-
-        /* ── Reflet chrome traversant le bouton principal ── */
-        @keyframes chromeSweep {
-          0%   { transform: translateX(-130%); }
-          55%  { transform: translateX(-130%); }
-          100% { transform: translateX(130%); }
-        }
-
-        /* ── Pulse neon : monte de 00 (bas) vers 05 (haut) ── */
-        @keyframes neonPulseMove {
-          0%   { top: calc(100% - 8px); opacity: 0; }
-          5%   { opacity: 1; }
-          95%  { opacity: 1; }
-          100% { top: 8px; opacity: 0; }
-        }
-
-        /* ── Respiration douce des cercles ── */
-        @keyframes circleBreath {
-          0%, 100% { box-shadow: 0 0 5px 1px rgba(105,197,253,0.22); }
-          50%       { box-shadow: 0 0 12px 3px rgba(105,197,253,0.48); }
-        }
-
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            CTA PRINCIPAL — plaque métal chrome poli
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .h-cta-main {
           display: inline-flex; align-items: center; gap: 10px;
           position: relative; overflow: hidden;
-          background: linear-gradient(
-            115deg,
-            #5f8ca4  0%, #d5f1ff 18%, #8fc4df 34%,
-            #ecf9ff 48%, #74a9c4 62%, #c4e9fa 78%, #5f8ca4 100%
-          );
-          color: #050505;
-          font-weight: 900; letter-spacing: 1.8px; text-transform: uppercase;
+          background: #b9dceb;
+          color: #071014;
+          font-weight: 700; letter-spacing: 0.2px; text-transform: none;
           text-decoration: none; border-radius: 10px; cursor: pointer;
           font-family: inherit; white-space: nowrap;
-          border: 1px solid rgba(255,255,255,0.82);
-          box-shadow:
-            inset 0 1px 0 rgba(255,255,255,0.92),
-            inset 0 -1px 0 rgba(0,0,0,0.22),
-            0 8px 30px rgba(156,207,234,0.10);
-          transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
-        }
-        .h-cta-main::before {
-          content: "";
-          position: absolute; inset: 0;
-          background: linear-gradient(
-            110deg,
-            transparent 25%, rgba(255,255,255,0.12) 38%,
-            rgba(255,255,255,0.72) 48%, rgba(255,255,255,0.14) 58%, transparent 72%
-          );
-          transform: translateX(-130%);
-          pointer-events: none; z-index: 1;
-          animation: chromeSweep 4.5s ease-in-out infinite;
+          border: 1px solid rgba(255,255,255,0.30);
+          box-shadow: none;
+          transition: transform 0.20s ease, background 0.20s ease;
         }
         .h-cta-main svg {
           position: relative; z-index: 2;
@@ -129,11 +82,8 @@ export default function Hero() {
         }
         .h-cta-main:hover svg { transform: translateX(3px); }
         .h-cta-main:hover {
-          transform: translateY(-2px); filter: brightness(1.07);
-          box-shadow:
-            inset 0 1px 0 rgba(255,255,255,1),
-            inset 0 -1px 0 rgba(0,0,0,0.18),
-            0 10px 34px rgba(255,255,255,0.09);
+          transform: translateY(-1px);
+          background: #c9e8f5;
         }
         .h-cta-main:active  { transform: translateY(0) scale(0.99); }
         .h-cta-main:focus-visible {
@@ -146,7 +96,7 @@ export default function Hero() {
         .h-cta-ghost {
           display: inline-flex; align-items: center; gap: 8px;
           background: transparent; color: rgba(255,255,255,0.52);
-          font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+          font-weight: 600; letter-spacing: 0.2px; text-transform: none;
           text-decoration: none; border-radius: 10px;
           border: 1px solid rgba(255,255,255,0.16); cursor: pointer;
           font-family: inherit; white-space: nowrap;
@@ -158,22 +108,6 @@ export default function Hero() {
         }
         .h-cta-ghost:focus-visible {
           outline: 2px solid rgba(255,255,255,0.50); outline-offset: 3px;
-        }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           CHROME MÉTALLIQUE — grands chiffres bloc promo
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .h-promo-chrome {
-          background: linear-gradient(
-            180deg,
-            #ffffff  0%, #d8d8d8 18%, #7d7d7d 38%,
-            #f8f8f8 52%, #a0a0a0 68%, #ffffff 82%, #777777 100%
-          );
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          filter: drop-shadow(0 1px 0 rgba(255,255,255,0.30))
-                  drop-shadow(0 3px 6px rgba(0,0,0,0.50));
         }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -195,36 +129,9 @@ export default function Hero() {
           top: 0; bottom: 0;
           left: 50%; transform: translateX(-50%);
           width: 1px;
-          background: linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(105,197,253,0.20) 6%,
-            rgba(105,197,253,0.20) 94%,
-            transparent 100%
-          );
+          background: rgba(156,207,234,0.16);
           z-index: 0;
           pointer-events: none;
-        }
-
-        /* Pulse neon qui monte — segment lumineux traversant */
-        .h-prog-line::after {
-          content: '';
-          position: absolute;
-          left: 50%; transform: translateX(-50%);
-          width: 2px; height: 36px;
-          background: linear-gradient(
-            to top,
-            transparent,
-            rgba(105,197,253,0.50) 20%,
-            #69C5FD 50%,
-            rgba(105,197,253,0.50) 80%,
-            transparent
-          );
-          border-radius: 2px;
-          box-shadow:
-            0 0 8px 2px rgba(105,197,253,0.55),
-            0 0 18px 5px rgba(105,197,253,0.22);
-          animation: neonPulseMove 5s ease-in-out infinite;
         }
 
         /* Cercles numérotés */
@@ -232,12 +139,11 @@ export default function Hero() {
           position: relative; z-index: 2;
           width: 34px; height: 34px; flex-shrink: 0;
           border-radius: 50%;
-          border: 1px solid rgba(105,197,253,0.32);
-          background: #040c12;
+          border: 1px solid rgba(156,207,234,0.24);
+          background: #171b1f;
           display: flex; align-items: center; justify-content: center;
           font-size: 9px; font-weight: 900; letter-spacing: 1px;
-          color: rgba(105,197,253,0.68);
-          animation: circleBreath 3.2s ease-in-out infinite;
+          color: rgba(194,226,241,0.78);
         }
         @media (max-width: 899px) {
           .h-prog-circle {
@@ -252,9 +158,6 @@ export default function Hero() {
         @media (prefers-reduced-motion: reduce) {
           * { animation-duration: 0.01ms !important; }
           .h-cta-main, .h-cta-ghost { transition: none; }
-          .h-cta-main::before { animation: none; }
-          .h-prog-line::after { animation: none; opacity: 0; }
-          .h-prog-circle { animation: none; }
         }
       `}</style>
 
@@ -262,7 +165,8 @@ export default function Hero() {
         id="hero"
         aria-label="Hero Traders Rewards"
         style={{
-          background: "#000000",
+          background: "#0a0c0f",
+          fontFamily: "var(--font-sans), system-ui, -apple-system, sans-serif",
           width:      "100%",
           position:   "relative",
           overflow:   "hidden",
@@ -277,16 +181,16 @@ export default function Hero() {
           display:       "flex",
           flexDirection: isMobile ? "column" : "row",
           alignItems:    isMobile ? "stretch" : "center",
-          minHeight:     isMobile ? 0 : "min(860px, 90vh)",
+          minHeight:     isMobile ? 0 : "min(900px, 92vh)",
           paddingTop:    isMobile
             ? "calc(60px + var(--promo-banner-height, 0px))"
             : "calc(72px + var(--promo-banner-height, 0px))",
           paddingBottom: isMobile ? 0 : 0,
-          maxWidth:      1500,
+          maxWidth:      1380,
           margin:        "0 auto",
           paddingLeft:   isMobile ? 0 : "max(40px, 4vw)",
           paddingRight:  isMobile ? 0 : "max(24px, 3vw)",
-          gap:           isMobile ? 0 : "clamp(24px, 3vw, 56px)",
+          gap:           isMobile ? 0 : "clamp(40px, 5vw, 84px)",
           boxSizing:     "border-box",
         }}>
 
@@ -300,8 +204,8 @@ export default function Hero() {
             justifyContent: "center",
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
-            paddingTop:     isMobile ? 32 : 52,
-            paddingBottom:  isMobile ? 32 : 52,
+            paddingTop:     isMobile ? 46 : 72,
+            paddingBottom:  isMobile ? 40 : 72,
           }}>
 
             {/* ── Badge OFFRE DE LANCEMENT ── */}
@@ -310,8 +214,8 @@ export default function Hero() {
                 display:      "inline-flex",
                 alignItems:   "center",
                 gap:          9,
-                background:   "rgba(255,255,255,0.06)",
-                border:       "1px solid rgba(255,255,255,0.22)",
+                background:   "rgba(255,255,255,0.045)",
+                border:       "1px solid rgba(255,255,255,0.10)",
                 borderRadius: 100,
                 padding:      isMobile ? "6px 16px" : "7px 20px",
               }}>
@@ -322,14 +226,13 @@ export default function Hero() {
                   borderRadius: "50%",
                   background:   ACCENT,
                   flexShrink:   0,
-                  animation:    "pillDot 2.4s ease-in-out infinite",
                 }} />
                 <span style={{
                   fontSize:      10,
-                  fontWeight:    800,
-                  color:         "#FFFFFF",
-                  letterSpacing: "2.2px",
-                  textTransform: "uppercase",
+                  fontWeight:    600,
+                  color:         "rgba(255,255,255,0.72)",
+                  letterSpacing: "0.3px",
+                  textTransform: "none",
                   whiteSpace:    "nowrap",
                 }}>
                   {pill}
@@ -339,20 +242,20 @@ export default function Hero() {
 
             {/* ── H1 — 2 lignes ── */}
             <h1 style={{
-              fontWeight:    900,
-              margin:        "0 0 28px",
-              textTransform: "uppercase",
+              fontWeight:    620,
+              margin:        "0 0 34px",
+              textTransform: "none",
               textAlign:     "left",
-              letterSpacing: isMobile ? "0px" : "0.5px",
-              lineHeight:    0.95,
+              letterSpacing: isMobile ? "-1.5px" : "-3px",
+              lineHeight:    0.98,
               animation:     "heroFadeUp 0.52s ease 0.05s both",
             }}>
               {/* Ligne 1 — blanc */}
               <span
                 className="h1-line"
                 style={{
-                  fontSize: isMobile ? "clamp(2rem, 7vw, 3.2rem)" : "clamp(50px, 4vw, 72px)",
-                  color: "#FFFFFF",
+                  fontSize: isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(54px, 4.8vw, 78px)",
+                  color: "#F7F8FA",
                 }}
               >
                 {h1L1}
@@ -362,39 +265,53 @@ export default function Hero() {
                 className="h1-line"
                 style={{
                   marginTop: isMobile ? 4 : 7,
-                  fontSize:  isMobile ? "clamp(2rem, 7vw, 3.2rem)" : "clamp(50px, 4vw, 72px)",
+                  fontSize:  isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(54px, 4.8vw, 78px)",
                 }}
               >
-                <span style={{ color: "#FFFFFF" }}>{h1L2pre}</span>
-                <span style={{ color: "#9CCFEA" }}>{h1L2acc}</span>
+                <span style={{ color: "#F7F8FA" }}>{h1L2pre}</span>
+                <span style={{ color: "#b9dceb" }}>{h1L2acc}</span>
               </span>
             </h1>
+
+            <p style={{
+              maxWidth: 620,
+              margin: isMobile ? "0 0 26px" : "0 0 34px",
+              color: "rgba(255,255,255,0.58)",
+              fontSize: isMobile ? 15 : 18,
+              lineHeight: 1.65,
+              fontWeight: 400,
+              animation: "heroFadeUp 0.52s ease 0.08s both",
+            }}>
+              {L(
+                "Validez un objectif unique de +6 %, puis progressez sur le même compte jusqu'à 5 Rewards.",
+                "Valide un objetivo único de +6 % y avance con la misma cuenta hasta 5 Rewards.",
+                "Complete one +6% target, then progress on the same account through up to 5 Rewards."
+              )}
+            </p>
 
             {/* ── Bloc promo : -90% / 19€ ── */}
             <div style={{
               display:              "inline-flex",
               alignItems:           "stretch",
               alignSelf:            "flex-start",
-              background:           "linear-gradient(135deg, rgba(255,255,255,0.038) 0%, rgba(255,255,255,0.012) 100%)",
-              border:               "1px solid rgba(255,255,255,0.28)",
+              background:           "#1d2024",
+              border:               "1px solid rgba(255,255,255,0.075)",
               borderRadius:         16,
               padding:              isMobile ? "14px 18px" : "18px 28px",
               marginBottom:         isMobile ? 22 : 30,
               animation:            "heroFadeUp 0.52s ease 0.10s both",
-              boxShadow:            "inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 35px rgba(0,0,0,0.35)",
-              backdropFilter:       "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
+              boxShadow:            "0 16px 45px rgba(0,0,0,0.24)",
             } as React.CSSProperties}>
 
               {/* Colonne 1 Challenge — -80% */}
               <div>
-                <div style={{ fontSize:9, fontWeight:700, color:"#22c55e", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3 }}>
+                <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom:6 }}>
                   1 CHALLENGE
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"rgba(255,255,255,0.82)" }}>
+                <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#F5F7F8" }}>
                   -80%
                 </div>
-                <div style={{ fontSize:9, fontWeight:700, color:"rgba(255,255,255,0.44)", letterSpacing:"1.5px", textTransform:"uppercase" }}>
+                <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
                   {L("PAIEMENT UNIQUE","PAGO ÚNICO","ONE-TIME")}
                 </div>
               </div>
@@ -410,13 +327,13 @@ export default function Hero() {
 
               {/* Colonne Pack ×3 — -90% · BEST DEAL */}
               <div>
-                <div style={{ fontSize:9, fontWeight:700, color:"#FF8A00", letterSpacing:"2px", textTransform:"uppercase", marginBottom:3 }}>
+                <div style={{ fontSize:10, fontWeight:600, color:"#9CCFEA", letterSpacing:"0.4px", textTransform:"none", marginBottom:6 }}>
                   PACK ×3 BEST DEAL
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:900, letterSpacing:"-1px", lineHeight:0.90, marginBottom:5, color:"#9CCFEA" }}>
+                <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#b9dceb" }}>
                   -90%
                 </div>
-                <div style={{ fontSize:9, fontWeight:700, color:"rgba(156,207,234,0.55)", letterSpacing:"1.5px", textTransform:"uppercase" }}>
+                <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
                   {L("PAIEMENT UNIQUE","PAGO ÚNICO","ONE-TIME")}
                 </div>
               </div>
@@ -470,18 +387,18 @@ export default function Hero() {
                 display:      "inline-flex",
                 alignItems:   "center",
                 gap:          7,
-                background:   "rgba(34,197,94,0.07)",
-                border:       "1px solid rgba(34,197,94,0.20)",
+                background:   "rgba(156,207,234,0.06)",
+                border:       "1px solid rgba(156,207,234,0.14)",
                 borderRadius: 100,
                 padding:      isMobile ? "5px 12px" : "6px 14px",
               }}>
-                <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
+                <span style={{ fontSize: 11, color: "#9CCFEA", fontWeight: 800, lineHeight: 1 }}>✓</span>
                 <span style={{
                   fontSize:      10,
-                  fontWeight:    800,
-                  color:         "#22c55e",
-                  letterSpacing: "1.2px",
-                  textTransform: "uppercase",
+                  fontWeight:    600,
+                  color:         "rgba(210,235,247,0.76)",
+                  letterSpacing: "0.2px",
+                  textTransform: "none",
                   whiteSpace:    "nowrap",
                 }}>
                   {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
@@ -502,10 +419,14 @@ export default function Hero() {
             padding:        isMobile ? "0 0 20px" : "52px 0",
           }}>
 
-            {/* Parcours — fond noir, pas de carte */}
+            {/* Parcours — panneau charbon premium */}
             <div style={{
               padding:  isMobile ? "20px 4px 16px" : "34px 32px 26px",
               position: "relative",
+              background: isMobile ? "transparent" : "#1d2024",
+              border: isMobile ? "none" : "1px solid rgba(255,255,255,0.075)",
+              borderRadius: isMobile ? 0 : 22,
+              boxShadow: isMobile ? "none" : "0 22px 60px rgba(0,0,0,0.26)",
             }}>
 
               {/* ── Header : JUSQU'À / 6 250 $ / DE REWARDS CUMULÉES ── */}
@@ -516,30 +437,30 @@ export default function Hero() {
               }}>
                 <div style={{
                   fontSize:      10,
-                  fontWeight:    800,
-                  letterSpacing: "2.8px",
-                  color:         "rgba(105,197,253,0.50)",
-                  textTransform: "uppercase",
+                  fontWeight:    600,
+                  letterSpacing: "0.5px",
+                  color:         "rgba(210,235,247,0.74)",
+                  textTransform: "none",
                   marginBottom:  8,
                 }}>
                   {L("GAGNEZ JUSQU'À","GANA HASTA","EARN UP TO")}
                 </div>
                 <div style={{
                   fontSize:          isMobile ? "clamp(3.2rem,12vw,4.2rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
-                  fontWeight:        900,
-                  letterSpacing:     "-1.5px",
+                  fontWeight:        650,
+                  letterSpacing:     "-2.5px",
                   lineHeight:        0.90,
-                  color:             "#FFFFFF",
+                  color:             "#F7F8FA",
                   fontVariantNumeric:"tabular-nums",
                 }}>
                   6 250 $
                 </div>
                 <div style={{
                   fontSize:      10,
-                  fontWeight:    800,
-                  letterSpacing: "2.8px",
-                  color:         "rgba(105,197,253,0.50)",
-                  textTransform: "uppercase",
+                  fontWeight:    600,
+                  letterSpacing: "0.5px",
+                  color:         "rgba(210,235,247,0.74)",
+                  textTransform: "none",
                   marginTop:     9,
                 }}>
                   {L("AVEC 1 SEUL COMPTE","CON 1 SOLA CUENTA","WITH 1 ACCOUNT")}
@@ -549,7 +470,7 @@ export default function Hero() {
               {/* Séparateur fin */}
               <div style={{
                 height:       1,
-                background:   "rgba(105,197,253,0.09)",
+                background:   "rgba(255,255,255,0.075)",
                 marginBottom: isMobile ? 6 : 14,
               }} />
 
@@ -585,12 +506,12 @@ export default function Hero() {
                       }}>
                         <div style={{
                           fontSize:      isMobile ? 11 : 10,
-                          fontWeight:    900,
-                          letterSpacing: "1.4px",
+                          fontWeight:    650,
+                          letterSpacing: "0.5px",
                           textTransform: "uppercase",
                           color:         step.num === "00"
-                            ? "rgba(255,255,255,0.30)"
-                            : "rgba(255,255,255,0.58)",
+                            ? "rgba(255,255,255,0.44)"
+                            : "rgba(255,255,255,0.72)",
                           lineHeight:    1.2,
                         }}>
                           {step.name}
@@ -598,10 +519,10 @@ export default function Hero() {
                         {step.sub && (
                           <div style={{
                             fontSize:      isMobile ? 7 : 7.5,
-                            fontWeight:    700,
-                            letterSpacing: "1px",
+                            fontWeight:    550,
+                            letterSpacing: "0.4px",
                             textTransform: "uppercase",
-                            color:         "rgba(105,197,253,0.42)",
+                            color:         "rgba(190,224,240,0.58)",
                             marginTop:     2,
                           }}>
                             {step.sub}
@@ -628,9 +549,9 @@ export default function Hero() {
                         {step.amount != null && (
                           <div style={{
                             fontSize:          isMobile ? 15 : 12,
-                            fontWeight:        900,
-                            letterSpacing:     "0.5px",
-                            color:             NEON,
+                            fontWeight:        650,
+                            letterSpacing:     "0px",
+                            color:             "#c9e8f5",
                             fontVariantNumeric:"tabular-nums",
                           }}>
                             {step.amount}
