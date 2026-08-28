@@ -137,18 +137,18 @@ export default function Hero() {
         /* Cercles numérotés */
         .h-prog-circle {
           position: relative; z-index: 2;
-          width: 34px; height: 34px; flex-shrink: 0;
+          width: 42px; height: 42px; flex-shrink: 0;
           border-radius: 50%;
           border: 1px solid rgba(156,207,234,0.24);
           background: #171b1f;
           display: flex; align-items: center; justify-content: center;
-          font-size: 9px; font-weight: 900; letter-spacing: 1px;
+          font-size: 11px; font-weight: 800; letter-spacing: 1px;
           color: rgba(194,226,241,0.78);
         }
         @media (max-width: 899px) {
           .h-prog-circle {
-            width: 40px; height: 40px;
-            font-size: 10px;
+            width: 42px; height: 42px;
+            font-size: 11px;
           }
         }
 
@@ -495,7 +495,7 @@ export default function Hero() {
                         gap:        0,
                         position:   "relative",
                         zIndex:     1,
-                        height:     isMobile ? 50 : 46,
+                        height:     isMobile ? 54 : 52,
                       }}
                     >
                       {/* Label gauche */}
@@ -505,7 +505,7 @@ export default function Hero() {
                         paddingRight: isMobile ? 10 : 16,
                       }}>
                         <div style={{
-                          fontSize:      isMobile ? 11 : 10,
+                          fontSize:      isMobile ? 12 : 13,
                           fontWeight:    650,
                           letterSpacing: "0.5px",
                           textTransform: "uppercase",
@@ -518,7 +518,7 @@ export default function Hero() {
                         </div>
                         {step.sub && (
                           <div style={{
-                            fontSize:      isMobile ? 7 : 7.5,
+                            fontSize:      isMobile ? 8 : 9,
                             fontWeight:    550,
                             letterSpacing: "0.4px",
                             textTransform: "uppercase",
@@ -548,7 +548,7 @@ export default function Hero() {
                       }}>
                         {step.amount != null && (
                           <div style={{
-                            fontSize:          isMobile ? 15 : 12,
+                            fontSize:          isMobile ? 16 : 17,
                             fontWeight:        650,
                             letterSpacing:     "0px",
                             color:             "#c9e8f5",
