@@ -152,6 +152,43 @@ export default function Hero() {
           }
         }
 
+        /* Sceau de confiance — promesse Reward automatique */
+        .h-reward-seal {
+          position: absolute;
+          right: 24px;
+          bottom: 22px;
+          z-index: 4;
+          width: 112px;
+          height: 112px;
+          border-radius: 50%;
+          border: 1px solid rgba(185,220,235,0.46);
+          background: #b9dceb;
+          color: #071014;
+          box-shadow: 0 0 0 6px rgba(185,220,235,0.055);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          animation: heroFadeUp 0.52s ease 0.34s both;
+        }
+        .h-reward-seal::before {
+          content: "";
+          position: absolute;
+          inset: 6px;
+          border: 1px solid rgba(7,16,20,0.18);
+          border-radius: inherit;
+          pointer-events: none;
+        }
+        @media (max-width: 899px) {
+          .h-reward-seal {
+            right: 10px;
+            bottom: 14px;
+            width: 96px;
+            height: 96px;
+          }
+        }
+
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            REDUCED MOTION
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -381,31 +418,6 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* ── Patch premium : Reward auto 48H ── */}
-            <div style={{ marginTop: isMobile ? 14 : 20, animation: "heroFadeUp 0.52s ease 0.20s both" }}>
-              <span style={{
-                display:      "inline-flex",
-                alignItems:   "center",
-                gap:          7,
-                background:   "rgba(156,207,234,0.06)",
-                border:       "1px solid rgba(156,207,234,0.14)",
-                borderRadius: 100,
-                padding:      isMobile ? "5px 12px" : "6px 14px",
-              }}>
-                <span style={{ fontSize: 11, color: "#9CCFEA", fontWeight: 800, lineHeight: 1 }}>✓</span>
-                <span style={{
-                  fontSize:      10,
-                  fontWeight:    600,
-                  color:         "rgba(210,235,247,0.76)",
-                  letterSpacing: "0.2px",
-                  textTransform: "none",
-                  whiteSpace:    "nowrap",
-                }}>
-                  {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
-                </span>
-              </span>
-            </div>
-
           </div>{/* fin colonne gauche */}
 
           {/* ════════════════════════════════════════════════
@@ -566,7 +578,7 @@ export default function Hero() {
 
               {/* PARCOURS 100K — bas droite */}
               <div style={{
-                textAlign:     "right",
+                textAlign:     "left",
                 marginTop:     isMobile ? 12 : 16,
                 fontSize:      8,
                 fontWeight:    900,
@@ -575,6 +587,27 @@ export default function Hero() {
                 color:         "rgba(105,197,253,0.26)",
               }}>
                 PARCOURS 100K
+              </div>
+
+              {/* Sceau prioritaire — promesse de paiement */}
+              <div
+                className="h-reward-seal"
+                aria-label={L(
+                  "Reward payé automatiquement sous 48 heures",
+                  "Reward pagada automáticamente en 48 horas",
+                  "Reward paid automatically within 48 hours"
+                )}
+              >
+                <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 850, lineHeight: 1, marginBottom: 4 }}>✓</span>
+                <span style={{ fontSize: isMobile ? 8 : 9, fontWeight: 750, lineHeight: 1.08, maxWidth: 78 }}>
+                  {L("Reward automatique", "Reward automática", "Automatic Reward")}
+                </span>
+                <span style={{ fontSize: isMobile ? 20 : 24, fontWeight: 760, letterSpacing: "-1px", lineHeight: 1, marginTop: 5 }}>
+                  48H
+                </span>
+                <span style={{ fontSize: 7, fontWeight: 700, opacity: 0.64, marginTop: 2 }}>
+                  {L("MAXIMUM", "MÁXIMO", "MAXIMUM")}
+                </span>
               </div>
 
             </div>{/* fin dark card */}
