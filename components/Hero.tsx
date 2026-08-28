@@ -269,7 +269,15 @@ export default function Hero() {
                   background:   ACCENT,
                   flexShrink:   0,
                 }} />
-                <span aria-hidden="true" style={{ fontSize: 13, lineHeight: 1 }}>🇫🇷</span>
+                <span aria-hidden="true" style={{
+                  display:      "inline-block",
+                  width:        17,
+                  height:       11,
+                  flexShrink:   0,
+                  borderRadius: 2,
+                  background:   "linear-gradient(90deg, #1B4FA3 0 33.333%, #FFFFFF 33.333% 66.666%, #EF3340 66.666% 100%)",
+                  boxShadow:    "0 0 0 1px rgba(255,255,255,0.16)",
+                }} />
                 <span style={{
                   fontSize:      10,
                   fontWeight:    600,
