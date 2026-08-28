@@ -206,15 +206,15 @@ export default function PricingV1() {
           right:         28,
           zIndex:        3,
           pointerEvents: "none",
-          background:    "rgba(156,207,234,0.10)",
-          color:         "#bfe4f6",
+          background:    "rgba(255,122,0,0.11)",
+          color:         "#FF7A00",
           fontSize:      9,
           fontWeight:    750,
           letterSpacing: "0.3px",
           padding:       "4px 8px",
           borderRadius:  100,
-          border:        "1px solid rgba(156,207,234,0.22)",
-          boxShadow:     "none",
+          border:        "1px solid rgba(255,122,0,0.34)",
+          boxShadow:     "0 0 18px rgba(255,122,0,0.10)",
         }}>
           -90%
         </div>
@@ -298,8 +298,9 @@ export default function PricingV1() {
         {/* Prix */}
         <div style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid rgba(255,255,255,0.085)" }}>
           <div style={{
-            fontSize: 10, fontWeight: 650, color: "#9CCFEA",
+            fontSize: 10, fontWeight: isPack3 ? 750 : 650, color: isPack3 ? "#FF7A00" : "#9CCFEA",
             letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 10,
+            textShadow: isPack3 ? "0 0 16px rgba(255,122,0,0.22)" : "none",
           }}>
             {isPack3
               ? "PACK ×3 BEST DEAL"

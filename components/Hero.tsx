@@ -364,10 +364,10 @@ export default function Hero() {
 
               {/* Colonne Pack ×3 — -90% · BEST DEAL */}
               <div>
-                <div style={{ fontSize:10, fontWeight:600, color:"#9CCFEA", letterSpacing:"0.4px", textTransform:"none", marginBottom:6 }}>
+                <div style={{ fontSize:10, fontWeight:700, color:"#FF7A00", letterSpacing:"0.4px", textTransform:"none", marginBottom:6, textShadow:"0 0 16px rgba(255,122,0,0.28)" }}>
                   PACK ×3 BEST DEAL
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#b9dceb" }}>
+                <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#FF7A00", textShadow:"0 0 22px rgba(255,122,0,0.20)" }}>
                   -90%
                 </div>
                 <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
