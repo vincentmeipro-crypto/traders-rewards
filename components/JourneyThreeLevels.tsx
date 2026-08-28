@@ -168,7 +168,13 @@ function ModalShell({ isOpen, onClose, titleId, children }: {
 }
 
 // ── Modal 02 : Compte Reward ──────────────────────────────────
-function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: string, en: string) => string }) {
+function Modal02({ onClose, L, selectedSize }: {
+  onClose: () => void;
+  L: (fr: string, es: string, en: string) => string;
+  selectedSize: typeof SIZES_DATA[number];
+}) {
+  const rewardOne = selectedSize.rewardCaps[0];
+  const frMoney = (value: number) => `${value.toLocaleString("fr-FR")} $`;
   return (
     <div>
       {/* Header */}
@@ -180,7 +186,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           {L("Débloquez votre première Reward","Desbloquee su primera Reward","Unlock your first Reward")}
         </h2>
         <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.36)", margin: 0 }}>
-          {L("Safety Net + cap · 5 journées qualifiantes · Trailing DD EOD avec verrou",
+          {L("Seuil de sécurité + Reward maximum · 5 journées qualifiantes · DD EOD avec plancher verrouillé",
              "Safety Net + tope · 5 días calificados · Trailing DD EOD con bloqueo",
              "Safety Net + cap · 5 qualifying days · Trailing EOD DD with lock")}
         </p>
@@ -193,7 +199,16 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           <h3 style={modalSecTitle}>{L("Règles de qualification","Reglas de calificación","Qualification Rules")}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 8 }}>
             {[
-              { label: L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold"), val: L("Safety Net + cap","Safety Net + tope","Safety Net + cap"), note: L("Verrou déclenché au Safety Net","Bloqueo en Safety Net","Lock triggers at Safety Net"), color: GREEN },
+              {
+                label: L("Seuil à atteindre pour le Reward #1","Umbral Reward #1","Reward #1 threshold"),
+                val: L(frMoney(selectedSize.targetBal), `Safety Net + ${rewardOne.toLocaleString("es-ES")} $`, `Safety Net + $${rewardOne.toLocaleString("en-US")}`),
+                note: L(
+                  `Seuil de sécurité ${frMoney(selectedSize.lockAt)} + Reward maximum ${frMoney(rewardOne)}`,
+                  "El bloqueo se activa en la Safety Net",
+                  "The floor locks at the Safety Net",
+                ),
+                color: GREEN,
+              },
               { label: L("Jours qualifiants","Días calificados","Qualifying days"), val: L("5 min","5 mín","5 min"), note: L("Journées avec profit ≥ seuil","Días con beneficio ≥ umbral","Days with profit ≥ threshold"), color: ACCENT },
               { label: L("Consistance","Consistencia","Consistency"),       val: "≤ 50%",  note: L("Meilleure journée ≤ 50% du profit total","Mejor día ≤ 50% del beneficio","Best day ≤ 50% of total profit"), color: ACCENT },
               { label: L("Durée","Duración","Duration"),                    val: L("Illimitée","Ilimitada","Unlimited"), note: L("Pas d'expiration","Sin expiración","No expiration"), color: "rgba(255,255,255,0.35)" },
@@ -234,7 +249,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
 
         {/* Trailing DD + verrou */}
         <div>
-          <h3 style={modalSecTitle}>Trailing Drawdown EOD — {L("Verrou du plancher de protection","Bloqueo del plancher de protección","Protection floor lock")}</h3>
+          <h3 style={modalSecTitle}>{L("PLANCHER DD EOD ÉVOLUTIF — VERROUILLAGE","TRAILING DRAWDOWN EOD — BLOQUEO","TRAILING EOD DRAWDOWN — FLOOR LOCK")}</h3>
           <p style={modalBodyTxt}>
             {L(
               "Le plancher de protection part en dessous du capital initial. Il remonte avec chaque nouveau plus haut EOD. Une fois qu'il atteint le capital initial, il se verrouille définitivement. Le plancher de protection ne monte plus — votre capital de départ est protégé pour toujours.",
@@ -251,7 +266,7 @@ function Modal02({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
                   [L("Plancher de protection initial","Plancher inicial","Initial protection floor"), fmt(s.floorStart)],
                   [L("Verrou déclenché à","Bloqueo en","Lock triggers at"),   fmt(s.lockAt)],
                   [L("Plancher verrouillé à","Plancher bloqueado en","Protection floor locks to"), fmt(s.bal)],
-                  [L("Seuil Reward #1 (Safety Net + cap)","Umbral Reward #1 (Safety Net + tope)","Reward #1 threshold (Safety Net + cap)"), fmt(s.targetBal)],
+                  [L("Seuil à atteindre — Reward #1","Umbral Reward #1 (Safety Net + tope)","Reward #1 threshold (Safety Net + cap)"), fmt(s.targetBal)],
                 ].map(([k, v], j) => (
                   <div key={j} style={{ display: "flex", justifyContent: "space-between", padding: "2.5px 0",
                     borderBottom: j < 4 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
@@ -358,7 +373,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
         </h2>
         <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.36)", margin: 0 }}>
           {L(
-            "Seuil = Safety Net + cap du niveau · Montant = min(profit, plafond) · Pas de reset · DD fixe",
+            "Seuil à atteindre = seuil de sécurité + Reward maximum · Montant versé limité au profit disponible · Aucun reset · DD fixe",
             "Umbral = Safety Net + tope del nivel · Importe = min(beneficio, tope) · Sin reset · DD fijo",
             "Threshold = Safety Net + level cap · Amount = min(profit, cap) · No reset · Fixed DD"
           )}
@@ -374,7 +389,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           </h3>
           <p style={modalBodyTxt}>
             {L(
-              "Pour demander une Reward, votre balance doit atteindre le seuil de demande : Safety Net + cap du niveau de Reward. Ce seuil augmente légèrement à chaque niveau en fonction du plafond associé.",
+              "Pour demander une Reward, votre balance doit atteindre le seuil affiché. Il correspond au seuil de sécurité additionné au Reward maximum du niveau. Ce seuil augmente à chaque niveau selon le montant maximum pouvant être versé.",
               "Para solicitar una Reward, su balance debe alcanzar el umbral de solicitud: Safety Net + tope del nivel de Reward. Este umbral aumenta ligeramente con cada nivel según el tope asociado.",
               "To request a Reward, your balance must reach the request threshold: Safety Net + cap of the Reward level. The threshold increases slightly at each level based on the associated cap."
             )}
@@ -386,7 +401,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
                   {[
                     L("Taille","Tamaño","Size"),
                     L("Capital initial","Capital inicial","Starting capital"),
-                    L("Seuil de demande (Safety Net + cap)","Umbral de solicitud (Safety Net + tope)","Request threshold (Safety Net + cap)"),
+                    L("Seuil à atteindre","Umbral de solicitud (Safety Net + tope)","Request threshold (Safety Net + cap)"),
                   ].map((h, i) => (
                     <th key={i} style={{
                       textAlign: i === 0 ? "left" : "center",
@@ -593,7 +608,7 @@ export default function JourneyThreeLevels() {
 
   const selectedSize = SIZES_DATA[selectedSizeIndex];
   const challengeTarget = selectedSize.bal * 1.06;
-  const rewardThreshold = selectedSize.targetBal;              // Safety Net + cap#1 (seuil Reward #1)
+  const rewardThreshold = selectedSize.targetBal;              // Seuil de sécurité + Reward maximum #1
   const ddUsd = selectedSize.bal - selectedSize.floorStart;    // DD EOD en $ (1000/2000/3000)
   const rewardOne = selectedSize.rewardCaps[0];
   const cumulativeRewards = selectedSize.rewardCaps.reduce((sum, amount) => sum + amount, 0);
@@ -825,16 +840,16 @@ export default function JourneyThreeLevels() {
                   </span>
                 </div>
 
-                {/* Safety Net + seuil Reward #1 */}
+                {/* Seuil de sécurité + seuil Reward #1 */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12, position: "relative" }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase" }}>Safety Net</span>
+                    <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase" }}>{L("Seuil de sécurité","Umbral de seguridad","Safety Net")}</span>
                     <span style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-0.5px", lineHeight: 1 }}>{money(selectedSize.lockAt)}</span>
                   </div>
                   <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.42)" }}>
-                    {L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold")}{" → "}
+                    {L("Seuil à atteindre — Reward #1","Umbral Reward #1","Reward #1 threshold")}{" → "}
                     <span style={{ color: "rgba(255,255,255,0.72)", fontWeight: 800 }}>{money(rewardThreshold)}</span>
-                    {" "}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>({L("cap","tope","cap")} {money(rewardOne)})</span>
+                    {" "}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>({L("Reward maximum","tope","cap")} {money(rewardOne)})</span>
                   </div>
                 </div>
 
@@ -945,10 +960,10 @@ export default function JourneyThreeLevels() {
                   </div>
                 </div>
 
-                {/* Safety Net */}
+                {/* Seuil de sécurité */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, position: "relative" }}>
                   <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", textTransform: "uppercase", letterSpacing: "1px" }}>
-                    SAFETY NET
+                    {L("SEUIL DE SÉCURITÉ","UMBRAL DE SEGURIDAD","SAFETY NET")}
                   </span>
                   <span style={{ fontSize: 14, fontWeight: 900, color: "rgba(255,255,255,0.72)" }}>{money(selectedSize.lockAt)}</span>
                 </div>
@@ -1021,7 +1036,7 @@ export default function JourneyThreeLevels() {
 
       {/* ── Modal 02 : Compte Reward ── */}
       <ModalShell isOpen={activeModal === 1} onClose={closeModal} titleId="m2-title">
-        <Modal02 onClose={closeModal} L={L} />
+        <Modal02 onClose={closeModal} L={L} selectedSize={selectedSize} />
       </ModalShell>
 
       {/* ── Modal 03 : Rewards Journey ── */}
