@@ -39,40 +39,49 @@ type PreviewData = {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const TYPE_LABELS: Record<string, string> = {
-  welcome:               "Accès Challenge",
-  phase2:                "Historique — ancien passage de phase",
-  failed:                "Challenge échoué",
+  welcome:               "Activation Compte Challenger",
+  phase2:                "Challenger Validé",
+  failed:                "Compte clôturé — Violation DD",
   funded:                "Activation Compte Reward",
   daily_update:          "Récap journalier",
-  phase1_certificate:    "Certificat Challenge validé",
-  challenge_certificate: "Certificat Challenge",
+  phase1_certificate:    "Certificat Challenger",
+  challenge_certificate: "Certificat Challenger",
   reward_certificate:    "Certificat Reward",
   apology:               "Compte rétabli",
   // Tests
-  "test:welcome":               "Test — Accès Challenge",
-  "test:phase2":                "Test historique — ancien passage de phase",
-  "test:failed":                "Test — Challenge échoué",
+  "test:welcome":               "Test — Activation Compte Challenger",
+  "test:phase2":                "Test — Challenger Validé",
+  "test:failed":                "Test — Compte clôturé — Violation DD",
   "test:funded":                "Test — Activation Compte Reward",
   "test:daily_update":          "Test — Récap journalier",
-  "test:phase1_certificate":    "Test — Certificat Challenge validé",
-  "test:challenge_certificate": "Test — Certificat Challenge",
+  "test:phase1_certificate":    "Test — Certificat Challenger",
+  "test:challenge_certificate": "Test — Certificat Challenger",
   "test:reward_certificate":    "Test — Certificat Reward",
   "test:apology":               "Test — Compte rétabli",
 };
 
 const TYPE_OPTIONS = [
   { value: "all",                   label: "Tous les types" },
-  { value: "welcome",               label: "Accès Challenge" },
-  { value: "phase2",                label: "Historique — ancien passage de phase" },
-  { value: "failed",                label: "Challenge échoué" },
+  { value: "welcome",               label: "Activation Compte Challenger" },
+  { value: "phase2",                label: "Challenger Validé" },
+  { value: "failed",                label: "Compte clôturé — Violation DD" },
   { value: "funded",                label: "Activation Compte Reward" },
   { value: "daily_update",          label: "Récap journalier" },
-  { value: "phase1_certificate",    label: "Certificat Challenge validé" },
-  { value: "challenge_certificate", label: "Certificat Challenge" },
+  { value: "phase1_certificate",    label: "Certificat Challenger" },
+  { value: "challenge_certificate", label: "Certificat Challenger" },
   { value: "reward_certificate",    label: "Certificat Reward" },
   { value: "apology",               label: "Compte rétabli" },
   { value: "tests",                 label: "— Tests —" },
 ];
+
+const FAILURE_PREVIEW_VARIANTS = [
+  { value: "challenger",      label: "Challenger" },
+  { value: "compte_reward",   label: "Compte Reward" },
+  { value: "trader_reward_2", label: "Trader Reward #2" },
+  { value: "trader_reward_3", label: "Trader Reward #3" },
+  { value: "trader_reward_4", label: "Trader Reward #4" },
+  { value: "trader_reward_5", label: "Trader Reward #5" },
+] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -583,7 +592,11 @@ export default function EmailCenterPage() {
   const handlePreview = async (type: string) => {
     setPreviewLoading(p => ({ ...p, [type]: true }));
     try {
-      const model = type === "welcome" ? (previewModel["welcome"] ?? "2step") : undefined;
+      const model = type === "welcome"
+        ? (previewModel.welcome ?? "2step")
+        : type === "failed"
+          ? (previewModel.failed ?? "challenger")
+          : undefined;
       const res = await fetch("/api/admin/emails/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
@@ -931,7 +944,7 @@ export default function EmailCenterPage() {
       {emailView === "transactional" && (
         <div style={{ padding: "24px", flex: 1 }}>
           <div className="email-tpl-grid" style={{ display: "grid", gap: 16 }}>
-            {EMAIL_CATALOG.map(entry => {
+            {EMAIL_CATALOG.filter(entry => entry.type !== "phase2" && entry.type !== "phase1_certificate").map(entry => {
               const isPreviewLoading = !!previewLoading[entry.type];
               const isTestLoading    = !!testLoading[entry.type];
               const isConfirm        = testConfirm === entry.type;
@@ -998,6 +1011,23 @@ export default function EmailCenterPage() {
                   )}
 
                   {entry.type === "welcome" && <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".12em", color: "#9ccfea" }}>PARCOURS ACTUEL · 25K / 50K / 100K</div>}
+
+                  {entry.type === "failed" && (
+                    <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase" as const }}>
+                        Variante de prévisualisation
+                      </span>
+                      <select
+                        value={previewModel.failed ?? "challenger"}
+                        onChange={event => setPreviewModel(current => ({ ...current, failed: event.target.value }))}
+                        style={{ width: "100%", background: "#111", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 6, color: "rgba(255,255,255,0.8)", fontSize: 12, padding: "8px 10px" }}
+                      >
+                        {FAILURE_PREVIEW_VARIANTS.map(variant => (
+                          <option key={variant.value} value={variant.value}>{variant.label}</option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
 
                   {/* Feedback */}
                   {msg && (

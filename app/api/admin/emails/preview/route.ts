@@ -5,7 +5,7 @@ import { getCatalogEntry } from "@/lib/email-catalog";
 
 // POST /api/admin/emails/preview
 //
-// Body accepté : { type: string }
+// Body accepté : { type: string, model?: string }
 // Tout autre champ est ignoré.
 //
 // Sécurité :

@@ -194,7 +194,7 @@ export async function sendChallengerValidatedEmail(
   });
 }
 
-// ── sendPhase2Email — alias legacy → sendChallengerValidatedEmail ──
+// ── sendPhase2Email — alias rétrocompat → sendChallengerValidatedEmail ──
 
 export async function sendPhase2Email(
   to: string,
@@ -281,10 +281,32 @@ export async function sendFailedEmail(
   accountSize: string,
   reason: "daily_drawdown" | "total_drawdown",
   mt5Login?: number,
-  opts?: { userId?: string; challengeId?: string; phase?: string },
+  opts?: { userId?: string; challengeId?: string; phase?: string; paidRewardsCount?: number; closedAt?: string },
 ) {
+  let phase = opts?.phase;
+  let paidRewardsCount = opts?.paidRewardsCount;
+
+  if (opts?.challengeId && (phase == null || paidRewardsCount == null)) {
+    try {
+      const admin = createAdminClient();
+      const [challengeResult, payoutsResult] = await Promise.all([
+        phase == null
+          ? admin.from("challenges").select("phase").eq("id", opts.challengeId).maybeSingle()
+          : Promise.resolve({ data: null }),
+        paidRewardsCount == null
+          ? admin.from("payouts").select("id", { count: "exact", head: true }).eq("challenge_id", opts.challengeId).eq("status", "paid")
+          : Promise.resolve({ count: null }),
+      ]);
+      phase ??= challengeResult.data?.phase;
+      paidRewardsCount ??= payoutsResult.count ?? 0;
+    } catch (error) {
+      console.warn("[mailer] Impossible de résoudre le niveau du compte clôturé:", String(error).slice(0, 200));
+    }
+  }
+
   const { siteUrl, logoUrl } = await getBrandingConfig();
-  const { subject, html } = buildFailedEmail({ accountSize, reason, mt5Login, phase: opts?.phase, siteUrl, logoUrl });
+  const closedAt = opts?.closedAt ?? new Date().toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+  const { subject, html } = buildFailedEmail({ accountSize, reason, mt5Login, phase, paidRewardsCount, closedAt, siteUrl, logoUrl });
   await _loggedSend({
     type: "failed",
     to,

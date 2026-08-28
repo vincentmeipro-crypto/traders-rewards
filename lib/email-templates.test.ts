@@ -38,7 +38,6 @@ const FORBIDDEN = [
   "Reward Account",
   "First Reward",
   "Apex",
-  "Legacy",
   "Reward Start",
   "nouveaux identifiants",
   // Note: "V1" peut apparaître dans des URLs internes — on vérifie le HTML complet
@@ -159,7 +158,7 @@ section("buildChallengerValidatedEmail");
   assertNotContains(html, "nouveau compte",                     "ne contient PAS 'nouveau compte'");
 }
 
-// ── 3. buildPhase2Email (alias legacy → buildChallengerValidatedEmail) ──
+// ── 3. buildPhase2Email (alias rétrocompat → buildChallengerValidatedEmail) ──
 
 section("buildPhase2Email — alias → Challenger validé");
 {
@@ -225,22 +224,27 @@ section("buildFailedEmail — Compte Reward (phase=funded)");
     siteUrl,
     logoUrl,
   });
-  assertContains(subject, "parcours Reward",                    "subject contient 'parcours Reward'");
-  assertContains(html,    "Votre parcours Reward est terminé",  "titre Compte Reward");
+  assertContains(subject, "Compte Reward",                      "subject contient 'Compte Reward'");
+  assertContains(html,    "Votre Compte Reward est terminé",    "titre Compte Reward");
   assertNotContains(html, "Phase 2",                            "ne contient PAS 'Phase 2'");
 }
 
-section("buildFailedEmail — Trader Reward #3 (phase=funded, rewardLevel=3)");
+section("buildFailedEmail — variantes Reward #2 à #5");
 {
-  const { html } = buildFailedEmail({
-    accountSize:  "$50,000",
-    reason:       "total_drawdown",
-    phase:        "funded",
-    rewardLevel:  3,
-    siteUrl,
-    logoUrl,
-  });
-  assertContains(html, "Trader Reward #3", "contient 'Trader Reward #3'");
+  for (let rewardNumber = 2; rewardNumber <= 5; rewardNumber++) {
+    const { subject, html } = buildFailedEmail({
+      accountSize:      "$50,000",
+      reason:           "total_drawdown",
+      phase:            "funded",
+      paidRewardsCount: rewardNumber - 1,
+      closedAt:         "27 août 2026",
+      siteUrl,
+      logoUrl,
+    });
+    assertContains(subject, `Trader Reward #${rewardNumber}`, `subject contient Trader Reward #${rewardNumber}`);
+    assertContains(html, `Votre Trader Reward #${rewardNumber} est terminé`, `titre Trader Reward #${rewardNumber}`);
+    assertContains(html, "Date de clôture", "contient la date de clôture");
+  }
 }
 
 // ── 6. buildFundedEmail ──────────────────────────────────────

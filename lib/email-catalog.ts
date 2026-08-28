@@ -83,7 +83,9 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
       { name: "reason",      sensitive: false },
       { name: "mt5Login",    sensitive: false },
       { name: "phase",       sensitive: false },
-      { name: "rewardLevel", sensitive: false },
+      { name: "paidRewardsCount", sensitive: false },
+      { name: "levelLabel",       sensitive: false },
+      { name: "closedAt",         sensitive: false },
     ],
   },
   {
@@ -124,8 +126,8 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   },
   {
     type:        "phase2",
-    label:       "Challenger Validé (alias legacy)",
-    description: "Alias de l'email 'challenger_validated'. Conservé pour compatibilité avec les callers existants.",
+    label:       "Challenger Validé (compat.)",
+    description: "Alias de l'email 'challenger_validated'. Conservé pour compatibilité avec les routes existantes.",
     trigger:     "Identique à challenger_validated",
     sensitive:   false,
     variables: [
@@ -180,9 +182,9 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   },
   {
     type:        "phase1_certificate",
-    label:       "Certificat Challenger (legacy phase1)",
+    label:       "Certificat Challenger (phase1)",
     description: "Identique au certificat Challenger. Conservé pour compatibilité avec les anciens certificats.",
-    trigger:     "Challenger validé (type legacy)",
+    trigger:     "Challenger validé (type phase1)",
     sensitive:   false,
     variables: [
       { name: "firstName",   sensitive: false },

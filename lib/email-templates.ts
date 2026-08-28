@@ -25,6 +25,7 @@ import {
   computeRewardRequestThreshold,
   getV1QualifyingDayMinUsd,
 } from "./v1-engine";
+import { getV1LevelLabel } from "./v1-display";
 
 // ── Type whitelist ────────────────────────────────────────────
 
@@ -32,7 +33,7 @@ export const TRANSACTIONAL_EMAIL_TYPES = [
   "welcome",
   "challenger_validated",   // Compte Challenger validé
   "challenger_expired",     // 30 jours expirés (distinct du DD)
-  "phase2",                 // alias legacy → challenger_validated
+  "phase2",                 // alias rétrocompat → challenger_validated
   "failed",
   "funded",
   "daily_update",
@@ -105,16 +106,9 @@ function profitTargetUsd(bal: number): number {
   return 1_500;
 }
 
-/** Label du niveau basé sur la phase et le rewardLevel */
-function levelLabel(phase: string, rewardLevel?: number): string {
-  const p = phase?.toLowerCase();
-  if (p === "challenge" || p === "challenger")  return "Compte Challenger";
-  if (p === "funded" || p === "compte_reward")  return rewardLevel && rewardLevel > 1 ? `Trader Reward #${rewardLevel}` : "Compte Reward";
-  if (p?.startsWith("trader_reward_")) {
-    const lvl = parseInt(p.replace("trader_reward_", ""), 10);
-    return isNaN(lvl) ? "Compte Reward" : `Trader Reward #${lvl}`;
-  }
-  return rewardLevel && rewardLevel > 1 ? `Trader Reward #${rewardLevel}` : "Compte Reward";
+/** Label canonique centralisé du niveau réel du compte. */
+export function accountLevelLabel(phase: string, paidRewardsCount = 0): string {
+  return getV1LevelLabel(phase === "funded" ? "funded" : "phase1", paidRewardsCount);
 }
 
 /** Signe + ou vide pour l'affichage des profits */
@@ -530,7 +524,7 @@ export function buildChallengerValidatedEmail(p: {
   return { subject, html };
 }
 
-/** Alias legacy — utilise buildChallengerValidatedEmail en interne */
+/** Alias rétrocompat — utilise buildChallengerValidatedEmail en interne */
 export function buildPhase2Email(p: {
   accountSize: string;
   mt5?:        { login: number; password: string; server: string };
@@ -590,20 +584,21 @@ export function buildFailedEmail(p: {
   accountSize:  string;
   reason:       "daily_drawdown" | "total_drawdown";
   mt5Login?:    number;
-  /** "funded" → Compte Reward / Trader Reward terminé ; sinon Challenger */
+  /** "funded" → Compte Reward / Trader Reward ; sinon Challenger */
   phase?:       string;
-  rewardLevel?: number;
+  paidRewardsCount?: number;
+  closedAt?:    string;
   siteUrl:      string;
   logoUrl:      string;
 }): { subject: string; html: string } {
-  const { accountSize, mt5Login, phase, rewardLevel, siteUrl, logoUrl } = p;
-  const isFunded     = phase === "funded" || phase?.includes("reward");
-  const currentLevel = isFunded ? levelLabel(phase ?? "funded", rewardLevel) : "Compte Challenger";
+  const { accountSize, mt5Login, phase, paidRewardsCount = 0, closedAt, siteUrl, logoUrl } = p;
+  const currentLevel = accountLevelLabel(phase ?? "phase1", paidRewardsCount);
+  const isReward     = currentLevel !== "Challenger";
   const reasonLabel  = "Trailing Drawdown EOD dépassé";
   const reasonDetail = "Le plancher de votre Trailing Drawdown EOD a été franchi. Il s'agit de l'unique limite de drawdown de ce parcours.";
-  const title        = isFunded ? "Votre parcours Reward est terminé" : "Votre Compte Challenger est terminé";
-  const subject      = isFunded
-    ? `Votre parcours Reward Traders Rewards a été clôturé — ${currentLevel}`
+  const title        = isReward ? `Votre ${currentLevel} est terminé` : "Votre Compte Challenger est terminé";
+  const subject      = isReward
+    ? `Votre ${currentLevel} Traders Rewards a été clôturé`
     : "Votre Compte Challenger Traders Rewards a été clôturé";
 
   const html = buildEmail({
@@ -616,6 +611,7 @@ export function buildFailedEmail(p: {
       { label: "Niveau",           value: currentLevel },
       ...(mt5Login ? [{ label: "Login MT5",  value: String(mt5Login) }] : []),
       { label: "Raison",  value: reasonLabel },
+      ...(closedAt ? [{ label: "Date de clôture", value: closedAt }] : []),
       { label: "Statut",  value: "Clôturé" },
     ],
     cta:     { text: "Choisir un nouveau Challenge", href: `${siteUrl}/#pricing` },
@@ -749,7 +745,9 @@ export function buildDailyUpdateEmail(p: DailyUpdateParams): { subject: string; 
   } = p;
 
   const isChallenger = phase === "challenge" || phase === "challenger" || phase === "phase1";
-  const lvlLabel     = levelLabel(phase, rewardLevel);
+  const lvlLabel     = isChallenger
+    ? "Compte Challenger"
+    : accountLevelLabel(phase, Math.max(0, (rewardLevel ?? 1) - 1));
   const profitSign   = profitPct >= 0 ? "+" : "";
 
   // Calculs dérivés
@@ -1151,8 +1149,26 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
       return buildChallengerValidatedEmail({ accountSize, mt5Login: FAKE_MT5.login, date: "27 août 2026", siteUrl, logoUrl });
     case "challenger_expired":
       return buildChallengerExpiredEmail({ accountSize, mt5Login: FAKE_MT5.login, creationDate: "28 juil. 2026", endDate: "27 août 2026", siteUrl, logoUrl });
-    case "failed":
-      return buildFailedEmail({ accountSize, reason: "total_drawdown", mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
+    case "failed": {
+      const variants: Record<string, { phase: string; paidRewardsCount: number }> = {
+        challenger:      { phase: "phase1", paidRewardsCount: 0 },
+        compte_reward:   { phase: "funded", paidRewardsCount: 0 },
+        trader_reward_2: { phase: "funded", paidRewardsCount: 1 },
+        trader_reward_3: { phase: "funded", paidRewardsCount: 2 },
+        trader_reward_4: { phase: "funded", paidRewardsCount: 3 },
+        trader_reward_5: { phase: "funded", paidRewardsCount: 4 },
+      };
+      const variant = variants[previewModel ?? "challenger"] ?? variants.challenger;
+      return buildFailedEmail({
+        accountSize,
+        reason: "total_drawdown",
+        mt5Login: FAKE_MT5.login,
+        closedAt: "27 août 2026",
+        ...variant,
+        siteUrl,
+        logoUrl,
+      });
+    }
     case "funded":
       return buildFundedEmail({ accountSize, mt5: FAKE_MT5, splitPct: 100, siteUrl, logoUrl });
     case "daily_update":
