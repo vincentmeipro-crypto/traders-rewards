@@ -105,6 +105,52 @@ export default function ProjectionPage() {
           </div>
         </div>
 
+        {/* STRATÉGIE MARKETING — FOUNDER-LED */}
+        <div style={{ background: "linear-gradient(135deg, #0f2348 0%, #1565C0 100%)", borderRadius: 20, padding: "34px 40px", marginBottom: 20, position: "relative", overflow: "hidden" }}>
+          <div style={{ position: "absolute", width: 260, height: 260, borderRadius: "50%", right: -90, top: -110, background: "rgba(156,207,234,0.08)" }} />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,255,255,0.10)", borderRadius: 100, padding: "5px 14px", marginBottom: 16 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#9CCFEA", display: "inline-block" }} />
+              <span style={{ color: "#fff", fontSize: 10, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase" }}>Stratégie d'acquisition</span>
+            </div>
+
+            <h2 style={{ fontSize: 22, fontWeight: 850, color: "#fff", margin: "0 0 8px" }}>Une marque incarnée, construite pour le marché français</h2>
+            <p style={{ color: "rgba(255,255,255,0.68)", fontSize: 13, lineHeight: 1.65, margin: "0 0 22px", maxWidth: 820 }}>
+              La stratégie marketing repose sur une communication vidéo face caméra portée directement par le fondateur. Anciennement placé du côté du trader particulier, il connaît de l'intérieur ses douleurs, ses besoins, ses croyances, ses freins et ses ambitions. Cette proximité permet de parler du trading avec des mots français simples, précis et crédibles — aussi bien sur le plan technique que psychologique.
+            </p>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 18 }}>
+              {[
+                { n: "01", title: "Face caméra", text: "Une parole humaine et identifiable qui crée confiance, mémorisation et proximité." },
+                { n: "02", title: "Codes français", text: "Un langage naturel, sans traduction littérale des acteurs anglophones du secteur." },
+                { n: "03", title: "Expertise vécue", text: "Une compréhension réelle du parcours, des erreurs et des attentes du trader particulier." },
+                { n: "04", title: "Double légitimité", text: "Des contenus capables d'aborder la technique de trading comme la psychologie de performance." },
+              ].map((item) => (
+                <div key={item.n} style={{ background: "rgba(255,255,255,0.075)", border: "1px solid rgba(255,255,255,0.13)", borderRadius: 13, padding: "17px 15px" }}>
+                  <div style={{ color: "#9CCFEA", fontSize: 9, fontWeight: 800, letterSpacing: "1.6px", marginBottom: 9 }}>{item.n}</div>
+                  <div style={{ color: "#fff", fontSize: 13, fontWeight: 800, marginBottom: 7 }}>{item.title}</div>
+                  <div style={{ color: "rgba(255,255,255,0.52)", fontSize: 11, lineHeight: 1.55 }}>{item.text}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1.15fr .85fr", gap: 12 }}>
+              <div style={{ background: "rgba(156,207,234,0.11)", border: "1px solid rgba(156,207,234,0.28)", borderRadius: 12, padding: "16px 18px" }}>
+                <div style={{ color: "#9CCFEA", fontSize: 10, fontWeight: 800, letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: 7 }}>Moteur de contenu</div>
+                <div style={{ color: "rgba(255,255,255,0.76)", fontSize: 12, lineHeight: 1.6 }}>
+                  Vidéos courtes d'acquisition, formats pédagogiques longs, analyses techniques, psychologie du trader, réponses aux objections et retours d'expérience. Chaque contenu nourrit la confiance avant la conversion.
+                </div>
+              </div>
+              <div style={{ background: "rgba(255,255,255,0.075)", border: "1px solid rgba(255,255,255,0.13)", borderRadius: 12, padding: "16px 18px" }}>
+                <div style={{ color: "#fff", fontSize: 10, fontWeight: 800, letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: 7 }}>Lecture investisseur</div>
+                <div style={{ color: "rgba(255,255,255,0.60)", fontSize: 12, lineHeight: 1.6 }}>
+                  Un avantage de distribution propriétaire : plus difficile à copier qu'une campagne publicitaire, avec un potentiel de baisse du coût d'acquisition et d'amélioration de la conversion organique.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* SYNTHÈSE STRATÉGIQUE */}
         <div style={{ background: "#fff", borderRadius: 20, padding: "32px 40px", marginBottom: 20, border: "2px solid #9CCFEA", boxShadow: "0 4px 24px rgba(201,168,76,0.1)" }}>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#fdf8ee", borderRadius: 100, padding: "5px 14px", marginBottom: 18 }}>
