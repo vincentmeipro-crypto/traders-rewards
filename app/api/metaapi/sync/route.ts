@@ -116,7 +116,13 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   // Règle de cohérence 1-Step : le meilleur jour ne peut représenter
   // plus de 50% du profit total validant. Le compte ne fail jamais pour
   // cette règle ; l'objectif augmente à 2 × le meilleur jour si nécessaire.
-  const currentDayProfit = Math.max(0, newBalance - dailyStartBalance);
+  // Au premier sync après 22:00, dailyStartBalance appartient déjà à la
+  // nouvelle journée. Utiliser encore l'ouverture stockée de la journée qui
+  // vient de se terminer afin de ne pas perdre les dernières minutes de P&L.
+  const closingDayStartBalance = effectiveNewDay && storedDailyStart !== null
+    ? storedDailyStart
+    : dailyStartBalance;
+  const currentDayProfit = Math.max(0, newBalance - closingDayStartBalance);
   const prevBestDay = (challenge.best_day_profit as number | null) ?? 0;
   const newBestDay = Math.max(prevBestDay, currentDayProfit);
   const consistencyTargetPct = startBalance > 0
@@ -302,12 +308,17 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   }
 
 
-  // 8. Récap quotidien à la clôture broker (21:55–22:00 UTC).
-  // La clé eventKey garantit au plus un envoi par compte et journée de trading.
+  // 8. Récap quotidien APRÈS la clôture broker, au premier sync entre
+  // 22:00 et 22:05 UTC. Les valeurs ci-dessous représentent la journée qui
+  // vient de se terminer, avant que le rollover ne soit visible dans l'email.
+  // La clé eventKey garantit au plus un envoi par compte et journée clôturée.
   const createdAt = challenge.created_at as string | null;
   const purchasedToday   = createdAt ? new Date(createdAt) >= tradingDayStart : false;
-  const inDailyRecapWindow = now.getUTCHours() === 21 && now.getUTCMinutes() >= 55;
-  if (inDailyRecapWindow && !purchasedToday) {
+  const inDailyRecapWindow = now.getUTCHours() === 22 && now.getUTCMinutes() < 5;
+  if (inDailyRecapWindow && effectiveNewDay && !purchasedToday) {
+    const closedTradingDay = new Date(tradingDayStart.getTime() - 86_400_000)
+      .toISOString()
+      .split("T")[0];
     const { count: paidRewardsCount } = await admin.from("payouts")
       .select("id", { count: "exact", head: true })
       .eq("challenge_id", id)
@@ -327,7 +338,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       model,
       rewardLevel,
       equity: newEquity,
-      dailyProfitUsd: newBalance - dailyStartBalance,
+      dailyProfitUsd: newBalance - closingDayStartBalance,
       profitUsd,
       highestBalance: newHighest,
       ddFloorUsd,
@@ -350,7 +361,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
         profitTargetUsdParam: startBalance * 0.06,
         minTradingDays: 2,
       }),
-    }, { userId, challengeId: id, tradingDayId }).catch(() => {});
+    }, { userId, challengeId: id, tradingDayId: closedTradingDay }).catch(() => {});
   }
 
   return { status: "synced", balance: newBalance, profitPct: profitPct.toFixed(2), profitTarget: effectiveProfitTarget, tradingDays: newTradingDays, dailyDD: dailyDD.toFixed(2), rawBalance: info.balance, rawEquity: newEquity, rawProfit: info.profit, prevBalance };

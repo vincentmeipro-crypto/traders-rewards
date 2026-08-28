@@ -106,7 +106,7 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
     type:        "daily_update",
     label:       "Récap journalier",
     description: "Résumé quotidien enrichi : balance, equity, P&L du jour, profit total, consistance, plancher DD EOD, distance à l'objectif (Challenger) ou au seuil Reward.",
-    trigger:     "Chaque jour à la clôture broker — 21:55 UTC",
+    trigger:     "Après la clôture broker — première synchronisation entre 22:00 et 22:05 UTC",
     sensitive:   false,
     variables: [
       { name: "accountSize",          sensitive: false },
