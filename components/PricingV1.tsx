@@ -168,32 +168,32 @@ export default function PricingV1() {
         onMouseLeave={() => !isMobile && setHovIdx(null)}
         style={{
           position:   "relative",
-          background: "linear-gradient(145deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.012) 42%, #090909 100%)",
-          border: `1px solid ${isHovered ? "rgba(255,255,255,0.42)" : isPopular ? "rgba(255,255,255,0.34)" : "rgba(255,255,255,0.24)"}`,
+          background: isPopular ? "#22262a" : "#1d2024",
+          border: `1px solid ${isHovered || isPopular ? "rgba(156,207,234,0.34)" : "rgba(255,255,255,0.075)"}`,
           borderRadius: 20,
-          padding:      "20px 18px 16px",
+          padding:      isMobile ? "24px 20px 20px" : "30px 28px 24px",
           display:      "flex",
           flexDirection: "column",
           gap:           0,
           cursor:        isMobile ? "pointer" : "default",
           transition:    "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease",
-          transform:     isHovered ? "translateY(-3px)" : "translateY(0)",
+          transform:     isHovered ? "translateY(-2px)" : "translateY(0)",
           boxShadow:     isPopular
-            ? "inset 0 1px 0 rgba(255,255,255,0.09), 0 26px 64px rgba(0,0,0,0.82)"
+            ? "0 22px 60px rgba(0,0,0,0.34), 0 0 0 1px rgba(156,207,234,0.04)"
             : isHovered
-              ? "inset 0 1px 0 rgba(255,255,255,0.10), 0 28px 66px rgba(0,0,0,0.84)"
-              : "inset 0 1px 0 rgba(255,255,255,0.07), 0 22px 56px rgba(0,0,0,0.76)",
+              ? "0 20px 54px rgba(0,0,0,0.30)"
+              : "0 14px 40px rgba(0,0,0,0.22)",
         }}
       >
         {/* Badge LE PLUS POPULAIRE */}
         {isPopular && (
           <div style={{
             position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-            background: "linear-gradient(115deg, #5f8ca4 0%, #d5f1ff 20%, #8fc4df 43%, #ecf9ff 62%, #74a9c4 82%, #c4e9fa 100%)", color: "#050505",
-            fontSize: 8, fontWeight: 900, padding: "4px 16px",
-            borderRadius: 100, letterSpacing: "1.8px", whiteSpace: "nowrap",
-            border: "1px solid rgba(255,255,255,0.75)",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(24,61,80,0.3), 0 4px 16px rgba(156,207,234,0.16)",
+            background: "#c8e7f5", color: "#071014",
+            fontSize: 10, fontWeight: 750, padding: "6px 18px",
+            borderRadius: 100, letterSpacing: "0.15px", whiteSpace: "nowrap",
+            border: "1px solid rgba(255,255,255,0.5)",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.24)",
           }}>
             {L("LE PLUS POPULAIRE","EL MÁS POPULAR","MOST POPULAR")}
           </div>
@@ -202,35 +202,34 @@ export default function PricingV1() {
         {/* Patch promo -90% — toujours visible, à cheval sur le bouton Pack ×3 */}
         <div style={{
           position:      "absolute",
-          top:           88,
-          right:         -6,
-          transform:     "rotate(12deg)",
+          top:           78,
+          right:         28,
           zIndex:        3,
           pointerEvents: "none",
-          background:    "linear-gradient(135deg, #ff6600 0%, #ff9900 100%)",
-          color:         "#ffffff",
-          fontSize:      10,
-          fontWeight:    900,
-          letterSpacing: "0.5px",
-          padding:       "2px 9px",
-          borderRadius:  5,
-          border:        "1px solid rgba(255,180,0,0.50)",
-          boxShadow:     "0 0 12px rgba(255,138,0,0.80), 0 0 5px rgba(255,138,0,0.50)",
+          background:    "rgba(156,207,234,0.10)",
+          color:         "#bfe4f6",
+          fontSize:      9,
+          fontWeight:    750,
+          letterSpacing: "0.3px",
+          padding:       "4px 8px",
+          borderRadius:  100,
+          border:        "1px solid rgba(156,207,234,0.22)",
+          boxShadow:     "none",
         }}>
           -90%
         </div>
 
         {/* En-tête — taille de compte + bouton "i" */}
-        <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.09)" }}>
+        <div style={{ marginBottom: 22 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
               <div style={{
-                fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)",
-                letterSpacing: "2.5px", textTransform: "uppercase", marginBottom: 5,
+                fontSize: 10, fontWeight: 650, color: "rgba(255,255,255,0.38)",
+                letterSpacing: "1.7px", textTransform: "uppercase", marginBottom: 8,
               }}>
                 {L("Compte simulé","Cuenta simulada","Simulated account")}
               </div>
-              <div style={{ fontSize: 34, fontWeight: 900, color: "#FFFFFF", letterSpacing: "0px", lineHeight: 1 }}>
+              <div style={{ fontSize: 38, fontWeight: 720, color: "#F7F8FA", letterSpacing: "-1.2px", lineHeight: 1 }}>
                 {label}
               </div>
             </div>
@@ -244,9 +243,9 @@ export default function PricingV1() {
               aria-label={L(`Détails du Challenge ${label}`,`Detalles del Challenge ${label}`,`Challenge ${label} details`)}
               style={{
                 width: 28, height: 28, borderRadius: "50%",
-                border:      "1px solid rgba(156,207,234,0.35)",
-                background:  "rgba(156,207,234,0.08)",
-                color:       "#9CCFEA",
+                border:      "1px solid rgba(255,255,255,0.18)",
+                background:  "transparent",
+                color:       "rgba(255,255,255,0.62)",
                 fontSize:    11, fontWeight: 900, fontStyle: "normal",
                 cursor:      "pointer",
                 display:     "grid", placeItems: "center",
@@ -254,8 +253,8 @@ export default function PricingV1() {
                 fontFamily:  "inherit",
                 transition:  "all 0.16s ease",
               }}
-              onMouseEnter={e => { const b = e.currentTarget; b.style.background = "rgba(156,207,234,0.20)"; b.style.borderColor = "rgba(156,207,234,0.65)"; }}
-              onMouseLeave={e => { const b = e.currentTarget; b.style.background = "rgba(156,207,234,0.08)"; b.style.borderColor = "rgba(156,207,234,0.35)"; }}
+              onMouseEnter={e => { const b = e.currentTarget; b.style.background = "rgba(255,255,255,0.06)"; b.style.borderColor = "rgba(255,255,255,0.32)"; }}
+              onMouseLeave={e => { const b = e.currentTarget; b.style.background = "transparent"; b.style.borderColor = "rgba(255,255,255,0.18)"; }}
             >
               i
             </button>
@@ -263,26 +262,26 @@ export default function PricingV1() {
         </div>
 
         {/* ── Sélecteur 1 Challenge / Pack ×3 ── */}
-        <div style={{ display: "flex", gap: 5, marginBottom: 10 }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 24, padding: 5, borderRadius: 12, background: "rgba(0,0,0,0.28)" }}>
           {[false, true].map(is3 => (
             <button
               key={String(is3)}
               onClick={e => { e.stopPropagation(); togglePack3(idx, is3); }}
               style={{
                 flex:       1,
-                padding:    "5px 0",
+                padding:    "9px 0",
                 borderRadius: 8,
-                fontSize:   10,
-                fontWeight: 800,
+                fontSize:   11,
+                fontWeight: 650,
                 border:     (isPack3 === is3)
-                  ? "1.5px solid rgba(156,207,234,0.65)"
-                  : "1.5px solid rgba(255,255,255,0.10)",
+                  ? "1px solid rgba(255,255,255,0.46)"
+                  : "1px solid transparent",
                 background: (isPack3 === is3)
-                  ? "rgba(156,207,234,0.13)"
+                  ? "rgba(255,255,255,0.055)"
                   : "transparent",
                 color:      (isPack3 === is3)
-                  ? "#9CCFEA"
-                  : "rgba(255,255,255,0.30)",
+                  ? "#F5F7F8"
+                  : "rgba(255,255,255,0.45)",
                 cursor:     "pointer",
                 fontFamily: "inherit",
                 letterSpacing: "0.3px",
@@ -297,10 +296,10 @@ export default function PricingV1() {
         </div>
 
         {/* Prix */}
-        <div style={{ marginBottom: 10, paddingBottom: 10, borderBottom: "1px solid rgba(255,255,255,0.09)" }}>
+        <div style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid rgba(255,255,255,0.085)" }}>
           <div style={{
-            fontSize: 9, fontWeight: 700, color: isPack3 ? "#ff6600" : "#22c55e",
-            letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6,
+            fontSize: 10, fontWeight: 650, color: "#9CCFEA",
+            letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 10,
           }}>
             {isPack3
               ? "PACK ×3 BEST DEAL"
@@ -309,22 +308,22 @@ export default function PricingV1() {
 
           {/* Prix de référence barré */}
           <div style={{
-            fontSize:       15,
+            fontSize:       14,
             fontWeight:     500,
             color:          "rgba(255,255,255,0.28)",
             textDecoration: "line-through",
             letterSpacing:  "0.5px",
             lineHeight:     1,
-            marginBottom:   4,
+            marginBottom:   7,
           }}>
             {displayRefPrice}
           </div>
 
           {/* Prix de lancement — dominant */}
-          <div style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", letterSpacing: "0px", lineHeight: 1 }}>
+          <div style={{ fontSize: 42, fontWeight: 720, color: "#F7F8FA", letterSpacing: "-1.5px", lineHeight: 1 }}>
             {displayPrice}
           </div>
-          <div style={{ fontSize: 10, color: "rgba(255,255,255,0.26)", marginTop: 4, fontWeight: 500 }}>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", marginTop: 8, fontWeight: 450 }}>
             {isPack3
               ? L("3 Challenges · Paiement unique","3 Challenges · Pago único","3 Challenges · One-time")
               : L("Paiement unique · non remboursable","Pago único · no reembolsable","One-time · non-refundable")}
@@ -332,29 +331,30 @@ export default function PricingV1() {
         </div>
 
         {/* Règles */}
-        <div style={{ marginBottom: 8, paddingBottom: 8, borderBottom: "1px solid rgba(255,255,255,0.09)" }}>
+        <div style={{ marginBottom: 14, paddingBottom: 14 }}>
           {RULES.map((rule, i) => (
             <div key={i} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
-              padding: "4px 0",
-              borderBottom: i < RULES.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+              padding: "9px 0",
+              borderBottom: i < RULES.length - 1 ? "1px solid rgba(255,255,255,0.075)" : "none",
             }}>
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,0.50)", fontWeight: 500 }}>{rule.label}</span>
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.62)", fontWeight: 450 }}>{rule.label}</span>
               <span style={{
-                fontSize: 12, fontWeight: 800,
-                color: rule.accent ? "#9CCFEA" : "#FFFFFF",
+                fontSize: 13, fontWeight: 650,
+                color: rule.accent ? "#9CCFEA" : "rgba(255,255,255,0.90)",
               }}>{rule.value}</span>
             </div>
           ))}
           {/* Activation Reward Account — spécifique par carte */}
           <div style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
-            padding: "4px 0",
+            padding: "9px 0",
+            borderBottom: "1px solid rgba(255,255,255,0.075)",
           }}>
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.50)", fontWeight: 500 }}>
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.62)", fontWeight: 450 }}>
               {L("Activation Compte Reward","Activación Compte Reward","Compte Reward activation")}
             </span>
-            <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.55)" }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.72)" }}>
               {card.activFeeEur}€
             </span>
           </div>
@@ -369,19 +369,19 @@ export default function PricingV1() {
             display:       "flex",
             alignItems:    "center",
             justifyContent:"center",
-            padding:       "11px 16px",
+            padding:       "14px 16px",
             marginTop:     8,
             borderRadius:  10,
-            fontSize:      12,
-            fontWeight:    900,
-            letterSpacing: "1.8px",
-            textTransform: "uppercase",
+            fontSize:      13,
+            fontWeight:    700,
+            letterSpacing: "0.3px",
+            textTransform: "none",
             textDecoration: "none",
           }}
         >
           {isPack3
-            ? L("DÉMARRER ×3","EMPEZAR ×3","GET STARTED ×3")
-            : L("DÉMARRER","EMPEZAR","GET STARTED")}
+            ? L("Démarrer avec 3 Challenges","Empezar con 3 Challenges","Get started with 3 Challenges")
+            : L("Démarrer","Empezar","Get started")}
         </a>
       </div>
     );
@@ -391,71 +391,58 @@ export default function PricingV1() {
     <section
       id="pricing"
       style={{
-        padding:         isMobile ? "48px 16px" : "64px 24px",
-        backgroundColor: "#000000",
+        padding:         isMobile ? "64px 16px" : "104px 28px 112px",
+        backgroundColor: "#0a0c0f",
+        fontFamily:      "var(--font-sans), system-ui, -apple-system, sans-serif",
         scrollMarginTop: "calc(72px + var(--promo-banner-height, 0px))",
         position:        "relative",
         overflowX:       "hidden",
       }}
     >
       <style>{`
-        @keyframes pricingChromeSweep {
-          0%   { transform: translateX(-135%); }
-          55%  { transform: translateX(-135%); }
-          100% { transform: translateX(135%); }
-        }
         .pricing-chrome-cta {
           position: relative;
           overflow: hidden;
-          background: linear-gradient(115deg, #5f8ca4 0%, #d5f1ff 18%, #8fc4df 34%, #ecf9ff 48%, #74a9c4 62%, #c4e9fa 78%, #5f8ca4 100%);
-          color: #050505;
-          border: 1px solid rgba(255,255,255,0.82);
-          box-shadow: inset 0 1px 0 rgba(255,255,255,0.92), inset 0 -1px 0 rgba(24,61,80,0.30), 0 8px 24px rgba(156,207,234,0.10);
-          transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
-        }
-        .pricing-chrome-cta::before {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.12) 38%, rgba(255,255,255,0.72) 48%, rgba(255,255,255,0.14) 58%, transparent 72%);
-          transform: translateX(-135%);
-          pointer-events: none;
-          animation: pricingChromeSweep 4.5s ease-in-out infinite;
+          background: #b9dceb;
+          color: #071014;
+          border: 1px solid rgba(255,255,255,0.34);
+          box-shadow: none;
+          transition: transform 0.2s ease, background 0.2s ease;
         }
         .pricing-chrome-cta:hover {
-          transform: translateY(-2px);
-          filter: brightness(1.07);
-          box-shadow: inset 0 1px 0 rgba(255,255,255,1), 0 10px 30px rgba(255,255,255,0.09);
+          transform: translateY(-1px);
+          background: #c9e8f5;
         }
         .pricing-chrome-cta:active { transform: translateY(0) scale(0.99); }
-        @media (prefers-reduced-motion: reduce) {
-          .pricing-chrome-cta::before { animation: none; }
-        }
       `}</style>
-      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
         {/* ── Titre section ── */}
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 24 : 14 }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 30 : 38 }}>
           <h2 style={{
-            fontSize:      isMobile ? "clamp(1.8rem, 7vw, 2.6rem)" : "clamp(2rem, 2.6vw, 3.4rem)",
-            fontWeight:    900,
+            fontSize:      isMobile ? "clamp(2rem, 8vw, 2.8rem)" : "clamp(2.7rem, 4vw, 4.15rem)",
+            fontWeight:    620,
             color:         "#FFFFFF",
-            textTransform: "uppercase",
-            letterSpacing: "0.5px",
-            lineHeight:    1.05,
-            margin:        "0 0 8px",
+            textTransform: "none",
+            letterSpacing: "-2px",
+            lineHeight:    1.08,
+            margin:        "0 0 18px",
           }}>
-            {L("Choisissez votre","Elige tu","Choose your")}{" "}
-            <span style={{ color: "#9CCFEA" }}>
-              {L("Challenge","Desafío","Challenge")}
-            </span>
+            {L("Choisissez votre Challenge","Elige tu Desafío","Choose your Challenge")}
           </h2>
+          <p style={{ maxWidth: 720, margin: "0 auto", color: "rgba(255,255,255,0.58)", fontSize: isMobile ? 15 : 18, lineHeight: 1.65, fontWeight: 400 }}>
+            {L(
+              "Sélectionnez la taille de compte simulé qui correspond à vos objectifs et progressez jusqu'à 5 Rewards.",
+              "Seleccione el tamaño de cuenta simulada que mejor se adapte a sus objetivos y avance hasta 5 Rewards.",
+              "Choose the simulated account size that fits your goals and progress through up to 5 Rewards."
+            )}
+          </p>
         </div>
 
         {/* ── Toggle % / $ ── */}
         <div style={{
           display: "flex", justifyContent: "center",
-          marginBottom: isMobile ? 18 : 12,
+          marginBottom: isMobile ? 24 : 34,
         }}>
           <button
             onClick={() => setShowPct(v => !v)}
@@ -469,9 +456,9 @@ export default function PricingV1() {
               alignItems:   "center",
               gap:          8,
                padding:      "7px 16px",
-              borderRadius: 10,
+              borderRadius: 100,
               border:       `1px solid ${showPct ? "rgba(255,255,255,0.09)" : "rgba(156,207,234,0.35)"}`,
-              background:   showPct ? "#121212" : "rgba(156,207,234,0.08)",
+              background:   showPct ? "rgba(255,255,255,0.045)" : "rgba(156,207,234,0.08)",
               color:        "#9CCFEA",
               fontSize:     12, fontWeight: 700,
               cursor:       "pointer",
@@ -525,7 +512,7 @@ export default function PricingV1() {
           <div style={{
             display:             "grid",
             gridTemplateColumns: "1fr 1fr 1fr",
-            gap:                 16,
+            gap:                 24,
             alignItems:          "flex-start",
             padding:             "8px 0 8px",
           }}>
