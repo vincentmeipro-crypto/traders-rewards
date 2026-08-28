@@ -1,5 +1,5 @@
 // DEPRECATED — Phase 3B-1b
-// Cette route est conservée pour compatibilité avec le bouton legacy
+// Cette route est conservée pour compatibilité avec le bouton admin
 // dans app/x8k3pz/page.tsx (section Maintenance).
 //
 // Elle délègue désormais à sendTestEmail() avec fake data.

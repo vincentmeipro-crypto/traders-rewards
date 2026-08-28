@@ -48,7 +48,7 @@ const DDL_STATEMENTS = [
   },
   {
     label: "COMMENT ON COLUMN challenges.dd_model",
-    sql: `COMMENT ON COLUMN challenges.dd_model IS 'Discriminant du moteur DD actif. NULL = ancien comportement (1-Step/2-Step legacy). trailing_eod_lock = nouveau modèle V1 Traders Rewards.'`,
+    sql: `COMMENT ON COLUMN challenges.dd_model IS 'Discriminant du moteur DD actif. NULL = ancien comportement (1-Step/2-Step). trailing_eod_lock = nouveau modèle V1 Traders Rewards.'`,
   },
   {
     label: "CREATE INDEX idx_challenges_dd_model",

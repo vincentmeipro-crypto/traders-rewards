@@ -11,7 +11,7 @@ import {
 } from "@/lib/product-engine";
 import { consumePromoCode } from "@/lib/promo";
 
-// Anciens slugs (VIP + legacy) — fallback si parts[2] n'est pas un UUID
+// Anciens slugs (VIP) — fallback si parts[2] n'est pas un UUID
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
   "10k-2step":   { accountSize: "$10,000",  model: "2step" },
   "25k-2step":   { accountSize: "$25,000",  model: "2step" },
@@ -83,10 +83,10 @@ export async function POST(req: NextRequest) {
     }
 
     const userId    = parts[1];
-    const productId = parts[2];  // UUID (new path) ou slug (legacy path)
+    const productId = parts[2];  // UUID (new path) ou slug (ancien path)
     const promoCode = parts[4] || "";
     const refCode   = parts[5] || "";
-    // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (legacy VIP).
+    // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (VIP).
     const rawQty   = parseInt(parts[6] ?? "1", 10);
     const quantity = ([1, 3, 5] as number[]).includes(rawQty) ? rawQty : 1;
 
@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     // Dans tous les cas les colonnes que metaapi/sync lit directement sont peuplées.
     //
     // discountApplied : calculé dans le path UUID (baseAmount connu),
-    //   NULL dans le path slug legacy (baseAmount non disponible sans produit).
+    //   NULL dans le path slug (baseAmount non disponible sans produit).
     //   getEffectivePrice retourne des centimes ; amountPaid est en EUR float
     //   → on compare amountPaid * 100 (centimes) à baseAmount (centimes).
 
@@ -123,9 +123,9 @@ export async function POST(req: NextRequest) {
     let challengeBalance: number;
     let discountApplied:    number | null = null;
     // UUID du produit — disponible dans le new path (Product Engine).
-    // Null dans le legacy path (slug sans UUID DB).
+    // Null dans l'ancien path (slug sans UUID DB).
     // Transmis à consumePromoCode pour l'enforcement product targeting.
-    // Pour le legacy : promos targeting_mode='specific' → RPC retourne product_required
+    // Pour l'ancien path : promos targeting_mode='specific' → RPC retourne product_required
     //   → log non-bloquant ; le client ayant payé reçoit quand même son challenge.
     let challengeProductId: string | null = null;
 
@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
       challengeModel       = model;
       challengeAccountSize = accountSize;
       challengeBalance     = size;
-      // discountApplied reste null : path legacy, baseAmount non disponible
+      // discountApplied reste null : ancien path, baseAmount non disponible
 
       challengeInsert = {
         user_id:              userId,

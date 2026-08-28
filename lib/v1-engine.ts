@@ -89,7 +89,7 @@ export const V1_DD_MODEL = "trailing_eod_lock" as const;
 /** Règles contractuelles du Challenge V1 — APEX EOD MODEL */
 export const V1_CHALLENGE = {
   profitTargetPct:  6,
-  trailingDdPct:    4,   // Gardé pour l'affichage % legacy — calcul réel via V1_DD_USD_BY_BALANCE
+  trailingDdPct:    4,   // Gardé pour l'affichage % — calcul réel via V1_DD_USD_BY_BALANCE
   // consistencyPct : 50 % — identique Reward (V1.2 — même règle toutes phases)
   minTradingDays:   2,   // V1.2 : 2 jours minimum
   maxTradingDays:   30,
@@ -98,8 +98,8 @@ export const V1_CHALLENGE = {
 /** Règles du Reward Account — qualification avant Reward #1 */
 export const V1_REWARD_QUAL = {
   profitTargetPct:   4,
-  trailingDdPct:     4,   // Legacy % — calcul réel via V1_DD_USD_BY_BALANCE
-  trailingLockPct:   4,   // Legacy % — lock réel via V1_SAFETY_NET. Utiliser getV1SafetyNet().
+  trailingDdPct:     4,   // % affiché — calcul réel via V1_DD_USD_BY_BALANCE
+  trailingLockPct:   4,   // % affiché — lock réel via V1_SAFETY_NET. Utiliser getV1SafetyNet().
   minQualifyingDays: 5,
 } as const;
 
@@ -156,7 +156,7 @@ export const V1_ACTIVATION_FEE_EUR: Record<number, number> = {
 
 /**
  * Trailing drawdown EOD par balance initiale (en %).
- * Gardé pour l'affichage legacy — le CALCUL réel utilise V1_DD_USD_BY_BALANCE.
+ * Gardé pour l'affichage % — le CALCUL réel utilise V1_DD_USD_BY_BALANCE.
  *
  *  25K → 4 %  (= 1 000$ fixe)
  *  50K → 4 %  (= 2 000$ fixe)
@@ -199,7 +199,7 @@ export const V1_SAFETY_NET: Record<number, number> = {
 
 /**
  * Retourne le pourcentage de trailing drawdown EOD pour une balance initiale.
- * Usage : affichage legacy (ex: "4%"). Le CALCUL réel utilise getV1DdUsdByBalance().
+ * Usage : affichage % (ex: "4%"). Le CALCUL réel utilise getV1DdUsdByBalance().
  *  25K → 4 %
  *  50K → 4 %
  * 100K → 3 %
@@ -978,7 +978,7 @@ export function computeRewardImpact(
 
 /**
  * @deprecated Remplacé par le modèle Apex EOD — Safety Net + cap.
- * Gardé pour rétrocompatibilité (tests existants, affichage legacy).
+ * Gardé pour rétrocompatibilité (tests existants, affichage %).
  * NE PAS utiliser pour de nouveaux calculs.
  */
 export const REWARD_REQUEST_PROFIT_PCT = 4 as const;

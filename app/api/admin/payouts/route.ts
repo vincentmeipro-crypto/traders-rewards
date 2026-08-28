@@ -116,7 +116,7 @@ export async function PATCH(req: NextRequest) {
             }
           }
         } else {
-          // ── Legacy (1-Step / 2-Step) — Comportement existant ─────────────
+          // ── Ancien modèle (1-Step / 2-Step) — Comportement existant ──────
           // Reset au capital initial + retrait de tout le profit.
 
           // 1. Reset DB en premier (avant withdrawal) pour éviter que le sync restore l'ancien high

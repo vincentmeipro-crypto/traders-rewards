@@ -111,7 +111,7 @@ export async function GET(req: NextRequest) {
 
       // ── V1 Apex EOD — Breach et Pass spécifiques ──────────────────────────────
       // Uniquement pour les challenges avec dd_model = 'trailing_eod_lock'
-      // On bypass les checks legacy (daily_drawdown_limit %, total_drawdown_limit %)
+      // On bypass les checks anciens modèles (daily_drawdown_limit %, total_drawdown_limit %)
       // et on utilise le trailing floor EOD fixe en $.
       if (isV1Challenge(challenge.dd_model as string | null)) {
         const v1Start = startBalance;
@@ -209,7 +209,7 @@ export async function GET(req: NextRequest) {
           await admin.from("challenges").update(highestEodUpdates).eq("id", challenge.id);
         }
 
-        // Si breach V1, traiter immédiatement (même logique que legacy ci-dessous)
+        // Si breach V1, traiter immédiatement (même logique que ci-dessous)
         if (breachReason) {
           const breachPct = parseFloat(((v1Start - breachEquity) / v1Start * 100).toFixed(2));
           console.error(`[V1 BREACH] ${challenge.mt5_login} ${breachReason} — pct: ${breachPct}%`);
@@ -243,7 +243,7 @@ export async function GET(req: NextRequest) {
         }
 
         // V1 sans breach : snapshot normal (le reste du code snapshot s'exécute ensuite)
-        // (Pas de daily_drawdown ni total_drawdown legacy pour V1 — on saute les checks ci-dessous)
+        // (Pas de daily_drawdown ni total_drawdown pour V1 — on saute les checks ci-dessous)
         await admin.from("challenges").update({
           equity:              equity,
           balance:             curBalance,
@@ -281,7 +281,7 @@ export async function GET(req: NextRequest) {
         });
 
         synced++;
-        continue;  // Sauter les checks legacy DD% (ne s'appliquent pas au V1)
+        continue;  // Sauter les checks DD% anciens modèles (ne s'appliquent pas au V1)
       }
       // ── Fin bloc V1 ───────────────────────────────────────────────────────────
 

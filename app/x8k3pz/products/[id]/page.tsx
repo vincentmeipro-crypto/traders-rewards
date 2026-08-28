@@ -377,7 +377,7 @@ export default function ProductEditorPage() {
   const title  = isNew ? "Nouveau produit" : (product?.name ?? "—");
   const fieldRow = { marginBottom: 20 };
 
-  // V1 : masquer consistency_pct legacy (remplacé par consistency_challenge_pct + consistency_reward_pct)
+  // V1 : masquer consistency_pct (remplacé par consistency_challenge_pct + consistency_reward_pct)
   const isV1Product = rules.some(r => r.rule_key === "dd_model" && r.rule_value === "trailing_eod_lock");
 
   // P3#25: Loading skeleton animé
@@ -731,7 +731,7 @@ export default function ProductEditorPage() {
                                     {V1_PHASE_SUBLABEL[phase.phase_type]}
                                   </div>
                                 )}
-                                {/* Legacy funded sous-label */}
+                                {/* Sous-label funded (ancien modèle) */}
                                 {!isV1 && isFunded && (
                                   <div style={{ fontSize: 10, color: accent, marginTop: 4, fontWeight: 600 }}>REWARD ACCOUNT</div>
                                 )}
@@ -741,7 +741,7 @@ export default function ProductEditorPage() {
                             {/* ── Métriques par phase_type ── */}
                             <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
 
-                              {/* NIVEAU 1 — CHALLENGE (V1 + legacy) */}
+                              {/* NIVEAU 1 — CHALLENGE (V1 + ancien modèle) */}
                               {phase.phase_type === "challenge" && (<>
                                 {phase.profit_target !== null && (
                                   <div style={{ textAlign: "right" }}>
@@ -771,7 +771,7 @@ export default function ProductEditorPage() {
                                     <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>j. max</div>
                                   </div>
                                 )}
-                                {/* Profit split — legacy uniquement */}
+                                {/* Profit split — ancien modèle uniquement */}
                                 {!isV1 && phase.profit_split !== null && (
                                   <div style={{ textAlign: "right" }}>
                                     <div style={{ fontSize: 16, fontWeight: 800, color: "#4ade80", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_split}%</div>
@@ -816,7 +816,7 @@ export default function ProductEditorPage() {
                                     <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", textTransform: "uppercase", letterSpacing: "0.5px", marginTop: 3 }}>Durée</div>
                                   </div>
                                 )}
-                                {/* Profit split — legacy uniquement */}
+                                {/* Profit split — ancien modèle uniquement */}
                                 {!isV1 && phase.profit_split !== null && (
                                   <div style={{ textAlign: "right" }}>
                                     <div style={{ fontSize: 16, fontWeight: 800, color: "#4ade80", fontVariantNumeric: "tabular-nums", lineHeight: 1 }}>{phase.profit_split}%</div>
@@ -939,7 +939,7 @@ export default function ProductEditorPage() {
                                 </div>
                               )}
 
-                              {/* NIVEAU 2 (legacy) : Jours min + Jours max + Profit split */}
+                              {/* NIVEAU 2 (ancien modèle) : Jours min + Jours max + Profit split */}
                               {phase.phase_type === "funded" && !isV1 && (
                                 <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
                                   <div>
@@ -1173,7 +1173,7 @@ export default function ProductEditorPage() {
                               {ph.phase_type === "reward_journey" && product && <div>Seuil {Math.round(product.balance_usd * 1.04).toLocaleString("fr-FR")} $ | Plancher fixe {product.balance_usd.toLocaleString("fr-FR")} $</div>}
                               {ph.phase_type === "challenge" && ph.min_trading_days > 0 && <div>{ph.min_trading_days} j. min · {ph.max_trading_days ?? "∞"} j. max</div>}
                               {ph.phase_type === "funded"    && ph.min_trading_days > 0 && <div>{ph.min_trading_days} j. qualifiantes</div>}
-                              {/* Profit split — legacy uniquement */}
+                              {/* Profit split — ancien modèle uniquement */}
                               {!isV1sb && ph.profit_split !== null && <div>Profit éligible {ph.profit_split}%</div>}
                             </div>
                             {idx < phases.length - 1 && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.15)", marginTop: 8 }}>↓</div>}

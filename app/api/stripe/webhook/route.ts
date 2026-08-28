@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     const { userId, productId, accountSize, model, promoCode, refCode } = session.metadata!;
-    // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (legacy VIP).
+    // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (VIP).
     const rawQty  = parseInt(session.metadata?.quantity ?? "1", 10);
     const quantity = ([1, 3, 5] as number[]).includes(rawQty) ? rawQty : 1;
 
@@ -69,12 +69,12 @@ export async function POST(req: NextRequest) {
     //   pour les sessions Stripe ouvertes avant le déploiement de Phase 2B.
     //
     // discountApplied : calculé dans le path UUID (baseAmount connu),
-    //   NULL dans le path slug legacy (baseAmount non disponible sans produit).
+    //   NULL dans le path slug (baseAmount non disponible sans produit).
 
     let challengeInsert: Record<string, unknown>;
     let discountApplied:    number | null = null;
     // UUID du produit — disponible dans le new path (Product Engine).
-    // Null dans le legacy path (slug) et dans le fallback Engine error.
+    // Null dans l'ancien path (slug) et dans le fallback Engine error.
     // Transmis à consumePromoCode pour l'enforcement product targeting.
     let challengeProductId: string | null = null;
 
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
         amount_paid:          amountPaidPerChallengeCents / 100,
         payment_method:       "card",
       };
-      // discountApplied reste null : path legacy, baseAmount non disponible
+      // discountApplied reste null : ancien path, baseAmount non disponible
     }
 
     // ── Consommation atomique promo code ──────────────────────────────

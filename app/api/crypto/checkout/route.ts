@@ -5,7 +5,7 @@ import { loadProductBySlug } from "@/lib/product-engine";
 import { validatePromoCode } from "@/lib/promo";
 import { getPriceForSlug, isPricingSlug } from "@/lib/pricing";
 
-// VIP/legacy products non en DB — conservés pour rétrocompatibilité
+// Produits VIP non en DB — conservés pour rétrocompatibilité
 const VIP_PRODUCTS: Record<
   string,
   { name: string; amount: number; accountSize: string; model: string }
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     try {
       productFromDB = await loadProductBySlug(productId);
     } catch {
-      // Produit non trouvé en DB → chemin VIP legacy
+      // Produit non trouvé en DB → chemin VIP
     }
 
     // ── Validation promo code côté serveur ────────────────────────────────────
@@ -132,9 +132,9 @@ export async function POST(req: NextRequest) {
 
       orderId = `elysium~${userId}~${productFromDB.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${qty}`;
     } else {
-      // ── Fallback : produit VIP / legacy non en DB ─────────────────────────
-      const legacy = VIP_PRODUCTS[productId as keyof typeof VIP_PRODUCTS];
-      if (!legacy) {
+      // ── Fallback : produit VIP non en DB ─────────────────────────────────
+      const vipProduct = VIP_PRODUCTS[productId as keyof typeof VIP_PRODUCTS];
+      if (!vipProduct) {
         return NextResponse.json(
           { error: "Produit introuvable ou inactif" },
           { status: 400 }
@@ -142,9 +142,9 @@ export async function POST(req: NextRequest) {
       }
 
       finalAmount = discountPct > 0
-        ? Math.round(legacy.amount * (100 - discountPct) / 100)
-        : legacy.amount;
-      productName = legacy.name;
+        ? Math.round(vipProduct.amount * (100 - discountPct) / 100)
+        : vipProduct.amount;
+      productName = vipProduct.name;
 
       orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${qty}`;
     }

@@ -8,7 +8,7 @@
  * B. Les anciens challenges ont dd_model = NULL
  * C. Les 3 produits V1 sont présents
  * D–H. Prix, règles, activation fees, qualifying days
- * I. Aucune donnée legacy modifiée
+ * I. Aucune donnée ancienne modifiée
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -73,7 +73,7 @@ async function main() {
   section("B. Anciens challenges — dd_model = NULL");
   {
     // Compter les challenges existants qui ont dd_model non null (problème si > 0)
-    const { data: legacyWithModel, error } = await admin
+    const { data: oldChallengesWithModel, error } = await admin
       .from("challenges")
       .select("id", { count: "exact", head: true })
       .not("dd_model", "is", null)
@@ -83,7 +83,7 @@ async function main() {
       warn("Impossible de vérifier anciens challenges", error.message);
     } else {
       // Ces challenges auraient un dd_model inattendu (avec head:true, data=null)
-      const badRows = legacyWithModel as unknown[] | null;
+      const badRows = oldChallengesWithModel as unknown[] | null;
       const noBadRows = badRows == null || badRows.length === 0;
       chk("Aucun ancien challenge avec dd_model inattendu", noBadRows);
     }

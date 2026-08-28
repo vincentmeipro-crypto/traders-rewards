@@ -23,16 +23,16 @@ BEGIN;
 --
 --  source_key          : clé d'idempotence interne
 --                        "payout:<uuid>"          → rewards CRM actuel
---                        "legacy:<slug>:<date>"   → rewards historiques validés
+--                        "hist:<slug>:<date>"     → rewards historiques validés
 --  public_token        : UUID sans tirets — 32 hex, non-devinable, 128 bits
 --                        seul identifiant public — jamais payout_id/user_id dans l'URL
 --  payout_id           : FK optionnelle — NULL pour les certificats historiques
 --  challenge_id        : FK optionnelle — NULL pour les certificats historiques
---  trader_display_name : nom issu de profiles ou saisi manuellement pour legacy
+--  trader_display_name : nom issu de profiles ou saisi manuellement (pré-CRM)
 --                        masqué à l'affichage public via publicName() ("Prénom N.")
 --  account_size        : taille du compte (ex: "$100K", "$50K")
 --  amount              : montant versé (ex: "3 187 EUR")
---  issued_at           : date d'émission (date du payout ou date legacy)
+--  issued_at           : date d'émission (date du payout ou date historique)
 --  revoked_at          : NULL = valide, timestamptz si révoqué manuellement
 
 CREATE TABLE IF NOT EXISTS public.reward_certificates (
@@ -103,7 +103,7 @@ GRANT USAGE, SELECT ON SEQUENCE public.reward_certificate_scans_id_seq TO servic
 -- avant la mise en place du CRM actuel (remises à zéro historiques).
 -- Confirmés et garantis par le dirigeant de Traders Rewards.
 --
--- "legacy" = certificat historique antérieur au CRM actuel.
+-- "hist" = certificat historique antérieur au CRM actuel.
 -- NE signifie PAS : fictif, démo ou non vérifié.
 --
 -- payout_id = NULL   : aucun payout en DB (données pre-CRM)
@@ -115,21 +115,21 @@ GRANT USAGE, SELECT ON SEQUENCE public.reward_certificate_scans_id_seq TO servic
 INSERT INTO public.reward_certificates
   (source_key, trader_display_name, account_size, amount, issued_at)
 VALUES
-  ('legacy:karim-b:2026-03-14',       'Karim B.',       '$100K', '3 187 EUR', '2026-03-14'),
-  ('legacy:marco-v:2026-04-02',       'Marco V.',       '$100K', '3 094 EUR', '2026-04-02'),
-  ('legacy:thomas-d:2026-04-19',      'Thomas D.',      '$50K',  '1 847 EUR', '2026-04-19'),
-  ('legacy:antoine-m:2026-05-05',     'Antoine M.',     '$100K', '4 213 EUR', '2026-05-05'),
-  ('legacy:mathieu-r:2026-05-21',     'Mathieu R.',     '$100K', '3 731 EUR', '2026-05-21'),
-  ('legacy:alexandre-p:2026-06-08',   'Alexandre P.',   '$100K', '3 847 EUR', '2026-06-08'),
-  ('legacy:sarah-l:2026-06-17',       'Sarah L.',       '$50K',  '2 196 EUR', '2026-06-17'),
-  ('legacy:carlos-g:2026-06-29',      'Carlos G.',      '$50K',  '1 438 EUR', '2026-06-29'),
-  ('legacy:camille-f:2026-07-07',     'Camille F.',     '$100K', '2 941 EUR', '2026-07-07'),
-  ('legacy:nicolas-b:2026-07-12',     'Nicolas B.',     '$100K', '4 638 EUR', '2026-07-12'),
-  ('legacy:jean-pierre-d:2026-07-15', 'Jean-Pierre D.', '$100K', '4 612 EUR', '2026-07-15'),
-  ('legacy:lukas-w:2026-07-18',       'Lukas W.',       '$100K', '3 574 EUR', '2026-07-18'),
-  ('legacy:julien-m:2026-07-20',      'Julien M.',      '$100K', '2 578 EUR', '2026-07-20'),
-  ('legacy:lena-h:2026-07-22',        'Lena H.',        '$25K',  '1 163 EUR', '2026-07-22'),
-  ('legacy:lucas-m:2026-07-24',       'Lucas M.',       '$25K',  '1 046 EUR', '2026-07-24')
+  ('hist:karim-b:2026-03-14',       'Karim B.',       '$100K', '3 187 EUR', '2026-03-14'),
+  ('hist:marco-v:2026-04-02',       'Marco V.',       '$100K', '3 094 EUR', '2026-04-02'),
+  ('hist:thomas-d:2026-04-19',      'Thomas D.',      '$50K',  '1 847 EUR', '2026-04-19'),
+  ('hist:antoine-m:2026-05-05',     'Antoine M.',     '$100K', '4 213 EUR', '2026-05-05'),
+  ('hist:mathieu-r:2026-05-21',     'Mathieu R.',     '$100K', '3 731 EUR', '2026-05-21'),
+  ('hist:alexandre-p:2026-06-08',   'Alexandre P.',   '$100K', '3 847 EUR', '2026-06-08'),
+  ('hist:sarah-l:2026-06-17',       'Sarah L.',       '$50K',  '2 196 EUR', '2026-06-17'),
+  ('hist:carlos-g:2026-06-29',      'Carlos G.',      '$50K',  '1 438 EUR', '2026-06-29'),
+  ('hist:camille-f:2026-07-07',     'Camille F.',     '$100K', '2 941 EUR', '2026-07-07'),
+  ('hist:nicolas-b:2026-07-12',     'Nicolas B.',     '$100K', '4 638 EUR', '2026-07-12'),
+  ('hist:jean-pierre-d:2026-07-15', 'Jean-Pierre D.', '$100K', '4 612 EUR', '2026-07-15'),
+  ('hist:lukas-w:2026-07-18',       'Lukas W.',       '$100K', '3 574 EUR', '2026-07-18'),
+  ('hist:julien-m:2026-07-20',      'Julien M.',      '$100K', '2 578 EUR', '2026-07-20'),
+  ('hist:lena-h:2026-07-22',        'Lena H.',        '$25K',  '1 163 EUR', '2026-07-22'),
+  ('hist:lucas-m:2026-07-24',       'Lucas M.',       '$25K',  '1 046 EUR', '2026-07-24')
 ON CONFLICT (source_key) DO NOTHING;
 
 -- ── 5. Backfill payouts status='paid' du CRM actuel ──────────

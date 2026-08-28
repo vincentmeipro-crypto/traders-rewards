@@ -157,7 +157,7 @@ function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
 
 function phaseLabel(phase: string, approvedRewardsCount: number): string {
   if (phase === "phase1") return "CHALLENGER";
-  if (phase === "phase2") return "CHALLENGER · LEGACY";
+  if (phase === "phase2") return "CHALLENGER";
   if (phase === "funded") return approvedRewardsCount > 0 ? "TRADER REWARD" : "COMPTE REWARD";
   return phase;
 }
@@ -400,7 +400,7 @@ export default function TraderCockpit({
   const equity = effectiveBalance + floatingPnl;
   const profit = effectiveBalance - challenge.start_balance;
   const accountSize = numeric(String(challenge.account_size).replace(/[^0-9.]/g, "")) * (String(challenge.account_size).toUpperCase().includes("K") ? 1000 : 1);
-  const isLegacyPhaseTwo = challenge.phase === "phase2";
+  const isTwoStepPhase2 = challenge.phase === "phase2";
   const isRewardAccount = challenge.phase === "funded";
   // Modèle V1 Apex EOD — détection robuste (dd_model OU rules_snapshot OU slug)
   const isV1 = isV1Challenge(challenge);
@@ -413,7 +413,7 @@ export default function TraderCockpit({
   // nextRewardNumber=null quand parcours terminé (≥5 Rewards) → fallback 5 pour l'affichage
   const currentRewardNumber = traderLevel.nextRewardNumber ?? 5;
   const currentRewardCap = REWARD_AMOUNTS[sizeIndex][currentRewardNumber - 1];
-  const displayProfitTargetPct = challenge.phase === "funded" ? 4 : isLegacyPhaseTwo ? challenge.profit_target : 6;
+  const displayProfitTargetPct = challenge.phase === "funded" ? 4 : isTwoStepPhase2 ? challenge.profit_target : 6;
   const displayDrawdownPct = accountSize >= 100_000 ? 3 : 4;
   const profitTargetUsd = challenge.start_balance * displayProfitTargetPct / 100;
   const targetBalance = challenge.start_balance + profitTargetUsd;
@@ -422,7 +422,7 @@ export default function TraderCockpit({
 
   // minDays from contract rules (snapshot → fallback)
   // V1 Challenge : 2 jours minimum (V1.2)
-  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isV1 ? V1_CHALLENGE_MIN_DAYS : isLegacyPhaseTwo ? contractRules.minTradingDays : 0;
+  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isV1 ? V1_CHALLENGE_MIN_DAYS : isTwoStepPhase2 ? contractRules.minTradingDays : 0;
 
   const daysRemaining = Math.max(0, minDays - challenge.trading_days);
   const dailyReferenceBalance = challenge.daily_start_balance ?? challenge.start_balance;
@@ -432,7 +432,7 @@ export default function TraderCockpit({
   const dailyRiskUsed = clamp((1 - dailyBuffer / Math.max(dailyLimitUsd, 1)) * 100);
   const isOneStep = challenge.model.toLowerCase().replace(/[\s-]/g, "").includes("1step");
   // V1 : floor = highest_eod - DD$ (ou start si Safety Net atteinte)
-  // Legacy : floor = highest_balance * (1 - ddPct/100)
+  // 2-Step : floor = highest_balance * (1 - ddPct/100)
   const v1DdUsd        = isV1 ? getV1DdUsd(challenge.start_balance) : 0;
   const v1SafetyNet    = isV1 ? getV1SafetyNetUsd(challenge.start_balance) : 0;
   const v1HighestEod   = challenge.highest_eod ?? challenge.start_balance;

@@ -32,7 +32,7 @@ ALTER TABLE challenges
   ADD COLUMN IF NOT EXISTS dd_model TEXT DEFAULT NULL;
 
 COMMENT ON COLUMN challenges.dd_model IS
-  'Discriminant du moteur DD actif. NULL = ancien comportement (1-Step/2-Step legacy). trailing_eod_lock = nouveau modèle V1 Traders Rewards.';
+  'Discriminant du moteur DD actif. NULL = ancien comportement (1-Step/2-Step). trailing_eod_lock = nouveau modèle V1 Traders Rewards.';
 
 -- Index optionnel pour filtrer rapidement les challenges V1 (futurs dashboards admin)
 CREATE INDEX IF NOT EXISTS idx_challenges_dd_model

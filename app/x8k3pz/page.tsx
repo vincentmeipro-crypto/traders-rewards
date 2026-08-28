@@ -390,7 +390,7 @@ function AdminPageInner() {
   const [settingsMsg, setSettingsMsg] = useState<Record<string, { ok: boolean; msg: string }>>({});
 
   // Settings & Maintenance Hub state
-  const [settingsLegacyOpen, setSettingsLegacyOpen] = useState(false);
+  const [settingsHistOpen, setSettingsHistOpen] = useState(false);
   const [maintenanceDangerOpen, setMaintenanceDangerOpen] = useState(false);
 
   const loadAdminData = async () => {
@@ -1641,7 +1641,7 @@ function AdminPageInner() {
                                               })()
                                               )
                                             ) : risk ? (
-                                              // Legacy : DD % jour + max
+                                              // Ancien modèle : DD % jour + max
                                               ([
                                                 { label: "DD Jour", used: risk.dailyUsed, max: risk.maxDaily, col: risk.dCol },
                                                 { label: "DD Max",  used: risk.totalUsed, max: risk.maxTotal, col: risk.tCol },
@@ -4540,7 +4540,7 @@ function AdminPageInner() {
                   <div style={{ borderTop: "1px solid rgba(239,68,68,0.1)", padding: "20px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 4 }}>Restauration clients</div>
-                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 6 }}>Operation legacy — Bruno Penard, Aurelien Roussel, Regis Allide (x2), Samir KHELIF</div>
+                      <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 6 }}>Restauration — Bruno Penard, Aurelien Roussel, Regis Allide (x2), Samir KHELIF</div>
                       <div style={{ fontSize: 11, color: "rgba(239,68,68,0.6)" }}>Action irreversible — cree des challenges Supabase et envoie des emails automatiques aux traders.</div>
                     </div>
 
@@ -4757,13 +4757,13 @@ function AdminPageInner() {
                   {challengesRows.length > 0 && (
                     <div style={{ marginTop: payoutsRows.length > 0 ? 16 : 0 }}>
                       <button
-                        onClick={() => setSettingsLegacyOpen(o => !o)}
+                        onClick={() => setSettingsHistOpen(o => !o)}
                         style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "10px 14px", cursor: "pointer", color: "rgba(255,255,255,0.45)", fontSize: 12 }}
                       >
-                        <span style={{ fontWeight: 600 }}>Valeurs legacy ({challengesRows.length})</span>
-                        <span>{settingsLegacyOpen ? "Masquer" : "Afficher"}</span>
+                        <span style={{ fontWeight: 600 }}>Valeurs historiques ({challengesRows.length})</span>
+                        <span>{settingsHistOpen ? "Masquer" : "Afficher"}</span>
                       </button>
-                      {settingsLegacyOpen && (
+                      {settingsHistOpen && (
                         <div style={{ paddingTop: 12 }}>
                           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 10 }}>
                             Ces valeurs servent uniquement de fallback pour les anciens flux. Product Builder est la source de verite pour les nouveaux produits.

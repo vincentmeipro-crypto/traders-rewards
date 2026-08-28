@@ -46,8 +46,8 @@ export async function GET(req: NextRequest) {
       .is("revoked_at", null)
       .order("issued_at", { ascending: false });
     if (fallback.error) return NextResponse.json([]);
-    const legacy = (fallback.data ?? []).map(cert => ({ ...cert, certificate_type: "reward" as const }));
-    return NextResponse.json(legacy);
+    const fallbackCerts = (fallback.data ?? []).map(cert => ({ ...cert, certificate_type: "reward" as const }));
+    return NextResponse.json(fallbackCerts);
   }
 
   if (error) return NextResponse.json([]);

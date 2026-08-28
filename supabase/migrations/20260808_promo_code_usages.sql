@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS public.promo_code_usages (
   provider          text        NOT NULL
                                 CHECK (provider IN ('stripe', 'crypto', 'free')),
   payment_reference text        NULL,           -- session.id | payment_id | free:userId:code:productId
-  discount_applied  integer     NULL,           -- % effectif appliqué (nullable : path legacy)
+  discount_applied  integer     NULL,           -- % effectif appliqué (nullable : ancien chemin)
   used_at           timestamptz NOT NULL DEFAULT now()
 );
 
@@ -71,7 +71,7 @@ ALTER TABLE public.promo_code_usages ENABLE ROW LEVEL SECURITY;
 --   p_user_id           uuid    — utilisateur qui consomme
 --   p_provider          text    — 'stripe' | 'crypto' | 'free'
 --   p_payment_reference text    — référence unique de la transaction (nullable)
---   p_discount_applied  integer — % effectif appliqué (nullable pour path legacy)
+--   p_discount_applied  integer — % effectif appliqué (nullable pour ancien chemin)
 --
 -- Retour (une ligne) :
 --   success           boolean — true = code consommé avec succès

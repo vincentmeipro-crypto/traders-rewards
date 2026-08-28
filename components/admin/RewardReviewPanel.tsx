@@ -59,7 +59,7 @@ export default function RewardReviewPanel({
   const compteRewardLabel   = rewardLevel === 1 ? "Compte Reward" : `Trader Reward #${rewardLevel}`;
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // CHECKS — deux ensembles selon produit (V1 strict / Legacy)
+  // CHECKS — deux ensembles selon produit (V1 / ancien modèle 2-step)
   // ═══════════════════════════════════════════════════════════════════════════
 
   // ── Checks communs (début) ────────────────────────────────────────────────
@@ -82,13 +82,13 @@ export default function RewardReviewPanel({
     detail: `${data.account.openPositions} ouverte(s)`,
   };
 
-  // ── Checks Legacy (inchangés) ─────────────────────────────────────────────
-  const legacyLimitsOk =
+  // ── Checks ancien modèle 2-step ──────────────────────────────────────────
+  const oldModelLimitsOk =
     data.account.status !== "failed" &&
     data.account.dailyUsed < data.account.dailyLimit &&
     data.account.totalUsed < data.account.totalLimit;
 
-  const legacyChecks: CheckRow[] = [
+  const oldModelChecks: CheckRow[] = [
     checkMt5Fresh,
     checkKyc,
     {
@@ -99,7 +99,7 @@ export default function RewardReviewPanel({
     },
     {
       label: "Limites respectées",
-      ok: legacyLimitsOk,
+      ok: oldModelLimitsOk,
       unknown: false,
       detail: `${data.account.dailyUsed.toFixed(2)}% J · ${data.account.totalUsed.toFixed(2)}% max`,
     },
@@ -114,7 +114,7 @@ export default function RewardReviewPanel({
     checkNoPositions,
   ];
 
-  const checks = legacyChecks;
+  const checks = oldModelChecks;
 
   // ═══════════════════════════════════════════════════════════════════════════
   // MÉTRIQUES — V1 supprime les métriques liées au Stop Loss
@@ -133,7 +133,7 @@ export default function RewardReviewPanel({
     },
   ];
 
-  // Legacy uniquement : métriques SL
+  // Ancien modèle 2-step uniquement : métriques SL
   const metrics = isV1 ? [] : slMetrics;
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -163,7 +163,7 @@ export default function RewardReviewPanel({
         </div>
       </div>
 
-      {/* Checks — V1 : 6 cartes horizontales / Legacy : liste */}
+      {/* Checks — V1 : 6 cartes horizontales / ancien modèle : liste */}
       {isV1 ? (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, margin: "14px 0" }}>
           {((): Array<{ label: string; ok: boolean; unknown: boolean; value: string; sub: string }> => {
@@ -264,7 +264,7 @@ export default function RewardReviewPanel({
         </div>
       )}
 
-      {/* Métriques SL — Legacy uniquement */}
+      {/* Métriques SL — ancien modèle 2-step uniquement */}
       {metrics.length > 0 && (
         <div className={styles.metrics}>
           {metrics.map(metric => (
@@ -277,7 +277,7 @@ export default function RewardReviewPanel({
         </div>
       )}
 
-      {/* Section Stop Loss — Legacy UNIQUEMENT (non affiché pour V1) */}
+      {/* Section Stop Loss — ancien modèle uniquement (non affiché pour V1) */}
       {!isV1 && (
         <>
           <div className={styles.riskHeader}>

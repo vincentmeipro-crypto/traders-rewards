@@ -110,7 +110,7 @@ test("rules_snapshot.rules.dd_model=trailing_eod_lock → true",
 test("model=rewards-50k → true",    isV1Challenge({ model: "rewards-50k" }),   true);
 test("model=rewards-25k → true",    isV1Challenge({ model: "rewards-25k" }),   true);
 test("model=rewards-100k → true",   isV1Challenge({ model: "rewards-100k" }),  true);
-// Legacy slugs → false
+// Anciens slugs → false
 test("model=2step → false",         isV1Challenge({ model: "2step" }),          false);
 test("model=1step → false",         isV1Challenge({ model: "1step" }),          false);
 // All null/undefined → false

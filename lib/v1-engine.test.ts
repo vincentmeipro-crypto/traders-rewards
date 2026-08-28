@@ -97,23 +97,23 @@ for (const balance of [25000, 50000, 100000]) {
 }
 
 // ════════════════════════════════════════════════════════════════
-// B-D. Challenge DD — Apex EOD : % legacy + $ fixe
+// B-D. Challenge DD — Apex EOD : % affiché + $ fixe
 // ════════════════════════════════════════════════════════════════
 
-section("B. 25K DD — 4 % legacy, 1 000$ fixe (Apex EOD)");
-test("getV1DdPctByBalance(25000) = 4 (affichage legacy)", getV1DdPctByBalance(25000), 4);
+section("B. 25K DD — 4 % affiché, 1 000$ fixe (Apex EOD)");
+test("getV1DdPctByBalance(25000) = 4 (affichage %)", getV1DdPctByBalance(25000), 4);
 test("V1_DD_PCT_BY_BALANCE[25000] = 4", V1_DD_PCT_BY_BALANCE[25000], 4);
 test("getV1DdUsdByBalance(25000) = 1 000", getV1DdUsdByBalance(25000), 1000);
 test("V1_DD_USD_BY_BALANCE[25000] = 1 000", V1_DD_USD_BY_BALANCE[25000], 1000);
 
-section("C. 50K DD — 4 % legacy, 2 000$ fixe (Apex EOD)");
-test("getV1DdPctByBalance(50000) = 4 (affichage legacy)", getV1DdPctByBalance(50000), 4);
+section("C. 50K DD — 4 % affiché, 2 000$ fixe (Apex EOD)");
+test("getV1DdPctByBalance(50000) = 4 (affichage %)", getV1DdPctByBalance(50000), 4);
 test("V1_DD_PCT_BY_BALANCE[50000] = 4", V1_DD_PCT_BY_BALANCE[50000], 4);
 test("getV1DdUsdByBalance(50000) = 2 000", getV1DdUsdByBalance(50000), 2000);
 test("V1_DD_USD_BY_BALANCE[50000] = 2 000", V1_DD_USD_BY_BALANCE[50000], 2000);
 
-section("D. 100K DD — 3 % legacy, 3 000$ fixe (Apex EOD)");
-test("getV1DdPctByBalance(100000) = 3 (affichage legacy)", getV1DdPctByBalance(100000), 3);
+section("D. 100K DD — 3 % affiché, 3 000$ fixe (Apex EOD)");
+test("getV1DdPctByBalance(100000) = 3 (affichage %)", getV1DdPctByBalance(100000), 3);
 test("V1_DD_PCT_BY_BALANCE[100000] = 3", V1_DD_PCT_BY_BALANCE[100000], 3);
 test("getV1DdUsdByBalance(100000) = 3 000", getV1DdUsdByBalance(100000), 3000);
 test("V1_DD_USD_BY_BALANCE[100000] = 3 000", V1_DD_USD_BY_BALANCE[100000], 3000);
