@@ -8,7 +8,7 @@
 // ════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef } from "react";
-import { X, CircleCheck, DollarSign, Trophy, Award } from "lucide-react";
+import { X, CircleCheck, DollarSign, Trophy, BadgeDollarSign, Award } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 import PricingDetailModal from "./PricingDetailModal";
@@ -894,7 +894,39 @@ export default function JourneyThreeLevels() {
               </div>
 
               {/* Spacer */}
-              <div style={{ flex: 1, minHeight: 12 }} />
+              <div style={{ flex: 1, minHeight: 20 }} />
+
+              {/* Bénéfice final — même format que les autres niveaux */}
+              <div style={{
+                position:     "relative",
+                background:   "linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
+                border:       "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 12,
+                padding:      "11px 14px",
+                minHeight:    150,
+                boxSizing:    "border-box",
+                boxShadow:    "0 2px 12px rgba(0,0,0,0.30)",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.30)", letterSpacing: "2px", textTransform: "uppercase" }}>
+                    REWARD #1
+                  </div>
+                  <BadgeDollarSign size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
+                </div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
+                  {L("JUSQU'À","HASTA","UP TO")}
+                </div>
+                <div style={{
+                  fontSize:      "clamp(40px, 4vw, 56px)",
+                  fontWeight:    900,
+                  color:         ACCENT,
+                  letterSpacing: "-2px",
+                  lineHeight:    1,
+                  textShadow:    "0 0 8px rgba(156,207,234,0.35), 0 0 20px rgba(156,207,234,0.18)",
+                }}>
+                  {money(rewardOne)}
+                </div>
+              </div>
             </div>
 
             {/* Arrow 2→3 */}
