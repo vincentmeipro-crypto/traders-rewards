@@ -858,18 +858,14 @@ export default function JourneyThreeLevels() {
                   <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "4px 7px", fontSize: 10.5, color: "rgba(255,255,255,0.52)" }}>
                     <strong style={{ color: "rgba(255,255,255,0.78)" }}>{money(selectedSize.lockAt)}</strong>
                     <span>{L("de seuil protégé","de umbral protegido","protected threshold")}</span>
-                    <span style={{ opacity: 0.45 }}>+</span>
-                    <strong style={{ color: "#FFFFFF" }}>{money(rewardOne)}</strong>
-                    <span>{L("de Reward maximum","de Reward máxima","maximum Reward")}</span>
                   </div>
                 </div>
 
                 {/* Conditions essentielles */}
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "7px 10px", position: "relative" }}>
                   {[
-                    L("5 jours minimum","5 días mínimo","5 days minimum"),
-                    `+${money(QUAL_MIN[selectedSize.bal])} / ${L("jour","día","day")}`,
-                    `${L("DD EOD jusqu'au seuil","DD EOD hasta el umbral","EOD DD until threshold")} ${money(selectedSize.lockAt)}, ${L("puis fixe","luego fijo","then fixed")}`,
+                    `${L("5 jours qualifiants à","5 días calificados a","5 qualifying days at")} ${money(QUAL_MIN[selectedSize.bal])}`,
+                    `${L("DD EOD jusqu'à","DD EOD hasta","EOD DD until")} ${money(selectedSize.lockAt)}`,
                     L("Consistance 50 %","Consistencia 50 %","50% consistency"),
                   ].map((rule) => (
                     <div key={rule} style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
@@ -888,7 +884,7 @@ export default function JourneyThreeLevels() {
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "6px 12px" }}>
                   <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
                   <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.5px" }}>
-                    {L("Demande traitée sous 48 h","Solicitud procesada en 48 h","Request processed within 48 hours")}
+                    {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
                   </span>
                 </span>
               </div>
