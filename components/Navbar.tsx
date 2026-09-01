@@ -130,13 +130,13 @@ export default function Navbar() {
               <div style={{ width: 36 }} />
               {/* Logo centré */}
               <Link href="/" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", textDecoration: "none" }}>
-                <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 134, width: "auto", objectFit: "contain", transform: "translateY(4px)" }} />
+                <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 46, width: "auto", maxWidth: "68vw", objectFit: "contain" }} />
               </Link>
             </>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
-                <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 146, width: "auto", objectFit: "contain", marginLeft: -10, transform: "translateY(6px)" }} />
+                <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 58, width: "auto", objectFit: "contain" }} />
               </Link>
             </div>
           )}
