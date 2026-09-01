@@ -757,16 +757,16 @@ export default function JourneyThreeLevels() {
 
               {/* Durée */}
               <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.72)", marginBottom: 8, position: "relative", lineHeight: 1.5 }}>
+                <span style={{ color: ACCENT, marginRight: 6 }}>✓</span>
                 {L("2 jours minimum","2 días mínimo","2 days minimum")}
                 <span style={{ color: "rgba(255,255,255,0.30)", margin: "0 6px" }}>→</span>
                 {L("30 jours maximum","30 días máximo","30 days maximum")}
               </div>
 
               {/* Règles */}
-              <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
-                {L("DD EOD","DD EOD","EOD drawdown")} {money(ddUsd)}
-                <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "7px 14px", fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
+                <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("DD EOD","DD EOD","EOD drawdown")} {money(ddUsd)}</span>
+                <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("Consistance 50%","Consistencia 50%","Consistency 50%")}</span>
               </div>
 
               {/* Spacer */}
@@ -815,7 +815,7 @@ export default function JourneyThreeLevels() {
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.015), transparent 52%)" }} />
 
               {/* Zone supérieure — minHeight identique carte 02/03 pour aligner les badges verts */}
-              <div style={{ minHeight: isMobile ? undefined : 220 }}>
+              <div style={{ minHeight: isMobile ? undefined : 250 }}>
 
                 {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
@@ -840,14 +840,10 @@ export default function JourneyThreeLevels() {
                   </span>
                 </div>
 
-                {/* Objectif principal et décomposition */}
+                {/* Objectif principal — présentation plate, cohérente avec les cartes voisines */}
                 <div style={{
                   position: "relative",
-                  marginBottom: 12,
-                  padding: "12px 13px",
-                  borderRadius: 12,
-                  border: "1px solid rgba(156,207,234,0.24)",
-                  background: "rgba(156,207,234,0.055)",
+                  marginBottom: 14,
                 }}>
                   <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.42)", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: 5 }}>
                     {L("SOLDE À ATTEINDRE","SALDO A ALCANZAR","TARGET BALANCE")}
@@ -935,7 +931,7 @@ export default function JourneyThreeLevels() {
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.012), transparent 50%)" }} />
 
               {/* Zone supérieure — minHeight identique carte 02/03 pour aligner les badges verts */}
-              <div style={{ minHeight: isMobile ? undefined : 220 }}>
+              <div style={{ minHeight: isMobile ? undefined : 250 }}>
 
                 {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
@@ -979,19 +975,18 @@ export default function JourneyThreeLevels() {
                 </div>
 
                 {/* Règles */}
-                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
-                  {L("DD fixe dès le départ","DD fijo desde el inicio","Fixed DD from the start")} {money(ddUsd)}
-                  <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                  {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "7px 14px", fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
+                  <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("DD fixe dès le départ","DD fijo desde el inicio","Fixed DD from the start")} {money(ddUsd)}</span>
+                  <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("Consistance 50%","Consistencia 50%","Consistency 50%")}</span>
                 </div>
 
               </div>{/* /zone supérieure */}
 
-              {/* Patch premium : Reward auto 48H */}
-              <div style={{ marginTop: 10, position: "relative" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "4px 12px" }}>
+              {/* Reward auto 48H — aligné avec le niveau 02 */}
+              <div style={{ marginTop: 12, position: "relative" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "6px 12px" }}>
                   <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.8px" }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.5px" }}>
                     {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
                   </span>
                 </span>
