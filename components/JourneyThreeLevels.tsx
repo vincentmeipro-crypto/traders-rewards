@@ -764,7 +764,7 @@ export default function JourneyThreeLevels() {
 
               {/* Règles */}
               <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
-                {L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} {money(ddUsd)}
+                {L("DD EOD","DD EOD","EOD drawdown")} {money(ddUsd)}
                 <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
                 {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
               </div>
@@ -869,7 +869,7 @@ export default function JourneyThreeLevels() {
                   {[
                     L("5 jours minimum","5 días mínimo","5 days minimum"),
                     `+${money(QUAL_MIN[selectedSize.bal])} / ${L("jour","día","day")}`,
-                    `${L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} ${money(ddUsd)}`,
+                    `${L("DD EOD jusqu'au seuil","DD EOD hasta el umbral","EOD DD until threshold")} ${money(selectedSize.lockAt)}, ${L("puis fixe","luego fijo","then fixed")}`,
                     L("Consistance 50 %","Consistencia 50 %","50% consistency"),
                   ].map((rule) => (
                     <div key={rule} style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
@@ -984,7 +984,7 @@ export default function JourneyThreeLevels() {
 
                 {/* Règles */}
                 <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
-                  {L("DD fixe","DD fijo","Fixed DD")}
+                  {L("DD fixe dès le départ","DD fijo desde el inicio","Fixed DD from the start")} {money(ddUsd)}
                   <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
                   {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
                 </div>
