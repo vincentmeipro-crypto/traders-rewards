@@ -8,7 +8,7 @@
 // ════════════════════════════════════════════════════════════════
 
 import { useState, useEffect, useRef } from "react";
-import { X, CircleCheck, DollarSign, Trophy, BadgeDollarSign, Award } from "lucide-react";
+import { X, CircleCheck, DollarSign, Trophy, Award } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 import PricingDetailModal from "./PricingDetailModal";
@@ -832,87 +832,69 @@ export default function JourneyThreeLevels() {
                   COMPTE REWARD
                 </div>
 
-                {/* Sous-titre */}
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 18, position: "relative" }}>
+                {/* Promesse du niveau */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, position: "relative" }}>
                   <DollarSign size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
                   <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
-                    {L("Débloquez votre première Reward","Desbloquee su primera Reward","Unlock your first Reward")}
+                    {L("Objectif pour demander la Reward #1","Objetivo para solicitar la Reward #1","Target to request Reward #1")}
                   </span>
                 </div>
 
-                {/* Seuil de sécurité + seuil Reward #1 */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12, position: "relative" }}>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                    <span style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.40)", letterSpacing: "1.5px", textTransform: "uppercase" }}>{L("Seuil de sécurité","Umbral de seguridad","Safety Net")}</span>
-                    <span style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-0.5px", lineHeight: 1 }}>{money(selectedSize.lockAt)}</span>
+                {/* Objectif principal et décomposition */}
+                <div style={{
+                  position: "relative",
+                  marginBottom: 12,
+                  padding: "12px 13px",
+                  borderRadius: 12,
+                  border: "1px solid rgba(156,207,234,0.24)",
+                  background: "rgba(156,207,234,0.055)",
+                }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.42)", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: 5 }}>
+                    {L("SOLDE À ATTEINDRE","SALDO A ALCANZAR","TARGET BALANCE")}
                   </div>
-                  <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.42)" }}>
-                    {L("Seuil à atteindre — Reward #1","Umbral Reward #1","Reward #1 threshold")}{" → "}
-                    <span style={{ color: "rgba(255,255,255,0.72)", fontWeight: 800 }}>{money(rewardThreshold)}</span>
-                    {" "}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.28)" }}>({L("Reward maximum","tope","cap")} {money(rewardOne)})</span>
+                  <div style={{ fontSize: 30, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1, marginBottom: 9 }}>
+                    {money(rewardThreshold)}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "4px 7px", fontSize: 10.5, color: "rgba(255,255,255,0.52)" }}>
+                    <strong style={{ color: "rgba(255,255,255,0.78)" }}>{money(selectedSize.lockAt)}</strong>
+                    <span>{L("de seuil protégé","de umbral protegido","protected threshold")}</span>
+                    <span style={{ opacity: 0.45 }}>+</span>
+                    <strong style={{ color: "#FFFFFF" }}>{money(rewardOne)}</strong>
+                    <span>{L("de Reward maximum","de Reward máxima","maximum Reward")}</span>
                   </div>
                 </div>
 
-                {/* Journées qualifiantes */}
-                <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.72)", marginBottom: 8, position: "relative", lineHeight: 1.5 }}>
-                  {L("5 journées qualifiantes minimum","5 días calificados mínimo","5 qualifying days minimum")} · +{money(QUAL_MIN[selectedSize.bal])} / {L("jour","día","day")}
-                </div>
-
-                {/* Règles */}
-                <div style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
-                  {L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} {money(ddUsd)}
-                  <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                  {L("Consistance 50%","Consistencia 50%","Consistency 50%")}
-                  <span style={{ margin: "0 6px", opacity: 0.5 }}>·</span>
-                  {L("Temps illimité","Tiempo ilimitado","Unlimited duration")}
+                {/* Conditions essentielles */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "7px 10px", position: "relative" }}>
+                  {[
+                    L("5 jours minimum","5 días mínimo","5 days minimum"),
+                    `+${money(QUAL_MIN[selectedSize.bal])} / ${L("jour","día","day")}`,
+                    `${L("DD EOD fixe","DD EOD fijo","Fixed DD EOD")} ${money(ddUsd)}`,
+                    L("Consistance 50 %","Consistencia 50 %","50% consistency"),
+                  ].map((rule) => (
+                    <div key={rule} style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+                      <span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{rule}
+                    </div>
+                  ))}
+                  <div style={{ gridColumn: "1 / -1", fontSize: 10.5, color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
+                    <span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("Temps illimité","Tiempo ilimitado","Unlimited duration")}
+                  </div>
                 </div>
 
               </div>{/* /zone supérieure */}
 
-              {/* Patch premium : Reward auto 48H */}
-              <div style={{ marginTop: 10, position: "relative" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "4px 12px" }}>
+              {/* Délai de traitement */}
+              <div style={{ marginTop: 12, position: "relative" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "6px 12px" }}>
                   <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
-                  <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.8px" }}>
-                    {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
+                  <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.5px" }}>
+                    {L("Demande traitée sous 48 h","Solicitud procesada en 48 h","Request processed within 48 hours")}
                   </span>
                 </span>
               </div>
 
               {/* Spacer */}
-              <div style={{ flex: 1, minHeight: 20 }} />
-
-              {/* Bénéfice final */}
-              <div style={{
-                position:     "relative",
-                background:   "linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
-                border:       "1px solid rgba(255,255,255,0.12)",
-                borderRadius: 12,
-                padding:      "11px 14px",
-                minHeight:    150,
-                boxSizing:    "border-box",
-                boxShadow:    "0 2px 12px rgba(0,0,0,0.30)",
-              }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.30)", letterSpacing: "2px", textTransform: "uppercase" }}>
-                    REWARD #1
-                  </div>
-                  <BadgeDollarSign size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
-                </div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
-                  {L("JUSQU'À","HASTA","UP TO")}
-                </div>
-                <div style={{
-                  fontSize:    "clamp(40px, 4vw, 56px)",
-                  fontWeight:  900,
-                  color:       ACCENT,
-                  letterSpacing: "-2px",
-                  lineHeight:  1,
-                  textShadow:  "0 0 8px rgba(156,207,234,0.35), 0 0 20px rgba(156,207,234,0.18)",
-                }}>
-                  {money(rewardOne)}
-                </div>
-              </div>
+              <div style={{ flex: 1, minHeight: 12 }} />
             </div>
 
             {/* Arrow 2→3 */}
