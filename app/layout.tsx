@@ -119,7 +119,7 @@ const jsonLd = {
       url: SITE_URL,
       logo: {
         "@type": "ImageObject",
-        url: `${SITE_URL}/traders-rewards-logo.png`,
+        url: `${SITE_URL}/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png`,
       },
       description: "Programme de trading simulé avec Challenges 25K, 50K et 100K et parcours progressif de cinq Rewards.",
       address: {

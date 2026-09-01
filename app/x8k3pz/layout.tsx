@@ -99,7 +99,7 @@ function SidebarInner() {
     }}>
       {/* Logo */}
       <div style={{ padding: "18px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
-        <img src="/logo-nom-noir.png" style={{ width: 34, height: 34, objectFit: "contain" }} alt="" />
+        <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" style={{ width: 34, height: 34, objectFit: "contain" }} alt="" />
         <div>
           <div style={{ color: "#fff", fontWeight: 900, fontSize: 13, letterSpacing: 0.5 }}>Traders Rewards</div>
           <div style={{ color: "rgba(255,255,255,0.25)", fontWeight: 700, fontSize: 10, letterSpacing: 2, textTransform: "uppercase" }}>Admin</div>

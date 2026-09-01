@@ -556,7 +556,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {!isMobile && (
         <div style={{ position: "fixed", top: 0, left: 0, bottom: 0, width: 240, backgroundColor: "#050505", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", zIndex: 50 }}>
           <div style={{ height: 110, padding: "0 10px", overflow: "hidden", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", alignItems: "center" }}>
-            <img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 220, maxWidth: "100%", height: "auto", objectFit: "contain", flexShrink: 0 }} />
+            <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ width: 220, maxWidth: "100%", height: "auto", objectFit: "contain", flexShrink: 0 }} />
           </div>
 
           <nav style={{ padding: "16px 12px", flex: 1, overflowY: "auto" }}>
@@ -629,7 +629,7 @@ export default function DashboardClient({ user }: { user: User }) {
       {isMobile && (
         <>
           <div style={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#050505", borderBottom: "1px solid rgba(255,255,255,0.08)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
-            <Link href="/"><img src="/logo-blanc-transparent.png" alt="Traders Rewards" style={{ width: 36, height: 36, objectFit: "contain" }} /></Link>
+            <Link href="/"><img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ width: 36, height: 36, objectFit: "contain" }} /></Link>
             <div style={{ fontSize: 13, fontWeight: 800, ...chromeMenuText }}>
               {([
                 { tab: "dashboard", label: T.dash.dashboard },

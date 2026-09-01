@@ -52,7 +52,7 @@ function CertContent() {
 
   const certRef = useRef<HTMLDivElement>(null);
   const qrRef = useRef<HTMLCanvasElement>(null);
-  const [logoDataUrl, setLogoDataUrl] = useState<string>("/logo-blanc-transparent.png");
+  const [logoDataUrl, setLogoDataUrl] = useState<string>("/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png");
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
@@ -67,7 +67,7 @@ function CertContent() {
   }, [token]);
 
   useEffect(() => {
-    fetch("/logo-blanc-transparent.png")
+    fetch("/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png")
       .then(r => r.blob())
       .then(blob => new Promise<string>((resolve) => {
         const reader = new FileReader();

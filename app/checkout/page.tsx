@@ -345,7 +345,7 @@ function CheckoutContent() {
           <ArrowLeft size={15} /> {isMobile ? "Retour" : "Retour aux challenges"}
         </Link>
         <Link href="/" aria-label="Traders Rewards" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", height: isMobile ? 58 : 70, display: "flex", alignItems: "center" }}>
-          <Image src="/logo-blanc-transparent.png" alt="Traders Rewards" width={176} height={112} priority style={{ width: isMobile ? 145 : 176, height: isMobile ? 92 : 112, objectFit: "contain" }} />
+          <Image src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" width={176} height={112} priority style={{ width: isMobile ? 145 : 176, height: isMobile ? 92 : 112, objectFit: "contain" }} />
         </Link>
         <div style={{ color: "rgba(255,255,255,.5)", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 7, letterSpacing: ".05em", textTransform: "uppercase" }}>
           <LockKeyhole size={14} color="#9CCFEA" /> {!isMobile && "Paiement sécurisé"}

@@ -32,7 +32,7 @@ export default async function VerifyPage({ params, searchParams }: { params: Pro
     <main style={{ minHeight: "100vh", background: "#050505", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "'Segoe UI', system-ui, sans-serif", padding: "40px 20px" }}>
       <div style={{ width: "100%", maxWidth: 480, background: "#0e0e0e", border: `1px solid ${valid ? "#3b82f630" : "#ef444430"}`, borderLeft: `4px solid ${valid ? "#3b82f6" : "#ef4444"}`, padding: "40px 44px" }}>
         <div style={{ marginBottom: 28 }}>
-          <Image src="/LOGO + NOM BLANC TRANSPARENT.png" alt="Traders Rewards" width={160} height={54} style={{ objectFit: "contain" }} />
+          <Image src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" width={160} height={54} style={{ objectFit: "contain" }} />
         </div>
         <div style={{ display: "inline-flex", gap: 8, background: valid ? "#3b82f615" : "#ef444415", border: `1px solid ${valid ? "#3b82f640" : "#ef444440"}`, borderRadius: 4, padding: "6px 14px", marginBottom: 28, color: valid ? "#60a5fa" : "#ef4444", fontSize: 12, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
           {valid ? "✓ Certificat authentique" : "✕ Certificat invalide"}
