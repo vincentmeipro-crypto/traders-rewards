@@ -863,14 +863,12 @@ export default function JourneyThreeLevels() {
                     `${L("5 jours qualifiants à","5 días calificados a","5 qualifying days at")} ${money(QUAL_MIN[selectedSize.bal])}`,
                     `${L("DD EOD jusqu'à","DD EOD hasta","EOD DD until")} ${money(selectedSize.lockAt)}`,
                     L("Consistance 50 %","Consistencia 50 %","50% consistency"),
+                    L("Temps illimité","Tiempo ilimitado","Unlimited duration"),
                   ].map((rule) => (
                     <div key={rule} style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
                       <span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{rule}
                     </div>
                   ))}
-                  <div style={{ gridColumn: "1 / -1", fontSize: 10.5, color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
-                    <span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("Temps illimité","Tiempo ilimitado","Unlimited duration")}
-                  </div>
                 </div>
 
               </div>{/* /zone supérieure */}
