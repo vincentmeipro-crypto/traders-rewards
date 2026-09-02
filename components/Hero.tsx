@@ -44,7 +44,7 @@ export default function Hero() {
   const pill    = L("Programme éducatif trading simulé", "Programa educativo de trading simulado", "Simulated trading education program");
   const h1L1    = L("Un seul Challenge.", "Un solo Challenge.", "One Challenge.");
   const h1L2pre = "5 ";
-  const h1L2acc = "Rewards.";
+  const h1L2acc = "Payouts.";
   const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
   const ctaSub  = L("Découvrir le parcours","Descubrir el camino",   "Explore the journey");
 
@@ -147,7 +147,7 @@ export default function Hero() {
           border: 1px solid rgba(156,207,234,0.24);
           background: #171b1f;
           display: flex; align-items: center; justify-content: center;
-          font-size: 11px; font-weight: 800; letter-spacing: 1px;
+          font-size: 13px; font-weight: 800; letter-spacing: 1px;
           color: rgba(194,226,241,0.78);
         }
         @media (max-width: 899px) {
@@ -303,15 +303,7 @@ export default function Hero() {
                   background:   ACCENT,
                   flexShrink:   0,
                 }} />
-                <span aria-hidden="true" style={{
-                  display:      "inline-block",
-                  width:        17,
-                  height:       11,
-                  flexShrink:   0,
-                  borderRadius: 2,
-                  background:   "linear-gradient(90deg, #1B4FA3 0 33.333%, #FFFFFF 33.333% 66.666%, #EF3340 66.666% 100%)",
-                  boxShadow:    "0 0 0 1px rgba(255,255,255,0.16)",
-                }} />
+
                 <span style={{
                   fontSize:      10,
                   fontWeight:    600,
@@ -368,9 +360,9 @@ export default function Hero() {
               animation: "heroFadeUp 0.52s ease 0.08s both",
             }}>
               {L(
-                "Validez un objectif unique de +6 %, puis progressez sur le même compte jusqu'à 5 Rewards.",
-                "Valide un objetivo único de +6 % y avance con la misma cuenta hasta 5 Rewards.",
-                "Complete one +6% target, then progress on the same account through up to 5 Rewards."
+                "Validez un objectif unique de +6 %, puis progressez sur le même compte jusqu'à 5 Payouts.",
+                "Valide un objetivo único de +6 % y avance con la misma cuenta hasta 5 Payouts.",
+                "Complete one +6% target, then progress on the same account through up to 5 Payouts."
               )}
             </p>
 
@@ -565,7 +557,7 @@ export default function Hero() {
                         paddingRight: isMobile ? 10 : 16,
                       }}>
                         <div style={{
-                          fontSize:      isMobile ? 12 : 13,
+                          fontSize:      isMobile ? 13 : 15,
                           fontWeight:    650,
                           letterSpacing: "0.5px",
                           textTransform: "uppercase",
@@ -578,7 +570,7 @@ export default function Hero() {
                         </div>
                         {step.sub && (
                           <div style={{
-                            fontSize:      isMobile ? 8 : 9,
+                            fontSize:      isMobile ? 9 : 10,
                             fontWeight:    550,
                             letterSpacing: "0.4px",
                             textTransform: "uppercase",
@@ -608,7 +600,7 @@ export default function Hero() {
                       }}>
                         {step.amount != null && (
                           <div style={{
-                            fontSize:          isMobile ? 16 : 17,
+                            fontSize:          isMobile ? 18 : 20,
                             fontWeight:        650,
                             letterSpacing:     "0px",
                             color:             "#c9e8f5",
