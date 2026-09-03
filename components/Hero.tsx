@@ -199,12 +199,19 @@ export default function Hero() {
         }
         @media (max-width: 899px) {
           .h-premium-panel {
-            overflow: visible;
-            border-color: transparent !important;
-            background: transparent !important;
-            animation: none;
+            overflow: hidden;
+            padding: 24px 14px 18px !important;
+            border-radius: 18px !important;
+            box-shadow:
+              0 18px 42px rgba(0,0,0,0.40),
+              0 0 0 1px rgba(105,197,253,0.07),
+              0 0 20px rgba(105,197,253,0.07) !important;
           }
-          .h-premium-panel::after { display: none; }
+          .h-premium-panel::after {
+            display: block;
+            inset: 5px;
+            border-radius: 12px;
+          }
         }
         @media (max-width: 899px) {
           .h-prog-circle {
