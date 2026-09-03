@@ -220,77 +220,6 @@ export default function Hero() {
           }
         }
 
-        /* Sceau de confiance — promesse Reward automatique */
-        .h-reward-seal {
-          position: relative;
-          z-index: 4;
-          width: 112px;
-          height: 112px;
-          flex: 0 0 112px;
-          border-radius: 50%;
-          border: 1px solid rgba(185,220,235,0.46);
-          background: #b9dceb;
-          color: #071014;
-          box-shadow: 0 0 0 6px rgba(185,220,235,0.055);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          animation: heroFadeUp 0.52s ease 0.34s both;
-        }
-        .h-reward-seal::before {
-          content: "";
-          position: absolute;
-          inset: 6px;
-          border: 1px solid rgba(7,16,20,0.18);
-          border-radius: inherit;
-          pointer-events: none;
-        }
-        .h-seal-row {
-          display: flex;
-          align-items: center;
-          justify-content: flex-end;
-          gap: 14px;
-          margin-top: 18px;
-        }
-        .h-split-seal {
-          position: relative;
-          z-index: 4;
-          width: 112px;
-          height: 112px;
-          flex: 0 0 112px;
-          border-radius: 50%;
-          border: 1px solid rgba(185,220,235,0.34);
-          background: #171b1f;
-          color: #f7f8fa;
-          box-shadow: 0 0 0 6px rgba(185,220,235,0.035);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          animation: heroFadeUp 0.52s ease 0.28s both;
-        }
-        .h-split-seal::before {
-          content: "";
-          position: absolute;
-          inset: 6px;
-          border: 1px solid rgba(185,220,235,0.18);
-          border-radius: inherit;
-          pointer-events: none;
-        }
-        .h-path-label { margin-right: auto; }
-        @media (max-width: 899px) {
-          .h-reward-seal, .h-split-seal {
-            width: 96px;
-            height: 96px;
-            flex-basis: 96px;
-          }
-          .h-seal-row { gap: 12px; padding: 0 10px; }
-          .h-path-label { display: none; }
-        }
-
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            REDUCED MOTION
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -320,7 +249,8 @@ export default function Hero() {
           display:       "flex",
           flexDirection: isMobile ? "column" : "row",
           alignItems:    isMobile ? "stretch" : "center",
-          minHeight:     isMobile ? 0 : "min(900px, 92vh)",
+          // Hero + bandeau = exactement un écran sur desktop.
+          minHeight:     isMobile ? 0 : "calc(100svh - 134px)",
           paddingTop:    isMobile
             ? "calc(60px + var(--promo-banner-height, 0px))"
             : "calc(72px + var(--promo-banner-height, 0px))",
@@ -343,8 +273,8 @@ export default function Hero() {
             justifyContent: "center",
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
-            paddingTop:     isMobile ? 46 : 72,
-            paddingBottom:  isMobile ? 40 : 72,
+            paddingTop:     isMobile ? 46 : 26,
+            paddingBottom:  isMobile ? 40 : 26,
           }}>
 
             {/* ── Badge programme éducatif français ── */}
@@ -383,7 +313,7 @@ export default function Hero() {
             {/* ── H1 — 2 lignes ── */}
             <h1 style={{
               fontWeight:    620,
-              margin:        "0 0 34px",
+              margin:        isMobile ? "0 0 34px" : "0 0 24px",
               textTransform: "none",
               textAlign:     "left",
               letterSpacing: isMobile ? "-1.5px" : "-3px",
@@ -394,7 +324,7 @@ export default function Hero() {
               <span
                 className="h1-line"
                 style={{
-                  fontSize: isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(54px, 4.8vw, 78px)",
+                  fontSize: isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
                   color: "#F7F8FA",
                 }}
               >
@@ -405,7 +335,7 @@ export default function Hero() {
                 className="h1-line"
                 style={{
                   marginTop: isMobile ? 4 : 7,
-                  fontSize:  isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(54px, 4.8vw, 78px)",
+                  fontSize:  isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
                 }}
               >
                 <span style={{ color: "#F7F8FA" }}>{h1L2pre}</span>
@@ -415,7 +345,7 @@ export default function Hero() {
 
             <p style={{
               maxWidth: 620,
-              margin: isMobile ? "0 0 26px" : "0 0 34px",
+              margin: isMobile ? "0 0 26px" : "0 0 22px",
               color: "rgba(255,255,255,0.58)",
               fontSize: isMobile ? 15 : 18,
               lineHeight: 1.65,
@@ -438,7 +368,7 @@ export default function Hero() {
               border:               "1px solid rgba(255,255,255,0.075)",
               borderRadius:         16,
               padding:              isMobile ? "14px 18px" : "18px 28px",
-              marginBottom:         isMobile ? 22 : 30,
+              marginBottom:         isMobile ? 22 : 20,
               animation:            "heroFadeUp 0.52s ease 0.10s both",
               boxShadow:            "0 16px 45px rgba(0,0,0,0.24)",
             } as React.CSSProperties}>
@@ -531,7 +461,7 @@ export default function Hero() {
             display:        "flex",
             flexDirection:  "column",
             justifyContent: "center",
-            padding:        isMobile ? "0 0 20px" : "52px 0",
+            padding:        isMobile ? "0 0 20px" : "18px 0",
           }}>
 
             {/* Parcours — panneau charbon premium */}
@@ -676,45 +606,6 @@ export default function Hero() {
                     </div>
                   ))}
 
-                </div>
-              </div>
-
-              <div className="h-seal-row">
-                <div className="h-path-label" style={{
-                  fontSize: 8, fontWeight: 900, letterSpacing: "2.8px",
-                  textTransform: "uppercase", color: "rgba(105,197,253,0.26)",
-                }}>
-                  PARCOURS 100K
-                </div>
-
-                {/* Split trader */}
-                <div className="h-split-seal" aria-label={L("Split trader de 90 pour cent", "Split trader del 90 por ciento", "90 percent trader split")}>
-                  <span style={{ fontSize: isMobile ? 8 : 9, fontWeight: 750, lineHeight: 1 }}>SPLIT</span>
-                  <span style={{ fontSize: isMobile ? 24 : 29, fontWeight: 780, color: "#b9dceb", letterSpacing: "-1.4px", lineHeight: 1, marginTop: 5 }}>90%</span>
-                  <span style={{ fontSize: 7, fontWeight: 700, color: "rgba(247,248,250,0.48)", marginTop: 4 }}>
-                    {L("POUR LE TRADER", "PARA EL TRADER", "FOR THE TRADER")}
-                  </span>
-                </div>
-
-                {/* Promesse de paiement */}
-                <div
-                  className="h-reward-seal"
-                  aria-label={L(
-                    "Reward payé automatiquement sous 48 heures",
-                    "Reward pagada automáticamente en 48 horas",
-                    "Reward paid automatically within 48 hours"
-                  )}
-                >
-                  <span style={{ fontSize: isMobile ? 13 : 15, fontWeight: 850, lineHeight: 1, marginBottom: 4 }}>✓</span>
-                  <span style={{ fontSize: isMobile ? 8 : 9, fontWeight: 750, lineHeight: 1.08, maxWidth: 78 }}>
-                    {L("Reward automatique", "Reward automática", "Automatic Reward")}
-                  </span>
-                  <span style={{ fontSize: isMobile ? 20 : 24, fontWeight: 760, letterSpacing: "-1px", lineHeight: 1, marginTop: 5 }}>
-                    48H
-                  </span>
-                  <span style={{ fontSize: 7, fontWeight: 700, opacity: 0.64, marginTop: 2 }}>
-                    {L("MAXIMUM", "MÁXIMO", "MAXIMUM")}
-                  </span>
                 </div>
               </div>
 

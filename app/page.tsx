@@ -1,8 +1,10 @@
 import Navbar            from "@/components/Navbar";
 import DisclaimerBanner  from "@/components/DisclaimerBanner";
 import Hero              from "@/components/Hero";
+import HeroBenefits      from "@/components/HeroBenefits";
 import PricingV1         from "@/components/PricingV1";
 import JourneyThreeLevels from "@/components/JourneyThreeLevels";
+import RulesV1           from "@/components/RulesV1";
 import RewardLevels      from "@/components/RewardLevels";
 import WhyTradersRewards from "@/components/WhyTradersRewards";
 import DashboardShowcase  from "@/components/DashboardShowcase";
@@ -17,11 +19,17 @@ export default function Home() {
       {/* ── Accroche V1 ── */}
       <Hero />
 
+      {/* ── Principaux avantages — bandeau directement sous le Hero ── */}
+      <HeroBenefits />
+
       {/* ── Offre principale — 3 challenges V1 ── */}
       <PricingV1 />
 
       {/* ── Parcours pédagogique — 3 niveaux ── */}
       <JourneyThreeLevels />
+
+      {/* ── Règles détaillées — une destination dédiée dans la navigation ── */}
+      <RulesV1 />
 
       {/* ── Les 5 niveaux de Rewards ── */}
       <RewardLevels />

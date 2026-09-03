@@ -44,7 +44,7 @@ export default function Navbar() {
 
   const navLinks: [string, string][] = [
     [T.nav.howItWorks, "/#parcours-3-niveaux"],
-    [T.nav.rules, "/#parcours-3-niveaux"],
+    [T.nav.rules, "/#rules"],
     [T.nav.faq, "/#faq"],
     ["Support", "/support"],
     ["Partenariat", "/partenariat"],

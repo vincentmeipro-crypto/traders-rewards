@@ -26,7 +26,7 @@ export default function Footer() {
       title: L("PARCOURS", "RECORRIDO", "JOURNEY"),
       links: [
         { label: L("De Challenger à Trader Reward", "De Challenger a Trader Reward", "From Challenger to Trader Reward"), href: "/#parcours-3-niveaux" },
-        { label: L("Les règles", "Las reglas", "Rules"), href: "/#faq" },
+        { label: L("Les règles", "Las reglas", "Rules"), href: "/#rules" },
         { label: "FAQ", href: "/#faq" },
       ],
     },
