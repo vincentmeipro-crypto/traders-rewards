@@ -95,7 +95,7 @@ export default function HeroBenefits() {
       aria-label={L("Avantages Traders Rewards","Ventajas Traders Rewards","Traders Rewards benefits")}
       style={{
         background: "#050709",
-        padding: isMobile ? "12px 10px 18px" : "5px 24px 14px",
+        padding: isMobile ? "12px 10px 18px" : "5px 0 14px",
       }}
     >
       <style>{`
@@ -130,7 +130,12 @@ export default function HeroBenefits() {
           .hero-benefit-card, .hero-benefit-metric { transition: none; }
         }
       `}</style>
-      <div style={{ maxWidth: 1500, margin: "0 auto" }}>
+      <div style={{
+        maxWidth:     1380,
+        margin:       "0 auto",
+        paddingLeft:  isMobile ? 0 : "max(40px, 4vw)",
+        paddingRight: isMobile ? 0 : "max(24px, 3vw)",
+      }}>
         <div className="hero-benefits-shell" style={{
           display:             "grid",
           gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(5, 1fr)",
