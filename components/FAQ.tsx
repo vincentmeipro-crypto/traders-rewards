@@ -340,7 +340,7 @@ export default function FAQ() {
   const lessLabel = lang === "fr" ? "RÉDUIRE LA LISTE" : lang === "es" ? "REDUCIR LA LISTA" : "SHOW FEWER QUESTIONS";
 
   return (
-    <section id="faq" className="home-faq" style={{ padding: isMobile ? "48px 16px" : "64px 24px", backgroundColor: "#000000" }}>
+    <section id="faq" className="home-faq" style={{ scrollMarginTop: isMobile ? "calc(60px + var(--promo-banner-height, 0px))" : "calc(72px + var(--promo-banner-height, 0px))", padding: isMobile ? "48px 16px" : "64px 24px", backgroundColor: "#000000" }}>
       <div className="home-faq-shell" style={{ maxWidth: 780, margin: "0 auto" }}>
 
         <div style={{ textAlign: "center", marginBottom: 56 }}>
