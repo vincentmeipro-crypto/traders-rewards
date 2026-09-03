@@ -1,9 +1,9 @@
 "use client";
 
 // ════════════════════════════════════════════════════════════════
-//  WhyTradersRewards.tsx — 5 arguments clés, Traders Rewards V1
+//  WhyTradersRewards.tsx — 6 arguments clés, Traders Rewards V1
 //  Design : metric-led · palette #000/#111/blanc/gris/#9CCFEA
-//  Pas d'emoji · SVG inline · 5 colonnes desktop, colonne mobile
+//  Pas d'emoji · SVG inline · 6 col ≥1280px · 3 col 900-1279px · 1 col mobile
 // ════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
@@ -44,6 +44,13 @@ const IconBarChart = () => (
     <line x1="18" y1="20" x2="18" y2="10"/>
     <line x1="12" y1="20" x2="12" y2="4"/>
     <line x1="6"  y1="20" x2="6"  y2="14"/>
+  </svg>
+);
+
+const IconCopy = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="9" y="9" width="13" height="13" rx="2"/>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
   </svg>
 );
 
@@ -89,6 +96,12 @@ const FEATURES_FR: Feature[] = [
     desc:  "Progressez à travers 5 Rewards successifs dont les montants maximums augmentent selon le niveau et la taille du compte.",
     icon: <IconBarChart />,
   },
+  {
+    num: "06", metric: "10",
+    title: "JUSQU'À 10 COMPTES REWARDS",
+    desc:  "Tradez jusqu'à 10 Comptes Rewards en même temps et multipliez vos opportunités de Rewards.",
+    icon: <IconCopy />,
+  },
 ];
 
 const FEATURES_EN: Feature[] = [
@@ -121,6 +134,12 @@ const FEATURES_EN: Feature[] = [
     title: "5 REWARD LEVELS",
     desc:  "Progress through 5 successive Rewards whose maximum amounts increase with level and account size.",
     icon: <IconBarChart />,
+  },
+  {
+    num: "06", metric: "10",
+    title: "UP TO 10 REWARD ACCOUNTS",
+    desc:  "Trade up to 10 Comptes Rewards simultaneously and multiply your Reward opportunities.",
+    icon: <IconCopy />,
   },
 ];
 
@@ -155,6 +174,12 @@ const FEATURES_ES: Feature[] = [
     desc:  "Progresa a través de 5 Rewards sucesivos cuyos montos máximos aumentan según el nivel y el tamaño de cuenta.",
     icon: <IconBarChart />,
   },
+  {
+    num: "06", metric: "10",
+    title: "HASTA 10 COMPTES REWARDS",
+    desc:  "Opera hasta 10 Comptes Rewards al mismo tiempo y multiplica tus oportunidades de Rewards.",
+    icon: <IconCopy />,
+  },
 ];
 
 // ── Composant ─────────────────────────────────────────────────
@@ -167,9 +192,14 @@ export default function WhyTradersRewards() {
   const features = isFr ? FEATURES_FR : isEs ? FEATURES_ES : FEATURES_EN;
 
   const [isNarrow, setIsNarrow] = useState(false); // < 900px
+  const [isWide,   setIsWide]   = useState(false); // ≥ 1280px — 6 colonnes
 
   useEffect(() => {
-    const check = () => setIsNarrow(window.innerWidth < 900);
+    const check = () => {
+      const w = window.innerWidth;
+      setIsNarrow(w < 900);
+      setIsWide(w >= 1280);
+    };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
@@ -224,7 +254,7 @@ export default function WhyTradersRewards() {
           </h2>
         </div>
 
-        {/* Feature grid — 5 colonnes desktop, colonne mobile */}
+        {/* Feature grid — 6 col ≥1280px · 3 col 900-1279px · 1 col mobile */}
         <div
           style={{
             border:       "1px solid rgba(255,255,255,0.08)",
@@ -236,15 +266,22 @@ export default function WhyTradersRewards() {
           <div
             style={{
               display:             "grid",
-              gridTemplateColumns: isNarrow ? "1fr" : "repeat(5, 1fr)",
+              gridTemplateColumns: isNarrow ? "1fr" : isWide ? "repeat(6, 1fr)" : "repeat(3, 1fr)",
             }}
           >
             {features.map((f, i) => {
-              const isLast   = i === features.length - 1;
-              const showDiv  = isNarrow ? !isLast : i < features.length - 1;
-              const divStyle = isNarrow
-                ? { borderBottom: "1px solid rgba(255,255,255,0.07)" }
-                : { borderRight:  "1px solid rgba(255,255,255,0.07)" };
+              // Séparateurs adaptatifs selon le nombre de colonnes actif
+              const cols    = isNarrow ? 1 : isWide ? 6 : 3;
+              const totalRows = Math.ceil(features.length / cols);
+              const col     = i % cols;
+              const row     = Math.floor(i / cols);
+              const divStyle: React.CSSProperties = {};
+              if (isNarrow) {
+                if (i < features.length - 1) divStyle.borderBottom = "1px solid rgba(255,255,255,0.07)";
+              } else {
+                if (col < cols - 1)  divStyle.borderRight  = "1px solid rgba(255,255,255,0.07)";
+                if (row < totalRows - 1) divStyle.borderBottom = "1px solid rgba(255,255,255,0.07)";
+              }
 
               return (
                 <div
@@ -255,7 +292,7 @@ export default function WhyTradersRewards() {
                     flexDirection: isNarrow ? "row" : "column",
                     gap:         isNarrow ? 20 : 0,
                     alignItems:  isNarrow ? "flex-start" : "flex-start",
-                    ...(showDiv ? divStyle : {}),
+                    ...divStyle,
                   }}
                 >
                   {/* En-tête: numéro + icône */}
