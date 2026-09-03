@@ -111,16 +111,19 @@ export default function HeroBenefits() {
           filter: drop-shadow(0 0 7px rgba(156,207,234,.7));
           animation: benefitsGlow 5s ease-in-out infinite;
         }
-        .hero-benefit-card { transition: background .25s ease, transform .25s ease; }
+        .hero-benefit-card {
+          background: rgba(156,207,234,.035);
+          transition: background .25s ease, transform .25s ease;
+        }
         .hero-benefit-card::after {
           content: ""; position: absolute; left: 20px; right: 20px; bottom: 0;
-          height: 2px; opacity: 0; transform: scaleX(.35);
+          height: 2px; opacity: .9; transform: scaleX(1);
           background: linear-gradient(90deg, transparent, #9CCFEA, transparent);
           transition: opacity .25s ease, transform .25s ease;
         }
-        .hero-benefit-card:hover { background: rgba(156,207,234,.035); }
-        .hero-benefit-card:hover::after { opacity: .9; transform: scaleX(1); }
-        .hero-benefit-card:hover .hero-benefit-metric { color: #d9f2ff !important; transform: translateY(-2px); }
+        .hero-benefit-card:hover { background: rgba(156,207,234,.055); }
+        .hero-benefit-card:hover::after { opacity: 1; }
+        .hero-benefit-card:hover .hero-benefit-metric { color: #ffffff !important; }
         .hero-benefit-metric { transition: color .25s ease, transform .25s ease; }
         @media (prefers-reduced-motion: reduce) {
           .hero-benefits-shell::before { animation: none; }
@@ -164,7 +167,7 @@ export default function HeroBenefits() {
                   <span style={{ color: "rgba(156,207,234,.68)", fontSize: 8, fontWeight: 900, letterSpacing: "2px" }}>{L("AVANTAGE", "VENTAJA", "BENEFIT")} 0{i + 1}</span>
                   <span style={{ width: 27, height: 27, border: "1px solid rgba(156,207,234,.14)", borderRadius: 8, color: "rgba(156,207,234,.42)", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(156,207,234,.025)" }}>{b.icon}</span>
                 </div>
-                <div className="hero-benefit-metric" style={{ color: "#9CCFEA", fontSize: isMobile ? "clamp(2.25rem, 11vw, 3.5rem)" : "clamp(2.35rem, 3vw, 3.65rem)", fontWeight: 850, letterSpacing: "-.055em", lineHeight: .86, textShadow: "0 0 30px rgba(156,207,234,.14)" }}>
+                <div className="hero-benefit-metric" style={{ color: "#d9f2ff", fontSize: isMobile ? "clamp(2.25rem, 11vw, 3.5rem)" : "clamp(2.35rem, 3vw, 3.65rem)", fontWeight: 850, letterSpacing: "-.055em", lineHeight: .86, textShadow: "0 0 30px rgba(156,207,234,.2)" }}>
                   {b.metric}
                 </div>
                 <div style={{ color: "#fff", fontSize: isMobile ? 10 : 11, fontWeight: 900, letterSpacing: isMobile ? "1.4px" : "1.8px", marginTop: 8 }}>
