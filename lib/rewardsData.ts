@@ -32,3 +32,11 @@ export const REWARD_AMOUNTS = [
 // ATTENTION : ce sont des SEUILS de qualification, PAS des montants de reward
 // Apex EOD : montants relevés (was [50, 100, 150])
 export const QUAL_DAY_USD = [100, 250, 300] as const;
+
+// Données contractuelles par taille de compte (frontend display uniquement)
+// Consommé par : JourneyThreeLevels, RulesV1
+export const SIZES_DATA = [
+  { bal: 25000,  label: "25K",  ddPct: 4, floorStart: 24000,  lockAt: 26100,  targetBal: 26400,  rewardCaps: REWARD_AMOUNTS[0] },
+  { bal: 50000,  label: "50K",  ddPct: 4, floorStart: 48000,  lockAt: 52100,  targetBal: 52600,  rewardCaps: REWARD_AMOUNTS[1] },
+  { bal: 100000, label: "100K", ddPct: 3, floorStart: 97000,  lockAt: 103100, targetBal: 103850, rewardCaps: REWARD_AMOUNTS[2] },
+] as const;

@@ -10,7 +10,8 @@
 import { useState, useEffect, useRef } from "react";
 import { X, CircleCheck, DollarSign, Trophy, BadgeDollarSign, Award } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { REWARD_AMOUNTS } from "@/lib/rewardsData";
+import { REWARD_AMOUNTS, SIZES_DATA } from "@/lib/rewardsData";
+import { useSizeSync } from "@/lib/SizeSyncContext";
 import PricingDetailModal from "./PricingDetailModal";
 
 // ── Palette & helpers ─────────────────────────────────────────
@@ -21,23 +22,8 @@ const VIOLET  = "#B8A8D8";
 
 const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 
-// ── Données contractuelles (importées / calculées) ────────────
-// Source : lib/rewardsData.ts + lib/v1-engine.ts (sans l'importer côté client)
-const DD_PCT: Record<number, number>    = { 25000: 4, 50000: 4, 100000: 3 };
+// ── Données contractuelles (importées de lib/rewardsData) ─────
 const ACTIV_FEE: Record<number, number> = { 25000: 99, 50000: 99, 100000: 149 };
-// APEX EOD : seuils journée qualifiante relevés (was 50/100/150)
-const QUAL_MIN: Record<number, number>  = { 25000: 100, 50000: 250, 100000: 300 };
-// Safety Net (seuil de lock Apex EOD)
-const LOCK_AT: Record<number, number> = {
-  25000:   26100,  // Safety Net 25K (was 26 000 = start×1.04)
-  50000:   52100,  // Safety Net 50K (was 52 000 = start×1.04)
-  100000: 103100,  // Safety Net 100K (was 103 000 = start×1.03)
-};
-const SIZES_DATA = [
-  { bal: 25000,  label: "25K",  ddPct: 4, floorStart: 24000,  lockAt: 26100,  targetBal: 26400,  rewardCaps: REWARD_AMOUNTS[0] },
-  { bal: 50000,  label: "50K",  ddPct: 4, floorStart: 48000,  lockAt: 52100,  targetBal: 52600,  rewardCaps: REWARD_AMOUNTS[1] },
-  { bal: 100000, label: "100K", ddPct: 3, floorStart: 97000,  lockAt: 103100, targetBal: 103850, rewardCaps: REWARD_AMOUNTS[2] },
-];
 
 // ── Styles partagés ───────────────────────────────────────────
 const secLabel: React.CSSProperties = {
@@ -583,7 +569,6 @@ export default function JourneyThreeLevels() {
   const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   const [isMobile, setIsMobile] = useState(false);
-  const [selectedSizeIndex, setSelectedSizeIndex] = useState(1);
   // null=aucun, 0=Challenge, 1=Reward Account, 2=Rewards Journey
   const [activeModal, setActiveModal] = useState<0 | 1 | 2 | null>(null);
   const triggerRefs = [
@@ -606,12 +591,10 @@ export default function JourneyThreeLevels() {
     if (idx !== null) setTimeout(() => triggerRefs[idx]?.current?.focus(), 80);
   };
 
-  const selectedSize = SIZES_DATA[selectedSizeIndex];
-  const challengeTarget = selectedSize.bal * 1.06;
-  const rewardThreshold = selectedSize.targetBal;              // Seuil de sécurité + Reward maximum #1
-  const ddUsd = selectedSize.bal - selectedSize.floorStart;    // DD EOD en $ (1000/2000/3000)
+  const { selectedSizeIndex, setSelectedSizeIndex } = useSizeSync();
+  const selectedSize = SIZES_DATA[selectedSizeIndex as 0 | 1 | 2];
   const rewardOne = selectedSize.rewardCaps[0];
-  const cumulativeRewards = selectedSize.rewardCaps.reduce((sum, amount) => sum + amount, 0);
+  const cumulativeRewards = (selectedSize.rewardCaps as readonly number[]).reduce((a, v) => a + v, 0);
   const money = (value: number) => `${value.toLocaleString("fr-FR")} $`;
 
   // ── Style commun des cartes ──────────────────────────────────
@@ -680,7 +663,7 @@ export default function JourneyThreeLevels() {
               border: "1px solid rgba(156,207,234,0.18)",
               background: "rgba(255,255,255,0.025)",
             }}>
-              {SIZES_DATA.map((size, index) => {
+              {(SIZES_DATA as readonly { label: string }[]).map((size, index) => {
                 const selected = selectedSizeIndex === index;
                 return (
                   <button
@@ -699,6 +682,7 @@ export default function JourneyThreeLevels() {
                       fontWeight: 900,
                       letterSpacing: "1.4px",
                       cursor: "pointer",
+                      fontFamily: "inherit",
                     }}
                   >
                     {size.label}
@@ -745,28 +729,9 @@ export default function JourneyThreeLevels() {
                 </span>
               </div>
 
-              {/* +6% + progression */}
-              <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 12, position: "relative", flexWrap: "wrap" }}>
+              {/* +6% */}
+              <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 12, position: "relative" }}>
                 <span style={{ fontSize: 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1 }}>+6%</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.55)" }}>
-                  {money(selectedSize.bal)}
-                  <span style={{ color: "rgba(255,255,255,0.22)", margin: "0 5px" }}>→</span>
-                  {money(challengeTarget)}
-                </span>
-              </div>
-
-              {/* Durée */}
-              <div style={{ fontSize: 11.5, color: "rgba(255,255,255,0.72)", marginBottom: 8, position: "relative", lineHeight: 1.5 }}>
-                <span style={{ color: ACCENT, marginRight: 6 }}>✓</span>
-                {L("2 jours minimum","2 días mínimo","2 days minimum")}
-                <span style={{ color: "rgba(255,255,255,0.30)", margin: "0 6px" }}>→</span>
-                {L("30 jours maximum","30 días máximo","30 days maximum")}
-              </div>
-
-              {/* Règles */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "7px 14px", fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5 }}>
-                <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("DD EOD","DD EOD","EOD drawdown")} {money(ddUsd)}</span>
-                <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("Consistance 50%","Consistencia 50%","Consistency 50%")}</span>
               </div>
 
               {/* Spacer */}
@@ -814,8 +779,8 @@ export default function JourneyThreeLevels() {
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.015), transparent 52%)" }} />
 
-              {/* Zone supérieure — minHeight identique carte 02/03 pour aligner les badges verts */}
-              <div style={{ minHeight: isMobile ? undefined : 250 }}>
+              {/* Zone supérieure */}
+              <div>
 
                 {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
@@ -836,39 +801,8 @@ export default function JourneyThreeLevels() {
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, position: "relative" }}>
                   <DollarSign size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
                   <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
-                    {L("Objectif pour demander la Reward #1","Objetivo para solicitar la Reward #1","Target to request Reward #1")}
+                    {L("Débloquez votre Reward #1","Desbloquee su Reward #1","Unlock your Reward #1")}
                   </span>
-                </div>
-
-                {/* Objectif principal — présentation plate, cohérente avec les cartes voisines */}
-                <div style={{
-                  position: "relative",
-                  marginBottom: 14,
-                }}>
-                  <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.42)", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: 5 }}>
-                    {L("SOLDE À ATTEINDRE","SALDO A ALCANZAR","TARGET BALANCE")}
-                  </div>
-                  <div style={{ fontSize: 30, fontWeight: 900, color: ACCENT, letterSpacing: "-1px", lineHeight: 1, marginBottom: 9 }}>
-                    {money(rewardThreshold)}
-                  </div>
-                  <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "4px 7px", fontSize: 10.5, color: "rgba(255,255,255,0.52)" }}>
-                    <strong style={{ color: "rgba(255,255,255,0.78)" }}>{money(selectedSize.lockAt)}</strong>
-                    <span>{L("de seuil protégé","de umbral protegido","protected threshold")}</span>
-                  </div>
-                </div>
-
-                {/* Conditions essentielles */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "7px 10px", position: "relative" }}>
-                  {[
-                    `${L("5 jours qualifiants à","5 días calificados a","5 qualifying days at")} ${money(QUAL_MIN[selectedSize.bal])}`,
-                    `${L("DD EOD jusqu'à","DD EOD hasta","EOD DD until")} ${money(selectedSize.lockAt)}`,
-                    L("Consistance 50 %","Consistencia 50 %","50% consistency"),
-                    L("Temps illimité","Tiempo ilimitado","Unlimited duration"),
-                  ].map((rule) => (
-                    <div key={rule} style={{ fontSize: 10.5, color: "rgba(255,255,255,0.72)", lineHeight: 1.35 }}>
-                      <span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{rule}
-                    </div>
-                  ))}
                 </div>
 
               </div>{/* /zone supérieure */}
@@ -928,8 +862,8 @@ export default function JourneyThreeLevels() {
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.012), transparent 50%)" }} />
 
-              {/* Zone supérieure — minHeight identique carte 02/03 pour aligner les badges verts */}
-              <div style={{ minHeight: isMobile ? undefined : 250 }}>
+              {/* Zone supérieure */}
+              <div>
 
                 {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
@@ -962,20 +896,6 @@ export default function JourneyThreeLevels() {
                   <div style={{ fontSize: 22, fontWeight: 900, color: "rgba(255,255,255,0.72)", letterSpacing: "-1px", lineHeight: 1 }}>
                     #2 → #5
                   </div>
-                </div>
-
-                {/* Seuil de sécurité */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6, position: "relative" }}>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.40)", textTransform: "uppercase", letterSpacing: "1px" }}>
-                    {L("SEUIL DE SÉCURITÉ","UMBRAL DE SEGURIDAD","SAFETY NET")}
-                  </span>
-                  <span style={{ fontSize: 14, fontWeight: 900, color: "rgba(255,255,255,0.72)" }}>{money(selectedSize.lockAt)}</span>
-                </div>
-
-                {/* Règles */}
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "7px 14px", fontSize: 10.5, color: "rgba(255,255,255,0.72)", position: "relative", letterSpacing: "0.2px", lineHeight: 1.5, marginBottom: 8 }}>
-                  <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("DD fixe dès le départ","DD fijo desde el inicio","Fixed DD from the start")} {money(ddUsd)}</span>
-                  <span><span style={{ color: ACCENT, marginRight: 6 }}>✓</span>{L("Consistance 50%","Consistencia 50%","Consistency 50%")}</span>
                 </div>
 
               </div>{/* /zone supérieure */}

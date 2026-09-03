@@ -1,12 +1,30 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { SIZES_DATA, QUAL_DAY_USD } from "@/lib/rewardsData";
+import { useSizeSync } from "@/lib/SizeSyncContext";
 
 const ACCENT = "#9CCFEA";
+const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 
 export default function RulesV1() {
   const { lang } = useLanguage();
   const L = (fr: string, es: string, en: string) => lang === "fr" ? fr : lang === "es" ? es : en;
+
+  const [isMobile, setIsMobile] = useState(false);
+  const { selectedSizeIndex, setSelectedSizeIndex } = useSizeSync();
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 900);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const selectedSize = SIZES_DATA[selectedSizeIndex as 0 | 1 | 2];
+  const ddUsd        = selectedSize.bal - selectedSize.floorStart;
+  const qualMin      = QUAL_DAY_USD[selectedSizeIndex as 0 | 1 | 2];
 
   const cards = [
     {
@@ -15,7 +33,7 @@ export default function RulesV1() {
       subtitle: L("Validez votre Challenge", "Valide su Challenge", "Complete your Challenge"),
       rules: [
         L("Objectif unique : +6 %", "Objetivo único: +6 %", "Single target: +6%"),
-        L("DD EOD : 1 000 $ / 2 000 $ / 3 000 $", "DD EOD: 1 000 $ / 2 000 $ / 3 000 $", "EOD DD: $1,000 / $2,000 / $3,000"),
+        `${L("DD EOD :", "DD EOD:", "EOD DD:")} ${fmt(ddUsd)}`,
         L("Consistance : 50 %", "Consistencia: 50 %", "Consistency: 50%"),
         L("2 jours minimum · 30 jours maximum", "2 días mínimo · 30 días máximo", "2 days minimum · 30 days maximum"),
       ],
@@ -25,7 +43,9 @@ export default function RulesV1() {
       title: "COMPTE REWARD",
       subtitle: L("Débloquez votre première récompense", "Desbloquee su primera recompensa", "Unlock your first reward"),
       rules: [
-        L("5 jours qualifiants au seuil du compte", "5 días calificados al umbral de la cuenta", "5 qualifying days at the account threshold"),
+        `${L("5 jours qualifiants à", "5 días calificados a", "5 qualifying days at")} ${fmt(qualMin)}${L("/jour", "/día", "/day")}`,
+        `${L("Solde cible (Reward #1) :", "Saldo objetivo (Reward #1):", "Target balance (Reward #1):")} ${fmt(selectedSize.targetBal)}`,
+        `${L("Seuil de sécurité :", "Safety Net:", "Safety Net:")} ${fmt(selectedSize.lockAt)}`,
         L("DD EOD jusqu’au plancher de sécurité", "DD EOD hasta el suelo de seguridad", "EOD DD until the safety floor"),
         L("Au plancher, le DD devient fixe", "Al llegar al suelo, el DD queda fijo", "At the floor, DD becomes fixed"),
         L("Consistance 50 % · Temps illimité", "Consistencia 50 % · Tiempo ilimitado", "50% consistency · Unlimited time"),
@@ -36,7 +56,8 @@ export default function RulesV1() {
       title: "TRADER REWARD",
       subtitle: L("Progressez jusqu’au Payout #5", "Progrese hasta el Payout #5", "Progress to Payout #5"),
       rules: [
-        L("DD fixe dès le départ", "DD fijo desde el inicio", "Fixed DD from the start"),
+        `${L("DD fixe :", "DD fijo:", "Fixed DD:")} ${fmt(ddUsd)}`,
+        `${L("Seuil de sécurité :", "Safety Net:", "Safety Net:")} ${fmt(selectedSize.lockAt)}`,
         L("Le plancher de sécurité ne remonte plus", "El suelo de seguridad ya no sube", "The safety floor no longer rises"),
         L("Consistance : 50 %", "Consistencia: 50 %", "Consistency: 50%"),
         L("Reward payé automatiquement sous 48 h", "Reward pagado automáticamente en 48 h", "Reward paid automatically within 48h"),
@@ -56,6 +77,47 @@ export default function RulesV1() {
             {L("Le drawdown évolue avec votre parcours : EOD pendant le Challenge, EOD jusqu’au plancher sur le Compte Reward, puis fixe sur le Trader Reward.", "El drawdown evoluciona con su recorrido: EOD durante el Challenge, EOD hasta el suelo en la Cuenta Reward y después fijo.", "Drawdown evolves with your journey: EOD during the Challenge, EOD until the floor on the Reward Account, then fixed.")}
           </p>
         </header>
+
+        {/* Sélecteur 25K / 50K / 100K */}
+        <div style={{ marginBottom: "clamp(24px, 3vw, 40px)" }}>
+          <div
+            role="group"
+            aria-label={L("Taille du compte","Tamaño de la cuenta","Account size")}
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 4,
+              padding: 4, borderRadius: 24,
+              border: "1px solid rgba(156,207,234,0.18)",
+              background: "rgba(255,255,255,0.025)",
+            }}
+          >
+            {(SIZES_DATA as readonly { label: string }[]).map((size, index) => {
+              const selected = selectedSizeIndex === index;
+              return (
+                <button
+                  key={size.label}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => setSelectedSizeIndex(index)}
+                  style={{
+                    minWidth: isMobile ? 62 : 72,
+                    padding: isMobile ? "7px 12px" : "7px 16px",
+                    borderRadius: 18,
+                    border: selected ? "1px solid rgba(156,207,234,0.52)" : "1px solid transparent",
+                    background: selected ? "rgba(156,207,234,0.16)" : "transparent",
+                    color: selected ? ACCENT : "rgba(255,255,255,0.42)",
+                    fontSize: 10,
+                    fontWeight: 900,
+                    letterSpacing: "1.4px",
+                    cursor: "pointer",
+                    fontFamily: "inherit",
+                  }}
+                >
+                  {size.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 310px), 1fr))", gap: 18 }}>
           {cards.map((card, index) => (
