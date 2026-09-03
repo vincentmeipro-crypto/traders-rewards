@@ -150,6 +150,62 @@ export default function Hero() {
           font-size: 13px; font-weight: 800; letter-spacing: 1px;
           color: rgba(194,226,241,0.78);
         }
+
+        @property --premium-border-angle {
+          syntax: "<angle>";
+          initial-value: 0deg;
+          inherits: false;
+        }
+        @keyframes premiumBorderFlow {
+          to { --premium-border-angle: 360deg; }
+        }
+        .h-premium-panel {
+          isolation: isolate;
+          overflow: hidden;
+          border: 2px solid transparent !important;
+          background:
+            linear-gradient(#07090c, #07090c) padding-box,
+            conic-gradient(
+              from var(--premium-border-angle),
+              rgba(105,197,253,0.30) 0deg 230deg,
+              rgba(105,197,253,0.58) 258deg,
+              #69c5fd 286deg,
+              #e2f6ff 302deg,
+              #69c5fd 318deg,
+              rgba(105,197,253,0.58) 342deg,
+              rgba(105,197,253,0.30) 360deg
+            ) border-box !important;
+          animation: premiumBorderFlow 4.8s linear infinite;
+          box-shadow:
+            0 22px 60px rgba(0,0,0,0.42),
+            0 0 0 1px rgba(105,197,253,0.08),
+            0 0 26px rgba(105,197,253,0.08) !important;
+        }
+        .h-premium-panel::before {
+          display: none;
+        }
+        .h-premium-panel::after {
+          content: "";
+          position: absolute;
+          inset: 7px;
+          z-index: 5;
+          border: 1px solid rgba(0,0,0,0.96);
+          border-radius: 16px;
+          box-shadow: inset 0 0 0 1px rgba(156,207,234,0.055);
+          pointer-events: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .h-premium-panel { animation: none; }
+        }
+        @media (max-width: 899px) {
+          .h-premium-panel {
+            overflow: visible;
+            border-color: transparent !important;
+            background: transparent !important;
+            animation: none;
+          }
+          .h-premium-panel::after { display: none; }
+        }
         @media (max-width: 899px) {
           .h-prog-circle {
             width: 42px; height: 42px;
@@ -472,10 +528,10 @@ export default function Hero() {
           }}>
 
             {/* Parcours — panneau charbon premium */}
-            <div style={{
+            <div className="h-premium-panel" style={{
               padding:  isMobile ? "20px 4px 16px" : "34px 32px 26px",
               position: "relative",
-              background: isMobile ? "transparent" : "#1d2024",
+              background: isMobile ? "transparent" : "#07090c",
               border: isMobile ? "none" : "1px solid rgba(255,255,255,0.075)",
               borderRadius: isMobile ? 0 : 22,
               boxShadow: isMobile ? "none" : "0 22px 60px rgba(0,0,0,0.26)",
@@ -488,7 +544,7 @@ export default function Hero() {
                 animation:    "heroFadeUp 0.52s ease 0.20s both",
               }}>
                 <div style={{
-                  fontSize:      10,
+                  fontSize:      isMobile ? 10 : 12,
                   fontWeight:    600,
                   letterSpacing: "0.5px",
                   color:         "rgba(210,235,247,0.74)",
@@ -508,7 +564,7 @@ export default function Hero() {
                   6 250 $
                 </div>
                 <div style={{
-                  fontSize:      10,
+                  fontSize:      isMobile ? 10 : 12,
                   fontWeight:    600,
                   letterSpacing: "0.5px",
                   color:         "rgba(210,235,247,0.74)",
@@ -557,7 +613,7 @@ export default function Hero() {
                         paddingRight: isMobile ? 10 : 16,
                       }}>
                         <div style={{
-                          fontSize:      isMobile ? 13 : 15,
+                          fontSize:      isMobile ? 13 : 17,
                           fontWeight:    650,
                           letterSpacing: "0.5px",
                           textTransform: "uppercase",
@@ -570,7 +626,7 @@ export default function Hero() {
                         </div>
                         {step.sub && (
                           <div style={{
-                            fontSize:      isMobile ? 9 : 10,
+                            fontSize:      isMobile ? 9 : 11,
                             fontWeight:    550,
                             letterSpacing: "0.4px",
                             textTransform: "uppercase",
@@ -600,7 +656,7 @@ export default function Hero() {
                       }}>
                         {step.amount != null && (
                           <div style={{
-                            fontSize:          isMobile ? 18 : 20,
+                            fontSize:          isMobile ? 18 : 22,
                             fontWeight:        650,
                             letterSpacing:     "0px",
                             color:             "#c9e8f5",
