@@ -242,12 +242,13 @@ export default function Hero() {
         id="hero"
         aria-label="Hero Traders Rewards"
         style={{
-          background: "#0a0c0f",
-          fontFamily: "var(--font-sans), system-ui, -apple-system, sans-serif",
-          width:      "100%",
-          position:   "relative",
-          overflow:   "hidden",
-          boxSizing:  "border-box",
+          background:   "#0a0c0f",
+          fontFamily:   "var(--font-sans), system-ui, -apple-system, sans-serif",
+          width:        "100%",
+          position:     "relative",
+          overflow:     "hidden",
+          boxSizing:    "border-box",
+          marginBottom: isMobile ? 0 : -70,
         }}
       >
 
@@ -280,9 +281,10 @@ export default function Hero() {
             display:        "flex",
             flexDirection:  "column",
             justifyContent: "center",
+            alignSelf:      isMobile ? undefined : "flex-start",
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
-            paddingTop:     isMobile ? 46 : 26,
+            paddingTop:     isMobile ? 46 : 52,
             paddingBottom:  isMobile ? 40 : 26,
           }}>
 
