@@ -43,7 +43,6 @@ export default function Navbar() {
   const current = languages.find(l => l.code === lang)!;
 
   const navLinks: [string, string][] = [
-    [T.nav.howItWorks, "/#parcours-3-niveaux"],
     [T.nav.rules, "/#rules"],
     [T.nav.faq, "/#faq"],
     ["Support", "/support"],
