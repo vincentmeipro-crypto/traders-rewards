@@ -33,8 +33,8 @@ type Copy = {
 };
 
 function Visual({ type, value, tone }: { type: Copy["visual"]; value: string; tone: Copy["tone"] }) {
-  const accent = tone === "red" ? "#ff5364" : tone === "green" ? "#47dc88" : "#9CCFEA";
-  const glow = tone === "red" ? "rgba(255,83,100,.34)" : tone === "green" ? "rgba(71,220,136,.3)" : "rgba(156,207,234,.34)";
+  const accent = tone === "red" ? "#ff5364" : tone === "green" ? "#47dc88" : "#D8A39D";
+  const glow = tone === "red" ? "rgba(255,83,100,.34)" : tone === "green" ? "rgba(71,220,136,.3)" : "rgba(183,110,121,.34)";
   const numericValue = Math.max(0, Math.min(100, Number.parseFloat(value) || 0));
 
   if (type === "infinity") {

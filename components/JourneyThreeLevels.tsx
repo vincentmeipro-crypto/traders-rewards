@@ -15,7 +15,7 @@ import { useSizeSync } from "@/lib/SizeSyncContext";
 import PricingDetailModal from "./PricingDetailModal";
 
 // ── Palette & helpers ─────────────────────────────────────────
-const ACCENT  = "#9CCFEA";
+const ACCENT  = "#D8A39D";
 const ORANGE  = "#f97316";
 const GREEN   = "#8FC9A3";
 const VIOLET  = "#B8A8D8";
@@ -71,14 +71,14 @@ function InfoBtn({ onClick, label, btnRef }: { onClick: () => void; label: strin
       aria-label={label}
       style={{
         width: 22, height: 22, borderRadius: "50%",
-        border: "1px solid rgba(156,207,234,0.35)",
-        background: "rgba(156,207,234,0.07)",
+        border: "1px solid rgba(183,110,121,0.35)",
+        background: "rgba(183,110,121,0.07)",
         color: ACCENT, fontSize: 9, fontWeight: 900, fontStyle: "normal",
         cursor: "pointer", display: "grid", placeItems: "center",
         fontFamily: "inherit", flexShrink: 0, transition: "all 0.16s ease",
       }}
-      onMouseEnter={e => { const b = e.currentTarget; b.style.background = "rgba(156,207,234,0.18)"; b.style.borderColor = "rgba(156,207,234,0.65)"; }}
-      onMouseLeave={e => { const b = e.currentTarget; b.style.background = "rgba(156,207,234,0.07)"; b.style.borderColor = "rgba(156,207,234,0.35)"; }}
+      onMouseEnter={e => { const b = e.currentTarget; b.style.background = "rgba(183,110,121,0.18)"; b.style.borderColor = "rgba(183,110,121,0.65)"; }}
+      onMouseLeave={e => { const b = e.currentTarget; b.style.background = "rgba(183,110,121,0.07)"; b.style.borderColor = "rgba(183,110,121,0.35)"; }}
     >
       i
     </button>
@@ -127,10 +127,10 @@ function ModalShell({ isOpen, onClose, titleId, children }: {
       <section role="dialog" aria-modal="true" aria-labelledby={titleId}
         style={{
           background: "linear-gradient(160deg, #0f1114 0%, #080a0c 100%)",
-          border: "1px solid rgba(156,207,234,0.22)", borderRadius: 24,
+          border: "1px solid rgba(183,110,121,0.22)", borderRadius: 24,
           maxWidth: 880, width: "100%", maxHeight: "88vh",
           overflowY: "auto", position: "relative",
-          boxShadow: "0 40px 120px rgba(0,0,0,0.90), 0 0 60px rgba(156,207,234,0.07)",
+          boxShadow: "0 40px 120px rgba(0,0,0,0.90), 0 0 60px rgba(183,110,121,0.07)",
         }}
       >
         <button ref={closeRef} onClick={onClose} aria-label="Fermer"
@@ -515,7 +515,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
                   return (
                     <tr key={lv} style={{
                       borderBottom: lv < 4 ? "1px solid rgba(255,255,255,0.055)" : "none",
-                      background: isTrader ? "rgba(156,207,234,0.05)" : "transparent",
+                      background: isTrader ? "rgba(183,110,121,0.05)" : "transparent",
                     }}>
                       <td style={{ padding: "8px 8px", fontWeight: 700, color: isTrader ? ACCENT : "rgba(255,255,255,0.60)", fontSize: 11.5, whiteSpace: "nowrap" }}>
                         {isTrader ? "★ TRADER REWARD" : `Reward #${lv + 1}`}
@@ -607,12 +607,12 @@ export default function JourneyThreeLevels() {
     flexDirection: "column",
     padding:       isMobile ? "18px 16px" : "16px 16px 14px",
     borderRadius:  18,
-    border:        `1px solid ${accent ? "rgba(156,207,234,0.40)" : "rgba(255,255,255,0.09)"}`,
+    border:        `1px solid ${accent ? "rgba(183,110,121,0.40)" : "rgba(255,255,255,0.09)"}`,
     background:    accent
       ? "linear-gradient(155deg, #181a1c 0%, #0f1215 100%)"
       : "linear-gradient(155deg, #141414 0%, #0c0c0e 100%)",
     boxShadow: accent
-      ? "0 28px 70px rgba(0,0,0,0.80), 0 0 32px rgba(156,207,234,0.10)"
+      ? "0 28px 70px rgba(0,0,0,0.80), 0 0 32px rgba(183,110,121,0.10)"
       : "0 20px 56px rgba(0,0,0,0.72), 0 8px 22px rgba(0,0,0,0.52)",
   });
 
@@ -634,7 +634,7 @@ export default function JourneyThreeLevels() {
           position: "absolute", top: "5%", left: "50%",
           width: "min(800px, 80vw)", height: 260, transform: "translateX(-50%)",
           borderRadius: "50%",
-          background: "radial-gradient(ellipse, rgba(156,207,234,0.04), transparent 65%)",
+          background: "radial-gradient(ellipse, rgba(183,110,121,0.04), transparent 65%)",
           filter: "blur(20px)", pointerEvents: "none",
         }} />
 
@@ -660,7 +660,7 @@ export default function JourneyThreeLevels() {
             <div role="group" aria-label={L("Taille du compte","Tamaño de la cuenta","Account size")} style={{
               display: "inline-flex", alignItems: "center", gap: 4,
               padding: 4, borderRadius: 24,
-              border: "1px solid rgba(156,207,234,0.18)",
+              border: "1px solid rgba(183,110,121,0.18)",
               background: "rgba(255,255,255,0.025)",
             }}>
               {(SIZES_DATA as readonly { label: string }[]).map((size, index) => {
@@ -675,8 +675,8 @@ export default function JourneyThreeLevels() {
                       minWidth: isMobile ? 62 : 72,
                       padding: isMobile ? "7px 12px" : "7px 16px",
                       borderRadius: 18,
-                      border: selected ? "1px solid rgba(156,207,234,0.52)" : "1px solid transparent",
-                      background: selected ? "rgba(156,207,234,0.16)" : "transparent",
+                      border: selected ? "1px solid rgba(183,110,121,0.52)" : "1px solid transparent",
+                      background: selected ? "rgba(183,110,121,0.16)" : "transparent",
                       color: selected ? ACCENT : "rgba(255,255,255,0.42)",
                       fontSize: 10,
                       fontWeight: 900,
@@ -763,7 +763,7 @@ export default function JourneyThreeLevels() {
                   color:         ACCENT,
                   letterSpacing: "-1.5px",
                   lineHeight:    1,
-                  textShadow:    "0 0 8px rgba(156,207,234,0.16), 0 0 16px rgba(156,207,234,0.07)",
+                  textShadow:    "0 0 8px rgba(183,110,121,0.16), 0 0 16px rgba(183,110,121,0.07)",
                 }}>
                   {L("VALIDÉ !","¡VALIDADO!","PASSED!")}
                 </div>
@@ -846,7 +846,7 @@ export default function JourneyThreeLevels() {
                   color:         ACCENT,
                   letterSpacing: "-2px",
                   lineHeight:    1,
-                  textShadow:    "0 0 8px rgba(156,207,234,0.35), 0 0 20px rgba(156,207,234,0.18)",
+                  textShadow:    "0 0 8px rgba(183,110,121,0.35), 0 0 20px rgba(183,110,121,0.18)",
                 }}>
                   {money(rewardOne)}
                 </div>
@@ -939,7 +939,7 @@ export default function JourneyThreeLevels() {
                   color:         ACCENT,
                   letterSpacing: "-2px",
                   lineHeight:    1,
-                  textShadow:    "0 0 8px rgba(156,207,234,0.16), 0 0 16px rgba(156,207,234,0.07)",
+                  textShadow:    "0 0 8px rgba(183,110,121,0.16), 0 0 16px rgba(183,110,121,0.07)",
                   marginBottom:  4,
                 }}>
                   {money(cumulativeRewards)}

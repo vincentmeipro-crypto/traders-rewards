@@ -9,7 +9,7 @@
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const ACCENT = "#9CCFEA"; // badge dot (gauche)
+const ACCENT = "#D4A0A8"; // badge dot (gauche) — rose gold nacré
 
 // Parcours 100K — rendu top→bottom (05 en haut visuellement)
 const STEPS = [
@@ -61,8 +61,8 @@ export default function Hero() {
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes heroDotTwinkle {
-          0%, 100% { opacity: 0.48; box-shadow: 0 0 0 rgba(156,207,234,0); transform: scale(0.82); }
-          50% { opacity: 1; box-shadow: 0 0 10px rgba(156,207,234,0.92), 0 0 18px rgba(156,207,234,0.42); transform: scale(1.12); }
+          0%, 100% { opacity: 0.48; box-shadow: 0 0 0 rgba(183,110,121,0); transform: scale(0.82); }
+          50% { opacity: 1; box-shadow: 0 0 8px rgba(183,110,121,0.80), 0 0 14px rgba(183,110,121,0.35); transform: scale(1.12); }
         }
         .h-pill-dot { animation: heroDotTwinkle 1.8s ease-in-out infinite; }
 
@@ -70,18 +70,18 @@ export default function Hero() {
            CTA PRINCIPAL — plaque métal chrome poli
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         @keyframes ctaGlow {
-          0%, 100% { box-shadow: 0 0 0px rgba(185,220,235,0), 0 2px 14px rgba(185,220,235,0.10); }
-          50%       { box-shadow: 0 0 18px rgba(185,220,235,0.30), 0 4px 24px rgba(185,220,235,0.18); }
+          0%, 100% { box-shadow: 0 0 0px rgba(216,163,157,0), 0 2px 14px rgba(216,163,157,0.08); }
+          50%       { box-shadow: 0 0 16px rgba(216,163,157,0.22), 0 4px 22px rgba(216,163,157,0.14); }
         }
         .h-cta-main {
           display: inline-flex; align-items: center; gap: 10px;
           position: relative; overflow: hidden;
-          background: #b9dceb;
-          color: #071014;
+          background: #F5EDE8;
+          color: #0A0404;
           font-weight: 700; letter-spacing: 0.2px; text-transform: none;
           text-decoration: none; border-radius: 10px; cursor: pointer;
           font-family: inherit; white-space: nowrap;
-          border: 1px solid rgba(255,255,255,0.30);
+          border: 1px solid rgba(183,110,121,0.32);
           animation: ctaGlow 2.8s ease-in-out infinite;
           transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
         }
@@ -92,8 +92,8 @@ export default function Hero() {
         .h-cta-main:hover svg { transform: translateX(5px); }
         .h-cta-main:hover {
           transform: translateY(-2px);
-          background: #c9e8f5;
-          box-shadow: 0 6px 28px rgba(185,220,235,0.40), 0 2px 10px rgba(185,220,235,0.22);
+          background: #FFF5F2;
+          box-shadow: 0 6px 24px rgba(183,110,121,0.28), 0 2px 10px rgba(183,110,121,0.16);
           animation-play-state: paused;
         }
         .h-cta-main:active  { transform: translateY(0) scale(0.98); }
@@ -140,7 +140,7 @@ export default function Hero() {
           top: 0; bottom: 0;
           left: 50%; transform: translateX(-50%);
           width: 1px;
-          background: rgba(156,207,234,0.16);
+          background: rgba(183,110,121,0.16);
           z-index: 0;
           pointer-events: none;
         }
@@ -150,7 +150,7 @@ export default function Hero() {
           position: relative; z-index: 2;
           width: 42px; height: 42px; flex-shrink: 0;
           border-radius: 50%;
-          border: 1px solid rgba(156,207,234,0.24);
+          border: 1px solid rgba(183,110,121,0.24);
           background: #171b1f;
           display: flex; align-items: center; justify-content: center;
           font-size: 13px; font-weight: 800; letter-spacing: 1px;
@@ -197,7 +197,7 @@ export default function Hero() {
           z-index: 5;
           border: 1px solid rgba(0,0,0,0.96);
           border-radius: 16px;
-          box-shadow: inset 0 0 0 1px rgba(156,207,234,0.055);
+          box-shadow: inset 0 0 0 1px rgba(183,110,121,0.055);
           pointer-events: none;
         }
         @media (prefers-reduced-motion: reduce) {
@@ -350,7 +350,7 @@ export default function Hero() {
                 }}
               >
                 <span style={{ color: "#F7F8FA" }}>{h1L2pre}</span>
-                <span style={{ color: "#b9dceb" }}>{h1L2acc}</span>
+                <span style={{ color: "#EDD8D2" }}>{h1L2acc}</span>
               </span>
             </h1>
 
@@ -408,10 +408,10 @@ export default function Hero() {
 
               {/* Colonne Pack ×3 — -90% · BEST DEAL */}
               <div>
-                <div style={{ fontSize:10, fontWeight:700, color:"#FF7A00", letterSpacing:"0.4px", textTransform:"none", marginBottom:6, textShadow:"0 0 16px rgba(255,122,0,0.28)" }}>
+                <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom:6, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
                   PACK ×3 BEST DEAL
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#b9dceb" }}>
+                <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#EDD8D2" }}>
                   -90%
                 </div>
                 <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>

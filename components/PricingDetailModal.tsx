@@ -23,7 +23,7 @@ type Props = {
 
 // ── style tokens ───────────────────────────────────────────────
 
-const ACCENT = "#9CCFEA";
+const ACCENT = "#D8A39D";
 const RED    = "#ff5364";
 const GREEN  = "#47dc88";
 const ORANGE = "#f97316";
@@ -134,14 +134,14 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
         aria-labelledby="pdm-title"
         style={{
           background:   "linear-gradient(160deg, #0f1114 0%, #080a0c 100%)",
-          border:       "1px solid rgba(156,207,234,0.22)",
+          border:       "1px solid rgba(183,110,121,0.22)",
           borderRadius: 24,
           maxWidth:     880,
           width:        "100%",
           maxHeight:    "88vh",
           overflowY:    "auto",
           position:     "relative",
-          boxShadow:    "0 40px 120px rgba(0,0,0,0.90), 0 0 60px rgba(156,207,234,0.07)",
+          boxShadow:    "0 40px 120px rgba(0,0,0,0.90), 0 0 60px rgba(183,110,121,0.07)",
         }}
       >
         {/* Fermer */}

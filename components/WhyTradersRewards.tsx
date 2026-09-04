@@ -2,7 +2,7 @@
 
 // ════════════════════════════════════════════════════════════════
 //  WhyTradersRewards.tsx — 6 arguments clés, Traders Rewards V1
-//  Design : metric-led · palette #000/#111/blanc/gris/#9CCFEA
+//  Design : metric-led · palette #000/#111/blanc/gris/#D8A39D (or rose)
 //  Pas d'emoji · SVG inline · 6 col ≥1280px · 3 col 900-1279px · 1 col mobile
 // ════════════════════════════════════════════════════════════════
 
@@ -224,7 +224,7 @@ export default function WhyTradersRewards() {
         height:        300,
         transform:     "translateX(-50%)",
         borderRadius:  "50%",
-        background:    "radial-gradient(ellipse, rgba(156,207,234,0.05), transparent 65%)",
+        background:    "radial-gradient(ellipse, rgba(183,110,121,0.05), transparent 65%)",
         filter:        "blur(24px)",
         pointerEvents: "none",
       }} />
@@ -248,7 +248,7 @@ export default function WhyTradersRewards() {
               {L("Pourquoi", "¿Por qué", "Why")}
             </span>
             {" "}
-            <span style={{ color: "#9CCFEA" }}>
+            <span style={{ color: "#D8A39D" }}>
               {L("Traders Rewards ?", "Traders Rewards ?", "Traders Rewards ?")}
             </span>
           </h2>
@@ -310,11 +310,11 @@ export default function WhyTradersRewards() {
                         width:       44,
                         height:      44,
                         borderRadius: 11,
-                        border:      "1px solid rgba(156,207,234,0.20)",
-                        background:  "rgba(156,207,234,0.06)",
+                        border:      "1px solid rgba(183,110,121,0.20)",
+                        background:  "rgba(183,110,121,0.06)",
                         display:     "grid",
                         placeItems:  "center",
-                        color:       "#9CCFEA",
+                        color:       "#D8A39D",
                         flexShrink:  0,
                       }}>
                         {f.icon}
@@ -324,7 +324,7 @@ export default function WhyTradersRewards() {
                         <span style={{
                           fontSize:      8,
                           fontWeight:    800,
-                          color:         "rgba(156,207,234,0.50)",
+                          color:         "rgba(183,110,121,0.50)",
                           letterSpacing: "2px",
                           lineHeight:    1,
                           paddingTop:    1,
@@ -352,7 +352,7 @@ export default function WhyTradersRewards() {
                           ? (isNarrow ? 77 : 97)
                           : (isNarrow ? 46 : 58),
                         fontWeight:    900,
-                        color:         "#9CCFEA",
+                        color:         "#D8A39D",
                         lineHeight:    1,                   // uniforme — le wrapper gère le centrage
                         letterSpacing: f.metric === "∞" ? "0px" : "-1px",
                         fontVariantNumeric: "tabular-nums",

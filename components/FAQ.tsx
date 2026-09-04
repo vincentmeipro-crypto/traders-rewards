@@ -344,7 +344,7 @@ export default function FAQ() {
       <div className="home-faq-shell" style={{ maxWidth: 780, margin: "0 auto" }}>
 
         <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#9CCFEA", marginBottom: 16 }}>FAQ</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#D8A39D", marginBottom: 16 }}>FAQ</div>
           <h2 style={{ fontSize: isMobile ? "clamp(1.8rem, 7vw, 2.6rem)" : "clamp(2rem, 2.6vw, 3.4rem)", fontWeight: 900, color: "#FFFFFF", letterSpacing: "0.5px", lineHeight: 1.05, textTransform: "uppercase" }}>
             {faqTitles[lang] || faqTitles.en}
           </h2>
@@ -371,7 +371,7 @@ export default function FAQ() {
                 <span style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", lineHeight: 1.4 }}>{item.q}</span>
                 <div style={{
                   width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                  background: open === i ? "#9CCFEA" : "rgba(255,255,255,0.08)",
+                  background: open === i ? "#D8A39D" : "rgba(255,255,255,0.08)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s",
                 }}>

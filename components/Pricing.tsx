@@ -206,8 +206,8 @@ export default function Pricing() {
             ? "linear-gradient(155deg, #181818 0%, #131313 100%)"
             : "linear-gradient(155deg, #151515 0%, #101010 100%)",
           border: `1px solid ${
-            isActive  ? "rgba(156,207,234,0.75)" :
-            isHovered ? "rgba(156,207,234,0.28)"  :
+            isActive  ? "rgba(183,110,121,0.75)" :
+            isHovered ? "rgba(183,110,121,0.28)"  :
                         "rgba(255,255,255,0.10)"
           }`,
           borderRadius: 20,
@@ -218,9 +218,9 @@ export default function Pricing() {
             ? "translateY(-6px)"
             : isHovered ? "translateY(-4px)" : "translateY(0)",
           boxShadow:    isActive
-            ? "0 34px 90px rgba(0,0,0,0.88), 0 0 38px rgba(156,207,234,0.22), 0 12px 30px rgba(0,0,0,0.55)"
+            ? "0 34px 90px rgba(0,0,0,0.88), 0 0 38px rgba(183,110,121,0.22), 0 12px 30px rgba(0,0,0,0.55)"
             : isHovered
-              ? "0 32px 80px rgba(0,0,0,0.82), 0 0 20px rgba(156,207,234,0.10), 0 10px 26px rgba(0,0,0,0.50)"
+              ? "0 32px 80px rgba(0,0,0,0.82), 0 0 20px rgba(183,110,121,0.10), 0 10px 26px rgba(0,0,0,0.50)"
               : "0 28px 70px rgba(0,0,0,0.78), 0 10px 28px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.03)",
         }}
       >
@@ -228,17 +228,17 @@ export default function Pricing() {
         {isActive && (
           <div aria-hidden="true" style={{
             position: "absolute", inset: 0, borderRadius: 20, pointerEvents: "none",
-            background: "radial-gradient(circle at 50% 0%, rgba(156,207,234,0.14), transparent 55%)",
+            background: "radial-gradient(circle at 50% 0%, rgba(183,110,121,0.14), transparent 55%)",
           }} />
         )}
 
         {/* Badge */}
         <div style={{
           position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-          background: "#9CCFEA", color: "#000",
+          background: "#D8A39D", color: "#000",
           fontSize: 8, fontWeight: 800, padding: "3px 14px",
           borderRadius: 100, letterSpacing: "1.8px", whiteSpace: "nowrap",
-          boxShadow: "0 3px 14px rgba(156,207,234,0.32)",
+          boxShadow: "0 3px 14px rgba(183,110,121,0.32)",
         }}>
           {acc.badge}
         </div>
@@ -308,8 +308,8 @@ export default function Pricing() {
               borderRadius: 10, fontSize: V(11, 10, 11), fontWeight: 800,
               letterSpacing: "1.5px", textTransform: "uppercase",
               textDecoration: "none",
-              background: "#9CCFEA", color: "#000000",
-              boxShadow: "0 10px 26px rgba(156,207,234,0.20)",
+              background: "#D8A39D", color: "#000000",
+              boxShadow: "0 10px 26px rgba(183,110,121,0.20)",
               transition: "filter 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease",
             }}
           >
@@ -335,12 +335,12 @@ export default function Pricing() {
                     ? V("3px 0 3px", "4px 0 4px", "6px 0 6px")
                     : V("6px 0 3px", "8px 0 4px", "12px 0 6px"),
                 }}>
-                  <div style={{ height: 1, flex: 1, background: "rgba(156,207,234,0.18)" }} />
+                  <div style={{ height: 1, flex: 1, background: "rgba(183,110,121,0.18)" }} />
                   <span style={{
-                    fontSize: 8, fontWeight: 900, color: "#9CCFEA",
+                    fontSize: 8, fontWeight: 900, color: "#D8A39D",
                     letterSpacing: "2.8px", textTransform: "uppercase",
                   }}>{row.label}</span>
-                  <div style={{ height: 1, flex: 1, background: "rgba(156,207,234,0.18)" }} />
+                  <div style={{ height: 1, flex: 1, background: "rgba(183,110,121,0.18)" }} />
                 </div>
               );
             }
@@ -366,12 +366,12 @@ export default function Pricing() {
                   cursor: row.ruleKey ? "help" : "default", fontFamily: "inherit", textAlign: "left",
                   transition: "background .16s ease, color .16s ease",
                 }}
-                onMouseEnter={event => { if (row.ruleKey) event.currentTarget.style.background = "rgba(156,207,234,.06)"; }}
+                onMouseEnter={event => { if (row.ruleKey) event.currentTarget.style.background = "rgba(183,110,121,.06)"; }}
                 onMouseLeave={event => { event.currentTarget.style.background = "transparent"; }}
               >
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.48)", fontSize: V(12, 10, 10), fontWeight: 500 }}>
                   {row.label}
-                  {row.ruleKey && <i aria-hidden="true" style={{ display: "inline-grid", placeItems: "center", width: 14, height: 14, border: "1px solid rgba(156,207,234,.32)", borderRadius: "50%", color: "#9CCFEA", fontSize: 8, fontStyle: "normal", fontWeight: 900 }}>i</i>}
+                  {row.ruleKey && <i aria-hidden="true" style={{ display: "inline-grid", placeItems: "center", width: 14, height: 14, border: "1px solid rgba(183,110,121,.32)", borderRadius: "50%", color: "#D8A39D", fontSize: 8, fontStyle: "normal", fontWeight: 900 }}>i</i>}
                 </span>
                 <span style={{ color: "#FFFFFF", fontSize: V(12, 10, 10), fontWeight: 700, paddingLeft: 4, whiteSpace: "nowrap" }}>{fmtRow(row, acc.size)}</span>
               </button>
@@ -382,8 +382,8 @@ export default function Pricing() {
         {/* ── Récompense moyenne ── */}
         <div style={{
           margin: V("0 18px 10px", "0 18px 10px", "0 20px 12px"),
-          background: "rgba(156,207,234,0.055)",
-          border: "1px solid rgba(156,207,234,0.14)",
+          background: "rgba(183,110,121,0.055)",
+          border: "1px solid rgba(183,110,121,0.14)",
           borderRadius: 10,
           padding: V("6px 12px", "5px 10px", "7px 12px"),
           display: "flex", alignItems: "center", justifyContent: "space-between",
@@ -391,7 +391,7 @@ export default function Pricing() {
           <span style={{ fontSize: V(10, 9, 10), color: "rgba(255,255,255,0.40)", fontWeight: 500 }}>
             {L("Récompense moy.","Recompensa prom.","Avg. reward")}
           </span>
-          <span style={{ fontSize: V(11, 10, 11), fontWeight: 800, color: "#9CCFEA" }}>
+          <span style={{ fontSize: V(11, 10, 11), fontWeight: 800, color: "#D8A39D" }}>
             {acc.reward}
           </span>
         </div>
@@ -420,7 +420,7 @@ export default function Pricing() {
         .ch-cta:hover {
           filter: brightness(1.1);
           transform: translateY(-1px) !important;
-          box-shadow: 0 14px 34px rgba(156,207,234,0.34) !important;
+          box-shadow: 0 14px 34px rgba(183,110,121,0.34) !important;
         }
         .ch-tog {
           cursor: pointer;
@@ -445,9 +445,9 @@ export default function Pricing() {
           border-color: rgba(255,255,255,0.18);
         }
         .ch-tog.on {
-          color: #9CCFEA;
-          border-color: rgba(156,207,234,0.35);
-          background: rgba(156,207,234,0.08);
+          color: #D8A39D;
+          border-color: rgba(183,110,121,0.35);
+          background: rgba(183,110,121,0.08);
         }
         .ch-how:hover {
           border-color: rgba(255,255,255,0.50) !important;
@@ -481,7 +481,7 @@ export default function Pricing() {
           marginBottom: isMobile ? 28 : isShortScreen ? 6 : 8,
         }}>
           <div style={{
-            fontSize: isMobile ? 12 : 12.5, fontWeight: 800, color: "#9CCFEA",
+            fontSize: isMobile ? 12 : 12.5, fontWeight: 800, color: "#D8A39D",
             letterSpacing: "3.5px", textTransform: "uppercase",
             marginBottom: isMobile ? 12 : isShortScreen ? 6 : 6,
           }}>
@@ -497,7 +497,7 @@ export default function Pricing() {
             lineHeight: 1.05, margin: "0 0 4px",
           }}>
             {L("Choisissez votre","Elige tu","Choose your")}{" "}
-            <span style={{ color: "#9CCFEA" }}>
+            <span style={{ color: "#D8A39D" }}>
               {L("Challenge","Desafío","Challenge")}
             </span>
           </h2>
@@ -577,7 +577,7 @@ export default function Pricing() {
                   aria-selected={on}
                   onClick={() => { setModel(tab.id); setSelIdx(defaultAccountIdx); setShowSteps(false); setRulePreview(null); }}
                   style={{
-                    background:   on ? "#9CCFEA" : "transparent",
+                    background:   on ? "#D8A39D" : "transparent",
                     color:        on ? "#000000" : "rgba(255,255,255,0.46)",
                     border:       "none",
                     borderRadius: 12,
@@ -591,7 +591,7 @@ export default function Pricing() {
                     transition: "all 0.2s ease",
                     textAlign:  "center",
                     flex:       isMobile ? "1 1 0" : undefined,
-                    boxShadow:  on ? "0 4px 20px rgba(156,207,234,0.28)" : "none",
+                    boxShadow:  on ? "0 4px 20px rgba(183,110,121,0.28)" : "none",
                     fontFamily: "inherit",
                   }}
                 >
@@ -662,7 +662,7 @@ export default function Pricing() {
             MOBILE : boutons + carte unique
         ══════════════════════════════ */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, margin: isMobile ? "-8px 0 18px" : "-5px 0 14px", color: "rgba(255,255,255,.32)", fontSize: isMobile ? 10 : 11 }}>
-          <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 18, height: 18, borderRadius: "50%", border: "1px solid rgba(156,207,234,.28)", color: "#9CCFEA", fontSize: 10, fontWeight: 900 }}>i</span>
+          <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 18, height: 18, borderRadius: "50%", border: "1px solid rgba(183,110,121,.28)", color: "#D8A39D", fontSize: 10, fontWeight: 900 }}>i</span>
           {L("Cliquez sur une règle pour comprendre son calcul", "Haz clic en una regla para entenderla", "Click any rule to understand how it works")}
         </div>
         {isMobile && (
@@ -682,12 +682,12 @@ export default function Pricing() {
                       flex: "1 1 0", padding: "13px 0",
                       borderRadius: 28,
                       border: on ? "none" : "1px solid rgba(255,255,255,0.10)",
-                      background: on ? "#9CCFEA" : "#171717",
+                      background: on ? "#D8A39D" : "#171717",
                       color: on ? "#000000" : "rgba(255,255,255,0.52)",
                       fontSize: 14, fontWeight: 800,
                       cursor: "pointer", fontFamily: "inherit",
                       transition: "all 0.18s ease",
-                      boxShadow: on ? "0 6px 18px rgba(156,207,234,0.30)" : "0 4px 14px rgba(0,0,0,0.40)",
+                      boxShadow: on ? "0 6px 18px rgba(183,110,121,0.30)" : "0 4px 14px rgba(0,0,0,0.40)",
                     }}
                   >
                     {acc.label}

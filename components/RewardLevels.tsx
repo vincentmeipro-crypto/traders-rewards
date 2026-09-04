@@ -35,8 +35,8 @@ const SIZES = ["25K", "50K", "100K"] as const;
 // Plus le niveau est élevé, plus le bleu est saturé
 
 const LEVEL_BLUE_OPACITY = [0.07, 0.10, 0.13, 0.17, 0.22];
-const LEVEL_BORDER_OPACITY = ["rgba(255,255,255,0.08)", "rgba(255,255,255,0.09)", "rgba(255,255,255,0.11)", "rgba(156,207,234,0.18)", "rgba(156,207,234,0.48)"];
-const LEVEL_VALUE_COLOR = ["rgba(255,255,255,0.72)", "rgba(255,255,255,0.78)", "rgba(255,255,255,0.85)", "#b8e4ff", "#9CCFEA"];
+const LEVEL_BORDER_OPACITY = ["rgba(255,255,255,0.08)", "rgba(255,255,255,0.09)", "rgba(255,255,255,0.11)", "rgba(183,110,121,0.22)", "rgba(183,110,121,0.52)"];
+const LEVEL_VALUE_COLOR = ["rgba(255,255,255,0.72)", "rgba(255,255,255,0.78)", "rgba(255,255,255,0.85)", "#F1D0C8", "#D8A39D"];
 
 function fmtUSD(n: number) {
   return "$" + n.toLocaleString("en-US");
@@ -78,7 +78,7 @@ export default function RewardLevels() {
         height:        300,
         transform:     "translateX(-50%)",
         borderRadius:  "50%",
-        background:    "radial-gradient(ellipse, rgba(156,207,234,0.06), transparent 68%)",
+        background:    "radial-gradient(ellipse, rgba(183,110,121,0.06), transparent 68%)",
         filter:        "blur(28px)",
         pointerEvents: "none",
       }} />
@@ -90,7 +90,7 @@ export default function RewardLevels() {
           <div style={{
             fontSize:      11,
             fontWeight:    800,
-            color:         "#9CCFEA",
+            color:         "#D8A39D",
             letterSpacing: "3px",
             textTransform: "uppercase",
             marginBottom:  12,
@@ -110,7 +110,7 @@ export default function RewardLevels() {
             }}
           >
             {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
-            <span style={{ color: "#9CCFEA" }}>
+            <span style={{ color: "#D8A39D" }}>
               {L("Rewards", "Rewards", "Rewards")}
             </span>
           </h2>
@@ -173,10 +173,10 @@ export default function RewardLevels() {
                       borderRadius:        isTrader ? 14 : 12,
                       border:              LEVEL_BORDER_OPACITY[li],
                       background:          isTrader
-                        ? `linear-gradient(135deg, rgba(156,207,234,${LEVEL_BLUE_OPACITY[li]}) 0%, rgba(15,20,28,1) 100%)`
+                        ? `linear-gradient(135deg, rgba(183,110,121,${LEVEL_BLUE_OPACITY[li]}) 0%, rgba(15,12,13,1) 100%)`
                         : `rgba(255,255,255,${LEVEL_BLUE_OPACITY[li] * 0.4})`,
                       boxShadow:           isTrader
-                        ? "0 0 28px rgba(156,207,234,0.08), 0 20px 48px rgba(0,0,0,0.60)"
+                        ? "0 0 28px rgba(183,110,121,0.08), 0 20px 48px rgba(0,0,0,0.60)"
                         : "0 8px 24px rgba(0,0,0,0.40)",
                       transition:          "transform 200ms ease",
                       transform:           isTrader ? "scale(1.01)" : "scale(1)",
@@ -190,15 +190,15 @@ export default function RewardLevels() {
                         height:       isTrader ? 40 : 28,
                         borderRadius: 2,
                         background:   isTrader
-                          ? "linear-gradient(to bottom, #9CCFEA, #3da8e8)"
-                          : `rgba(156,207,234,${0.18 + li * 0.06})`,
+                          ? "linear-gradient(to bottom, #D8A39D, #B76E79)"
+                          : `rgba(183,110,121,${0.18 + li * 0.06})`,
                         flexShrink:   0,
                       }} />
                       <div>
                         <div style={{
                           fontSize:      isTrader ? 13 : 12,
                           fontWeight:    isTrader ? 900 : 700,
-                          color:         isTrader ? "#9CCFEA" : LEVEL_VALUE_COLOR[li],
+                          color:         isTrader ? "#D8A39D" : LEVEL_VALUE_COLOR[li],
                           letterSpacing: "0.3px",
                           lineHeight:    1.2,
                         }}>
@@ -207,7 +207,7 @@ export default function RewardLevels() {
                         <div style={{
                           fontSize:   9,
                           fontWeight: 700,
-                          color:      isTrader ? "rgba(156,207,234,0.65)" : "rgba(255,255,255,0.25)",
+                          color:      isTrader ? "rgba(183,110,121,0.65)" : "rgba(255,255,255,0.25)",
                           letterSpacing: "1.2px",
                           textTransform: "uppercase",
                           marginTop:  2,
@@ -235,7 +235,7 @@ export default function RewardLevels() {
                           <div style={{
                             fontSize:   8,
                             fontWeight: 700,
-                            color:      "rgba(156,207,234,0.50)",
+                            color:      "rgba(183,110,121,0.50)",
                             letterSpacing: "1px",
                             textTransform: "uppercase",
                             marginTop:  3,

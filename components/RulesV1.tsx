@@ -5,7 +5,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { SIZES_DATA, QUAL_DAY_USD } from "@/lib/rewardsData";
 import { useSizeSync } from "@/lib/SizeSyncContext";
 
-const ACCENT = "#9CCFEA";
+const ACCENT = "#D8A39D";
 const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 
 export default function RulesV1() {
@@ -86,7 +86,7 @@ export default function RulesV1() {
             style={{
               display: "inline-flex", alignItems: "center", gap: 4,
               padding: 4, borderRadius: 24,
-              border: "1px solid rgba(156,207,234,0.18)",
+              border: "1px solid rgba(183,110,121,0.18)",
               background: "rgba(255,255,255,0.025)",
             }}
           >
@@ -102,8 +102,8 @@ export default function RulesV1() {
                     minWidth: isMobile ? 62 : 72,
                     padding: isMobile ? "7px 12px" : "7px 16px",
                     borderRadius: 18,
-                    border: selected ? "1px solid rgba(156,207,234,0.52)" : "1px solid transparent",
-                    background: selected ? "rgba(156,207,234,0.16)" : "transparent",
+                    border: selected ? "1px solid rgba(183,110,121,0.52)" : "1px solid transparent",
+                    background: selected ? "rgba(183,110,121,0.16)" : "transparent",
                     color: selected ? ACCENT : "rgba(255,255,255,0.42)",
                     fontSize: 10,
                     fontWeight: 900,
@@ -121,7 +121,7 @@ export default function RulesV1() {
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 310px), 1fr))", gap: 18 }}>
           {cards.map((card, index) => (
-            <article key={card.title} style={{ minHeight: 370, padding: "clamp(26px, 3vw, 38px)", borderRadius: 22, background: index === 1 ? "linear-gradient(145deg, #101820, #090c0f)" : "#0b0e11", border: `1px solid ${index === 1 ? "rgba(156,207,234,.48)" : "rgba(255,255,255,.12)"}`, boxShadow: index === 1 ? "0 18px 60px rgba(73,150,196,.11)" : "none" }}>
+            <article key={card.title} style={{ minHeight: 370, padding: "clamp(26px, 3vw, 38px)", borderRadius: 22, background: index === 1 ? "linear-gradient(145deg, #1a1416, #0c0a0b)" : "#0b0e11", border: `1px solid ${index === 1 ? "rgba(183,110,121,.48)" : "rgba(255,255,255,.12)"}`, boxShadow: index === 1 ? "0 18px 60px rgba(183,110,121,.11)" : "none" }}>
               <div style={{ color: ACCENT, fontSize: 10, fontWeight: 900, letterSpacing: "2.2px" }}>{card.level}</div>
               <h3 style={{ color: "#fff", fontSize: "clamp(1.55rem, 2.2vw, 2.35rem)", margin: "14px 0 7px", fontWeight: 900 }}>{card.title}</h3>
               <p style={{ color: "rgba(255,255,255,.52)", fontSize: 14, margin: "0 0 30px" }}>{card.subtitle}</p>

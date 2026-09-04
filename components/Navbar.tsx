@@ -16,7 +16,7 @@ const FlagImg = ({ code }: { code: string }) => (
 function TraderLink() {
   return (
     <Link href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", padding: "8px 10px" }}>
-      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "rgba(156,207,234,0.65)", color: "#FFFFFF", padding: "2px 8px", borderRadius: 4 }}>CHALLENGE</span>
+      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "rgba(255,255,255,0.08)", color: "#FFFFFF", padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.20)" }}>CHALLENGE</span>
     </Link>
   );
 }
@@ -116,9 +116,9 @@ export default function Navbar() {
       <nav className={`home-navbar${scrolled ? " is-scrolled" : ""}`} style={{
         position: "fixed", top: "var(--promo-banner-height, 0px)", left: 0, right: 0, zIndex: 100,
         backgroundColor: scrolled ? "rgba(0,0,0,0.9)" : "#000000",
-        borderBottom: scrolled ? "1px solid rgba(156,207,234,0.2)" : "1px solid rgba(255,255,255,0.18)",
+        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(255,255,255,0.18)",
         backdropFilter: scrolled ? "blur(18px)" : "none",
-        boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42), 0 1px 0 rgba(156,207,234,0.04)" : "none",
+        boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42)" : "none",
         transition: "all 0.3s ease",
       }}>
         <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: isMobile ? "space-between" : "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: isMobile ? "hidden" : "visible" }}>
@@ -178,11 +178,11 @@ export default function Navbar() {
                           display: "flex", alignItems: "center", gap: 10,
                           width: "100%", padding: "11px 16px", background: "none",
                           border: "none", cursor: "pointer", textAlign: "left",
-                          backgroundColor: lang === l.code ? "#f0f4ff" : "transparent",
-                          borderLeft: lang === l.code ? "2px solid #1B4FD8" : "2px solid transparent",
+                          backgroundColor: lang === l.code ? "#FBF6F4" : "transparent",
+                          borderLeft: lang === l.code ? "2px solid #B76E79" : "2px solid transparent",
                         }}>
                         <FlagImg code={l.code} />
-                        <span style={{ color: lang === l.code ? "#1B4FD8" : "#4a5568", fontSize: 13, fontWeight: 500 }}>{l.label}</span>
+                        <span style={{ color: lang === l.code ? "#B76E79" : "#4a5568", fontSize: 13, fontWeight: 500 }}>{l.label}</span>
                       </button>
                     ))}
                   </div>
@@ -206,7 +206,7 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {open && (
-          <div style={{ backgroundColor: "rgba(3,5,7,0.98)", borderTop: "1px solid rgba(156,207,234,0.16)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ backgroundColor: "rgba(3,5,7,0.98)", borderTop: "1px solid rgba(255,255,255,0.10)", padding: "24px 32px", display: "flex", flexDirection: "column", gap: 20 }}>
             <div onClick={() => setOpen(false)}><TraderLink /></div>
             {navLinks.map(([label, href]) => (
               <a key={`${label}-${href}`} href={href} onClick={() => setOpen(false)}
@@ -219,9 +219,9 @@ export default function Navbar() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {languages.map(l => (
                 <button key={l.code} onClick={() => { setLang(l.code as Lang); setOpen(false); }}
-                  style={{ display: "flex", alignItems: "center", gap: 6, background: lang === l.code ? "#f0f4ff" : "#f8f9fa", border: `1px solid ${lang === l.code ? "#1B4FD8" : "transparent"}`, borderRadius: 6, padding: "6px 10px", cursor: "pointer" }}>
+                  style={{ display: "flex", alignItems: "center", gap: 6, background: lang === l.code ? "#FBF6F4" : "#f8f9fa", border: `1px solid ${lang === l.code ? "#B76E79" : "transparent"}`, borderRadius: 6, padding: "6px 10px", cursor: "pointer" }}>
                   <FlagImg code={l.code} />
-                  <span style={{ color: lang === l.code ? "#1B4FD8" : "#666", fontSize: 13 }}>{l.label}</span>
+                  <span style={{ color: lang === l.code ? "#B76E79" : "#666", fontSize: 13 }}>{l.label}</span>
                 </button>
               ))}
             </div>

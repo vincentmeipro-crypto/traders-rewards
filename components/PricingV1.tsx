@@ -169,9 +169,9 @@ export default function PricingV1() {
         style={{
           position:   "relative",
           background: isPopular ? "#22262a" : "#1d2024",
-          border: `1px solid ${isHovered || isPopular ? "rgba(156,207,234,0.34)" : "rgba(255,255,255,0.075)"}`,
+          border: `1px solid ${isPopular ? "rgba(183,110,121,0.48)" : isHovered ? "rgba(255,255,255,0.13)" : "rgba(255,255,255,0.075)"}`,
           borderRadius: 20,
-          padding:      isMobile ? "24px 20px 20px" : "30px 28px 24px",
+          padding:      isMobile ? "24px 20px 20px" : "18px 20px 14px",
           display:      "flex",
           flexDirection: "column",
           gap:           0,
@@ -179,7 +179,7 @@ export default function PricingV1() {
           transition:    "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease",
           transform:     isHovered ? "translateY(-2px)" : "translateY(0)",
           boxShadow:     isPopular
-            ? "0 22px 60px rgba(0,0,0,0.34), 0 0 0 1px rgba(156,207,234,0.04)"
+            ? "0 22px 60px rgba(0,0,0,0.44), 0 0 32px rgba(183,110,121,0.08)"
             : isHovered
               ? "0 20px 54px rgba(0,0,0,0.30)"
               : "0 14px 40px rgba(0,0,0,0.22)",
@@ -189,11 +189,12 @@ export default function PricingV1() {
         {isPopular && (
           <div style={{
             position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-            background: "#c8e7f5", color: "#071014",
+            background: "linear-gradient(135deg, #B76E79, #F1D0C8 55%, #9A5865)",
+            color: "#2A0810",
             fontSize: 10, fontWeight: 750, padding: "6px 18px",
             borderRadius: 100, letterSpacing: "0.15px", whiteSpace: "nowrap",
-            border: "1px solid rgba(255,255,255,0.5)",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.24)",
+            border: "1px solid rgba(241,208,200,0.40)",
+            boxShadow: "0 6px 20px rgba(0,0,0,0.28)",
           }}>
             {L("LE PLUS POPULAIRE","EL MÁS POPULAR","MOST POPULAR")}
           </div>
@@ -202,34 +203,34 @@ export default function PricingV1() {
         {/* Patch promo -90% — toujours visible, à cheval sur le bouton Pack ×3 */}
         <div style={{
           position:      "absolute",
-          top:           78,
+          top:           54,
           right:         28,
           zIndex:        3,
           pointerEvents: "none",
-          background:    "rgba(255,122,0,0.11)",
-          color:         "#FF7A00",
+          background:    "rgba(200,162,72,0.10)",
+          color:         "#C8A84B",
           fontSize:      9,
           fontWeight:    750,
           letterSpacing: "0.3px",
           padding:       "4px 8px",
           borderRadius:  100,
-          border:        "1px solid rgba(255,122,0,0.34)",
-          boxShadow:     "0 0 18px rgba(255,122,0,0.10)",
+          border:        "1px solid rgba(200,162,72,0.36)",
+          boxShadow:     "0 0 14px rgba(200,162,72,0.08)",
         }}>
           -90%
         </div>
 
         {/* En-tête — taille de compte + bouton "i" */}
-        <div style={{ marginBottom: 22 }}>
+        <div style={{ marginBottom: 10 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div>
               <div style={{
                 fontSize: 10, fontWeight: 650, color: "rgba(255,255,255,0.38)",
-                letterSpacing: "1.7px", textTransform: "uppercase", marginBottom: 8,
+                letterSpacing: "1.7px", textTransform: "uppercase", marginBottom: 4,
               }}>
                 {L("Compte simulé","Cuenta simulada","Simulated account")}
               </div>
-              <div style={{ fontSize: 38, fontWeight: 720, color: "#F7F8FA", letterSpacing: "-1.2px", lineHeight: 1 }}>
+              <div style={{ fontSize: 30, fontWeight: 720, color: "#F7F8FA", letterSpacing: "-1.2px", lineHeight: 1 }}>
                 {label}
               </div>
             </div>
@@ -262,14 +263,14 @@ export default function PricingV1() {
         </div>
 
         {/* ── Sélecteur 1 Challenge / Pack ×3 ── */}
-        <div style={{ display: "flex", gap: 6, marginBottom: 24, padding: 5, borderRadius: 12, background: "rgba(0,0,0,0.28)" }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 12, padding: 4, borderRadius: 10, background: "rgba(0,0,0,0.28)" }}>
           {[false, true].map(is3 => (
             <button
               key={String(is3)}
               onClick={e => { e.stopPropagation(); togglePack3(idx, is3); }}
               style={{
                 flex:       1,
-                padding:    "9px 0",
+                padding:    "5px 0",
                 borderRadius: 8,
                 fontSize:   11,
                 fontWeight: 650,
@@ -296,11 +297,11 @@ export default function PricingV1() {
         </div>
 
         {/* Prix */}
-        <div style={{ marginBottom: 24, paddingBottom: 24, borderBottom: "1px solid rgba(255,255,255,0.085)" }}>
+        <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid rgba(255,255,255,0.085)" }}>
           <div style={{
-            fontSize: 10, fontWeight: isPack3 ? 750 : 650, color: isPack3 ? "#FF7A00" : "#9CCFEA",
-            letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 10,
-            textShadow: isPack3 ? "0 0 16px rgba(255,122,0,0.22)" : "none",
+            fontSize: 10, fontWeight: isPack3 ? 750 : 650, color: isPack3 ? "#C8A84B" : "rgba(255,255,255,0.38)",
+            letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 4,
+            textShadow: isPack3 ? "0 0 14px rgba(200,162,72,0.20)" : "none",
           }}>
             {isPack3
               ? "PACK ×3 BEST DEAL"
@@ -315,16 +316,16 @@ export default function PricingV1() {
             textDecoration: "line-through",
             letterSpacing:  "0.5px",
             lineHeight:     1,
-            marginBottom:   7,
+            marginBottom:   2,
           }}>
             {displayRefPrice}
           </div>
 
           {/* Prix de lancement — dominant */}
-          <div style={{ fontSize: 42, fontWeight: 720, color: "#F7F8FA", letterSpacing: "-1.5px", lineHeight: 1 }}>
+          <div style={{ fontSize: 34, fontWeight: 720, color: "#F7F8FA", letterSpacing: "-1.5px", lineHeight: 1 }}>
             {displayPrice}
           </div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", marginTop: 8, fontWeight: 450 }}>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", marginTop: 3, fontWeight: 450 }}>
             {isPack3
               ? L("3 Challenges · Paiement unique","3 Challenges · Pago único","3 Challenges · One-time")
               : L("Paiement unique · non remboursable","Pago único · no reembolsable","One-time · non-refundable")}
@@ -332,30 +333,43 @@ export default function PricingV1() {
         </div>
 
         {/* Règles */}
-        <div style={{ marginBottom: 14, paddingBottom: 14 }}>
+        <div style={{ marginBottom: 4, paddingBottom: 4 }}>
           {RULES.map((rule, i) => (
             <div key={i} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
-              padding: "9px 0",
+              padding: "4px 0",
               borderBottom: i < RULES.length - 1 ? "1px solid rgba(255,255,255,0.075)" : "none",
             }}>
-              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.62)", fontWeight: 450 }}>{rule.label}</span>
+              <span style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", fontWeight: 450 }}>{rule.label}</span>
               <span style={{
-                fontSize: 13, fontWeight: 650,
-                color: rule.accent ? "#9CCFEA" : "rgba(255,255,255,0.90)",
+                display: "inline-flex", alignItems: "center",
+                padding: "3px 9px", borderRadius: 6,
+                background: "rgba(0,0,0,0.28)",
+                border: `1px solid ${rule.accent ? "rgba(183,110,121,0.38)" : "rgba(255,255,255,0.08)"}`,
+                fontSize: 12, fontWeight: 650,
+                color: rule.accent ? "#D8A39D" : "rgba(255,255,255,0.88)",
+                letterSpacing: "0.2px",
               }}>{rule.value}</span>
             </div>
           ))}
           {/* Activation Reward Account — spécifique par carte */}
           <div style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
-            padding: "9px 0",
+            padding: "4px 0",
             borderBottom: "1px solid rgba(255,255,255,0.075)",
           }}>
             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.62)", fontWeight: 450 }}>
               {L("Activation Compte Reward","Activación Compte Reward","Compte Reward activation")}
             </span>
-            <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.72)" }}>
+            <span style={{
+              display: "inline-flex", alignItems: "center",
+              padding: "3px 9px", borderRadius: 6,
+              background: "rgba(0,0,0,0.28)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              fontSize: 12, fontWeight: 650,
+              color: "rgba(255,255,255,0.88)",
+              letterSpacing: "0.2px",
+            }}>
               {card.activFeeEur}€
             </span>
           </div>
@@ -370,8 +384,8 @@ export default function PricingV1() {
             display:       "flex",
             alignItems:    "center",
             justifyContent:"center",
-            padding:       "14px 16px",
-            marginTop:     8,
+            padding:       "9px 16px",
+            marginTop:     4,
             borderRadius:  10,
             fontSize:      13,
             fontWeight:    700,
@@ -392,7 +406,7 @@ export default function PricingV1() {
     <section
       id="pricing"
       style={{
-        padding:         isMobile ? "64px 16px" : "72px 28px 112px",
+        padding:         isMobile ? "40px 16px" : "38px 28px 52px",
         backgroundColor: "#000000",
         fontFamily:      "var(--font-sans), system-ui, -apple-system, sans-serif",
         scrollMarginTop: "calc(72px + var(--promo-banner-height, 0px))",
@@ -404,34 +418,35 @@ export default function PricingV1() {
         .pricing-chrome-cta {
           position: relative;
           overflow: hidden;
-          background: #b9dceb;
-          color: #071014;
-          border: 1px solid rgba(255,255,255,0.34);
+          background: #000000;
+          color: #FFFFFF;
+          border: 1px solid rgba(183,110,121,0.52);
           box-shadow: none;
-          transition: transform 0.2s ease, background 0.2s ease;
+          transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
         .pricing-chrome-cta:hover {
           transform: translateY(-1px);
-          background: #c9e8f5;
+          background: rgba(255,255,255,0.03);
+          border-color: rgba(216,163,157,0.85);
         }
         .pricing-chrome-cta:active { transform: translateY(0) scale(0.99); }
       `}</style>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
         {/* ── Titre section ── */}
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 30 : 38 }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 18 }}>
           <h2 style={{
-            fontSize:      isMobile ? "clamp(2rem, 8vw, 2.8rem)" : "clamp(2.7rem, 4vw, 4.15rem)",
+            fontSize:      isMobile ? "clamp(2rem, 8vw, 2.8rem)" : "clamp(2.4rem, 3.6vw, 3.6rem)",
             fontWeight:    620,
             color:         "#FFFFFF",
             textTransform: "none",
             letterSpacing: "-2px",
             lineHeight:    1.08,
-            margin:        "0 0 18px",
+            margin:        "0 0 10px",
           }}>
             {L("Choisissez votre Challenge","Elige tu Desafío","Choose your Challenge")}
           </h2>
-          <p style={{ maxWidth: 720, margin: "0 auto", color: "rgba(255,255,255,0.58)", fontSize: isMobile ? 15 : 18, lineHeight: 1.65, fontWeight: 400 }}>
+          <p style={{ maxWidth: isMobile ? 480 : 860, margin: "0 auto", color: "rgba(255,255,255,0.58)", fontSize: isMobile ? 14 : 16, lineHeight: 1.55, fontWeight: 400 }}>
             {L(
               "Sélectionnez la taille de compte simulé qui correspond à vos objectifs et progressez jusqu'à 5 Rewards.",
               "Seleccione el tamaño de cuenta simulada que mejor se adapte a sus objetivos y avance hasta 5 Rewards.",
@@ -443,7 +458,7 @@ export default function PricingV1() {
         {/* ── Toggle % / $ ── */}
         <div style={{
           display: "flex", justifyContent: "center",
-          marginBottom: isMobile ? 24 : 34,
+          marginBottom: isMobile ? 14 : 16,
         }}>
           <button
             onClick={() => setShowPct(v => !v)}
@@ -458,9 +473,9 @@ export default function PricingV1() {
               gap:          8,
                padding:      "7px 16px",
               borderRadius: 100,
-              border:       `1px solid ${showPct ? "rgba(255,255,255,0.09)" : "rgba(156,207,234,0.35)"}`,
-              background:   showPct ? "rgba(255,255,255,0.045)" : "rgba(156,207,234,0.08)",
-              color:        "#9CCFEA",
+              border:       "1px solid rgba(255,255,255,0.10)",
+              background:   "rgba(255,255,255,0.045)",
+              color:        "rgba(255,255,255,0.62)",
               fontSize:     12, fontWeight: 700,
               cursor:       "pointer",
               fontFamily:   "inherit",
@@ -491,15 +506,15 @@ export default function PricingV1() {
                   flex:         "1 1 0",
                   padding:      "12px 0",
                   borderRadius: 28,
-                  border:       selIdx === i ? "none" : "1px solid rgba(255,255,255,0.10)",
-                  background:   selIdx === i ? "#9CCFEA" : "#171717",
-                  color:        selIdx === i ? "#000" : "rgba(255,255,255,0.52)",
+                  border:       selIdx === i ? "1px solid rgba(200,162,72,0.55)" : "1px solid rgba(255,255,255,0.10)",
+                  background:   selIdx === i ? "rgba(255,255,255,0.10)" : "#171717",
+                  color:        selIdx === i ? "#FFFFFF" : "rgba(255,255,255,0.42)",
                   fontSize:     14,
                   fontWeight:   800,
                   cursor:       "pointer",
                   fontFamily:   "inherit",
                   transition:   "all 0.18s ease",
-                  boxShadow:    selIdx === i ? "0 6px 18px rgba(156,207,234,0.30)" : "0 4px 14px rgba(0,0,0,0.40)",
+                  boxShadow:    selIdx === i ? "0 6px 18px rgba(0,0,0,0.30)" : "0 4px 14px rgba(0,0,0,0.40)",
                 }}
               >
                 {fmtBalance(card.balance)}
