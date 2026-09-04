@@ -26,6 +26,11 @@ export default function RulesV1() {
   const ddUsd        = selectedSize.bal - selectedSize.floorStart;
   const qualMin      = QUAL_DAY_USD[selectedSizeIndex as 0 | 1 | 2];
 
+  // Plancher fixe affiché : +4 % du capital initial (display uniquement)
+  const floorDisplay = selectedSize.bal * 1.04;
+  // Reward Max : premier palier configuré pour cette taille de compte
+  const rewardMax    = selectedSize.rewardCaps[0];
+
   const cards = [
     {
       level: L("NIVEAU 01", "NIVEL 01", "LEVEL 01"),
@@ -42,14 +47,11 @@ export default function RulesV1() {
       level: L("NIVEAU 02", "NIVEL 02", "LEVEL 02"),
       title: "COMPTE REWARD",
       subtitle: L("Débloquez votre première récompense", "Desbloquee su primera recompensa", "Unlock your first reward"),
-      rules: [
-        `${L("5 jours qualifiants à", "5 días calificados a", "5 qualifying days at")} ${fmt(qualMin)}${L("/jour", "/día", "/day")}`,
-        `${L("Solde cible (Reward #1) :", "Saldo objetivo (Reward #1):", "Target balance (Reward #1):")} ${fmt(selectedSize.targetBal)}`,
-        `${L("Seuil de sécurité :", "Safety Net:", "Safety Net:")} ${fmt(selectedSize.lockAt)}`,
-        L("DD EOD jusqu’au plancher de sécurité", "DD EOD hasta el suelo de seguridad", "EOD DD until the safety floor"),
-        L("Au plancher, le DD devient fixe", "Al llegar al suelo, el DD queda fijo", "At the floor, DD becomes fixed"),
-        L("Consistance 50 % · Temps illimité", "Consistencia 50 % · Tiempo ilimitado", "50% consistency · Unlimited time"),
-      ],
+      // Contenu rendu de manière personnalisée dans le JSX (index === 1)
+      rules: [] as string[],
+      floorDisplay,
+      qualMin,
+      rewardMax,
     },
     {
       level: L("NIVEAU 03", "NIVEL 03", "LEVEL 03"),
@@ -59,6 +61,7 @@ export default function RulesV1() {
         `${L("DD fixe :", "DD fijo:", "Fixed DD:")} ${fmt(ddUsd)}`,
         `${L("Seuil de sécurité :", "Safety Net:", "Safety Net:")} ${fmt(selectedSize.lockAt)}`,
         L("Le plancher de sécurité ne remonte plus", "El suelo de seguridad ya no sube", "The safety floor no longer rises"),
+        `${L("5 nouveaux jours qualifiants à", "5 nuevos días calificados a", "5 new qualifying days at")} ${fmt(qualMin)}${L("/jour après chaque Payout", "/día tras cada Payout", "/day after each Payout")}`,
         L("Consistance : 50 %", "Consistencia: 50 %", "Consistency: 50%"),
         L("Reward payé automatiquement sous 48 h", "Reward pagado automáticamente en 48 h", "Reward paid automatically within 48h"),
       ],
@@ -126,11 +129,71 @@ export default function RulesV1() {
               <h3 style={{ color: "#fff", fontSize: "clamp(1.55rem, 2.2vw, 2.35rem)", margin: "14px 0 7px", fontWeight: 900 }}>{card.title}</h3>
               <p style={{ color: "rgba(255,255,255,.52)", fontSize: 14, margin: "0 0 30px" }}>{card.subtitle}</p>
               <div style={{ height: 1, background: "rgba(255,255,255,.1)", marginBottom: 10 }} />
-              {card.rules.map(rule => (
-                <div key={rule} style={{ display: "grid", gridTemplateColumns: "20px 1fr", gap: 10, alignItems: "start", padding: "12px 0", color: "rgba(255,255,255,.86)", fontSize: 15, lineHeight: 1.4 }}>
-                  <span style={{ color: ACCENT, fontWeight: 900 }}>✓</span><span>{rule}</span>
-                </div>
-              ))}
+
+              {/* ── NIVEAU 02 : rendu personnalisé ─────────────────── */}
+              {index === 1 ? (
+                <>
+                  {/* Bloc plancher fixe */}
+                  <div style={{
+                    background:   "rgba(183,110,121,0.08)",
+                    border:       "1px solid rgba(183,110,121,0.28)",
+                    borderRadius: 12,
+                    padding:      "16px 18px",
+                    marginBottom: 22,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                      <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: "2px", color: ACCENT, textTransform: "uppercase" as const }}>
+                        {L("PLANCHER FIXE", "SUELO FIJO", "FIXED FLOOR")}
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 900, color: ACCENT, letterSpacing: "1px" }}>+4 %</span>
+                    </div>
+                    <div style={{ fontSize: "clamp(1.5rem, 3vw, 1.85rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em" }}>
+                      {fmt(card.floorDisplay ?? 0)}
+                    </div>
+                  </div>
+
+                  {/* 4 règles label / valeur */}
+                  {([
+                    { label: L("JOURS QUALIFIANTS",      "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),   value: L("5 jours", "5 días", "5 days") },
+                    { label: L("PROFIT MIN / JOUR",       "PROFIT MÍN / DÍA", "MIN PROFIT / DAY"),  value: fmt(card.qualMin ?? 0) },
+                    { label: L("CONSISTANCE",             "CONSISTENCIA",     "CONSISTENCY"),        value: "50 %" },
+                    { label: "REWARD MAX",                                                            value: fmt(card.rewardMax ?? 0) },
+                  ] as { label: string; value: string }[]).map(row => (
+                    <div key={row.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ color: ACCENT, fontWeight: 900, fontSize: 13 }}>✓</span>
+                        <span style={{ fontSize: 12, fontWeight: 800, color: "rgba(255,255,255,0.48)", letterSpacing: "1.3px", textTransform: "uppercase" as const }}>{row.label}</span>
+                      </div>
+                      <span style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>{row.value}</span>
+                    </div>
+                  ))}
+
+                  {/* 2 lignes d'explication */}
+                  <div style={{ marginTop: 20, display: "flex", flexDirection: "column" as const, gap: 10 }}>
+                    <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.46)", lineHeight: 1.5 }}>
+                      {L(
+                        "Une fois le seuil de +4 % atteint, votre stop devient fixe.",
+                        "Una vez alcanzado el umbral de +4 %, su stop se vuelve fijo.",
+                        "Once the +4% threshold is reached, your stop becomes fixed.",
+                      )}
+                    </p>
+                    <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.46)", lineHeight: 1.5 }}>
+                      {L(
+                        "Vos profits au-dessus de ce plancher deviennent disponibles pour vos Rewards.",
+                        "Sus ganancias por encima de este suelo quedan disponibles para sus Rewards.",
+                        "Your profits above this floor become available for your Rewards.",
+                      )}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                /* ── Autres niveaux : rendu standard ─────────────── */
+                card.rules.map(rule => (
+                  <div key={rule} style={{ display: "grid", gridTemplateColumns: "20px 1fr", gap: 10, alignItems: "start", padding: "12px 0", color: "rgba(255,255,255,.86)", fontSize: 15, lineHeight: 1.4 }}>
+                    <span style={{ color: ACCENT, fontWeight: 900 }}>✓</span><span>{rule}</span>
+                  </div>
+                ))
+              )}
             </article>
           ))}
         </div>
