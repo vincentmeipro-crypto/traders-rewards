@@ -70,7 +70,7 @@ export default function HeroBenefits() {
     {
       icon: <IconTrending />,
       metric: "5",
-      title: "PAYOUTS",
+      title: "RÉCOMPENSES",
     },
     {
       icon: <IconShield />,
