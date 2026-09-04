@@ -14,19 +14,17 @@ import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 // ── Data ───────────────────────────────────────────────────────
 
 interface Level {
-  num:       number;
-  tag:       string;
-  label:     string;
-  sublabel:  string;
-  isTrader:  boolean;
+  num:      number;
+  label:    string;
+  isTrader: boolean;
 }
 
 const LEVELS: Level[] = [
-  { num: 1, tag: "#1", label: "REWARD START",  sublabel: "START",  isTrader: false },
-  { num: 2, tag: "#2", label: "REWARD PLUS",   sublabel: "PLUS",   isTrader: false },
-  { num: 3, tag: "#3", label: "REWARD PRO",    sublabel: "PRO",    isTrader: false },
-  { num: 4, tag: "#4", label: "REWARD PRIME",  sublabel: "PRIME",  isTrader: false },
-  { num: 5, tag: "#5", label: "TRADER REWARD", sublabel: "TRADER", isTrader: true  },
+  { num: 1, label: "RÉCOMPENSE 1", isTrader: false },
+  { num: 2, label: "RÉCOMPENSE 2", isTrader: false },
+  { num: 3, label: "RÉCOMPENSE 3", isTrader: false },
+  { num: 4, label: "RÉCOMPENSE 4", isTrader: false },
+  { num: 5, label: "RÉCOMPENSE 5", isTrader: true  },
 ];
 
 const SIZES = ["25K", "50K", "100K"] as const;
@@ -185,35 +183,21 @@ export default function RewardLevels() {
                       {/* Indicateur de progression */}
                       <div style={{
                         width:        3,
-                        height:       isTrader ? 40 : 28,
+                        height:       22,
                         borderRadius: 2,
                         background:   isTrader
                           ? "linear-gradient(to bottom, #D8A39D, #B76E79)"
                           : `rgba(183,110,121,${0.18 + li * 0.06})`,
                         flexShrink:   0,
                       }} />
-                      <div>
-                        <div style={{
-                          fontSize:      isTrader ? 13 : 12,
-                          fontWeight:    isTrader ? 900 : 700,
-                          color:         isTrader ? "#D8A39D" : LEVEL_VALUE_COLOR[li],
-                          letterSpacing: "0.3px",
-                          lineHeight:    1.2,
-                        }}>
-                          {level.label}
-                        </div>
-                        <div style={{
-                          fontSize:   9,
-                          fontWeight: 700,
-                          color:      isTrader ? "rgba(183,110,121,0.65)" : "rgba(255,255,255,0.25)",
-                          letterSpacing: "1.2px",
-                          textTransform: "uppercase",
-                          marginTop:  2,
-                        }}>
-                          {isTrader
-                            ? L("STATUT FINAL", "ESTATUS FINAL", "FINAL STATUS")
-                            : L("REWARD", "REWARD", "REWARD")} {level.tag}
-                        </div>
+                      <div style={{
+                        fontSize:      isTrader ? 13 : 12,
+                        fontWeight:    isTrader ? 900 : 700,
+                        color:         isTrader ? "#D8A39D" : LEVEL_VALUE_COLOR[li],
+                        letterSpacing: "0.3px",
+                        lineHeight:    1.2,
+                      }}>
+                        {level.label}
                       </div>
                     </div>
 
