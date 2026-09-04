@@ -46,7 +46,6 @@ export default function Hero() {
   const h1L2pre = "";
   const h1L2acc = "5 RÉCOMPENSES.";
   const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
-  const ctaSub  = L("Découvrir le parcours","Descubrir el camino",   "Explore the journey");
 
   const promoFS = isMobile
     ? "clamp(2.4rem, 10vw, 3.6rem)"
@@ -420,26 +419,25 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* ── CTAs ── */}
+            {/* ── CTA principal ── */}
             <div style={{
-              display:       "flex",
-              flexDirection: isMobile ? "column" : "row",
-              gap:           isMobile ? 8 : 12,
-              alignItems:    isMobile ? "stretch" : "center",
-              animation:     "heroFadeUp 0.52s ease 0.15s both",
+              display:   "flex",
+              alignItems: isMobile ? "stretch" : "flex-start",
+              animation: "heroFadeUp 0.52s ease 0.15s both",
             }}>
               <a
                 href="#pricing"
                 className="h-cta-main"
                 style={{
-                  fontSize:       isMobile ? 13 : 12,
-                  padding:        isMobile ? "17px 28px" : "15px 32px",
-                  justifyContent: isMobile ? "center" : undefined,
+                  fontSize:       isMobile ? 14 : 15,
+                  padding:        isMobile ? "20px 28px" : "26px 48px",
+                  justifyContent: "center",
+                  minWidth:       isMobile ? undefined : 400,
                 }}
               >
                 {ctaMain}
                 <svg
-                  width="14" height="14"
+                  width="16" height="16"
                   viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" strokeWidth="2.5"
                   strokeLinecap="round" strokeLinejoin="round"
@@ -447,18 +445,6 @@ export default function Hero() {
                 >
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
-              </a>
-              <a
-                href="#parcours-3-niveaux"
-                className="h-cta-ghost"
-                style={{
-                  fontSize:  isMobile ? 10 : 12,
-                  padding:   isMobile ? "9px 18px" : "15px 32px",
-                  alignSelf: isMobile ? "flex-start" : undefined,
-                  opacity:   isMobile ? 0.8 : 1,
-                }}
-              >
-                {ctaSub}
               </a>
             </div>
 
