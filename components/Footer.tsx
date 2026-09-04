@@ -39,7 +39,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="home-footer" style={{ backgroundColor: "#050505", padding: "64px 24px 40px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+    <footer className="home-footer" style={{ backgroundColor: "#000000", padding: "64px 24px 40px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
       <div className="home-footer-shell" style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ maxWidth: 860, margin: "0 auto 48px", textAlign: "center" }}>
           <div style={{ fontSize: 16, fontWeight: 900, letterSpacing: "3.5px", color: "#FFFFFF", textTransform: "uppercase", marginBottom: 16 }}>TRADERS REWARDS</div>

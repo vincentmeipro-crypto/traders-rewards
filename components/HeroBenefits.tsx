@@ -94,7 +94,7 @@ export default function HeroBenefits() {
       role="list"
       aria-label={L("Avantages Traders Rewards","Ventajas Traders Rewards","Traders Rewards benefits")}
       style={{
-        background: "#050709",
+        background: "#000000",
         padding: isMobile ? "12px 10px 18px" : "5px 0 14px",
       }}
     >

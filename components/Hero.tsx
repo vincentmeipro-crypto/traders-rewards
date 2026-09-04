@@ -242,7 +242,7 @@ export default function Hero() {
         id="hero"
         aria-label="Hero Traders Rewards"
         style={{
-          background:   "#0a0c0f",
+          background:   "#000000",
           fontFamily:   "var(--font-sans), system-ui, -apple-system, sans-serif",
           width:        "100%",
           position:     "relative",
@@ -478,7 +478,7 @@ export default function Hero() {
             {/* ── Visuel droit — 3 jetons 100K / 25K / 50K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/JETON PNG.png"
+              src="/NEW HERO OR.png"
               alt="Comptes Traders Rewards — 100K, 25K et 50K"
               style={{
                 display:    "block",

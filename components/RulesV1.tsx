@@ -66,7 +66,7 @@ export default function RulesV1() {
   ];
 
   return (
-    <section id="rules" style={{ scrollMarginTop: 92, padding: "clamp(72px, 8vw, 112px) 24px", background: "#050709" }}>
+    <section id="rules" style={{ scrollMarginTop: 92, padding: "clamp(72px, 8vw, 112px) 24px", background: "#000000" }}>
       <div style={{ maxWidth: 1500, margin: "0 auto" }}>
         <header style={{ maxWidth: 900, marginBottom: "clamp(38px, 5vw, 62px)" }}>
           <div style={{ color: ACCENT, fontSize: 11, fontWeight: 900, letterSpacing: "2.4px", marginBottom: 14 }}>{L("LES RÈGLES", "LAS REGLAS", "THE RULES")}</div>

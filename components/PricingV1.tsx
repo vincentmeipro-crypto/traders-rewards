@@ -393,7 +393,7 @@ export default function PricingV1() {
       id="pricing"
       style={{
         padding:         isMobile ? "64px 16px" : "72px 28px 112px",
-        backgroundColor: "#0a0c0f",
+        backgroundColor: "#000000",
         fontFamily:      "var(--font-sans), system-ui, -apple-system, sans-serif",
         scrollMarginTop: "calc(72px + var(--promo-banner-height, 0px))",
         position:        "relative",
