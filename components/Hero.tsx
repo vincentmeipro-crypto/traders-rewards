@@ -476,15 +476,16 @@ export default function Hero() {
             {/* ── Visuel droit — 3 jetons 100K / 25K / 50K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/NOUVEAU HERO.png"
+              src="/JETON PNG.png"
               alt="Comptes Traders Rewards — 100K, 25K et 50K"
               style={{
-                display:   "block",
-                width:     "100%",
-                maxWidth:  isMobile ? 380 : "100%",
-                height:    "auto",
-                objectFit: "contain",
-                margin:    "0 auto",
+                display:    "block",
+                width:      isMobile ? "100%" : "115%",
+                maxWidth:   isMobile ? 400 : "none",
+                height:     "auto",
+                objectFit:  "contain",
+                margin:     "0 auto",
+                marginLeft: isMobile ? "auto" : "-7.5%",
               }}
             />
           </div>{/* fin colonne droite */}
