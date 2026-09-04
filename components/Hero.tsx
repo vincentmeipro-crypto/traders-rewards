@@ -69,6 +69,10 @@ export default function Hero() {
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            CTA PRINCIPAL — plaque métal chrome poli
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        @keyframes ctaGlow {
+          0%, 100% { box-shadow: 0 0 0px rgba(185,220,235,0), 0 2px 14px rgba(185,220,235,0.10); }
+          50%       { box-shadow: 0 0 18px rgba(185,220,235,0.30), 0 4px 24px rgba(185,220,235,0.18); }
+        }
         .h-cta-main {
           display: inline-flex; align-items: center; gap: 10px;
           position: relative; overflow: hidden;
@@ -78,19 +82,21 @@ export default function Hero() {
           text-decoration: none; border-radius: 10px; cursor: pointer;
           font-family: inherit; white-space: nowrap;
           border: 1px solid rgba(255,255,255,0.30);
-          box-shadow: none;
-          transition: transform 0.20s ease, background 0.20s ease;
+          animation: ctaGlow 2.8s ease-in-out infinite;
+          transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
         }
         .h-cta-main svg {
           position: relative; z-index: 2;
           transition: transform 0.22s ease; flex-shrink: 0;
         }
-        .h-cta-main:hover svg { transform: translateX(3px); }
+        .h-cta-main:hover svg { transform: translateX(5px); }
         .h-cta-main:hover {
-          transform: translateY(-1px);
+          transform: translateY(-2px);
           background: #c9e8f5;
+          box-shadow: 0 6px 28px rgba(185,220,235,0.40), 0 2px 10px rgba(185,220,235,0.22);
+          animation-play-state: paused;
         }
-        .h-cta-main:active  { transform: translateY(0) scale(0.99); }
+        .h-cta-main:active  { transform: translateY(0) scale(0.98); }
         .h-cta-main:focus-visible {
           outline: 2px solid rgba(255,255,255,0.72); outline-offset: 3px;
         }
@@ -225,7 +231,10 @@ export default function Hero() {
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         @media (prefers-reduced-motion: reduce) {
           * { animation-duration: 0.01ms !important; }
-          .h-cta-main, .h-cta-ghost { transition: none; }
+          .h-cta-main { animation: none; transition: none; }
+          .h-cta-main:hover { transform: none; }
+          .h-cta-main:hover svg { transform: none; }
+          .h-cta-ghost { transition: none; }
         }
       `}</style>
 
