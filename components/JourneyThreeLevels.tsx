@@ -643,17 +643,16 @@ export default function JourneyThreeLevels() {
           {/* ── Titre ── */}
           <div style={{ textAlign: "center", marginBottom: isMobile ? 24 : 18 }}>
             <h2 id="j3l-heading" style={{
-              fontSize:      isMobile ? "clamp(1.8rem, 7vw, 2.6rem)" : "clamp(2rem, 2.6vw, 3.4rem)",
+              fontSize:      isMobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)",
               fontWeight:    900,
               color:         "#FFFFFF",
-              textTransform: "uppercase",
               letterSpacing: "0.5px",
               lineHeight:    1.05,
               margin:        "0 0 12px",
             }}>
-              {L("DE CHALLENGER À","DE CHALLENGER A","FROM CHALLENGER TO")}{" "}
-              <span style={{ color: ACCENT }}>
-                TRADER REWARD
+              {L("De Challenger à","De Challenger a","From Challenger to")}{" "}
+              <span style={{ color: "#FFFFFF" }}>
+                Trader Reward
               </span>
             </h2>
             {/* Sélecteur des trois produits */}
@@ -760,7 +759,7 @@ export default function JourneyThreeLevels() {
                 <div style={{
                   fontSize:      "clamp(36px, 3.6vw, 50px)",
                   fontWeight:    900,
-                  color:         ACCENT,
+                  color:         "#FFFFFF",
                   letterSpacing: "-1.5px",
                   lineHeight:    1,
                   textShadow:    "0 0 8px rgba(183,110,121,0.16), 0 0 16px rgba(183,110,121,0.07)",
@@ -808,7 +807,7 @@ export default function JourneyThreeLevels() {
               </div>{/* /zone supérieure */}
 
               {/* Délai de traitement */}
-              <div style={{ marginTop: 12, position: "relative" }}>
+              <div style={{ marginTop: 48, position: "relative" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "6px 12px" }}>
                   <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
                   <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.5px" }}>
@@ -843,7 +842,7 @@ export default function JourneyThreeLevels() {
                 <div style={{
                   fontSize:      "clamp(40px, 4vw, 56px)",
                   fontWeight:    900,
-                  color:         ACCENT,
+                  color:         "#FFFFFF",
                   letterSpacing: "-2px",
                   lineHeight:    1,
                   textShadow:    "0 0 8px rgba(183,110,121,0.35), 0 0 20px rgba(183,110,121,0.18)",
@@ -936,7 +935,7 @@ export default function JourneyThreeLevels() {
                 <div style={{
                   fontSize:      "clamp(40px, 4vw, 56px)",
                   fontWeight:    900,
-                  color:         ACCENT,
+                  color:         "#FFFFFF",
                   letterSpacing: "-2px",
                   lineHeight:    1,
                   textShadow:    "0 0 8px rgba(183,110,121,0.16), 0 0 16px rgba(183,110,121,0.07)",

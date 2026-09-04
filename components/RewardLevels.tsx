@@ -100,7 +100,7 @@ export default function RewardLevels() {
           <h2
             id="reward-levels-heading"
             style={{
-              fontSize:      isMobile ? "clamp(1.8rem, 7vw, 2.6rem)" : "clamp(2rem, 2.6vw, 3.4rem)",
+              fontSize:      isMobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)",
               fontWeight:    900,
               textTransform: "uppercase",
               color:         "#FFFFFF",
@@ -110,7 +110,7 @@ export default function RewardLevels() {
             }}
           >
             {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
-            <span style={{ color: "#D8A39D" }}>
+            <span style={{ color: "#FFFFFF" }}>
               {L("Rewards", "Rewards", "Rewards")}
             </span>
           </h2>
@@ -118,7 +118,7 @@ export default function RewardLevels() {
             maxWidth:   480,
             margin:     "0 auto",
             color:      "rgba(255,255,255,0.42)",
-            fontSize:   isMobile ? 13 : 14,
+            fontSize:   isMobile ? 14 : 17,
             lineHeight: 1.7,
           }}>
             {L(

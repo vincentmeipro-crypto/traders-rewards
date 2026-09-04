@@ -236,7 +236,7 @@ export default function WhyTradersRewards() {
           <h2
             id="why-heading"
             style={{
-              fontSize:      isNarrow ? "clamp(1.8rem, 7vw, 2.6rem)" : "clamp(2rem, 2.6vw, 3.4rem)",
+              fontSize:      isNarrow ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)",
               fontWeight:    900,
               textTransform: "uppercase",
               letterSpacing: "0.5px",
@@ -248,7 +248,7 @@ export default function WhyTradersRewards() {
               {L("Pourquoi", "¿Por qué", "Why")}
             </span>
             {" "}
-            <span style={{ color: "#D8A39D" }}>
+            <span style={{ color: "#FFFFFF" }}>
               {L("Traders Rewards ?", "Traders Rewards ?", "Traders Rewards ?")}
             </span>
           </h2>

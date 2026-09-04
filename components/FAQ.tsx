@@ -345,7 +345,7 @@ export default function FAQ() {
 
         <div style={{ textAlign: "center", marginBottom: 56 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#D8A39D", marginBottom: 16 }}>FAQ</div>
-          <h2 style={{ fontSize: isMobile ? "clamp(1.8rem, 7vw, 2.6rem)" : "clamp(2rem, 2.6vw, 3.4rem)", fontWeight: 900, color: "#FFFFFF", letterSpacing: "0.5px", lineHeight: 1.05, textTransform: "uppercase" }}>
+          <h2 style={{ fontSize: isMobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)", fontWeight: 900, color: "#FFFFFF", letterSpacing: "0.5px", lineHeight: 1.05, textTransform: "uppercase" }}>
             {faqTitles[lang] || faqTitles.en}
           </h2>
         </div>

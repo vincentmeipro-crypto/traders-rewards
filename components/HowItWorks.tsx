@@ -84,14 +84,14 @@ export default function HowItWorks() {
         h2 {
           margin: 0 0 16px;
           color: #fff;
-          font-size: clamp(2rem, 4vw, 3rem);
-          font-weight: 850;
+          font-size: clamp(2.4rem, 3.5vw, 3.5rem);
+          font-weight: 900;
           letter-spacing: -1.5px;
           line-height: 1.08;
         }
 
         h2 span {
-          color: #D8A39D;
+          color: #FFFFFF;
         }
 
         .how-heading > p {
@@ -291,7 +291,7 @@ export default function HowItWorks() {
 
           h2 {
             margin-bottom: 13px;
-            font-size: clamp(1.85rem, 9vw, 2.35rem);
+            font-size: clamp(2.1rem, 7vw, 2.75rem);
             letter-spacing: -1.2px;
           }
 

@@ -26,10 +26,10 @@ export default function DashboardShowcase() {
     <div style={{ maxWidth: 1240, margin: "0 auto" }}>
       <div style={{ textAlign: "center", marginBottom: mobile ? 30 : 44 }}>
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 3, color: "#D8A39D", marginBottom: 12 }}>COCKPIT TRADER</div>
-        <h2 style={{ margin: "0 0 14px", color: "#fff", fontSize: mobile ? "clamp(1.8rem, 7vw, 2.6rem)" : "clamp(2rem, 2.6vw, 3.4rem)", lineHeight: 1.05, fontWeight: 900, textTransform: "uppercase" }}>
-          {L("PILOTEZ VOTRE", "CONTROLA TU", "CONTROL YOUR")} <span style={{ color: "#D8A39D" }}>{L("PROGRESSION", "PROGRESO", "PROGRESS")}</span>
+        <h2 style={{ margin: "0 0 14px", color: "#fff", fontSize: mobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)", lineHeight: 1.05, fontWeight: 900 }}>
+          {L("Pilotez votre", "Controla tu", "Control your")} <span style={{ color: "#FFFFFF" }}>{L("Progression", "Progreso", "Progress")}</span>
         </h2>
-        <p style={{ maxWidth: 620, margin: "0 auto", color: "rgba(255,255,255,.46)", fontSize: 14, lineHeight: 1.7 }}>
+        <p style={{ maxWidth: mobile ? 480 : "none", whiteSpace: mobile ? "normal" : "nowrap", margin: "0 auto", color: "rgba(255,255,255,.46)", fontSize: mobile ? 14 : 17, lineHeight: 1.7 }}>
           {L("Retrouvez vos résultats, vos règles et votre prochain objectif dans une interface unique.", "Consulta tus resultados, reglas y próximo objetivo en una sola interfaz.", "Track your results, rules and next objective in one clear interface.")}
         </p>
       </div>

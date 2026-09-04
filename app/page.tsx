@@ -36,20 +36,20 @@ export default function Home() {
       {/* ── Titre de transition : Environnement Trader ── */}
       <div style={{ backgroundColor: "#000000", padding: "clamp(48px, 5vw, 64px) 24px", textAlign: "center" }}>
         <div style={{
-          fontSize: 10, fontWeight: 800, color: "#9CCFEA",
+          fontSize: 10, fontWeight: 800, color: "#D8A39D",
           letterSpacing: "3px", textTransform: "uppercase", marginBottom: 12,
         }}>
           ENVIRONNEMENT TRADER
         </div>
         <h2 style={{
-          fontSize: "clamp(1.8rem, 2.6vw, 3.4rem)",
+          fontSize: "clamp(2.1rem, 3.5vw, 3.5rem)",
           fontWeight: 900, color: "#FFFFFF",
           textTransform: "uppercase",
           letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 12px",
           textWrap: "balance",
         } as React.CSSProperties}>
           Votre environnement de{" "}
-          <span style={{ color: "#9CCFEA" }}>trading</span>
+          <span style={{ color: "#FFFFFF" }}>trading</span>
         </h2>
       </div>
 
@@ -67,7 +67,7 @@ export default function Home() {
         }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/NOUVEAU IMAGE MT5.png"
+            src="/NOUVEAU MT5.png"
             alt="MetaTrader 5 — plateforme de trading simulé Traders Rewards"
             style={{ width: "100%", height: "auto", maxHeight: 650, objectFit: "contain", display: "block", backgroundColor: "#000000" }}
           />

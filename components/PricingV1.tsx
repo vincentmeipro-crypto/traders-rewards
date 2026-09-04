@@ -406,7 +406,7 @@ export default function PricingV1() {
     <section
       id="pricing"
       style={{
-        padding:         isMobile ? "40px 16px" : "38px 28px 52px",
+        padding:         isMobile ? "56px 16px" : "80px 28px 52px",
         backgroundColor: "#000000",
         fontFamily:      "var(--font-sans), system-ui, -apple-system, sans-serif",
         scrollMarginTop: "calc(72px + var(--promo-banner-height, 0px))",
@@ -436,8 +436,8 @@ export default function PricingV1() {
         {/* ── Titre section ── */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 18 }}>
           <h2 style={{
-            fontSize:      isMobile ? "clamp(2rem, 8vw, 2.8rem)" : "clamp(2.4rem, 3.6vw, 3.6rem)",
-            fontWeight:    620,
+            fontSize:      isMobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)",
+            fontWeight:    900,
             color:         "#FFFFFF",
             textTransform: "none",
             letterSpacing: "-2px",
