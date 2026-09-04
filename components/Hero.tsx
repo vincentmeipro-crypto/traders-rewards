@@ -7,6 +7,7 @@
 // ════════════════════════════════════════════════════════════════
 
 import { useState, useEffect } from "react";
+import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
 const ACCENT = "#D4A0A8"; // badge dot (gauche) — rose gold nacré
@@ -66,34 +67,28 @@ export default function Hero() {
         .h-pill-dot { animation: heroDotTwinkle 1.8s ease-in-out infinite; }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           CTA PRINCIPAL — plaque métal chrome poli
+           CTA PRINCIPAL — nacré / rose gold premium
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        @keyframes ctaGlow {
-          0%, 100% { box-shadow: 0 0 0px rgba(216,163,157,0), 0 2px 14px rgba(216,163,157,0.08); }
-          50%       { box-shadow: 0 0 16px rgba(216,163,157,0.22), 0 4px 22px rgba(216,163,157,0.14); }
-        }
         .h-cta-main {
-          display: inline-flex; align-items: center; gap: 10px;
+          display: inline-flex; align-items: center; gap: 18px;
           position: relative; overflow: hidden;
-          background: #F5EDE8;
-          color: #0A0404;
-          font-weight: 700; letter-spacing: 0.2px; text-transform: none;
-          text-decoration: none; border-radius: 10px; cursor: pointer;
+          background: linear-gradient(110deg, #F7F2EF 0%, #E8D4CF 35%, #FFF9F6 58%, #D8A39D 100%);
+          color: #1A0808;
+          font-weight: 730; letter-spacing: 0.05px; text-transform: none;
+          text-decoration: none; border-radius: 16px; cursor: pointer;
           font-family: inherit; white-space: nowrap;
-          border: 1px solid rgba(183,110,121,0.32);
-          animation: ctaGlow 2.8s ease-in-out infinite;
-          transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+          border: 1px solid rgba(241,208,200,0.55);
+          box-shadow: 0 10px 35px rgba(183,110,121,0.15), 0 3px 12px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.75);
+          transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
         }
         .h-cta-main svg {
-          position: relative; z-index: 2;
-          transition: transform 0.22s ease; flex-shrink: 0;
+          transition: transform 0.25s ease; flex-shrink: 0;
         }
         .h-cta-main:hover svg { transform: translateX(5px); }
         .h-cta-main:hover {
           transform: translateY(-2px);
-          background: #FFF5F2;
-          box-shadow: 0 6px 24px rgba(183,110,121,0.28), 0 2px 10px rgba(183,110,121,0.16);
-          animation-play-state: paused;
+          background: linear-gradient(110deg, #FBF7F4 0%, #EEDBD7 35%, #FFFAF7 58%, #C9908A 100%);
+          box-shadow: 0 18px 48px rgba(183,110,121,0.22), 0 5px 16px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.85);
         }
         .h-cta-main:active  { transform: translateY(0) scale(0.98); }
         .h-cta-main:focus-visible {
@@ -429,22 +424,17 @@ export default function Hero() {
                 href="#pricing"
                 className="h-cta-main"
                 style={{
-                  fontSize:       isMobile ? 14 : 15,
-                  padding:        isMobile ? "20px 28px" : "26px 48px",
+                  fontSize:       isMobile ? 18 : 21,
+                  fontWeight:     730,
+                  height:         isMobile ? 66 : 72,
+                  padding:        isMobile ? "0 32px" : "0 44px",
                   justifyContent: "center",
-                  minWidth:       isMobile ? undefined : 400,
+                  minWidth:       isMobile ? undefined : 410,
+                  boxSizing:      "border-box" as const,
                 }}
               >
                 {ctaMain}
-                <svg
-                  width="16" height="16"
-                  viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" strokeWidth="2.5"
-                  strokeLinecap="round" strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+                <ArrowRight size={isMobile ? 20 : 22} strokeWidth={2.2} aria-hidden="true" />
               </a>
             </div>
 
