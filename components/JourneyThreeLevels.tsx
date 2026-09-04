@@ -10,7 +10,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, CircleCheck, DollarSign, Trophy, BadgeDollarSign, Award } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { REWARD_AMOUNTS, SIZES_DATA } from "@/lib/rewardsData";
+import { REWARD_AMOUNTS, SIZES_DATA, QUAL_DAY_USD } from "@/lib/rewardsData";
 import { useSizeSync } from "@/lib/SizeSyncContext";
 import PricingDetailModal from "./PricingDetailModal";
 
@@ -951,7 +951,7 @@ export default function JourneyThreeLevels() {
 
       {/* ── Modal 01 : Challenge — suit le produit sélectionné ── */}
       <PricingDetailModal
-        card={activeModal === 0 ? { balance: selectedSize.bal, trailingDdPct: selectedSize.ddPct, activFeeEur: ACTIV_FEE[selectedSize.bal] } : null}
+        card={activeModal === 0 ? { balance: selectedSize.bal, trailingDdPct: selectedSize.ddPct, activFeeEur: ACTIV_FEE[selectedSize.bal], qualDayUsd: QUAL_DAY_USD[selectedSizeIndex as 0|1|2] } : null}
         lang={lang}
         onClose={closeModal}
       />

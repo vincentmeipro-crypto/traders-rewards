@@ -200,10 +200,10 @@ export default function PricingV1() {
           </div>
         )}
 
-        {/* Patch promo -90% — toujours visible, à cheval sur le bouton Pack ×3 */}
+        {/* Patch promo -90% — séparé du bouton "i" par 16-18px minimum */}
         <div style={{
           position:      "absolute",
-          top:           54,
+          top:           isMobile ? 72 : 68,
           right:         28,
           zIndex:        3,
           pointerEvents: "none",

@@ -8,11 +8,13 @@
 
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 
 export type ModalCardData = {
   balance:       number;
   trailingDdPct: number;
   activFeeEur:   number;
+  qualDayUsd:    number;
 };
 
 type Props = {
@@ -106,13 +108,19 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
 
   if (!card) return null;
 
-  const { balance, trailingDdPct } = card;
+  const { balance, trailingDdPct, qualDayUsd } = card;
   const sizeK      = balance / 1000;
   const sizeLabel  = `$${sizeK}K`;
   const targetAmt  = balance * 0.06;
   const ddAmt      = balance * trailingDdPct / 100;
   const floorAmt   = balance - ddAmt;
   const maxBestDay = targetAmt / 2;
+
+  // NIVEAU 02 / 03 — plancher fixe +4% et caps Rewards
+  const fixedFloor = balance * 1.04;
+  const AMOUNTS    = REWARD_AMOUNTS as readonly (readonly number[])[];
+  const sizeIdx    = balance === 25000 ? 0 : balance === 50000 ? 1 : 2;
+  const rewardCaps = AMOUNTS[sizeIdx]; // [R1, R2, R3, R4, R5]
 
   return (
     <div
@@ -404,6 +412,177 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.55 }}>
                   {L("Equity = plancher de protection — pas encore d'échec","Equity = plancher — no es fallo aún","Equity = protection floor — not yet a breach")}
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── NIVEAU 02 — COMPTE REWARD ── */}
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 24 }}>
+            <h3 style={{ ...secTitle, marginBottom: 6 }}>
+              {L("NIVEAU 02 — COMPTE REWARD","NIVEL 02 — COMPTE REWARD","LEVEL 02 — REWARD ACCOUNT")}
+            </h3>
+            <p style={bodyTxt}>
+              {L(
+                `Le Compte Reward démarre avec un drawdown EOD. Dès que la balance réalisée atteint le plancher fixe (+4%), le trailing s'arrête et le stop devient définitivement fixe à ce niveau.`,
+                `La Cuenta Reward comienza con un drawdown EOD. En cuanto la balance realizada alcanza el suelo fijo (+4%), el trailing se detiene y el stop queda fijo permanentemente.`,
+                `The Reward Account starts with an EOD drawdown. As soon as the realised balance reaches the fixed floor (+4%), trailing stops and the stop becomes permanently fixed.`
+              )}
+            </p>
+
+            {/* Plancher fixe +4% */}
+            <div style={{ ...infoBox, border: "1px solid rgba(183,110,121,0.30)", marginBottom: 12 }}>
+              <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 6 }}>
+                {L("PLANCHER FIXE +4%","SUELO FIJO +4%","FIXED FLOOR +4%")}
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-0.5px", marginBottom: 4 }}>
+                {fmt(fixedFloor)}
+              </div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.32)", lineHeight: 1.5 }}>
+                {L(
+                  "Dès que la balance réalisée atteint ce niveau en cours de journée, le stop devient fixe et permanent.",
+                  "En cuanto la balance realizada alcanza este nivel durante la jornada, el stop queda fijo y permanente.",
+                  "As soon as realised balance hits this level intraday, the stop becomes fixed and permanent."
+                )}
+              </div>
+            </div>
+
+            {/* Règles N02 */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))", gap: 8 }}>
+              {([
+                {
+                  label: L("JOURS QUALIFIANTS","DÍAS CALIFICADOS","QUALIFYING DAYS"),
+                  value: L("5 JOURS","5 DÍAS","5 DAYS"),
+                  note:  L("5 jours de trading à profit minimum requis","5 días de trading con beneficio mínimo requerido","5 trading days at minimum profit required"),
+                  color: ACCENT,
+                },
+                {
+                  label: L("PROFIT MIN / JOUR","PROFIT MÍN / DÍA","MIN PROFIT / DAY"),
+                  value: fmt(qualDayUsd),
+                  note:  L(`Minimum ${fmt(qualDayUsd)} de profit réalisé par jour qualifiant`,`Mínimo ${fmt(qualDayUsd)} de beneficio por día calificado`,`Minimum ${fmt(qualDayUsd)} realised profit per qualifying day`),
+                  color: GREEN,
+                },
+                {
+                  label: L("CONSISTANCE","CONSISTENCIA","CONSISTENCY"),
+                  value: "≤ 50%",
+                  note:  L("Votre meilleure journée ne dépasse pas 50% du profit total","Su mejor día no supera el 50% del beneficio total","Best day must not exceed 50% of total profit"),
+                  color: ACCENT,
+                },
+                {
+                  label: "REWARD MAX",
+                  value: fmt(rewardCaps[0]),
+                  note:  L("Montant maximum du premier Reward","Monto máximo del primer Reward","Maximum amount for the first Reward"),
+                  color: ORANGE,
+                },
+                {
+                  label: L("PAIEMENT","PAGO","PAYMENT"),
+                  value: "48H MAX",
+                  note:  L("Reward versé automatiquement sous 48h","Reward abonado automáticamente en 48h","Reward automatically paid within 48h"),
+                  color: GREEN,
+                },
+              ] as { label: string; value: string; note: string; color: string }[]).map((row, i) => (
+                <div key={i} style={{ ...infoBox, borderLeft: `2px solid ${row.color}33` }}>
+                  <div style={miniLabel}>{row.label}</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "#FFFFFF", marginBottom: 3 }}>{row.value}</div>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>{row.note}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── NIVEAU 03 — TRADER REWARD ── */}
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 24 }}>
+            <h3 style={{ ...secTitle, marginBottom: 6 }}>
+              {L("NIVEAU 03 — TRADER REWARD","NIVEL 03 — TRADER REWARD","LEVEL 03 — TRADER REWARD")}
+            </h3>
+            <p style={bodyTxt}>
+              {L(
+                `À partir du Compte Reward, le drawdown devient fixe et le plancher ne remonte plus jamais. Pour chaque nouveau Payout (Rewards 2 à 5), le trader doit valider à nouveau 5 jours qualifiants.`,
+                `A partir de la Cuenta Reward, el drawdown se vuelve fijo y el suelo nunca vuelve a subir. Para cada nuevo Payout (Rewards 2 a 5), el trader debe validar de nuevo 5 días calificados.`,
+                `From the Reward Account onward, the drawdown is fixed and the floor never rises again. For each new Payout (Rewards 2 to 5), the trader must requalify with 5 new qualifying days.`
+              )}
+            </p>
+
+            {/* DD fixe + plancher fixe */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+              <div style={{ ...infoBox, border: "1px solid rgba(255,83,100,0.22)", background: "rgba(255,83,100,0.03)" }}>
+                <div style={{ fontSize: 9, fontWeight: 800, color: ORANGE, letterSpacing: "1.5px", textTransform: "uppercase" as const, marginBottom: 5 }}>
+                  DD {L("FIXE","FIJO","FIXED")}
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 900, color: "#FFFFFF", marginBottom: 3 }}>{fmt(ddAmt)}</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>
+                  {L("Drawdown fixe — ne trail plus","Drawdown fijo — sin trailing","Fixed drawdown — no longer trailing")}
+                </div>
+              </div>
+              <div style={{ ...infoBox, border: "1px solid rgba(183,110,121,0.30)" }}>
+                <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "1.5px", textTransform: "uppercase" as const, marginBottom: 5 }}>
+                  {L("PLANCHER FIXE","SUELO FIJO","FIXED FLOOR")}
+                </div>
+                <div style={{ fontSize: 18, fontWeight: 900, color: "#FFFFFF", marginBottom: 3 }}>{fmt(fixedFloor)}</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>
+                  {L("Permanent — ne remonte jamais","Permanente — nunca vuelve a subir","Permanent — never rises again")}
+                </div>
+              </div>
+            </div>
+
+            {/* Règles N03 */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))", gap: 8 }}>
+              {([
+                {
+                  label: L("JOURS QUALIFIANTS / PAYOUT","DÍAS CALIFICADOS / PAYOUT","QUALIFYING DAYS / PAYOUT"),
+                  value: L("5 JOURS","5 DÍAS","5 DAYS"),
+                  note:  L("À refaire pour chaque nouveau Payout (Rewards 2 à 5)","A repetir para cada nuevo Payout (Rewards 2 a 5)","To redo for each new Payout (Rewards 2 to 5)"),
+                  color: ACCENT,
+                },
+                {
+                  label: L("PROFIT MIN / JOUR","PROFIT MÍN / DÍA","MIN PROFIT / DAY"),
+                  value: fmt(qualDayUsd),
+                  note:  L(`Minimum ${fmt(qualDayUsd)} de profit réalisé par jour qualifiant`,`Mínimo ${fmt(qualDayUsd)} por día calificado`,`Minimum ${fmt(qualDayUsd)} per qualifying day`),
+                  color: GREEN,
+                },
+                {
+                  label: L("CONSISTANCE","CONSISTENCIA","CONSISTENCY"),
+                  value: "≤ 50%",
+                  note:  L("Votre meilleure journée ne dépasse pas 50% du profit total","Su mejor día no supera el 50% del beneficio total","Best day must not exceed 50% of total profit"),
+                  color: ACCENT,
+                },
+                {
+                  label: L("PAIEMENT","PAGO","PAYMENT"),
+                  value: "48H MAX",
+                  note:  L("Reward versé automatiquement sous 48h après validation","Reward abonado automáticamente en 48h tras validación","Reward automatically paid within 48h after validation"),
+                  color: GREEN,
+                },
+              ] as { label: string; value: string; note: string; color: string }[]).map((row, i) => (
+                <div key={i} style={{ ...infoBox, borderLeft: `2px solid ${row.color}33` }}>
+                  <div style={miniLabel}>{row.label}</div>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: "#FFFFFF", marginBottom: 3 }}>{row.value}</div>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>{row.note}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* 5 niveaux de Rewards */}
+            <div style={{ ...infoBox, marginTop: 12 }}>
+              <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 10 }}>
+                {L(`5 RÉCOMPENSES — ${sizeLabel}`, `5 RECOMPENSAS — ${sizeLabel}`, `5 REWARDS — ${sizeLabel}`)}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column" as const, gap: 4 }}>
+                {rewardCaps.map((cap, i) => (
+                  <div key={i} style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    padding: "4px 8px",
+                    background: i === 4 ? "rgba(183,110,121,0.07)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${i === 4 ? "rgba(183,110,121,0.20)" : "rgba(255,255,255,0.05)"}`,
+                    borderRadius: 6,
+                  }}>
+                    <span style={{ fontSize: 10.5, color: i === 4 ? ACCENT : "rgba(255,255,255,0.42)", fontWeight: i === 4 ? 800 : 500 }}>
+                      {L(`RÉCOMPENSE ${i + 1}`, `RECOMPENSA ${i + 1}`, `REWARD ${i + 1}`)}
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 800, color: i === 4 ? ACCENT : "#FFFFFF" }}>
+                      {fmt(cap)}
+                      {i === 4 && <span style={{ fontSize: 8, fontWeight: 700, color: "rgba(183,110,121,0.60)", marginLeft: 5, letterSpacing: "0.8px" }}>MAX</span>}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
