@@ -59,7 +59,7 @@ export default function RulesV1() {
       subtitle: L("Progressez jusqu’au Payout #5", "Progrese hasta el Payout #5", "Progress to Payout #5"),
       rules: [
         `${L("DD fixe :", "DD fijo:", "Fixed DD:")} ${fmt(ddUsd)}`,
-        `${L("Seuil de sécurité :", "Safety Net:", "Safety Net:")} ${fmt(selectedSize.lockAt)}`,
+        `${L("Plancher fixe :", "Suelo fijo:", "Fixed floor:")} ${fmt(selectedSize.bal * 1.04)}`,
         L("Le plancher de sécurité ne remonte plus", "El suelo de seguridad ya no sube", "The safety floor no longer rises"),
         `${L("5 nouveaux jours qualifiants à", "5 nuevos días calificados a", "5 new qualifying days at")} ${fmt(qualMin)}${L("/jour après chaque Payout", "/día tras cada Payout", "/day after each Payout")}`,
         L("Consistance : 50 %", "Consistencia: 50 %", "Consistency: 50%"),
@@ -158,6 +158,7 @@ export default function RulesV1() {
                     { label: L("PROFIT MIN / JOUR",       "PROFIT MÍN / DÍA", "MIN PROFIT / DAY"),  value: fmt(card.qualMin ?? 0) },
                     { label: L("CONSISTANCE",             "CONSISTENCIA",     "CONSISTENCY"),        value: "50 %" },
                     { label: "REWARD MAX",                                                            value: fmt(card.rewardMax ?? 0) },
+                    { label: L("PAIEMENT",                "PAGO",             "PAYMENT"),            value: L("Sous 48 h", "En 48 h", "Within 48h") },
                   ] as { label: string; value: string }[]).map(row => (
                     <div key={row.label} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "11px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
