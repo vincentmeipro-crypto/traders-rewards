@@ -8,13 +8,11 @@
 // ══════════════════════════════════════════════════════════════
 
 import { SizeSyncProvider } from "@/lib/SizeSyncContext";
-import JourneyThreeLevels  from "@/components/JourneyThreeLevels";
 import RulesV1             from "@/components/RulesV1";
 
 export default function JourneyRulesSection() {
   return (
     <SizeSyncProvider>
-      <JourneyThreeLevels />
       <RulesV1 />
     </SizeSyncProvider>
   );
