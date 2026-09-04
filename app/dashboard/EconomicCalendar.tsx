@@ -20,7 +20,7 @@ type CurrencyFilter = "both" | "USD" | "EUR";
 const IMPACT_COLORS: Record<string, string> = {
   High: "#ef4444",
   Medium: "#f59e0b",
-  Low: "#9CCFEA",
+  Low: "rgba(255,255,255,0.45)",
   Holiday: "#64748b",
 };
 

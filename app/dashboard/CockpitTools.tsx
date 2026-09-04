@@ -44,7 +44,7 @@ type Props = {
   setJournalNote: Dispatch<SetStateAction<string>>;
 };
 
-const BLUE  = "#9CCFEA";
+const BLUE  = "rgba(255,255,255,0.65)";
 const GREEN = "#22c55e";
 const AMBER = "#f59e0b";
 const RED   = "#ef4444";
@@ -1121,7 +1121,7 @@ const RISK_STATUS_CONFIG: Record<
   { color: string; bg: string; border: string; label: string; labelEn: string }
 > = {
   "CONFORTABLE":     { color: GREEN,  bg: "rgba(34,197,94,.09)",   border: "rgba(34,197,94,.22)",   label: "✓ Confortable",     labelEn: "✓ Comfortable"    },
-  "MODÉRÉ":         { color: BLUE,   bg: "rgba(156,207,234,.09)", border: "rgba(156,207,234,.22)", label: "◆ Modéré",          labelEn: "◆ Moderate"       },
+  "MODÉRÉ":         { color: BLUE,   bg: "rgba(255,255,255,.06)", border: "rgba(255,255,255,.15)", label: "◆ Modéré",          labelEn: "◆ Moderate"       },
   "ATTENTION":      { color: AMBER,  bg: "rgba(245,158,11,.09)",  border: "rgba(245,158,11,.22)",  label: "⚠ Attention",       labelEn: "⚠ Caution"        },
   "CRITIQUE":       { color: RED,    bg: "rgba(239,68,68,.09)",   border: "rgba(239,68,68,.22)",   label: "✖ Critique",        labelEn: "✖ Critical"       },
   "LIMITE DÉPASSÉE":{ color: "#fff", bg: "rgba(239,68,68,.22)",   border: "rgba(239,68,68,.55)",   label: "⛔ Limite dépassée", labelEn: "⛔ Limit exceeded"},

@@ -96,7 +96,7 @@ type Props = {
   onRefresh?: () => void;
 };
 
-const BLUE  = "#9CCFEA";
+const BLUE  = "rgba(255,255,255,0.65)";
 const GREEN = "#22c55e";
 const AMBER = "#f59e0b";
 const RED   = "#ef4444";
@@ -557,7 +557,7 @@ export default function TraderCockpit({
     window.setTimeout(() => setCopied(""), 1400);
   };
 
-  const riskColor = (used: number) => used >= 85 ? RED : used >= 60 ? AMBER : BLUE;
+  const riskColor = (used: number) => used >= 85 ? RED : used >= 60 ? AMBER : GREEN;
 
   return (
     <div className={styles.root} data-mobile={isMobile ? "true" : "false"}>
@@ -575,8 +575,8 @@ export default function TraderCockpit({
               }}>
                 {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {phaseLabel(item.phase, 0)}</option>)}
               </select>
-            ) : <span className={styles.pill} style={{ color: BLUE, background: "rgba(156,207,234,.1)" }}>{challenge.account_size} · {phaseLabel(challenge.phase, approvedRewardsCount)}</span>}
-            <span className={styles.pill} style={{ color: BLUE, background: "rgba(156,207,234,.08)" }}><Target size={13} />{phaseLabel(challenge.phase, approvedRewardsCount)}</span>
+            ) : <span className={styles.pill} style={{ color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.07)" }}>{challenge.account_size} · {phaseLabel(challenge.phase, approvedRewardsCount)}</span>}
+            <span className={styles.pill} style={{ color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.05)" }}><Target size={13} />{phaseLabel(challenge.phase, approvedRewardsCount)}</span>
             <span className={styles.pill} style={{ color: health.color, background: `${health.color}16` }}>{health.icon}{health.label}</span>
             {/* Freshness indicator — color-coded, never reveals infrastructure */}
             <span
