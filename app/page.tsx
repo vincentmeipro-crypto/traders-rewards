@@ -5,7 +5,6 @@ import HeroBenefits      from "@/components/HeroBenefits";
 import PricingV1         from "@/components/PricingV1";
 import JourneyRulesSection from "@/components/JourneyRulesSection";
 import RewardLevels      from "@/components/RewardLevels";
-import WhyTradersRewards from "@/components/WhyTradersRewards";
 import DashboardShowcase  from "@/components/DashboardShowcase";
 import FAQ               from "@/components/FAQ";
 import Footer            from "@/components/Footer";
@@ -29,9 +28,6 @@ export default function Home() {
 
       {/* ── Les 5 niveaux de Rewards ── */}
       <RewardLevels />
-
-      {/* ── Pourquoi Traders Rewards ── */}
-      <WhyTradersRewards />
 
       {/* ── Titre de transition : Environnement Trader ── */}
       <div style={{ backgroundColor: "#000000", padding: "clamp(48px, 5vw, 64px) 24px", textAlign: "center" }}>
