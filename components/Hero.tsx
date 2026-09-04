@@ -473,152 +473,20 @@ export default function Hero() {
             padding:        isMobile ? "0 0 20px" : "18px 0",
           }}>
 
-            {/* Parcours — panneau charbon premium */}
-            <div className="h-premium-panel" style={{
-              padding:  isMobile ? "20px 4px 16px" : "34px 32px 26px",
-              position: "relative",
-              background: isMobile ? "transparent" : "#07090c",
-              border: isMobile ? "none" : "1px solid rgba(255,255,255,0.075)",
-              borderRadius: isMobile ? 0 : 22,
-              boxShadow: isMobile ? "none" : "0 22px 60px rgba(0,0,0,0.26)",
-            }}>
-
-              {/* ── Header : JUSQU'À / 6 250 $ / DE REWARDS CUMULÉES ── */}
-              <div style={{
-                textAlign:    "center",
-                marginBottom: isMobile ? 8 : 18,
-                animation:    "heroFadeUp 0.52s ease 0.20s both",
-              }}>
-                <div style={{
-                  fontSize:      isMobile ? 10 : 12,
-                  fontWeight:    600,
-                  letterSpacing: "0.5px",
-                  color:         "rgba(210,235,247,0.74)",
-                  textTransform: "none",
-                  marginBottom:  8,
-                }}>
-                  {L("GAGNEZ JUSQU'À","GANA HASTA","EARN UP TO")}
-                </div>
-                <div style={{
-                  fontSize:          isMobile ? "clamp(3.2rem,12vw,4.2rem)" : "clamp(3.2rem,4.2vw,4.8rem)",
-                  fontWeight:        650,
-                  letterSpacing:     "-2.5px",
-                  lineHeight:        0.90,
-                  color:             "#F7F8FA",
-                  fontVariantNumeric:"tabular-nums",
-                }}>
-                  6 250 $
-                </div>
-                <div style={{
-                  fontSize:      isMobile ? 10 : 12,
-                  fontWeight:    600,
-                  letterSpacing: "0.5px",
-                  color:         "rgba(210,235,247,0.74)",
-                  textTransform: "none",
-                  marginTop:     9,
-                }}>
-                  {L("AVEC 1 SEUL COMPTE","CON 1 SOLA CUENTA","WITH 1 ACCOUNT")}
-                </div>
-              </div>
-
-              {/* Séparateur fin */}
-              <div style={{
-                height:       1,
-                background:   "rgba(255,255,255,0.075)",
-                marginBottom: isMobile ? 6 : 14,
-              }} />
-
-              {/* ── Progression verticale 05 → 00 ── */}
-              <div style={{
-                position:  "relative",
-                animation: "heroFadeUp 0.52s ease 0.25s both",
-              }}>
-                {/* Container steps avec ligne absolue derrière */}
-                <div style={{ position: "relative" }}>
-
-                  {/* Ligne verticale neon — centrée sur les cercles (qui sont à 50%) */}
-                  <div className="h-prog-line" />
-
-                  {/* Steps : 05 (haut) → 00 (bas) */}
-                  {STEPS.map((step, idx) => (
-                    <div
-                      key={step.num}
-                      style={{
-                        display:    "flex",
-                        alignItems: "center",
-                        gap:        0,
-                        position:   "relative",
-                        zIndex:     1,
-                        height:     isMobile ? 54 : 52,
-                      }}
-                    >
-                      {/* Label gauche */}
-                      <div style={{
-                        flex:       1,
-                        textAlign:  "right",
-                        paddingRight: isMobile ? 10 : 16,
-                      }}>
-                        <div style={{
-                          fontSize:      isMobile ? 13 : 17,
-                          fontWeight:    650,
-                          letterSpacing: "0.5px",
-                          textTransform: "uppercase",
-                          color:         step.num === "00"
-                            ? "rgba(255,255,255,0.44)"
-                            : "rgba(255,255,255,0.72)",
-                          lineHeight:    1.2,
-                        }}>
-                          {step.name}
-                        </div>
-                        {step.sub && (
-                          <div style={{
-                            fontSize:      isMobile ? 9 : 11,
-                            fontWeight:    550,
-                            letterSpacing: "0.4px",
-                            textTransform: "uppercase",
-                            color:         "rgba(190,224,240,0.58)",
-                            marginTop:     2,
-                          }}>
-                            {step.sub}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Cercle centré — exactement 34×34 */}
-                      <div
-                        className="h-prog-circle"
-                        style={{
-                          animationDelay: `-${idx * 0.55}s`,
-                        }}
-                      >
-                        {step.num}
-                      </div>
-
-                      {/* Montant droit */}
-                      <div style={{
-                        flex:        1,
-                        textAlign:   "left",
-                        paddingLeft: isMobile ? 10 : 16,
-                      }}>
-                        {step.amount != null && (
-                          <div style={{
-                            fontSize:          isMobile ? 18 : 22,
-                            fontWeight:        650,
-                            letterSpacing:     "0px",
-                            color:             "#c9e8f5",
-                            fontVariantNumeric:"tabular-nums",
-                          }}>
-                            {step.amount}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-
-                </div>
-              </div>
-
-            </div>{/* fin dark card */}
+            {/* ── Visuel droit — 3 jetons 100K / 25K / 50K ── */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/NOUVEAU HERO.png"
+              alt="Comptes Traders Rewards — 100K, 25K et 50K"
+              style={{
+                display:   "block",
+                width:     "100%",
+                maxWidth:  isMobile ? 380 : "100%",
+                height:    "auto",
+                objectFit: "contain",
+                margin:    "0 auto",
+              }}
+            />
           </div>{/* fin colonne droite */}
 
         </div>{/* fin wrapper flex */}
