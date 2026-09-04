@@ -260,7 +260,7 @@ export default function Hero() {
           flexDirection: isMobile ? "column" : "row",
           alignItems:    isMobile ? "stretch" : "center",
           // Desktop : hauteur naturelle plafonnée à 720px pour éviter l'espace mort.
-          minHeight:     isMobile ? 0 : "min(720px, calc(100svh - 134px))",
+          minHeight:     isMobile ? 0 : "min(680px, calc(100svh - 174px))",
           paddingTop:    isMobile
             ? "calc(60px + var(--promo-banner-height, 0px))"
             : "calc(72px + var(--promo-banner-height, 0px))",
@@ -378,7 +378,7 @@ export default function Hero() {
               background:           "#1d2024",
               border:               "1px solid rgba(255,255,255,0.075)",
               borderRadius:         16,
-              padding:              isMobile ? "14px 18px" : "18px 28px",
+              padding:              isMobile ? "14px 18px" : "5px 28px",
               marginBottom:         isMobile ? 22 : 20,
               animation:            "heroFadeUp 0.52s ease 0.10s both",
               boxShadow:            "0 16px 45px rgba(0,0,0,0.24)",
@@ -386,10 +386,10 @@ export default function Hero() {
 
               {/* Colonne 1 Challenge — -80% */}
               <div>
-                <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom:6 }}>
+                <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2 }}>
                   1 CHALLENGE
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#F5F7F8" }}>
+                <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#F5F7F8" }}>
                   -80%
                 </div>
                 <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
@@ -408,10 +408,10 @@ export default function Hero() {
 
               {/* Colonne Pack ×3 — -90% · BEST DEAL */}
               <div>
-                <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom:6, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
+                <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
                   PACK ×3 BEST DEAL
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:7, color:"#EDD8D2" }}>
+                <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#EDD8D2" }}>
                   -90%
                 </div>
                 <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
