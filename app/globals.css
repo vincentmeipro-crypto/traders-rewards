@@ -726,7 +726,7 @@ body {
    Surfaces charbon, lignes fines, typographie éditoriale, bleu calme.
    ══════════════════════════════════════════════════════════════════ */
 :root {
-  --premium-canvas: #0a0c0f;
+  --premium-canvas: #000000;
   --premium-canvas-deep: #07090b;
   --premium-surface: #1d2024;
   --premium-surface-soft: #171a1e;
