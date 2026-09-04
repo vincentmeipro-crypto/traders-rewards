@@ -145,14 +145,14 @@ export default function RulesV1() {
       <div style={{ maxWidth: 1500, margin: "0 auto" }}>
 
         {/* En-tête section */}
-        <header style={{ maxWidth: 900, marginBottom: "clamp(38px, 5vw, 62px)" }}>
+        <header style={{ maxWidth: 900, margin: "0 auto", marginBottom: "clamp(38px, 5vw, 62px)", textAlign: "center" }}>
           <div style={{ color: ACCENT, fontSize: 11, fontWeight: 900, letterSpacing: "2.4px", marginBottom: 14 }}>
             {L("LES RÈGLES", "LAS REGLAS", "THE RULES")}
           </div>
           <h2 style={{ color: "#fff", fontSize: "clamp(2.1rem, 4.2vw, 3.5rem)", lineHeight: .98, letterSpacing: "-.045em", margin: 0, fontWeight: 900 }}>
             {L("Trois niveaux. Des règles sans ambiguïté.", "Tres niveles. Reglas sin ambigüedad.", "Three levels. No ambiguous rules.")}
           </h2>
-          <p style={{ color: "rgba(255,255,255,.58)", fontSize: "clamp(1rem, 1.25vw, 1.22rem)", lineHeight: 1.55, margin: "22px 0 0" }}>
+          <p style={{ color: "rgba(255,255,255,.58)", fontSize: "clamp(1rem, 1.25vw, 1.22rem)", lineHeight: 1.55, margin: "22px auto 0", maxWidth: 680 }}>
             {L(
               "Le drawdown évolue avec votre parcours : EOD pendant le Challenge, EOD jusqu'au plancher sur le Compte Reward, puis fixe sur le Trader Reward.",
               "El drawdown evoluciona con su recorrido: EOD durante el Challenge, EOD hasta el suelo en la Cuenta Reward y después fijo.",
