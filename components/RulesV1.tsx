@@ -226,7 +226,7 @@ export default function RulesV1() {
                 padding:    "clamp(26px, 3vw, 38px)",
                 borderRadius: 22,
                 background: index === 1
-                  ? "linear-gradient(145deg, #1a1416, #0c0a0b)"
+                  ? "linear-gradient(145deg, #0e1013, #080a0c)"
                   : "#0b0e11",
                 border:     `1px solid ${index === 1 ? "rgba(183,110,121,.48)" : "rgba(255,255,255,.12)"}`,
                 boxShadow:  index === 1 ? "0 18px 60px rgba(183,110,121,.11)" : "none",
@@ -248,7 +248,7 @@ export default function RulesV1() {
               {card.floorBlock && (
                 <div
                   style={{
-                    background:   "rgba(183,110,121,0.08)",
+                    background:   "rgba(255,255,255,0.035)",
                     border:       "1px solid rgba(183,110,121,0.28)",
                     borderRadius: 12,
                     padding:      "16px 18px",
