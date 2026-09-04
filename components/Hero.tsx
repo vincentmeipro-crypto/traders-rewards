@@ -368,6 +368,23 @@ export default function Hero() {
               )}
             </p>
 
+            {/* ── Visuel jetons — mobile uniquement (entre sous-titre et promo) ── */}
+            {isMobile && <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/JETON PNG.png"
+                alt="Comptes Traders Rewards — 100K, 25K et 50K"
+                style={{
+                  display:   "block",
+                  width:     "75%",
+                  maxWidth:  350,
+                  height:    "auto",
+                  objectFit: "contain",
+                  margin:    "0 auto 24px",
+                }}
+              />
+            </>}
+
             {/* ── Bloc promo : -90% / 19€ ── */}
             <div style={{
               display:              "inline-flex",
@@ -467,10 +484,10 @@ export default function Hero() {
           ════════════════════════════════════════════════ */}
           <div style={{
             flex:           isMobile ? "none" : "1 1 0",
-            display:        "flex",
+            display:        isMobile ? "none" : "flex",
             flexDirection:  "column",
             justifyContent: "center",
-            padding:        isMobile ? "0 0 20px" : "18px 0",
+            padding:        "18px 0",
           }}>
 
             {/* ── Visuel droit — 3 jetons 100K / 25K / 50K ── */}
@@ -480,12 +497,12 @@ export default function Hero() {
               alt="Comptes Traders Rewards — 100K, 25K et 50K"
               style={{
                 display:    "block",
-                width:      isMobile ? "100%" : "115%",
+                width:      isMobile ? "100%" : "170%",
                 maxWidth:   isMobile ? 400 : "none",
                 height:     "auto",
                 objectFit:  "contain",
                 margin:     "0 auto",
-                marginLeft: isMobile ? "auto" : "-7.5%",
+                marginLeft: isMobile ? "auto" : "-35%",
               }}
             />
           </div>{/* fin colonne droite */}
