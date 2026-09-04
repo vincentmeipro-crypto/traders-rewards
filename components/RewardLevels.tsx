@@ -113,16 +113,17 @@ export default function RewardLevels() {
             </span>
           </h2>
           <p style={{
-            maxWidth:   480,
-            margin:     "0 auto",
-            color:      "rgba(255,255,255,0.42)",
-            fontSize:   isMobile ? 14 : 17,
-            lineHeight: 1.7,
+            maxWidth:    isMobile ? 480 : "none",
+            whiteSpace:  isMobile ? "normal" : "nowrap",
+            margin:      "0 auto",
+            color:       "rgba(255,255,255,0.42)",
+            fontSize:    isMobile ? 14 : 17,
+            lineHeight:  1.7,
           }}>
             {L(
-              "Chaque Reward débloqué augmente les montants maximums. Le niveau 5 confère le statut Trader Reward.",
-              "Cada Reward desbloqueado aumenta los montos máximos. El nivel 5 otorga el estatus Trader Reward.",
-              "Each unlocked Reward increases maximum amounts. Level 5 grants Trader Reward status."
+              "Chaque Reward débloqué augmente les montants maximums.",
+              "Cada Reward desbloqueado aumenta los montos máximos.",
+              "Each unlocked Reward increases maximum amounts."
             )}
           </p>
         </div>
