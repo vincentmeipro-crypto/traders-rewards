@@ -129,14 +129,9 @@ export default function RulesV1() {
       rows: [
         { label: "DD FIXE",                                                          value: fmt(ddUsd) },
         { label: L("PLANCHER FIXE",      "SUELO FIJO",        "FIXED FLOOR"),        value: fmt(floorDisplay) },
-        {
-          label:   L("JOURS QUALIFIANTS", "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),
-          value:   L("5 JOURS", "5 DÍAS", "5 DAYS"),
-          subNote: L("À renouveler après chaque Payout", "A renovar tras cada Payout", "Renew after each Payout"),
-        },
+        { label: L("JOURS QUALIFIANTS", "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),    value: L("5 JOURS", "5 DÍAS", "5 DAYS") },
         { label: L("PROFIT MIN / JOUR",  "PROFIT MÍN / DÍA", "MIN PROFIT / DAY"),  value: fmt(qualMin) },
         { label: L("CONSISTANCE",        "CONSISTENCIA",      "CONSISTENCY"),        value: "50 %" },
-        { label: "REWARD MAX",                                                        value: fmt(rewardMax) },
         { label: L("PAIEMENT",           "PAGO",              "PAYMENT"),            value: "48H MAX" },
       ],
     },
