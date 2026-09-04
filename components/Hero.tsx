@@ -258,12 +258,12 @@ export default function Hero() {
           display:       "flex",
           flexDirection: isMobile ? "column" : "row",
           alignItems:    isMobile ? "stretch" : "center",
-          // Hero + bandeau = exactement un écran sur desktop.
-          minHeight:     isMobile ? 0 : "calc(100svh - 134px)",
+          // Desktop : hauteur naturelle plafonnée à 720px pour éviter l'espace mort.
+          minHeight:     isMobile ? 0 : "min(720px, calc(100svh - 134px))",
           paddingTop:    isMobile
             ? "calc(60px + var(--promo-banner-height, 0px))"
             : "calc(72px + var(--promo-banner-height, 0px))",
-          paddingBottom: isMobile ? 0 : 140,
+          paddingBottom: isMobile ? 0 : 0,
           maxWidth:      1380,
           margin:        "0 auto",
           paddingLeft:   isMobile ? 0 : "max(40px, 4vw)",
@@ -367,18 +367,6 @@ export default function Hero() {
                 "Complete one +6% target, then progress on the same account through up to 5 Payouts."
               )}
             </p>
-
-            {/* ── Visuel jetons — mobile uniquement (entre sous-titre et promo) ── */}
-            {isMobile && (
-              <div style={{ width: "calc(100% + 44px)", margin: "0 -22px 24px", overflow: "hidden" }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/JETON PNG.png"
-                  alt="Comptes Traders Rewards — 100K, 25K et 50K"
-                  style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
-                />
-              </div>
-            )}
 
             {/* ── Bloc promo : -90% / 19€ ── */}
             <div style={{

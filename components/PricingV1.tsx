@@ -392,7 +392,7 @@ export default function PricingV1() {
     <section
       id="pricing"
       style={{
-        padding:         isMobile ? "64px 16px" : "104px 28px 112px",
+        padding:         isMobile ? "64px 16px" : "72px 28px 112px",
         backgroundColor: "#0a0c0f",
         fontFamily:      "var(--font-sans), system-ui, -apple-system, sans-serif",
         scrollMarginTop: "calc(72px + var(--promo-banner-height, 0px))",
