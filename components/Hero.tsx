@@ -329,8 +329,9 @@ export default function Hero() {
               <span
                 className="h1-line"
                 style={{
-                  fontSize: isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
-                  color: "#F7F8FA",
+                  fontSize:   isMobile ? "clamp(2.0rem, 9vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
+                  color:      "#F7F8FA",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {h1L1}
@@ -339,8 +340,9 @@ export default function Hero() {
               <span
                 className="h1-line"
                 style={{
-                  marginTop: isMobile ? 4 : 7,
-                  fontSize:  isMobile ? "clamp(2.6rem, 11vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
+                  marginTop:  isMobile ? 4 : 7,
+                  fontSize:   isMobile ? "clamp(2.0rem, 9vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
+                  whiteSpace: "nowrap",
                 }}
               >
                 <span style={{ color: "#F7F8FA" }}>{h1L2pre}</span>
