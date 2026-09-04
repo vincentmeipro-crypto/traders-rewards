@@ -172,9 +172,7 @@ export default function RewardLevels() {
                       padding:             isTrader ? "16px 16px" : "13px 16px",
                       borderRadius:        isTrader ? 14 : 12,
                       border:              LEVEL_BORDER_OPACITY[li],
-                      background:          isTrader
-                        ? `linear-gradient(135deg, rgba(183,110,121,${LEVEL_BLUE_OPACITY[li]}) 0%, rgba(15,12,13,1) 100%)`
-                        : `rgba(255,255,255,${LEVEL_BLUE_OPACITY[li] * 0.4})`,
+                      background:          `rgba(255,255,255,${LEVEL_BLUE_OPACITY[li] * 0.4})`,
                       boxShadow:           isTrader
                         ? "0 0 28px rgba(183,110,121,0.08), 0 20px 48px rgba(0,0,0,0.60)"
                         : "0 8px 24px rgba(0,0,0,0.40)",
