@@ -318,7 +318,7 @@ export default function Hero() {
             {/* ── H1 — 2 lignes ── */}
             <h1 style={{
               fontWeight:    620,
-              margin:        isMobile ? "0 0 34px" : "0 0 24px",
+              margin:        isMobile ? "0 0 20px" : "0 0 24px",
               textTransform: "none",
               textAlign:     "left",
               letterSpacing: isMobile ? "-1.5px" : "-3px",
@@ -349,6 +349,30 @@ export default function Hero() {
                 <span style={{ color: "#EDD8D2" }}>{h1L2acc}</span>
               </span>
             </h1>
+
+            {/* ── Jetons — mobile uniquement, pleine largeur ── */}
+            {isMobile && (
+              <div style={{
+                marginLeft:   -22,
+                marginRight:  -22,
+                marginBottom: 20,
+                overflow:     "hidden",
+                lineHeight:   0,
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/HERO FINAL.png"
+                  alt="Comptes Traders Rewards — 100K, 25K et 50K"
+                  style={{
+                    display:         "block",
+                    width:           "100%",
+                    height:          "auto",
+                    objectFit:       "contain",
+                    backgroundColor: "#000000",
+                  }}
+                />
+              </div>
+            )}
 
             {/* ── Bloc promo : -90% / 19€ ── */}
             <div style={{
@@ -399,31 +423,6 @@ export default function Hero() {
                 </div>
               </div>
             </div>
-
-            {/* ── Jetons — mobile uniquement, pleine largeur ── */}
-            {isMobile && (
-              <div style={{
-                marginLeft:  -22,
-                marginRight: -22,
-                marginTop:   0,       /* promo a déjà 22px de marginBottom */
-                marginBottom: 20,
-                overflow:    "hidden",
-                lineHeight:  0,
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/HERO FINAL.png"
-                  alt="Comptes Traders Rewards — 100K, 25K et 50K"
-                  style={{
-                    display:         "block",
-                    width:           "100%",
-                    height:          "auto",
-                    objectFit:       "contain",
-                    backgroundColor: "#000000",
-                  }}
-                />
-              </div>
-            )}
 
             {/* ── CTA principal ── */}
             <div style={{
