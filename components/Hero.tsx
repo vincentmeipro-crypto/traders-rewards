@@ -348,22 +348,6 @@ export default function Hero() {
               </span>
             </h1>
 
-            <p style={{
-              maxWidth: 620,
-              margin: isMobile ? "0 0 26px" : "0 0 22px",
-              color: "rgba(255,255,255,0.58)",
-              fontSize: isMobile ? 15 : 18,
-              lineHeight: 1.65,
-              fontWeight: 400,
-              animation: "heroFadeUp 0.52s ease 0.08s both",
-            }}>
-              {L(
-                "Validez un objectif unique de +6 %, puis progressez sur le même compte jusqu'à 5 Payouts.",
-                "Valide un objetivo único de +6 % y avance con la misma cuenta hasta 5 Payouts.",
-                "Complete one +6% target, then progress on the same account through up to 5 Payouts."
-              )}
-            </p>
-
             {/* ── Bloc promo : -90% / 19€ ── */}
             <div style={{
               display:              "inline-flex",
