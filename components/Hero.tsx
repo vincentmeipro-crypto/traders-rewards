@@ -400,6 +400,31 @@ export default function Hero() {
               </div>
             </div>
 
+            {/* ── Jetons — mobile uniquement, pleine largeur ── */}
+            {isMobile && (
+              <div style={{
+                marginLeft:  -22,
+                marginRight: -22,
+                marginTop:   0,       /* promo a déjà 22px de marginBottom */
+                marginBottom: 20,
+                overflow:    "hidden",
+                lineHeight:  0,
+              }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/HERO FINAL.png"
+                  alt="Comptes Traders Rewards — 100K, 25K et 50K"
+                  style={{
+                    display:         "block",
+                    width:           "100%",
+                    height:          "auto",
+                    objectFit:       "contain",
+                    backgroundColor: "#000000",
+                  }}
+                />
+              </div>
+            )}
+
             {/* ── CTA principal ── */}
             <div style={{
               display:   "flex",
