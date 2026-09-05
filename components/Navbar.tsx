@@ -9,9 +9,9 @@ const FLAG_CODES: Record<string, string> = {
   en: "gb", fr: "fr", ar: "sa", es: "es", pt: "br", de: "de", tr: "tr",
 };
 const FlagImg = ({ code }: { code: string }) => (
-  <img src={`https://flagcdn.com/20x15/${FLAG_CODES[code] ?? code}.png`}
-    width={20} height={15} alt={code}
-    style={{ borderRadius: 2, objectFit: "cover", display: "inline-block" }} />
+  <img src={`https://flagcdn.com/${FLAG_CODES[code] ?? code}.svg`}
+    width={22} height={15} alt={code}
+    style={{ borderRadius: 2, display: "block", flexShrink: 0 }} />
 );
 function TraderLink() {
   return (
