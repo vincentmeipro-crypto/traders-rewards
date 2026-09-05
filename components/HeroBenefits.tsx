@@ -44,6 +44,15 @@ const IconTag = () => (
   </svg>
 );
 
+const IconCalendar = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+);
+
 // ── Composant ────────────────────────────────────────────────
 
 export default function HeroBenefits() {
@@ -66,6 +75,11 @@ export default function HeroBenefits() {
       icon: <IconZap />,
       metric: "1",
       title: "CHALLENGE",
+    },
+    {
+      icon: <IconCalendar />,
+      metric: "2",
+      title: L("JOURS", "DÍAS", "DAYS"),
     },
     {
       icon: <IconTrending />,
@@ -138,7 +152,7 @@ export default function HeroBenefits() {
       }}>
         <div className="hero-benefits-shell" style={{
           display:             "grid",
-          gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(5, 1fr)",
+          gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(6, 1fr)",
           gap:                 0,
           overflow:            "hidden",
           border:              "1px solid rgba(255,255,255,.12)",
@@ -147,7 +161,10 @@ export default function HeroBenefits() {
           boxShadow:           "0 20px 65px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.025)",
         }}>
           {BENEFITS.map((b, i) => {
-            const isLastMobile = isMobile && i === 4;
+            const totalItems = BENEFITS.length;
+            const isLastMobile = isMobile && totalItems % 2 !== 0 && i === totalItems - 1;
+            const mobileRows = Math.ceil(totalItems / 2);
+            const lastRowStart = (mobileRows - 1) * 2;
             return (
               <div
                 key={i}
@@ -163,7 +180,7 @@ export default function HeroBenefits() {
                   borderRight:    !isMobile && i < BENEFITS.length - 1
                     ? "1px solid rgba(255,255,255,0.08)"
                     : "none",
-                  borderBottom:   isMobile && i < 4 ? "1px solid rgba(255,255,255,0.08)" : "none",
+                  borderBottom:   isMobile && i < lastRowStart ? "1px solid rgba(255,255,255,0.08)" : "none",
                   gridColumn:     isLastMobile ? "span 2" : "auto",
                   position:       "relative",
                 }}

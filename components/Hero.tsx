@@ -275,6 +275,7 @@ export default function Hero() {
             display:        "flex",
             flexDirection:  "column",
             justifyContent: "center",
+            alignItems:     isMobile ? "center" : undefined,
             alignSelf:      isMobile ? undefined : "flex-start",
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
@@ -358,6 +359,7 @@ export default function Hero() {
                 marginBottom: 20,
                 overflow:     "hidden",
                 lineHeight:   0,
+                alignSelf:    "stretch",
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -378,7 +380,7 @@ export default function Hero() {
             <div style={{
               display:              "inline-flex",
               alignItems:           "stretch",
-              alignSelf:            "flex-start",
+              alignSelf:            isMobile ? "center" : "flex-start",
               background:           "#1d2024",
               border:               "1px solid rgba(255,255,255,0.075)",
               borderRadius:         16,
@@ -426,9 +428,11 @@ export default function Hero() {
 
             {/* ── CTA principal ── */}
             <div style={{
-              display:   "flex",
-              alignItems: isMobile ? "stretch" : "flex-start",
-              animation: "heroFadeUp 0.52s ease 0.15s both",
+              display:         "flex",
+              alignItems:      isMobile ? "stretch" : "flex-start",
+              justifyContent:  isMobile ? "center" : "flex-start",
+              alignSelf:       isMobile ? "stretch" : undefined,
+              animation:       "heroFadeUp 0.52s ease 0.15s both",
             }}>
               <a
                 href="#pricing"
