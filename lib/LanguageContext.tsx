@@ -5,11 +5,11 @@ import { Lang, t, languages } from "./translations";
 type ContextType = { lang: Lang; setLang: (l: Lang) => void; T: typeof t.en; isRtl: boolean };
 
 const LanguageContext = createContext<ContextType>({
-  lang: "fr", setLang: () => {}, T: t.fr, isRtl: false,
+  lang: "en", setLang: () => {}, T: t.en, isRtl: false,
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("fr");
+  const [lang, setLangState] = useState<Lang>("en");
 
   const setLang = (l: Lang) => {
     setLangState(l);

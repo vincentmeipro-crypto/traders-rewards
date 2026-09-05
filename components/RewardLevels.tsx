@@ -14,13 +14,7 @@ import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 
 const SIZES = ["25K", "50K", "100K"] as const;
 
-const LEVELS = [
-  { num: "01", label: "RÉCOMPENSE 1", isTrader: false },
-  { num: "02", label: "RÉCOMPENSE 2", isTrader: false },
-  { num: "03", label: "RÉCOMPENSE 3", isTrader: false },
-  { num: "04", label: "RÉCOMPENSE 4", isTrader: false },
-  { num: "05", label: "RÉCOMPENSE 5", isTrader: true  },
-];
+// LEVELS is built inside the component (uses L() for translation)
 
 // ── Progression visuelle (intensité croissante) ───────────────
 
@@ -81,6 +75,15 @@ export default function RewardLevels() {
   const isEs = lang === "es";
   const L = (fr: string, es: string, en: string) =>
     isFr ? fr : isEs ? es : en;
+
+  const r = L("RÉCOMPENSE", "RECOMPENSA", "REWARD");
+  const LEVELS = [
+    { num: "01", label: `${r} 1`, isTrader: false },
+    { num: "02", label: `${r} 2`, isTrader: false },
+    { num: "03", label: `${r} 3`, isTrader: false },
+    { num: "04", label: `${r} 4`, isTrader: false },
+    { num: "05", label: `${r} 5`, isTrader: true  },
+  ];
 
   const [isMobile, setIsMobile] = useState(false);
 

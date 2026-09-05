@@ -23,6 +23,7 @@ function TraderLink() {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [mobileLangOpen, setMobileLangOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { lang, setLang, T } = useLanguage();
@@ -120,13 +121,13 @@ export default function Navbar() {
         boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42)" : "none",
         transition: "all 0.3s ease",
       }}>
-        <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: isMobile ? "space-between" : "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: isMobile ? "hidden" : "visible" }}>
+        <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: "visible" }}>
 
           {/* GAUCHE / CENTRE mobile */}
           {isMobile ? (
             <>
-              {/* Spacer gauche pour centrer le logo */}
-              <div style={{ width: 36 }} />
+              {/* Spacer gauche pour équilibrer le côté droit (flag 36 + gap 10 + burger 36) */}
+              <div style={{ width: 82 }} />
               {/* Logo centré */}
               <Link href="/" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", textDecoration: "none" }}>
                 <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 40, width: "auto", maxWidth: "68vw", objectFit: "contain" }} />
@@ -193,10 +194,59 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* DROITE mobile : burger seulement */}
+          {/* DROITE mobile : sélecteur langue + burger */}
           {isMobile && (
-            <div style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
-              <button onClick={() => setOpen(!open)} style={{ background: "none", border: "none", color: "#FFFFFF", cursor: "pointer" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "0 0 auto" }}>
+              {/* Flag selector */}
+              <div style={{ position: "relative" }}>
+                <button
+                  onClick={() => { setMobileLangOpen(!mobileLangOpen); setOpen(false); }}
+                  aria-label="Change language"
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    width: 36, height: 36,
+                    background: "none",
+                    border: `1px solid ${mobileLangOpen ? "rgba(216,163,157,0.55)" : "rgba(255,255,255,0.16)"}`,
+                    borderRadius: 8, cursor: "pointer", padding: 0,
+                  }}
+                >
+                  <FlagImg code={current.code} />
+                </button>
+                {mobileLangOpen && (
+                  <div style={{
+                    position: "absolute", top: "calc(100% + 8px)", right: 0,
+                    backgroundColor: "#0d0d0d",
+                    border: "1px solid rgba(255,255,255,0.10)",
+                    borderRadius: 10, overflow: "hidden", minWidth: 130, zIndex: 200,
+                    boxShadow: "0 16px 40px rgba(0,0,0,0.65)",
+                  }}>
+                    {languages.map(l => (
+                      <button key={l.code}
+                        onClick={() => { setLang(l.code as Lang); setMobileLangOpen(false); }}
+                        style={{
+                          display: "flex", alignItems: "center", gap: 10,
+                          width: "100%", padding: "10px 14px",
+                          background: "none", border: "none", cursor: "pointer",
+                          backgroundColor: lang === l.code ? "rgba(216,163,157,0.08)" : "transparent",
+                          borderLeft: lang === l.code ? "2px solid #D8A39D" : "2px solid transparent",
+                        }}>
+                        <FlagImg code={l.code} />
+                        <span style={{
+                          color: lang === l.code ? "#D8A39D" : "rgba(255,255,255,0.72)",
+                          fontSize: 13, fontWeight: lang === l.code ? 700 : 500,
+                        }}>
+                          {l.label}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {/* Hamburger */}
+              <button
+                onClick={() => { setOpen(!open); setMobileLangOpen(false); }}
+                style={{ background: "none", border: "none", color: "#FFFFFF", cursor: "pointer", width: 36, height: 36, display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
                 {open ? <X size={22} /> : <Menu size={22} />}
               </button>
             </div>

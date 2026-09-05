@@ -84,7 +84,7 @@ export default function HeroBenefits() {
     {
       icon: <IconTrending />,
       metric: "5",
-      title: "RÉCOMPENSES",
+      title: L("RÉCOMPENSES", "RECOMPENSAS", "REWARDS"),
     },
     {
       icon: <IconShield />,
