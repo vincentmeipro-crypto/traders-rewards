@@ -63,7 +63,7 @@ export default function Home() {
         }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/NOUVEAU MT5.png"
+            src="/NEW MT5 SEUL.png"
             alt="MetaTrader 5 — plateforme de trading simulé Traders Rewards"
             style={{ width: "100%", height: "auto", maxHeight: 650, objectFit: "contain", display: "block", backgroundColor: "#000000" }}
           />
