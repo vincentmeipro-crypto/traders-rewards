@@ -200,11 +200,11 @@ export default function PricingV1() {
           </div>
         )}
 
-        {/* Patch promo -90% — séparé du bouton "i" par 16-18px minimum */}
+        {/* Patch promo -90% — au-dessus du sélecteur Pack ×3, décalé vers la gauche */}
         <div style={{
           position:      "absolute",
-          top:           isMobile ? 72 : 68,
-          right:         28,
+          top:           isMobile ? 56 : 50,
+          right:         60,
           zIndex:        3,
           pointerEvents: "none",
           background:    "rgba(200,162,72,0.10)",
