@@ -123,16 +123,11 @@ export default function Navbar() {
       }}>
         <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: "visible" }}>
 
-          {/* GAUCHE / CENTRE mobile */}
+          {/* Logo — gauche sur mobile et desktop */}
           {isMobile ? (
-            <>
-              {/* Spacer gauche pour équilibrer le côté droit (flag 36 + gap 10 + burger 36) */}
-              <div style={{ width: 82 }} />
-              {/* Logo centré */}
-              <Link href="/" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", display: "flex", alignItems: "center", textDecoration: "none" }}>
-                <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 40, width: "auto", maxWidth: "68vw", objectFit: "contain" }} />
-              </Link>
-            </>
+            <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 1, minWidth: 0 }}>
+              <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 36, width: "auto", maxWidth: "calc(100vw - 200px)", objectFit: "contain", display: "block" }} />
+            </Link>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
@@ -194,9 +189,9 @@ export default function Navbar() {
             </div>
           )}
 
-          {/* DROITE mobile : sélecteur langue + burger */}
+          {/* DROITE mobile : flag + login + burger */}
           {isMobile && (
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flex: "0 0 auto" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 9, flex: "0 0 auto" }}>
               {/* Flag selector */}
               <div style={{ position: "relative" }}>
                 <button
@@ -242,6 +237,21 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
+              {/* LOGIN compact */}
+              <a href="/login" style={{
+                display: "flex", alignItems: "center",
+                color: "rgba(255,255,255,0.82)",
+                fontSize: 11, fontWeight: 700,
+                letterSpacing: "1px", textDecoration: "none",
+                textTransform: "uppercase",
+                padding: "0 9px", height: 32,
+                border: "1px solid rgba(255,255,255,0.13)",
+                borderRadius: 7,
+                background: "rgba(255,255,255,0.04)",
+                flexShrink: 0, whiteSpace: "nowrap",
+              }}>
+                LOGIN
+              </a>
               {/* Hamburger */}
               <button
                 onClick={() => { setOpen(!open); setMobileLangOpen(false); }}
@@ -261,9 +271,6 @@ export default function Navbar() {
               <a key={`${label}-${href}`} href={href} onClick={() => setOpen(false)}
                 style={{ color: "rgba(255,255,255,0.85)", fontSize: 15, fontWeight: 500, textDecoration: "none" }}>{label}</a>
             ))}
-            <hr style={{ borderColor: "rgba(255,255,255,0.12)", margin: "4px 0" }} />
-            <a href="/login" onClick={() => setOpen(false)}
-              style={{ color: "#FFFFFF", fontSize: 15, fontWeight: 700, textDecoration: "none" }}>{T.nav.logIn}</a>
             <hr style={{ borderColor: "rgba(255,255,255,0.12)", margin: "4px 0" }} />
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {languages.map(l => (

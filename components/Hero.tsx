@@ -52,6 +52,35 @@ export default function Hero() {
     ? "clamp(2.4rem, 10vw, 3.6rem)"
     : "clamp(2.8rem, 4vw, 5rem)";
 
+  // ── Colonnes internes du cadre promo (shared mobile/desktop) ──
+  const promoColumns = (
+    <>
+      <div>
+        <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2 }}>
+          1 CHALLENGE
+        </div>
+        <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#F5F7F8" }}>
+          -80%
+        </div>
+        <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
+          {L("PAIEMENT UNIQUE","PAGO ÚNICO","ONE-TIME")}
+        </div>
+      </div>
+      <div style={{ width:1, alignSelf:"stretch", background:"linear-gradient(to bottom, transparent, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.22) 80%, transparent)", margin: isMobile ? "0 16px" : "0 24px", flexShrink:0 }} />
+      <div>
+        <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
+          PACK ×3 BEST DEAL
+        </div>
+        <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#EDD8D2" }}>
+          -90%
+        </div>
+        <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
+          {L("PAIEMENT UNIQUE","PAGO ÚNICO","ONE-TIME")}
+        </div>
+      </div>
+    </>
+  );
+
   return (
     <>
       <style>{`
@@ -376,81 +405,75 @@ export default function Hero() {
               </div>
             )}
 
-            {/* ── Bloc promo : -90% / 19€ ── */}
-            <div style={{
-              display:              "inline-flex",
-              alignItems:           "stretch",
-              alignSelf:            isMobile ? "center" : "flex-start",
-              background:           "#1d2024",
-              border:               "1px solid rgba(255,255,255,0.075)",
-              borderRadius:         16,
-              padding:              isMobile ? "14px 18px" : "5px 28px",
-              marginBottom:         isMobile ? 22 : 20,
-              animation:            "heroFadeUp 0.52s ease 0.10s both",
-              boxShadow:            "0 16px 45px rgba(0,0,0,0.24)",
-            } as React.CSSProperties}>
-
-              {/* Colonne 1 Challenge — -80% */}
-              <div>
-                <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2 }}>
-                  1 CHALLENGE
-                </div>
-                <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#F5F7F8" }}>
-                  -80%
-                </div>
-                <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
-                  {L("PAIEMENT UNIQUE","PAGO ÚNICO","ONE-TIME")}
-                </div>
-              </div>
-
-              {/* Séparateur vertical */}
+            {/* ── Mobile : promo + CTA dans un wrapper commun (largeur partagée) ── */}
+            {isMobile && (
               <div style={{
-                width:      1,
-                alignSelf:  "stretch",
-                background: "linear-gradient(to bottom, transparent, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.22) 80%, transparent)",
-                margin:     isMobile ? "0 16px" : "0 24px",
-                flexShrink: 0,
-              }} />
-
-              {/* Colonne Pack ×3 — -90% · BEST DEAL */}
-              <div>
-                <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
-                  PACK ×3 BEST DEAL
+                display: "flex", flexDirection: "column",
+                alignSelf: "center", gap: 18,
+                width: "fit-content",
+                animation: "heroFadeUp 0.52s ease 0.10s both",
+              }}>
+                <div style={{
+                  display: "flex", alignItems: "stretch",
+                  background: "#1d2024",
+                  border: "1px solid rgba(255,255,255,0.075)",
+                  borderRadius: 16, padding: "14px 18px",
+                  boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
+                } as React.CSSProperties}>
+                  {promoColumns}
                 </div>
-                <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#EDD8D2" }}>
-                  -90%
-                </div>
-                <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
-                  {L("PAIEMENT UNIQUE","PAGO ÚNICO","ONE-TIME")}
-                </div>
+                <a
+                  href="#pricing"
+                  className="h-cta-main"
+                  style={{
+                    width: "100%", boxSizing: "border-box",
+                    fontSize: 18, fontWeight: 730,
+                    height: 66, padding: "0 32px",
+                    justifyContent: "center",
+                  }}
+                >
+                  {ctaMain}
+                  <ArrowRight size={20} strokeWidth={2.2} aria-hidden="true" />
+                </a>
               </div>
-            </div>
+            )}
 
-            {/* ── CTA principal ── */}
-            <div style={{
-              display:         "flex",
-              alignItems:      isMobile ? "stretch" : "flex-start",
-              justifyContent:  isMobile ? "center" : "flex-start",
-              alignSelf:       isMobile ? "stretch" : undefined,
-              animation:       "heroFadeUp 0.52s ease 0.15s both",
-            }}>
-              <a
-                href="#pricing"
-                className="h-cta-main"
-                style={{
-                  fontSize:       isMobile ? 18 : 21,
-                  fontWeight:     730,
-                  height:         isMobile ? 66 : 72,
-                  padding:        isMobile ? "0 32px" : "0 44px",
-                  justifyContent: "center",
-                  minWidth:       isMobile ? undefined : 410,
-                  boxSizing:      "border-box" as const,
-                }}
-              >
-                {ctaMain}
-                <ArrowRight size={isMobile ? 20 : 22} strokeWidth={2.2} aria-hidden="true" />
-              </a>
-            </div>
+            {/* ── Desktop : promo + CTA inchangés ── */}
+            {!isMobile && (
+              <>
+                <div style={{
+                  display: "inline-flex", alignItems: "stretch",
+                  alignSelf: "flex-start",
+                  background: "#1d2024",
+                  border: "1px solid rgba(255,255,255,0.075)",
+                  borderRadius: 16, padding: "5px 28px",
+                  marginBottom: 20,
+                  animation: "heroFadeUp 0.52s ease 0.10s both",
+                  boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
+                } as React.CSSProperties}>
+                  {promoColumns}
+                </div>
+                <div style={{
+                  display: "flex",
+                  alignItems: "flex-start", justifyContent: "flex-start",
+                  animation: "heroFadeUp 0.52s ease 0.15s both",
+                }}>
+                  <a
+                    href="#pricing"
+                    className="h-cta-main"
+                    style={{
+                      fontSize: 21, fontWeight: 730,
+                      height: 72, padding: "0 44px",
+                      justifyContent: "center",
+                      minWidth: 410, boxSizing: "border-box" as const,
+                    }}
+                  >
+                    {ctaMain}
+                    <ArrowRight size={22} strokeWidth={2.2} aria-hidden="true" />
+                  </a>
+                </div>
+              </>
+            )}
 
           </div>{/* fin colonne gauche */}
 
