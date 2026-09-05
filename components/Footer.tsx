@@ -32,7 +32,7 @@ export default function Footer() {
     {
       title: T.footer.support,
       links: [
-        { label: T.footer.supportLinks[3], href: "mailto:contact@traders-rewards.eu" },
+        { label: T.footer.supportLinks[3], href: "/support" },
       ],
     },
   ];
