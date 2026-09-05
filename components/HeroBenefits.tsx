@@ -94,7 +94,7 @@ export default function HeroBenefits() {
     {
       icon: <IconAward />,
       metric: "48H",
-      title: "PAYOUT AUTOMATIQUE",
+      title: "PAYOUT EXPRESS",
     },
     {
       icon: <IconTag />,
