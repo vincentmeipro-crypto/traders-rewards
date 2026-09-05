@@ -162,7 +162,7 @@ export default function RulesV1() {
         </header>
 
         {/* Sélecteur 25K / 50K / 100K */}
-        <div style={{ marginBottom: "clamp(24px, 3vw, 40px)" }}>
+        <div style={{ marginBottom: "clamp(24px, 3vw, 40px)", display: "flex", justifyContent: "center" }}>
           <div
             role="group"
             aria-label={L("Taille du compte", "Tamaño de la cuenta", "Account size")}
