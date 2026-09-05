@@ -547,7 +547,7 @@ export default function TraderCockpit({
     return { icon: <Sparkles size={22} />, title: isFr ? "Ton cap du jour" : "Today's focus", text: isFr ? `${money(profitRemaining)} restent pour l'objectif. Ta marge avant le plancher EOD est ${money(totalBuffer)}.` : `${money(profitRemaining)} remains to target. Your EOD floor buffer is ${money(totalBuffer)}.`, action: () => { setSubTab("trading"); setTradingSection("prepare"); }, label: isFr ? "Préparer ma session" : "Prepare session", color: BLUE };
   })();
 
-  const phaseSteps = ["CHALLENGER", "REWARD START", "TRADER REWARD"];
+  const phaseSteps = ["CHALLENGER", isFr ? "COMPTE REWARD" : "REWARD ACCOUNT", "TRADER REWARD"];
   const phaseIndex = traderLevel.level - 1;  // 1→0 / 2→1 / 3→2
 
   const copyValue = async (label: string, value: string) => {
