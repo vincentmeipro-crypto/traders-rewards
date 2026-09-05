@@ -3,6 +3,14 @@ import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
+const SUBMIT_BTN: React.CSSProperties = {
+  width: "100%", padding: "15px", fontSize: 14, fontWeight: 800,
+  letterSpacing: "1.5px", textTransform: "uppercase",
+  background: "linear-gradient(135deg, #151719, #0B0C0E)",
+  color: "#FFFFFF", border: "1px solid rgba(216,163,157,0.50)",
+  borderRadius: 10, transition: "transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease",
+};
+
 export default function SupportPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -107,7 +115,9 @@ export default function SupportPage() {
             )}
 
             <button type="submit" disabled={loading}
-              style={{ width: "100%", padding: "15px", fontSize: 14, fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, background: "#D8A39D", color: "#0a0a0a", border: "none", borderRadius: 10, transition: "opacity 0.2s" }}>
+              style={{ ...SUBMIT_BTN, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1 }}
+              onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(216,163,157,0.85)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 22px rgba(216,163,157,0.10)"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; } }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(216,163,157,0.50)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; }}>
               {loading ? "Envoi en cours..." : "ENVOYER LE MESSAGE"}
             </button>
 
