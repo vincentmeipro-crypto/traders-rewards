@@ -55,28 +55,28 @@ export default function Hero() {
   // ── Colonnes internes du cadre promo (shared mobile/desktop) ──
   const promoColumns = (
     <>
-      <div>
+      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", position:"relative" }}>
         <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2 }}>
           1 CHALLENGE
         </div>
-        <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#F5F7F8" }}>
+        <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom:0, color:"#F5F7F8" }}>
           -80%
         </div>
-        <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none" }}>
+        <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none", position:"absolute" }}>
           PAIEMENT UNIQUE
         </div>
       </div>
       <div style={{ width:1, alignSelf:"stretch", background:"linear-gradient(to bottom, transparent, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.22) 80%, transparent)", margin: isMobile ? "0 16px" : "0 24px", flexShrink:0 }} />
-      <div>
+      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", position:"relative" }}>
         <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
           PACK ×3 BEST DEAL
         </div>
-        <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3,
+        <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:0,
           background:"linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
           WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
           -90%
         </div>
-        <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none" }}>
+        <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none", position:"absolute" }}>
           PAIEMENT UNIQUE
         </div>
       </div>
