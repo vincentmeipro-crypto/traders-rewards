@@ -152,9 +152,9 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
   };
 
   const tiers = [
-    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "rgba(255,255,255,0.75)", bg: "rgba(255,255,255,0.06)" },
-    { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 29 ventes" : "11 to 29 sales", pct: "15%", color: "#a855f7", bg: "rgba(168,85,247,0.08)" },
-    { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ ventes" : "30+ sales", pct: "20%", color: "#d97706", bg: "rgba(217,119,6,0.08)" },
+    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "rgba(255,255,255,0.70)", bg: "rgba(255,255,255,0.04)" },
+    { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 29 ventes" : "11 to 29 sales", pct: "15%", color: "rgba(212,168,67,0.85)", bg: "rgba(212,168,67,0.06)" },
+    { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ ventes" : "30+ sales", pct: "20%", color: "#D4A843", bg: "rgba(212,168,67,0.09)" },
   ];
 
   return (
@@ -1754,14 +1754,19 @@ export default function DashboardClient({ user }: { user: User }) {
                 <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>{T.dash.challengesSub}</p>
               </div>
               <div className="dash-new-challenges">
-                <Link href="/#pricing" className="dash-trader-btn" style={{
-                  position: "relative", overflow: "hidden", padding: "10px 13px", borderRadius: 10,
-                  border: "1px solid rgba(255,255,255,.82)",
-                  background: "linear-gradient(115deg,#5f8ca4 0%,#d5f1ff 18%,#8fc4df 34%,#ecf9ff 48%,#74a9c4 62%,#c4e9fa 78%,#5f8ca4 100%)",
-                  boxShadow: "inset 0 1px rgba(255,255,255,.92), inset 0 -1px rgba(24,61,80,.3), 0 8px 30px rgba(255,255,255,.06)",
-                }}>
-                  <span className="dash-trader-shine" aria-hidden="true" />
-                  <span className="dash-trader-label">+ Nouveau challenge</span>
+                <Link href="/#pricing" style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  padding: "10px 18px", borderRadius: 14, textDecoration: "none",
+                  background: "linear-gradient(#090A0B, #090A0B) padding-box, linear-gradient(110deg, #B88746 0%, #D6AD63 35%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%) border-box",
+                  border: "1.5px solid transparent",
+                  color: "#FFFFFF", fontSize: 13, fontWeight: 700, letterSpacing: "0.3px",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                }}
+                onMouseOver={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 6px 20px rgba(212,168,67,0.10)"; }}
+                onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.boxShadow = ""; }}
+                >
+                  <span style={{ color: "#D4A843", fontSize: 16, lineHeight: 1 }}>+</span>
+                  {isFr ? "Nouveau challenge" : "New challenge"}
                 </Link>
               </div>
             </div>
@@ -1863,11 +1868,16 @@ export default function DashboardClient({ user }: { user: User }) {
             <h2 style={{ fontSize: 24, fontWeight: 800, marginBottom: 12 }}>{T.dash.noChallengeTitle}</h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, marginBottom: 32 }}>{T.dash.noChallengeDesc}</p>
             <div className="dash-new-challenges">
-              <Link href="/#pricing" className="dash-trader-btn">
-                <span className="dash-trader-label">Challenge</span>
-                <span className="dash-trader-badge">TRADER</span>
+              <Link href="/#pricing" style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "12px 24px", borderRadius: 14, textDecoration: "none",
+                background: "linear-gradient(#090A0B, #090A0B) padding-box, linear-gradient(110deg, #B88746 0%, #D6AD63 35%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%) border-box",
+                border: "1.5px solid transparent",
+                color: "#FFFFFF", fontSize: 14, fontWeight: 700, letterSpacing: "0.3px",
+              }}>
+                <span style={{ color: "#D4A843", fontSize: 16, lineHeight: 1 }}>+</span>
+                {isFr ? "Démarrer un Challenge" : "Start a Challenge"}
               </Link>
-              {/* ALGO masqué */}
             </div>
           </div>
         ) : (activeTab === "dashboard") && challenge && (

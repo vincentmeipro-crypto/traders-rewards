@@ -565,7 +565,7 @@ export default function TraderCockpit({
       {/* ── Header ── */}
       <header className={styles.header}>
         <div>
-          <div className={styles.eyebrow}>{isFr ? "Cockpit de progression" : "Progress cockpit"}</div>
+          <div className={styles.eyebrow} style={{ color: "rgba(212,168,67,0.75)", letterSpacing: "2px" }}>{isFr ? "Cockpit de progression" : "Progress cockpit"}</div>
           <h1 className={styles.title}>{isFr ? "Prêt pour ta prochaine étape ?" : "Ready for your next step?"}</h1>
           <div className={styles.accountRow}>
             {activeChallenges.length > 1 ? (
@@ -589,10 +589,20 @@ export default function TraderCockpit({
           </div>
         </div>
         <div className={styles.headerActions}>
-          <button className={styles.button} onClick={() => onRefresh ? onRefresh() : window.location.reload()}><RefreshCw size={14} />{isFr ? "Actualiser" : "Refresh"}</button>
-          <Link href="/#pricing" className="dash-trader-btn">
-            <span className="dash-trader-shine" aria-hidden="true" />
-            <span className="dash-trader-label">+ {isFr ? "Nouveau challenge" : "New challenge"}</span>
+          {/* Actualiser — secondaire dark + gris */}
+          <button className={styles.button} onClick={() => onRefresh ? onRefresh() : window.location.reload()}
+            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)", color: "rgba(255,255,255,0.65)" }}>
+            <RefreshCw size={14} />{isFr ? "Actualiser" : "Refresh"}
+          </button>
+          {/* + Nouveau challenge — CTA dark + contour doré */}
+          <Link href="/#pricing" style={{
+            display: "inline-flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: 12,
+            textDecoration: "none", fontFamily: "inherit", fontSize: 12, fontWeight: 700, letterSpacing: "0.3px",
+            background: "linear-gradient(#090A0B, #090A0B) padding-box, linear-gradient(110deg, #B88746 0%, #D6AD63 35%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%) border-box",
+            border: "1.5px solid transparent", color: "#FFFFFF",
+          }}>
+            <span style={{ color: "#D4A843", fontSize: 15, lineHeight: 1 }}>+</span>
+            {isFr ? "Nouveau challenge" : "New challenge"}
           </Link>
         </div>
       </header>

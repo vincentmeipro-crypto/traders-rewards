@@ -406,63 +406,72 @@ function CheckoutContent() {
           <div style={{ ...card, borderColor: "rgba(212,168,67,.23)", boxShadow: "0 22px 70px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03)" }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Challenge</div>
 
-            {/* Sélecteur taille */}
+            {/* Sélecteur taille — 25K=argent, 50K=or rose, 100K=or champagne */}
             <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-              {SIZES.map(size => (
+              {SIZES.map(size => {
+                const metallic: Record<string, { border: string; color: string; bg: string }> = {
+                  "25k":  { border: "rgba(180,185,192,.70)", color: "#D5D8DC", bg: "rgba(180,185,192,.07)" },
+                  "50k":  { border: "rgba(185,110,100,.70)", color: "#D79A8F", bg: "rgba(185,110,100,.07)" },
+                  "100k": { border: "rgba(212,168,67,.72)",  color: "#D4A843", bg: "rgba(212,168,67,.08)" },
+                };
+                const m = metallic[size];
+                const isActive = selectedSize === size;
+                return (
                 <button key={size} onClick={() => changeSize(size)} style={{
                   flex: 1, padding: "8px 4px", fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border: selectedSize === size ? "1.5px solid rgba(212,168,67,.65)" : "1.5px solid rgba(255,255,255,0.1)",
-                  background: selectedSize === size ? "rgba(255,255,255,0.07)" : "#111",
-                  color: selectedSize === size ? "#fff" : "rgba(255,255,255,0.5)",
+                  border: isActive ? `1.5px solid ${m.border}` : "1.5px solid rgba(255,255,255,0.10)",
+                  background: isActive ? m.bg : "#111",
+                  color: isActive ? m.color : "rgba(255,255,255,0.45)",
                 }}>{SIZE_LABELS[size]}</button>
-              ))}
+                );
+              })}
             </div>
 
             {/* Sélecteur quantité : 1 Challenge / Pack ×3 — pourcentages en vert voyant */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
 
-              {/* ── 1 Challenge · -80% vert ── */}
+              {/* ── 1 Challenge · -80% ── */}
               <button
                 onClick={() => setQuantity(1)}
                 style={{
                   flex: 1, padding: "10px 6px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border:     quantity === 1 ? "1.5px solid rgba(34,197,94,0.55)" : "1.5px solid rgba(255,255,255,0.10)",
-                  background: quantity === 1 ? "rgba(34,197,94,0.08)" : "#111",
+                  border:     quantity === 1 ? "1.5px solid rgba(255,255,255,0.35)" : "1.5px solid rgba(255,255,255,0.10)",
+                  background: quantity === 1 ? "rgba(255,255,255,0.06)" : "#111",
                   fontFamily: "inherit", textAlign: "center" as const,
                 }}
               >
                 <div style={{ fontSize:11, fontWeight:800, color: quantity === 1 ? "#FFFFFF" : "rgba(255,255,255,0.45)", marginBottom:3 }}>
                   1 Challenge
                 </div>
-                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color:"#22c55e" }}>
+                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color: quantity === 1 ? "#FFFFFF" : "rgba(255,255,255,0.55)" }}>
                   −80%
                 </div>
               </button>
 
-              {/* ── Pack ×3 · -90% orange · MEILLEURE OFFRE ── */}
+              {/* ── Pack ×3 · -90% doré · BEST DEAL ── */}
               <button
                 onClick={() => setQuantity(3)}
                 style={{
                   flex: 1, padding: "10px 6px", borderRadius: 8, cursor: "pointer", transition: "all 0.15s",
-                  border:     quantity === 3 ? "1.5px solid rgba(255,102,0,0.80)" : "1.5px solid rgba(255,102,0,0.30)",
-                  background: quantity === 3 ? "rgba(255,102,0,0.12)" : "rgba(255,102,0,0.05)",
+                  border:     quantity === 3 ? "1.5px solid rgba(212,168,67,0.75)" : "1.5px solid rgba(212,168,67,0.22)",
+                  background: quantity === 3 ? "rgba(212,168,67,0.08)" : "rgba(212,168,67,0.03)",
                   fontFamily: "inherit", textAlign: "center" as const, position: "relative" as const,
                 }}
               >
-                {/* Badge "MEILLEURE OFFRE" */}
+                {/* Badge "BEST DEAL" */}
                 <div style={{
                   position:"absolute", top:-9, left:"50%", transform:"translateX(-50%)",
-                  fontSize:7, fontWeight:900, color:"#ffffff",
-                  background:"#ff6600", borderRadius:4,
-                  padding:"2px 6px", letterSpacing:"0.8px", textTransform:"uppercase" as const,
+                  fontSize:7, fontWeight:900, color:"#050505",
+                  background:"linear-gradient(110deg, #B88746, #D6AD63 45%, #F2D79A 60%, #C6964D)", borderRadius:4,
+                  padding:"2px 7px", letterSpacing:"0.8px", textTransform:"uppercase" as const,
                   whiteSpace:"nowrap",
                 }}>
-                  MEILLEURE OFFRE
+                  BEST DEAL
                 </div>
-                <div style={{ fontSize:11, fontWeight:800, color:"#ff6600", marginBottom:3 }}>
+                <div style={{ fontSize:11, fontWeight:800, color: quantity === 3 ? "#D4A843" : "rgba(212,168,67,0.60)", marginBottom:3 }}>
                   Pack ×3
                 </div>
-                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color:"#ff6600" }}>
+                <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color: quantity === 3 ? "#D4A843" : "rgba(212,168,67,0.60)" }}>
                   −90%
                 </div>
               </button>
@@ -642,7 +651,7 @@ function CheckoutContent() {
                   onKeyDown={e => e.key === "Enter" && applyPromo()} placeholder="ENTRER LE CODE"
                   style={{ ...inp, flex: 1, fontWeight: 700, letterSpacing: "1.5px", fontFamily: "monospace" }} />
                 <button onClick={applyPromo} disabled={!promoInput.trim() || promoStatus === "loading"}
-                  style={{ background: "#fff", color: "#000", border: "none", borderRadius: 8, padding: "10px 16px", fontSize: 12, fontWeight: 800, cursor: promoInput.trim() ? "pointer" : "not-allowed", opacity: promoInput.trim() ? 1 : 0.4, whiteSpace: "nowrap" }}>
+                  style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.85)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 8, padding: "10px 16px", fontSize: 12, fontWeight: 700, cursor: promoInput.trim() ? "pointer" : "not-allowed", opacity: promoInput.trim() ? 1 : 0.4, whiteSpace: "nowrap" }}>
                   {promoStatus === "loading" ? "..." : "Appliquer"}
                 </button>
               </div>

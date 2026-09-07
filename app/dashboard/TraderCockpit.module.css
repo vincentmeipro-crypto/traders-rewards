@@ -80,10 +80,16 @@
   color: #f7f8fa;
   background: none;
 }
-.stepActive .stepDot, .stepDone .stepDot {
+.stepActive .stepDot {
   color: #fff;
-  background: rgba(255,255,255,0.18);
-  border-color: rgba(255,255,255,.6);
+  background: rgba(212,168,67,0.12);
+  border-color: rgba(212,168,67,.72);
+  box-shadow: none;
+}
+.stepDone .stepDot {
+  color: #fff;
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,.45);
   box-shadow: none;
 }
 .stepDone::after { background: rgba(255,255,255,.18); box-shadow: none; }
@@ -197,8 +203,8 @@
 
 .subTabBtnActive {
   color: #ffffff;
-  background: rgba(255,255,255,0.07);
-  border-bottom-color: rgba(216,163,157,0.75);
+  background: rgba(255,255,255,0.06);
+  border-bottom-color: rgba(212,168,67,0.80);
   border-radius: 8px 8px 0 0;
   box-shadow: none;
 }
@@ -215,17 +221,17 @@
   align-self: center;
   margin: 0 0 7px 7px;
   padding: 5px 10px;
-  border: 1px solid rgba(216,163,157,.45);
+  border: 1px solid rgba(212,168,67,.38);
   border-radius: 999px;
-  background: rgba(216,163,157,.10);
-  color: rgba(255,255,255,.8);
+  background: rgba(212,168,67,.07);
+  color: rgba(255,255,255,.85);
   box-shadow: none;
   font: 900 8px inherit;
   letter-spacing: .9px;
   cursor: pointer;
   transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
 }
-.accountIdBadge:hover { transform: translateY(-1px); filter: brightness(1.1); box-shadow: 0 4px 12px rgba(216,163,157,.18); }
+.accountIdBadge:hover { transform: translateY(-1px); filter: brightness(1.1); box-shadow: 0 4px 12px rgba(212,168,67,.12); }
 .credentialsAnchor { scroll-margin-top: 18px; }
 
 /* ── Objective Block V2 ──────────────────────────────────────────────────── */
@@ -292,7 +298,7 @@
 .objectiveBarFill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, #16a34a, #22c55e);
+  background: linear-gradient(90deg, #B88746, #D6AD63 40%, #F2D79A 60%, #C6964D);
   transition: width .5s ease;
 }
 
