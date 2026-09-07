@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 // ── NotesSection — Section notes internes admin ───────────────────────────────
 // Client Component : gère l'ajout et la suppression de notes.
 // author_email jamais envoyé depuis ce composant — résolu par l'API.
@@ -90,7 +90,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
             disabled={saving || !draft.trim()}
             style={{
               padding: "8px 18px",
-              background: saving || !draft.trim() ? "rgba(59,130,246,0.25)" : "#3b82f6",
+              background: saving || !draft.trim() ? "rgba(201,150,63,0.25)" : "#C9963F",
               border: "none", borderRadius: 7,
               color: "#fff", fontSize: 12, fontWeight: 700,
               cursor: saving || !draft.trim() ? "not-allowed" : "pointer",
@@ -121,7 +121,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
           key={note.id}
           style={{
             background: "#0f1117",
-            border: "1px solid rgba(59,130,246,0.12)",
+            border: "1px solid rgba(201,150,63,0.12)",
             borderRadius: 8,
             padding: "12px 16px",
             display: "flex",

@@ -1,1 +1,37 @@
-.cockpit{display:flex;flex-direction:column;gap:18px;color:#f7fbff}.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:4px 0 8px}.eyebrow,.label,.sectionTitle{font-size:11px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:#9ccfea}.title{margin:7px 0 0;font-size:clamp(28px,3vw,44px);line-height:1;font-weight:950;background:linear-gradient(110deg,#fff 8%,#9ccfea 45%,#e9eef2 75%,#7f919e);-webkit-background-clip:text;color:transparent}.refresh{border:1px solid rgba(156,207,234,.35);border-radius:10px;background:linear-gradient(110deg,#eaf4f9,#9ccfea 42%,#eef4f7 72%,#778995);color:#071018;padding:10px 16px;font-weight:900;cursor:pointer}.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.card,.panel{background:linear-gradient(145deg,#0d1114,#090b0d);border:1px solid rgba(176,199,214,.18);border-radius:15px;box-shadow:inset 0 1px rgba(255,255,255,.025)}.card{padding:18px;min-height:105px}.value{margin-top:13px;font-size:30px;font-weight:950;font-variant-numeric:tabular-nums}.sub{margin-top:5px;color:#788793;font-size:12px;line-height:1.35}.blue{color:#9ccfea}.green{color:#47d66f}.amber{color:#f1ba57}.wide{grid-column:span 2}.main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(310px,.65fr);gap:14px}.panel{overflow:hidden}.sectionTitle{padding:15px 18px;border-bottom:1px solid rgba(176,199,214,.12)}.row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 18px;border-bottom:1px solid rgba(176,199,214,.08);text-decoration:none;color:#f7fbff}.row:last-child{border-bottom:0}.rowName{font-size:13px;font-weight:800}.rowSub{color:#71808b;font-size:11px;margin-top:3px}.pill{flex:none;border:1px solid rgba(156,207,234,.28);background:rgba(156,207,234,.09);color:#9ccfea;border-radius:999px;padding:4px 9px;font-size:10px;font-weight:900}.danger{color:#ff7777;border-color:rgba(239,68,68,.28);background:rgba(239,68,68,.08)}.empty{padding:27px 18px;text-align:center;color:#60717e;font-size:13px}.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:14px;width:100%;box-sizing:border-box}.quick a{padding:13px;border:1px solid rgba(156,207,234,.18);border-radius:10px;text-decoration:none;color:#cbd8e0;font-size:10px;font-weight:800;background:rgba(156,207,234,.035);min-width:0;word-break:break-word;overflow-wrap:break-word;text-align:center}.quick a:hover{background:rgba(156,207,234,.1);color:#fff}.skeleton{height:120px;animation:pulse 1.4s infinite}@keyframes pulse{50%{opacity:.45}}@media(max-width:1150px){.grid{grid-template-columns:repeat(3,1fr)}.wide{grid-column:span 1}}@media(max-width:780px){.hero{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:repeat(2,1fr)}.main{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,1fr)}}
+/* ═══════════════════════════════════════════════════════════
+   AdminCockpitV2 — Palette premium noir / doré champagne
+═══════════════════════════════════════════════════════════ */
+
+.cockpit{display:flex;flex-direction:column;gap:18px;color:#F0F0F0}
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:4px 0 8px}
+.eyebrow,.label,.sectionTitle{font-size:11px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:rgba(201,150,63,.75)}
+.title{margin:7px 0 0;font-size:clamp(28px,3vw,44px);line-height:1;font-weight:950;background:linear-gradient(110deg,#FFFFFF 10%,#D6AD63 38%,#F2D79A 52%,#C4943E 72%,#FFFFFF 90%);-webkit-background-clip:text;color:transparent;background-clip:text}
+.refresh{border-radius:10px;background:linear-gradient(#0E0F11,#0E0F11) padding-box,linear-gradient(110deg,#8A6424 0%,#C99B45 22%,#F0D58A 45%,#D4AD5A 65%,#9B722B 100%) border-box;border:1.5px solid transparent;color:rgba(255,255,255,.80);padding:9px 16px;font-size:11px;font-weight:900;letter-spacing:.08em;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.card,.panel{background:linear-gradient(145deg,#0D0E10,#090A0B);border:1px solid rgba(255,255,255,.07);border-radius:15px;box-shadow:inset 0 1px rgba(255,255,255,.02)}
+.card{padding:18px;min-height:105px}
+.label{font-size:11px;font-weight:900;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.value{margin-top:13px;font-size:30px;font-weight:950;font-variant-numeric:tabular-nums;color:#FFFFFF}
+.sub{margin-top:5px;color:rgba(255,255,255,.35);font-size:12px;line-height:1.35}
+.blue{color:#D4A843}
+.green{color:#47d66f}
+.amber{color:#f1ba57}
+.wide{grid-column:span 2}
+.main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(310px,.65fr);gap:14px}
+.panel{overflow:hidden}
+.sectionTitle{padding:15px 18px;border-bottom:1px solid rgba(255,255,255,.07)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 18px;border-bottom:1px solid rgba(255,255,255,.05);text-decoration:none;color:#F0F0F0;transition:background .15s ease}
+.row:last-child{border-bottom:0}
+.row:hover{background:rgba(255,255,255,.03)}
+.rowName{font-size:13px;font-weight:800}
+.rowSub{color:rgba(255,255,255,.32);font-size:11px;margin-top:3px}
+.pill{flex:none;border:1px solid rgba(201,150,63,.28);background:rgba(201,150,63,.09);color:rgba(201,150,63,.90);border-radius:999px;padding:4px 9px;font-size:10px;font-weight:900}
+.danger{color:#ff7777;border-color:rgba(239,68,68,.28);background:rgba(239,68,68,.08)}
+.empty{padding:27px 18px;text-align:center;color:rgba(255,255,255,.28);font-size:13px}
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:14px;width:100%;box-sizing:border-box}
+.quick a{padding:13px;border:1px solid rgba(255,255,255,.07);border-radius:10px;text-decoration:none;color:rgba(255,255,255,.45);font-size:10px;font-weight:800;background:rgba(255,255,255,.025);min-width:0;word-break:break-word;overflow-wrap:break-word;text-align:center;transition:background .18s ease,color .18s ease,border-color .18s ease}
+.quick a:hover{background:rgba(201,150,63,.08);color:rgba(201,150,63,.88);border-color:rgba(201,150,63,.22)}
+.skeleton{height:120px;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.45}}
+@media(max-width:1150px){.grid{grid-template-columns:repeat(3,1fr)}.wide{grid-column:span 1}}
+@media(max-width:780px){.hero{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:repeat(2,1fr)}.main{grid-template-columns:1fr}.quick{grid-template-columns:repeat(2,1fr)}}

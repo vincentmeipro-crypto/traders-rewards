@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 
@@ -33,7 +33,7 @@ const STATUS_CFG: Record<PromoStatus, { label: string; bg: string; color: string
   active:    { label: "ACTIVE",    bg: "rgba(34,197,94,0.1)",   color: "#4ade80", border: "rgba(34,197,94,0.2)"   },
   revoked:   { label: "RÉVOQUÉE",  bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "rgba(255,255,255,0.1)" },
   expired:   { label: "EXPIRÉE",   bg: "rgba(245,158,11,0.1)",  color: "#fbbf24", border: "rgba(245,158,11,0.2)"  },
-  exhausted: { label: "ÉPUISÉE",   bg: "rgba(59,130,246,0.1)",  color: "#60a5fa", border: "rgba(59,130,246,0.2)"  },
+  exhausted: { label: "ÉPUISÉE",   bg: "rgba(201,150,63,0.1)",  color: "rgba(201,150,63,0.85)", border: "rgba(201,150,63,0.2)"  },
   scheduled: { label: "PLANIFIÉE", bg: "rgba(168,85,247,0.1)",  color: "#c084fc", border: "rgba(168,85,247,0.2)"  },
 };
 
@@ -176,10 +176,10 @@ export default function PromotionsPage() {
         .menu-btn:hover  { background: rgba(255,255,255,0.07) !important; }
         .pill-btn:hover  { color: rgba(255,255,255,0.7) !important; }
         .action-item:hover { background: rgba(255,255,255,0.06) !important; }
-        .promo-link:hover  { color: #60a5fa !important; }
-        .promo-code-copy:hover { color: #fff !important; border-color: rgba(96,165,250,.42) !important; background: rgba(96,165,250,.08) !important; }
+        .promo-link:hover  { color: rgba(201,150,63,0.85) !important; }
+        .promo-code-copy:hover { color: #fff !important; border-color: rgba(201,150,63,.42) !important; background: rgba(201,150,63,.08) !important; }
         input:focus-visible, select:focus-visible, button:focus-visible {
-          outline: 2px solid rgba(59,130,246,0.5); outline-offset: 2px;
+          outline: 2px solid rgba(201,150,63,0.5); outline-offset: 2px;
         }
       `}</style>
 
@@ -220,7 +220,7 @@ export default function PromotionsPage() {
           </span>
         </div>
         <Link href="/x8k3pz/promotions/new" style={{
-          background: "#3B82F6", border: "none", color: "#fff",
+          background: "#C9963F", border: "none", color: "#fff",
           borderRadius: 8, padding: "8px 20px", fontSize: 13, fontWeight: 700,
           textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 7,
         }}>
@@ -297,9 +297,9 @@ export default function PromotionsPage() {
               </div>
               {promos.length === 0 && (
                 <Link href="/x8k3pz/promotions/new" style={{
-                  display: "inline-block", padding: "8px 20px", background: "rgba(59,130,246,0.1)",
-                  border: "1px solid rgba(59,130,246,0.25)", borderRadius: 7,
-                  color: "#60a5fa", fontSize: 13, fontWeight: 700, textDecoration: "none",
+                  display: "inline-block", padding: "8px 20px", background: "rgba(201,150,63,0.1)",
+                  border: "1px solid rgba(201,150,63,0.25)", borderRadius: 7,
+                  color: "rgba(201,150,63,0.85)", fontSize: 13, fontWeight: 700, textDecoration: "none",
                 }}>
                   Créer le premier code
                 </Link>
@@ -355,7 +355,7 @@ export default function PromotionsPage() {
                             }}
                           >
                             <span>{p.code}</span>
-                            <span aria-hidden="true" style={{ fontFamily: "sans-serif", fontSize: 11, color: copiedId === p.id ? "#4ade80" : "#60a5fa" }}>
+                            <span aria-hidden="true" style={{ fontFamily: "sans-serif", fontSize: 11, color: copiedId === p.id ? "#4ade80" : "rgba(201,150,63,0.85)" }}>
                               {copiedId === p.id ? "✓ Copié" : "▣"}
                             </span>
                           </button>

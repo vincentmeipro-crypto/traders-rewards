@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { EMAIL_CATALOG } from "@/lib/email-catalog";
 
@@ -432,9 +432,9 @@ function PreviewPanel({
                 style={{
                   fontSize: 11, fontWeight: mode === m ? 700 : 500,
                   padding: "5px 12px", borderRadius: 5, cursor: "pointer",
-                  background: mode === m ? "rgba(59,130,246,0.12)" : "transparent",
-                  border: `1px solid ${mode === m ? "rgba(59,130,246,0.4)" : "rgba(255,255,255,0.1)"}`,
-                  color: mode === m ? "#60a5fa" : "rgba(255,255,255,0.4)",
+                  background: mode === m ? "rgba(201,150,63,0.12)" : "transparent",
+                  border: `1px solid ${mode === m ? "rgba(201,150,63,0.4)" : "rgba(255,255,255,0.1)"}`,
+                  color: mode === m ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.4)",
                   transition: "all 0.15s",
                 }}
               >
@@ -565,9 +565,9 @@ export default function EmailCenterPage() {
   const pillStyle = (active: boolean) => ({
     fontSize: 12, fontWeight: active ? 700 : 500,
     padding: "6px 14px", borderRadius: 6, cursor: "pointer" as const,
-    border: `1px solid ${active ? "rgba(59,130,246,0.4)" : "rgba(255,255,255,0.1)"}`,
-    background: active ? "rgba(59,130,246,0.12)" : "transparent",
-    color: active ? "#60a5fa" : "rgba(255,255,255,0.5)",
+    border: `1px solid ${active ? "rgba(201,150,63,0.4)" : "rgba(255,255,255,0.1)"}`,
+    background: active ? "rgba(201,150,63,0.12)" : "transparent",
+    color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.5)",
     transition: "all 0.15s",
   });
 
@@ -575,7 +575,7 @@ export default function EmailCenterPage() {
     fontSize: 13, fontWeight: active ? 700 : 500,
     padding: "8px 18px", cursor: "pointer" as const,
     background: "transparent", border: "none",
-    borderBottom: `2px solid ${active ? "#3b82f6" : "transparent"}`,
+    borderBottom: `2px solid ${active ? "#C9963F" : "transparent"}`,
     color: active ? "#fff" : "rgba(255,255,255,0.38)",
     transition: "all 0.15s",
   });
@@ -655,10 +655,10 @@ export default function EmailCenterPage() {
         }
         .email-skel      { animation: email-pulse 1.5s ease-in-out infinite; }
         .email-row:hover  { background: rgba(255,255,255,0.03) !important; }
-        .email-row:focus-within { outline: 1px solid rgba(59,130,246,0.4); }
+        .email-row:focus-within { outline: 1px solid rgba(201,150,63,0.4); }
         .email-card:hover { background: rgba(255,255,255,0.04) !important; }
         .email-tpl-card:hover { border-color: rgba(255,255,255,0.15) !important; }
-        .email-tpl-btn:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+        .email-tpl-btn:focus-visible { outline: 2px solid #C9963F; outline-offset: 2px; }
 
         @media (max-width: 640px) {
           .email-table    { display: none !important; }
@@ -1010,7 +1010,7 @@ export default function EmailCenterPage() {
                     </div>
                   )}
 
-                  {entry.type === "welcome" && <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".12em", color: "#9ccfea" }}>PARCOURS ACTUEL · 25K / 50K / 100K</div>}
+                  {entry.type === "welcome" && <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".12em", color: "#C9963F" }}>PARCOURS ACTUEL · 25K / 50K / 100K</div>}
 
                   {entry.type === "failed" && (
                     <label style={{ display: "flex", flexDirection: "column", gap: 6 }}>
@@ -1092,9 +1092,9 @@ export default function EmailCenterPage() {
                             flex: 1, fontSize: 11, fontWeight: 700,
                             padding: "8px 10px", borderRadius: 7,
                             cursor: isTestLoading ? "wait" : "pointer",
-                            background: "rgba(59,130,246,0.15)",
-                            border: "1px solid rgba(59,130,246,0.35)",
-                            color: "#60a5fa",
+                            background: "rgba(201,150,63,0.15)",
+                            border: "1px solid rgba(201,150,63,0.35)",
+                            color: "rgba(201,150,63,0.85)",
                             opacity: isTestLoading ? 0.6 : 1,
                             transition: "opacity 0.15s",
                           }}
@@ -1125,9 +1125,9 @@ export default function EmailCenterPage() {
                           flex: 1, fontSize: 12, fontWeight: 600,
                           padding: "8px 12px", borderRadius: 7,
                           cursor: isTestLoading ? "wait" : "pointer",
-                          background: "rgba(59,130,246,0.08)",
-                          border: "1px solid rgba(59,130,246,0.2)",
-                          color: "#60a5fa",
+                          background: "rgba(201,150,63,0.08)",
+                          border: "1px solid rgba(201,150,63,0.2)",
+                          color: "rgba(201,150,63,0.85)",
                           opacity: isTestLoading ? 0.6 : 1,
                           transition: "opacity 0.15s",
                         }}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 // ── ChatCRM — Live Chat CRM Admin ─────────────────────────────────────────────
 // Interface admin 2 colonnes : liste conversations + détail.
 // Polling liste 4s / détail 3s (pas de Realtime : admin utilise x-admin-key, pas JWT).
@@ -53,7 +53,7 @@ type Note = {
 const STATUS_CONFIG: Record<ChatStatus, { label: string; bg: string; color: string; border: string }> = {
   waiting_support: { label: "À répondre",     bg: "rgba(239,68,68,0.12)",   color: "#f87171", border: "rgba(239,68,68,0.25)"  },
   open:            { label: "En cours",        bg: "rgba(245,158,11,0.15)",  color: "#fbbf24", border: "rgba(245,158,11,0.3)"  },
-  waiting_client:  { label: "Attend client",   bg: "rgba(59,130,246,0.15)",  color: "#60a5fa", border: "rgba(59,130,246,0.3)"  },
+  waiting_client:  { label: "Attend client",   bg: "rgba(201,150,63,0.15)",  color: "rgba(201,150,63,0.85)", border: "rgba(201,150,63,0.3)"  },
   closed:          { label: "Fermée",          bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)", border: "rgba(255,255,255,0.1)" },
 };
 
@@ -166,7 +166,7 @@ function ConvNotes({ convId }: { convId: string }) {
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button
             onClick={addNote} disabled={saving || !draft.trim()}
-            style={{ padding: "6px 14px", background: saving || !draft.trim() ? "rgba(59,130,246,0.15)" : "#3b82f6", border: "none", borderRadius: 6, color: "#fff", fontSize: 11, fontWeight: 700, cursor: saving || !draft.trim() ? "not-allowed" : "pointer" }}
+            style={{ padding: "6px 14px", background: saving || !draft.trim() ? "rgba(201,150,63,0.15)" : "#C9963F", border: "none", borderRadius: 6, color: "#fff", fontSize: 11, fontWeight: 700, cursor: saving || !draft.trim() ? "not-allowed" : "pointer" }}
           >
             {saving ? "…" : "Ajouter"}
           </button>
@@ -176,7 +176,7 @@ function ConvNotes({ convId }: { convId: string }) {
       {notes.length === 0
         ? <p style={{ fontSize: 12, color: "rgba(255,255,255,0.2)", margin: 0 }}>Aucune note.</p>
         : notes.map(note => (
-          <div key={note.id} style={{ background: "#0f1117", border: "1px solid rgba(59,130,246,0.1)", borderRadius: 8, padding: "10px 13px" }}>
+          <div key={note.id} style={{ background: "#0f1117", border: "1px solid rgba(201,150,63,0.1)", borderRadius: 8, padding: "10px 13px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
               <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>
                 <span style={{ color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>{note.author_email}</span>
@@ -218,8 +218,8 @@ function ConvRow({
       onClick={onClick}
       style={{
         padding: "12px 14px",
-        background: isSelected ? "rgba(59,130,246,0.08)" : "transparent",
-        border: `1px solid ${isSelected ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.06)"}`,
+        background: isSelected ? "rgba(201,150,63,0.08)" : "transparent",
+        border: `1px solid ${isSelected ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.06)"}`,
         borderRadius: 8, cursor: "pointer",
         transition: "background 0.1s, border-color 0.1s",
         display: "flex", flexDirection: "column", gap: 5,
@@ -490,11 +490,11 @@ function ChatDetail({
           </div>
           <div style={{ display: "flex", gap: 10, flexWrap: "wrap" as const, alignItems: "center" }}>
             {conv.email
-              ? <a href={`mailto:${conv.email}`} style={{ fontSize: 11, color: "#60a5fa", textDecoration: "none" }}>{conv.email}</a>
+              ? <a href={`mailto:${conv.email}`} style={{ fontSize: 11, color: "rgba(201,150,63,0.85)", textDecoration: "none" }}>{conv.email}</a>
               : <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontStyle: "italic" }}>Email non renseigné</span>
             }
             {conv.user_id && (
-              <Link href={`/x8k3pz/traders/${conv.user_id}`} target="_blank" style={{ fontSize: 11, color: "#3b82f6", fontWeight: 600, textDecoration: "none", border: "1px solid rgba(59,130,246,0.3)", padding: "2px 7px", borderRadius: 4 }}>
+              <Link href={`/x8k3pz/traders/${conv.user_id}`} target="_blank" style={{ fontSize: 11, color: "#C9963F", fontWeight: 600, textDecoration: "none", border: "1px solid rgba(201,150,63,0.3)", padding: "2px 7px", borderRadius: 4 }}>
                 Fiche trader ↗
               </Link>
             )}
@@ -570,11 +570,11 @@ function ChatDetail({
             <div key={msg.id} style={{ display: "flex", justifyContent: isAdmin ? "flex-end" : "flex-start" }}>
               <div style={{
                 maxWidth: "75%", padding: "9px 14px", borderRadius: 12,
-                background: isAdmin ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.07)",
-                border: `1px solid ${isAdmin ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.1)"}`,
+                background: isAdmin ? "rgba(201,150,63,0.18)" : "rgba(255,255,255,0.07)",
+                border: `1px solid ${isAdmin ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.1)"}`,
               }}>
                 <p style={{
-                  margin: "0 0 4px 0", fontSize: 12.5, color: isAdmin ? "#93c5fd" : "rgba(255,255,255,0.85)",
+                  margin: "0 0 4px 0", fontSize: 12.5, color: isAdmin ? "rgba(212,168,67,0.72)" : "rgba(255,255,255,0.85)",
                   lineHeight: "1.55", whiteSpace: "pre-wrap" as const, wordBreak: "break-word" as const,
                 }}>
                   {msg.message}
@@ -607,7 +607,7 @@ function ChatDetail({
           onClick={sendMessage}
           disabled={sending || !draft.trim()}
           style={{
-            padding: "9px 18px", background: sending || !draft.trim() ? "rgba(59,130,246,0.2)" : "#3b82f6",
+            padding: "9px 18px", background: sending || !draft.trim() ? "rgba(201,150,63,0.2)" : "#C9963F",
             border: "none", borderRadius: 9, color: "#fff", fontSize: 13, fontWeight: 700,
             cursor: sending || !draft.trim() ? "not-allowed" : "pointer", height: 56, flexShrink: 0,
           }}
@@ -734,15 +734,15 @@ export default function ChatCRM() {
                   onClick={() => { setStatusFilter(tab.key); setPage(1); setSelectedId(null); }}
                   style={{
                     padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: active ? 700 : 500, cursor: "pointer",
-                    background: active ? "rgba(59,130,246,0.12)" : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${active ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.07)"}`,
-                    color: active ? "#60a5fa" : "rgba(255,255,255,0.4)",
+                    background: active ? "rgba(201,150,63,0.12)" : "rgba(255,255,255,0.04)",
+                    border: `1px solid ${active ? "rgba(201,150,63,0.3)" : "rgba(255,255,255,0.07)"}`,
+                    color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.4)",
                     display: "flex", alignItems: "center", gap: 5,
                   }}
                 >
                   {tab.label}
                   {badge !== null && badge > 0 && (
-                    <span style={{ fontSize: 9, fontWeight: 800, background: tab.key === "waiting_support" ? "#ef4444" : (active ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.1)"), color: "#fff", padding: "1px 5px", borderRadius: 8 }}>
+                    <span style={{ fontSize: 9, fontWeight: 800, background: tab.key === "waiting_support" ? "#ef4444" : (active ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.1)"), color: "#fff", padding: "1px 5px", borderRadius: 8 }}>
                       {badge}
                     </span>
                   )}

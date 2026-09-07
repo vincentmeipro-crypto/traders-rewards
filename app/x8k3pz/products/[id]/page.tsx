@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 
@@ -92,7 +92,7 @@ const Input = ({
       readOnly={readOnly}
       onChange={e => onChange?.(e.target.value)}
       style={readOnly ? readOnlyStyle : inputBaseStyle}
-      onFocus={e => { if (!readOnly) e.target.style.borderColor = "rgba(59,130,246,0.5)"; }}
+      onFocus={e => { if (!readOnly) e.target.style.borderColor = "rgba(201,150,63,0.5)"; }}
       onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
     />
     {suffix && <span style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>{suffix}</span>}
@@ -119,7 +119,7 @@ const Textarea = ({
       width: "100%", outline: "none", fontFamily: "inherit",
       resize: "vertical", minHeight: 72, boxSizing: "border-box",
     }}
-    onFocus={e => { e.target.style.borderColor = "rgba(59,130,246,0.5)"; }}
+    onFocus={e => { e.target.style.borderColor = "rgba(201,150,63,0.5)"; }}
     onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
   />
 );
@@ -168,7 +168,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     letterSpacing: "1.5px", textTransform: "uppercase",
     marginBottom: 18, paddingBottom: 10,
     borderBottom: "1px solid rgba(255,255,255,0.08)",
-    paddingLeft: 10, borderLeft: "3px solid rgba(59,130,246,0.3)",
+    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)",
   }}>
     {children}
   </div>
@@ -564,11 +564,11 @@ export default function ProductEditorPage() {
           {isNew && (
             <div style={{
               marginBottom: 24, padding: "10px 16px",
-              background: "rgba(59,130,246,0.06)", border: "1px solid rgba(59,130,246,0.15)",
+              background: "rgba(201,150,63,0.06)", border: "1px solid rgba(201,150,63,0.15)",
               borderRadius: 8, fontSize: 12, color: "rgba(255,255,255,0.45)",
               display: "flex", alignItems: "center", gap: 8,
             }}>
-              <span style={{ color: "#60a5fa", fontWeight: 700 }}>Étape 1/3</span>
+              <span style={{ color: "rgba(201,150,63,0.85)", fontWeight: 700 }}>Étape 1/3</span>
               <span>— Après création, vous configurerez les phases et les règles.</span>
             </div>
           )}
@@ -620,7 +620,7 @@ export default function ProductEditorPage() {
                   <div>
                     <Label>Prix promotionnel actuel</Label>
                     <Input value={form.price_eur} onChange={pf("price_eur")} type="number" suffix="€" />
-                    {form.slug.startsWith("rewards-") && <div style={{ fontSize: 10, color: "#9ccfea", marginTop: 5 }}>Remise de lancement −90% · prix standard : {form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</div>}
+                    {form.slug.startsWith("rewards-") && <div style={{ fontSize: 10, color: "#C9963F", marginTop: 5 }}>Remise de lancement −90% · prix standard : {form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</div>}
                   </div>
                   <div>
                     <Label>Prix crypto</Label>
@@ -685,7 +685,7 @@ export default function ProductEditorPage() {
 
                 // Labels et couleurs par phase_type (V1)
                 const V1_PHASE_ACCENT: Record<string, string> = {
-                  challenge:      "#60a5fa",
+                  challenge:      "rgba(201,150,63,0.85)",
                   funded:         "#c9a84c",
                   reward_journey: "#4ade80",
                 };
@@ -702,8 +702,8 @@ export default function ProductEditorPage() {
                     const isFunded        = phase.phase_type === "funded";
                     const isRewardJourney = phase.phase_type === "reward_journey";
                     const accent          = isV1
-                      ? (V1_PHASE_ACCENT[phase.phase_type] ?? "#60a5fa")
-                      : (isFunded ? "#4ade80" : "#60a5fa");
+                      ? (V1_PHASE_ACCENT[phase.phase_type] ?? "rgba(201,150,63,0.85)")
+                      : (isFunded ? "#4ade80" : "rgba(201,150,63,0.85)");
                     const isEditing = editingPhase === phase.phase_order;
 
                     return (
@@ -1028,7 +1028,7 @@ export default function ProductEditorPage() {
                         <div style={{ flex: 1 }}>
                           <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
                             <span style={{ fontSize: 13, fontWeight: 600, color: rule.enabled ? "#fff" : "rgba(255,255,255,0.28)", fontFamily: "ui-monospace, 'Cascadia Code', monospace" }}>{rule.rule_key}</span>
-                            <span style={{ fontSize: 12, fontWeight: 700, color: rule.enabled ? "#60a5fa" : "rgba(255,255,255,0.18)", fontVariantNumeric: "tabular-nums" }}>{displayValue}</span>
+                            <span style={{ fontSize: 12, fontWeight: 700, color: rule.enabled ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.18)", fontVariantNumeric: "tabular-nums" }}>{displayValue}</span>
                           </div>
                           {displayDescription && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.22)", marginTop: 2 }}>{displayDescription}</div>}
                         </div>
@@ -1136,7 +1136,7 @@ export default function ProductEditorPage() {
                 {form.slug.startsWith("rewards-") && <span style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,.32)", textDecoration: "line-through", letterSpacing: 0, marginBottom: 4 }}>{form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</span>}
                 {form.price_eur ? `€${form.price_eur}` : "—"}
               </div>
-              {form.slug.startsWith("rewards-") && <div style={{ color: "#9ccfea", fontSize: 9, fontWeight: 900, letterSpacing: ".12em", marginBottom: 6 }}>OFFRE DE LANCEMENT · −90%</div>}
+              {form.slug.startsWith("rewards-") && <div style={{ color: "#C9963F", fontSize: 9, fontWeight: 900, letterSpacing: ".12em", marginBottom: 6 }}>OFFRE DE LANCEMENT · −90%</div>}
               {form.price_crypto && (
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginBottom: 4 }}>
                   Crypto : €{form.price_crypto}
@@ -1151,7 +1151,7 @@ export default function ProductEditorPage() {
                   {(() => {
                     const isV1sb = rules.some(r => r.rule_key === "dd_model" && r.rule_value === "trailing_eod_lock");
                     const phAccent: Record<string, string> = {
-                      challenge: "#60a5fa", funded: "#c9a84c", reward_journey: "#4ade80",
+                      challenge: "rgba(201,150,63,0.85)", funded: "#c9a84c", reward_journey: "#4ade80",
                     };
                     const phSublabel: Record<string, string> = {
                       challenge: "CHALLENGER", funded: "REWARD START", reward_journey: "TRADER REWARD",
@@ -1159,7 +1159,7 @@ export default function ProductEditorPage() {
                     return (<>
                       <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Parcours {phases.length}</div>
                       {phases.map((ph, idx) => {
-                        const col = isV1sb ? (phAccent[ph.phase_type] ?? "#60a5fa") : (ph.phase_type === "funded" ? "#4ade80" : "#60a5fa");
+                        const col = isV1sb ? (phAccent[ph.phase_type] ?? "rgba(201,150,63,0.85)") : (ph.phase_type === "funded" ? "#4ade80" : "rgba(201,150,63,0.85)");
                         return (
                           <div key={ph.phase_order} style={{ marginBottom: 12 }}>
                             <div style={{ fontSize: 12, fontWeight: 700, color: col, marginBottom: 2 }}>{ph.phase_label}</div>
@@ -1194,7 +1194,7 @@ export default function ProductEditorPage() {
                   {rules.filter(r => r.enabled && !(isV1Product && r.rule_key === "consistency_pct")).map(r => (
                     <div key={r.rule_key} style={{ fontSize: 10, color: "rgba(255,255,255,0.38)", marginBottom: 5, display: "flex", justifyContent: "space-between", gap: 8 }}>
                       <span style={{ fontFamily: "ui-monospace, 'Cascadia Code', monospace", color: "rgba(255,255,255,0.3)", wordBreak: "break-all" }}>{r.rule_key}</span>
-                      <span style={{ color: "#60a5fa", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
+                      <span style={{ color: "rgba(201,150,63,0.85)", fontVariantNumeric: "tabular-nums", flexShrink: 0 }}>
                         {typeof r.rule_value === "object" ? JSON.stringify(r.rule_value) : String(r.rule_value)}
                       </span>
                     </div>
@@ -1212,12 +1212,12 @@ export default function ProductEditorPage() {
                     rel="noopener noreferrer"
                     style={{
                       display: "flex", alignItems: "center", gap: 5,
-                      fontSize: 12, color: "rgba(59,130,246,0.65)", textDecoration: "none",
+                      fontSize: 12, color: "rgba(201,150,63,0.65)", textDecoration: "none",
                       fontWeight: 600, letterSpacing: "0.3px",
                       transition: "color 0.15s",
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(96,165,250,0.9)")}
-                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(59,130,246,0.65)")}
+                    onMouseEnter={e => (e.currentTarget.style.color = "rgba(201,150,63,0.9)")}
+                    onMouseLeave={e => (e.currentTarget.style.color = "rgba(201,150,63,0.65)")}
                   >
                     Voir sur le site
                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">

@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+﻿import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -100,12 +100,12 @@ function Row({ cert }: { cert: Cert }) {
       }}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ fontWeight: 700, color: "#3b82f6", fontSize: 15 }}>
+            <div style={{ fontWeight: 700, color: "#C9963F", fontSize: 15 }}>
               {cert.trader_display_name}
             </div>
             <span style={{
               fontSize: 9, fontWeight: 800, letterSpacing: "0.1em", textTransform: "uppercase",
-              color: "#9CCFEA", border: "1px solid #9CCFEA35", background: "#9CCFEA0d",
+              color: "#C9963F", border: "1px solid #C9963F35", background: "#C9963F0d",
               borderRadius: 999, padding: "3px 7px",
             }}>
               {typeLabel}
@@ -134,7 +134,7 @@ function Row({ cert }: { cert: Cert }) {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              background: "#3b82f6", color: "#fff",
+              background: "#C9963F", color: "#fff",
               textDecoration: "none", padding: "7px 14px", borderRadius: 6,
               fontSize: 12, fontWeight: 700, whiteSpace: "nowrap",
             }}
@@ -150,7 +150,7 @@ function Row({ cert }: { cert: Cert }) {
         display: "flex", gap: 28, flexWrap: "wrap", alignItems: "center",
       }}>
         <Stat label="Total"     value={String(total)} color={total > 0 ? "#22c55e" : "#444"} />
-        <Stat label="Scans QR"  value={String(qr)}    color={qr > 0   ? "#60a5fa" : "#444"} />
+        <Stat label="Scans QR"  value={String(qr)}    color={qr > 0   ? "rgba(201,150,63,0.85)" : "#444"} />
         <Stat label="Ouv. lien" value={String(lien)}  color={lien > 0 ? "#a78bfa" : "#444"} />
 
         <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -213,7 +213,7 @@ export default async function CertificatsPage() {
         <div style={{ marginBottom: 36 }}>
           <div style={{
             fontSize: 11, fontWeight: 700, letterSpacing: "0.2em",
-            textTransform: "uppercase", color: "#3b82f6", marginBottom: 6,
+            textTransform: "uppercase", color: "#C9963F", marginBottom: 6,
           }}>
             Admin — Traders Rewards
           </div>

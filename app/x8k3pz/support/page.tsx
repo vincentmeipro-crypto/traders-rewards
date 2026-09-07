@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 // ── Support Center — /x8k3pz/support ─────────────────────────────────────────
 // Interface admin de traitement des tickets de support + chat live.
 // ?tab=tickets (défaut) | chat
@@ -61,7 +61,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const CATEGORY_COLORS: Record<string, string> = {
   billing:   "#f59e0b",
-  challenge: "#3b82f6",
+  challenge: "#C9963F",
   mt5:       "#8b5cf6",
   reward:    "#22c55e",
   kyc:       "#06b6d4",
@@ -70,7 +70,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const STATUS_CONFIG = {
-  new:      { label: "Nouveau",    bg: "rgba(59,130,246,0.15)",  color: "#60a5fa",  border: "rgba(59,130,246,0.3)"  },
+  new:      { label: "Nouveau",    bg: "rgba(201,150,63,0.15)",  color: "rgba(201,150,63,0.85)",  border: "rgba(201,150,63,0.3)"  },
   open:     { label: "En cours",   bg: "rgba(245,158,11,0.15)",  color: "#fbbf24",  border: "rgba(245,158,11,0.3)"  },
   resolved: { label: "Résolu",     bg: "rgba(34,197,94,0.12)",   color: "#4ade80",  border: "rgba(34,197,94,0.25)"  },
 };
@@ -186,7 +186,7 @@ function TicketNotes({ ticketId }: { ticketId: string }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button
             onClick={addNote} disabled={saving || !draft.trim()}
-            style={{ padding: "7px 16px", background: saving || !draft.trim() ? "rgba(59,130,246,0.2)" : "#3b82f6", border: "none", borderRadius: 7, color: "#fff", fontSize: 12, fontWeight: 700, cursor: saving || !draft.trim() ? "not-allowed" : "pointer" }}
+            style={{ padding: "7px 16px", background: saving || !draft.trim() ? "rgba(201,150,63,0.2)" : "#C9963F", border: "none", borderRadius: 7, color: "#fff", fontSize: 12, fontWeight: 700, cursor: saving || !draft.trim() ? "not-allowed" : "pointer" }}
           >
             {saving ? "Enregistrement…" : "Ajouter"}
           </button>
@@ -203,7 +203,7 @@ function TicketNotes({ ticketId }: { ticketId: string }) {
       {notes.length === 0
         ? <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Aucune note.</div>
         : notes.map(note => (
-          <div key={note.id} style={{ background: "#0f1117", border: "1px solid rgba(59,130,246,0.1)", borderRadius: 8, padding: "11px 14px" }}>
+          <div key={note.id} style={{ background: "#0f1117", border: "1px solid rgba(201,150,63,0.1)", borderRadius: 8, padding: "11px 14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8, marginBottom: 6 }}>
               <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", display: "flex", gap: 8, flexWrap: "wrap" as const }}>
                 <span style={{ color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>{note.author_email}</span>
@@ -319,8 +319,8 @@ function TicketThread({ ticketId }: { ticketId: string }) {
             }}>
               <div style={{
                 maxWidth:     "76%",
-                background:   isAdmin ? "rgba(59,130,246,0.18)" : "rgba(255,255,255,0.07)",
-                border:       `1px solid ${isAdmin ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.09)"}`,
+                background:   isAdmin ? "rgba(201,150,63,0.18)" : "rgba(255,255,255,0.07)",
+                border:       `1px solid ${isAdmin ? "rgba(201,150,63,0.3)" : "rgba(255,255,255,0.09)"}`,
                 borderRadius: isAdmin ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
                 padding:      "10px 14px",
               }}>
@@ -364,7 +364,7 @@ function TicketThread({ ticketId }: { ticketId: string }) {
             width:        "100%",
             boxSizing:    "border-box" as const,
             background:   "#111",
-            border:       `1px solid ${draft.trim() ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.08)"}`,
+            border:       `1px solid ${draft.trim() ? "rgba(201,150,63,0.3)" : "rgba(255,255,255,0.08)"}`,
             borderRadius: 8,
             padding:      "9px 13px",
             color:        "#fff",
@@ -381,7 +381,7 @@ function TicketThread({ ticketId }: { ticketId: string }) {
             disabled={sending || !draft.trim()}
             style={{
               padding:      "7px 18px",
-              background:   sending || !draft.trim() ? "rgba(59,130,246,0.2)" : "#3b82f6",
+              background:   sending || !draft.trim() ? "rgba(201,150,63,0.2)" : "#C9963F",
               border:       "none",
               borderRadius: 7,
               color:        "#fff",
@@ -448,12 +448,12 @@ function TicketDetail({
           <div style={{ fontSize: 17, fontWeight: 800, color: "#fff" }}>
             {ticket.first_name} {ticket.last_name}
           </div>
-          <a href={`mailto:${ticket.email}`} style={{ fontSize: 13, color: "#60a5fa", textDecoration: "none" }}>
+          <a href={`mailto:${ticket.email}`} style={{ fontSize: 13, color: "rgba(201,150,63,0.85)", textDecoration: "none" }}>
             {ticket.email}
           </a>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" as const, marginTop: 4, alignItems: "center" }}>
             {ticket.user_id && (
-              <Link href={`/x8k3pz/traders/${ticket.user_id}`} style={{ fontSize: 11, color: "#3b82f6", fontWeight: 600, textDecoration: "none", border: "1px solid rgba(59,130,246,0.3)", padding: "2px 8px", borderRadius: 4 }}>
+              <Link href={`/x8k3pz/traders/${ticket.user_id}`} style={{ fontSize: 11, color: "#C9963F", fontWeight: 600, textDecoration: "none", border: "1px solid rgba(201,150,63,0.3)", padding: "2px 8px", borderRadius: 4 }}>
                 Voir fiche trader ↗
               </Link>
             )}
@@ -574,7 +574,7 @@ function TicketRow({
   return (
     <div style={{
       background: "#0c0c0c",
-      border: `1px solid ${isOpen ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.07)"}`,
+      border: `1px solid ${isOpen ? "rgba(201,150,63,0.2)" : "rgba(255,255,255,0.07)"}`,
       borderRadius: 10, overflow: "hidden",
     }}>
       {/* Ligne fermée */}
@@ -584,7 +584,7 @@ function TicketRow({
       >
         {/* Indicateur statut new */}
         {ticket.status === "new" && (
-          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#60a5fa", flexShrink: 0, boxShadow: "0 0 8px #60a5fa" }} />
+          <span style={{ width: 7, height: 7, borderRadius: "50%", background: "rgba(201,150,63,0.85)", flexShrink: 0, boxShadow: "0 0 8px rgba(201,150,63,0.85)" }} />
         )}
 
         {/* Identité */}
@@ -802,15 +802,15 @@ function SupportPageInner() {
                 onClick={() => switchTab(t.key)}
                 style={{
                   padding: "8px 18px", borderRadius: 9, fontSize: 13, fontWeight: active ? 700 : 500, cursor: "pointer",
-                  background: active ? "rgba(59,130,246,0.15)" : "rgba(255,255,255,0.04)",
-                  border: `1px solid ${active ? "rgba(59,130,246,0.4)" : "rgba(255,255,255,0.09)"}`,
-                  color: active ? "#60a5fa" : "rgba(255,255,255,0.5)",
+                  background: active ? "rgba(201,150,63,0.15)" : "rgba(255,255,255,0.04)",
+                  border: `1px solid ${active ? "rgba(201,150,63,0.4)" : "rgba(255,255,255,0.09)"}`,
+                  color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.5)",
                   display: "flex", alignItems: "center", gap: 7, transition: "all 0.15s",
                 }}
               >
                 {t.label}
                 {t.badge !== null && t.badge > 0 && (
-                  <span style={{ fontSize: 10, fontWeight: 800, background: active ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.1)", color: active ? "#93c5fd" : "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 10 }}>
+                  <span style={{ fontSize: 10, fontWeight: 800, background: active ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.1)", color: active ? "rgba(212,168,67,0.72)" : "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 10 }}>
                     {t.badge}
                   </span>
                 )}
@@ -841,15 +841,15 @@ function SupportPageInner() {
                   onClick={() => changeStatus(tab.key)}
                   style={{
                     padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: active ? 700 : 500, cursor: "pointer",
-                    background: active ? "rgba(59,130,246,0.15)" : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${active ? "rgba(59,130,246,0.35)" : "rgba(255,255,255,0.08)"}`,
-                    color: active ? "#60a5fa" : "rgba(255,255,255,0.55)",
+                    background: active ? "rgba(201,150,63,0.15)" : "rgba(255,255,255,0.04)",
+                    border: `1px solid ${active ? "rgba(201,150,63,0.35)" : "rgba(255,255,255,0.08)"}`,
+                    color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.55)",
                     display: "flex", alignItems: "center", gap: 6,
                   }}
                 >
                   {tab.label}
                   {tab.count !== null && tab.count > 0 && (
-                    <span style={{ fontSize: 10, fontWeight: 800, background: active ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.1)", color: active ? "#93c5fd" : "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 10 }}>
+                    <span style={{ fontSize: 10, fontWeight: 800, background: active ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.1)", color: active ? "rgba(212,168,67,0.72)" : "rgba(255,255,255,0.5)", padding: "1px 6px", borderRadius: 10 }}>
                       {tab.count}
                     </span>
                   )}
@@ -880,7 +880,7 @@ function SupportPageInner() {
           {error && (
             <div style={{ padding: "14px 18px", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, color: "#ef4444", fontSize: 13 }}>
               Erreur : {error}
-              <button onClick={() => loadTickets(statusFilter, categoryFilter, search, page)} style={{ marginLeft: 12, background: "none", border: "none", color: "#60a5fa", cursor: "pointer", fontSize: 12, textDecoration: "underline" }}>
+              <button onClick={() => loadTickets(statusFilter, categoryFilter, search, page)} style={{ marginLeft: 12, background: "none", border: "none", color: "rgba(201,150,63,0.85)", cursor: "pointer", fontSize: 12, textDecoration: "underline" }}>
                 Réessayer
               </button>
             </div>

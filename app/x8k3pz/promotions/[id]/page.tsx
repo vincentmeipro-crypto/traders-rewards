@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 
@@ -58,7 +58,7 @@ const STATUS_CFG: Record<PromoStatus, { label: string; bg: string; color: string
   active:    { label: "ACTIVE",    bg: "rgba(34,197,94,0.1)",   color: "#4ade80", border: "rgba(34,197,94,0.2)"   },
   revoked:   { label: "RÉVOQUÉE",  bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "rgba(255,255,255,0.1)" },
   expired:   { label: "EXPIRÉE",   bg: "rgba(245,158,11,0.1)",  color: "#fbbf24", border: "rgba(245,158,11,0.2)"  },
-  exhausted: { label: "ÉPUISÉE",   bg: "rgba(59,130,246,0.1)",  color: "#60a5fa", border: "rgba(59,130,246,0.2)"  },
+  exhausted: { label: "ÉPUISÉE",   bg: "rgba(201,150,63,0.1)",  color: "rgba(201,150,63,0.85)", border: "rgba(201,150,63,0.2)"  },
   scheduled: { label: "PLANIFIÉE", bg: "rgba(168,85,247,0.1)",  color: "#c084fc", border: "rgba(168,85,247,0.2)"  },
 };
 
@@ -98,7 +98,7 @@ const Input = ({ id, value, onChange, type = "text", placeholder, readOnly }: {
     placeholder={placeholder}
     onChange={e => onChange?.(e.target.value)}
     style={readOnly ? { ...inputBaseStyle, background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.35)" } : inputBaseStyle}
-    onFocus={e => { if (!readOnly) e.target.style.borderColor = "rgba(59,130,246,0.5)"; }}
+    onFocus={e => { if (!readOnly) e.target.style.borderColor = "rgba(201,150,63,0.5)"; }}
     onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
   />
 );
@@ -149,7 +149,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     letterSpacing: "1.5px", textTransform: "uppercase",
     marginBottom: 18, paddingBottom: 10,
     borderBottom: "1px solid rgba(255,255,255,0.08)",
-    paddingLeft: 10, borderLeft: "3px solid rgba(59,130,246,0.3)",
+    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)",
   }}>
     {children}
   </div>
@@ -426,7 +426,7 @@ export default function PromoEditorPage() {
         select option         { background: #111; }
         input[type="datetime-local"] { color-scheme: dark; }
         input:focus-visible, select:focus-visible, button:focus-visible {
-          outline: 2px solid rgba(59,130,246,0.5); outline-offset: 2px;
+          outline: 2px solid rgba(201,150,63,0.5); outline-offset: 2px;
         }
         @media (max-width: 640px) {
           .form-grid-2    { grid-template-columns: 1fr !important; }
@@ -565,7 +565,7 @@ export default function PromoEditorPage() {
         <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
           {([
             { label: "Utilisations",  value: String(promo.used_count), color: "#fff", sub: promo.max_uses !== null ? `/ ${promo.max_uses} max` : "/ illimité" },
-            { label: "Traders uniques", value: String(promo.unique_users_count), color: "#60a5fa", sub: "" },
+            { label: "Traders uniques", value: String(promo.unique_users_count), color: "rgba(201,150,63,0.85)", sub: "" },
             { label: "Dernier usage", value: fmtDate(promo.last_used_at), color: "rgba(255,255,255,0.7)", sub: "" },
           ] as { label: string; value: string; color: string; sub: string }[]).map(k => (
             <div key={k.label}>
@@ -680,9 +680,9 @@ export default function PromoEditorPage() {
                     style={{
                       padding: "8px 18px", borderRadius: 7, fontSize: 12, fontWeight: 700,
                       cursor: "pointer",
-                      background: form.targeting_mode === mode ? "rgba(59,130,246,0.12)" : "transparent",
-                      border: `1px solid ${form.targeting_mode === mode ? "rgba(59,130,246,0.35)" : "rgba(255,255,255,0.1)"}`,
-                      color: form.targeting_mode === mode ? "#60a5fa" : "rgba(255,255,255,0.45)",
+                      background: form.targeting_mode === mode ? "rgba(201,150,63,0.12)" : "transparent",
+                      border: `1px solid ${form.targeting_mode === mode ? "rgba(201,150,63,0.35)" : "rgba(255,255,255,0.1)"}`,
+                      color: form.targeting_mode === mode ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.45)",
                     }}
                   >
                     {mode === "all" ? "Tous les produits" : "Produits spécifiques"}
@@ -715,10 +715,10 @@ export default function PromoEditorPage() {
                               padding: "10px 14px", borderRadius: 8,
                               cursor: isInactive && !selected ? "not-allowed" : "pointer",
                               background: selected
-                                ? isInactive ? "rgba(245,158,11,0.05)" : "rgba(59,130,246,0.07)"
+                                ? isInactive ? "rgba(245,158,11,0.05)" : "rgba(201,150,63,0.07)"
                                 : "rgba(255,255,255,0.03)",
                               border: `1px solid ${selected
-                                ? isInactive ? "rgba(245,158,11,0.2)" : "rgba(59,130,246,0.25)"
+                                ? isInactive ? "rgba(245,158,11,0.2)" : "rgba(201,150,63,0.25)"
                                 : "rgba(255,255,255,0.06)"}`,
                               opacity: isInactive && !selected ? 0.4 : 1,
                               transition: "all 0.1s",

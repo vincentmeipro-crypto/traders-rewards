@@ -1,4 +1,4 @@
-// ── Fiche Trader — Page dédiée /x8k3pz/traders/[userId] ─────────────────────
+﻿// ── Fiche Trader — Page dédiée /x8k3pz/traders/[userId] ─────────────────────
 // Server Component : accès direct createAdminClient().
 // Centralise toutes les informations d'un trader en un seul endroit.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -335,7 +335,7 @@ export default async function TraderPage({
             { label: "Total payé", value: `€${totalSpent.toLocaleString()}`, color: "#22c55e" },
             { label: "Challenges", value: String(challenges.length),             color: "#fff" },
             { label: "Actifs",   value: String(activeCount),                     color: activeCount > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
-            { label: "Comptes Reward", value: String(certifCount), color: certifCount > 0 ? "#9ccfea" : "rgba(255,255,255,0.25)" },
+            { label: "Comptes Reward", value: String(certifCount), color: certifCount > 0 ? "#C9963F" : "rgba(255,255,255,0.25)" },
             { label: "Échoués",  value: String(failedCount),                     color: failedCount > 0 ? "#ef4444" : "rgba(255,255,255,0.25)" },
             { label: "Rewards",  value: `€${rewardsPaid.toLocaleString()}`,      color: rewardsPaid > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
             { label: "En attente", value: rewardsPending > 0 ? `€${rewardsPending.toLocaleString()}` : "—", color: rewardsPending > 0 ? "#f59e0b" : "rgba(255,255,255,0.2)" },
@@ -417,7 +417,7 @@ export default async function TraderPage({
                       </td>
                       <td style={{ padding: "10px 10px" }}>
                         {isV1c
-                          ? <span style={{ fontSize: 10, background: "rgba(59,130,246,0.12)", color: "#60a5fa", padding: "2px 6px", borderRadius: 4, fontWeight: 700 }}>
+                          ? <span style={{ fontSize: 10, background: "rgba(201,150,63,0.12)", color: "rgba(201,150,63,0.85)", padding: "2px 6px", borderRadius: 4, fontWeight: 700 }}>
                               {v1LevelLabel}
                             </span>
                           : <span style={{ fontSize: 10, background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.5)", padding: "2px 6px", borderRadius: 4, fontWeight: 600 }}>
@@ -582,10 +582,10 @@ export default async function TraderPage({
                     rel="noopener noreferrer"
                     style={{
                       padding: "6px 14px",
-                      background: "rgba(59,130,246,0.1)",
-                      border: "1px solid rgba(59,130,246,0.25)",
+                      background: "rgba(201,150,63,0.1)",
+                      border: "1px solid rgba(201,150,63,0.25)",
                       borderRadius: 7,
-                      color: "#60a5fa",
+                      color: "rgba(201,150,63,0.85)",
                       fontSize: 12,
                       fontWeight: 600,
                       textDecoration: "none",

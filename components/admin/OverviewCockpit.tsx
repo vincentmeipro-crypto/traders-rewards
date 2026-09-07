@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 // ── OverviewCockpit ───────────────────────────────────────────────────────────
 // Cockpit global du CRM Traders Rewards.
 // Chargé uniquement quand tab === "overview" sur /x8k3pz.
@@ -146,7 +146,7 @@ export default function OverviewCockpit() {
   const treatItems: { label: string; sub: string; count: number; href: string; color: string }[] = [];
 
   if (kpis.kycPending > 0)      treatItems.push({ label: "KYC en attente",        sub: `${kpis.kycPending} dossier${kpis.kycPending > 1 ? "s" : ""} à traiter`, count: kpis.kycPending, href: "/x8k3pz?t=kyc",    color: "#f59e0b" });
-  if (kpis.pendingPayoutsCount > 0) treatItems.push({ label: "Rewards en attente", sub: `${fmtEuro(kpis.pendingPayoutsAmt)} à valider`,                           count: kpis.pendingPayoutsCount, href: "/x8k3pz?t=payouts", color: "#3b82f6" });
+  if (kpis.pendingPayoutsCount > 0) treatItems.push({ label: "Rewards en attente", sub: `${fmtEuro(kpis.pendingPayoutsAmt)} à valider`,                           count: kpis.pendingPayoutsCount, href: "/x8k3pz?t=payouts", color: "#C9963F" });
   if (kpis.supportNew > 0)      treatItems.push({ label: "Tickets support nouveaux", sub: `${kpis.supportNew} ticket${kpis.supportNew > 1 ? "s" : ""} non traité${kpis.supportNew > 1 ? "s" : ""}`, count: kpis.supportNew, href: "/x8k3pz/support", color: "#8b5cf6" });
   if (kpis.emailFailed24h > 0)  treatItems.push({ label: "Emails échoués (24h)",  sub: `${kpis.emailFailed24h} échec${kpis.emailFailed24h > 1 ? "s" : ""} depuis 24h`,                 count: kpis.emailFailed24h,  href: "/x8k3pz/emails",  color: "#ef4444" });
   if (riskWatch.length > 0)     treatItems.push({ label: "Comptes à risque",       sub: "DD proche de la limite",                                                  count: riskWatch.length,         href: "/x8k3pz?t=pipeline", color: "#ef4444" });
@@ -295,7 +295,7 @@ export default function OverviewCockpit() {
               </div>
             </div>
           </div>
-          <Link href="/x8k3pz/emails" style={{ padding: "7px 14px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.18)", borderRadius: 7, color: "#60a5fa", fontSize: 11, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" as const, flexShrink: 0 }}>
+          <Link href="/x8k3pz/emails" style={{ padding: "7px 14px", background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.18)", borderRadius: 7, color: "rgba(201,150,63,0.85)", fontSize: 11, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" as const, flexShrink: 0 }}>
             Voir Emails →
           </Link>
         </div>
@@ -348,8 +348,8 @@ export default function OverviewCockpit() {
               { label: "Voir Email Center",       href: "/x8k3pz/emails",     accent: false },
             ] as { label: string; href: string; accent: boolean }[]).map((a, i, arr) => (
               <Link key={i} href={a.href} style={{ textDecoration: "none" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", background: a.accent ? "rgba(59,130,246,0.07)" : "transparent", borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", cursor: "pointer" }}>
-                  <span style={{ fontSize: 13, fontWeight: a.accent ? 700 : 500, color: a.accent ? "#60a5fa" : "rgba(255,255,255,0.7)" }}>{a.label}</span>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", background: a.accent ? "rgba(201,150,63,0.07)" : "transparent", borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", cursor: "pointer" }}>
+                  <span style={{ fontSize: 13, fontWeight: a.accent ? 700 : 500, color: a.accent ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.7)" }}>{a.label}</span>
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>→</span>
                 </div>
               </Link>

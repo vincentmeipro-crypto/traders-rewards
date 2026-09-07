@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
@@ -130,8 +130,8 @@ function SidebarInner() {
                   <Link key={item.id} href={item.href} style={{
                     display: "flex", alignItems: "center", gap: 6,
                     padding: item.sub ? "7px 14px 7px 22px" : "9px 14px",
-                    background: active ? "linear-gradient(110deg,rgba(156,207,234,.22),rgba(199,208,215,.07))" : "transparent",
-                    borderLeft: `3px solid ${active ? "#9CCFEA" : "transparent"}`,
+                    background: active ? "linear-gradient(110deg,rgba(201,150,63,.22),rgba(201,150,63,.07))" : "transparent",
+                    borderLeft: `3px solid ${active ? "#C9963F" : "transparent"}`,
                     borderRadius: "0 6px 6px 0",
                     color: active ? "#fff" : item.sub ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.6)",
                     fontWeight: active ? 700 : item.sub ? 400 : 500,
@@ -141,7 +141,7 @@ function SidebarInner() {
                     {item.label}
                     {item.id === "support" && (supportCounts.tickets > 0 || supportCounts.chat > 0) && (
                       <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                        {supportCounts.tickets > 0 && <span title={`${supportCounts.tickets} nouveau(x) ticket(s)`} style={{ minWidth: 22, height: 19, padding: "0 6px", display: "inline-grid", placeItems: "center", borderRadius: 100, background: "#9CCFEA", color: "#061018", fontSize: 9, fontWeight: 900 }}>✉ {supportCounts.tickets > 99 ? "99+" : supportCounts.tickets}</span>}
+                        {supportCounts.tickets > 0 && <span title={`${supportCounts.tickets} nouveau(x) ticket(s)`} style={{ minWidth: 22, height: 19, padding: "0 6px", display: "inline-grid", placeItems: "center", borderRadius: 100, background: "#C9963F", color: "#0A0A0B", fontSize: 9, fontWeight: 900 }}>✉ {supportCounts.tickets > 99 ? "99+" : supportCounts.tickets}</span>}
                         {supportCounts.chat > 0 && <span title={`${supportCounts.chat} chat(s) à traiter`} style={{ minWidth: 22, height: 19, padding: "0 6px", display: "inline-grid", placeItems: "center", borderRadius: 100, background: "#ef4444", color: "#fff", fontSize: 9, fontWeight: 900 }}>● {supportCounts.chat > 99 ? "99+" : supportCounts.chat}</span>}
                       </span>
                     )}
@@ -153,18 +153,18 @@ function SidebarInner() {
         })}
       </nav>
 
-      {/* Footer CTA */}
-      <div style={{ padding: "12px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+      {/* Footer CTA — dark + gold border */}
+      <div style={{ padding: "12px", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
         <Link href="/x8k3pz?t=create" style={{
           display: "flex", alignItems: "center", justifyContent: "center",
           padding: "9px 14px",
-          background: "linear-gradient(110deg,#f3f7f9,#9ccfea 40%,#e9eef2 72%,#788b98)",
-          border: "1px solid rgba(255,255,255,.65)",
-          borderRadius: 8, color: "#071018",
-          fontWeight: 700, fontSize: 12, letterSpacing: 0.3,
-          textDecoration: "none",
+          background: "linear-gradient(#0A0B0C, #0A0B0C) padding-box, linear-gradient(110deg, #8A6424 0%, #C99B45 22%, #F0D58A 45%, #D4AD5A 65%, #9B722B 100%) border-box",
+          border: "1.5px solid transparent",
+          borderRadius: 8, color: "rgba(212,168,67,0.90)",
+          fontWeight: 800, fontSize: 11, letterSpacing: "0.6px",
+          textDecoration: "none", textTransform: "uppercase",
         }}>
-          + NOUVEAU CHALLENGE
+          + Nouveau Challenge
         </Link>
       </div>
     </aside>

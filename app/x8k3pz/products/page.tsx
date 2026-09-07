@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
@@ -66,7 +66,7 @@ const StatusBadge = ({ active }: { active: boolean }) => (
 
 const ModelBadge = ({ model }: { model: string }) => {
   const cfg = model === "2step"
-    ? { label: "2-STEP", bg: "rgba(59,130,246,0.1)",  color: "#60a5fa", border: "rgba(59,130,246,0.2)"  }
+    ? { label: "2-STEP", bg: "rgba(201,150,63,0.1)",  color: "rgba(201,150,63,0.85)", border: "rgba(201,150,63,0.2)"  }
     : model === "1step"
     ? { label: "1-STEP", bg: "rgba(168,85,247,0.1)",  color: "#c084fc", border: "rgba(168,85,247,0.2)"  }
     : { label: "VIP",    bg: "rgba(234,179,8,0.1)",   color: "#fbbf24", border: "rgba(234,179,8,0.2)"   };
@@ -257,12 +257,12 @@ export default function ProductsPage() {
             )}
           </label>
           <label style={{ fontSize: 12, color: "rgba(255,255,255,0.32)", cursor: "pointer", display: "flex", alignItems: "center", gap: 7, userSelect: "none" as const }}>
-            <input type="checkbox" checked={showArchives} onChange={e => setShowArchives(e.target.checked)} style={{ accentColor: "#9CCFEA", width: 14, height: 14 }} />
+            <input type="checkbox" checked={showArchives} onChange={e => setShowArchives(e.target.checked)} style={{ accentColor: "#C9963F", width: 14, height: 14 }} />
             Afficher les archives ({products.filter(product => !isCurrentOffer(product)).length})
           </label>
           <a
             href="/x8k3pz/products/new"
-            style={{ background: "linear-gradient(110deg,#eff7fa,#9ccfea 42%,#e8eef1 72%,#788b98)", color: "#071018", border: "1px solid rgba(255,255,255,.65)", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 900, textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}
+            style={{ background: "linear-gradient(110deg,#eff7fa,#C9963F 42%,#e8eef1 72%,#6B6B6B)", color: "#0A0A0B", border: "1px solid rgba(255,255,255,.65)", borderRadius: 8, padding: "9px 18px", fontSize: 13, fontWeight: 900, textDecoration: "none", display: "inline-block", whiteSpace: "nowrap" }}
           >
             + Nouveau produit
           </a>
@@ -313,7 +313,7 @@ export default function ProductsPage() {
                 <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>
                   {GROUP_LABELS[group.model]}
                 </span>
-                <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".12em", padding: "3px 8px", borderRadius: 4, color: group.model === "current" ? "#061018" : "#7f8c95", background: group.model === "current" ? "linear-gradient(110deg,#e9f4f9,#9ccfea,#dfe7eb)" : "rgba(255,255,255,.05)", border: "1px solid rgba(156,207,234,.2)" }}>{group.model === "current" ? "ACTUEL" : "HISTORIQUE"}</span>
+                <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: ".12em", padding: "3px 8px", borderRadius: 4, color: group.model === "current" ? "#0A0A0B" : "#7A7A7A", background: group.model === "current" ? "linear-gradient(110deg,#e9f4f9,#C9963F,#dfe7eb)" : "rgba(255,255,255,.05)", border: "1px solid rgba(201,150,63,.2)" }}>{group.model === "current" ? "ACTUEL" : "HISTORIQUE"}</span>
                 <span style={{ fontSize: 10, color: "rgba(255,255,255,0.22)" }}>
                   {group.items.length} produit{group.items.length > 1 ? "s" : ""}
                 </span>
@@ -386,7 +386,7 @@ export default function ProductsPage() {
                     <div style={{ fontSize: 16, fontWeight: 800, color: product.active ? "#fff" : "rgba(255,255,255,0.28)", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.3px" }}>
                       {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,.3)", textDecoration: "line-through", marginBottom: 2 }}>€{STANDARD_PRICES[product.slug]}</span>}
                       €{priceEur}
-                      {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 9, color: "#9ccfea", marginTop: 2 }}>LANCEMENT −90%</span>}
+                      {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 9, color: "#C9963F", marginTop: 2 }}>LANCEMENT −90%</span>}
                     </div>
 
                     {/* Règles contractuelles du Challenge — masqué en narrow */}
@@ -395,10 +395,10 @@ export default function ProductsPage() {
                         {p1 ? (
                           <div style={{ display: "flex", gap: 12, fontSize: 12, color: "rgba(255,255,255,0.42)", flexWrap: "wrap" }}>
                             {isCurrentOffer(product) ? <>
-                              <span>Objectif <strong style={{ color: "#9ccfea" }}>+6%</strong></span>
-                              <span>Trailing DD EOD <strong style={{ color: "#9ccfea" }}>{product.slug === "rewards-100k" ? "3%" : "4%"}</strong></span>
-                              <span>Consistance <strong style={{ color: "#9ccfea" }}>≤50%</strong></span>
-                              <span>Minimum <strong style={{ color: "#9ccfea" }}>2 jours</strong></span>
+                              <span>Objectif <strong style={{ color: "#C9963F" }}>+6%</strong></span>
+                              <span>Trailing DD EOD <strong style={{ color: "#C9963F" }}>{product.slug === "rewards-100k" ? "3%" : "4%"}</strong></span>
+                              <span>Consistance <strong style={{ color: "#C9963F" }}>≤50%</strong></span>
+                              <span>Minimum <strong style={{ color: "#C9963F" }}>2 jours</strong></span>
                             </> : <>
                               {p1.profit_target !== null && <span>Obj. <strong>{p1.profit_target}%</strong></span>}
                               <span>DD/j <strong>{p1.daily_drawdown}%</strong></span>

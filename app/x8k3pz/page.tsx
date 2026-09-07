@@ -248,7 +248,7 @@ function CustomSelect({ value, onChange, options, small }: {
   const fs = small ? 12 : 13;
   return (
     <div ref={ref} style={{ position: "relative", display: "inline-block" }}>
-      <button onClick={() => setOpen(o => !o)} style={{ backgroundColor: small ? "rgba(255,255,255,0.06)" : "#111111", border: `1px solid ${small ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.1)"}`, borderRadius: small ? 6 : 8, padding: pad, color: "#fff", fontSize: fs, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, outline: "none", whiteSpace: "nowrap" }}>
+      <button onClick={() => setOpen(o => !o)} style={{ backgroundColor: small ? "rgba(255,255,255,0.06)" : "#111111", border: `1px solid ${small ? "rgba(201,150,63,0.2)" : "rgba(255,255,255,0.1)"}`, borderRadius: small ? 6 : 8, padding: pad, color: "#fff", fontSize: fs, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, outline: "none", whiteSpace: "nowrap" }}>
         {selected?.label ?? value}
         <span style={{ fontSize: 10, opacity: 0.6, marginLeft: 2 }}>▾</span>
       </button>
@@ -972,9 +972,9 @@ function AdminPageInner() {
                     aria-label={item.label}
                     style={{
                       width: "100%", textAlign: "left", padding: "12px 20px",
-                      background: tab === item.id ? "rgba(59,130,246,0.06)" : "transparent",
+                      background: tab === item.id ? "rgba(201,150,63,0.06)" : "transparent",
                       border: "none",
-                      borderLeft: `3px solid ${tab === item.id ? "#3b82f6" : "transparent"}`,
+                      borderLeft: `3px solid ${tab === item.id ? "#C9963F" : "transparent"}`,
                       color: tab === item.id ? "#fff" : "rgba(255,255,255,0.65)",
                       fontSize: 13, fontWeight: tab === item.id ? 700 : 400, cursor: "pointer",
                     }}>
@@ -991,7 +991,7 @@ function AdminPageInner() {
                   return (
                     <button key={t.id} onClick={() => { setTab(t.id); setDrawerOpen(false); }}
                       aria-label={t.label}
-                      style={{ flex: 1, padding: "4px 2px 6px", background: "none", border: "none", borderTop: `2px solid ${isActive ? "#3b82f6" : "transparent"}`, color: isActive ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: isActive ? 700 : 400, cursor: "pointer", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", gap: 2, letterSpacing: "0.2px" }}>
+                      style={{ flex: 1, padding: "4px 2px 6px", background: "none", border: "none", borderTop: `2px solid ${isActive ? "#C9963F" : "transparent"}`, color: isActive ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: isActive ? 700 : 400, cursor: "pointer", position: "relative", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", gap: 2, letterSpacing: "0.2px" }}>
                       {badgeCount > 0 && <span style={{ position: "absolute", top: 6, right: "15%", background: t.id === "crm" ? "#f59e0b" : "#ef4444", color: t.id === "crm" ? "#000" : "#fff", borderRadius: 100, padding: "1px 4px", fontSize: 8, fontWeight: 900, lineHeight: 1.4 }}>{badgeCount}</span>}
                       {t.label}
                     </button>
@@ -1001,7 +1001,7 @@ function AdminPageInner() {
                 <button onClick={() => setDrawerOpen(o => !o)}
                   aria-label="Menu secondaire"
                   aria-expanded={drawerOpen}
-                  style={{ flex: 1, padding: "4px 2px 6px", background: "none", border: "none", borderTop: `2px solid ${drawerOpen ? "#3b82f6" : "transparent"}`, color: drawerOpen ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: drawerOpen ? 700 : 400, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", gap: 2 }}>
+                  style={{ flex: 1, padding: "4px 2px 6px", background: "none", border: "none", borderTop: `2px solid ${drawerOpen ? "#C9963F" : "transparent"}`, color: drawerOpen ? "#fff" : "rgba(255,255,255,0.4)", fontSize: 10, fontWeight: drawerOpen ? 700 : 400, cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-end", gap: 2 }}>
                   <span style={{ fontSize: 15, lineHeight: 1 }}>≡</span>
                   Menu
                 </button>
@@ -1047,7 +1047,7 @@ function AdminPageInner() {
           const events: EvType[] = [
             ...challenges
               .filter(c => c.phase === "phase1" || c.model === "instant")
-              .map(c => ({ at: c.created_at, label: "Nouveau challenge", sub: `${c.account_size} · ${c.user_email}`, color: "#3b82f6" })),
+              .map(c => ({ at: c.created_at, label: "Nouveau challenge", sub: `${c.account_size} · ${c.user_email}`, color: "#C9963F" })),
             ...challenges
               .filter(c => c.phase === "phase2" && c.status !== "failed")
               .map(c => ({ at: c.created_at, label: "Challenge validé", sub: `${c.account_size} · ${c.user_email}`, color: "#22c55e" })),
@@ -1131,7 +1131,7 @@ function AdminPageInner() {
                             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>€{kpis.pendingAmt.toLocaleString()} à valider</div>
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <span style={{ background: "#3b82f620", color: "#3b82f6", fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100 }}>{kpis.pendingPayouts}</span>
+                            <span style={{ background: "#C9963F20", color: "#C9963F", fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 100 }}>{kpis.pendingPayouts}</span>
                             <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 12 }}>→</span>
                           </div>
                         </button>
@@ -1225,7 +1225,7 @@ function AdminPageInner() {
                       { label: "Ajouter un Produit",   action: () => { window.location.href = "/x8k3pz/products"; }, accent: false },
                       { label: "Créer un Code Promo",  action: () => setTab("promos"),   accent: false },
                     ] as { label: string; action: () => void; accent: boolean }[]).map((a, i) => (
-                      <button key={i} onClick={a.action} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "13px 20px", background: a.accent ? "rgba(59,130,246,0.07)" : "none", border: "none", borderBottom: i < 5 ? "1px solid rgba(255,255,255,0.04)" : "none", color: a.accent ? "#60a5fa" : "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: a.accent ? 700 : 500, cursor: "pointer", textAlign: "left" }}>
+                      <button key={i} onClick={a.action} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "13px 20px", background: a.accent ? "rgba(201,150,63,0.07)" : "none", border: "none", borderBottom: i < 5 ? "1px solid rgba(255,255,255,0.04)" : "none", color: a.accent ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: a.accent ? 700 : 500, cursor: "pointer", textAlign: "left" }}>
                         {a.label}
                         <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>→</span>
                       </button>
@@ -1305,7 +1305,7 @@ function AdminPageInner() {
                   <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>Challenges</div>
                   <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>Gestion et surveillance des comptes</div>
                 </div>
-                <button onClick={() => setTab("create")} style={{ padding: "9px 18px", background: "#3b82f6", border: "none", borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
+                <button onClick={() => setTab("create")} style={{ padding: "9px 18px", background: "#C9963F", border: "none", borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
                   + Nouveau Challenge
                 </button>
               </div>
@@ -1342,9 +1342,9 @@ function AdminPageInner() {
                   {pills.map(p => (
                     <button key={p.id} onClick={() => setPipelineFilter(p.id)} style={{
                       padding: "5px 12px", borderRadius: 100, cursor: "pointer", whiteSpace: "nowrap",
-                      border: `1px solid ${pipelineFilter === p.id ? "#3b82f6" : "rgba(255,255,255,0.1)"}`,
-                      background: pipelineFilter === p.id ? "rgba(59,130,246,0.12)" : "transparent",
-                      color: pipelineFilter === p.id ? "#60a5fa" : "rgba(255,255,255,0.5)",
+                      border: `1px solid ${pipelineFilter === p.id ? "#C9963F" : "rgba(255,255,255,0.1)"}`,
+                      background: pipelineFilter === p.id ? "rgba(201,150,63,0.12)" : "transparent",
+                      color: pipelineFilter === p.id ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.5)",
                       fontSize: 12, fontWeight: pipelineFilter === p.id ? 700 : 400,
                     }}>
                       {p.label}{p.cnt > 0 && p.id !== "all" ? ` · ${p.cnt}` : ""}
@@ -1404,7 +1404,7 @@ function AdminPageInner() {
                             <tbody key={c.id}>
                               {/* Ligne principale */}
                               <tr
-                                style={{ borderBottom: isExpanded ? "none" : "1px solid rgba(255,255,255,0.05)", background: isExpanded ? "rgba(59,130,246,0.04)" : isEditing ? "rgba(59,130,246,0.02)" : "transparent", cursor: isEditing ? "default" : "pointer" }}
+                                style={{ borderBottom: isExpanded ? "none" : "1px solid rgba(255,255,255,0.05)", background: isExpanded ? "rgba(201,150,63,0.04)" : isEditing ? "rgba(201,150,63,0.02)" : "transparent", cursor: isEditing ? "default" : "pointer" }}
                                 onClick={isEditing ? undefined : () => setExpandedChallenge(isExpanded ? null : c.id)}
                               >
                                 {/* Trader */}
@@ -1450,7 +1450,7 @@ function AdminPageInner() {
                                           options={[{ value: "phase1", label: "Étape 1" }, { value: "phase2", label: "Étape 2" }, { value: "funded", label: "Reward" }]}
                                         />
                                     : isV1c
-                                      ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                      ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(201,150,63,0.12)", color: c.phase === "funded" ? "#22c55e" : "rgba(201,150,63,0.85)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
                                           {v1Level}
                                         </span>
                                       : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
@@ -1469,7 +1469,7 @@ function AdminPageInner() {
                                 {/* Balance */}
                                 <td style={{ padding: "11px 12px", minWidth: 90 }}>
                                   {isEditing
-                                    ? <input type="number" value={editData.balance ?? c.balance} onChange={e => { const nb = Number(e.target.value); setEditData(d => ({ ...d, balance: nb, daily_low_equity: Math.min(d.daily_low_equity ?? c.daily_low_equity ?? c.balance, nb) })); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
+                                    ? <input type="number" value={editData.balance ?? c.balance} onChange={e => { const nb = Number(e.target.value); setEditData(d => ({ ...d, balance: nb, daily_low_equity: Math.min(d.daily_low_equity ?? c.daily_low_equity ?? c.balance, nb) })); }} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 6, padding: "4px 8px", color: "#fff", fontSize: 12, width: 90 }} />
                                     : <div>
                                         <div style={{ fontSize: 13, fontWeight: 700, color: c.status === "failed" ? "#ef4444" : "#fff", fontVariantNumeric: "tabular-nums" }}>
                                           ${(c.status === "failed" && c.breach_equity ? Math.round(c.breach_equity) : c.balance)?.toLocaleString() ?? "—"}
@@ -1487,7 +1487,7 @@ function AdminPageInner() {
                                 {/* J. tradés */}
                                 <td style={{ padding: "11px 12px" }} onClick={e => e.stopPropagation()}>
                                   {isEditing
-                                    ? <input type="number" min={0} value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
+                                    ? <input type="number" min={0} value={editData.trading_days ?? c.trading_days} onChange={e => setEditData(d => ({ ...d, trading_days: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 5, padding: "4px 8px", color: "#fff", fontSize: 12, width: 55 }} />
                                     : <span style={{ color: (isV1c && c.phase !== "funded") ? "#22c55e" : (c.trading_days ?? 0) >= 5 ? "#22c55e" : "rgba(255,255,255,0.65)", fontWeight: 600, fontSize: 12, fontVariantNumeric: "tabular-nums" }}>{c.trading_days ?? 0}</span>
                                   }
                                 </td>
@@ -1526,9 +1526,9 @@ function AdminPageInner() {
                                 {/* MT5 login */}
                                 <td style={{ padding: "11px 12px" }} onClick={e => e.stopPropagation()}>
                                   {isEditing
-                                    ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "3px 6px", color: "#60A5FA", fontSize: 11, width: 90, fontFamily: "monospace" }} />
+                                    ? <input type="text" value={editData.mt5_login ?? c.mt5_login ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_login: Number(e.target.value) }))} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 5, padding: "3px 6px", color: "rgba(201,150,63,0.85)", fontSize: 11, width: 90, fontFamily: "monospace" }} />
                                     : c.mt5_login
-                                      ? <button onClick={() => copyToClipboard(String(c.mt5_login))} title="Copier login" style={{ background: "none", border: "none", color: "#60A5FA", fontSize: 11, fontFamily: "monospace", cursor: "pointer", padding: 0 }}>{c.mt5_login} ⎘</button>
+                                      ? <button onClick={() => copyToClipboard(String(c.mt5_login))} title="Copier login" style={{ background: "none", border: "none", color: "rgba(201,150,63,0.85)", fontSize: 11, fontFamily: "monospace", cursor: "pointer", padding: 0 }}>{c.mt5_login} ⎘</button>
                                       : <span style={{ color: "rgba(255,255,255,0.2)", fontSize: 11 }}>—</span>
                                   }
                                 </td>
@@ -1571,7 +1571,7 @@ function AdminPageInner() {
                               {isExpanded && (
                                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                                   <td colSpan={9} style={{ padding: 0 }}>
-                                    <div style={{ background: "rgba(0,0,0,0.22)", borderTop: "1px solid rgba(59,130,246,0.1)", padding: isMobile ? "16px" : "20px 28px", display: "flex", flexDirection: "column", gap: 20 }}>
+                                    <div style={{ background: "rgba(0,0,0,0.22)", borderTop: "1px solid rgba(201,150,63,0.1)", padding: isMobile ? "16px" : "20px 28px", display: "flex", flexDirection: "column", gap: 20 }}>
 
                                       {/* P7 — Challenge card dominante (pleine largeur) */}
                                       <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "18px 20px" }}>
@@ -1579,7 +1579,7 @@ function AdminPageInner() {
                                         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16, flexWrap: "wrap" }}>
                                           <span style={{ fontSize: 16, fontWeight: 900, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{c.account_size}</span>
                                           {isV1c
-                                            ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(59,130,246,0.12)", color: c.phase === "funded" ? "#22c55e" : "#60a5fa", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
+                                            ? <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : "rgba(201,150,63,0.12)", color: c.phase === "funded" ? "#22c55e" : "rgba(201,150,63,0.85)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
                                                 {v1Level}
                                               </span>
                                             : <span style={{ background: c.phase === "funded" ? "rgba(34,197,94,0.12)" : c.phase === "phase2" ? "rgba(245,158,11,0.12)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#22c55e" : c.phase === "phase2" ? "#f59e0b" : "rgba(255,255,255,0.5)", fontSize: 11, fontWeight: 700, padding: "3px 8px", borderRadius: 6 }}>
@@ -1743,8 +1743,8 @@ function AdminPageInner() {
                                                 {/* Inputs edit en mode édition */}
                                                 {isEditing && (
                                                   <div style={{ display: "flex", flexDirection: "column", gap: 5, marginTop: 4, paddingTop: 10, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                                                    <input type="text" placeholder="Modifier password" value={editData.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "5px 10px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
-                                                    <input type="text" placeholder="Modifier serveur" value={editData.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 5, padding: "5px 10px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
+                                                    <input type="text" placeholder="Modifier password" value={editData.mt5_password ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_password: e.target.value }))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 5, padding: "5px 10px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
+                                                    <input type="text" placeholder="Modifier serveur" value={editData.mt5_server ?? ""} onChange={e => setEditData(d => ({ ...d, mt5_server: e.target.value }))} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 5, padding: "5px 10px", color: "#fff", fontSize: 11, fontFamily: "monospace" }} />
                                                   </div>
                                                 )}
                                               </div>
@@ -1758,7 +1758,7 @@ function AdminPageInner() {
                                           {/* P5 — Actions rapides */}
                                           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                                             <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 2 }}>Actions rapides</div>
-                                            <button onClick={() => sendAccessEmail(c.user_email)} style={{ padding: "9px 14px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 7, color: "#60a5fa", fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "left" }}>
+                                            <button onClick={() => sendAccessEmail(c.user_email)} style={{ padding: "9px 14px", background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 7, color: "rgba(201,150,63,0.85)", fontSize: 12, fontWeight: 600, cursor: "pointer", textAlign: "left" }}>
                                               {accessEmailMsg[c.user_email] || "Renvoyer accès email"}
                                             </button>
                                             {!c.mt5_login && !provisionMsg[c.id] && (
@@ -1847,7 +1847,7 @@ function AdminPageInner() {
                   { label: "Total Algo", value: algoChallenges.length, color: "#a78bfa" },
                   { label: "Actifs",     value: algoActive,           color: "#22c55e" },
                   { label: "Passés",     value: algoPassed,           color: "#f59e0b" },
-                  { label: "Reward",     value: algoFunded,           color: "#3b82f6" },
+                  { label: "Reward",     value: algoFunded,           color: "#C9963F" },
                   { label: "Failed",     value: algoFailed,           color: "#ef4444" },
                 ].map((s, i) => (
                   <div key={i} style={{ flex: 1, minWidth: 90, background: "#111111", border: `1px solid ${s.color}33`, borderRadius: 10, padding: "14px 16px", textAlign: "center" }}>
@@ -2036,7 +2036,7 @@ function AdminPageInner() {
                 const kycLbl   = !kyc ? "Non soumis" : kyc.kyc_status === "approved" ? "KYC" : kyc.kyc_status === "rejected" ? "Refusé" : "En attente";
 
                 return (
-                  <div key={trader.email} style={{ background: "#0c0c0c", border: `1px solid ${isOpen ? "rgba(59,130,246,0.2)" : "rgba(255,255,255,0.08)"}`, borderRadius: 12, overflow: "hidden" }}>
+                  <div key={trader.email} style={{ background: "#0c0c0c", border: `1px solid ${isOpen ? "rgba(201,150,63,0.2)" : "rgba(255,255,255,0.08)"}`, borderRadius: 12, overflow: "hidden" }}>
 
                     {/* Ligne — fermée */}
                     <div
@@ -2097,7 +2097,7 @@ function AdminPageInner() {
                               </div>
                               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                                 <button onClick={() => sendAccessEmail(trader.email)}
-                                  style={{ padding: "8px 16px", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 8, color: "#60a5fa", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+                                  style={{ padding: "8px 16px", background: "rgba(201,150,63,0.1)", border: "1px solid rgba(201,150,63,0.25)", borderRadius: 8, color: "rgba(201,150,63,0.85)", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
                                   {accessEmailMsg[trader.email] || "Renvoyer accès"}
                                 </button>
                                 <button onClick={() => { setTab("pipeline"); setSearch(trader.email); }}
@@ -2111,7 +2111,7 @@ function AdminPageInner() {
                                   </a>
                                 )}
                                 <button onClick={() => setTab("create")}
-                                  style={{ padding: "8px 16px", background: "#3b82f6", border: "none", borderRadius: 8, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                                  style={{ padding: "8px 16px", background: "#C9963F", border: "none", borderRadius: 8, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                                   + Challenge
                                 </button>
                               </div>
@@ -2123,8 +2123,8 @@ function AdminPageInner() {
                                 { label: "Total payé", value: `€${trader.totalSpent.toLocaleString()}`, color: "#22c55e" },
                                 { label: "Challenges",  value: String(trader.challenges.length),            color: "#fff"    },
                                 { label: "Actifs",      value: String(activeC),                             color: activeC > 0 ? "#22c55e" : "rgba(255,255,255,0.25)" },
-                                { label: "Comptes Reward", value: String(certC), color: certC > 0 ? "#9ccfea" : "rgba(255,255,255,0.25)" },
-                                { label: "Rewards",     value: `€${totalRewardsPaid.toLocaleString()}`,     color: totalRewardsPaid > 0 ? "#3b82f6" : "rgba(255,255,255,0.25)" },
+                                { label: "Comptes Reward", value: String(certC), color: certC > 0 ? "#C9963F" : "rgba(255,255,255,0.25)" },
+                                { label: "Rewards",     value: `€${totalRewardsPaid.toLocaleString()}`,     color: totalRewardsPaid > 0 ? "#C9963F" : "rgba(255,255,255,0.25)" },
                                 { label: "Marge brute", value: `€${margeBrute.toLocaleString()}`,           color: margeBrute >= 0 ? "#22c55e" : "#ef4444" },
                               ] as { label: string; value: string; color: string }[]).map((k, i) => (
                                 <div key={i} style={{ background: "#111", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "10px 14px" }}>
@@ -2182,7 +2182,7 @@ function AdminPageInner() {
                                                 ) : null}
                                               </div>
                                               <button onClick={e => { e.stopPropagation(); setTab("pipeline"); setSearch(trader.email); }}
-                                                style={{ padding: "4px 10px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.18)", borderRadius: 5, color: "#60a5fa", fontSize: 10, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>
+                                                style={{ padding: "4px 10px", background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.18)", borderRadius: 5, color: "rgba(201,150,63,0.85)", fontSize: 10, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>
                                                 Pipeline
                                               </button>
                                             </div>
@@ -2226,7 +2226,7 @@ function AdminPageInner() {
                                 <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
                                   {([
                                     { label: "Total dépensé", value: `€${trader.totalSpent.toLocaleString()}`,  color: "#fff" },
-                                    { label: "Rewards reçus", value: `€${totalRewardsPaid.toLocaleString()}`,   color: totalRewardsPaid > 0 ? "#3b82f6" : "rgba(255,255,255,0.25)" },
+                                    { label: "Rewards reçus", value: `€${totalRewardsPaid.toLocaleString()}`,   color: totalRewardsPaid > 0 ? "#C9963F" : "rgba(255,255,255,0.25)" },
                                     { label: "Marge brute",   value: `€${margeBrute.toLocaleString()}`,         color: margeBrute >= 0 ? "#22c55e" : "#ef4444" },
                                     ...(failedC > 0 ? [{ label: "Échecs", value: String(failedC), color: "#ef4444" }] : []),
                                   ] as { label: string; value: string; color: string }[]).map((f, i) => (
@@ -2264,7 +2264,7 @@ function AdminPageInner() {
                                           {docFields.map(({ field, label }) =>
                                             kyc.doc_urls[field] ? (
                                               <a key={field} href={kyc.doc_urls[field]!} target="_blank" rel="noopener noreferrer"
-                                                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "4px 10px", color: "#60a5fa", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
+                                                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "4px 10px", color: "rgba(201,150,63,0.85)", fontSize: 11, fontWeight: 600, textDecoration: "none" }}>
                                                 {label}
                                               </a>
                                             ) : null
@@ -2466,7 +2466,7 @@ function AdminPageInner() {
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
                     {([
                       { label: "CA du mois",     value: `€${kpis.caMonth.toLocaleString()}`,     color: "#fff" },
-                      { label: "Rewards versés", value: `€${totalPaid.toLocaleString()}`,         color: totalPaid  > 0 ? "#3b82f6" : "rgba(255,255,255,0.25)" },
+                      { label: "Rewards versés", value: `€${totalPaid.toLocaleString()}`,         color: totalPaid  > 0 ? "#C9963F" : "rgba(255,255,255,0.25)" },
                       { label: "En attente",     value: `€${pendingAmt.toLocaleString()}`,        color: pendingAmt > 0 ? "#f59e0b" : "rgba(255,255,255,0.25)" },
                       { label: "Marge du mois",  value: `${kpis.margeMonth}%`,                   color: kpis.margeMonth > 0 ? "#22c55e" : "#ef4444" },
                     ] as { label: string; value: string; color: string }[]).map((k, i) => (
@@ -2500,7 +2500,7 @@ function AdminPageInner() {
                             {monthlyRevenue.map(m => (
                               <div key={m.month} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, minWidth: 52 }}>
                                 <div style={{ fontSize: 10, color: "#22c55e", fontWeight: 700 }}>€{Math.round(m.ca / 1000)}k</div>
-                                <div style={{ width: 38, backgroundColor: "#3b82f6", borderRadius: "4px 4px 0 0", height: Math.max(4, m.ca / maxCA * 120) }} title={`€${m.ca}`} />
+                                <div style={{ width: 38, backgroundColor: "#C9963F", borderRadius: "4px 4px 0 0", height: Math.max(4, m.ca / maxCA * 120) }} title={`€${m.ca}`} />
                                 {m.payoutsAmt > 0 && <div style={{ width: 38, backgroundColor: "#ef4444", borderRadius: "0 0 4px 4px", height: Math.max(2, m.payoutsAmt / maxCA * 120), marginTop: -4 }} title={`Rewards: €${m.payoutsAmt}`} />}
                                 <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textAlign: "center" }}>{m.month.slice(5)}/{m.month.slice(2, 4)}</div>
                                 <div style={{ fontSize: 9, color: m.marge > 50 ? "#22c55e" : "rgba(255,255,255,0.3)" }}>{m.marge}%</div>
@@ -2508,7 +2508,7 @@ function AdminPageInner() {
                             ))}
                           </div>
                           <div style={{ display: "flex", gap: 16, marginTop: 10 }}>
-                            <span style={{ fontSize: 10, color: "#3b82f6" }}>■ CA</span>
+                            <span style={{ fontSize: 10, color: "#C9963F" }}>■ CA</span>
                             <span style={{ fontSize: 10, color: "#ef4444" }}>■ Rewards</span>
                             <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>% marge</span>
                           </div>
@@ -2566,7 +2566,7 @@ function AdminPageInner() {
                                     <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{p.user_email}</div>
                                     {kyc && <div style={{ fontSize: 10, color: kycOk ? "#22c55e" : kyc.kyc_status === "rejected" ? "#ef4444" : "#f59e0b", marginTop: 2 }}>KYC {kycOk ? "Validé" : kyc.kyc_status === "rejected" ? "Refusé" : "En attente"}</div>}
                                     {ch && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontFamily: "monospace", marginTop: 1 }}>MT5 {ch.mt5_login}</div>}
-                                    {p.wallet_address && <div onClick={() => navigator.clipboard.writeText(p.wallet_address!)} style={{ fontSize: 10, color: "#60a5fa", fontFamily: "monospace", cursor: "pointer", marginTop: 1 }} title="Copier">{p.wallet_address.length > 16 ? p.wallet_address.slice(0,8) + "…" + p.wallet_address.slice(-6) : p.wallet_address}</div>}
+                                    {p.wallet_address && <div onClick={() => navigator.clipboard.writeText(p.wallet_address!)} style={{ fontSize: 10, color: "rgba(201,150,63,0.85)", fontFamily: "monospace", cursor: "pointer", marginTop: 1 }} title="Copier">{p.wallet_address.length > 16 ? p.wallet_address.slice(0,8) + "…" + p.wallet_address.slice(-6) : p.wallet_address}</div>}
                                   </td>
                                   <td style={{ padding: "12px 16px" }}>
                                     <div style={{ fontSize: 16, fontWeight: 900, color: p.status === "paid" ? "#22c55e" : p.status === "rejected" ? "#ef4444" : "#fff", fontVariantNumeric: "tabular-nums" }}>€{p.amount?.toLocaleString()}</div>
@@ -2651,7 +2651,7 @@ function AdminPageInner() {
                                   <td style={{ padding: "12px 16px" }}>
                                     <button onClick={() => { setTab("crm"); setCrmExpanded(c.user_email); }}
                                       style={{ background: "none", border: "none", padding: 0, cursor: "pointer", textAlign: "left" }}>
-                                      <div style={{ fontSize: 12, fontWeight: 700, color: "#60a5fa" }}>{traderName}</div>
+                                      <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(201,150,63,0.85)" }}>{traderName}</div>
                                       {traderName !== c.user_email && <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>{c.user_email}</div>}
                                     </button>
                                   </td>
@@ -2687,7 +2687,7 @@ function AdminPageInner() {
                         Registre des versements <span style={{ fontWeight: 400, color: "rgba(255,255,255,0.3)" }}>({histList.length})</span>
                       </div>
                       <button onClick={exportCSV}
-                        style={{ padding: "7px 16px", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: 8, color: "#60a5fa", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                        style={{ padding: "7px 16px", background: "rgba(201,150,63,0.1)", border: "1px solid rgba(201,150,63,0.25)", borderRadius: 8, color: "rgba(201,150,63,0.85)", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                         Export CSV
                       </button>
                     </div>
@@ -2721,7 +2721,7 @@ function AdminPageInner() {
                                 </td>
                                 <td style={{ padding: "11px 14px" }}>
                                   <a href={receiptUrl} target="_blank" rel="noreferrer"
-                                    style={{ background: "rgba(59,130,246,0.1)", color: "#60a5fa", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 7, border: "1px solid rgba(59,130,246,0.2)", textDecoration: "none" }}>
+                                    style={{ background: "rgba(201,150,63,0.1)", color: "rgba(201,150,63,0.85)", fontWeight: 700, fontSize: 11, padding: "4px 10px", borderRadius: 7, border: "1px solid rgba(201,150,63,0.2)", textDecoration: "none" }}>
                                     PDF
                                   </a>
                                 </td>
@@ -2815,7 +2815,7 @@ function AdminPageInner() {
                     style={{ display: "flex", alignItems: "center", gap: 5, padding: "7px 14px", background: marketingView === v.id ? "#111" : "transparent", border: `1px solid ${marketingView === v.id ? "rgba(255,255,255,0.1)" : "transparent"}`, borderRadius: 7, color: marketingView === v.id ? "#fff" : "rgba(255,255,255,0.38)", fontSize: 12, fontWeight: marketingView === v.id ? 700 : 400, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}>
                     {v.label}
                     {v.id === "promotions" && activePromos.length > 0 && <span style={{ background: "#22c55e", color: "#000", fontSize: 10, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activePromos.length}</span>}
-                    {v.id === "affilies"   && activeAffiliates.length > 0 && <span style={{ background: "#3b82f6", color: "#fff", fontSize: 10, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activeAffiliates.length}</span>}
+                    {v.id === "affilies"   && activeAffiliates.length > 0 && <span style={{ background: "#C9963F", color: "#fff", fontSize: 10, fontWeight: 900, padding: "1px 5px", borderRadius: 10, lineHeight: 1.4 }}>{activeAffiliates.length}</span>}
                   </button>
                 ))}
               </div>
@@ -2827,7 +2827,7 @@ function AdminPageInner() {
                     {([
                       { label: "Affiliés actifs",      value: String(activeAffiliates.length),                        color: "#fff"    },
                       { label: "Codes actifs",          value: String(activePromos.length),                            color: "#22c55e" },
-                      { label: "Conversions totales",   value: String(totalConversions),                               color: "#3b82f6" },
+                      { label: "Conversions totales",   value: String(totalConversions),                               color: "#C9963F" },
                       { label: "Commissions générées",  value: `€${totalCommissions.toLocaleString()}`,                color: "#f59e0b" },
                     ] as { label: string; value: string; color: string }[]).map((k, i) => (
                       <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 22px" }}>
@@ -2840,7 +2840,7 @@ function AdminPageInner() {
                     <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
                       <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Top affiliés</div>
-                        <button onClick={() => setMarketingView("affilies")} style={{ background: "none", border: "none", color: "#60a5fa", fontSize: 12, cursor: "pointer", padding: 0 }}>Voir tous</button>
+                        <button onClick={() => setMarketingView("affilies")} style={{ background: "none", border: "none", color: "rgba(201,150,63,0.85)", fontSize: 12, cursor: "pointer", padding: 0 }}>Voir tous</button>
                       </div>
                       {!affiliatesLoaded
                         ? <div style={{ padding: "28px 20px", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 12 }}>Chargement...</div>
@@ -2858,7 +2858,7 @@ function AdminPageInner() {
                                     <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontFamily: "monospace" }}>{a.code}</div>
                                   </div>
                                   <div style={{ textAlign: "right", flexShrink: 0 }}>
-                                    <div style={{ fontSize: 12, fontWeight: 800, color: "#3b82f6" }}>{a.referrals.length} conv.</div>
+                                    <div style={{ fontSize: 12, fontWeight: 800, color: "#C9963F" }}>{a.referrals.length} conv.</div>
                                     <div style={{ fontSize: 10, color: "#f59e0b" }}>€{comm.toLocaleString()}</div>
                                   </div>
                                 </div>
@@ -2868,7 +2868,7 @@ function AdminPageInner() {
                     <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
                       <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Promotions actives</div>
-                        <button onClick={() => setMarketingView("promotions")} style={{ background: "none", border: "none", color: "#60a5fa", fontSize: 12, cursor: "pointer", padding: 0 }}>Voir toutes</button>
+                        <button onClick={() => setMarketingView("promotions")} style={{ background: "none", border: "none", color: "rgba(201,150,63,0.85)", fontSize: 12, cursor: "pointer", padding: 0 }}>Voir toutes</button>
                       </div>
                       {promosLoading
                         ? <div style={{ padding: "28px 20px", textAlign: "center", color: "rgba(255,255,255,0.25)", fontSize: 12 }}>Chargement...</div>
@@ -2877,7 +2877,7 @@ function AdminPageInner() {
                           : activePromos.slice(0, 5).map((p, i) => (
                               <div key={p.id} style={{ padding: "12px 20px", borderBottom: i < Math.min(5, activePromos.length) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", display: "flex", alignItems: "center", gap: 12 }}>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                  <button type="button" onClick={() => void copyPromoToClipboard(p.code)} title={`Copier ${p.code}`} aria-label={`Copier le code promo ${p.code}`} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: 0, border: 0, background: "none", color: copiedPromoCode === p.code ? "#4ade80" : "#fff", fontSize: 12, fontWeight: 800, fontFamily: "monospace", cursor: "copy" }}>{p.code}<span aria-hidden="true" style={{ color: copiedPromoCode === p.code ? "#4ade80" : "#60a5fa", fontSize: 10 }}>{copiedPromoCode === p.code ? "✓ Copié" : "▣"}</span></button>
+                                  <button type="button" onClick={() => void copyPromoToClipboard(p.code)} title={`Copier ${p.code}`} aria-label={`Copier le code promo ${p.code}`} style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: 0, border: 0, background: "none", color: copiedPromoCode === p.code ? "#4ade80" : "#fff", fontSize: 12, fontWeight: 800, fontFamily: "monospace", cursor: "copy" }}>{p.code}<span aria-hidden="true" style={{ color: copiedPromoCode === p.code ? "#4ade80" : "rgba(201,150,63,0.85)", fontSize: 10 }}>{copiedPromoCode === p.code ? "✓ Copié" : "▣"}</span></button>
                                   <div style={{ fontSize: 10, color: "#22c55e", marginTop: 1 }}>-{p.discount_percent}%</div>
                                 </div>
                                 <div style={{ textAlign: "right", flexShrink: 0 }}>
@@ -2916,7 +2916,7 @@ function AdminPageInner() {
                     <div style={{ display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 }}>
                       <a href="/x8k3pz/promotions" style={{
                         display: "inline-flex", alignItems: "center", gap: 8,
-                        padding: "10px 22px", background: "#3B82F6", border: "none",
+                        padding: "10px 22px", background: "#C9963F", border: "none",
                         borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700,
                         textDecoration: "none", whiteSpace: "nowrap",
                       }}>
@@ -2925,8 +2925,8 @@ function AdminPageInner() {
                       <a href="/x8k3pz/promotions/new" style={{
                         display: "inline-flex", alignItems: "center", justifyContent: "center",
                         padding: "9px 22px", background: "transparent",
-                        border: "1px solid rgba(59,130,246,0.3)",
-                        borderRadius: 8, color: "#60a5fa", fontSize: 12, fontWeight: 600,
+                        border: "1px solid rgba(201,150,63,0.3)",
+                        borderRadius: 8, color: "rgba(201,150,63,0.85)", fontSize: 12, fontWeight: 600,
                         textDecoration: "none", whiteSpace: "nowrap",
                       }}>
                         + Nouveau code
@@ -2939,7 +2939,7 @@ function AdminPageInner() {
                     <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, overflow: "hidden" }}>
                       <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.45)" }}>Codes actifs récents</div>
-                        <a href="/x8k3pz/promotions" style={{ background: "none", border: "none", color: "#60a5fa", fontSize: 12, cursor: "pointer", textDecoration: "none" }}>Voir tous</a>
+                        <a href="/x8k3pz/promotions" style={{ background: "none", border: "none", color: "rgba(201,150,63,0.85)", fontSize: 12, cursor: "pointer", textDecoration: "none" }}>Voir tous</a>
                       </div>
                       {activePromos.slice(0, 5).map((p, i) => (
                         <div key={p.id} style={{
@@ -2951,12 +2951,12 @@ function AdminPageInner() {
                           onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                         >
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <button type="button" onClick={() => void copyPromoToClipboard(p.code)} title={`Copier ${p.code}`} aria-label={`Copier le code promo ${p.code}`} style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: 0, border: 0, background: "none", color: copiedPromoCode === p.code ? "#4ade80" : "#fff", fontSize: 13, fontWeight: 800, fontFamily: "monospace", cursor: "copy" }}>{p.code}<span aria-hidden="true" style={{ color: copiedPromoCode === p.code ? "#4ade80" : "#60a5fa", fontSize: 10 }}>{copiedPromoCode === p.code ? "✓ Copié" : "▣"}</span></button>
+                            <button type="button" onClick={() => void copyPromoToClipboard(p.code)} title={`Copier ${p.code}`} aria-label={`Copier le code promo ${p.code}`} style={{ display: "inline-flex", alignItems: "center", gap: 7, padding: 0, border: 0, background: "none", color: copiedPromoCode === p.code ? "#4ade80" : "#fff", fontSize: 13, fontWeight: 800, fontFamily: "monospace", cursor: "copy" }}>{p.code}<span aria-hidden="true" style={{ color: copiedPromoCode === p.code ? "#4ade80" : "rgba(201,150,63,0.85)", fontSize: 10 }}>{copiedPromoCode === p.code ? "✓ Copié" : "▣"}</span></button>
                             <div style={{ fontSize: 10, color: "#22c55e", marginTop: 1 }}>-{p.discount_percent}%</div>
                           </div>
                           <div style={{ textAlign: "right", flexShrink: 0 }}>
                             <div style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{p.used_count} util.</div>
-                            <Link href={`/x8k3pz/promotions/${p.id}`} style={{ display: "block", marginTop: 2, color: "#60a5fa", fontSize: 10, textDecoration: "none" }}>Gérer →</Link>
+                            <Link href={`/x8k3pz/promotions/${p.id}`} style={{ display: "block", marginTop: 2, color: "rgba(201,150,63,0.85)", fontSize: 10, textDecoration: "none" }}>Gérer →</Link>
                           </div>
                         </div>
                       ))}
@@ -2974,7 +2974,7 @@ function AdminPageInner() {
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
                       {([
                         { label: "Total affiliés",         value: String(affiliates.length),          color: "#fff"    },
-                        { label: "Total conversions",      value: String(totalConversions),            color: "#3b82f6" },
+                        { label: "Total conversions",      value: String(totalConversions),            color: "#C9963F" },
                         { label: "Commissions en attente", value: `€${pendingTotal.toLocaleString()}`, color: "#f59e0b" },
                         { label: "Commissions payées",     value: `€${paidTotal.toLocaleString()}`,   color: "#22c55e" },
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
@@ -2988,7 +2988,7 @@ function AdminPageInner() {
                     <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
                       <input placeholder="Recherche email, nom ou code..." value={marketingSearch} onChange={e => setMarketingSearch(e.target.value)}
                         style={{ flex: 1, maxWidth: 340, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 7, padding: "8px 13px", color: "#fff", fontSize: 13, outline: "none" }} />
-                      <a href="/partenariat" target="_blank" style={{ fontSize: 12, color: "#60a5fa", textDecoration: "none", flexShrink: 0 }}>Page partenariat</a>
+                      <a href="/partenariat" target="_blank" style={{ fontSize: 12, color: "rgba(201,150,63,0.85)", textDecoration: "none", flexShrink: 0 }}>Page partenariat</a>
                     </div>
 
                     {affiliateMsg && (
@@ -3011,7 +3011,7 @@ function AdminPageInner() {
                             const pending      = a.referrals.filter(r => r.status === "pending").reduce((s, r) => s + (r.commission_amount || 0), 0);
                             const earned       = a.referrals.reduce((s, r) => s + (r.commission_amount || 0), 0);
                             const tierLabel    = a.commission_rate >= 20 ? "Elite" : a.commission_rate >= 15 ? "Partenaire" : "Débutant";
-                            const tierColor    = a.commission_rate >= 20 ? "#60a5fa" : a.commission_rate >= 15 ? "#60a5fa" : "#6b7280";
+                            const tierColor    = a.commission_rate >= 20 ? "rgba(201,150,63,0.85)" : a.commission_rate >= 15 ? "rgba(201,150,63,0.85)" : "#6b7280";
                             const linkedPromos = promos.filter(p => p.affiliate_user_id === a.user_id);
                             return (
                               <div key={a.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
@@ -3042,13 +3042,13 @@ function AdminPageInner() {
                                   </div>
                                   <div style={{ display: "flex", gap: 8, flexShrink: 0, alignItems: "center" }}>
                                     <button onClick={e => { e.stopPropagation(); setAffiliatePromoForm({ affiliateId: a.id, userId: a.user_id }); setAffiliatePromoData({ code: `${a.code}10`, discount: "10", maxUses: "" }); }}
-                                      style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "#60a5fa", borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>+ Promo</button>
+                                      style={{ background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.2)", color: "rgba(201,150,63,0.85)", borderRadius: 6, padding: "5px 10px", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>+ Promo</button>
                                     <span style={{ color: "rgba(255,255,255,0.25)", fontSize: 14 }}>{isOpen ? "▲" : "▼"}</span>
                                   </div>
                                 </div>
 
                                 {affiliatePromoForm?.affiliateId === a.id && (
-                                  <div style={{ margin: "0 20px 16px", background: "rgba(59,130,246,0.04)", border: "1px solid rgba(59,130,246,0.15)", borderRadius: 10, padding: "16px 20px" }}>
+                                  <div style={{ margin: "0 20px 16px", background: "rgba(201,150,63,0.04)", border: "1px solid rgba(201,150,63,0.15)", borderRadius: 10, padding: "16px 20px" }}>
                                     <div style={{ fontWeight: 700, fontSize: 13, color: "#fff", marginBottom: 12 }}>Créer un code promo pour cet affilié</div>
                                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "flex-end" }}>
                                       <div>
@@ -3067,7 +3067,7 @@ function AdminPageInner() {
                                           style={{ background: "#111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "7px 12px", fontSize: 13, color: "#fff", outline: "none", width: 100 }} />
                                       </div>
                                       <button onClick={createAffiliatePromo}
-                                        style={{ background: "#3b82f6", color: "#fff", border: "none", borderRadius: 6, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Créer</button>
+                                        style={{ background: "#C9963F", color: "#fff", border: "none", borderRadius: 6, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Créer</button>
                                       <button onClick={() => setAffiliatePromoForm(null)}
                                         style={{ background: "none", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.4)", borderRadius: 6, padding: "8px 12px", fontSize: 12, cursor: "pointer" }}>Annuler</button>
                                     </div>
@@ -3141,7 +3141,7 @@ function AdminPageInner() {
                                                   <tr key={r.id} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                                                     <td style={{ padding: "9px 14px", fontSize: 12, color: "#fff" }}>{rEmail}</td>
                                                     <td style={{ padding: "9px 14px", fontWeight: 700, color: "#fff", fontVariantNumeric: "tabular-nums" }}>€{((r.purchase_amount || 0) / 100).toLocaleString()}</td>
-                                                    <td style={{ padding: "9px 14px", fontWeight: 800, color: "#60a5fa", fontVariantNumeric: "tabular-nums" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
+                                                    <td style={{ padding: "9px 14px", fontWeight: 800, color: "rgba(201,150,63,0.85)", fontVariantNumeric: "tabular-nums" }}>€{((r.commission_amount || 0) / 100).toLocaleString()}</td>
                                                     <td style={{ padding: "9px 14px" }}>
                                                       <span style={{ background: r.status === "paid" ? "rgba(34,197,94,0.1)" : "rgba(245,158,11,0.1)", color: r.status === "paid" ? "#22c55e" : "#f59e0b", padding: "2px 8px", borderRadius: 100, fontSize: 11, fontWeight: 700 }}>
                                                         {r.status === "paid" ? "Payé" : "En attente"}
@@ -3254,7 +3254,7 @@ function AdminPageInner() {
                       <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Répartition des ventes</div>
                         {([
-                          { label: "Directes",    count: directCount, color: "#3b82f6", pct: Math.round(directCount / totalPurch * 100) },
+                          { label: "Directes",    count: directCount, color: "#C9963F", pct: Math.round(directCount / totalPurch * 100) },
                           { label: "Via affilié", count: refCount,    color: "#f59e0b", pct: Math.round(refCount    / totalPurch * 100) },
                         ] as { label: string; count: number; color: string; pct: number }[]).map(row => (
                           <div key={row.label} style={{ marginBottom: 14 }}>
@@ -3274,7 +3274,7 @@ function AdminPageInner() {
                       <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 16 }}>Méthodes de paiement</div>
                         {([
-                          { label: "Stripe / Carte", count: stripeCount, color: "#3b82f6" },
+                          { label: "Stripe / Carte", count: stripeCount, color: "#C9963F" },
                           { label: "Crypto",          count: cryptoCount, color: "#f59e0b" },
                           ...(totalPurch - stripeCount - cryptoCount > 0 ? [{ label: "Autre", count: totalPurch - stripeCount - cryptoCount, color: "#6b7280" }] : []),
                         ] as { label: string; count: number; color: string }[]).map(row => (
@@ -3314,7 +3314,7 @@ function AdminPageInner() {
                                       {a.first_name || a.last_name ? `${a.first_name || ""} ${a.last_name || ""}`.trim() : a.email || a.user_id.slice(0, 12) + "…"}
                                     </td>
                                     <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{a.code}</td>
-                                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "#3b82f6" }}>{a.referrals.length}</td>
+                                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "#C9963F" }}>{a.referrals.length}</td>
                                     <td style={{ padding: "10px 16px", fontWeight: 800, color: "#22c55e", fontVariantNumeric: "tabular-nums" }}>€{ca.toLocaleString()}</td>
                                     <td style={{ padding: "10px 16px", fontWeight: 700, color: "#f59e0b", fontVariantNumeric: "tabular-nums" }}>€{comm.toLocaleString()}</td>
                                   </tr>
@@ -3416,7 +3416,7 @@ function AdminPageInner() {
                           value={kycRejectReason[k.id] || ""}
                           onChange={e => setKycRejectReason(r => ({ ...r, [k.id]: e.target.value }))}
                           placeholder="Motif de refus (optionnel)..."
-                          style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 12, outline: "none" }}
+                          style={{ flex: 1, backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 8, padding: "8px 12px", color: "#fff", fontSize: 12, outline: "none" }}
                         />
                         <button onClick={() => updateKyc(k.id, "rejected", kycRejectReason[k.id])}
                           style={{ backgroundColor: "#ef444420", color: "#ef4444", border: "1px solid #ef444440", borderRadius: 8, padding: "8px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
@@ -3441,7 +3441,7 @@ function AdminPageInner() {
                   <button key={val} onClick={() => setCreateForm(f => ({ ...f, type: val }))} style={{
                     flex: 1, padding: "10px", borderRadius: 7, border: "none", cursor: "pointer",
                     fontSize: 13, fontWeight: 700,
-                    backgroundColor: createForm.type === val ? (val === "reward" ? "#60A5FA" : "#0D1B3E") : "transparent",
+                    backgroundColor: createForm.type === val ? (val === "reward" ? "rgba(201,150,63,0.85)" : "#0D1B3E") : "transparent",
                     color: createForm.type === val ? "#fff" : "#6b7280",
                     transition: "all 0.2s",
                   }}>{label}</button>
@@ -3449,7 +3449,7 @@ function AdminPageInner() {
               </div>
 
               {createForm.type === "reward" && (
-                <div style={{ background: "rgba(59,130,246,0.15)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 8, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#fff" }}>
+                <div style={{ background: "rgba(201,150,63,0.15)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 8, padding: "10px 14px", marginBottom: 20, fontSize: 12, color: "#fff" }}>
                   Le client recevra directement un <strong>Compte Reward</strong>. Cette action doit rester exceptionnelle et traçable.
                 </div>
               )}
@@ -3459,11 +3459,11 @@ function AdminPageInner() {
               </div>
 
               {[
-                { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
-                { label: "Prénom", el: <input type="text" value={createForm.firstName} onChange={e => setCreateForm(f => ({ ...f, firstName: e.target.value }))} placeholder="Jean" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
-                { label: "Nom", el: <input type="text" value={createForm.lastName} onChange={e => setCreateForm(f => ({ ...f, lastName: e.target.value }))} placeholder="Dupont" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
-                { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(156,207,234,.28)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none" }}><option>$25,000</option><option>$50,000</option><option>$100,000</option></select> },
-                { label: "Montant payé (€)", el: <input type="number" value={createForm.amountPaid} onChange={e => setCreateForm(f => ({ ...f, amountPaid: e.target.value }))} placeholder="ex: 6.90" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(59,130,246,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Email du trader", el: <input type="email" value={createForm.userEmail} onChange={e => setCreateForm(f => ({ ...f, userEmail: e.target.value }))} placeholder="trader@email.com" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Prénom", el: <input type="text" value={createForm.firstName} onChange={e => setCreateForm(f => ({ ...f, firstName: e.target.value }))} placeholder="Jean" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Nom", el: <input type="text" value={createForm.lastName} onChange={e => setCreateForm(f => ({ ...f, lastName: e.target.value }))} placeholder="Dupont" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
+                { label: "Taille du compte", el: <select value={createForm.accountSize} onChange={e => setCreateForm(f => ({ ...f, accountSize: e.target.value }))} style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,.28)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none" }}><option>$25,000</option><option>$50,000</option><option>$100,000</option></select> },
+                { label: "Montant payé (€)", el: <input type="number" value={createForm.amountPaid} onChange={e => setCreateForm(f => ({ ...f, amountPaid: e.target.value }))} placeholder="ex: 6.90" style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 8, padding: "10px 14px", fontSize: 14, color: "#fff", outline: "none", boxSizing: "border-box" as const }} /> },
               ].map((f, i) => (
                 <div key={i} style={{ marginBottom: 16 }}>
                   <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: 600, marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.5px" }}>{f.label}</div>
@@ -3477,7 +3477,7 @@ function AdminPageInner() {
               {createError && <div style={{ color: "#ef4444", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#ef444410", borderRadius: 8 }}>{createError}</div>}
               {createMsg && <div style={{ color: "#22c55e", fontSize: 13, marginBottom: 12, padding: "10px 14px", backgroundColor: "#22c55e10", borderRadius: 8 }}>{createMsg}</div>}
               <button onClick={createChallenge} disabled={createLoading || !createForm.userEmail}
-                style={{ width: "100%", backgroundColor: createForm.type === "reward" ? "#60A5FA" : "#60A5FA", color: createForm.type === "reward" ? "#fff" : "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
+                style={{ width: "100%", backgroundColor: createForm.type === "reward" ? "rgba(201,150,63,0.85)" : "rgba(201,150,63,0.85)", color: createForm.type === "reward" ? "#fff" : "#000", border: "none", borderRadius: 10, padding: "14px", fontSize: 15, fontWeight: 800, cursor: createLoading ? "not-allowed" : "pointer", opacity: createLoading ? 0.7 : 1 }}>
                 {createLoading ? "Création en cours..." : createForm.type === "reward" ? "⭐ Créer le compte Reward" : "🎯 Créer le challenge"}
               </button>
             </>)}
@@ -3575,7 +3575,7 @@ function AdminPageInner() {
           ].filter((x): x is { text: string; ok: boolean } => x !== null);
 
           // ── Helpers
-          const PBar = ({ value, max, color = "#3b82f6" }: { value: number; max: number; color?: string }) => (
+          const PBar = ({ value, max, color = "#C9963F" }: { value: number; max: number; color?: string }) => (
             <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 4, height: 6, overflow: "hidden" }}>
               <div style={{ width: `${max > 0 ? Math.min(100, Math.round(value / max * 100)) : 0}%`, background: color, borderRadius: 4, height: 6 }} />
             </div>
@@ -3646,8 +3646,8 @@ function AdminPageInner() {
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12 }}>
                     {([
                       { label: "CA annuel",         value: `€${Math.round(kpis.caYear).toLocaleString()}`,  color: "#fff"    },
-                      { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#3b82f6" },
-                      { label: "Comptes Reward", value: String(totalCert), color: "#9ccfea" },
+                      { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#C9963F" },
+                      { label: "Comptes Reward", value: String(totalCert), color: "#C9963F" },
                       { label: "Échoués",           value: String(totalFailed),                               color: "#ef4444" },
                       { label: "Dépense moyenne client", value: `€${Math.round(kpis.ltv).toLocaleString()}`, color: "#f59e0b" },
                       { label: "KYC en attente",    value: String(kycPending),                                color: kycPending > 0 ? "#f59e0b" : "#6b7280" },
@@ -3670,8 +3670,8 @@ function AdminPageInner() {
                       { label: "CA de l'année",  value: `€${Math.round(kpis.caYear).toLocaleString()}`,   color: "#fff"    },
                       { label: "Marge du mois",  value: `${kpis.margeMonth}%`,                            color: kpis.margeMonth >= 60 ? "#22c55e" : "#f59e0b" },
                       { label: "Marge annuelle", value: `${kpis.margeYear}%`,                             color: kpis.margeYear >= 60 ? "#22c55e" : "#f59e0b" },
-                      { label: "Panier moyen",   value: avgBasket > 0 ? `€${avgBasket}` : "—",           color: "#3b82f6" },
-                      { label: "Ventes ce mois", value: String(salesThisMonth),                            color: "#3b82f6" },
+                      { label: "Panier moyen",   value: avgBasket > 0 ? `€${avgBasket}` : "—",           color: "#C9963F" },
+                      { label: "Ventes ce mois", value: String(salesThisMonth),                            color: "#C9963F" },
                     ] as { label: string; value: string; color: string }[]).map((k, i) => (
                       <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 22px" }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{k.label}</div>
@@ -3696,7 +3696,7 @@ function AdminPageInner() {
                                 <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", fontVariantNumeric: "tabular-nums" }}>
                                   {m.ca >= 1000 ? `€${Math.round(m.ca / 1000)}k` : `€${Math.round(m.ca)}`}
                                 </div>
-                                <div style={{ width: "100%", flex: `0 0 ${h}%`, background: isCur ? "#3b82f6" : "rgba(59,130,246,0.35)", borderRadius: "3px 3px 0 0" }} />
+                                <div style={{ width: "100%", flex: `0 0 ${h}%`, background: isCur ? "#C9963F" : "rgba(201,150,63,0.35)", borderRadius: "3px 3px 0 0" }} />
                                 <div style={{ fontSize: 9, color: isCur ? "#fff" : "rgba(255,255,255,0.3)", fontWeight: isCur ? 700 : 400 }}>
                                   {m.month.slice(5, 7)}/{m.month.slice(2, 4)}
                                 </div>
@@ -3737,7 +3737,7 @@ function AdminPageInner() {
                   <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Méthodes de paiement</div>
                     {([
-                      { label: "Stripe / Carte", amount: caByCard,   count: countByCard,   color: "#3b82f6" },
+                      { label: "Stripe / Carte", amount: caByCard,   count: countByCard,   color: "#C9963F" },
                       { label: "Crypto",          amount: caByCrypto, count: countByCrypto, color: "#f59e0b" },
                     ] as { label: string; amount: number; count: number; color: string }[]).map(row => (
                       <div key={row.label} style={{ marginBottom: 14 }}>
@@ -3764,10 +3764,10 @@ function AdminPageInner() {
                       {([
                         { label: "Total",      value: String(total),        color: "#fff"    },
                         { label: "Actifs",     value: String(totalActive),   color: "#22c55e" },
-                        { label: "Comptes Reward", value: String(totalCert), color: "#9ccfea" },
+                        { label: "Comptes Reward", value: String(totalCert), color: "#C9963F" },
                         { label: "Échoués",    value: String(totalFailed),   color: "#ef4444" },
-                        { label: "Parcours actuel", value: String(t1Count), color: "#9ccfea" },
-                        { label: "Comptes historiques", value: String(t2Count), color: "#788793" },
+                        { label: "Parcours actuel", value: String(t1Count), color: "#C9963F" },
+                        { label: "Comptes historiques", value: String(t2Count), color: "#787878" },
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
                         <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "16px 18px" }}>
                           <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 6 }}>{k.label}</div>
@@ -3785,11 +3785,11 @@ function AdminPageInner() {
                               <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{b.size}</span>
                               <div style={{ display: "flex", gap: 8, fontSize: 11 }}>
                                 <span style={{ color: "#22c55e" }}>{b.active} act.</span>
-                                <span style={{ color: "#3b82f6" }}>{b.certified} cert.</span>
+                                <span style={{ color: "#C9963F" }}>{b.certified} cert.</span>
                                 <span style={{ color: "#ef4444" }}>{b.failed} éch.</span>
                               </div>
                             </div>
-                            <PBar value={b.count} max={maxBySizeCount} color="#3b82f6" />
+                            <PBar value={b.count} max={maxBySizeCount} color="#C9963F" />
                             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginTop: 4 }}>{b.count} challenge{b.count > 1 ? "s" : ""} · €{Math.round(b.revenue).toLocaleString()} CA</div>
                           </div>
                         ))}
@@ -3799,8 +3799,8 @@ function AdminPageInner() {
                       <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Répartition des parcours</div>
                         {([
-                          { label: "Parcours actuel", count: t1Count, color: "#9ccfea" },
-                          { label: "Historique", count: t2Count, color: "#788793" },
+                          { label: "Parcours actuel", count: t1Count, color: "#C9963F" },
+                          { label: "Historique", count: t2Count, color: "#787878" },
                         ] as { label: string; count: number; color: string }[]).map(m => (
                           <div key={m.label} style={{ marginBottom: 16 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -3814,8 +3814,8 @@ function AdminPageInner() {
                         <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 8 }}>
                           <div style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 12 }}>Taux clés</div>
                           {([
-                            { label: "Challenge → Reward Start", value: `${kpis.convP2Fund}%`, color: "#9ccfea" },
-                            { label: "Taux d'accès Reward", value: `${pct(totalCert)}%`, color: "#9ccfea" },
+                            { label: "Challenge → Reward Start", value: `${kpis.convP2Fund}%`, color: "#C9963F" },
+                            { label: "Taux d'accès Reward", value: `${pct(totalCert)}%`, color: "#C9963F" },
                             { label: "Taux échec global",    value: `${pct(totalFailed)}%`,  color: "#ef4444" },
                           ] as { label: string; value: string; color: string }[]).map((r, i) => (
                             <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "7px 0", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
@@ -3840,7 +3840,7 @@ function AdminPageInner() {
                       {([
                         { label: "Traders uniques",   value: String(kpis.totalTraders),                        color: "#fff"    },
                         { label: "Traders actifs",    value: String(kpis.activeTraders),                       color: "#22c55e" },
-                        { label: "Traders avec Compte Reward", value: String(certifiedTraders), color: "#9ccfea" },
+                        { label: "Traders avec Compte Reward", value: String(certifiedTraders), color: "#C9963F" },
                         { label: "Dépense moyenne client", value: `€${Math.round(kpis.ltv).toLocaleString()}`, color: "#f59e0b" },
                         { label: "Moy. challenges",   value: avgChallenges,                                     color: "#a78bfa" },
                         { label: "Paiement Crypto",   value: `${cryptoPct}%`,                                   color: "#f59e0b" },
@@ -3890,7 +3890,7 @@ function AdminPageInner() {
                                     <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{country}</span>
                                     <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.5)" }}>{count}</span>
                                   </div>
-                                  <PBar value={count} max={maxC} color="#3b82f6" />
+                                  <PBar value={count} max={maxC} color="#C9963F" />
                                 </div>
                               ))}
                             </div>
@@ -3912,9 +3912,9 @@ function AdminPageInner() {
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
                       {([
                         { label: "Codes actifs",          value: String(activePromos.length),                                                color: "#22c55e" },
-                        { label: "Conversions affiliées", value: String(totalConversions),                                                   color: "#3b82f6" },
+                        { label: "Conversions affiliées", value: String(totalConversions),                                                   color: "#C9963F" },
                         { label: "CA affilié (estimé)",  value: `€${Math.round(affiliateCA).toLocaleString()}`,                             color: "#f59e0b" },
-                        { label: "Affiliés actifs",       value: String(affiliates.filter(a => a.referrals.length > 0).length),              color: "#60a5fa" },
+                        { label: "Affiliés actifs",       value: String(affiliates.filter(a => a.referrals.length > 0).length),              color: "rgba(201,150,63,0.85)" },
                       ] as { label: string; value: string; color: string }[]).map((k, i) => (
                         <div key={i} style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "18px 22px" }}>
                           <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>{k.label}</div>
@@ -3926,7 +3926,7 @@ function AdminPageInner() {
                     <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 24px" }}>
                       <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", marginBottom: 16 }}>Répartition acquisition</div>
                       {([
-                        { label: "Ventes directes", count: directCount, color: "#3b82f6" },
+                        { label: "Ventes directes", count: directCount, color: "#C9963F" },
                         { label: "Via affilié",      count: totalConversions, color: "#f59e0b" },
                       ] as { label: string; count: number; color: string }[]).map(row => (
                         <div key={row.label} style={{ marginBottom: 14 }}>
@@ -3953,9 +3953,9 @@ function AdminPageInner() {
                                     </div>
                                     <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontFamily: "monospace" }}>{a.code}</div>
                                   </div>
-                                  <span style={{ fontWeight: 800, fontSize: 13, color: "#3b82f6", flexShrink: 0, marginLeft: 12 }}>{a.referrals.length} conv.</span>
+                                  <span style={{ fontWeight: 800, fontSize: 13, color: "#C9963F", flexShrink: 0, marginLeft: 12 }}>{a.referrals.length} conv.</span>
                                 </div>
-                                <PBar value={a.referrals.length} max={maxConv} color="#3b82f6" />
+                                <PBar value={a.referrals.length} max={maxConv} color="#C9963F" />
                               </div>
                             ))}
                       </div>
@@ -4225,7 +4225,7 @@ function AdminPageInner() {
                               <div style={{ fontSize: 13, color: "#fff", marginBottom: 6 }}>{item.label}</div>
                               <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                                 {item.emails.filter(Boolean).map((email, j) => (
-                                  <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 11, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.15)", borderRadius: 6, padding: "2px 8px", cursor: "pointer" }}>{email}</button>
+                                  <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 11, color: "rgba(201,150,63,0.85)", background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.15)", borderRadius: 6, padding: "2px 8px", cursor: "pointer" }}>{email}</button>
                                 ))}
                               </div>
                             </div>
@@ -4260,7 +4260,7 @@ function AdminPageInner() {
                             </div>
                             <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                               {item.emails.map((email, j) => (
-                                <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 12, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.15)", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{email}</button>
+                                <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 12, color: "rgba(201,150,63,0.85)", background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.15)", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{email}</button>
                               ))}
                             </div>
                           </div>
@@ -4276,7 +4276,7 @@ function AdminPageInner() {
                       {mt5Loading && <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>Chargement MT5…</span>}
                       <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{ipMismatchShowAll ? `${ipRows.length} traders` : `${mismatchRows.length} mismatch`}</span>
-                        <button onClick={() => setIpMismatchShowAll(v => !v)} style={{ fontSize: 11, color: "#60a5fa", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "3px 10px", cursor: "pointer" }}>{ipMismatchShowAll ? "Mismatches seulement" : "Voir tous"}</button>
+                        <button onClick={() => setIpMismatchShowAll(v => !v)} style={{ fontSize: 11, color: "rgba(201,150,63,0.85)", background: "none", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 6, padding: "3px 10px", cursor: "pointer" }}>{ipMismatchShowAll ? "Mismatches seulement" : "Voir tous"}</button>
                       </div>
                     </div>
                     {displayedRows.length === 0 ? (
@@ -4293,7 +4293,7 @@ function AdminPageInner() {
                             {displayedRows.map((row, i) => (
                               <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                                 <td style={{ padding: "10px 16px" }}>
-                                  <button onClick={() => goToCRM(row.email)} style={{ fontSize: 12, color: "#60a5fa", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>{row.email}</button>
+                                  <button onClick={() => goToCRM(row.email)} style={{ fontSize: 12, color: "rgba(201,150,63,0.85)", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>{row.email}</button>
                                 </td>
                                 <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 11, color: row.mismatch ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{row.regIP || <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}</td>
                                 <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: 11, color: row.mismatch ? "#f59e0b" : "rgba(255,255,255,0.45)" }}>{row.loginIP || <span style={{ color: "rgba(255,255,255,0.2)" }}>—</span>}</td>
@@ -4340,7 +4340,7 @@ function AdminPageInner() {
                           </div>
                           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                             {item.emails.map((email, j) => (
-                              <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 12, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.15)", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{email}</button>
+                              <button key={j} onClick={() => goToCRM(email)} style={{ fontSize: 12, color: "rgba(201,150,63,0.85)", background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.15)", borderRadius: 8, padding: "4px 10px", cursor: "pointer" }}>{email}</button>
                             ))}
                           </div>
                         </div>
@@ -4375,7 +4375,7 @@ function AdminPageInner() {
                               const regIsVpn = profiles.find(p => p.email === trader.email)?.registration_is_vpn;
                               return (
                                 <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                                  <td style={{ padding: "10px 16px", fontSize: 12, color: "#60a5fa" }}>{trader.email}</td>
+                                  <td style={{ padding: "10px 16px", fontSize: 12, color: "rgba(201,150,63,0.85)" }}>{trader.email}</td>
                                   <td style={{ padding: "10px 16px", fontSize: 12, color: "rgba(255,255,255,0.45)" }}>{trader.last.country || "—"}</td>
                                   <td style={{ padding: "10px 16px" }}>
                                     {regIsVpn
@@ -4385,7 +4385,7 @@ function AdminPageInner() {
                                   <td style={{ padding: "10px 16px", fontSize: 11, color: "rgba(255,255,255,0.4)", whiteSpace: "nowrap" }}>{new Date(trader.first.created_at).toLocaleDateString("fr-FR")}</td>
                                   <td style={{ padding: "10px 16px", fontSize: 11, color: "rgba(255,255,255,0.4)", whiteSpace: "nowrap" }}>{new Date(trader.last.created_at).toLocaleDateString("fr-FR")}</td>
                                   <td style={{ padding: "10px 16px" }}>
-                                    <button onClick={() => goToCRM(trader.email)} style={{ fontSize: 11, color: "#60a5fa", background: "none", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 6, padding: "3px 10px", cursor: "pointer", whiteSpace: "nowrap" }}>Voir CRM</button>
+                                    <button onClick={() => goToCRM(trader.email)} style={{ fontSize: 11, color: "rgba(201,150,63,0.85)", background: "none", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 6, padding: "3px 10px", cursor: "pointer", whiteSpace: "nowrap" }}>Voir CRM</button>
                                   </td>
                                 </tr>
                               );
@@ -4417,7 +4417,7 @@ function AdminPageInner() {
                           ) : filteredEvents.map((e, i) => (
                             <tr key={i} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                               <td style={{ padding: "10px 16px" }}>
-                                <button onClick={() => goToCRM(e.user_email)} style={{ fontSize: 12, color: "#60a5fa", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>{e.user_email}</button>
+                                <button onClick={() => goToCRM(e.user_email)} style={{ fontSize: 12, color: "rgba(201,150,63,0.85)", background: "none", border: "none", cursor: "pointer", padding: 0, textAlign: "left" }}>{e.user_email}</button>
                               </td>
                               <td style={{ padding: "10px 16px" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -4507,7 +4507,7 @@ function AdminPageInner() {
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
                     {syncMsg && <span style={{ fontSize: 12, fontWeight: 600, color: syncMsg.startsWith("✓") ? "#22c55e" : "#ef4444" }}>{syncMsg}</span>}
-                    <button onClick={runSync} disabled={syncing} style={{ background: syncing ? "rgba(255,255,255,0.06)" : "#3b82f6", color: syncing ? "rgba(255,255,255,0.35)" : "#fff", border: "none", borderRadius: 8, padding: "9px 20px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
+                    <button onClick={runSync} disabled={syncing} style={{ background: syncing ? "rgba(255,255,255,0.06)" : "#C9963F", color: syncing ? "rgba(255,255,255,0.35)" : "#fff", border: "none", borderRadius: 8, padding: "9px 20px", fontSize: 13, fontWeight: 700, cursor: syncing ? "not-allowed" : "pointer" }}>
                       {syncing ? "Synchronisation en cours..." : "Lancer la sync"}
                     </button>
                   </div>
@@ -4549,7 +4549,7 @@ function AdminPageInner() {
                         onClick={async () => {
                           await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
                         }}
-                        style={{ background: "transparent", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.25)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
+                        style={{ background: "transparent", color: "rgba(201,150,63,0.85)", border: "1px solid rgba(201,150,63,0.25)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
                       >
                         Recevoir copie email
                       </button>
@@ -4641,10 +4641,10 @@ function AdminPageInner() {
                   <input
                     value={editVal}
                     onChange={e => setSettingsEdit(p => ({ ...p, [row.key]: e.target.value }))}
-                    style={{ background: isDirty ? "rgba(96,165,250,0.08)" : "#111111", border: `1px solid ${isDirty ? "#60a5fa" : "rgba(255,255,255,0.08)"}`, borderRadius: 8, padding: "7px 12px", color: "#fff", fontSize: 12, fontFamily: "monospace", width: "100%", maxWidth: 240, outline: "none" }}
+                    style={{ background: isDirty ? "rgba(201,150,63,0.08)" : "#111111", border: `1px solid ${isDirty ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.08)"}`, borderRadius: 8, padding: "7px 12px", color: "#fff", fontSize: 12, fontFamily: "monospace", width: "100%", maxWidth: 240, outline: "none" }}
                   />
                   {isDirty && (
-                    <button onClick={() => saveSetting(row.key)} disabled={saving} style={{ background: saving ? "#374151" : "#60a5fa", border: "none", borderRadius: 8, color: saving ? "rgba(255,255,255,0.4)" : "#000", padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
+                    <button onClick={() => saveSetting(row.key)} disabled={saving} style={{ background: saving ? "#374151" : "rgba(201,150,63,0.85)", border: "none", borderRadius: 8, color: saving ? "rgba(255,255,255,0.4)" : "#000", padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: saving ? "not-allowed" : "pointer" }}>
                       {saving ? "..." : "Enregistrer"}
                     </button>
                   )}
@@ -4703,7 +4703,7 @@ function AdminPageInner() {
                         .then(r => r.json()).then(d => { if (d.settings) setSettingsData(d.settings); })
                         .finally(() => setSettingsLoading(false));
                     }}
-                    style={{ fontSize: 12, color: "#60a5fa", background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600 }}
+                    style={{ fontSize: 12, color: "rgba(201,150,63,0.85)", background: "rgba(201,150,63,0.08)", border: "1px solid rgba(201,150,63,0.2)", borderRadius: 8, padding: "5px 12px", cursor: "pointer", fontWeight: 600 }}
                   >
                     Rafraichir
                   </button>
