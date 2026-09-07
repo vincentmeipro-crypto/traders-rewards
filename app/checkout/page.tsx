@@ -319,23 +319,60 @@ function CheckoutContent() {
         .co-input::placeholder { color: rgba(255,255,255,.25); }
         .co-select option { background: #111; color: #fff; }
         .co-border { border-radius: 12px; display: block; }
+
+        /* ── Animation gradient carte ── */
+        @keyframes coCartaFlow {
+          0%   { background-position: 0% 50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        /* ── PAYER PAR CARTE — bouton principal doré ── */
         .co-border-btn {
           display: flex; align-items: center; justify-content: center; gap: 10px;
           width: 100%; min-height: 54px; padding: 15px 18px; border-radius: 10px;
-          font-size: 13px; font-weight: 900; letter-spacing: 1.1px; text-transform: uppercase;
-          background: linear-gradient(#0B0C0E, #0B0C0E) padding-box,
-            linear-gradient(110deg, #B88746, #F2D79A 50%, #C79A55) border-box;
-          border: 1.5px solid transparent; color: #FFFFFF; cursor: pointer;
-          box-shadow: none;
-          transition: transform .2s ease, box-shadow .2s ease;
+          font-size: 13px; font-weight: 700; letter-spacing: 1.1px; text-transform: uppercase;
+          position: relative;
+          background: linear-gradient(110deg, #8A6424 0%, #C99B45 22%, #F0D58A 45%, #D4AD5A 65%, #9B722B 100%);
+          background-size: 220% 100%;
+          border: 1px solid rgba(240,213,138,0.45);
+          color: #080808; cursor: pointer;
+          box-shadow: 0 4px 22px rgba(184,135,70,0.24), 0 2px 8px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.20);
+          transition: filter .25s ease, box-shadow .25s ease;
+          animation: coCartaFlow 7s ease-in-out infinite;
         }
-        .co-border-btn:hover:not(:disabled) { transform: translateY(-1px);
-          background: linear-gradient(#0E0F11, #0E0F11) padding-box,
-            linear-gradient(110deg, #D4A843, #F8E4A8 50%, #D4A843) border-box;
-          box-shadow: 0 6px 24px rgba(212,168,67,.12); }
-        .co-border-btn.crypto { background: rgba(212,168,67,.04); color: #fff; border: 1.5px solid rgba(212,168,67,.30); box-shadow: none; }
-        .co-border-btn.crypto:hover:not(:disabled) { background: rgba(212,168,67,.09); border-color: rgba(212,168,67,.55); box-shadow: 0 6px 18px rgba(212,168,67,.07); }
-        .co-border-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .co-border-btn svg { transition: transform .25s ease; }
+        .co-border-btn:hover:not(:disabled) {
+          filter: brightness(1.12);
+          box-shadow: 0 6px 30px rgba(184,135,70,0.34), 0 2px 10px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.28);
+        }
+        .co-border-btn:hover:not(:disabled) svg:last-child { transform: translateX(3px); }
+
+        /* ── PAYER EN CRYPTO — bouton secondaire sombre / doré ── */
+        .co-border-btn.crypto {
+          background: #111214; background-size: unset;
+          color: #FFFFFF; border: 1px solid rgba(212,173,90,0.40);
+          box-shadow: none; animation: none; filter: none;
+        }
+        .co-border-btn.crypto svg { color: rgba(212,168,67,0.85); }
+        .co-border-btn.crypto:hover:not(:disabled) {
+          background: #17191c; filter: none;
+          border-color: rgba(212,173,90,0.72);
+          box-shadow: 0 4px 20px rgba(184,135,70,0.12);
+        }
+
+        /* ── État désactivé (CGV non cochées / chargement) ── */
+        .co-border-btn:disabled {
+          opacity: 0.48; cursor: not-allowed;
+          filter: none !important; animation: none !important;
+          box-shadow: none !important; background-position: 0% 50% !important;
+        }
+        .co-border-btn:disabled svg { transform: none !important; }
+
+        /* ── Respect prefers-reduced-motion ── */
+        @media (prefers-reduced-motion: reduce) {
+          .co-border-btn { animation: none !important; background-position: 0% 50%; }
+        }
         .co-summary { position: sticky; top: 24px; }
         .co-step-line { height: 1px; flex: 1; max-width: 72px; background: linear-gradient(90deg, rgba(212,168,67,.45), rgba(255,255,255,.08)); }
         @media (max-width: 767px) {
@@ -701,21 +738,21 @@ function CheckoutContent() {
               </div>
             )}
             {!profileComplete && <p style={{ textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 12, margin: 0 }}>Remplissez tous les champs pour continuer.</p>}
-            {profileComplete && !agreedToTerms && <p style={{ textAlign: "center", color: "#f59e0b", fontSize: 12, margin: 0 }}>Acceptez les CGV pour continuer.</p>}
+            {profileComplete && !agreedToTerms && <p style={{ textAlign: "center", color: "rgba(212,168,67,0.85)", fontSize: 12, margin: 0 }}>Acceptez les CGV pour continuer.</p>}
 
             {isFree ? (
-              <div className="co-border" style={{ opacity: (anyLoading || !canPay) ? 0.5 : 1 }}>
+              <div className="co-border">
                 <button onClick={handleFree} disabled={anyLoading || !canPay} className="co-border-btn">
                   {loadingFree ? "Configuration..." : <><span>🎉</span> Accès gratuit <ChevronRight size={16} /></>}
                 </button>
               </div>
             ) : (<>
-              <div className="co-border" style={{ opacity: (anyLoading || !canPay) ? 0.5 : 1 }}>
+              <div className="co-border">
                 <button onClick={handleStripe} disabled={anyLoading || !canPay} className="co-border-btn">
                   {loadingStripe ? "Redirection..." : <><CreditCard size={17} /> Payer par carte <ChevronRight size={16} /></>}
                 </button>
               </div>
-              <div className="co-border" style={{ opacity: (anyLoading || !canPay) ? 0.5 : 1 }}>
+              <div className="co-border">
                 <button onClick={handleCrypto} disabled={anyLoading || !canPay} className="co-border-btn crypto">
                   {loadingCrypto ? "Redirection..." : <><Bitcoin size={17} /> Payer en crypto <ChevronRight size={16} /></>}
                 </button>
