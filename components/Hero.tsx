@@ -100,6 +100,19 @@ export default function Hero() {
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            CTA PRINCIPAL — champagne / doré nacré premium
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+        /* Shimmer : traverse de gauche à droite, long pause */
+        @keyframes heroCtaShimmer {
+          0%          { transform: translateX(-280%); }
+          30%         { transform: translateX(380%); }
+          30.01%, 100%{ transform: translateX(-280%); }
+        }
+        /* Respiration : scale 1 → 1.014 → 1 */
+        @keyframes heroCtaBreathe {
+          0%, 100% { transform: scale(1); }
+          50%      { transform: scale(1.014); }
+        }
+
         .h-cta-main {
           display: inline-flex; align-items: center; gap: 18px;
           position: relative; overflow: hidden;
@@ -111,15 +124,35 @@ export default function Hero() {
           border: 1px solid rgba(232,201,138,0.55);
           box-shadow: 0 10px 35px rgba(184,135,70,0.15), 0 3px 12px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.75);
           transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+          animation: heroCtaBreathe 4s ease-in-out infinite;
+        }
+        /* Reflet shimmer — couche lumineuse qui traverse le bouton */
+        .h-cta-main::before {
+          content: "";
+          position: absolute;
+          top: -20%; bottom: -20%;
+          left: 0; width: 65%;
+          background: linear-gradient(
+            105deg,
+            transparent 5%,
+            rgba(255,255,255,0.18) 30%,
+            rgba(255,255,255,0.42) 50%,
+            rgba(255,255,255,0.18) 70%,
+            transparent 95%
+          );
+          transform: translateX(-280%);
+          animation: heroCtaShimmer 4s ease-in-out 1.8s infinite;
+          pointer-events: none;
         }
         .h-cta-main svg {
+          position: relative; z-index: 1;
           transition: transform 0.25s ease; flex-shrink: 0;
         }
-        .h-cta-main:hover svg { transform: translateX(5px); }
+        .h-cta-main:hover svg { transform: translateX(3px); }
         .h-cta-main:hover {
-          transform: translateY(-2px);
+          transform: translateY(-1px);
           background: linear-gradient(110deg, #FBF7ED 0%, #EFDFAB 35%, #FFFAEE 58%, #BF9045 100%);
-          box-shadow: 0 18px 48px rgba(184,135,70,0.22), 0 5px 16px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.85);
+          box-shadow: 0 14px 40px rgba(184,135,70,0.20), 0 4px 14px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.85);
         }
         .h-cta-main:active  { transform: translateY(0) scale(0.98); }
         .h-cta-main:focus-visible {
@@ -257,6 +290,7 @@ export default function Hero() {
         @media (prefers-reduced-motion: reduce) {
           * { animation-duration: 0.01ms !important; }
           .h-cta-main { animation: none; transition: none; }
+          .h-cta-main::before { animation: none; opacity: 0; }
           .h-cta-main:hover { transform: none; }
           .h-cta-main:hover svg { transform: none; }
           .h-cta-ghost { transition: none; }
