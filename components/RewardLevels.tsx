@@ -14,9 +14,21 @@ import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 // ── Sizes ─────────────────────────────────────────────────────
 const SIZES = ["25K", "50K", "100K"] as const;
 
-// ── Gradient doré champagne — identique Hero / CTA ────────────
+// ── Gradients métalliques par colonne ─────────────────────────
+// 25K → Argent/acier métallique (jeton argent du Hero)
+const SILVER =
+  "linear-gradient(110deg, #8E949A 0%, #D7DADD 35%, #F2F3F4 52%, #A8ADB2 75%, #D9DCDF 100%)";
+
+// 50K → Or rose / cuivre rosé premium (jeton or rose du Hero)
+const ROSE_GOLD =
+  "linear-gradient(110deg, #9F625C 0%, #C9897E 28%, #E5B4A8 52%, #B56F66 78%, #D79A8F 100%)";
+
+// 100K → Doré champagne identique Hero / CTA / titres
 const GOLD =
   "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)";
+
+// Tableau indexé par colonne (si = 0 / 1 / 2)
+const COL_GRADIENT = [SILVER, ROSE_GOLD, GOLD] as const;
 
 // ── Progression des bordures (R1 très discret → R5 bien visible)
 const BORDER = [
@@ -36,14 +48,8 @@ const SHADOW = [
   "0 8px 32px rgba(0,0,0,0.64), 0 0 32px rgba(201,155,84,0.07), inset 0 1px 0 rgba(255,255,255,0.025)",
 ];
 
-// ── Labels REWARD 1–5
-const LABEL_COLOR = [
-  "rgba(255,255,255,0.46)",
-  "rgba(255,255,255,0.58)",
-  "rgba(255,255,255,0.72)",
-  "#E8C98A",
-  "#D4A843",
-];
+// ── Labels RÉCOMPENSE 1–5 : gris neutre uniforme (aucun doré)
+const LABEL_GRAY = "rgba(143,148,154,0.90)";
 
 // ── Tailles des montants (desktop / mobile)
 // desktop : 33–38px selon le niveau
@@ -59,18 +65,18 @@ function fmtUSD(n: number) {
 // ── Montants (cast depuis as const)
 const AMOUNTS = REWARD_AMOUNTS as readonly (readonly number[])[];
 
-// ── Style montant doré (réutilisé partout)
-function goldAmt(size: number): React.CSSProperties {
+// ── Style montant — gradient selon la colonne (si : 0=25K, 1=50K, 2=100K)
+function amtStyle(size: number, si: number): React.CSSProperties {
   return {
-    fontSize:           size,
-    fontWeight:         800,
-    background:         GOLD,
+    fontSize:             size,
+    fontWeight:           800,
+    background:           COL_GRADIENT[si],
     WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip:     "text",
-    letterSpacing:      "-0.5px",
-    fontVariantNumeric: "tabular-nums",
-    lineHeight:         1,
+    WebkitTextFillColor:  "transparent",
+    backgroundClip:       "text",
+    letterSpacing:        "-0.5px",
+    fontVariantNumeric:   "tabular-nums",
+    lineHeight:           1,
   };
 }
 
@@ -304,7 +310,7 @@ export default function RewardLevels() {
                     <span style={{
                       fontSize:      isTrader ? 12 : 11,
                       fontWeight:    800,
-                      color:         LABEL_COLOR[li],
+                      color:         LABEL_GRAY,
                       letterSpacing: "1.2px",
                       textTransform: "uppercase",
                     }}>
@@ -331,8 +337,8 @@ export default function RewardLevels() {
                         }}>
                           {sz}
                         </div>
-                        {/* Montant doré */}
-                        <div style={goldAmt(AMT_M[li])}>
+                        {/* Montant — couleur selon la colonne */}
+                        <div style={amtStyle(AMT_M[li], si)}>
                           {fmtUSD(AMOUNTS[si][li])}
                         </div>
                       </div>
@@ -412,7 +418,7 @@ export default function RewardLevels() {
                   <div style={{
                     fontSize:      isTrader ? 13 : 12,
                     fontWeight:    800,
-                    color:         LABEL_COLOR[li],
+                    color:         LABEL_GRAY,
                     letterSpacing: "1px",
                     textTransform: "uppercase",
                   }}>
@@ -420,10 +426,10 @@ export default function RewardLevels() {
                   </div>
                 </div>
 
-                {/* 3 colonnes montants */}
+                {/* 3 colonnes montants — argent / or rose / doré selon colonne */}
                 {SIZES.map((_sz, si) => (
                   <div key={si} style={{ textAlign: "center" }}>
-                    <div style={goldAmt(AMT_D[li])}>
+                    <div style={amtStyle(AMT_D[li], si)}>
                       {fmtUSD(AMOUNTS[si][li])}
                     </div>
                   </div>
