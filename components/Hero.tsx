@@ -98,35 +98,48 @@ export default function Hero() {
         .h-pill-dot { animation: heroDotTwinkle 1.8s ease-in-out infinite; }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           CTA PRINCIPAL — champagne / doré nacré premium
+           CTA PRINCIPAL — or métallique sombre premium (Variante 03)
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-        /* Shimmer : traverse de gauche à droite, long pause */
+        /* Reflet ponctuel — traverse de gauche à droite, longue pause */
         @keyframes heroCtaShimmer {
           0%          { transform: translateX(-280%); }
           30%         { transform: translateX(380%); }
           30.01%, 100%{ transform: translateX(-280%); }
         }
-        /* Respiration : scale 1 → 1.014 → 1 */
-        @keyframes heroCtaBreathe {
-          0%, 100% { transform: scale(1); }
-          50%      { transform: scale(1.014); }
+        /* Lumière qui circule lentement dans le métal — background-position */
+        @keyframes heroCtaGoldFlow {
+          0%   { background-position: 0% 50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
 
         .h-cta-main {
           display: inline-flex; align-items: center; gap: 18px;
           position: relative; overflow: hidden;
-          background: linear-gradient(110deg, #F7F3EB 0%, #E8D7B5 35%, #FFF9EC 55%, #D7B673 100%);
+          background: linear-gradient(
+            110deg,
+            #6B4A1A 0%,
+            #B88746 14%,
+            #D6AD63 28%,
+            #F2D79A 43%,
+            #FFF0AA 52%,
+            #E8C864 61%,
+            #C4943E 74%,
+            #8A6220 88%,
+            #6B4A1A 100%
+          );
+          background-size: 220% 100%;
           color: #111111;
           font-weight: 730; letter-spacing: 0.05px; text-transform: none;
           text-decoration: none; border-radius: 16px; cursor: pointer;
           font-family: inherit; white-space: nowrap;
-          border: 1px solid rgba(232,201,138,0.55);
-          box-shadow: 0 10px 35px rgba(184,135,70,0.15), 0 3px 12px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.75);
-          transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-          animation: heroCtaBreathe 4s ease-in-out infinite;
+          border: 1px solid rgba(232,190,100,0.50);
+          box-shadow: 0 10px 35px rgba(184,135,70,0.22), 0 3px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.38);
+          transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+          animation: heroCtaGoldFlow 7s ease-in-out infinite;
         }
-        /* Reflet shimmer — couche lumineuse qui traverse le bouton */
+        /* Reflet shimmer ponctuel — lumière qui traverse le métal */
         .h-cta-main::before {
           content: "";
           position: absolute;
@@ -135,13 +148,13 @@ export default function Hero() {
           background: linear-gradient(
             105deg,
             transparent 5%,
-            rgba(255,255,255,0.18) 30%,
-            rgba(255,255,255,0.42) 50%,
-            rgba(255,255,255,0.18) 70%,
+            rgba(255,255,255,0.08) 30%,
+            rgba(255,255,255,0.28) 50%,
+            rgba(255,255,255,0.08) 70%,
             transparent 95%
           );
           transform: translateX(-280%);
-          animation: heroCtaShimmer 4s ease-in-out 1.8s infinite;
+          animation: heroCtaShimmer 6s ease-in-out 2.5s infinite;
           pointer-events: none;
         }
         .h-cta-main svg {
@@ -151,10 +164,10 @@ export default function Hero() {
         .h-cta-main:hover svg { transform: translateX(3px); }
         .h-cta-main:hover {
           transform: translateY(-1px);
-          background: linear-gradient(110deg, #FBF7ED 0%, #EFDFAB 35%, #FFFAEE 58%, #BF9045 100%);
-          box-shadow: 0 14px 40px rgba(184,135,70,0.20), 0 4px 14px rgba(0,0,0,0.36), inset 0 1px 0 rgba(255,255,255,0.85);
+          filter: brightness(1.14);
+          box-shadow: 0 14px 42px rgba(184,135,70,0.34), 0 4px 14px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.48);
         }
-        .h-cta-main:active  { transform: translateY(0) scale(0.98); }
+        .h-cta-main:active  { transform: translateY(0) scale(0.98); filter: brightness(1); }
         .h-cta-main:focus-visible {
           outline: 2px solid rgba(255,255,255,0.72); outline-offset: 3px;
         }
@@ -289,9 +302,9 @@ export default function Hero() {
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         @media (prefers-reduced-motion: reduce) {
           * { animation-duration: 0.01ms !important; }
-          .h-cta-main { animation: none; transition: none; }
+          .h-cta-main { animation: none; transition: none; background-position: 0% 50%; }
           .h-cta-main::before { animation: none; opacity: 0; }
-          .h-cta-main:hover { transform: none; }
+          .h-cta-main:hover { transform: none; filter: none; }
           .h-cta-main:hover svg { transform: none; }
           .h-cta-ghost { transition: none; }
         }
