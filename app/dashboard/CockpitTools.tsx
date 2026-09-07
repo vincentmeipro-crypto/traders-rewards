@@ -35,6 +35,7 @@ type RiskStatus = "CONFORTABLE" | "MODÉRÉ" | "ATTENTION" | "CRITIQUE" | "LIMIT
 type Props = {
   challenge:      CockpitChallenge;
   isFr:           boolean;
+  isEs?:          boolean;
   isMobile:       boolean;
   section:        TradingSection;
   onSection:      (s: TradingSection) => void;
@@ -136,12 +137,15 @@ function MiniMeter({ value, color = BLUE }: { value: number; color?: string }) {
 function RRCalculator({
   challenge,
   isFr,
+  isEs = false,
   isMobile,
 }: {
   challenge: CockpitChallenge;
   isFr:      boolean;
+  isEs?:     boolean;
   isMobile:  boolean;
 }) {
+  const R = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const [symbol,    setSymbol]    = useState("EURUSD");
   const [direction, setDirection] = useState<"BUY" | "SELL">("BUY");
   const [entry,     setEntry]     = useState("");
@@ -271,7 +275,7 @@ function RRCalculator({
     <div className={styles.toolSection}>
 
       {/* ── Actif ─────────────────────────────────────────────────── */}
-      <Field label={isFr ? "Actif" : "Asset"}>
+      <Field label={R("Actif", "Activo", "Asset")}>
         <select
           className={styles.symbolSelect}
           value={symbol}
@@ -290,9 +294,11 @@ function RRCalculator({
         <div className={styles.approxNote}>
           <Info size={12} color={BLUE} />
           <span>
-            {isFr
-              ? `Valeurs ${spec.approxNote}. Résultats indicatifs.`
-              : `Values ${spec.approxNote}. Indicative results.`}
+            {R(
+              `Valeurs ${spec.approxNote}. Résultats indicatifs.`,
+              `Valores ${spec.approxNote}. Resultados indicativos.`,
+              `Values ${spec.approxNote}. Indicative results.`,
+            )}
           </span>
         </div>
       )}
@@ -300,7 +306,7 @@ function RRCalculator({
       {/* ── Direction ─────────────────────────────────────────────── */}
       <div className={styles.dirRow}>
         <span className={styles.fieldLabel}>
-          {isFr ? "Direction" : "Direction"}
+          Direction
         </span>
         <div className={styles.dirToggle}>
           <button
@@ -319,7 +325,7 @@ function RRCalculator({
         className={styles.priceGrid}
         style={{ gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr" }}
       >
-        <Field label={isFr ? "Prix d'entrée" : "Entry price"}>
+        <Field label={R("Prix d'entrée", "Precio de entrada", "Entry price")}>
           <PriceInput value={entry} onChange={setEntry} placeholder="1.08500" />
         </Field>
 
@@ -329,8 +335,8 @@ function RRCalculator({
             calc?.slOnWrongSide
               ? undefined
               : direction === "BUY"
-                ? (isFr ? "↓ En dessous de l'entrée" : "↓ Below entry")
-                : (isFr ? "↑ Au-dessus de l'entrée" : "↑ Above entry")
+                ? R("↓ En dessous de l'entrée", "↓ Por debajo de la entrada", "↓ Below entry")
+                : R("↑ Au-dessus de l'entrée", "↑ Por encima de la entrada", "↑ Above entry")
           }
         >
           <div>
@@ -343,21 +349,21 @@ function RRCalculator({
               <div className={styles.fieldError}>
                 <AlertTriangle size={12} />
                 {direction === "BUY"
-                  ? (isFr ? "SL doit être en dessous de l'entrée (BUY)." : "SL must be below entry for a BUY.")
-                  : (isFr ? "SL doit être au-dessus de l'entrée (SELL)." : "SL must be above entry for a SELL.")}
+                  ? R("SL doit être en dessous de l'entrée (BUY).", "El SL debe estar por debajo de la entrada (BUY).", "SL must be below entry for a BUY.")
+                  : R("SL doit être au-dessus de l'entrée (SELL).", "El SL debe estar por encima de la entrada (SELL).", "SL must be above entry for a SELL.")}
               </div>
             )}
           </div>
         </Field>
 
         <Field
-          label={`Take Profit ${isFr ? "(optionnel)" : "(optional)"}`}
+          label={`Take Profit ${R("(optionnel)", "(opcional)", "(optional)")}`}
           hint={
             calc?.tpOnWrongSide
               ? undefined
               : direction === "BUY"
-                ? (isFr ? "↑ Au-dessus de l'entrée" : "↑ Above entry")
-                : (isFr ? "↓ En dessous de l'entrée" : "↓ Below entry")
+                ? R("↑ Au-dessus de l'entrée", "↑ Por encima de la entrada", "↑ Above entry")
+                : R("↓ En dessous de l'entrée", "↓ Por debajo de la entrada", "↓ Below entry")
           }
         >
           <div>
@@ -370,8 +376,8 @@ function RRCalculator({
               <div className={styles.fieldError}>
                 <AlertTriangle size={12} />
                 {direction === "BUY"
-                  ? (isFr ? "TP doit être au-dessus de l'entrée (BUY)." : "TP must be above entry for a BUY.")
-                  : (isFr ? "TP doit être en dessous de l'entrée (SELL)." : "TP must be below entry for a SELL.")}
+                  ? R("TP doit être au-dessus de l'entrée (BUY).", "El TP debe estar por encima de la entrada (BUY).", "TP must be above entry for a BUY.")
+                  : R("TP doit être en dessous de l'entrée (SELL).", "El TP debe estar por debajo de la entrada (SELL).", "TP must be below entry for a SELL.")}
               </div>
             )}
           </div>
@@ -380,10 +386,12 @@ function RRCalculator({
 
       {/* ── Taille de position ────────────────────────────────────── */}
       <Field
-        label={isFr ? "Taille de position (lots)" : "Position size (lots)"}
-        hint={isFr
-          ? "1 lot standard = 100 000 unités. Mini-lot = 0.10. Micro-lot = 0.01."
-          : "1 standard lot = 100,000 units. Mini = 0.10. Micro = 0.01."}
+        label={R("Taille de position (lots)", "Tamaño de posición (lotes)", "Position size (lots)")}
+        hint={R(
+          "1 lot standard = 100 000 unités. Mini-lot = 0.10. Micro-lot = 0.01.",
+          "1 lote estándar = 100 000 unidades. Mini-lote = 0.10. Micro-lote = 0.01.",
+          "1 standard lot = 100,000 units. Mini = 0.10. Micro = 0.01.",
+        )}
       >
         <div className={styles.fieldWrap}>
           <input
@@ -409,7 +417,7 @@ function RRCalculator({
           {/* ── R:R Ratio ────────────────────────────────────────── */}
           <div className={styles.rrBlock}>
             <div className={styles.rrEyebrow}>
-              {isFr ? "Ratio Risque / Rendement" : "Risk / Reward Ratio"}
+              {R("Ratio Risque / Rendement", "Ratio Riesgo / Rendimiento", "Risk / Reward Ratio")}
             </div>
 
             {calc.rrRatio != null ? (
@@ -433,15 +441,15 @@ function RRCalculator({
                   }}
                 >
                   {calc.rrRatio >= 2
-                    ? (isFr ? "✓ Excellent" : "✓ Excellent")
+                    ? "✓ Excellent"
                     : calc.rrRatio >= 1.5
-                      ? (isFr ? "✓ Acceptable" : "✓ Acceptable")
-                      : (isFr ? "⚠ Ratio faible" : "⚠ Low ratio")}
+                      ? "✓ Acceptable"
+                      : R("⚠ Ratio faible", "⚠ Ratio bajo", "⚠ Low ratio")}
                 </div>
               </>
             ) : (
               <div className={styles.rrNoTp}>
-                {isFr ? "Entrez un Take Profit pour calculer le ratio." : "Enter a Take Profit to calculate the ratio."}
+                {R("Entrez un Take Profit pour calculer le ratio.", "Introduce un Take Profit para calcular el ratio.", "Enter a Take Profit to calculate the ratio.")}
               </div>
             )}
           </div>
@@ -486,7 +494,7 @@ function RRCalculator({
               <div className={styles.distChip}>
                 <div className={styles.distChipTop}>
                   <span className={styles.distLabel}>
-                    {isFr ? `${isApprox ? "≈ " : ""}Valeur / ${pipLabel.replace("s", "")}` : `${isApprox ? "≈ " : ""}Per ${pipLabel.replace("s", "")}`}
+                    {isApprox ? "≈ " : ""}{R(`Valeur / ${pipLabel.replace("s", "")}`, `Valor / ${pipLabel.replace("s", "")}`, `Per ${pipLabel.replace("s", "")}`)}
                   </span>
                 </div>
                 <span className={styles.distValue} style={{ color: isApprox ? AMBER : GREEN }}>
@@ -506,14 +514,14 @@ function RRCalculator({
               {/* Risque */}
               <div className={`${styles.monetaryCard} ${styles.monetaryCardLoss}`}>
                 <div className={styles.monetaryLabel}>
-                  {isFr ? "Risque au Stop Loss" : "Risk at Stop Loss"}
+                  {R("Risque au Stop Loss", "Riesgo en Stop Loss", "Risk at Stop Loss")}
                 </div>
                 <div className={styles.monetaryValue} style={{ color: RED }}>
                   {isApprox ? "≈ " : ""}-{money(calc.lossUsd!)}
                 </div>
                 {calc.riskPct != null && (
                   <div className={styles.monetarySub}>
-                    {isApprox ? "≈ " : ""}{pct(calc.riskPct, 2)} {isFr ? "du capital actuel" : "of current capital"}
+                    {isApprox ? "≈ " : ""}{pct(calc.riskPct, 2)} {R("du capital actuel", "del capital actual", "of current capital")}
                   </div>
                 )}
               </div>
@@ -521,7 +529,7 @@ function RRCalculator({
               {/* Gain */}
               <div className={`${styles.monetaryCard} ${calc.gainUsd != null ? styles.monetaryCardGain : styles.monetaryCardNeutral}`}>
                 <div className={styles.monetaryLabel}>
-                  {isFr ? "Gain au Take Profit" : "Gain at Take Profit"}
+                  {R("Gain au Take Profit", "Ganancia en Take Profit", "Gain at Take Profit")}
                 </div>
                 {calc.gainUsd != null ? (
                   <>
@@ -530,13 +538,13 @@ function RRCalculator({
                     </div>
                     {calc.gainPct != null && (
                       <div className={styles.monetarySub}>
-                        {isApprox ? "≈ " : ""}{pct(calc.gainPct, 2)} {isFr ? "du compte" : "of account"}
+                        {isApprox ? "≈ " : ""}{pct(calc.gainPct, 2)} {R("du compte", "de la cuenta", "of account")}
                       </div>
                     )}
                   </>
                 ) : (
                   <div className={styles.monetaryNoTp}>
-                    {isFr ? "Entrez un TP" : "Enter a TP"}
+                    {R("Entrez un TP", "Introduce un TP", "Enter a TP")}
                   </div>
                 )}
               </div>
@@ -548,14 +556,18 @@ function RRCalculator({
               <AlertTriangle size={16} color={AMBER} />
               <div>
                 <strong>
-                  {isFr
-                    ? "Spécifications non disponibles pour cet actif."
-                    : "Specifications not available for this asset."}
+                  {R(
+                    "Spécifications non disponibles pour cet actif.",
+                    "Especificaciones no disponibles para este activo.",
+                    "Specifications not available for this asset.",
+                  )}
                 </strong>
                 <div className={styles.specsUnavailableSub}>
-                  {isFr
-                    ? "Le ratio R:R est calculé. Pour les montants $, sélectionnez un actif supporté."
-                    : "The R:R ratio is calculated. For $ amounts, select a supported asset."}
+                  {R(
+                    "Le ratio R:R est calculé. Pour les montants $, sélectionnez un actif supporté.",
+                    "El ratio R:R se calcula. Para importes en $, selecciona un activo compatible.",
+                    "The R:R ratio is calculated. For $ amounts, select a supported asset.",
+                  )}
                 </div>
               </div>
             </div>
@@ -565,9 +577,9 @@ function RRCalculator({
           {calc.canCalcMoney && calc.lossUsd != null && (
             <div className={styles.impactArea}>
               <div className={styles.impactAreaTitle}>
-                {isFr ? "Impact sur ton challenge" : "Impact on your challenge"}
+                {R("Impact sur ton challenge", "Impacto en tu challenge", "Impact on your challenge")}
                 <span className={styles.impactAreaSub}>
-                  {isFr ? "· Si le Stop Loss est touché" : "· If the Stop Loss is hit"}
+                  {R("· Si le Stop Loss est touché", "· Si el Stop Loss se alcanza", "· If the Stop Loss is hit")}
                 </span>
                 {calc.isOneStep && (
                   <span className={styles.impactModelBadge}>CHALLENGE · TRAILING DD EOD</span>
@@ -587,23 +599,29 @@ function RRCalculator({
                   <div className={styles.simStatusLabel}>
                     {isFr
                       ? RISK_STATUS_CONFIG[calc.riskStatus].label
-                      : RISK_STATUS_CONFIG[calc.riskStatus].labelEn}
+                      : isEs
+                        ? RISK_STATUS_CONFIG[calc.riskStatus].labelEs
+                        : RISK_STATUS_CONFIG[calc.riskStatus].labelEn}
                   </div>
                   <div className={styles.simStatusSub}>
                     {calc.riskStatus === "LIMITE DÉPASSÉE"
-                      ? (isFr
-                          ? "Ce scénario atteindrait ou dépasserait une limite de drawdown de ton challenge."
-                          : "This scenario would reach or exceed a drawdown limit of your challenge.")
-                      : (isFr
-                          ? `Utilisation max des marges DD après SL : ${pct(Math.max(0, calc.worstUsedPct ?? 0), 1)}`
-                          : `Max DD margin usage after SL: ${pct(Math.max(0, calc.worstUsedPct ?? 0), 1)}`)}
+                      ? R(
+                          "Ce scénario atteindrait ou dépasserait une limite de drawdown de ton challenge.",
+                          "Este escenario alcanzaría o superaría un límite de drawdown de tu challenge.",
+                          "This scenario would reach or exceed a drawdown limit of your challenge.",
+                        )
+                      : R(
+                          `Utilisation max des marges DD après SL : ${pct(Math.max(0, calc.worstUsedPct ?? 0), 1)}`,
+                          `Uso máx. de márgenes DD tras SL: ${pct(Math.max(0, calc.worstUsedPct ?? 0), 1)}`,
+                          `Max DD margin usage after SL: ${pct(Math.max(0, calc.worstUsedPct ?? 0), 1)}`,
+                        )}
                   </div>
                 </div>
               )}
 
               {/* Daily DD */}
               <DDBlock
-                label={isFr ? "Marge journalière" : "Daily margin"}
+                label={R("Marge journalière", "Margen diario", "Daily margin")}
                 sub=""
                 bufferBefore={calc.dailyBuffer}
                 bufferAfter={calc.dailyBufferAfterSL}
@@ -612,15 +630,16 @@ function RRCalculator({
                 violation={calc.dailyViolation}
                 amberThreshold={60}
                 isFr={isFr}
+                isEs={isEs}
               />
 
               {/* Total DD */}
               <DDBlock
-                label={isFr ? "Marge totale" : "Total margin"}
+                label={R("Marge totale", "Margen total", "Total margin")}
                 sub={
                   calc.isOneStep
-                    ? (isFr ? "trailing — basé sur highest balance" : "trailing — based on highest balance")
-                    : (isFr ? "plancher fixe" : "fixed floor")
+                    ? R("trailing — basé sur highest balance", "trailing — basado en highest balance", "trailing — based on highest balance")
+                    : R("plancher fixe", "suelo fijo", "fixed floor")
                 }
                 bufferBefore={calc.totalBuffer}
                 bufferAfter={calc.totalBufferAfterSL}
@@ -629,25 +648,26 @@ function RRCalculator({
                 violation={calc.totalViolation}
                 amberThreshold={30}
                 isFr={isFr}
+                isEs={isEs}
               />
 
               {/* ── Valeur après SL ──────────────────────────────────── */}
               {calc.equityAfterSL != null && (
                 <div className={styles.simEquitySummary}>
                   <div className={styles.simEquityItem}>
-                    <div className={styles.simEquityLabel}>{isFr ? "Valeur actuelle" : "Current equity"}</div>
+                    <div className={styles.simEquityLabel}>{R("Valeur actuelle", "Valor actual", "Current equity")}</div>
                     <div className={styles.simEquityValue}>{money(calc.equity)}</div>
                   </div>
                   <div className={styles.simEquityArrow}>→</div>
                   <div className={styles.simEquityItem}>
-                    <div className={styles.simEquityLabel}>{isFr ? "Perte au SL" : "SL loss"}</div>
+                    <div className={styles.simEquityLabel}>{R("Perte au SL", "Pérdida en SL", "SL loss")}</div>
                     <div className={styles.simEquityValue} style={{ color: RED }}>
                       {isApprox ? "≈ " : ""}-{money(calc.lossUsd)}
                     </div>
                   </div>
                   <div className={styles.simEquityArrow}>→</div>
                   <div className={styles.simEquityItem}>
-                    <div className={styles.simEquityLabel}>{isFr ? "Valeur après SL" : "Equity after SL"}</div>
+                    <div className={styles.simEquityLabel}>{R("Valeur après SL", "Valor tras SL", "Equity after SL")}</div>
                     <div
                       className={styles.simEquityValue}
                       style={{
@@ -661,9 +681,11 @@ function RRCalculator({
               )}
 
               <div className={styles.impactDisclaimer}>
-                {isFr
-                  ? "Simulation basée sur le solde actuel. Les positions ouvertes et la variation du highest balance peuvent modifier ces chiffres."
-                  : "Simulation based on current balance. Open positions and highest balance changes may affect these figures."}
+                {R(
+                  "Simulation basée sur le solde actuel. Les positions ouvertes et la variation du highest balance peuvent modifier ces chiffres.",
+                  "Simulación basada en el saldo actual. Las posiciones abiertas y la variación del highest balance pueden modificar estas cifras.",
+                  "Simulation based on current balance. Open positions and highest balance changes may affect these figures.",
+                )}
               </div>
             </div>
           )}
@@ -675,9 +697,11 @@ function RRCalculator({
       {calc == null && (
         <div className={styles.emptyState}>
           <div className={styles.emptyStateText}>
-            {isFr
-              ? "Renseigne un actif, une direction, un prix d'entrée, un Stop Loss et un volume pour voir les résultats."
-              : "Enter an asset, direction, entry price, Stop Loss, and volume to see results."}
+            {R(
+              "Renseigne un actif, une direction, un prix d'entrée, un Stop Loss et un volume pour voir les résultats.",
+              "Introduce un activo, dirección, precio de entrada, Stop Loss y volumen para ver los resultados.",
+              "Enter an asset, direction, entry price, Stop Loss, and volume to see results.",
+            )}
           </div>
         </div>
       )}
@@ -696,12 +720,15 @@ function RRCalculator({
 function LotCalculator({
   challenge,
   isFr,
+  isEs = false,
   isMobile,
 }: {
   challenge: CockpitChallenge;
   isFr:      boolean;
+  isEs?:     boolean;
   isMobile:  boolean;
 }) {
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const [symbol,    setSymbol]    = useState("EURUSD");
   const [direction, setDirection] = useState<"BUY" | "SELL">("BUY");
   const [entry,     setEntry]     = useState("");
@@ -802,7 +829,7 @@ function LotCalculator({
     <div className={styles.toolSection}>
 
       {/* ── Actif ─────────────────────────────────────────────────── */}
-      <Field label={isFr ? "Actif" : "Asset"}>
+      <Field label={L("Actif", "Activo", "Asset")}>
         <select
           className={styles.symbolSelect}
           value={symbol}
@@ -821,9 +848,11 @@ function LotCalculator({
         <div className={styles.approxNote}>
           <Info size={12} color={BLUE} />
           <span>
-            {isFr
-              ? `Valeurs ${spec.approxNote}. Résultats indicatifs.`
-              : `Values ${spec.approxNote}. Indicative results.`}
+            {L(
+              `Valeurs ${spec.approxNote}. Résultats indicatifs.`,
+              `Valores ${spec.approxNote}. Resultados indicativos.`,
+              `Values ${spec.approxNote}. Indicative results.`,
+            )}
           </span>
         </div>
       )}
@@ -831,7 +860,7 @@ function LotCalculator({
       {/* ── Direction ─────────────────────────────────────────────── */}
       <div className={styles.dirRow}>
         <span className={styles.fieldLabel}>
-          {isFr ? "Direction" : "Direction"}
+          Direction
         </span>
         <div className={styles.dirToggle}>
           <button
@@ -850,7 +879,7 @@ function LotCalculator({
         className={styles.priceGrid}
         style={{ gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr" }}
       >
-        <Field label={isFr ? "Prix d'entrée" : "Entry price"}>
+        <Field label={L("Prix d'entrée", "Precio de entrada", "Entry price")}>
           <PriceInput value={entry} onChange={setEntry} placeholder="1.08500" />
         </Field>
 
@@ -860,8 +889,8 @@ function LotCalculator({
             calc?.slOnWrongSide
               ? undefined
               : direction === "BUY"
-                ? (isFr ? "↓ En dessous de l'entrée" : "↓ Below entry")
-                : (isFr ? "↑ Au-dessus de l'entrée" : "↑ Above entry")
+                ? L("↓ En dessous de l'entrée", "↓ Por debajo de la entrada", "↓ Below entry")
+                : L("↑ Au-dessus de l'entrée", "↑ Por encima de la entrada", "↑ Above entry")
           }
         >
           <div>
@@ -874,8 +903,8 @@ function LotCalculator({
               <div className={styles.fieldError}>
                 <AlertTriangle size={12} />
                 {direction === "BUY"
-                  ? (isFr ? "SL doit être en dessous de l'entrée (BUY)." : "SL must be below entry for a BUY.")
-                  : (isFr ? "SL doit être au-dessus de l'entrée (SELL)." : "SL must be above entry for a SELL.")}
+                  ? L("SL doit être en dessous de l'entrée (BUY).", "El SL debe estar por debajo de la entrada (BUY).", "SL must be below entry for a BUY.")
+                  : L("SL doit être au-dessus de l'entrée (SELL).", "El SL debe estar por encima de la entrada (SELL).", "SL must be above entry for a SELL.")}
               </div>
             )}
           </div>
@@ -883,7 +912,7 @@ function LotCalculator({
       </div>
 
       {/* ── Risque souhaité + toggle $/% ──────────────────────────── */}
-      <Field label={isFr ? "Risque souhaité" : "Desired risk"}>
+      <Field label={L("Risque souhaité", "Riesgo deseado", "Desired risk")}>
         <div style={{ display: "flex", gap: "8px", alignItems: "stretch" }}>
           <div className={styles.fieldWrap} style={{ flex: 1 }}>
             <input
@@ -914,9 +943,9 @@ function LotCalculator({
         {/* Capital de référence */}
         {calc && calc.equity > 0 && (
           <div className={styles.capitalRef}>
-            {isFr ? "Capital simulé" : "Simulated capital"} : {money(calc.equity)}
+            {L("Capital simulé", "Capital simulado", "Simulated capital")} : {money(calc.equity)}
             {riskMode === "pct" && calc.riskUsd > 0 && (
-              <> = {money(calc.riskUsd, 2)} {isFr ? "de risque" : "of risk"}</>
+              <> = {money(calc.riskUsd, 2)} {L("de risque", "de riesgo", "of risk")}</>
             )}
           </div>
         )}
@@ -930,14 +959,18 @@ function LotCalculator({
           <AlertTriangle size={16} color={AMBER} />
           <div>
             <strong>
-              {isFr
-                ? "Spécifications non disponibles pour cet actif."
-                : "Specifications not available for this asset."}
+              {L(
+                "Spécifications non disponibles pour cet actif.",
+                "Especificaciones no disponibles para este activo.",
+                "Specifications not available for this asset.",
+              )}
             </strong>
             <div className={styles.specsUnavailableSub}>
-              {isFr
-                ? "Sélectionnez un actif supporté pour calculer le lot optimal."
-                : "Select a supported asset to calculate the optimal lot size."}
+              {L(
+                "Sélectionnez un actif supporté pour calculer le lot optimal.",
+                "Selecciona un activo compatible para calcular el lote óptimo.",
+                "Select a supported asset to calculate the optimal lot size.",
+              )}
             </div>
           </div>
         </div>
@@ -950,7 +983,7 @@ function LotCalculator({
           {/* ── Big lot number ─────────────────────────────────────── */}
           <div className={styles.lotResultBlock}>
             <div className={styles.lotResultEyebrow}>
-              {isFr ? "LOT RECOMMANDÉ" : "RECOMMENDED LOT"}
+              {L("LOT RECOMMANDÉ", "LOTE RECOMENDADO", "RECOMMENDED LOT")}
             </div>
 
             {calc.lotResult.tooSmall ? (
@@ -958,12 +991,16 @@ function LotCalculator({
                 <AlertTriangle size={16} color={AMBER} />
                 <span>
                   {calc.lotResult.hasConfirmedMin
-                    ? (isFr
-                        ? "Risque insuffisant — volume calculé inférieur au minimum autorisé pour cet actif."
-                        : "Insufficient risk — calculated lot below the confirmed minimum for this asset.")
-                    : (isFr
-                        ? "Volume calculé inférieur à 0,01 lot. Le volume minimum réel dépend des spécifications de l'actif sur ta plateforme."
-                        : "Calculated lot below 0.01. The actual minimum lot depends on your platform's asset specifications.")}
+                    ? L(
+                        "Risque insuffisant — volume calculé inférieur au minimum autorisé pour cet actif.",
+                        "Riesgo insuficiente — volumen calculado inferior al mínimo permitido para este activo.",
+                        "Insufficient risk — calculated lot below the confirmed minimum for this asset.",
+                      )
+                    : L(
+                        "Volume calculé inférieur à 0,01 lot. Le volume minimum réel dépend des spécifications de l'actif sur ta plateforme.",
+                        "Volumen calculado inferior a 0,01 lote. El volumen mínimo real depende de las especificaciones del activo en tu plataforma.",
+                        "Calculated lot below 0.01. The actual minimum lot depends on your platform's asset specifications.",
+                      )}
                 </span>
               </div>
             ) : (
@@ -975,10 +1012,10 @@ function LotCalculator({
                 <div className={styles.lotUnit}>lot</div>
                 <div className={styles.lotRiskMeta}>
                   {isApprox ? "≈ " : ""}
-                  {isFr ? "Risque réel" : "Actual risk"}{" "}
+                  {L("Risque réel", "Riesgo real", "Actual risk")}{" "}
                   <strong>{money(calc.lotResult.actualRiskUsd, 2)}</strong>
                   {" · "}<strong>{pct(calc.riskPct, 2)}</strong>
-                  {" "}{isFr ? "du capital" : "of capital"}
+                  {" "}{L("du capital", "del capital", "of capital")}
                 </div>
               </>
             )}
@@ -1001,7 +1038,7 @@ function LotCalculator({
               <div className={styles.distChip}>
                 <div className={styles.distChipTop}>
                   <span className={styles.distLabel}>
-                    {isFr ? "Risque demandé" : "Requested risk"}
+                    {L("Risque demandé", "Riesgo solicitado", "Requested risk")}
                   </span>
                 </div>
                 <span className={styles.distValue}>{money(calc.riskUsd, 2)}</span>
@@ -1011,7 +1048,7 @@ function LotCalculator({
               <div className={styles.distChip}>
                 <div className={styles.distChipTop}>
                   <span className={styles.distLabel}>
-                    {isFr ? "Risque réel" : "Actual risk"}
+                    {L("Risque réel", "Riesgo real", "Actual risk")}
                   </span>
                 </div>
                 <span className={styles.distValue} style={{ color: GREEN }}>
@@ -1024,7 +1061,7 @@ function LotCalculator({
                 <div className={styles.distChipTop}>
                   <span className={styles.distLabel}>
                     {isApprox ? "≈ " : ""}
-                    {isFr ? "Risque / lot" : "Risk / lot"}
+                    {L("Risque / lot", "Riesgo / lote", "Risk / lot")}
                   </span>
                 </div>
                 <span
@@ -1043,9 +1080,11 @@ function LotCalculator({
             <div className={styles.approxNote} style={{ borderColor: "rgba(245,158,11,.2)", background: "rgba(245,158,11,.06)" }}>
               <Info size={12} color={AMBER} />
               <span style={{ color: "rgba(245,158,11,.85)" }}>
-                {isFr
-                  ? `Pas de volume non confirmé pour cet actif — calcul effectué avec un pas de ${calc.lotResult.stepUsed.toFixed(2)} lot (hypothèse MT5 standard). Vérifie le volume autorisé sur ta plateforme avant de placer le trade.`
-                  : `Lot step not confirmed for this asset — calculation based on ${calc.lotResult.stepUsed.toFixed(2)} lot step (MT5 standard assumption). Verify the allowed lot size on your platform before placing the trade.`}
+                {L(
+                  `Pas de volume non confirmé pour cet actif — calcul effectué avec un pas de ${calc.lotResult.stepUsed.toFixed(2)} lot (hypothèse MT5 standard). Vérifie le volume autorisé sur ta plateforme avant de placer le trade.`,
+                  `Paso de lote no confirmado para este activo — cálculo realizado con un paso de ${calc.lotResult.stepUsed.toFixed(2)} lote (hipótesis MT5 estándar). Verifica el volumen permitido en tu plataforma antes de operar.`,
+                  `Lot step not confirmed for this asset — calculation based on ${calc.lotResult.stepUsed.toFixed(2)} lot step (MT5 standard assumption). Verify the allowed lot size on your platform before placing the trade.`,
+                )}
               </span>
             </div>
           )}
@@ -1054,14 +1093,14 @@ function LotCalculator({
           {!calc.lotResult.tooSmall && calc.lotResult.actualRiskUsd > 0 && (
             <div className={styles.impactArea}>
               <div className={styles.impactAreaTitle}>
-                {isFr ? "Impact sur ton challenge" : "Impact on your challenge"}
+                {L("Impact sur ton challenge", "Impacto en tu challenge", "Impact on your challenge")}
                 {calc.isOneStep && (
                   <span className={styles.impactModelBadge}>CHALLENGE · TRAILING DD EOD</span>
                 )}
               </div>
 
               <DDBlock
-                label={isFr ? "Marge journalière" : "Daily margin"}
+                label={L("Marge journalière", "Margen diario", "Daily margin")}
                 sub=""
                 bufferBefore={calc.dailyBuffer}
                 bufferAfter={calc.dailyBufferAfter}
@@ -1070,14 +1109,15 @@ function LotCalculator({
                 violation={calc.dailyViolation}
                 amberThreshold={60}
                 isFr={isFr}
+                isEs={isEs}
               />
 
               <DDBlock
-                label={isFr ? "Marge totale" : "Total margin"}
+                label={L("Marge totale", "Margen total", "Total margin")}
                 sub={
                   calc.isOneStep
-                    ? (isFr ? "trailing — basé sur highest balance" : "trailing — based on highest balance")
-                    : (isFr ? "plancher fixe" : "fixed floor")
+                    ? L("trailing — basé sur highest balance", "trailing — basado en highest balance", "trailing — based on highest balance")
+                    : L("plancher fixe", "suelo fijo", "fixed floor")
                 }
                 bufferBefore={calc.totalBuffer}
                 bufferAfter={calc.totalBufferAfter}
@@ -1086,12 +1126,15 @@ function LotCalculator({
                 violation={calc.totalViolation}
                 amberThreshold={30}
                 isFr={isFr}
+                isEs={isEs}
               />
 
               <div className={styles.impactDisclaimer}>
-                {isFr
-                  ? "Simulation basée sur le solde actuel. Les positions ouvertes peuvent modifier ces chiffres."
-                  : "Simulation based on current balance. Open positions may affect these figures."}
+                {L(
+                  "Simulation basée sur le solde actuel. Les positions ouvertes peuvent modifier ces chiffres.",
+                  "Simulación basada en el saldo actual. Las posiciones abiertas pueden modificar estas cifras.",
+                  "Simulation based on current balance. Open positions may affect these figures.",
+                )}
               </div>
             </div>
           )}
@@ -1103,9 +1146,11 @@ function LotCalculator({
       {calc == null && (
         <div className={styles.emptyState}>
           <div className={styles.emptyStateText}>
-            {isFr
-              ? "Renseigne un actif, une direction, un prix d'entrée, un Stop Loss et un risque pour calculer le lot optimal."
-              : "Enter an asset, direction, entry price, Stop Loss, and risk to calculate the optimal lot size."}
+            {L(
+              "Renseigne un actif, une direction, un prix d'entrée, un Stop Loss et un risque pour calculer le lot optimal.",
+              "Introduce un activo, dirección, precio de entrada, Stop Loss y riesgo para calcular el lote óptimo.",
+              "Enter an asset, direction, entry price, Stop Loss, and risk to calculate the optimal lot size.",
+            )}
           </div>
         </div>
       )}
@@ -1118,13 +1163,13 @@ function LotCalculator({
 
 const RISK_STATUS_CONFIG: Record<
   RiskStatus,
-  { color: string; bg: string; border: string; label: string; labelEn: string }
+  { color: string; bg: string; border: string; label: string; labelEs: string; labelEn: string }
 > = {
-  "CONFORTABLE":     { color: GREEN,  bg: "rgba(34,197,94,.09)",   border: "rgba(34,197,94,.22)",   label: "✓ Confortable",     labelEn: "✓ Comfortable"    },
-  "MODÉRÉ":         { color: BLUE,   bg: "rgba(255,255,255,.06)", border: "rgba(255,255,255,.15)", label: "◆ Modéré",          labelEn: "◆ Moderate"       },
-  "ATTENTION":      { color: AMBER,  bg: "rgba(245,158,11,.09)",  border: "rgba(245,158,11,.22)",  label: "⚠ Attention",       labelEn: "⚠ Caution"        },
-  "CRITIQUE":       { color: RED,    bg: "rgba(239,68,68,.09)",   border: "rgba(239,68,68,.22)",   label: "✖ Critique",        labelEn: "✖ Critical"       },
-  "LIMITE DÉPASSÉE":{ color: "#fff", bg: "rgba(239,68,68,.22)",   border: "rgba(239,68,68,.55)",   label: "⛔ Limite dépassée", labelEn: "⛔ Limit exceeded"},
+  "CONFORTABLE":     { color: GREEN,  bg: "rgba(34,197,94,.09)",   border: "rgba(34,197,94,.22)",   label: "✓ Confortable",     labelEs: "✓ Cómodo",            labelEn: "✓ Comfortable"    },
+  "MODÉRÉ":         { color: BLUE,   bg: "rgba(255,255,255,.06)", border: "rgba(255,255,255,.15)", label: "◆ Modéré",          labelEs: "◆ Moderado",          labelEn: "◆ Moderate"       },
+  "ATTENTION":      { color: AMBER,  bg: "rgba(245,158,11,.09)",  border: "rgba(245,158,11,.22)",  label: "⚠ Attention",       labelEs: "⚠ Atención",          labelEn: "⚠ Caution"        },
+  "CRITIQUE":       { color: RED,    bg: "rgba(239,68,68,.09)",   border: "rgba(239,68,68,.22)",   label: "✖ Critique",        labelEs: "✖ Crítico",           labelEn: "✖ Critical"       },
+  "LIMITE DÉPASSÉE":{ color: "#fff", bg: "rgba(239,68,68,.22)",   border: "rgba(239,68,68,.55)",   label: "⛔ Limite dépassée", labelEs: "⛔ Límite superado",  labelEn: "⛔ Limit exceeded"},
 };
 
 
@@ -1135,7 +1180,7 @@ function DDBlock({
   bufferBefore, bufferAfter,
   impactPct, limitUsd,
   violation, amberThreshold,
-  isFr,
+  isFr, isEs = false,
 }: {
   label:          string;
   sub:            string;
@@ -1146,7 +1191,9 @@ function DDBlock({
   violation:      boolean;
   amberThreshold: number;
   isFr:           boolean;
+  isEs?:          boolean;
 }) {
+  const D = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const afterColor = violation
     ? RED
     : (impactPct ?? 0) >= amberThreshold ? AMBER : "#22c55e";
@@ -1160,17 +1207,17 @@ function DDBlock({
 
       <div className={styles.marginFlow}>
         <div className={styles.marginSide}>
-          <div className={styles.marginSideLabel}>{isFr ? "Actuellement" : "Current"}</div>
+          <div className={styles.marginSideLabel}>{D("Actuellement", "Actualmente", "Current")}</div>
           <div className={styles.marginSideValue}>{money(bufferBefore)}</div>
         </div>
         <div className={styles.marginArrow}>→</div>
         <div className={styles.marginSide}>
           <div className={styles.marginSideLabel}>
-            {isFr ? "Si SL touché" : "If SL hit"}
+            {D("Si SL touché", "Si SL alcanzado", "If SL hit")}
           </div>
           <div className={styles.marginSideValue} style={{ color: afterColor }}>
             {violation
-              ? (isFr ? "< Plancher" : "< Floor")
+              ? D("< Plancher", "< Suelo", "< Floor")
               : money(bufferAfter ?? 0)}
           </div>
         </div>
@@ -1179,18 +1226,20 @@ function DDBlock({
       <MiniMeter value={impactPct ?? 0} color={afterColor} />
 
       <div className={styles.impactStatRow}>
-        <span className={styles.impactStatLabel}>{isFr ? "Impact" : "Impact"}</span>
+        <span className={styles.impactStatLabel}>Impact</span>
         <span className={styles.impactStatValue} style={{ color: afterColor }}>
-          {pct(impactPct ?? 0)} {isFr ? "de la marge restante" : "of remaining margin"}
+          {pct(impactPct ?? 0)} {D("de la marge restante", "del margen restante", "of remaining margin")}
         </span>
       </div>
 
       {violation && (
         <div className={styles.ddViolation}>
           <AlertTriangle size={14} />
-          {isFr
-            ? "Ce Stop Loss dépasserait la limite. Simulation uniquement."
-            : "This Stop Loss would exceed the limit. Simulation only."}
+          {D(
+            "Ce Stop Loss dépasserait la limite. Simulation uniquement.",
+            "Este Stop Loss superaría el límite. Solo simulación.",
+            "This Stop Loss would exceed the limit. Simulation only.",
+          )}
         </div>
       )}
     </div>
@@ -1215,7 +1264,7 @@ function ComingSoonStub({
       <div className={styles.comingSoonTitle}>{title}</div>
       <div className={styles.comingSoonDesc}>{desc}</div>
       <div className={styles.comingSoonBadge}>
-        {isFr ? "Bientôt disponible" : "Coming soon"}
+        Coming soon
       </div>
     </div>
   );
@@ -1249,19 +1298,31 @@ const PLAN_ITEMS_EN = [
   "My maximum risk per trade is defined",
 ] as const;
 
-// Index → shortcut link (labelFr, labelEn, destination section)
-const ITEM_LINKS: Record<number, { labelFr: string; labelEn: string; section: TradingSection }> = {
-  0: { labelFr: "Consulter →", labelEn: "View →",        section: "calendar"  },
-  4: { labelFr: "Vérifier →",  labelEn: "Check →",       section: "rr"        },
-  5: { labelFr: "Calculer →",  labelEn: "Calculate →",   section: "lot"       },
-  6: { labelFr: "Vérifier →",  labelEn: "Check →",        section: "rr"        },
-  7: { labelFr: "Vérifier →",  labelEn: "Check →",        section: "rr"        },
+const PLAN_ITEMS_ES = [
+  "Revisé los anuncios económicos",
+  "Mi setup y mi invalidación están claros",
+  "Mi Stop Loss está definido",
+  "Mi Take Profit está definido",
+  "Revisé mi ratio Riesgo / Rendimiento",
+  "Calculé mi tamaño de lote",
+  "Revisé mi margen Daily DD disponible",
+  "Revisé mi margen Total DD disponible",
+  "Mi riesgo máximo por operación está definido",
+] as const;
+
+// Index → shortcut link (labelFr, labelEs, labelEn, destination section)
+const ITEM_LINKS: Record<number, { labelFr: string; labelEs: string; labelEn: string; section: TradingSection }> = {
+  0: { labelFr: "Consulter →", labelEs: "Consultar →", labelEn: "View →",        section: "calendar"  },
+  4: { labelFr: "Vérifier →",  labelEs: "Verificar →", labelEn: "Check →",       section: "rr"        },
+  5: { labelFr: "Calculer →",  labelEs: "Calcular →",  labelEn: "Calculate →",   section: "lot"       },
+  6: { labelFr: "Vérifier →",  labelEs: "Verificar →", labelEn: "Check →",       section: "rr"        },
+  7: { labelFr: "Vérifier →",  labelEs: "Verificar →", labelEn: "Check →",       section: "rr"        },
 };
 
 function PrepareSession({
   planChecks, setPlanChecks,
   journalNote, setJournalNote,
-  onSection, isFr,
+  onSection, isFr, isEs = false,
 }: {
   planChecks:     boolean[];
   setPlanChecks:  Dispatch<SetStateAction<boolean[]>>;
@@ -1269,9 +1330,11 @@ function PrepareSession({
   setJournalNote: Dispatch<SetStateAction<string>>;
   onSection:      (s: TradingSection) => void;
   isFr:           boolean;
+  isEs?:          boolean;
   isMobile:       boolean;
 }) {
-  const items     = isFr ? PLAN_ITEMS_FR : PLAN_ITEMS_EN;
+  const PS = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
+  const items     = isFr ? PLAN_ITEMS_FR : isEs ? PLAN_ITEMS_ES : PLAN_ITEMS_EN;
   const checked   = planChecks.filter(Boolean).length;
   const total     = 9;
   const pct9      = (checked / total) * 100;
@@ -1280,10 +1343,10 @@ function PrepareSession({
 
   const statusColor = allDone ? GREEN : almost ? BLUE : AMBER;
   const statusText  = allDone
-    ? (isFr ? "✓ Session prête" : "✓ Session ready")
+    ? PS("✓ Session prête", "✓ Sesión lista", "✓ Session ready")
     : almost
-      ? (isFr ? "Session presque prête" : "Session almost ready")
-      : (isFr ? "Complète ta préparation" : "Complete your preparation");
+      ? PS("Session presque prête", "Sesión casi lista", "Session almost ready")
+      : PS("Complète ta préparation", "Completa tu preparación", "Complete your preparation");
 
   const toggle = (i: number) =>
     setPlanChecks(prev => prev.map((v, idx) => idx === i ? !v : v));
@@ -1296,7 +1359,7 @@ function PrepareSession({
         <div className={styles.prepProgressTop}>
           <div>
             <div className={styles.prepProgressEyebrow}>
-              {isFr ? "PRÉPARATION DE SESSION" : "SESSION PREPARATION"}
+              {PS("PRÉPARATION DE SESSION", "PREPARACIÓN DE SESIÓN", "SESSION PREPARATION")}
             </div>
             <div className={styles.prepProgressCount}>
               <span style={{ fontVariantNumeric: "tabular-nums" }}>
@@ -1304,7 +1367,7 @@ function PrepareSession({
               </span>
               <span className={styles.prepProgressSlash}> / {total}</span>
               <span className={styles.prepProgressUnit}>
-                {isFr ? " vérifications" : " checks"}
+                {PS(" vérifications", " verificaciones", " checks")}
               </span>
             </div>
           </div>
@@ -1341,7 +1404,7 @@ function PrepareSession({
                   className={styles.prepItemLink}
                   onClick={() => onSection(link.section)}
                 >
-                  {isFr ? link.labelFr : link.labelEn}
+                  {isFr ? link.labelFr : isEs ? link.labelEs : link.labelEn}
                 </button>
               )}
             </div>
@@ -1352,15 +1415,17 @@ function PrepareSession({
       {/* ── Note de session ──────────────────────────────────────────── */}
       <div className={styles.prepNoteSection}>
         <div className={styles.prepNoteLabel}>
-          {isFr ? "Plan de session / Notes" : "Session plan / Notes"}
+          {PS("Plan de session / Notes", "Plan de sesión / Notas", "Session plan / Notes")}
         </div>
         <textarea
           className={styles.prepNote}
           value={journalNote}
           onChange={e => setJournalNote(e.target.value)}
-          placeholder={isFr
-            ? "Mon setup, mon état d'esprit et la règle que je veux respecter aujourd'hui…"
-            : "My setup, mindset and the rule I want to respect today…"}
+          placeholder={PS(
+            "Mon setup, mon état d'esprit et la règle que je veux respecter aujourd'hui…",
+            "Mi setup, mi estado mental y la regla que quiero respetar hoy…",
+            "My setup, mindset and the rule I want to respect today…",
+          )}
           rows={4}
         />
       </div>
@@ -1374,16 +1439,17 @@ function PrepareSession({
 // ═════════════════════════════════════════════════════════════════════════════
 
 export default function CockpitTools({
-  challenge, isFr, isMobile,
+  challenge, isFr, isEs = false, isMobile,
   section, onSection,
   planChecks, setPlanChecks, journalNote, setJournalNote,
 }: Props) {
+  const CT = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
-  const tabs: { id: TradingSection; labelFr: string; labelEn: string; live: boolean }[] = [
-    { id: "prepare",   labelFr: isMobile ? "Préparer"   : "Préparer ma session",  labelEn: isMobile ? "Prepare"   : "Prepare session",  live: true  },
-    { id: "rr",        labelFr: isMobile ? "R:R"        : "Risque / Rendement",   labelEn: isMobile ? "R:R"       : "Risk / Reward",    live: true  },
-    { id: "lot",       labelFr: isMobile ? "Lot"        : "Calculateur de lot",   labelEn: isMobile ? "Lot"       : "Lot Calculator",   live: true  },
-{ id: "calendar",  labelFr: isMobile ? "Annonces"   : "Calendrier éco",       labelEn: isMobile ? "Calendar"  : "Eco Calendar",     live: true  },
+  const tabs: { id: TradingSection; labelFr: string; labelEs: string; labelEn: string; live: boolean }[] = [
+    { id: "prepare",  labelFr: isMobile ? "Préparer"  : "Préparer ma session", labelEs: isMobile ? "Preparar"  : "Preparar mi sesión",    labelEn: isMobile ? "Prepare"  : "Prepare session",  live: true },
+    { id: "rr",       labelFr: isMobile ? "R:R"       : "Risque / Rendement",  labelEs: isMobile ? "R:R"       : "Riesgo / Rendimiento",   labelEn: isMobile ? "R:R"      : "Risk / Reward",    live: true },
+    { id: "lot",      labelFr: isMobile ? "Lot"       : "Calculateur de lot",  labelEs: isMobile ? "Lote"      : "Calculadora de lote",    labelEn: isMobile ? "Lot"      : "Lot Calculator",   live: true },
+    { id: "calendar", labelFr: isMobile ? "Annonces"  : "Calendrier éco",      labelEs: isMobile ? "Anuncios"  : "Calendario eco",          labelEn: isMobile ? "Calendar" : "Eco Calendar",     live: true },
   ];
 
   return (
@@ -1396,10 +1462,10 @@ export default function CockpitTools({
             className={`${styles.toolNavBtn} ${section === tab.id ? styles.toolNavBtnActive : ""}`}
             onClick={() => onSection(tab.id)}
           >
-            {isFr ? tab.labelFr : tab.labelEn}
+            {isFr ? tab.labelFr : isEs ? tab.labelEs : tab.labelEn}
             {!tab.live && (
               <span className={styles.toolNavSoon}>
-                {isFr ? "bientôt" : "soon"}
+                {CT("bientôt", "próximamente", "soon")}
               </span>
             )}
           </button>
@@ -1412,15 +1478,17 @@ export default function CockpitTools({
           <>
             <div className={styles.toolHeader}>
               <div className={styles.toolEyebrow}>
-                {isFr ? "Trading · Session du jour" : "Trading · Today's session"}
+                {CT("Trading · Session du jour", "Trading · Sesión de hoy", "Trading · Today's session")}
               </div>
               <h2 className={styles.toolTitle}>
-                {isFr ? "Préparer ma session" : "Prepare my session"}
+                {CT("Préparer ma session", "Preparar mi sesión", "Prepare my session")}
               </h2>
               <p className={styles.toolSub}>
-                {isFr
-                  ? "Valide chaque point avant d'entrer en position. Les raccourcis te renvoient directement aux outils concernés."
-                  : "Check each point before entering a position. Shortcuts take you directly to the relevant tools."}
+                {CT(
+                  "Valide chaque point avant d'entrer en position. Les raccourcis te renvoient directement aux outils concernés.",
+                  "Valida cada punto antes de entrar en posición. Los atajos te llevan directamente a las herramientas correspondientes.",
+                  "Check each point before entering a position. Shortcuts take you directly to the relevant tools.",
+                )}
               </p>
             </div>
             <div className={styles.toolDivider} />
@@ -1431,6 +1499,7 @@ export default function CockpitTools({
               setJournalNote={setJournalNote}
               onSection={onSection}
               isFr={isFr}
+              isEs={isEs}
               isMobile={isMobile}
             />
           </>
@@ -1440,19 +1509,21 @@ export default function CockpitTools({
           <>
             <div className={styles.toolHeader}>
               <div className={styles.toolEyebrow}>
-                {isFr ? "Calcul avant d'entrer" : "Pre-trade calculation"}
+                {CT("Calcul avant d'entrer", "Cálculo antes de entrar", "Pre-trade calculation")}
               </div>
               <h2 className={styles.toolTitle}>
-                {isFr ? "Risque / Rendement" : "Risk / Reward"}
+                {CT("Risque / Rendement", "Riesgo / Rendimiento", "Risk / Reward")}
               </h2>
               <p className={styles.toolSub}>
-                {isFr
-                  ? "Saisis ton trade tel que tu l'envisages — risque, gain, impact drawdown et analyse challenge sont calculés automatiquement."
-                  : "Enter your trade as you envision it — risk, gain, drawdown impact, and challenge analysis are calculated automatically."}
+                {CT(
+                  "Saisis ton trade tel que tu l'envisages — risque, gain, impact drawdown et analyse challenge sont calculés automatiquement.",
+                  "Introduce tu operación tal como la planeas — riesgo, ganancia, impacto en drawdown y análisis del challenge se calculan automáticamente.",
+                  "Enter your trade as you envision it — risk, gain, drawdown impact, and challenge analysis are calculated automatically.",
+                )}
               </p>
             </div>
             <div className={styles.toolDivider} />
-            <RRCalculator challenge={challenge} isFr={isFr} isMobile={isMobile} />
+            <RRCalculator challenge={challenge} isFr={isFr} isEs={isEs} isMobile={isMobile} />
           </>
         )}
 
@@ -1460,39 +1531,43 @@ export default function CockpitTools({
           <>
             <div className={styles.toolHeader}>
               <div className={styles.toolEyebrow}>
-                {isFr ? "Calcul avant d'entrer" : "Pre-trade calculation"}
+                {CT("Calcul avant d'entrer", "Cálculo antes de entrar", "Pre-trade calculation")}
               </div>
               <h2 className={styles.toolTitle}>
-                {isFr ? "Calculateur de lot" : "Lot Calculator"}
+                {CT("Calculateur de lot", "Calculadora de lote", "Lot Calculator")}
               </h2>
               <p className={styles.toolSub}>
-                {isFr
-                  ? "Indique ton Entry, ton Stop Loss et le risque souhaité — le lot optimal est calculé automatiquement sans dépasser ton risque."
-                  : "Enter your Entry, Stop Loss and desired risk — the optimal lot size is calculated automatically without exceeding your risk."}
+                {CT(
+                  "Indique ton Entry, ton Stop Loss et le risque souhaité — le lot optimal est calculé automatiquement sans dépasser ton risque.",
+                  "Indica tu entrada, Stop Loss y riesgo deseado — el lote óptimo se calcula automáticamente sin superar tu riesgo.",
+                  "Enter your Entry, Stop Loss and desired risk — the optimal lot size is calculated automatically without exceeding your risk.",
+                )}
               </p>
             </div>
             <div className={styles.toolDivider} />
-            <LotCalculator challenge={challenge} isFr={isFr} isMobile={isMobile} />
+            <LotCalculator challenge={challenge} isFr={isFr} isEs={isEs} isMobile={isMobile} />
           </>
         )}
 
-{section === "calendar" && (
+        {section === "calendar" && (
           <>
             <div className={styles.toolHeader}>
               <div className={styles.toolEyebrow}>
-                {isFr ? "Anticipation · Avant la session" : "Anticipation · Before the session"}
+                {CT("Anticipation · Avant la session", "Anticipación · Antes de la sesión", "Anticipation · Before the session")}
               </div>
               <h2 className={styles.toolTitle}>
-                {isFr ? "Calendrier économique" : "Economic Calendar"}
+                {CT("Calendrier économique", "Calendario económico", "Economic Calendar")}
               </h2>
               <p className={styles.toolSub}>
-                {isFr
-                  ? "Identifie les annonces à fort impact avant d'entrer en position."
-                  : "Identify high-impact announcements before entering a position."}
+                {CT(
+                  "Identifie les annonces à fort impact avant d'entrer en position.",
+                  "Identifica los anuncios de alto impacto antes de entrar en posición.",
+                  "Identify high-impact announcements before entering a position.",
+                )}
               </p>
             </div>
             <div className={styles.toolDivider} />
-            <EconomicCalendar isFr={isFr} />
+            <EconomicCalendar isFr={isFr} isEs={isEs} />
           </>
         )}
 

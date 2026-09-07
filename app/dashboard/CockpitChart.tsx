@@ -27,6 +27,7 @@ export default function CockpitChart({
   targetBalance,
   floorBalance,
   isFr,
+  isEs,
 }: {
   trades: CockpitTrade[];
   startBalance: number;
@@ -34,6 +35,7 @@ export default function CockpitChart({
   targetBalance: number;
   floorBalance: number;
   isFr: boolean;
+  isEs?: boolean;
 }) {
   const width = 760;
   const height = 260;
@@ -69,7 +71,7 @@ export default function CockpitChart({
 
   return (
     <div style={{ position: "relative", minHeight: 250 }}>
-      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={isFr ? "Évolution réelle du compte" : "Actual account evolution"} style={{ width: "100%", display: "block" }}>
+      <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={isFr ? "Évolution réelle du compte" : isEs ? "Evolución real de la cuenta" : "Actual account evolution"} style={{ width: "100%", display: "block" }}>
         <defs>
           <linearGradient id="cockpit-area" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={BLUE} stopOpacity="0.32" />
@@ -85,9 +87,9 @@ export default function CockpitChart({
           <line key={step} x1={pad.left} y1={pad.top + step * chartHeight} x2={pad.left + chartWidth} y2={pad.top + step * chartHeight} stroke="rgba(255,255,255,0.055)" />
         ))}
         <line x1={pad.left} y1={y(targetBalance)} x2={pad.left + chartWidth} y2={y(targetBalance)} stroke={GREEN} strokeDasharray="6 5" />
-        <text x={pad.left + chartWidth + 9} y={y(targetBalance) + 4} fill={GREEN} fontSize="10" fontWeight="800">{isFr ? "OBJECTIF" : "TARGET"}</text>
+        <text x={pad.left + chartWidth + 9} y={y(targetBalance) + 4} fill={GREEN} fontSize="10" fontWeight="800">{isFr ? "OBJECTIF" : isEs ? "OBJETIVO" : "TARGET"}</text>
         <line x1={pad.left} y1={y(floorBalance)} x2={pad.left + chartWidth} y2={y(floorBalance)} stroke={RED} strokeDasharray="6 5" />
-        <text x={pad.left + chartWidth + 9} y={y(floorBalance) + 4} fill={RED} fontSize="10" fontWeight="800">{isFr ? "LIMITE" : "FLOOR"}</text>
+        <text x={pad.left + chartWidth + 9} y={y(floorBalance) + 4} fill={RED} fontSize="10" fontWeight="800">{isFr ? "LIMITE" : isEs ? "SUELO" : "FLOOR"}</text>
         <path d={area} fill="url(#cockpit-area)" />
         <path d={path} fill="none" stroke="url(#cockpit-line)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
         <circle cx={x(points.length - 1)} cy={y(current.balance)} r="5" fill={BLUE} stroke="#fff" strokeWidth="2" />
@@ -98,7 +100,7 @@ export default function CockpitChart({
       {trades.length === 0 && (
         <div style={{ position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: "min(330px,78%)", display: "flex", alignItems: "center", gap: 8, color: "rgba(255,255,255,.35)", fontSize: 11, textAlign: "center" }}>
           <LineChart size={18} />
-          {isFr ? "La courbe se dessinera après les premiers trades clôturés." : "The chart will build after your first closed trades."}
+          {isFr ? "La courbe se dessinera après les premiers trades clôturés." : isEs ? "La curva se dibujará tras los primeros trades cerrados." : "The chart will build after your first closed trades."}
         </div>
       )}
     </div>

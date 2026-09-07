@@ -111,7 +111,7 @@ export default function Rules() {
                 <span style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#FFFFFF", fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 100, border: "1px solid rgba(255,255,255,0.12)" }}>{labels.twoStep}</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
-                <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Critère" : "Criteria"}</div>
+                <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{L("Critère", "Criterio", "Criteria")}</div>
                 <div style={{ padding: "8px 0", color: "#D4A843", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.phase1}</div>
                 <div style={{ padding: "8px 0", color: "#D4A843", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.phase2}</div>
                 {challengeRows2Step.map((row, i) => (
@@ -130,8 +130,8 @@ export default function Rules() {
                 <span style={{ backgroundColor: "rgba(255,255,255,0.06)", color: "#FFFFFF", fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 100, border: "1px solid rgba(255,255,255,0.12)" }}>{labels.oneStep} ⚡</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-                <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Critère" : "Criteria"}</div>
-                <div style={{ padding: "8px 0", color: "#D4A843", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Valeur" : "Value"}</div>
+                <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{L("Critère", "Criterio", "Criteria")}</div>
+                <div style={{ padding: "8px 0", color: "#D4A843", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{L("Valeur", "Valor", "Value")}</div>
                 {challengeRows1Step.map((row, i) => (
                   <Fragment key={row.label}>
                     <div key={`l${i}`} style={{ padding: "10px 0", color: "rgba(255,255,255,0.6)", fontSize: 13, borderBottom: i < challengeRows1Step.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>{row.label}</div>
@@ -149,7 +149,7 @@ export default function Rules() {
           <div style={{ marginBottom: 32 }}>
             <div className="rules-surface" style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: isMobile ? 16 : 24, overflowX: isMobile ? "auto" : "visible" }}>
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "140px 100px 100px" : "2fr 1fr 1fr", gap: 0, minWidth: isMobile ? 340 : "auto" }}>
-                <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{isFr ? "Critère" : "Criteria"}</div>
+                <div style={{ padding: "8px 0", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{L("Critère", "Criterio", "Criteria")}</div>
                 <div style={{ padding: "8px 0", color: "#D4A843", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.twoStep}</div>
                 <div style={{ padding: "8px 0", color: "#D4A843", fontSize: 10, fontWeight: 700, textAlign: "center", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>{labels.oneStep} ⚡</div>
                 {fundedRows.map((row, i) => (

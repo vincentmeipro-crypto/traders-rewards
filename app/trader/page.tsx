@@ -31,6 +31,7 @@ const CURRENCY_FLAG: Record<string, string> = {
 };
 
 const DAYS_FR = ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"];
+const DAYS_ES = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 const DAYS_EN = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function normalizeDate(dateStr: string): string {
@@ -54,9 +55,9 @@ function groupByDate(events: CalEvent[]) {
   return Object.entries(map).sort(([a], [b]) => a.localeCompare(b));
 }
 
-function formatDate(dateStr: string, isFr: boolean) {
+function formatDate(dateStr: string, isFr: boolean, isEs?: boolean) {
   const d = new Date(dateStr);
-  const day = isFr ? DAYS_FR[d.getDay()] : DAYS_EN[d.getDay()];
+  const day = isFr ? DAYS_FR[d.getDay()] : isEs ? DAYS_ES[d.getDay()] : DAYS_EN[d.getDay()];
   return `${day} ${d.getDate()}/${d.getMonth() + 1}`;
 }
 
@@ -67,6 +68,8 @@ export default function TraderPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"All" | "High" | "Medium" | "Low">("All");
   const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const T = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   useEffect(() => {
     if (tab !== "calendar") return;
@@ -81,27 +84,29 @@ export default function TraderPage() {
   const grouped = groupByDate(filtered);
 
   const labels = {
-    title:    isFr ? "Espace Trader" : "Trader Hub",
-    sub:      isFr ? "Vos outils de trading au même endroit." : "Your trading tools in one place.",
-    calTab:   isFr ? "Annonces Économiques" : "Economic Announcements",
-    platTab:  isFr ? "Plateforme de Trading" : "Trading Platform",
-    all:      isFr ? "Tout" : "All",
-    high:     isFr ? "Élevé" : "High",
-    medium:   isFr ? "Moyen" : "Medium",
-    low:      isFr ? "Faible" : "Low",
-    time:     isFr ? "Heure" : "Time",
-    currency: isFr ? "Devise" : "Currency",
-    event:    isFr ? "Événement" : "Event",
-    impact:   isFr ? "Impact" : "Impact",
-    actual:   isFr ? "Actuel" : "Actual",
-    forecast: isFr ? "Prévision" : "Forecast",
-    previous: isFr ? "Précédent" : "Previous",
-    loading:  isFr ? "Chargement..." : "Loading...",
-    noData:   isFr ? "Aucun événement pour cette semaine." : "No events for this week.",
-    mt5Desc:  isFr
-      ? "Accédez à votre compte Reward depuis MetaTrader 5, la référence des traders professionnels."
-      : "Access your Reward account from MetaTrader 5, the reference for professional traders.",
-    mt5Btn:   isFr ? "Télécharger MT5" : "Download MT5",
+    title:    T("Espace Trader", "Espacio Trader", "Trader Hub"),
+    sub:      T("Vos outils de trading au même endroit.", "Tus herramientas de trading en un solo lugar.", "Your trading tools in one place."),
+    calTab:   T("Annonces Économiques", "Anuncios Económicos", "Economic Announcements"),
+    platTab:  T("Plateforme de Trading", "Plataforma de Trading", "Trading Platform"),
+    all:      T("Tout", "Todo", "All"),
+    high:     T("Élevé", "Alto", "High"),
+    medium:   T("Moyen", "Medio", "Medium"),
+    low:      T("Faible", "Bajo", "Low"),
+    time:     T("Heure", "Hora", "Time"),
+    currency: T("Devise", "Divisa", "Currency"),
+    event:    T("Événement", "Evento", "Event"),
+    impact:   "Impact",
+    actual:   T("Actuel", "Actual", "Actual"),
+    forecast: T("Prévision", "Previsión", "Forecast"),
+    previous: T("Précédent", "Anterior", "Previous"),
+    loading:  T("Chargement...", "Cargando...", "Loading..."),
+    noData:   T("Aucun événement pour cette semaine.", "Ningún evento para esta semana.", "No events for this week."),
+    mt5Desc:  T(
+      "Accédez à votre compte Reward depuis MetaTrader 5, la référence des traders professionnels.",
+      "Accede a tu cuenta Reward desde MetaTrader 5, la referencia de los traders profesionales.",
+      "Access your Reward account from MetaTrader 5, the reference for professional traders.",
+    ),
+    mt5Btn:   T("Télécharger MT5", "Descargar MT5", "Download MT5"),
   };
 
   return (
@@ -155,8 +160,8 @@ export default function TraderPage() {
                 grouped.map(([date, evs]) => (
                   <div key={date} style={{ marginBottom: 32 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12, borderLeft: "3px solid #1565C0", paddingLeft: 12 }}>
-                      <span style={{ fontWeight: 800, fontSize: 15, color: "#0D1B3E" }}>{formatDate(date, isFr)}</span>
-                      <span style={{ color: "#7a90b0", fontSize: 12 }}>{evs.length} {isFr ? "annonce(s)" : "event(s)"}</span>
+                      <span style={{ fontWeight: 800, fontSize: 15, color: "#0D1B3E" }}>{formatDate(date, isFr, isEs)}</span>
+                      <span style={{ color: "#7a90b0", fontSize: 12 }}>{evs.length} {T("annonce(s)", "anuncio(s)", "event(s)")}</span>
                     </div>
                     <div className="card" style={{ padding: 0, overflow: "hidden" }}>
                       <div style={{ overflowX: "auto" }}>

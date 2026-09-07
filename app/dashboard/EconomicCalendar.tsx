@@ -30,10 +30,10 @@ function eventDate(event: EconomicEvent): Date | null {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
-function impactLabel(impact: string | undefined, isFr: boolean): string {
-  if (impact === "High") return isFr ? "Fort ***" : "High ***";
-  if (impact === "Medium") return isFr ? "Moyen **" : "Medium **";
-  if (impact === "Low") return isFr ? "Faible *" : "Low *";
+function impactLabel(impact: string | undefined, isFr: boolean, isEs?: boolean): string {
+  if (impact === "High") return isFr ? "Fort ***" : isEs ? "Alto ***" : "High ***";
+  if (impact === "Medium") return isFr ? "Moyen **" : isEs ? "Medio **" : "Medium **";
+  if (impact === "Low") return isFr ? "Faible *" : isEs ? "Bajo *" : "Low *";
   return impact ?? "—";
 }
 
@@ -58,7 +58,8 @@ function CountryFlag({ country }: { country: "USD" | "EUR" }) {
     </svg>
   );
 }
-export default function EconomicCalendar({ isFr }: { isFr: boolean }) {
+export default function EconomicCalendar({ isFr, isEs }: { isFr: boolean; isEs?: boolean }) {
+  const E = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const [events, setEvents] = useState<EconomicEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -104,9 +105,9 @@ export default function EconomicCalendar({ isFr }: { isFr: boolean }) {
         <div className={styles.heading}>
           <div className={styles.icon}><CalendarClock size={18} /></div>
           <div>
-            <h2>{isFr ? "Calendrier économique" : "Economic calendar"}</h2>
+            <h2>{E("Calendrier économique", "Calendario económico", "Economic calendar")}</h2>
             <p>
-              {isFr ? "Annonces à fort impact · heure de Paris" : "High-impact events · Paris time"}
+              {E("Annonces à fort impact · heure de Paris", "Anuncios de alto impacto · hora de París", "High-impact events · Paris time")}
               <span className={styles.impactBadge}>★★★</span>
             </p>
           </div>
@@ -121,25 +122,25 @@ export default function EconomicCalendar({ isFr }: { isFr: boolean }) {
       </div>
 
       {loading ? (
-        <div className={styles.state}>{isFr ? "Chargement des annonces…" : "Loading events…"}</div>
+        <div className={styles.state}>{E("Chargement des annonces…", "Cargando anuncios…", "Loading events…")}</div>
       ) : failed ? (
-        <div className={styles.state}>{isFr ? "Données indisponibles." : "Data unavailable."}</div>
+        <div className={styles.state}>{E("Données indisponibles.", "Datos no disponibles.", "Data unavailable.")}</div>
       ) : visibleEvents.length === 0 ? (
-        <div className={styles.state}>{isFr ? "Aucune annonce à fort impact prévue pour le moment." : "No high-impact event scheduled right now."}</div>
+        <div className={styles.state}>{E("Aucune annonce à fort impact prévue pour le moment.", "Ningún anuncio de alto impacto previsto por el momento.", "No high-impact event scheduled right now.")}</div>
       ) : (
         <div className={styles.table}>
           <div className={styles.tableHeader}>
-            <span>{isFr ? "Date" : "Date"}</span><span>{isFr ? "Devise" : "Currency"}</span><span>{isFr ? "Annonce" : "Event"}</span><span>{isFr ? "Prévision" : "Forecast"}</span><span>{isFr ? "Précédent" : "Previous"}</span>
+            <span>{"Date"}</span><span>{E("Devise", "Divisa", "Currency")}</span><span>{E("Annonce", "Anuncio", "Event")}</span><span>{E("Prévision", "Previsión", "Forecast")}</span><span>{E("Précédent", "Anterior", "Previous")}</span>
           </div>
           {visibleEvents.map(({ event, date }, index) => {
             const impactColor = IMPACT_COLORS[event.impact ?? ""] ?? "#64748b";
             return (
               <div className={styles.row} key={`${event.country}-${event.title}-${event.date}-${index}`}>
-                <div className={styles.date}><strong>{date.toLocaleTimeString(isFr ? "fr-FR" : "en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" })}</strong><span>{date.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { weekday: "short", day: "2-digit", month: "short", timeZone: "Europe/Paris" })}</span></div>
+                <div className={styles.date}><strong>{date.toLocaleTimeString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" })}</strong><span>{date.toLocaleDateString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", { weekday: "short", day: "2-digit", month: "short", timeZone: "Europe/Paris" })}</span></div>
                 <div className={styles.currency}><CountryFlag country={event.country === "USD" ? "USD" : "EUR"} /><b>{event.country}</b></div>
-                <div className={styles.event}><strong>{event.title ?? "—"}</strong><span><i style={{ background: impactColor }} />{impactLabel(event.impact, isFr)}</span></div>
-                <div className={styles.value}><small>{isFr ? "Prévision" : "Forecast"}</small>{event.forecast || "—"}</div>
-                <div className={styles.value}><small>{isFr ? "Précédent" : "Previous"}</small>{event.previous || "—"}</div>
+                <div className={styles.event}><strong>{event.title ?? "—"}</strong><span><i style={{ background: impactColor }} />{impactLabel(event.impact, isFr, isEs)}</span></div>
+                <div className={styles.value}><small>{E("Prévision", "Previsión", "Forecast")}</small>{event.forecast || "—"}</div>
+                <div className={styles.value}><small>{E("Précédent", "Anterior", "Previous")}</small>{event.previous || "—"}</div>
               </div>
             );
           })}
@@ -147,8 +148,8 @@ export default function EconomicCalendar({ isFr }: { isFr: boolean }) {
       )}
 
       <div className={styles.footer}>
-        <span>{isFr ? "Données actualisées toutes les 15 minutes" : "Data refreshed every 15 minutes"}</span>
-        <Link href="/trader">{isFr ? "Voir le calendrier complet" : "Open full calendar"}<ArrowRight size={13} /></Link>
+        <span>{E("Données actualisées toutes les 15 minutes", "Datos actualizados cada 15 minutos", "Data refreshed every 15 minutes")}</span>
+        <Link href="/trader">{E("Voir le calendrier complet", "Ver el calendario completo", "Open full calendar")}<ArrowRight size={13} /></Link>
       </div>
     </section>
   );

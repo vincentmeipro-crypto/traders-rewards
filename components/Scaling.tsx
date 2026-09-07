@@ -30,24 +30,28 @@ function getSteps(start: number) {
 export default function Scaling() {
   const { lang } = useLanguage();
   const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const S = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   const steps = getSteps(200000);
 
   const labels = {
-    badge:   isFr ? "PROGRAMME D'ÉLÉVATION" : "ELEVATION PROGRAM",
-    title:   isFr ? "Progressez jusqu'à" : "Grow Your Account Up to",
+    badge:   S("PROGRAMME D'ÉLÉVATION", "PROGRAMA DE ELEVACIÓN", "ELEVATION PROGRAM"),
+    title:   S("Progressez jusqu'à", "Progresa hasta", "Grow Your Account Up to"),
     gold:    "$1,000,000",
-    sub:     isFr
-      ? "Chaque trimestre de performance, votre capital funded évolue vers le palier suivant. Atteignez le million sans changer de stratégie."
-      : "Every performance quarter, your funded account moves to the next level. Reach seven figures without changing your strategy.",
-    session: isFr ? "Session" : "Session",
-    balance: isFr ? "Solde du compte" : "Account Balance",
-    daily:   isFr ? "Perte journalière max" : "Max Daily Loss",
-    totalL:  isFr ? "Perte totale max" : "Max Total Loss",
-    scaleAt: isFr ? "Objectif d'élévation" : "Elevation Target",
-    nextBal: isFr ? "Prochain palier" : "Next Level",
-    cap:     isFr ? "Plafond atteint" : "Cap Reached",
-    condTitle: isFr ? "Conditions pour évoluer" : "Conditions to Level Up",
+    sub:     S(
+      "Chaque trimestre de performance, votre capital funded évolue vers le palier suivant. Atteignez le million sans changer de stratégie.",
+      "Cada trimestre de rendimiento, tu capital funded avanza al siguiente nivel. Alcanza el millón sin cambiar de estrategia.",
+      "Every performance quarter, your funded account moves to the next level. Reach seven figures without changing your strategy.",
+    ),
+    session: "Session",
+    balance: S("Solde du compte", "Saldo de la cuenta", "Account Balance"),
+    daily:   S("Perte journalière max", "Pérdida diaria máx.", "Max Daily Loss"),
+    totalL:  S("Perte totale max", "Pérdida total máx.", "Max Total Loss"),
+    scaleAt: S("Objectif d'élévation", "Objetivo de elevación", "Elevation Target"),
+    nextBal: S("Prochain palier", "Siguiente nivel", "Next Level"),
+    cap:     S("Plafond atteint", "Techo alcanzado", "Cap Reached"),
+    condTitle: S("Conditions pour évoluer", "Condiciones para avanzar", "Conditions to Level Up"),
     conds: isFr ? [
       "Réaliser au moins 10% de profit sur le solde du compte funded",
       "Sur une session trimestrielle (3 mois)",
@@ -55,6 +59,13 @@ export default function Scaling() {
       "Aucune violation des règles de trading",
       "Solde du compte positif en permanence",
       "Traders Rewards se réserve le droit de restreindre l'accès au programme d'Élévation à l'issue d'une étude approfondie du profil et de l'historique de trading du trader",
+    ] : isEs ? [
+      "Lograr al menos un 10% de beneficio sobre el saldo de la cuenta funded",
+      "Durante una sesión trimestral (3 meses)",
+      "Haber recibido al menos 2 recompensas durante la sesión",
+      "Ninguna violación de las reglas de trading",
+      "Saldo de cuenta positivo en todo momento",
+      "Traders Rewards se reserva el derecho de restringir el acceso al programa de Elevación tras un análisis exhaustivo del perfil e historial de trading del trader",
     ] : [
       "Achieve at least 10% profit on your funded account balance",
       "Over a quarterly session (3 months)",
@@ -63,12 +74,16 @@ export default function Scaling() {
       "Positive account balance maintained throughout",
       "Traders Rewards reserves the right to restrict access to the Elevation program following a thorough review of the trader's profile and trading history",
     ],
-    note: isFr
-      ? "L'élévation est automatiquement appliquée dès que toutes les conditions sont validées. Votre stratégie, vos règles et votre partage des profits restent inchangés."
-      : "Elevation is automatically applied once all conditions are met. Your strategy, rules, and profit split remain unchanged.",
-    profitNote: isFr
-      ? "Le compteur de profit est cumulatif sur les 3 mois. Si vous faites un retrait en cours de session, votre capital de base revient à son niveau initial — mais le profit déjà généré reste comptabilisé. Exemple : vous atteignez +5%, retirez, puis faites encore +5% → total cumulé = 10% → élévation déclenchée."
-      : "The profit counter is cumulative over 3 months. If you withdraw during the session, your base capital returns to its initial level — but the profit already generated still counts. Example: you reach +5%, withdraw, then generate another +5% → cumulative total = 10% → elevation triggered.",
+    note: S(
+      "L'élévation est automatiquement appliquée dès que toutes les conditions sont validées. Votre stratégie, vos règles et votre partage des profits restent inchangés.",
+      "La elevación se aplica automáticamente una vez validadas todas las condiciones. Tu estrategia, reglas y reparto de beneficios no cambian.",
+      "Elevation is automatically applied once all conditions are met. Your strategy, rules, and profit split remain unchanged.",
+    ),
+    profitNote: S(
+      "Le compteur de profit est cumulatif sur les 3 mois. Si vous faites un retrait en cours de session, votre capital de base revient à son niveau initial — mais le profit déjà généré reste comptabilisé. Exemple : vous atteignez +5%, retirez, puis faites encore +5% → total cumulé = 10% → élévation déclenchée.",
+      "El contador de beneficio es acumulativo durante los 3 meses. Si realizas un retiro durante la sesión, tu capital base vuelve a su nivel inicial — pero el beneficio ya generado sigue contabilizándose. Ejemplo: alcanzas +5%, retiras, luego generas otro +5% → total acumulado = 10% → elevación activada.",
+      "The profit counter is cumulative over 3 months. If you withdraw during the session, your base capital returns to its initial level — but the profit already generated still counts. Example: you reach +5%, withdraw, then generate another +5% → cumulative total = 10% → elevation triggered.",
+    ),
   };
 
   return (
@@ -130,7 +145,7 @@ export default function Scaling() {
         <div style={{ marginBottom: 24, backgroundColor: "rgba(21,101,192,0.06)", border: "1px solid rgba(21,101,192,0.2)", borderRadius: 16, padding: "20px 28px", display: "flex", gap: 16, alignItems: "flex-start" }}>
           <span style={{ fontSize: 20, flexShrink: 0 }}>💡</span>
           <p style={{ color: "#888", fontSize: 14, lineHeight: 1.8, margin: 0 }}>
-            <span style={{ color: "#1565C0", fontWeight: 700 }}>{isFr ? "Profit cumulatif" : "Cumulative profit"} — </span>
+            <span style={{ color: "#1565C0", fontWeight: 700 }}>{S("Profit cumulatif", "Beneficio acumulativo", "Cumulative profit")} — </span>
             {labels.profitNote}
           </p>
         </div>
@@ -161,15 +176,15 @@ export default function Scaling() {
             <div style={{ marginTop: 20, display: "flex", gap: 24, flexWrap: "wrap" }}>
               <div>
                 <div style={{ color: "#00C2FF", fontSize: 22, fontWeight: 900 }}>{steps.length}</div>
-                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Sessions" : "Sessions"}</div>
+                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{"Sessions"}</div>
               </div>
               <div>
-                <div style={{ color: "#1565C0", fontSize: 22, fontWeight: 900 }}>3 {isFr ? "mois" : "months"}</div>
-                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Par session" : "Per session"}</div>
+                <div style={{ color: "#1565C0", fontSize: 22, fontWeight: 900 }}>3 {S("mois", "meses", "months")}</div>
+                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{S("Par session", "Por sesión", "Per session")}</div>
               </div>
               <div>
                 <div style={{ color: "#60A5FA", fontSize: 22, fontWeight: 900 }}>$1M</div>
-                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{isFr ? "Plafond" : "Cap"}</div>
+                <div style={{ color: "#444", fontSize: 12, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>{S("Plafond", "Techo", "Cap")}</div>
               </div>
             </div>
           </div>

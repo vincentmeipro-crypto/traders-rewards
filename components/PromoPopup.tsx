@@ -12,6 +12,8 @@ export default function PromoPopup() {
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState("");
   const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const P = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   useEffect(() => {
     const now = new Date();
@@ -88,16 +90,16 @@ export default function PromoPopup() {
 
         {/* Titre */}
         <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 6, lineHeight: 1.2 }}>
-          {isFr ? "Offre Été — 33% de réduction" : "Summer Deal — 33% off"}
+          {P("Offre Été — 33% de réduction", "Oferta Verano — 33% de descuento", "Summer Deal — 33% off")}
         </div>
         <div style={{ color: "#666", fontSize: 13, marginBottom: 24 }}>
-          {isFr ? "Sur tous vos challenges · Jusqu'au 15 août 2026" : "On all challenges · Until Aug 15, 2026"}
+          {P("Sur tous vos challenges · Jusqu'au 15 août 2026", "En todos tus challenges · Hasta el 15 ago. 2026", "On all challenges · Until Aug 15, 2026")}
         </div>
 
         {/* Code promo */}
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 11, color: "#555", fontWeight: 600, marginBottom: 8, textTransform: "uppercase", letterSpacing: "1px" }}>
-            {isFr ? "Votre code promo" : "Your promo code"}
+            {P("Votre code promo", "Tu código promo", "Your promo code")}
           </div>
           <button onClick={copyCode} style={{
             display: "inline-flex", alignItems: "center", gap: 10,
@@ -108,7 +110,7 @@ export default function PromoPopup() {
           }}>
             <span style={{ fontSize: 28, fontWeight: 900, color: "#f97316", letterSpacing: "4px", fontFamily: "monospace", textShadow: "0 0 12px rgba(249,115,22,0.5)" }}>TR33</span>
             <span style={{ fontSize: 12, color: copied ? "#22c55e" : "#f97316", fontWeight: 700 }}>
-              {copied ? (isFr ? "Copié !" : "Copied!") : (isFr ? "Copier" : "Copy")}
+              {copied ? P("Copié !", "¡Copiado!", "Copied!") : P("Copier", "Copiar", "Copy")}
             </span>
           </button>
         </div>
@@ -117,7 +119,7 @@ export default function PromoPopup() {
         {timeLeft && (
           <div style={{ marginBottom: 24, backgroundColor: "rgba(249,115,22,0.06)", border: "1px solid rgba(249,115,22,0.15)", borderRadius: 10, padding: "10px 16px" }}>
             <div style={{ fontSize: 11, color: "#666", fontWeight: 600, textTransform: "uppercase", letterSpacing: "1px", marginBottom: 4 }}>
-              {isFr ? "Expire dans" : "Expires in"}
+              {P("Expire dans", "Expira en", "Expires in")}
             </div>
             <div style={{ fontSize: 20, fontWeight: 800, color: "#f97316", fontFamily: "monospace" }}>{timeLeft}</div>
           </div>
@@ -133,11 +135,11 @@ export default function PromoPopup() {
           textDecoration: "none",
           boxShadow: "0 4px 24px rgba(249,115,22,0.3)",
         }}>
-          {isFr ? "Utiliser le code TR33 →" : "Use code TR33 →"}
+          {P("Utiliser le code TR33 →", "Usar el código TR33 →", "Use code TR33 →")}
         </a>
 
         <div style={{ marginTop: 14, fontSize: 11, color: "#444" }}>
-          {isFr ? "Valable jusqu'au 15 août 2026" : "Valid until August 15, 2026"}
+          {P("Valable jusqu'au 15 août 2026", "Válido hasta el 15 de agosto de 2026", "Valid until August 15, 2026")}
         </div>
       </div>
     </div>

@@ -14,6 +14,7 @@ export interface FreshnessInfo {
   state:   FreshnessState;
   label:   string;   // EN
   labelFr: string;   // FR
+  labelEs: string;   // ES
   /** True when data is likely outdated and should not be presented as live */
   isStale: boolean;
   /**
@@ -44,6 +45,7 @@ export function getSyncFreshness(
       state:   "unknown",
       label:   "Sync pending",
       labelFr: "Synchronisation en attente",
+      labelEs: "Sincronización pendiente",
       isStale: false,
       color:   "#9CCFEA",
     };
@@ -59,6 +61,7 @@ export function getSyncFreshness(
       state:   "live",
       label:   "Data synchronized",
       labelFr: "Données synchronisées",
+      labelEs: "Datos sincronizados",
       isStale: false,
       color:   "#22c55e",
     };
@@ -70,6 +73,7 @@ export function getSyncFreshness(
       state:   "recent",
       label:   `Last sync: ${m} min`,
       labelFr: `Dernière synchronisation : ${m} min`,
+      labelEs: `Última sincronización: ${m} min`,
       isStale: false,
       color:   "#9CCFEA",
     };
@@ -82,6 +86,7 @@ export function getSyncFreshness(
       state:   "old",
       label:   `Last sync: ${hours}h`,
       labelFr: `Dernière synchronisation : ${hours} h`,
+      labelEs: `Última sincronización: ${hours}h`,
       isStale: true,
       color:   "#f59e0b",
     };
@@ -91,6 +96,7 @@ export function getSyncFreshness(
     state:   "stale",
     label:   "Account data not recently synchronized",
     labelFr: "Données de compte non synchronisées récemment",
+    labelEs: "Datos de cuenta no sincronizados recientemente",
     isStale: true,
     color:   "#f59e0b",
   };

@@ -156,10 +156,11 @@ function parseTrades(history: Record<string, unknown>[]): CockpitTrade[] {
     .sort((a, b) => (a.date?.getTime() ?? 0) - (b.date?.getTime() ?? 0));
 }
 
-function phaseLabel(phase: string, approvedRewardsCount: number): string {
+function phaseLabel(phase: string, approvedRewardsCount: number, isFr = false, isEs = false): string {
+  const CL = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   if (phase === "phase1") return "CHALLENGER";
   if (phase === "phase2") return "CHALLENGER";
-  if (phase === "funded") return approvedRewardsCount > 0 ? "TRADER REWARD" : "COMPTE REWARD";
+  if (phase === "funded") return approvedRewardsCount > 0 ? "TRADER REWARD" : CL("COMPTE REWARD", "CUENTA REWARD", "REWARD ACCOUNT");
   return phase;
 }
 
@@ -194,6 +195,7 @@ type ObjectiveBlockProps = {
   daysRemaining: number;
   levelLabel: string;
   isFr: boolean;
+  isEs?: boolean;
 };
 
 function ObjectiveBlock({
@@ -208,7 +210,9 @@ function ObjectiveBlock({
   daysRemaining,
   levelLabel,
   isFr,
+  isEs = false,
 }: ObjectiveBlockProps) {
+  const OB = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const isFunded = phase === "funded";
 
   return (
@@ -220,8 +224,8 @@ function ObjectiveBlock({
           : phase === "phase1"
             ? "CHALLENGER · OBJECTIF +6%"
             : phase === "phase2"
-              ? (isFr ? "CHALLENGER · OBJECTIF" : "CHALLENGER · TARGET")
-              : (isFr ? "Objectif — Challenge" : "Objective — Challenge")}
+              ? OB("CHALLENGER · OBJECTIF", "CHALLENGER · OBJETIVO", "CHALLENGER · TARGET")
+              : OB("Objectif — Challenge", "Objetivo — Challenge", "Objective — Challenge")}
       </div>
 
       {(
@@ -247,7 +251,7 @@ function ObjectiveBlock({
           {/* Amounts */}
           <div className={styles.objectiveAmounts}>
             <div className={styles.objectiveAmount}>
-              <div className={styles.objectiveAmountLabel}>{isFr ? "Réalisé" : "Achieved"}</div>
+              <div className={styles.objectiveAmountLabel}>{OB("Réalisé", "Logrado", "Achieved")}</div>
               <div
                 className={styles.objectiveAmountValue}
                 style={{ color: profit >= 0 ? GREEN : RED }}
@@ -257,9 +261,9 @@ function ObjectiveBlock({
             </div>
             <div className={styles.objectiveAmountSep} />
             <div className={styles.objectiveAmount} style={{ textAlign: "right" }}>
-              <div className={styles.objectiveAmountLabel}>{isFr ? "Encore nécessaire" : "Still needed"}</div>
+              <div className={styles.objectiveAmountLabel}>{OB("Encore nécessaire", "Aún necesario", "Still needed")}</div>
               <div className={styles.objectiveAmountValue}>
-                {profitRemaining > 0 ? money(profitRemaining) : <span style={{ color: GREEN }}>✓ {isFr ? "Atteint" : "Reached"}</span>}
+                {profitRemaining > 0 ? money(profitRemaining) : <span style={{ color: GREEN }}>✓ {OB("Atteint", "Alcanzado", "Reached")}</span>}
               </div>
             </div>
           </div>
@@ -273,18 +277,20 @@ function ObjectiveBlock({
           <span className={styles.objectiveDaysSep}> / </span>
           <span className={styles.objectiveDaysMin}>{minDays}</span>
           <span className={styles.objectiveDaysLabel}>
-            {" "}{isFr ? "jours minimum tradés" : "minimum days traded"}
+            {" "}{OB("jours minimum tradés", "días mínimos operados", "minimum days traded")}
           </span>
         </div>
         {daysRemaining > 0 ? (
           <span className={styles.objectiveDaysBadge}>
-            {daysRemaining} {isFr
-              ? `jour${daysRemaining > 1 ? "s" : ""} restant${daysRemaining > 1 ? "s" : ""}`
-              : `day${daysRemaining > 1 ? "s" : ""} left`}
+            {daysRemaining} {OB(
+              `jour${daysRemaining > 1 ? "s" : ""} restant${daysRemaining > 1 ? "s" : ""}`,
+              `día${daysRemaining > 1 ? "s" : ""} restante${daysRemaining > 1 ? "s" : ""}`,
+              `day${daysRemaining > 1 ? "s" : ""} left`
+            )}
           </span>
         ) : (
           <span className={styles.objectiveDaysDone}>
-            ✓ {isFr ? "Condition validée" : "Requirement met"}
+            ✓ {OB("Condition validée", "Condición cumplida", "Requirement met")}
           </span>
         )}
       </div>}
@@ -294,28 +300,35 @@ function ObjectiveBlock({
 
 // ── Tools Placeholder ─────────────────────────────────────────────────────────
 
-function ToolsPlaceholder({ isFr, isMobile }: { isFr: boolean; isMobile: boolean }) {
+function ToolsPlaceholder({ isFr, isEs = false, isMobile }: { isFr: boolean; isEs?: boolean; isMobile: boolean }) {
+  const TP = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const tools = [
     {
       icon: <TrendingUp size={26} color={BLUE} />,
-      title: isFr ? "Risque / Rendement" : "Risk / Reward",
-      desc: isFr
-        ? "Calcule ton ratio R:R, la perte et le gain potentiels avant d'entrer en position."
-        : "Calculate your R:R ratio, potential loss and gain before entering a trade.",
+      title: TP("Risque / Rendement", "Riesgo / Rendimiento", "Risk / Reward"),
+      desc: TP(
+        "Calcule ton ratio R:R, la perte et le gain potentiels avant d'entrer en position.",
+        "Calcula tu ratio R:R, la pérdida y ganancia potenciales antes de entrar en posición.",
+        "Calculate your R:R ratio, potential loss and gain before entering a trade.",
+      ),
     },
     {
       icon: <Target size={26} color={BLUE} />,
-      title: isFr ? "Calculateur de lot" : "Lot Calculator",
-      desc: isFr
-        ? "Détermine la taille de position optimale en fonction de ton capital et de ton risque défini."
-        : "Find the optimal position size based on your capital and defined risk percentage.",
+      title: TP("Calculateur de lot", "Calculadora de lote", "Lot Calculator"),
+      desc: TP(
+        "Détermine la taille de position optimale en fonction de ton capital et de ton risque défini.",
+        "Determina el tamaño de posición óptimo en función de tu capital y riesgo definido.",
+        "Find the optimal position size based on your capital and defined risk percentage.",
+      ),
     },
     {
       icon: <ShieldCheck size={26} color={BLUE} />,
-      title: isFr ? "Simulateur de risque" : "Risk Simulator",
-      desc: isFr
-        ? "Simule l'impact d'un stop-loss sur ton drawdown journalier et total avant de passer le trade."
-        : "Simulate a stop-loss impact on your daily and total drawdown before placing the trade.",
+      title: TP("Simulateur de risque", "Simulador de riesgo", "Risk Simulator"),
+      desc: TP(
+        "Simule l'impact d'un stop-loss sur ton drawdown journalier et total avant de passer le trade.",
+        "Simula el impacto de un stop-loss en tu drawdown diario y total antes de operar.",
+        "Simulate a stop-loss impact on your daily and total drawdown before placing the trade.",
+      ),
     },
   ];
 
@@ -323,11 +336,13 @@ function ToolsPlaceholder({ isFr, isMobile }: { isFr: boolean; isMobile: boolean
     <div className={styles.toolsPlaceholder}>
       <div className={styles.toolsHeader}>
         <div className={styles.toolsEyebrow}>Traders Rewards</div>
-        <h2 className={styles.toolsTitle}>{isFr ? "Outils Trader" : "Trader Tools"}</h2>
+        <h2 className={styles.toolsTitle}>{TP("Outils Trader", "Herramientas Trader", "Trader Tools")}</h2>
         <p className={styles.toolsSub}>
-          {isFr
-            ? "Des outils concrets pour mieux gérer ton risque et réussir ton challenge."
-            : "Concrete tools to better manage your risk and succeed in your challenge."}
+          {TP(
+            "Des outils concrets pour mieux gérer ton risque et réussir ton challenge.",
+            "Herramientas concretas para gestionar mejor tu riesgo y superar tu challenge.",
+            "Concrete tools to better manage your risk and succeed in your challenge.",
+          )}
         </p>
       </div>
 
@@ -341,7 +356,7 @@ function ToolsPlaceholder({ isFr, isMobile }: { isFr: boolean; isMobile: boolean
             <div className={styles.toolName}>{tool.title}</div>
             <div className={styles.toolDesc}>{tool.desc}</div>
             <div className={styles.toolSoon}>
-              {isFr ? "Bientôt disponible" : "Coming soon"}
+              {TP("Bientôt disponible", "Próximamente", "Coming soon")}
             </div>
           </div>
         ))}
@@ -410,7 +425,7 @@ export default function TraderCockpit({
   // Niveau V1 dérivé depuis la source canonique (payouts.status="paid")
   const traderLevel = getTraderV1Level(challenge.phase, approvedRewardsCount);
   const isTraderReward = traderLevel.level === 3;
-  const levelLabel = phaseLabel(challenge.phase, approvedRewardsCount);
+  const levelLabel = phaseLabel(challenge.phase, approvedRewardsCount, isFr, isEs);
   const sizeIndex = accountSize >= 100_000 ? 2 : accountSize >= 50_000 ? 1 : 0;
   const qualifyingDayUsd = QUAL_DAY_USD[sizeIndex];
   // nextRewardNumber=null quand parcours terminé (≥5 Rewards) → fallback 5 pour l'affichage
@@ -462,12 +477,12 @@ export default function TraderCockpit({
   const maxRiskUsed = totalRiskUsed;
 
   const health = challenge.status === "failed"
-    ? { label: isFr ? "Compte arrêté" : "Account stopped", color: RED, icon: <AlertTriangle size={15} /> }
+    ? { label: C("Compte arrêté", "Cuenta detenida", "Account stopped"), color: RED, icon: <AlertTriangle size={15} /> }
     : maxRiskUsed >= 85
-      ? { label: isFr ? "Risque critique" : "Critical risk", color: RED, icon: <AlertTriangle size={15} /> }
+      ? { label: C("Risque critique", "Riesgo crítico", "Critical risk"), color: RED, icon: <AlertTriangle size={15} /> }
       : maxRiskUsed >= 60
-        ? { label: isFr ? "Vigilance" : "Caution", color: AMBER, icon: <Gauge size={15} /> }
-        : { label: isFr ? "Compte sain" : "Healthy account", color: GREEN, icon: <ShieldCheck size={15} /> };
+        ? { label: C("Vigilance", "Precaución", "Caution"), color: AMBER, icon: <Gauge size={15} /> }
+        : { label: C("Compte sain", "Cuenta saludable", "Healthy account"), color: GREEN, icon: <ShieldCheck size={15} /> };
 
   const stats = useMemo(() => {
     const wins = trades.filter(trade => trade.profit > 0);
@@ -543,14 +558,14 @@ export default function TraderCockpit({
   }, [loadedPlanKey, planKey, planChecks, journalNote]);
 
   const nextAction = (() => {
-    if (challenge.status === "failed") return { icon: <History size={22} />, title: isFr ? "Analyse ce qui s'est passé" : "Review what happened", text: isFr ? "Identifie le moment exact où la limite a été atteinte avant de repartir." : "Identify exactly where the limit was reached before restarting.", action: () => onNavigate("history"), label: isFr ? "Voir le bilan" : "View review", color: RED };
-    if (!challenge.mt5_login) return { icon: <Clock3 size={22} />, title: isFr ? "Ton compte est en préparation" : "Your account is being prepared", text: isFr ? "Tes identifiants apparaîtront automatiquement. Tu peux déjà installer MT5 et relire les règles." : "Credentials will appear automatically. You can already install MT5 and review the rules.", action: () => onNavigate("rules"), label: isFr ? "Préparer mon départ" : "Get ready", color: BLUE };
-    if (challenge.phase === "funded") return { icon: <Wallet size={22} />, title: daysRemaining > 0 ? (isFr ? "Construis une performance régulière" : "Build consistent performance") : (isFr ? "Ta récompense se prépare ici" : "Your reward starts here"), text: daysRemaining > 0 ? (isFr ? `Encore ${daysRemaining} jour(s) avant l'éligibilité. Priorité à la régularité.` : `${daysRemaining} more day(s) before eligibility. Focus on consistency.`) : (isFr ? "Vérifie ton KYC puis contrôle ton éligibilité dans Récompenses." : "Check KYC, then review eligibility in Rewards."), action: () => onNavigate(kycStatus === "approved" ? "payouts" : "kyc"), label: kycStatus === "approved" ? (isFr ? "Mes récompenses" : "My rewards") : (isFr ? "Vérifier mon KYC" : "Check KYC"), color: GREEN };
-    if (profitRemaining <= 0 && daysRemaining > 0) return { icon: <Trophy size={22} />, title: isFr ? "Objectif atteint — protège le résultat" : "Target reached — protect the result", text: isFr ? `Il reste ${daysRemaining} jour(s) minimum. La priorité est maintenant la discipline.` : `${daysRemaining} minimum day(s) remain. Discipline is now the priority.`, action: () => onNavigate("rules"), label: isFr ? "Revoir mes limites" : "Review limits", color: GREEN };
-    return { icon: <Sparkles size={22} />, title: isFr ? "Ton cap du jour" : "Today's focus", text: isFr ? `${money(profitRemaining)} restent pour l'objectif. Ta marge avant le plancher EOD est ${money(totalBuffer)}.` : `${money(profitRemaining)} remains to target. Your EOD floor buffer is ${money(totalBuffer)}.`, action: () => { setSubTab("trading"); setTradingSection("prepare"); }, label: isFr ? "Préparer ma session" : "Prepare session", color: BLUE };
+    if (challenge.status === "failed") return { icon: <History size={22} />, title: C("Analyse ce qui s'est passé", "Analiza lo que pasó", "Review what happened"), text: C("Identifie le moment exact où la limite a été atteinte avant de repartir.", "Identifica exactamente dónde se alcanzó el límite antes de reiniciar.", "Identify exactly where the limit was reached before restarting."), action: () => onNavigate("history"), label: C("Voir le bilan", "Ver el análisis", "View review"), color: RED };
+    if (!challenge.mt5_login) return { icon: <Clock3 size={22} />, title: C("Ton compte est en préparation", "Tu cuenta está siendo preparada", "Your account is being prepared"), text: C("Tes identifiants apparaîtront automatiquement. Tu peux déjà installer MT5 et relire les règles.", "Tus credenciales aparecerán automáticamente. Ya puedes instalar MT5 y consultar las reglas.", "Credentials will appear automatically. You can already install MT5 and review the rules."), action: () => onNavigate("rules"), label: C("Préparer mon départ", "Preparar mi inicio", "Get ready"), color: BLUE };
+    if (challenge.phase === "funded") return { icon: <Wallet size={22} />, title: daysRemaining > 0 ? C("Construis une performance régulière", "Construye un rendimiento consistente", "Build consistent performance") : C("Ta récompense se prépare ici", "Tu recompensa empieza aquí", "Your reward starts here"), text: daysRemaining > 0 ? C(`Encore ${daysRemaining} jour(s) avant l'éligibilité. Priorité à la régularité.`, `${daysRemaining} día(s) más antes de la elegibilidad. Prioridad a la consistencia.`, `${daysRemaining} more day(s) before eligibility. Focus on consistency.`) : C("Vérifie ton KYC puis contrôle ton éligibilité dans Récompenses.", "Verifica tu KYC y revisa tu elegibilidad en Recompensas.", "Check KYC, then review eligibility in Rewards."), action: () => onNavigate(kycStatus === "approved" ? "payouts" : "kyc"), label: kycStatus === "approved" ? C("Mes récompenses", "Mis recompensas", "My rewards") : C("Vérifier mon KYC", "Verificar mi KYC", "Check KYC"), color: GREEN };
+    if (profitRemaining <= 0 && daysRemaining > 0) return { icon: <Trophy size={22} />, title: C("Objectif atteint — protège le résultat", "Objetivo alcanzado — protege el resultado", "Target reached — protect the result"), text: C(`Il reste ${daysRemaining} jour(s) minimum. La priorité est maintenant la discipline.`, `Quedan ${daysRemaining} día(s) mínimo. La prioridad ahora es la disciplina.`, `${daysRemaining} minimum day(s) remain. Discipline is now the priority.`), action: () => onNavigate("rules"), label: C("Revoir mes limites", "Revisar mis límites", "Review limits"), color: GREEN };
+    return { icon: <Sparkles size={22} />, title: C("Ton cap du jour", "Tu objetivo del día", "Today's focus"), text: C(`${money(profitRemaining)} restent pour l'objectif. Ta marge avant le plancher EOD est ${money(totalBuffer)}.`, `${money(profitRemaining)} quedan para el objetivo. Tu margen antes del suelo EOD es ${money(totalBuffer)}.`, `${money(profitRemaining)} remains to target. Your EOD floor buffer is ${money(totalBuffer)}.`), action: () => { setSubTab("trading"); setTradingSection("prepare"); }, label: C("Préparer ma session", "Preparar mi sesión", "Prepare session"), color: BLUE };
   })();
 
-  const phaseSteps = ["CHALLENGER", isFr ? "COMPTE REWARD" : "REWARD ACCOUNT", "TRADER REWARD"];
+  const phaseSteps = ["CHALLENGER", C("COMPTE REWARD", "CUENTA REWARD", "REWARD ACCOUNT"), "TRADER REWARD"];
   const phaseIndex = traderLevel.level - 1;  // 1→0 / 2→1 / 3→2
 
   const copyValue = async (label: string, value: string) => {
@@ -576,10 +591,10 @@ export default function TraderCockpit({
                 const selected = activeChallenges.find(item => item.id === event.target.value);
                 if (selected) onSelectChallenge(selected);
               }}>
-                {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {phaseLabel(item.phase, 0)}</option>)}
+                {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {phaseLabel(item.phase, 0, isFr, isEs)}</option>)}
               </select>
-            ) : <span className={styles.pill} style={{ color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.07)" }}>{challenge.account_size} · {phaseLabel(challenge.phase, approvedRewardsCount)}</span>}
-            <span className={styles.pill} style={{ color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.05)" }}><Target size={13} />{phaseLabel(challenge.phase, approvedRewardsCount)}</span>
+            ) : <span className={styles.pill} style={{ color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.07)" }}>{challenge.account_size} · {phaseLabel(challenge.phase, approvedRewardsCount, isFr, isEs)}</span>}
+            <span className={styles.pill} style={{ color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.05)" }}><Target size={13} />{phaseLabel(challenge.phase, approvedRewardsCount, isFr, isEs)}</span>
             <span className={styles.pill} style={{ color: health.color, background: `${health.color}16` }}>{health.icon}{health.label}</span>
             {/* Freshness indicator — color-coded, never reveals infrastructure */}
             <span
@@ -587,7 +602,7 @@ export default function TraderCockpit({
               style={{ fontSize: 10, display: "inline-flex", gap: 5, alignItems: "center", color: freshness.color }}
             >
               <Activity size={11} />
-              {isFr ? freshness.labelFr : freshness.label}
+              {isFr ? freshness.labelFr : isEs ? freshness.labelEs : freshness.label}
             </span>
           </div>
         </div>
@@ -656,8 +671,8 @@ export default function TraderCockpit({
               <div className={styles.kpiTop}>
                 <span className={styles.kpiLabel}>
                   {freshness.isStale
-                    ? (isFr ? "Dernière valeur connue" : "Last known value")
-                    : (isFr ? "Equity actuelle" : "Current equity")}
+                    ? C("Dernière valeur connue", "Último valor conocido", "Last known value")
+                    : C("Equity actuelle", "Capital actual", "Current equity")}
                 </span>
                 <Activity color={freshness.isStale ? AMBER : BLUE} size={17} />
               </div>
@@ -665,18 +680,18 @@ export default function TraderCockpit({
                 <div className={styles.kpiValue}>{money(equity)}</div>
                 <div className={styles.kpiMeta}>
                   <span style={{ color: profit >= 0 ? GREEN : RED }}>{profit >= 0 ? "+" : ""}{money(profit)} ({profit >= 0 ? "+" : ""}{(profit / challenge.start_balance * 100).toFixed(2)}%)</span>
-                  <span>{floatingPnl ? `${isFr ? "Flottant" : "Floating"} ${money(floatingPnl, 2)}` : isFr ? "Aucune exposition" : "No exposure"}</span>
+                  <span>{floatingPnl ? `${C("Flottant", "Flotante", "Floating")} ${money(floatingPnl, 2)}` : C("Aucune exposition", "Sin exposición", "No exposure")}</span>
                 </div>
               </div>
             </div>
 
             {/* Objective remaining */}
             <div className={`${styles.card} ${styles.kpi}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isTraderReward ? (isFr ? "Seuil +4% restant" : "+4% threshold left") : `${isFr ? "Objectif" : "Target"} +${displayProfitTargetPct.toFixed(0)}% ${isFr ? "restant" : "left"}`}</span><Target color={BLUE} size={17} /></div>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isTraderReward ? C("Seuil +4% restant", "Umbral +4% restante", "+4% threshold left") : `${C("Objectif", "Objetivo", "Target")} +${displayProfitTargetPct.toFixed(0)}% ${C("restant", "restante", "left")}`}</span><Target color={BLUE} size={17} /></div>
               <div>
                 <div className={styles.kpiValue}>{money(profitRemaining)}</div>
                 <div className={styles.kpiMeta}>
-                  <span>{profitProgress.toFixed(0)}% {isFr ? "accompli" : "complete"}</span>
+                  <span>{profitProgress.toFixed(0)}% {C("accompli", "completado", "complete")}</span>
                   <span>{money(targetBalance)}</span>
                 </div>
                 <Meter value={profitProgress} color={GREEN} />
@@ -689,8 +704,8 @@ export default function TraderCockpit({
               <div>
                 <div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalBuffer)}</div>
                 <div className={styles.kpiMeta}>
-                  <span>{totalRiskUsed.toFixed(0)}% {isFr ? "utilisé" : "used"}</span>
-                  <span>{isFr ? "Plancher" : "Floor"} {money(totalFloor)}</span>
+                  <span>{totalRiskUsed.toFixed(0)}% {C("utilisé", "usado", "used")}</span>
+                  <span>{C("Plancher", "Suelo", "Floor")} {money(totalFloor)}</span>
                 </div>
                 <Meter value={totalRiskUsed} color={riskColor(totalRiskUsed)} />
               </div>
@@ -698,12 +713,12 @@ export default function TraderCockpit({
 
             {/* Règle de consistance */}
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Consistance" : "Consistency"}</span><Gauge color={BLUE} size={16} /></div>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("Consistance", "Consistencia", "Consistency")}</span><Gauge color={BLUE} size={16} /></div>
               <div>
                 <div className={styles.kpiValue}>≤ 50%</div>
                 <div className={styles.kpiMeta}>
-                  <span>{isFr ? "Meilleure journée" : "Best day"}</span>
-                  <span>{isFr ? "du profit total" : "of total profit"}</span>
+                  <span>{C("Meilleure journée", "Mejor día", "Best day")}</span>
+                  <span>{C("du profit total", "del profit total", "of total profit")}</span>
                 </div>
               </div>
             </div>
@@ -715,10 +730,10 @@ export default function TraderCockpit({
                   {isTraderReward
                     ? `REWARD #${currentRewardNumber}`
                     : isRewardAccount
-                      ? (isFr ? "Jours qualifiants" : "Qualifying days")
+                      ? C("Jours qualifiants", "Días de calificación", "Qualifying days")
                       : isV1
-                        ? (isFr ? "Jours minimum" : "Minimum days")         // V1 Challenge : 2 jours minimum (V1.2)
-                        : (isFr ? "Jours minimum" : "Minimum days")}
+                        ? C("Jours minimum", "Días mínimos", "Minimum days")         // V1 Challenge : 2 jours minimum (V1.2)
+                        : C("Jours minimum", "Días mínimos", "Minimum days")}
                 </span>
                 <CalendarDays color={BLUE} size={16} />
               </div>
@@ -735,12 +750,12 @@ export default function TraderCockpit({
                 <div className={styles.kpiMeta}>
                   <span>
                     {isTraderReward
-                      ? (isFr ? "Plafond maximum" : "Maximum cap")
+                      ? C("Plafond maximum", "Límite máximo", "Maximum cap")
                       : isRewardAccount
-                        ? `${money(qualifyingDayUsd)} ${isFr ? "minimum / jour" : "minimum / day"}`
+                        ? `${money(qualifyingDayUsd)} ${C("minimum / jour", "mínimo / día", "minimum / day")}`
                         : isV1
-                          ? (isFr ? "2 jours minimum" : "2 days minimum")
-                          : (isFr ? "Jours tradés" : "Days traded")}
+                          ? C("2 jours minimum", "2 días mínimos", "2 days minimum")
+                          : C("Jours tradés", "Días operados", "Days traded")}
                   </span>
                 </div>
               </div>
@@ -748,15 +763,15 @@ export default function TraderCockpit({
 
             {/* Durée contractuelle */}
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isFr ? "Durée" : "Duration"}</span><Clock3 color={BLUE} size={16} /></div>
-              <div><div className={styles.kpiValue}>{isRewardAccount ? (isFr ? "ILLIMITÉE" : "UNLIMITED") : "30 J."}</div><div className={styles.kpiMeta}><span>{isRewardAccount ? (isFr ? "Aucune limite" : "No time limit") : isFr ? "Jours calendaires max" : "Maximum calendar days"}</span></div></div>
+              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("Durée", "Duración", "Duration")}</span><Clock3 color={BLUE} size={16} /></div>
+              <div><div className={styles.kpiValue}>{isRewardAccount ? C("ILLIMITÉE", "ILIMITADA", "UNLIMITED") : "30 J."}</div><div className={styles.kpiMeta}><span>{isRewardAccount ? C("Aucune limite", "Sin límite", "No time limit") : C("Jours calendaires max", "Días calendario máx", "Maximum calendar days")}</span></div></div>
             </div>
 
           </div>
 
           {/* Journey stepper */}
           <div className={`${styles.card} ${styles.journey}`}>
-            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{isFr ? "Ton parcours" : "Your journey"}</strong><span>{isTraderReward ? (traderLevel.terminated ? (isFr ? "PARCOURS COMPLÉTÉ ✓" : "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : isV1 && !isRewardAccount ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS} ${isFr ? "jour(s) tradé(s)" : "day(s) traded"}` : `${challenge.trading_days}/${minDays} ${isFr ? "jours validés" : "days complete"}`}</span></div>
+            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{C("Ton parcours", "Tu recorrido", "Your journey")}</strong><span>{isTraderReward ? (traderLevel.terminated ? C("PARCOURS COMPLÉTÉ ✓", "RECORRIDO COMPLETO ✓", "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : isV1 && !isRewardAccount ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS} ${C("jour(s) tradé(s)", "día(s) operado(s)", "day(s) traded")}` : `${challenge.trading_days}/${minDays} ${C("jours validés", "días completados", "days complete")}`}</span></div>
             <div className={styles.steps} style={{ gridTemplateColumns: `repeat(${phaseSteps.length},minmax(120px,1fr))` }}>
               {phaseSteps.map((step, index) => <div key={step} className={`${styles.step} ${index < phaseIndex ? styles.stepDone : index === phaseIndex ? styles.stepActive : ""}`}><span className={styles.stepDot}>{index < phaseIndex ? <Check size={12} /> : index + 1}</span><span className={styles.stepText}>{step}</span></div>)}
             </div>
@@ -765,27 +780,27 @@ export default function TraderCockpit({
           <div className={`${styles.card} ${styles.performanceBand}`}>
             <div className={styles.performanceBandTitle}>
               <BarChart3 size={19} />
-              <div><span>{isFr ? "ANALYSE" : "ANALYSIS"}</span><strong>{isFr ? "SIGNATURE DE PERFORMANCE" : "PERFORMANCE SIGNATURE"}</strong><small>{tradeHistoryLoading ? (isFr ? "Analyse en cours…" : "Analyzing…") : `${stats.count} ${isFr ? "trades clôturés" : "closed trades"}`}</small></div>
+              <div><span>{C("ANALYSE", "ANÁLISIS", "ANALYSIS")}</span><strong>{C("SIGNATURE DE PERFORMANCE", "PERFIL DE RENDIMIENTO", "PERFORMANCE SIGNATURE")}</strong><small>{tradeHistoryLoading ? C("Analyse en cours…", "Analizando…", "Analyzing…") : `${stats.count} ${C("trades clôturés", "operaciones cerradas", "closed trades")}`}</small></div>
             </div>
             <div className={styles.performanceStats}>{[
-                { label: isFr ? "Taux de réussite" : "Win rate", value: `${stats.winRate.toFixed(0)}%`, note: isFr ? "Trades gagnants" : "Winning trades" },
-                { label: "Profit factor", value: Number.isFinite(stats.profitFactor) ? stats.profitFactor.toFixed(2) : "∞", note: isFr ? "Gains / pertes" : "Wins / losses" },
-                { label: isFr ? "Espérance" : "Expectancy", value: money(stats.expectancy, 2), note: isFr ? "Par trade" : "Per trade" },
-                { label: isFr ? "Gain moyen" : "Average win", value: money(stats.averageWin), note: isFr ? "Trade gagnant" : "Winning trade" },
-                { label: isFr ? "Perte moyenne" : "Average loss", value: money(stats.averageLoss), note: isFr ? "Trade perdant" : "Losing trade" },
-                { label: isFr ? "Meilleur symbole" : "Best symbol", value: stats.bestSymbol?.[0] ?? "—", note: stats.bestSymbol ? money(stats.bestSymbol[1]) : (isFr ? "Pas assez de données" : "Not enough data") },
+                { label: C("Taux de réussite", "Tasa de acierto", "Win rate"), value: `${stats.winRate.toFixed(0)}%`, note: C("Trades gagnants", "Operaciones ganadoras", "Winning trades") },
+                { label: C("Profit factor", "Factor de beneficio", "Profit factor"), value: Number.isFinite(stats.profitFactor) ? stats.profitFactor.toFixed(2) : "∞", note: C("Gains / pertes", "Ganancias / pérdidas", "Wins / losses") },
+                { label: C("Espérance", "Expectativa", "Expectancy"), value: money(stats.expectancy, 2), note: C("Par trade", "Por operación", "Per trade") },
+                { label: C("Gain moyen", "Ganancia media", "Average win"), value: money(stats.averageWin), note: C("Trade gagnant", "Operación ganadora", "Winning trade") },
+                { label: C("Perte moyenne", "Pérdida media", "Average loss"), value: money(stats.averageLoss), note: C("Trade perdant", "Operación perdedora", "Losing trade") },
+                { label: C("Meilleur symbole", "Mejor activo", "Best symbol"), value: stats.bestSymbol?.[0] ?? "—", note: stats.bestSymbol ? money(stats.bestSymbol[1]) : C("Pas assez de données", "Datos insuficientes", "Not enough data") },
               ].map(item => <div key={item.label} className={styles.stat}><div className={styles.statLabel}>{item.label}</div><div className={styles.statValue}>{item.value}</div><div className={styles.statNote}>{item.note}</div></div>)}</div>
           </div>
 
           <div className={`${styles.card} ${styles.panel} ${styles.monthCalendar}`}>
-            <SectionTitle icon={<CalendarDays size={17} />} title={`${isFr ? "Calendrier P&L" : "P&L calendar"} · ${new Date().toLocaleDateString(isFr ? "fr-FR" : "en-GB", { month: "long", year: "numeric" }).toUpperCase()}`} subtitle={isFr ? "Le mois complet, journée par journée" : "The complete month, day by day"} />
-            <div className={styles.calendar}>{calendarDays.map(({ date, pnl, isCurrentMonth }) => <div key={date.toISOString()} className={`${styles.day} ${!isCurrentMonth ? styles.dayOutside : ""}`} style={pnl > 0 ? { background: "rgba(34,197,94,.08)", borderColor: "rgba(34,197,94,.18)" } : pnl < 0 ? { background: "rgba(239,68,68,.08)", borderColor: "rgba(239,68,68,.18)" } : undefined}><div className={styles.dayName}>{date.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { weekday: "short" })}</div><div className={styles.dayNumber}>{date.getDate()}</div><div className={styles.dayPnl} style={{ color: pnl > 0 ? GREEN : pnl < 0 ? RED : "rgba(255,255,255,.25)" }}>{pnl ? `${pnl > 0 ? "+" : ""}${money(pnl)}` : "—"}</div></div>)}</div>
+            <SectionTitle icon={<CalendarDays size={17} />} title={`${C("Calendrier P&L", "Calendario P&L", "P&L calendar")} · ${new Date().toLocaleDateString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", { month: "long", year: "numeric" }).toUpperCase()}`} subtitle={C("Le mois complet, journée par journée", "El mes completo, día a día", "The complete month, day by day")} />
+            <div className={styles.calendar}>{calendarDays.map(({ date, pnl, isCurrentMonth }) => <div key={date.toISOString()} className={`${styles.day} ${!isCurrentMonth ? styles.dayOutside : ""}`} style={pnl > 0 ? { background: "rgba(34,197,94,.08)", borderColor: "rgba(34,197,94,.18)" } : pnl < 0 ? { background: "rgba(239,68,68,.08)", borderColor: "rgba(239,68,68,.18)" } : undefined}><div className={styles.dayName}>{date.toLocaleDateString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", { weekday: "short" })}</div><div className={styles.dayNumber}>{date.getDate()}</div><div className={styles.dayPnl} style={{ color: pnl > 0 ? GREEN : pnl < 0 ? RED : "rgba(255,255,255,.25)" }}>{pnl ? `${pnl > 0 ? "+" : ""}${money(pnl)}` : "—"}</div></div>)}</div>
           </div>
 
           <div className={styles.twoGrid}>
             <div className={`${styles.card} ${styles.panel}`}>
-              <SectionTitle icon={<TrendingUp size={17} />} title={isFr ? "Positions ouvertes" : "Open positions"} subtitle={`${positions.length} ${isFr ? "position(s) · P&L flottant" : "position(s) · floating P&L"} ${money(floatingPnl, 2)}`} />
-              {positions.length === 0 ? <Empty icon={<Activity size={20} />} text={isFr ? "Aucune position ouverte. Ton exposition est actuellement nulle." : "No open positions. Your current exposure is zero."} /> : <div className={styles.positions}>{positions.slice(0, 6).map((position, index) => {
+              <SectionTitle icon={<TrendingUp size={17} />} title={C("Positions ouvertes", "Posiciones abiertas", "Open positions")} subtitle={`${positions.length} ${C("position(s) · P&L flottant", "posición(es) · P&L flotante", "position(s) · floating P&L")} ${money(floatingPnl, 2)}`} />
+              {positions.length === 0 ? <Empty icon={<Activity size={20} />} text={C("Aucune position ouverte. Ton exposition est actuellement nulle.", "No hay posiciones abiertas. Tu exposición actual es cero.", "No open positions. Your current exposure is zero.")} /> : <div className={styles.positions}>{positions.slice(0, 6).map((position, index) => {
                 const side = position.type === 0 || String(position.type).toLowerCase().includes("buy") ? "BUY" : "SELL";
                 const pnl = numeric(position.profit) + numeric(position.swap);
                 const rawVolume = numeric(position.volume);
@@ -794,26 +809,26 @@ export default function TraderCockpit({
               })}</div>}
             </div>
             <div className={`${styles.card} ${styles.panel}`}>
-              <SectionTitle icon={<History size={17} />} title={isFr ? "Derniers trades" : "Recent trades"} subtitle={isFr ? "Lecture rapide de ta session" : "Quick session review"} />
-              {trades.length === 0 ? <Empty icon={<CircleDollarSign size={20} />} text={isFr ? "Les trades clôturés apparaîtront ici automatiquement." : "Closed trades will appear here automatically."} /> : <div>{[...trades].reverse().slice(0, 5).map(trade => <div className={styles.trade} key={trade.id}><span><b>{trade.symbol}</b><small style={{ color: trade.side === "BUY" ? GREEN : RED, marginLeft: 6 }}>{trade.side}</small></span><span className={styles.muted}>{trade.date?.toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "short" }) ?? "—"}</span><strong style={{ color: trade.profit >= 0 ? GREEN : RED, textAlign: "right" }}>{trade.profit >= 0 ? "+" : ""}{money(trade.profit, 2)}</strong></div>)}<button className={styles.button} style={{ width: "100%", marginTop: 9 }} onClick={() => onNavigate("history")}>{isFr ? "Ouvrir tout l'historique" : "Open full history"}<ArrowRight size={14} /></button></div>}
+              <SectionTitle icon={<History size={17} />} title={C("Derniers trades", "Últimas operaciones", "Recent trades")} subtitle={C("Lecture rapide de ta session", "Revisión rápida de tu sesión", "Quick session review")} />
+              {trades.length === 0 ? <Empty icon={<CircleDollarSign size={20} />} text={C("Les trades clôturés apparaîtront ici automatiquement.", "Las operaciones cerradas aparecerán aquí automáticamente.", "Closed trades will appear here automatically.")} /> : <div>{[...trades].reverse().slice(0, 5).map(trade => <div className={styles.trade} key={trade.id}><span><b>{trade.symbol}</b><small style={{ color: trade.side === "BUY" ? GREEN : RED, marginLeft: 6 }}>{trade.side}</small></span><span className={styles.muted}>{trade.date?.toLocaleDateString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", { day: "2-digit", month: "short" }) ?? "—"}</span><strong style={{ color: trade.profit >= 0 ? GREEN : RED, textAlign: "right" }}>{trade.profit >= 0 ? "+" : ""}{money(trade.profit, 2)}</strong></div>)}<button className={styles.button} style={{ width: "100%", marginTop: 9 }} onClick={() => onNavigate("history")}>{C("Ouvrir tout l'historique", "Ver historial completo", "Open full history")}<ArrowRight size={14} /></button></div>}
             </div>
           </div>
 
           <div id="account-credentials" className={`${styles.card} ${styles.panel} ${styles.credentialsAnchor}`}>
-            <SectionTitle icon={<Zap size={17} />} title={isFr ? "Accès rapide" : "Quick access"} subtitle={challenge.mt5_login ? (isFr ? "Tes accès restent masqués par défaut" : "Credentials stay hidden by default") : (isFr ? "Disponible dès la création du compte" : "Available once the account is created")} />
+            <SectionTitle icon={<Zap size={17} />} title={C("Accès rapide", "Acceso rápido", "Quick access")} subtitle={challenge.mt5_login ? C("Tes accès restent masqués par défaut", "Tus accesos permanecen ocultos por defecto", "Credentials stay hidden by default") : C("Disponible dès la création du compte", "Disponible una vez creada la cuenta", "Available once the account is created")} />
             {challenge.mt5_login ? <>
               <div className={styles.credentials}>{[
                 { label: "Login", value: String(challenge.mt5_login), secret: false },
-                { label: isFr ? "Mot de passe" : "Password", value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) ?? "—", secret: true },
-                { label: isFr ? "Serveur" : "Server", value: challenge.mt5_server ?? "—", secret: false },
-                { label: isFr ? "Plateforme" : "Platform", value: "MetaTrader 5", secret: false },
-              ].map(item => <div className={styles.credential} key={item.label} onClick={() => item.secret && !showCredentials ? setShowCredentials(true) : copyValue(item.label, item.value)}><div className={styles.credentialLabel}>{item.label} {copied === item.label ? <span style={{ color: GREEN }}>✓ {isFr ? "copié" : "copied"}</span> : <Copy size={9} style={{ marginLeft: 4 }} />}</div><div className={styles.credentialValue}>{item.secret && !showCredentials ? "••••••••••" : item.value}</div></div>)}</div>
-              <div className={styles.quickActions}><button className={styles.button} onClick={() => setShowCredentials(value => !value)}>{showCredentials ? <EyeOff size={14} /> : <Eye size={14} />}{showCredentials ? (isFr ? "Masquer" : "Hide") : (isFr ? "Révéler" : "Reveal")}</button><button className={styles.button} onClick={() => onNavigate("rules")}><BookOpen size={14} />{isFr ? "Règles" : "Rules"}</button><button className={styles.button} onClick={() => onNavigate("support")}><LifeBuoy size={14} />Support</button></div>
-            </> : <Empty icon={<Clock3 size={20} />} text={isFr ? "Le compte est en cours de configuration. Les identifiants apparaîtront ici automatiquement." : "The account is being configured. Credentials will appear here automatically."} />}
+                { label: C("Mot de passe", "Contraseña", "Password"), value: (challenge.model === "vip" ? challenge.mt5_password_investor : challenge.mt5_password) ?? "—", secret: true },
+                { label: C("Serveur", "Servidor", "Server"), value: challenge.mt5_server ?? "—", secret: false },
+                { label: C("Plateforme", "Plataforma", "Platform"), value: "MetaTrader 5", secret: false },
+              ].map(item => <div className={styles.credential} key={item.label} onClick={() => item.secret && !showCredentials ? setShowCredentials(true) : copyValue(item.label, item.value)}><div className={styles.credentialLabel}>{item.label} {copied === item.label ? <span style={{ color: GREEN }}>✓ {C("copié", "copiado", "copied")}</span> : <Copy size={9} style={{ marginLeft: 4 }} />}</div><div className={styles.credentialValue}>{item.secret && !showCredentials ? "••••••••••" : item.value}</div></div>)}</div>
+              <div className={styles.quickActions}><button className={styles.button} onClick={() => setShowCredentials(value => !value)}>{showCredentials ? <EyeOff size={14} /> : <Eye size={14} />}{showCredentials ? C("Masquer", "Ocultar", "Hide") : C("Révéler", "Revelar", "Reveal")}</button><button className={styles.button} onClick={() => onNavigate("rules")}><BookOpen size={14} />{C("Règles", "Reglas", "Rules")}</button><button className={styles.button} onClick={() => onNavigate("support")}><LifeBuoy size={14} />Support</button></div>
+            </> : <Empty icon={<Clock3 size={20} />} text={C("Le compte est en cours de configuration. Les identifiants apparaîtront ici automatiquement.", "La cuenta está siendo configurada. Las credenciales aparecerán aquí automáticamente.", "The account is being configured. Credentials will appear here automatically.")} />}
             <div className={styles.platformBlock}>
               <div className={styles.platformHeading}>
                 <Image className={styles.platformLogo} src="/MT5.png" alt="MetaTrader 5" width={40} height={40} />
-                <div><strong>{isFr ? "Télécharger les plateformes MT5" : "Download MT5 platforms"}</strong><span>{isFr ? "Installe MT5 puis connecte-toi avec les accès affichés ci-dessus." : "Install MT5, then sign in with the credentials shown above."}</span></div>
+                <div><strong>{C("Télécharger les plateformes MT5", "Descargar plataformas MT5", "Download MT5 platforms")}</strong><span>{C("Installe MT5 puis connecte-toi avec les accès affichés ci-dessus.", "Instala MT5 y conéctate con los accesos mostrados arriba.", "Install MT5, then sign in with the credentials shown above.")}</span></div>
               </div>
               <div className={styles.platformGrid}>{[
                 { label: "Windows", icon: "🖥️", href: "https://download.mql5.com/cdn/web/xylo.markets.ltd/mt5/xylomarkets5setup.exe" },
@@ -834,6 +849,7 @@ export default function TraderCockpit({
         <CockpitTools
           challenge={challenge}
           isFr={isFr}
+          isEs={isEs}
           isMobile={isMobile}
           section={tradingSection}
           onSection={setTradingSection}

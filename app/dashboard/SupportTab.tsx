@@ -59,26 +59,26 @@ interface SupportMessage {
 
 // ── Configs ───────────────────────────────────────────────────────────────────
 
-const TICKET_STATUS: Record<string, { fr: string; en: string; color: string; bg: string }> = {
-  new:      { fr: "Nouveau",  en: "New",         color: "rgba(255,255,255,0.75)", bg: "rgba(255,255,255,0.08)" },
-  open:     { fr: "En cours", en: "In progress",  color: "#F59E0B", bg: "rgba(245,158,11,0.12)" },
-  resolved: { fr: "Résolu",   en: "Resolved",     color: "#22C55E", bg: "rgba(34,197,94,0.12)"  },
+const TICKET_STATUS: Record<string, { fr: string; es: string; en: string; color: string; bg: string }> = {
+  new:      { fr: "Nouveau",  es: "Nuevo",       en: "New",         color: "rgba(255,255,255,0.75)", bg: "rgba(255,255,255,0.08)" },
+  open:     { fr: "En cours", es: "En curso",    en: "In progress",  color: "#F59E0B", bg: "rgba(245,158,11,0.12)" },
+  resolved: { fr: "Résolu",   es: "Resuelto",    en: "Resolved",     color: "#22C55E", bg: "rgba(34,197,94,0.12)"  },
 };
 
-const CONV_STATUS: Record<string, { fr: string; en: string; color: string }> = {
-  waiting_support: { fr: "En attente d'un agent",  en: "Waiting for agent",  color: "#F59E0B" },
-  open:            { fr: "En cours",                en: "In progress",        color: "rgba(255,255,255,0.7)" },
-  waiting_client:  { fr: "Réponse reçue ✓",        en: "Reply received ✓",   color: "#22C55E" },
-  closed:          { fr: "Fermé",                   en: "Closed",             color: "#6B7280" },
+const CONV_STATUS: Record<string, { fr: string; es?: string; en: string; color: string }> = {
+  waiting_support: { fr: "En attente d'un agent",  es: "Esperando un agente",  en: "Waiting for agent",  color: "#F59E0B" },
+  open:            { fr: "En cours",                es: "En curso",             en: "In progress",        color: "rgba(255,255,255,0.7)" },
+  waiting_client:  { fr: "Réponse reçue ✓",        es: "Respuesta recibida ✓", en: "Reply received ✓",   color: "#22C55E" },
+  closed:          { fr: "Fermé",                   es: "Cerrado",              en: "Closed",             color: "#6B7280" },
 };
 
 const CATEGORIES = [
-  { value: "",             fr: "Catégorie (optionnel)", en: "Category (optional)" },
-  { value: "payout",      fr: "Récompense / Paiement", en: "Payout / Payment"    },
-  { value: "challenge",   fr: "Challenge / Compte",    en: "Challenge / Account"  },
-  { value: "kyc",         fr: "KYC / Documents",       en: "KYC / Documents"      },
-  { value: "technical",   fr: "Problème technique",    en: "Technical issue"       },
-  { value: "other",       fr: "Autre",                 en: "Other"                 },
+  { value: "",             fr: "Catégorie (optionnel)", es: "Categoría (opcional)",    en: "Category (optional)" },
+  { value: "payout",      fr: "Récompense / Paiement", es: "Recompensa / Pago",       en: "Payout / Payment"    },
+  { value: "challenge",   fr: "Challenge / Compte",    es: "Challenge / Cuenta",      en: "Challenge / Account"  },
+  { value: "kyc",         fr: "KYC / Documents",       es: "KYC / Documentos",        en: "KYC / Documents"      },
+  { value: "technical",   fr: "Problème technique",    es: "Problema técnico",         en: "Technical issue"       },
+  { value: "other",       fr: "Autre",                 es: "Otro",                    en: "Other"                 },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -162,13 +162,13 @@ export default function SupportTab({
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}) as Record<string,unknown>);
-        setTicketsError((d as {error?:string}).error ?? (isFr ? "Erreur de chargement." : "Loading error."));
+        setTicketsError((d as {error?:string}).error ?? S("Erreur de chargement.", "Error de carga.", "Loading error."));
         return;
       }
       const d = await res.json() as { tickets: MyTicket[] };
       setTickets(d.tickets ?? []);
     } catch {
-      setTicketsError(isFr ? "Erreur réseau." : "Network error.");
+      setTicketsError(S("Erreur réseau.", "Error de red.", "Network error."));
     } finally {
       setTicketsLoading(false);
     }
@@ -214,7 +214,7 @@ export default function SupportTab({
       });
       if (!res.ok) {
         const d = await res.json().catch(() => ({}) as Record<string,unknown>);
-        setChatError((d as {error?:string}).error ?? (isFr ? "Erreur de chargement." : "Loading error."));
+        setChatError((d as {error?:string}).error ?? S("Erreur de chargement.", "Error de carga.", "Loading error."));
         return;
       }
       const d = await res.json() as {
@@ -226,7 +226,7 @@ export default function SupportTab({
       setUnreadCount(d.unreadCount);
       setLastMsg(d.lastMessage);
     } catch {
-      setChatError(isFr ? "Erreur réseau." : "Network error.");
+      setChatError(S("Erreur réseau.", "Error de red.", "Network error."));
     } finally {
       setChatLoading(false);
       setConvChecked(true);
@@ -278,19 +278,19 @@ export default function SupportTab({
   const submitTicket = useCallback(async () => {
     // Validation client
     if (!form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
-      setFormError(isFr ? "Prénom, nom et email sont obligatoires." : "First name, last name, and email are required.");
+      setFormError(S("Prénom, nom et email sont obligatoires.", "Nombre, apellido y email son obligatorios.", "First name, last name, and email are required."));
       return;
     }
     if (!form.subject.trim()) {
-      setFormError(isFr ? "L'objet est obligatoire." : "Subject is required.");
+      setFormError(S("L'objet est obligatoire.", "El asunto es obligatorio.", "Subject is required."));
       return;
     }
     if (form.subject.trim().length > 200) {
-      setFormError(isFr ? "L'objet ne peut pas dépasser 200 caractères." : "Subject cannot exceed 200 characters.");
+      setFormError(S("L'objet ne peut pas dépasser 200 caractères.", "El asunto no puede superar los 200 caracteres.", "Subject cannot exceed 200 characters."));
       return;
     }
     if (!form.message.trim()) {
-      setFormError(isFr ? "Le message est obligatoire." : "Message is required.");
+      setFormError(S("Le message est obligatoire.", "El mensaje es obligatorio.", "Message is required."));
       return;
     }
 
@@ -320,7 +320,7 @@ export default function SupportTab({
 
       if (!res.ok) {
         const d = await res.json().catch(() => ({}) as Record<string,unknown>);
-        setFormError((d as {error?:string}).error ?? (isFr ? "Envoi impossible. Réessaie." : "Submission failed. Try again."));
+        setFormError((d as {error?:string}).error ?? S("Envoi impossible. Réessaie.", "Envío fallido. Inténtalo de nuevo.", "Submission failed. Try again."));
         return;
       }
 
@@ -333,7 +333,7 @@ export default function SupportTab({
         fetchTickets();
       }, 2800);
     } catch {
-      setFormError(isFr ? "Erreur réseau. Réessaie." : "Network error. Try again.");
+      setFormError(S("Erreur réseau. Réessaie.", "Error de red. Inténtalo de nuevo.", "Network error. Try again."));
     } finally {
       setFormSending(false);
     }
@@ -353,13 +353,13 @@ export default function SupportTab({
       });
       const d = await res.json() as { error?: string };
       if (!res.ok) {
-        setReplyError(d.error ?? (isFr ? "Envoi impossible." : "Send failed."));
+        setReplyError(d.error ?? S("Envoi impossible.", "Envío fallido.", "Send failed."));
         return;
       }
       setReply("");
       await fetchMessages(selectedTicket.id);
     } catch {
-      setReplyError(isFr ? "Erreur réseau." : "Network error.");
+      setReplyError(S("Erreur réseau.", "Error de red.", "Network error."));
     } finally {
       setReplySending(false);
     }
@@ -373,7 +373,7 @@ export default function SupportTab({
   // ── Date helper ───────────────────────────────────────────────────────────
   const fmtDate = (iso: string) => {
     try {
-      return new Date(iso).toLocaleDateString(isFr ? "fr-FR" : "en-GB", {
+      return new Date(iso).toLocaleDateString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", {
         day: "2-digit", month: "short", year: "numeric",
       });
     } catch { return "—"; }
@@ -566,7 +566,7 @@ export default function SupportTab({
                   <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12, marginBottom: 12 }}>
                     <div>
                       <label style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>
-                        {isFr ? "Email *" : "Email *"}
+                        Email *
                       </label>
                       <input
                         type="email"
@@ -587,7 +587,7 @@ export default function SupportTab({
                       >
                         {CATEGORIES.map(c => (
                           <option key={c.value} value={c.value}>
-                            {isFr ? c.fr : c.en}
+                            {isFr ? c.fr : isEs ? (c.es ?? c.en) : c.en}
                           </option>
                         ))}
                       </select>
@@ -615,7 +615,7 @@ export default function SupportTab({
                   {/* Message */}
                   <div style={{ marginBottom: 16 }}>
                     <label style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>
-                      {isFr ? "Message *" : "Message *"}
+                      Message *
                     </label>
                     <textarea
                       value={form.message}
@@ -712,7 +712,7 @@ export default function SupportTab({
 
               {detailLoading ? (
                 <div style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", padding: "24px 0", fontSize: 14 }}>
-                  {isFr ? "Chargement…" : "Loading…"}
+                  {S("Chargement…", "Cargando…", "Loading…")}
                 </div>
               ) : (
                 <>
@@ -720,10 +720,10 @@ export default function SupportTab({
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
                     <div>
                       <h2 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff", margin: "0 0 6px" }}>
-                        {selectedTicket.subject || (isFr ? "Demande de support" : "Support request")}
+                        {selectedTicket.subject || S("Demande de support", "Solicitud de soporte", "Support request")}
                       </h2>
                       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                        <StatusBadge status={selectedTicket.status} isFr={isFr} />
+                        <StatusBadge status={selectedTicket.status} isFr={isFr} isEs={isEs} />
                         {selectedTicket.category && (
                           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", backgroundColor: "rgba(255,255,255,0.06)", padding: "2px 8px", borderRadius: 5 }}>
                             {selectedTicket.category}
@@ -732,10 +732,10 @@ export default function SupportTab({
                       </div>
                     </div>
                     <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textAlign: "right" }}>
-                      <div>{isFr ? "Créée le" : "Created"} {fmtDate(selectedTicket.created_at)}</div>
+                      <div>{S("Créée le", "Creada el", "Created")} {fmtDate(selectedTicket.created_at)}</div>
                       {selectedTicket.resolved_at && (
                         <div style={{ marginTop: 3, color: "rgba(34,197,94,0.7)" }}>
-                          {isFr ? "Résolue le" : "Resolved"} {fmtDate(selectedTicket.resolved_at)}
+                          {S("Résolue le", "Resuelta el", "Resolved")} {fmtDate(selectedTicket.resolved_at)}
                         </div>
                       )}
                     </div>
@@ -747,7 +747,7 @@ export default function SupportTab({
                   {/* Fil de conversation */}
                   {messagesLoading && messages.length === 0 ? (
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", paddingTop: 8 }}>
-                      {isFr ? "Chargement…" : "Loading…"}
+                      {S("Chargement…", "Cargando…", "Loading…")}
                     </div>
                   ) : (
                     <div
@@ -763,7 +763,7 @@ export default function SupportTab({
                     >
                       {messages.length === 0 && (
                         <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)" }}>
-                          {isFr ? "Aucun message." : "No messages."}
+                          {S("Aucun message.", "Sin mensajes.", "No messages.")}
                         </div>
                       )}
                       {messages.map(msg => {
@@ -802,7 +802,7 @@ export default function SupportTab({
                                   if (diff < 3600)      return `${Math.floor(diff / 60)}min`;
                                   if (diff < 86400)     return `${Math.floor(diff / 3600)}h`;
                                   if (diff < 86400 * 7) return `${Math.floor(diff / 86400)}j`;
-                                  return new Date(msg.created_at).toLocaleDateString(isFr ? "fr-FR" : "en-GB", { day: "2-digit", month: "short" });
+                                  return new Date(msg.created_at).toLocaleDateString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", { day: "2-digit", month: "short" });
                                 })()}
                               </div>
                               <div style={{
@@ -905,7 +905,7 @@ export default function SupportTab({
 
               {ticketsLoading && (
                 <div style={{ textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 14, padding: "40px 0" }}>
-                  {isFr ? "Chargement…" : "Loading…"}
+                  {S("Chargement…", "Cargando…", "Loading…")}
                 </div>
               )}
 
@@ -998,7 +998,7 @@ export default function SupportTab({
                           {t.subject || S("Demande de support", "Solicitud de soporte", "Support request")}
                         </div>
                         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                          <StatusBadge status={t.status} isFr={isFr} />
+                          <StatusBadge status={t.status} isFr={isFr} isEs={isEs} />
                           <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
                             {fmtDate(t.created_at)}
                           </span>
@@ -1030,7 +1030,7 @@ export default function SupportTab({
         <div>
           {chatLoading && (
             <div style={{ textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 14, padding: "48px 0" }}>
-              {isFr ? "Chargement…" : "Loading…"}
+              {S("Chargement…", "Cargando…", "Loading…")}
             </div>
           )}
 
@@ -1082,11 +1082,11 @@ export default function SupportTab({
                         </div>
                         <div>
                           <div style={{ fontSize: 14, fontWeight: 700, color: "#ffffff" }}>
-                            {isFr ? "Support Traders Rewards" : "Traders Rewards Support"}
+                            {S("Support Traders Rewards", "Soporte Traders Rewards", "Traders Rewards Support")}
                           </div>
                           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>
                             {CONV_STATUS[conv.status]
-                              ? (isFr ? CONV_STATUS[conv.status].fr : CONV_STATUS[conv.status].en)
+                              ? S(CONV_STATUS[conv.status].fr, CONV_STATUS[conv.status].es ?? CONV_STATUS[conv.status].en, CONV_STATUS[conv.status].en)
                               : conv.status}
                           </div>
                         </div>
@@ -1103,7 +1103,7 @@ export default function SupportTab({
                             fontSize:        12,
                             fontWeight:      700,
                           }}>
-                            {unreadCount} {isFr ? "non lu(s)" : "unread"}
+                            {unreadCount} {S("non lu(s)", "no leído(s)", "unread")}
                           </span>
                         )}
 
@@ -1129,10 +1129,10 @@ export default function SupportTab({
                       }}>
                         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 5 }}>
                           {lastMsg.sender_type === "admin"
-                            ? (isFr ? "Dernier message — Support" : "Last message — Support")
-                            : (isFr ? "Dernier message — Vous"    : "Last message — You")}
+                            ? S("Dernier message — Support", "Último mensaje — Soporte", "Last message — Support")
+                            : S("Dernier message — Vous", "Último mensaje — Tú", "Last message — You")}
                           {" · "}
-                          {new Date(lastMsg.created_at).toLocaleTimeString(isFr ? "fr-FR" : "en-GB", { hour: "2-digit", minute: "2-digit" })}
+                          {new Date(lastMsg.created_at).toLocaleTimeString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB", { hour: "2-digit", minute: "2-digit" })}
                         </div>
                         <div style={{
                           fontSize:     13,
@@ -1250,7 +1250,7 @@ export default function SupportTab({
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
-function StatusBadge({ status, isFr }: { status: string; isFr: boolean }) {
+function StatusBadge({ status, isFr, isEs }: { status: string; isFr: boolean; isEs?: boolean }) {
   const cfg = TICKET_STATUS[status];
   if (!cfg) return null;
   return (
@@ -1263,7 +1263,7 @@ function StatusBadge({ status, isFr }: { status: string; isFr: boolean }) {
       borderRadius:    5,
       letterSpacing:   0.3,
     }}>
-      {isFr ? cfg.fr : cfg.en}
+      {isFr ? cfg.fr : isEs ? cfg.es : cfg.en}
     </span>
   );
 }

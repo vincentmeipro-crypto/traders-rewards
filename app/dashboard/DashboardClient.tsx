@@ -60,12 +60,18 @@ type Challenge = {
   highest_eod?: number;
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  active: "Active",
-  passed: "Validé",
-  funded: "Active",
-  failed: "Échoué",
-};
+function getStatusLabel(status: string, isFr: boolean, isEs: boolean): string {
+  const labels: Record<string, [string, string, string]> = {
+    // [FR, ES, EN]
+    active: ["Active",  "Activo",   "Active"],
+    passed: ["Validé",  "Validado", "Passed"],
+    funded: ["Active",  "Activo",   "Active"],
+    failed: ["Échoué",  "Fallido",  "Failed"],
+  };
+  const l = labels[status];
+  if (!l) return status;
+  return isFr ? l[0] : isEs ? l[1] : l[2];
+}
 
 const STATUS_COLORS: Record<string, string> = {
   active: "#22c55e",
@@ -131,7 +137,8 @@ type AffiliateData = {
   current_tier: string;
 };
 
-function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: boolean; token: string }) {
+function AffiliateTab({ isFr, isEs = false, isMobile, token }: { isFr: boolean; isEs?: boolean; isMobile: boolean; token: string }) {
+  const A = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const [data, setData] = useState<AffiliateData | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -152,16 +159,16 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
   };
 
   const tiers = [
-    { tier: isFr ? "Débutant" : "Starter", range: isFr ? "1 à 10 ventes" : "1 to 10 sales", pct: "10%", color: "rgba(255,255,255,0.70)", bg: "rgba(255,255,255,0.04)" },
-    { tier: isFr ? "Partenaire" : "Partner", range: isFr ? "11 à 29 ventes" : "11 to 29 sales", pct: "15%", color: "rgba(212,168,67,0.85)", bg: "rgba(212,168,67,0.06)" },
-    { tier: isFr ? "Elite" : "Elite", range: isFr ? "30+ ventes" : "30+ sales", pct: "20%", color: "#D4A843", bg: "rgba(212,168,67,0.09)" },
+    { tier: A("Débutant", "Principiante", "Starter"),   range: A("1 à 10 ventes", "1 a 10 ventas", "1 to 10 sales"),   pct: "10%", color: "rgba(255,255,255,0.70)", bg: "rgba(255,255,255,0.04)" },
+    { tier: A("Partenaire", "Socio",      "Partner"),   range: A("11 à 29 ventes", "11 a 29 ventas", "11 to 29 sales"), pct: "15%", color: "rgba(212,168,67,0.85)", bg: "rgba(212,168,67,0.06)" },
+    { tier: "Elite",                                     range: A("30+ ventes", "30+ ventas", "30+ sales"),               pct: "20%", color: "#D4A843", bg: "rgba(212,168,67,0.09)" },
   ];
 
   return (
     <div style={{ maxWidth: 680 }}>
-      <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{isFr ? "Programme Affiliation" : "Affiliate Program"}</h1>
+      <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{A("Programme Affiliation", "Programa de Afiliación", "Affiliate Program")}</h1>
       <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 28 }}>
-        {isFr ? "Partagez votre lien et gagnez des commissions sur chaque vente." : "Share your link and earn commissions on every sale."}
+        {A("Partagez votre lien et gagnez des commissions sur chaque vente.", "Comparte tu enlace y gana comisiones en cada venta.", "Share your link and earn commissions on every sale.")}
       </p>
 
       {/* Tiers */}
@@ -186,10 +193,10 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
       {/* Mon lien */}
       <div className="card" style={{ padding: 24, marginBottom: 20 }}>
         <div style={{ fontWeight: 700, fontSize: 14, color: "rgba(255,255,255,0.65)", marginBottom: 14 }}>
-          {isFr ? "Mon lien affilié" : "My affiliate link"}
+          {A("Mon lien affilié", "Mi enlace de afiliado", "My affiliate link")}
         </div>
         {loading ? (
-          <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>Chargement...</div>
+          <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13 }}>{A("Chargement...", "Cargando...", "Loading...")}</div>
         ) : (
           <>
             <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
@@ -197,11 +204,11 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
                 {data?.link || "—"}
               </div>
               <button onClick={copyLink} style={{ padding: "10px 18px", background: copied ? "#16a34a" : "rgba(255,255,255,0.10)", color: "#fff", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer", whiteSpace: "nowrap", transition: "background 0.2s" }}>
-                {copied ? (isFr ? "Copié !" : "Copied!") : (isFr ? "Copier" : "Copy")}
+                {copied ? A("Copié !", "¡Copiado!", "Copied!") : A("Copier", "Copiar", "Copy")}
               </button>
             </div>
             <div style={{ marginTop: 10, color: "rgba(255,255,255,0.45)", fontSize: 12 }}>
-              {isFr ? "Code : " : "Code: "}<span style={{ fontFamily: "monospace", fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>{data?.code}</span>
+              {A("Code : ", "Código: ", "Code: ")}<span style={{ fontFamily: "monospace", fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>{data?.code}</span>
             </div>
           </>
         )}
@@ -210,10 +217,10 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 12, marginBottom: 20 }}>
         {[
-          { label: isFr ? "Ventes totales" : "Total sales", value: loading ? "—" : String(data?.total_conversions || 0), icon: "🏆" },
-          { label: isFr ? "Commission totale" : "Total commission", value: loading ? "—" : `€${(data?.total_commission || 0).toFixed(2)}`, icon: "💰" },
-          { label: isFr ? "En attente" : "Pending", value: loading ? "—" : `€${(data?.pending_commission || 0).toFixed(2)}`, icon: "⏳" },
-          { label: isFr ? "Versé" : "Paid out", value: loading ? "—" : `€${(data?.paid_commission || 0).toFixed(2)}`, icon: "✅" },
+          { label: A("Ventes totales", "Ventas totales", "Total sales"), value: loading ? "—" : String(data?.total_conversions || 0), icon: "🏆" },
+          { label: A("Commission totale", "Comisión total", "Total commission"), value: loading ? "—" : `€${(data?.total_commission || 0).toFixed(2)}`, icon: "💰" },
+          { label: A("En attente", "Pendiente", "Pending"), value: loading ? "—" : `€${(data?.pending_commission || 0).toFixed(2)}`, icon: "⏳" },
+          { label: A("Versé", "Pagado", "Paid out"), value: loading ? "—" : `€${(data?.paid_commission || 0).toFixed(2)}`, icon: "✅" },
         ].map((s, i) => (
           <div key={i} className="card" style={{ padding: "16px 14px", textAlign: "center" }}>
             <div style={{ fontSize: 20, marginBottom: 6 }}>{s.icon}</div>
@@ -225,12 +232,12 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
 
       {/* Comment ça marche */}
       <div className="card" style={{ padding: 22, marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 14, color: "rgba(255,255,255,0.65)", marginBottom: 14 }}>{isFr ? "Comment ça fonctionne" : "How it works"}</div>
+        <div style={{ fontWeight: 700, fontSize: 14, color: "rgba(255,255,255,0.65)", marginBottom: 14 }}>{A("Comment ça fonctionne", "Cómo funciona", "How it works")}</div>
         {[
-          { icon: "🔗", text: isFr ? "Partagez votre lien unique — il est valide à vie." : "Share your unique link — it never expires." },
-          { icon: "💰", text: isFr ? "Gagnez une commission sur chaque challenge acheté via votre lien." : "Earn a commission on every challenge purchased via your link." },
-          { icon: "📈", text: isFr ? "Votre taux monte automatiquement avec vos ventes (10% → 15% → 20%)." : "Your rate increases automatically with your sales (10% → 15% → 20%)." },
-          { icon: "💳", text: isFr ? "Retrait dès 100€ de commissions validées, en crypto ou virement." : "Withdraw from €100 in validated commissions, via crypto or bank transfer." },
+          { icon: "🔗", text: A("Partagez votre lien unique — il est valide à vie.", "Comparte tu enlace único — es válido de por vida.", "Share your unique link — it never expires.") },
+          { icon: "💰", text: A("Gagnez une commission sur chaque challenge acheté via votre lien.", "Gana una comisión en cada challenge comprado a través de tu enlace.", "Earn a commission on every challenge purchased via your link.") },
+          { icon: "📈", text: A("Votre taux monte automatiquement avec vos ventes (10% → 15% → 20%).", "Tu tasa sube automáticamente con tus ventas (10% → 15% → 20%).", "Your rate increases automatically with your sales (10% → 15% → 20%).") },
+          { icon: "💳", text: A("Retrait dès 100€ de commissions validées, en crypto ou virement.", "Retiro desde 100€ en comisiones validadas, en criptomoneda o transferencia.", "Withdraw from €100 in validated commissions, via crypto or bank transfer.") },
         ].map((item, i) => (
           <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "10px 0", borderBottom: i < 3 ? "1px solid #f0f4ff" : "none" }}>
             <span style={{ fontSize: 18, flexShrink: 0 }}>{item.icon}</span>
@@ -241,9 +248,9 @@ function AffiliateTab({ isFr, isMobile, token }: { isFr: boolean; isMobile: bool
 
       {/* Retrait */}
       <div className="card" style={{ padding: 22, textAlign: "center" }}>
-        <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>{isFr ? "Demander un retrait" : "Request a payout"}</div>
+        <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 6 }}>{A("Demander un retrait", "Solicitar retiro", "Request a payout")}</div>
         <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, marginBottom: 16 }}>
-          {isFr ? "Minimum 100€ de commissions validées." : "Minimum €100 in validated commissions."}
+          {A("Minimum 100€ de commissions validées.", "Mínimo 100€ en comisiones validadas.", "Minimum €100 in validated commissions.")}
         </div>
         <a href="mailto:contact@traders-rewards.eu?subject=Retrait%20commission%20affiliation"
           style={{ display: "inline-block", backgroundColor: "rgba(255,255,255,0.10)", color: "#fff", fontWeight: 700, fontSize: 13, padding: "12px 28px", borderRadius: 10, textDecoration: "none", border: "1px solid rgba(255,255,255,0.12)" }}>
@@ -259,6 +266,8 @@ export default function DashboardClient({ user }: { user: User }) {
   const supabase = React.useMemo(() => createClient(), []);
   const { T, lang, setLang } = useLanguage();
   const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const C = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const [token, setToken] = useState("");
   const [supportUnreadCount, setSupportUnreadCount] = useState(0);
   const [latestSupportReplyAt, setLatestSupportReplyAt] = useState<string | null>(null);
@@ -569,7 +578,7 @@ export default function DashboardClient({ user }: { user: User }) {
               { icon: <History size={16} />, label: T.dash.history, tab: "history" },
               { icon: <FileText size={16} />, label: T.dash.invoices, tab: "invoices" },
               { icon: <BookOpen size={16} />, label: T.dash.rules, tab: "rules" },
-              { icon: <Users size={16} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
+              { icon: <Users size={16} />, label: C("Affiliation", "Afiliación", "Affiliate"), tab: "affiliate" },
               { icon: <UserIcon size={16} />, label: T.dash.profile, tab: "profile" },
               { icon: <Settings size={16} />, label: T.dash.settings, tab: "settings" },
             ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -610,7 +619,7 @@ export default function DashboardClient({ user }: { user: User }) {
               onMouseOut={e => { e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.05)"; }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
                 <MessageCircle size={16} />
-                <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
+                <span style={{ fontSize: 14, fontWeight: 600 }}>{C("Centre d'aide", "Centro de ayuda", "Help Center")}</span>
                 {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 20, height: 20, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#D4A843", color: "#02070b", fontSize: 10, fontWeight: 900, boxShadow: "0 0 16px rgba(212,168,67,.35)" }} aria-label={`${supportUnreadCount} réponse(s) non lue(s)`}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
               </div>
               <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", paddingLeft: 26 }}>contact@traders-rewards.eu</span>
@@ -640,8 +649,8 @@ export default function DashboardClient({ user }: { user: User }) {
                 { tab: "history", label: T.dash.history },
                 { tab: "invoices", label: T.dash.invoices },
                 { tab: "rules", label: T.dash.rules },
-                { tab: "affiliate", label: isFr ? "Affiliation" : "Affiliate" },
-                { tab: "support",   label: isFr ? "Support" : "Support" },
+                { tab: "affiliate", label: C("Affiliation", "Afiliación", "Affiliate") },
+                { tab: "support",   label: "Support" },
                 { tab: "profile",   label: T.dash.profile },
                 { tab: "settings",  label: T.dash.settings },
               ] as { tab: Tab; label: string }[]).find(i => i.tab === activeTab)?.label}
@@ -671,7 +680,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 { icon: <History size={20} />, label: T.dash.history, tab: "history" },
                 { icon: <FileText size={20} />, label: T.dash.invoices, tab: "invoices" },
                 { icon: <BookOpen size={20} />, label: T.dash.rules, tab: "rules" },
-                { icon: <Users size={20} />, label: isFr ? "Affiliation" : "Affiliate", tab: "affiliate" },
+                { icon: <Users size={20} />, label: C("Affiliation", "Afiliación", "Affiliate"), tab: "affiliate" },
                 { icon: <UserIcon size={20} />, label: T.dash.profile, tab: "profile" },
                 { icon: <Settings size={20} />, label: T.dash.settings, tab: "settings" },
               ] as { icon: React.ReactNode; label: string; tab: Tab }[]).map(item => (
@@ -690,7 +699,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ padding: "16px 24px", borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: 8 }}>
                 <div onClick={() => { setActiveTab("support"); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", color: "#fff", marginBottom: 12, cursor: "pointer" }}>
                   <MessageCircle size={20} />
-                  <span style={{ fontSize: 15, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
+                  <span style={{ fontSize: 15, fontWeight: 600 }}>{C("Centre d'aide", "Centro de ayuda", "Help Center")}</span>
                   {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 22, height: 22, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#D4A843", color: "#02070b", fontSize: 10, fontWeight: 900 }}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
                 </div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>{user.email}</div>
@@ -758,7 +767,7 @@ export default function DashboardClient({ user }: { user: User }) {
                           <div>
                             <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.phase === "funded" ? "Compte Reward" : "Challenge"}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                              <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{STATUS_LABELS[c.status] || c.status}</span>
+                              <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{getStatusLabel(c.status, isFr, isEs)}</span>
                               <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#C9A84C" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
                             </div>
                           </div>
@@ -775,7 +784,7 @@ export default function DashboardClient({ user }: { user: User }) {
                             { label: T.dash.finalBalance, value: `$${finalBalance?.toLocaleString()}` },
                             { label: "P&L", value: profit ? `${Number(profit) >= 0 ? "+" : ""}${profit}%` : "—", color: profit ? (Number(profit) >= 0 ? "#FFFFFF" : "#ef4444") : "rgba(255,255,255,0.45)" },
                             { label: T.dash.daysTradedLabel, value: c.trading_days?.toString() || "0" },
-                            { label: isFr ? "Compte MT5" : "MT5 Account", value: c.mt5_login ? String(c.mt5_login) : "—" },
+                            { label: C("Compte MT5", "Cuenta MT5", "MT5 Account"), value: c.mt5_login ? String(c.mt5_login) : "—" },
                             { label: T.dash.amountPaidLabel, value: `€${c.amount_paid}` },
                           ].map((s, i) => (
                             <div key={i} style={{ backgroundColor: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 14px" }}>
@@ -789,7 +798,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         {isV1 && (c.challenge_passed_at || c.reward_converted_at || c.terminated_at) && (
                           <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 14, marginTop: 4, marginBottom: relatedPayouts.length > 0 ? 14 : 0 }}>
                             <div style={{ color: "rgba(255,255,255,0.4)", fontSize: 10, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 10 }}>
-                              {isFr ? "Parcours Traders Rewards" : "Traders Rewards Journey"}
+                              {C("Parcours Traders Rewards", "Recorrido Traders Rewards", "Traders Rewards Journey")}
                             </div>
                             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
 
@@ -799,7 +808,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                     <CheckCircle size={14} color="rgba(255,255,255,0.7)" />
                                     <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                                      {isFr ? "Challenge réussi" : "Challenge passed"}
+                                      {C("Challenge réussi", "Challenge superado", "Challenge passed")}
                                     </span>
                                     {c.challenge_passed_balance != null && (
                                       <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>
@@ -819,7 +828,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                     <Award size={14} color="#C9A84C" />
                                     <span style={{ fontSize: 13, fontWeight: 700, color: "#C9A84C" }}>
-                                      {isFr ? "Compte Reward activé" : "Compte Reward actif"}
+                                      {C("Compte Reward activé", "Cuenta Reward activada", "Reward Account activated")}
                                     </span>
                                     {c.mt5_login && (
                                       <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>#{c.mt5_login}</span>
@@ -837,7 +846,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                     <Trophy size={14} color="rgba(255,255,255,0.55)" />
                                     <span style={{ fontSize: 13, color: "rgba(255,255,255,0.75)" }}>
-                                      {isFr ? "Niveau Reward" : "Reward Level"}
+                                      {C("Niveau Reward", "Nivel Reward", "Reward Level")}
                                     </span>
                                   </div>
                                   <span style={{ fontSize: 13, fontWeight: 800, color: "#FFFFFF", letterSpacing: 0.5 }}>
@@ -852,7 +861,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                     <Shield size={14} color="rgba(255,255,255,0.7)" />
                                     <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-                                      {isFr ? "Parcours terminé — 5/5 Rewards" : "Journey completed — 5/5 Rewards"}
+                                      {C("Parcours terminé — 5/5 Rewards", "Recorrido completado — 5/5 Rewards", "Journey completed — 5/5 Rewards")}
                                     </span>
                                   </div>
                                   <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
@@ -888,8 +897,8 @@ export default function DashboardClient({ user }: { user: User }) {
                           <div style={{ marginTop: 12, display: "flex", alignItems: "center", gap: 6, color: "rgba(255,255,255,0.55)", fontSize: 12, fontWeight: 600 }}>
                             <BarChart2 size={13} />
                             {isSelectedHist
-                              ? (isFr ? "Masquer l'historique ▲" : "Hide trade history ▲")
-                              : (isFr ? "Voir l'historique des trades ▼" : "View trade history ▼")}
+                              ? C("Masquer l'historique ▲", "Ocultar historial ▲", "Hide trade history ▲")
+                              : C("Voir l'historique des trades ▼", "Ver historial de operaciones ▼", "View trade history ▼")}
                           </div>
                         )}
                       </div>
@@ -898,18 +907,18 @@ export default function DashboardClient({ user }: { user: User }) {
                         {isSelectedHist && (
                           <div style={{ marginTop: 8, backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "16px 20px" }}>
                             <div style={{ fontWeight: 700, fontSize: 14, color: "#FFFFFF", marginBottom: 12 }}>
-                              {isFr ? "Historique des positions" : "Trade history"} — {c.account_size}
+                              {C("Historique des positions", "Historial de posiciones", "Trade history")} — {c.account_size}
                             </div>
                             {histTradesLoading ? (
-                              <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 16, fontSize: 13 }}>{isFr ? "Chargement…" : "Loading…"}</div>
+                              <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 16, fontSize: 13 }}>{C("Chargement…", "Cargando…", "Loading…")}</div>
                             ) : histTrades.length === 0 ? (
-                              <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 16, fontSize: 13 }}>{isFr ? "Aucune position trouvée" : "No trades found"}</div>
+                              <div style={{ textAlign: "center", color: "rgba(255,255,255,0.45)", padding: 16, fontSize: 13 }}>{C("Aucune position trouvée", "No se encontraron operaciones", "No trades found")}</div>
                             ) : (
                               <div style={{ overflowX: "auto" }}>
                                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                                   <thead>
                                     <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", backgroundColor: "rgba(255,255,255,0.02)" }}>
-                                      {["Ticket", "Date", isFr ? "Symbole" : "Symbol", "Type", "Volume", isFr ? "Prix" : "Price", "Profit"].map(h => (
+                                      {["Ticket", "Date", C("Symbole", "Símbolo", "Symbol"), "Type", "Volume", C("Prix", "Precio", "Price"), "Profit"].map(h => (
                                         <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontWeight: 700, color: "rgba(255,255,255,0.45)", fontSize: 11, textTransform: "uppercase", whiteSpace: "nowrap" }}>{h}</th>
                                       ))}
                                     </tr>
@@ -1099,42 +1108,52 @@ export default function DashboardClient({ user }: { user: User }) {
             const displayedTarget = isFunded ? 4 : (pt ?? 6);
             ruleCards.push({
               icon: <Target size={20} color="rgba(255,255,255,0.65)" />,
-              title: isFunded ? (isFr ? "Seuil de Reward" : "Reward Threshold") : (isFr ? "Objectif du Challenge" : "Challenge Target"),
-              desc: isFr
-                ? `Atteindre +${displayedTarget}% sur ce compte pour ${isFunded ? "débloquer la prochaine Reward" : "valider le Challenge"}.`
-                : `Reach +${displayedTarget}% on this account to ${isFunded ? "unlock the next Reward" : "pass the Challenge"}.`,
+              title: isFunded ? C("Seuil de Reward", "Umbral de Reward", "Reward Threshold") : C("Objectif du Challenge", "Objetivo del Challenge", "Challenge Target"),
+              desc: C(
+                `Atteindre +${displayedTarget}% sur ce compte pour ${isFunded ? "débloquer la prochaine Reward" : "valider le Challenge"}.`,
+                `Alcanzar +${displayedTarget}% en esta cuenta para ${isFunded ? "desbloquear la siguiente Reward" : "validar el Challenge"}.`,
+                `Reach +${displayedTarget}% on this account to ${isFunded ? "unlock the next Reward" : "pass the Challenge"}.`,
+              ),
             });
           }
 
           // Minimum trading days
           ruleCards.push({
             icon: <Calendar size={20} color="rgba(255,255,255,0.65)" />,
-            title: isFr ? "Jours de trading minimum" : "Minimum Trading Days",
-            desc: isFr
-              ? isFunded
+            title: C("Jours de trading minimum", "Días mínimos de trading", "Minimum Trading Days"),
+            desc: C(
+              isFunded
                 ? `Vous devez enregistrer au moins ${minD} journées qualifiantes avant de demander la Reward.`
-                : `Vous devez trader au moins ${minD} jours différents avant de valider le Challenge.`
-              : isFunded
+                : `Vous devez trader au moins ${minD} jours différents avant de valider le Challenge.`,
+              isFunded
+                ? `Debes registrar al menos ${minD} días qualificativos antes de solicitar la Reward.`
+                : `Debes operar al menos ${minD} días distintos antes de validar el Challenge.`,
+              isFunded
                 ? `You need at least ${minD} qualifying days before requesting the Reward.`
                 : `You must trade at least ${minD} different days before passing the Challenge.`,
+            ),
           });
 
           // Une seule limite de risque : Drawdown total en modèle trailing EOD.
           ruleCards.push({
             icon: <Shield size={20} color="rgba(255,255,255,0.65)" />,
-            title: isFr ? "Drawdown total · Trailing EOD" : "Total Drawdown · Trailing EOD",
-            desc: isFr
-              ? `Limite unique de ${rewardsDdPct}% : le plancher suit le plus haut solde de fin de journée. La violation est contrôlée sur l'equity en temps réel.`
-              : `Single ${rewardsDdPct}% limit: the floor follows the highest end-of-day balance. Breaches are checked against live equity.`,
+            title: "Total Drawdown · Trailing EOD",
+            desc: C(
+              `Limite unique de ${rewardsDdPct}% : le plancher suit le plus haut solde de fin de journée. La violation est contrôlée sur l'equity en temps réel.`,
+              `Límite único de ${rewardsDdPct}%: el suelo sigue el saldo más alto al cierre del día. La violación se controla sobre el equity en tiempo real.`,
+              `Single ${rewardsDdPct}% limit: the floor follows the highest end-of-day balance. Breaches are checked against live equity.`,
+            ),
           });
 
           // Règle de consistance : 50% pour tous les niveaux (Challenge et Compte Reward)
           ruleCards.push({
             icon: <Percent size={20} color="rgba(255,255,255,0.65)" />,
-            title: isFr ? "Règle de consistance" : "Consistency Rule",
-            desc: isFr
-              ? "Votre meilleure journée ne doit pas représenter plus de 50% de votre profit total."
-              : "Your best day must not represent more than 50% of your total profit.",
+            title: C("Règle de consistance", "Regla de consistencia", "Consistency Rule"),
+            desc: C(
+              "Votre meilleure journée ne doit pas représenter plus de 50% de votre profit total.",
+              "Tu mejor día no debe representar más del 50% de tu beneficio total.",
+              "Your best day must not represent more than 50% of your total profit.",
+            ),
           });
 
           // Durée contractuelle : Challenge limité à 30 jours calendaires,
@@ -1142,22 +1161,28 @@ export default function DashboardClient({ user }: { user: User }) {
           ruleCards.push({
             icon: <Clock size={20} color="rgba(255,255,255,0.65)" />,
             title: isFunded
-              ? (isFr ? "Temps illimité" : "Unlimited Duration")
-              : (isFr ? "30 jours calendaires maximum" : "30 Calendar Days Maximum"),
+              ? C("Temps illimité", "Tiempo ilimitado", "Unlimited Duration")
+              : C("30 jours calendaires maximum", "30 días calendario máximo", "30 Calendar Days Maximum"),
             desc: isFunded
-              ? (isFr
-                ? "Le Compte Reward ne comporte aucune limite de temps pour atteindre le prochain seuil."
-                : "The Compte Reward has no time limit for reaching the next threshold.")
-              : (isFr
-                ? "Le Challenge doit être validé dans les 30 jours calendaires suivant sa création."
-                : "The Challenge must be completed within 30 calendar days of its creation."),
+              ? C(
+                  "Le Compte Reward ne comporte aucune limite de temps pour atteindre le prochain seuil.",
+                  "La Cuenta Reward no tiene límite de tiempo para alcanzar el siguiente umbral.",
+                  "The Compte Reward has no time limit for reaching the next threshold.",
+                )
+              : C(
+                  "Le Challenge doit être validé dans les 30 jours calendaires suivant sa création.",
+                  "El Challenge debe completarse en los 30 días calendario siguientes a su creación.",
+                  "The Challenge must be completed within 30 calendar days of its creation.",
+                ),
           });
           ruleCards.push({
             icon: <BarChart2 size={20} color="rgba(255,255,255,0.65)" />,
-            title: isFr ? "Tous styles de trading" : "Any Trading Style",
-            desc: isFr
-              ? "Scalping, swing trading, news trading — toutes les stratégies sont autorisées."
-              : "Scalping, swing trading, news trading — all strategies are allowed.",
+            title: C("Tous styles de trading", "Todos los estilos de trading", "Any Trading Style"),
+            desc: C(
+              "Scalping, swing trading, news trading — toutes les stratégies sont autorisées.",
+              "Scalping, swing trading, news trading — todas las estrategias están permitidas.",
+              "Scalping, swing trading, news trading — all strategies are allowed.",
+            ),
           });
 
           return (
@@ -1165,12 +1190,12 @@ export default function DashboardClient({ user }: { user: User }) {
               <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rules}</h1>
               <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>
                 {contractRules?.hasSnapshot
-                  ? (isFr ? "Règles contractuelles spécifiques à ce compte — issues du snapshot d'achat." : "Contractual rules specific to this account — from your purchase snapshot.")
+                  ? C("Règles contractuelles spécifiques à ce compte — issues du snapshot d'achat.", "Reglas contractuales específicas de esta cuenta — extraídas del snapshot de compra.", "Contractual rules specific to this account — from your purchase snapshot.")
                   : T.dash.tradingRulesSub}
               </p>
               {activeChallenges.length > 1 && (
                 <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 12, background: "rgba(255,255,255,0.04)" }}>
-                  <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{isFr ? "COMPTE" : "ACCOUNT"}</span>
+                  <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{C("COMPTE", "CUENTA", "ACCOUNT")}</span>
                   <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
                     {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER"}</option>)}
                   </select>
@@ -1362,25 +1387,25 @@ export default function DashboardClient({ user }: { user: User }) {
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Clock size={40} color="#f59e0b" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>
-                  {isFr ? "Demande en cours de traitement" : "Request being processed"}
+                  {C("Demande en cours de traitement", "Solicitud en proceso", "Request being processed")}
                 </div>
                 <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14 }}>
-                  {isFr ? "Votre demande de récompense est en attente de validation par notre équipe." : "Your reward request is pending validation by our team."}
+                  {C("Votre demande de récompense est en attente de validation par notre équipe.", "Tu solicitud de recompensa está pendiente de validación por nuestro equipo.", "Your reward request is pending validation by our team.")}
                 </div>
               </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>
                 {/* ── 5 étapes de validation automatique ── */}
                 <div style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 18 }}>
-                  {isFr ? "VALIDATION AUTOMATIQUE" : "AUTOMATIC VALIDATION"}
+                  {C("VALIDATION AUTOMATIQUE", "VALIDACIÓN AUTOMÁTICA", "AUTOMATIC VALIDATION")}
                 </div>
                 <div style={{ marginBottom: 28 }}>
                   {([
-                    isFr ? "KYC validé" : "KYC verified",
-                    isFr ? "Moyen de paiement validé" : "Payment method validated",
-                    isFr ? "Règles du compte respectées" : "Account rules respected",
-                    isFr ? "Montant Reward validé" : "Reward amount validated",
-                    isFr ? "Paiement automatique en 48H" : "Automatic payment in 48H",
+                    C("KYC validé", "KYC verificado", "KYC verified"),
+                    C("Moyen de paiement validé", "Método de pago validado", "Payment method validated"),
+                    C("Règles du compte respectées", "Reglas de cuenta respetadas", "Account rules respected"),
+                    C("Montant Reward validé", "Importe Reward validado", "Reward amount validated"),
+                    C("Paiement automatique en 48H", "Pago automático en 48H", "Automatic payment in 48H"),
                   ] as string[]).map((label, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < 4 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
                       <div style={{
@@ -1403,10 +1428,10 @@ export default function DashboardClient({ user }: { user: User }) {
 
                 {/* Méthode de paiement */}
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ display: "block", color: "rgba(255,255,255,0.65)", fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{isFr ? "Méthode de versement" : "Payment method"}</label>
+                  <label style={{ display: "block", color: "rgba(255,255,255,0.65)", fontSize: 13, fontWeight: 700, marginBottom: 8 }}>{C("Méthode de versement", "Método de pago", "Payment method")}</label>
                   <select value={payoutForm.payment_method} onChange={e => setPayoutForm(f => ({ ...f, payment_method: e.target.value, wallet_address: "" }))}
                     style={{ width: "100%", backgroundColor: "rgba(255,255,255,0.06)", border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "14px 16px", color: "#fff", fontSize: 14, fontWeight: 700, outline: "none" }}>
-                    <option value="bank">{isFr ? "Virement bancaire (RIB/IBAN)" : "Bank transfer (IBAN)"}</option>
+                    <option value="bank">{C("Virement bancaire (RIB/IBAN)", "Transferencia bancaria (IBAN)", "Bank transfer (IBAN)")}</option>
                     <option value="crypto">Crypto — USDC réseau Solana</option>
                   </select>
                 </div>
@@ -1414,7 +1439,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 {/* Adresse selon méthode */}
                 <div style={{ marginBottom: 28 }}>
                   <label style={{ display: "block", color: "rgba(255,255,255,0.65)", fontSize: 13, fontWeight: 700, marginBottom: 8 }}>
-                    {payoutForm.payment_method === "crypto" ? (isFr ? "Adresse portefeuille USDC (Solana)" : "USDC wallet address (Solana)") : "IBAN"}
+                    {payoutForm.payment_method === "crypto" ? C("Adresse portefeuille USDC (Solana)", "Dirección billetera USDC (Solana)", "USDC wallet address (Solana)") : "IBAN"}
                   </label>
                   <input type="text"
                     placeholder={payoutForm.payment_method === "crypto" ? "Adresse Solana..." : "FR76..."}
@@ -1442,13 +1467,13 @@ export default function DashboardClient({ user }: { user: User }) {
             {allPayouts.length > 0 && (
               <div>
                 <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "#FFFFFF" }}>
-                  {isFr ? "Historique des récompenses" : "Rewards history"}
+                  {C("Historique des récompenses", "Historial de recompensas", "Rewards history")}
                 </h2>
                 <div className="card" style={{ padding: 0, overflow: "hidden" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)" }}>
-                        {[isFr ? "Date" : "Date", isFr ? "Montant" : "Amount", isFr ? "Méthode" : "Method", isFr ? "Statut" : "Status", isFr ? "Motif" : "Reason", ""].map(h => (
+                        {["Date", C("Montant", "Importe", "Amount"), C("Méthode", "Método", "Method"), C("Statut", "Estado", "Status"), C("Motif", "Motivo", "Reason"), ""].map(h => (
                           <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: "rgba(255,255,255,0.45)", fontWeight: 600, fontSize: 11, textTransform: "uppercase", letterSpacing: "0.5px" }}>{h}</th>
                         ))}
                       </tr>
@@ -1456,7 +1481,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <tbody>
                       {allPayouts.map((p, i) => {
                         const statusColor = p.status === "paid" ? "#22c55e" : p.status === "pending" ? "#f59e0b" : "#ef4444";
-                        const statusLabel = p.status === "paid" ? (isFr ? "Validée" : "Approved") : p.status === "pending" ? (isFr ? "En attente" : "Pending") : (isFr ? "Refusée" : "Rejected");
+                        const statusLabel = p.status === "paid" ? C("Validée", "Aprobada", "Approved") : p.status === "pending" ? C("En attente", "Pendiente", "Pending") : C("Refusée", "Rechazada", "Rejected");
                         const relatedChallenge = allChallenges.find(c => c.id === p.challenge_id);
                         const ref = `ELY-${new Date(p.created_at).getFullYear()}-${p.id.slice(0,6).toUpperCase()}`;
                         const receiptUrl = `/payout-receipt?ref=${ref}&date=${new Date(p.created_at).toLocaleDateString("fr-FR")}&amount=${p.amount}&method=${p.payment_method||""}&first=${encodeURIComponent(profileFirstName)}&last=${encodeURIComponent(profileLastName)}&email=${encodeURIComponent(user.email||"")}&size=${encodeURIComponent(relatedChallenge?.account_size||"")}&login=${relatedChallenge?.mt5_login||""}`;
@@ -1473,7 +1498,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               </span>
                             </td>
                             <td style={{ padding: "13px 16px", color: "#ef4444", fontSize: 12 }}>
-                              {p.rejection_reason || (p.status === "rejected" ? (isFr ? "Voir support" : "Contact support") : "—")}
+                              {p.rejection_reason || (p.status === "rejected" ? C("Voir support", "Contactar soporte", "Contact support") : "—")}
                             </td>
                             <td style={{ padding: "13px 16px" }}>
                               {p.status === "paid" && (
@@ -1598,7 +1623,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.certSub}</p>
             {activeChallenges.length > 1 && (
               <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 12, background: "rgba(255,255,255,0.04)" }}>
-                <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{isFr ? "COMPTE" : "ACCOUNT"}</span>
+                <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{C("COMPTE", "CUENTA", "ACCOUNT")}</span>
                 <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
                   {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER"}</option>)}
                 </select>
@@ -1628,7 +1653,7 @@ export default function DashboardClient({ user }: { user: User }) {
               const baseCerts = [
                 {
                   type: validationCertificate?.certificate_type ?? "phase2", label: "Challenge", btnColor: "rgba(255,255,255,0.12)",
-                  title: isFr ? "CHALLENGE VALIDÉ" : "CHALLENGE PASSED", topLabel: "Traders Rewards — Certification",
+                  title: C("CHALLENGE VALIDÉ", "CHALLENGE SUPERADO", "CHALLENGE PASSED"), topLabel: "Traders Rewards — Certification",
                   unlocked: challengeValidated,
                   amount: challenge?.account_size || "$100,000",
                   date: issuedDate(validationCertificate),
@@ -1699,7 +1724,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {paidPayouts.length > 0 && (
                     <div>
                       <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 16, color: "#FFFFFF" }}>
-                        {isFr ? "Mes Récompenses" : "My Rewards"}
+                        {C("Mes Récompenses", "Mis Recompensas", "My Rewards")}
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 20 }}>
                         {paidPayouts.map((p) => {
@@ -1766,7 +1791,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 onMouseOut={e => { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.boxShadow = ""; }}
                 >
                   <span style={{ color: "#D4A843", fontSize: 16, lineHeight: 1 }}>+</span>
-                  {isFr ? "Nouveau challenge" : "New challenge"}
+                  {C("Nouveau challenge", "Nuevo challenge", "New challenge")}
                 </Link>
               </div>
             </div>
@@ -1775,8 +1800,8 @@ export default function DashboardClient({ user }: { user: User }) {
               const challengeCount = activeChallenges.filter(c => c.status === "active" && c.phase !== "funded").length;
               const rewardCount = activeChallenges.filter(c => c.status === "funded" || c.phase === "funded").length;
               const counters = [
-                { label: isFr ? "Challenges actifs" : "Active Challenges", value: challengeCount, max: 10 },
-                { label: isFr ? "Comptes Reward actifs" : "Active Comptes Reward", value: rewardCount, max: 5 },
+                { label: C("Challenges actifs", "Challenges activos", "Active Challenges"), value: challengeCount, max: 10 },
+                { label: C("Comptes Reward actifs", "Cuentas Reward activas", "Active Reward Accounts"), value: rewardCount, max: 5 },
               ];
               return (
                 <div className="card" style={{ padding: "14px 20px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 22, marginBottom: 16 }}>
@@ -1816,7 +1841,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         <div>
                           <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{c.account_size} — Challenge</div>
                           <div style={{ display: "flex", gap: 8 }}>
-                            <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{c.status === "funded" ? "Active" : STATUS_LABELS[c.status] || c.status}</span>
+                            <span style={{ backgroundColor: `${STATUS_COLORS[c.status]}20`, color: STATUS_COLORS[c.status] || "#888", fontSize: 12, fontWeight: 600, padding: "3px 10px", borderRadius: 100 }}>{getStatusLabel(c.status, isFr, isEs)}</span>
                           </div>
                         </div>
                         <div style={{ textAlign: "right" }}>
@@ -1841,7 +1866,7 @@ export default function DashboardClient({ user }: { user: User }) {
 
         {/* ══ AFFILIATION ══ */}
         {activeTab === "affiliate" && (
-          <AffiliateTab isFr={isFr} isMobile={isMobile} token={token} />
+          <AffiliateTab isFr={isFr} isEs={isEs} isMobile={isMobile} token={token} />
         )}
 
         {/* ══ SUPPORT ══ */}
@@ -1849,7 +1874,7 @@ export default function DashboardClient({ user }: { user: User }) {
           <SupportTab
             token={token}
             isFr={isFr}
-            isEs={lang === "es"}
+            isEs={isEs}
             isMobile={isMobile}
             firstName={profileFirstName}
             lastName={profileLastName}
@@ -1877,7 +1902,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 color: "#FFFFFF", fontSize: 14, fontWeight: 700, letterSpacing: "0.3px",
               }}>
                 <span style={{ color: "#D4A843", fontSize: 16, lineHeight: 1 }}>+</span>
-                {isFr ? "Démarrer un Challenge" : "Start a Challenge"}
+                {C("Démarrer un Challenge", "Iniciar un Challenge", "Start a Challenge")}
               </Link>
             </div>
           </div>
@@ -1888,7 +1913,7 @@ export default function DashboardClient({ user }: { user: User }) {
             tradeHistory={tradeHistory}
             tradeHistoryLoading={tradeHistoryLoading}
             isFr={isFr}
-            isEs={lang === "es"}
+            isEs={isEs}
             isMobile={isMobile}
             kycStatus={kycStatus}
             approvedRewardsCount={allPayouts.filter(p => p.challenge_id === challenge.id && p.status === "paid").length}
