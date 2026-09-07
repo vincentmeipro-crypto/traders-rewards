@@ -43,9 +43,9 @@ export default function Hero() {
 
   // ── i18n ────────────────────────────────────────────────────
   const pill    = L("Programme éducatif trading simulé", "Programa educativo de trading simulado", "Simulated trading education program");
-  const h1L1    = "1 CHALLENGE.";
+  const h1L1    = "1 CHALLENGE";
   const h1L2pre = "";
-  const h1L2acc = L("5 RÉCOMPENSES.", "5 RECOMPENSAS.", "5 REWARDS.");
+  const h1L2acc = L("5 RÉCOMPENSES", "5 RECOMPENSAS", "5 REWARDS");
   const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
 
   const promoFS = isMobile

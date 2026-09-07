@@ -159,12 +159,12 @@ export default function Navbar() {
 
           {/* Logo — gauche sur mobile et desktop */}
           {isMobile ? (
-            <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 1, minWidth: 0 }}>
+            <Link href="/#hero" style={{ display: "flex", alignItems: "center", textDecoration: "none", flexShrink: 1, minWidth: 0 }}>
               <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 36, width: "auto", maxWidth: "calc(100vw - 200px)", objectFit: "contain", display: "block" }} />
             </Link>
           ) : (
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <Link href="/" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
+              <Link href="/#hero" style={{ display: "flex", alignItems: "center", textDecoration: "none" }}>
                 <img src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" style={{ height: 50, width: "auto", objectFit: "contain" }} />
               </Link>
             </div>
