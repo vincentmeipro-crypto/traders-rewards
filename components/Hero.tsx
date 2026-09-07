@@ -324,6 +324,51 @@ export default function Hero() {
         }}
       >
 
+        {/* ════════════════════════════════════════════════════════
+            BADGE — position:absolute → hors flow, image inchangée
+        ════════════════════════════════════════════════════════ */}
+        <div style={{
+          position:       "absolute",
+          top:            isMobile
+            ? "calc(60px + var(--promo-banner-height, 0px) + 20px)"
+            : "calc(72px + var(--promo-banner-height, 0px) + 24px)",
+          left:           0,
+          right:          0,
+          display:        "flex",
+          justifyContent: "center",
+          zIndex:         10,
+          animation:      "heroFadeUp 0.44s ease both",
+        }}>
+          <span style={{
+            display:      "inline-flex",
+            alignItems:   "center",
+            gap:          9,
+            background:   "rgba(255,255,255,0.025)",
+            border:       "1px solid rgba(255,255,255,0.14)",
+            borderRadius: 100,
+            padding:      isMobile ? "10px 22px" : "11px 24px",
+          }}>
+            <span className="h-pill-dot" style={{
+              display:      "inline-block",
+              width:        7,
+              height:       7,
+              borderRadius: "50%",
+              background:   ACCENT,
+              flexShrink:   0,
+            }} />
+            <span style={{
+              fontSize:      isMobile ? 13 : 14,
+              fontWeight:    600,
+              color:         "#FFFFFF",
+              letterSpacing: "0.15px",
+              textTransform: "none",
+              whiteSpace:    "nowrap",
+            }}>
+              {pill}
+            </span>
+          </span>
+        </div>
+
         {/* ══════════════════════════════════════════════════════
             WRAPPER FLEX — 2 colonnes desktop / 1 colonne mobile
         ══════════════════════════════════════════════════════ */}
@@ -357,42 +402,9 @@ export default function Hero() {
             alignSelf:      isMobile ? undefined : "flex-start",
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
-            paddingTop:     isMobile ? 46 : 52,
+            paddingTop:     isMobile ? 66 : 80,
             paddingBottom:  isMobile ? 40 : 26,
           }}>
-
-            {/* ── Badge programme éducatif français ── */}
-            <div style={{ marginBottom: isMobile ? 16 : 22, animation: "heroFadeUp 0.44s ease both" }}>
-              <span style={{
-                display:      "inline-flex",
-                alignItems:   "center",
-                gap:          9,
-                background:   "rgba(255,255,255,0.045)",
-                border:       "1px solid rgba(255,255,255,0.10)",
-                borderRadius: 100,
-                padding:      isMobile ? "6px 16px" : "7px 20px",
-              }}>
-                <span className="h-pill-dot" style={{
-                  display:      "inline-block",
-                  width:        6,
-                  height:       6,
-                  borderRadius: "50%",
-                  background:   ACCENT,
-                  flexShrink:   0,
-                }} />
-
-                <span style={{
-                  fontSize:      10,
-                  fontWeight:    600,
-                  color:         "rgba(255,255,255,0.72)",
-                  letterSpacing: "0.3px",
-                  textTransform: "none",
-                  whiteSpace:    "nowrap",
-                }}>
-                  {pill}
-                </span>
-              </span>
-            </div>
 
             {/* ── H1 — 2 lignes ── */}
             <h1 style={{
