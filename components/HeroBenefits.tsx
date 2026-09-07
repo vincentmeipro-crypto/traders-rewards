@@ -98,7 +98,7 @@ export default function HeroBenefits() {
     },
     {
       icon: <IconTag />,
-      metric: "10",
+      metric: "5",
       title: L("COMPTES", "CUENTAS", "ACCOUNTS"),
     },
   ];

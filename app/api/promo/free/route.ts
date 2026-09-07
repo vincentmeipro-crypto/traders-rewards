@@ -31,9 +31,9 @@ export async function POST(req: NextRequest) {
         .eq("user_id", userId)
         .eq("status", "active")
         .neq("phase", "funded");
-      if ((count ?? 0) >= 10) {
+      if ((count ?? 0) >= 5) {
         return NextResponse.json(
-          { error: "Vous avez déjà atteint la limite de 10 Challenges actifs." },
+          { error: "Vous avez déjà atteint la limite de 5 Challenges actifs." },
           { status: 400 }
         );
       }

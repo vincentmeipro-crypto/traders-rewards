@@ -69,7 +69,7 @@ const faqData = {
     // 11
     {
       q: "Puis-je avoir plusieurs Challenges simultanément ?",
-      a: "Oui. Quelle que soit la taille des comptes, vous pouvez avoir jusqu'à 10 Challenges actifs et jusqu'à 5 Comptes Reward actifs simultanément sur votre profil.",
+      a: "Oui. Quelle que soit la taille des comptes, vous pouvez avoir jusqu'à 5 Challenges actifs et jusqu'à 5 Comptes Reward actifs simultanément sur votre profil.",
     },
     // 12
     {
@@ -143,7 +143,7 @@ const faqData = {
     // 11
     {
       q: "Can I have multiple Challenges simultaneously?",
-      a: "Yes. Regardless of account size, you can have up to 10 active Challenges and up to 5 active Comptes Reward simultaneously on your profile.",
+      a: "Yes. Regardless of account size, you can have up to 5 active Challenges and up to 5 active Comptes Reward simultaneously on your profile.",
     },
     // 12
     {
@@ -222,7 +222,7 @@ const faqData = {
     // 11
     {
       q: "¿Puedo tener varios Challenges simultáneamente?",
-      a: "Sí. Independientemente del tamaño de las cuentas, puedes tener hasta 10 Challenges activos y hasta 5 Comptes Reward activos simultáneamente.",
+      a: "Sí. Independientemente del tamaño de las cuentas, puedes tener hasta 5 Challenges activos y hasta 5 Comptes Reward activos simultáneamente.",
     },
     // 12
     {
@@ -258,7 +258,7 @@ const faqData = {
     { q: "O que é um dia qualificado?", a: "Um dia qualificado é um dia de trading fechado com um lucro líquido mínimo: 100 $ na conta 25K, 250 $ na conta 50K e 300 $ na conta 100K. São necessários pelo menos 5 dias qualificados para cumprir as condições da Compte Reward. Estes valores são apenas o mínimo de lucro diário exigido — não o valor das Rewards." },
     { q: "Como são calculados e pagos os Rewards?", a: "O valor da Reward depende do lucro disponível na Compte Reward, dentro do limite máximo correspondente ao nível e tamanho de conta. Estes limites aumentam progressivamente do Reward #1 ao Reward #5. Após validação do pedido, o valor aprovado é pago e o percurso continua para o nível seguinte." },
     { q: "Existe um limite no número de Rewards?", a: "Sim. O percurso Traders Rewards inclui 5 Rewards sucessivas, com limites que aumentam a cada nível.\n\nConta 25K :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\nConta 50K :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\nConta 100K :\nReward #1 : 750 $\nReward #2 : 1.000 $\nReward #3 : 1.250 $\nReward #4 : 1.500 $\nReward #5 : 1.750 $\n\nO Reward #5 é o nível final e concede o estatuto Trader Reward." },
-    { q: "Posso ter vários Challenges simultaneamente?", a: "Sim. Independentemente do tamanho das contas, pode ter até 10 Challenges ativos e até 5 Comptes Reward ativas em simultâneo." },
+    { q: "Posso ter vários Challenges simultaneamente?", a: "Sim. Independentemente do tamanho das contas, pode ter até 5 Challenges ativos e até 5 Comptes Reward ativas em simultâneo." },
     { q: "Que plataforma de trading é utilizada?", a: "Traders Rewards utiliza MetaTrader 5 (MT5). Após confirmação do pagamento, as credenciais são enviadas por email e ficam também disponíveis no dashboard. Se já utiliza o MT5, não é necessário nenhum software adicional." },
     { q: "O que acontece se ultrapassar 30 dias?", a: "Se o objetivo de +6 % não for atingido ao fim dos 30 dias calendário, o Challenge é considerado falhado. O prazo começa a contar da criação do Challenge, não do primeiro trade." },
     { q: "O capital é real?", a: "Não. Todo o trading é 100 % simulado. As Rewards aprovadas são reais e pagas pela Traders Rewards segundo as condições do programa." },
@@ -315,7 +315,7 @@ const faqData = {
     { q: "ما هو اليوم المؤهل؟", a: "اليوم المؤهل هو يوم تداول تحقق فيه ربحاً صافياً لا يقل عن: 100 $ (25K)، 250 $ (50K)، 300 $ (100K). تحتاج 5 أيام مؤهلة على الأقل. هذه المبالغ هي الحد الأدنى للربح اليومي، وليست قيمة Rewards." },
     { q: "كيف تُحسب وتُدفع Rewards؟", a: "يعتمد مبلغ Reward على الربح المتاح في Compte Reward، بحدود أقصى تزداد تدريجياً من Reward #1 إلى Reward #5. بعد التحقق من الطلب يُصرف المبلغ، ثم تستمر في المستوى التالي." },
     { q: "هل هناك حدٌّ لعدد Rewards؟", a: "نعم. يتضمن مسار Traders Rewards 5 Rewards متتالية، بحدود قصوى تزداد في كل مستوى.\n\nحساب 25K :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\nحساب 50K :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\nحساب 100K :\nReward #1 : 750 $\nReward #2 : 1.000 $\nReward #3 : 1.250 $\nReward #4 : 1.500 $\nReward #5 : 1.750 $\n\nReward #5 هو المستوى النهائي ويمنح وضع Trader Reward." },
-    { q: "هل يمكنني الحصول على عدة Challenges في وقت واحد؟", a: "نعم. بغض النظر عن حجم الحساب، يمكنك امتلاك ما يصل إلى 10 Challenges نشطة و5 Comptes Reward نشطة في الوقت نفسه." },
+    { q: "هل يمكنني الحصول على عدة Challenges في وقت واحد؟", a: "نعم. بغض النظر عن حجم الحساب، يمكنك امتلاك ما يصل إلى 5 Challenges نشطة و5 Comptes Reward نشطة في الوقت نفسه." },
     { q: "ما منصة التداول المستخدمة؟", a: "Traders Rewards يستخدم MetaTrader 5 (MT5). بعد تأكيد الدفع، تُرسل بيانات الدخول عبر البريد الإلكتروني وتكون متاحة من لوحة التحكم. لا حاجة لتنزيل إضافي إن كنت تستخدم MT5 بالفعل." },
     { q: "ماذا يحدث إذا تجاوزت 30 يوماً؟", a: "إذا لم يتحقق هدف +6 % خلال 30 يوماً تقويمياً، يُعدّ Challenge فاشلاً. يبدأ العد من تاريخ إنشاء Challenge، وليس من أول صفقة." },
     { q: "هل رأس المال حقيقي؟", a: "لا. جميع التداولات على Traders Rewards محاكاة 100 %. أما Rewards المعتمدة فهي حقيقية وتُدفع من قِبل Traders Rewards وفق شروط البرنامج." },

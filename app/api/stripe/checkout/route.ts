@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     const SITE_URL = await getStringConfig("branding.site_url");
     const admin = createAdminClient();
 
-    // ── Limite : 10 Challenges actifs max ────────────────────────────────────
+    // ── Limite : 5 Challenges actifs max ─────────────────────────────────────
     if (product.slug.startsWith("rewards-")) {
       const { count } = await admin
         .from("challenges")
@@ -47,9 +47,9 @@ export async function POST(req: NextRequest) {
         .eq("status", "active")
         .neq("phase", "funded");
 
-      if ((count ?? 0) + qty > 10) {
+      if ((count ?? 0) + qty > 5) {
         return NextResponse.json(
-          { error: `Vous pouvez avoir au maximum 10 Challenges actifs. Il vous reste ${Math.max(0, 10 - (count ?? 0))} place(s).` },
+          { error: `Vous pouvez avoir au maximum 5 Challenges actifs. Il vous reste ${Math.max(0, 5 - (count ?? 0))} place(s).` },
           { status: 400 }
         );
       }
