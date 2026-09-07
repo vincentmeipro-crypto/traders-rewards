@@ -319,7 +319,7 @@ export default function Hero() {
           flexDirection: isMobile ? "column" : "row",
           alignItems:    isMobile ? "stretch" : "center",
           // Desktop : hauteur naturelle plafonnée à 720px pour éviter l'espace mort.
-          minHeight:     isMobile ? 0 : "min(680px, calc(100svh - 174px))",
+          minHeight:     isMobile ? 0 : "min(620px, calc(100svh - 234px))",
           paddingTop:    isMobile
             ? "calc(60px + var(--promo-banner-height, 0px))"
             : "calc(72px + var(--promo-banner-height, 0px))",
@@ -431,7 +431,7 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/HERO FINAL.png"
+                  src="/JETONS HERO NOUVEAUX.png"
                   alt="Comptes Traders Rewards — 100K, 25K et 50K"
                   style={{
                     display:         "block",
@@ -530,7 +530,7 @@ export default function Hero() {
             {/* ── Visuel droit — 3 jetons 100K / 25K / 50K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/HERO FINAL.png"
+              src="/JETONS HERO NOUVEAUX.png"
               alt="Comptes Traders Rewards — 100K, 25K et 50K"
               style={{
                 display:    "block",
