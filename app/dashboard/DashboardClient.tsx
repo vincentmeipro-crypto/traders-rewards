@@ -1849,6 +1849,7 @@ export default function DashboardClient({ user }: { user: User }) {
           <SupportTab
             token={token}
             isFr={isFr}
+            isEs={lang === "es"}
             isMobile={isMobile}
             firstName={profileFirstName}
             lastName={profileLastName}
@@ -1887,6 +1888,7 @@ export default function DashboardClient({ user }: { user: User }) {
             tradeHistory={tradeHistory}
             tradeHistoryLoading={tradeHistoryLoading}
             isFr={isFr}
+            isEs={lang === "es"}
             isMobile={isMobile}
             kycStatus={kycStatus}
             approvedRewardsCount={allPayouts.filter(p => p.challenge_id === challenge.id && p.status === "paid").length}

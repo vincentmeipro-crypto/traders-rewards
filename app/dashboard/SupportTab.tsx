@@ -86,6 +86,7 @@ const CATEGORIES = [
 export default function SupportTab({
   token,
   isFr,
+  isEs = false,
   isMobile,
   firstName: initFirstName = "",
   lastName:  initLastName  = "",
@@ -93,11 +94,14 @@ export default function SupportTab({
 }: {
   token:      string;
   isFr:       boolean;
+  isEs?:      boolean;
   isMobile:   boolean;
   firstName?: string;
   lastName?:  string;
   email?:     string;
 }) {
+  // Helper: pick the right language string
+  const S = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   // ── Sub-tab ───────────────────────────────────────────────────────────────
   const [subTab, setSubTab] = useState<SupportSubTab>("tickets");
 
@@ -385,13 +389,14 @@ export default function SupportTab({
       {/* ── Page header ───────────────────────────────────────────────────── */}
       <div style={{ marginBottom: 28 }}>
         <h1 className="dash-chrome-title" style={{ fontSize: isMobile ? 22 : 26, fontWeight: 800, marginBottom: 6 }}>
-          {isFr ? "Centre d'aide" : "Help Center"}
+          {S("Centre d'aide", "Centro de ayuda", "Help Center")}
         </h1>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.6 }}>
-          {isFr
-            ? "Suivez vos demandes de support et discutez en direct avec notre équipe."
-            : "Track your support requests and chat live with our team."
-          }
+          {S(
+            "Suivez vos demandes de support et discutez en direct avec notre équipe.",
+            "Sigue tus solicitudes de soporte y chatea en directo con nuestro equipo.",
+            "Track your support requests and chat live with our team."
+          )}
         </p>
       </div>
 
@@ -423,7 +428,7 @@ export default function SupportTab({
             }}
           >
             {t === "tickets"
-              ? (isFr ? "Mes demandes" : "My requests")
+              ? S("Mes demandes", "Mis solicitudes", "My requests")
               : "Chat"}
             {/* Unread badge on Chat tab */}
             {t === "chat" && unreadCount > 0 && (
@@ -461,8 +466,8 @@ export default function SupportTab({
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
             <div style={{ fontSize: 14, color: "rgba(255,255,255,0.45)" }}>
               {ticketsLoading
-                ? (isFr ? "Chargement…" : "Loading…")
-                : `${tickets.length} ${isFr ? "demande(s)" : "request(s)"}`}
+                ? S("Chargement…", "Cargando…", "Loading…")
+                : `${tickets.length} ${S("demande(s)", "solicitud(es)", "request(s)")}`}
             </div>
             {!showForm && !selectedTicket && (
               <button
@@ -487,7 +492,7 @@ export default function SupportTab({
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                 </svg>
-                {isFr ? "Nouvelle demande" : "New request"}
+                {S("Nouvelle demande", "Nueva solicitud", "New request")}
               </button>
             )}
           </div>
@@ -503,7 +508,7 @@ export default function SupportTab({
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
                 <h2 style={{ fontSize: 16, fontWeight: 700, color: "#ffffff", margin: 0 }}>
-                  {isFr ? "Nouvelle demande de support" : "New support request"}
+                  {S("Nouvelle demande de support", "Nueva solicitud de soporte", "New support request")}
                 </h2>
                 <button
                   onClick={() => { setShowForm(false); setFormError(null); setFormSuccess(false); }}
@@ -521,10 +526,10 @@ export default function SupportTab({
                 }}>
                   <div style={{ fontSize: 32, marginBottom: 10 }}>✓</div>
                   <div style={{ fontSize: 15, fontWeight: 700 }}>
-                    {isFr ? "Demande envoyée !" : "Request sent!"}
+                    {S("Demande envoyée !", "¡Solicitud enviada!", "Request sent!")}
                   </div>
                   <div style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", marginTop: 6 }}>
-                    {isFr ? "Notre équipe vous répondra rapidement." : "Our team will reply shortly."}
+                    {S("Notre équipe vous répondra rapidement.", "Nuestro equipo te responderá pronto.", "Our team will reply shortly.")}
                   </div>
                 </div>
               ) : (
@@ -533,25 +538,25 @@ export default function SupportTab({
                   <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 12, marginBottom: 12 }}>
                     <div>
                       <label style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>
-                        {isFr ? "Prénom *" : "First name *"}
+                        {S("Prénom *", "Nombre *", "First name *")}
                       </label>
                       <input
                         type="text"
                         value={form.firstName}
                         onChange={e => setForm(f => ({ ...f, firstName: e.target.value.slice(0, 60) }))}
-                        placeholder={isFr ? "Prénom" : "First name"}
+                        placeholder={S("Prénom", "Nombre", "First name")}
                         style={inputStyle}
                       />
                     </div>
                     <div>
                       <label style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>
-                        {isFr ? "Nom *" : "Last name *"}
+                        {S("Nom *", "Apellido *", "Last name *")}
                       </label>
                       <input
                         type="text"
                         value={form.lastName}
                         onChange={e => setForm(f => ({ ...f, lastName: e.target.value.slice(0, 60) }))}
-                        placeholder={isFr ? "Nom" : "Last name"}
+                        placeholder={S("Nom", "Apellido", "Last name")}
                         style={inputStyle}
                       />
                     </div>
@@ -573,7 +578,7 @@ export default function SupportTab({
                     </div>
                     <div>
                       <label style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>
-                        {isFr ? "Catégorie" : "Category"}
+                        {S("Catégorie", "Categoría", "Category")}
                       </label>
                       <select
                         value={form.category}
@@ -592,13 +597,13 @@ export default function SupportTab({
                   {/* Objet (Subject) */}
                   <div style={{ marginBottom: 12 }}>
                     <label style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>
-                      {isFr ? "Objet *" : "Subject *"}
+                      {S("Objet *", "Asunto *", "Subject *")}
                     </label>
                     <input
                       type="text"
                       value={form.subject}
                       onChange={e => setForm(f => ({ ...f, subject: e.target.value.slice(0, 200) }))}
-                      placeholder={isFr ? "Résumez votre demande en quelques mots" : "Summarize your request in a few words"}
+                      placeholder={S("Résumez votre demande en quelques mots", "Resume tu solicitud en pocas palabras", "Summarize your request in a few words")}
                       maxLength={200}
                       style={inputStyle}
                     />
@@ -615,7 +620,7 @@ export default function SupportTab({
                     <textarea
                       value={form.message}
                       onChange={e => setForm(f => ({ ...f, message: e.target.value.slice(0, 4000) }))}
-                      placeholder={isFr ? "Décris ton problème ou ta question en détail…" : "Describe your issue or question in detail…"}
+                      placeholder={S("Décris ton problème ou ta question en détail…", "Describe tu problema o pregunta en detalle…", "Describe your issue or question in detail…")}
                       rows={5}
                       style={{ ...inputStyle, resize: "vertical", minHeight: 100, maxHeight: 280 }}
                     />
@@ -654,7 +659,7 @@ export default function SupportTab({
                         cursor:          "pointer",
                       }}
                     >
-                      {isFr ? "Annuler" : "Cancel"}
+                      {S("Annuler", "Cancelar", "Cancel")}
                     </button>
                     <button
                       onClick={submitTicket}
@@ -672,8 +677,8 @@ export default function SupportTab({
                       }}
                     >
                       {formSending
-                        ? (isFr ? "Envoi…" : "Sending…")
-                        : (isFr ? "Envoyer" : "Send")}
+                        ? S("Envoi…", "Enviando…", "Sending…")
+                        : S("Envoyer", "Enviar", "Send")}
                     </button>
                   </div>
                 </>
@@ -702,7 +707,7 @@ export default function SupportTab({
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <polyline points="15 18 9 12 15 6"/>
                 </svg>
-                {isFr ? "Retour aux demandes" : "Back to requests"}
+                {S("Retour aux demandes", "Volver a las solicitudes", "Back to requests")}
               </button>
 
               {detailLoading ? (
@@ -788,12 +793,12 @@ export default function SupportTab({
                                 marginBottom: 4,
                               }}>
                                 {isClient
-                                  ? (isFr ? "Vous" : "You")
-                                  : (isFr ? "Support" : "Support")}
+                                  ? S("Vous", "Tú", "You")
+                                  : "Support"}
                                 {" · "}
                                 {(() => {
                                   const diff = Math.floor((Date.now() - new Date(msg.created_at).getTime()) / 1000);
-                                  if (diff < 60)        return isFr ? "À l'instant" : "Just now";
+                                  if (diff < 60)        return S("À l'instant", "Ahora mismo", "Just now");
                                   if (diff < 3600)      return `${Math.floor(diff / 60)}min`;
                                   if (diff < 86400)     return `${Math.floor(diff / 3600)}h`;
                                   if (diff < 86400 * 7) return `${Math.floor(diff / 86400)}j`;
@@ -827,9 +832,11 @@ export default function SupportTab({
                           void sendReply();
                         }
                       }}
-                      placeholder={isFr
-                        ? "Votre réponse… (Entrée = envoyer · Maj+Entrée = saut de ligne)"
-                        : "Your reply… (Enter = send · Shift+Enter = new line)"}
+                      placeholder={S(
+                        "Votre réponse… (Entrée = envoyer · Maj+Entrée = saut de ligne)",
+                        "Tu respuesta… (Intro = enviar · Mayús+Intro = nueva línea)",
+                        "Your reply… (Enter = send · Shift+Enter = new line)"
+                      )}
                       rows={3}
                       style={{
                         ...inputStyle,
@@ -869,8 +876,8 @@ export default function SupportTab({
                         }}
                       >
                         {replySending
-                          ? (isFr ? "Envoi…" : "Sending…")
-                          : (isFr ? "Envoyer" : "Send")}
+                          ? S("Envoi…", "Enviando…", "Sending…")
+                          : S("Envoyer", "Enviar", "Send")}
                       </button>
                     </div>
                   </div>
@@ -912,13 +919,14 @@ export default function SupportTab({
                 }}>
                   <div style={{ fontSize: 36, marginBottom: 14 }}>📬</div>
                   <div style={{ fontSize: 15, fontWeight: 700, color: "#ffffff", marginBottom: 8 }}>
-                    {isFr ? "Aucune demande pour l'instant" : "No requests yet"}
+                    {S("Aucune demande pour l'instant", "Aún no hay solicitudes", "No requests yet")}
                   </div>
                   <div style={{ fontSize: 13, color: "rgba(255,255,255,0.38)", marginBottom: 20, lineHeight: 1.6 }}>
-                    {isFr
-                      ? "Créez une demande de support et notre équipe vous répondra rapidement."
-                      : "Create a support request and our team will reply quickly."
-                    }
+                    {S(
+                      "Créez une demande de support et notre équipe vous répondra rapidement.",
+                      "Crea una solicitud de soporte y nuestro equipo te responderá rápidamente.",
+                      "Create a support request and our team will reply quickly."
+                    )}
                   </div>
                   <button
                     onClick={() => setShowForm(true)}
@@ -933,7 +941,7 @@ export default function SupportTab({
                       cursor:          "pointer",
                     }}
                   >
-                    {isFr ? "Créer une demande" : "Create a request"}
+                    {S("Créer une demande", "Crear una solicitud", "Create a request")}
                   </button>
                 </div>
               )}
@@ -987,7 +995,7 @@ export default function SupportTab({
                           whiteSpace:   "nowrap",
                           marginBottom: 4,
                         }}>
-                          {t.subject || (isFr ? "Demande de support" : "Support request")}
+                          {t.subject || S("Demande de support", "Solicitud de soporte", "Support request")}
                         </div>
                         <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
                           <StatusBadge status={t.status} isFr={isFr} />
@@ -1166,8 +1174,8 @@ export default function SupportTab({
                         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                       </svg>
                       {unreadCount > 0
-                        ? (isFr ? `Ouvrir le chat (${unreadCount} non lu)` : `Open chat (${unreadCount} unread)`)
-                        : (isFr ? "Ouvrir le chat" : "Open chat")}
+                        ? S(`Ouvrir le chat (${unreadCount} non lu)`, `Abrir el chat (${unreadCount} sin leer)`, `Open chat (${unreadCount} unread)`)
+                        : S("Ouvrir le chat", "Abrir el chat", "Open chat")}
                     </button>
                   </div>
 
@@ -1178,10 +1186,11 @@ export default function SupportTab({
                     lineHeight: 1.6,
                     padding:    "0 2px",
                   }}>
-                    {isFr
-                      ? "Le chat s'ouvre dans le widget en bas à droite de l'écran."
-                      : "Chat opens in the widget at the bottom right of the screen."
-                    }
+                    {S(
+                      "Le chat s'ouvre dans le widget en bas à droite de l'écran.",
+                      "El chat se abre en el widget en la esquina inferior derecha de la pantalla.",
+                      "Chat opens in the widget at the bottom right of the screen."
+                    )}
                   </div>
                 </div>
               ) : (
@@ -1195,13 +1204,14 @@ export default function SupportTab({
                 }}>
                   <div style={{ fontSize: 40, marginBottom: 14 }}>💬</div>
                   <div style={{ fontSize: 16, fontWeight: 700, color: "#ffffff", marginBottom: 8 }}>
-                    {isFr ? "Chat en direct" : "Live Chat"}
+                    {S("Chat en direct", "Chat en vivo", "Live Chat")}
                   </div>
                   <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginBottom: 24, lineHeight: 1.7, maxWidth: 320, margin: "0 auto 24px" }}>
-                    {isFr
-                      ? "Parle directement avec un membre de notre équipe. Répons rapides garanties."
-                      : "Talk directly with a member of our team. Quick responses guaranteed."
-                    }
+                    {S(
+                      "Parle directement avec un membre de notre équipe. Répons rapides garanties.",
+                      "Habla directamente con un miembro de nuestro equipo. Respuestas rápidas garantizadas.",
+                      "Talk directly with a member of our team. Quick responses guaranteed."
+                    )}
                   </div>
                   <button
                     onClick={openChatWidget}
@@ -1225,7 +1235,7 @@ export default function SupportTab({
                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                     </svg>
-                    {isFr ? "Démarrer le chat" : "Start chat"}
+                    {S("Démarrer le chat", "Iniciar el chat", "Start chat")}
                   </button>
                 </div>
               )}

@@ -88,6 +88,7 @@ type Props = {
   tradeHistory: Record<string, unknown>[];
   tradeHistoryLoading: boolean;
   isFr: boolean;
+  isEs?: boolean;
   isMobile: boolean;
   kycStatus: string;
   approvedRewardsCount: number;
@@ -357,6 +358,7 @@ export default function TraderCockpit({
   tradeHistory,
   tradeHistoryLoading,
   isFr,
+  isEs = false,
   isMobile,
   kycStatus,
   approvedRewardsCount,
@@ -364,6 +366,7 @@ export default function TraderCockpit({
   onNavigate,
   onRefresh,
 }: Props) {
+  const C = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const [subTab, setSubTab]                   = useState<CockpitSubTab>("cockpit");
   const [tradingSection, setTradingSection]   = useState<TradingSection>("prepare");
   const [showCredentials, setShowCredentials] = useState(false);
@@ -565,8 +568,8 @@ export default function TraderCockpit({
       {/* ── Header ── */}
       <header className={styles.header}>
         <div>
-          <div className={styles.eyebrow} style={{ color: "rgba(212,168,67,0.75)", letterSpacing: "2px" }}>{isFr ? "Cockpit de progression" : "Progress cockpit"}</div>
-          <h1 className={styles.title}>{isFr ? "Prêt pour ta prochaine étape ?" : "Ready for your next step?"}</h1>
+          <div className={styles.eyebrow} style={{ color: "rgba(212,168,67,0.75)", letterSpacing: "2px" }}>{C("Cockpit de progression", "Cabina de progreso", "Progress cockpit")}</div>
+          <h1 className={styles.title}>{C("Prêt pour ta prochaine étape ?", "¿Listo para el siguiente paso?", "Ready for your next step?")}</h1>
           <div className={styles.accountRow}>
             {activeChallenges.length > 1 ? (
               <select className={styles.accountSelect} value={challenge.id} onChange={event => {
@@ -592,7 +595,7 @@ export default function TraderCockpit({
           {/* Actualiser — secondaire dark + gris */}
           <button className={styles.button} onClick={() => onRefresh ? onRefresh() : window.location.reload()}
             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.10)", color: "rgba(255,255,255,0.65)" }}>
-            <RefreshCw size={14} />{isFr ? "Actualiser" : "Refresh"}
+            <RefreshCw size={14} />{C("Actualiser", "Actualizar", "Refresh")}
           </button>
           {/* + Nouveau challenge — CTA dark + contour doré */}
           <Link href="/#pricing" style={{
@@ -602,7 +605,7 @@ export default function TraderCockpit({
             border: "1.5px solid transparent", color: "#FFFFFF",
           }}>
             <span style={{ color: "#D4A843", fontSize: 15, lineHeight: 1 }}>+</span>
-            {isFr ? "Nouveau challenge" : "New challenge"}
+            {C("Nouveau challenge", "Nuevo challenge", "New challenge")}
           </Link>
         </div>
       </header>
@@ -629,7 +632,7 @@ export default function TraderCockpit({
           }}
         >
           <KeyRound size={11} />
-          {isFr ? "ID COMPTE" : "ACCOUNT ID"}
+          {C("ID COMPTE", "ID CUENTA", "ACCOUNT ID")}
         </button>
       </div>
 

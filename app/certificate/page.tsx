@@ -1,6 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useRef, useEffect, useState, type ReactNode } from "react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 // ── BodySegments ──────────────────────────────────────────────────────────────
 // Parse <b>…</b> en éléments React — aucun dangerouslySetInnerHTML.
@@ -42,12 +43,16 @@ const TITLE: Record<string, { top: string; main: string }> = {
 
 function CertContent() {
   const params = useSearchParams();
+  const { lang } = useLanguage();
+  const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
   const type = params.get("type") || "phase1";
   const firstname = params.get("firstname") || "";
   const lastname = params.get("lastname") || "";
   const name = firstname || lastname ? `${firstname} ${lastname}`.trim() : (params.get("name") || "Trader");
   const amount = params.get("amount") || "";
-  const date = params.get("date") || new Date().toLocaleDateString("fr-FR");
+  const date = params.get("date") || new Date().toLocaleDateString(isFr ? "fr-FR" : isEs ? "es-ES" : "en-GB");
   const token = params.get("token") || "";
 
   const certRef = useRef<HTMLDivElement>(null);
@@ -207,7 +212,7 @@ function CertContent() {
       link.click();
     } catch (e) {
       console.error("Certificate download error:", e);
-      alert("Erreur: " + String(e));
+      alert(L("Erreur: ", "Error: ", "Error: ") + String(e));
     } finally {
       setDownloading(false);
     }
@@ -221,10 +226,12 @@ function CertContent() {
 
       <div className="no-print" style={{ position: "fixed", top: 20, right: 20, zIndex: 100, display: "flex", gap: 10 }}>
         <button onClick={download} disabled={downloading} style={{ background: downloading ? "#1d4ed8" : "#9CCFEA", color: downloading ? "#fff" : "#000", border: "none", borderRadius: 8, padding: "10px 22px", fontSize: 13, fontWeight: 800, cursor: downloading ? "wait" : "pointer", opacity: downloading ? 0.8 : 1 }}>
-          {downloading ? "⏳ En cours…" : "↓ Télécharger JPEG"}
+          {downloading
+            ? L("⏳ En cours…", "⏳ En curso…", "⏳ In progress…")
+            : L("↓ Télécharger JPEG", "↓ Descargar JPEG", "↓ Download JPEG")}
         </button>
         <button onClick={() => window.print()} style={{ background: "#1a1a1a", color: "#aaa", border: "1px solid #333", borderRadius: 8, padding: "10px 18px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-          Imprimer
+          {L("Imprimer", "Imprimir", "Print")}
         </button>
       </div>
 
@@ -281,7 +288,7 @@ function CertContent() {
           </div>
           {(type === "reward") && amount && (
             <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginTop: 18, flexShrink: 0 }}>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#555", whiteSpace: "nowrap" }}>Montant versé</div>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#555", whiteSpace: "nowrap" }}>{L("Montant versé", "Monto pagado", "Amount paid")}</div>
               <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{amount}</div>
             </div>
           )}

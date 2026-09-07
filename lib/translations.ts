@@ -11,6 +11,7 @@ export const t = {
     nav: {
       challenges: 'Challenges', howItWorks: 'How it works', pricing: 'Pricing',
       rules: 'Rules', elevation: 'Elevation', trader: 'Trader', faq: 'FAQ', logIn: 'LOG IN', startChallenge: 'START CHALLENGE',
+      support: 'Support', partnership: 'Partnership',
     },
     hero: {
       badge: 'The Elite Trading Program',
@@ -130,6 +131,7 @@ export const t = {
     nav: {
       challenges: 'Challenges', howItWorks: 'Comment ça marche', pricing: 'Tarifs',
       rules: 'Règles', elevation: 'Élévation', trader: 'Trader', faq: 'FAQ', logIn: 'LOGIN', startChallenge: 'COMMENCER',
+      support: 'Support', partnership: 'Partenariat',
     },
     hero: {
       badge: 'Le Programme Élite',
@@ -249,9 +251,10 @@ export const t = {
     nav: {
       challenges: 'Desafíos', howItWorks: 'Cómo funciona', pricing: 'Precios',
       rules: 'Reglas', elevation: 'Elevación', trader: 'Trader', faq: 'FAQ', logIn: 'INICIAR SESIÓN', startChallenge: 'EMPEZAR',
+      support: 'Soporte', partnership: 'Colaboración',
     },
     hero: {
-      badge: 'Le Programme Élite',
+      badge: 'El Programa Élite',
       headline1: 'Realiza tu Trading Demo',
       headline2: 'Recibe recompensas reales',
       sub: 'Supera nuestro desafío y accede a €100,000 en capital financiado. Quédate hasta el 90% de tus ganancias. Sin riesgo personal.',

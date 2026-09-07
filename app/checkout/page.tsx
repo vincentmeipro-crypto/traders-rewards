@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Bitcoin, Check, ChevronRight, CreditCard, LockKeyhole, ShieldCheck, Sparkles, X } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 type ModelKey = "2step" | "1step";
 type Challenge = { label: string; model: "Challenge"; price: string; amount: number; pack3Amount: number };
@@ -23,15 +24,6 @@ const CHALLENGES: Record<string, Challenge> = {
   "rewards-50k":  { label: "$50,000",  model: "Challenge", price: "€58", amount: 5800,  pack3Amount: 8700  },
   "rewards-100k": { label: "$100,000", model: "Challenge", price: "€118", amount: 11800, pack3Amount: 17700 },
 };
-
-const rulesFor = (sizeKey: string) => [
-  { label: "Étapes", value: "1" },
-  { label: "Objectif de profit", value: "+6%" },
-  { label: "Trailing Drawdown EOD", value: sizeKey === "100k" ? "3%" : "4%" },
-  { label: "Consistance", value: "≤ 50%" },
-  { label: "Jours de trading minimum", value: "2 jours" },
-  { label: "Durée maximale", value: "30 jours calendaires" },
-];
 
 const DIAL_CODES = [
   { code: "+33", flag: "🇫🇷" }, { code: "+32", flag: "🇧🇪" }, { code: "+41", flag: "🇨🇭" },
@@ -69,6 +61,10 @@ function CheckoutContent() {
   const params = useSearchParams();
   const router = useRouter();
   const requestedProduct = params.get("product");
+  const { lang } = useLanguage();
+  const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   // Quantité initiale depuis l'URL : ?qty=3 → pack ×3, sinon 1 challenge.
   const initialQty = params.get("qty") === "3" ? 3 : 1;
@@ -80,7 +76,17 @@ function CheckoutContent() {
     ?? FALLBACK_PRODUCTS.find(product => product.slug === selectedProduct)
     ?? FALLBACK_PRODUCTS.find(product => product.slug === "rewards-50k")!;
   const selectedSize  = challenge.sizeKey;
-  const rules = rulesFor(selectedSize);
+
+  // Rules traduits
+  const rules = [
+    { label: L("Étapes", "Etapas", "Steps"), value: "1" },
+    { label: L("Objectif de profit", "Objetivo de beneficio", "Profit target"), value: "+6%" },
+    { label: L("Trailing Drawdown EOD", "Trailing Drawdown EOD", "Trailing Drawdown EOD"), value: selectedSize === "100k" ? "3%" : "4%" },
+    { label: L("Consistance", "Consistencia", "Consistency"), value: "≤ 50%" },
+    { label: L("Jours de trading minimum", "Días mínimos de trading", "Minimum trading days"), value: L("2 jours", "2 días", "2 days") },
+    { label: L("Durée maximale", "Duración máxima", "Maximum duration"), value: L("30 jours calendaires", "30 días naturales", "30 calendar days") },
+  ];
+
   const changeSize = (size: string) => {
     const product = availableProducts.find(item => item.sizeKey === size);
     if (product) setSelectedProduct(product.slug);
@@ -215,7 +221,7 @@ function CheckoutContent() {
     const data = await res.json();
     if (res.ok && data.discount) {
       setDiscount(data.discount); setAppliedCode(data.code); setPromoStatus("valid");
-    } else { setPromoStatus("error"); setPromoError(data.error || "Code invalide"); }
+    } else { setPromoStatus("error"); setPromoError(data.error || L("Code invalide", "Código inválido", "Invalid code")); }
   };
 
   const removePromo = () => {
@@ -225,8 +231,14 @@ function CheckoutContent() {
 
   const createAccountAndGetUser = async () => {
     const supabase = createClient();
-    if (password !== confirmPassword) { setPasswordError("Les mots de passe ne correspondent pas"); return null; }
-    if (password.length < 8) { setPasswordError("Minimum 8 caractères"); return null; }
+    if (password !== confirmPassword) {
+      setPasswordError(L("Les mots de passe ne correspondent pas", "Las contraseñas no coinciden", "Passwords do not match"));
+      return null;
+    }
+    if (password.length < 8) {
+      setPasswordError(L("Minimum 8 caractères", "Mínimo 8 caracteres", "Minimum 8 characters"));
+      return null;
+    }
     setPasswordError("");
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (!error && data.session) {
@@ -235,7 +247,10 @@ function CheckoutContent() {
     }
     if (error?.message?.includes("already") || !data.session) {
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) { setPayError("Email déjà utilisé. Connecte-toi d'abord."); return null; }
+      if (signInError) {
+        setPayError(L("Email déjà utilisé. Connecte-toi d'abord.", "Email ya en uso. Inicia sesión primero.", "Email already in use. Please log in first."));
+        return null;
+      }
       if (signInData.session) return { id: signInData.user.id, email: signInData.user.email!, token: signInData.session.access_token };
     }
     if (error) { setPayError(error.message); return null; }
@@ -257,7 +272,7 @@ function CheckoutContent() {
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
     if (data.code === "USE_FREE_PATH") { setLoadingStripe(false); await handleFree(); return; }
-    setPayError(data.error || "Erreur paiement."); setLoadingStripe(false);
+    setPayError(data.error || L("Erreur paiement.", "Error de pago.", "Payment error.")); setLoadingStripe(false);
   };
 
   const handleCrypto = async () => {
@@ -274,7 +289,7 @@ function CheckoutContent() {
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
     if (data.code === "USE_FREE_PATH") { setLoadingCrypto(false); await handleFree(); return; }
-    setPayError(data.error || "Erreur paiement."); setLoadingCrypto(false);
+    setPayError(data.error || L("Erreur paiement.", "Error de pago.", "Payment error.")); setLoadingCrypto(false);
   };
 
   const handleFree = async () => {
@@ -285,7 +300,7 @@ function CheckoutContent() {
     const res = await fetch("/api/promo/free", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode }) });
     const data = await res.json();
     if (data.ok) router.push("/dashboard");
-    else { setPromoStatus("error"); setPromoError(data.error || "Erreur"); setLoadingFree(false); }
+    else { setPromoStatus("error"); setPromoError(data.error || L("Erreur", "Error", "Error")); setLoadingFree(false); }
   };
 
   const inp: React.CSSProperties = {
@@ -384,28 +399,42 @@ function CheckoutContent() {
       {/* Header */}
       <div style={{ minHeight: isMobile ? 64 : 76, borderBottom: "1px solid rgba(255,255,255,0.10)", padding: isMobile ? "0 16px" : "0 34px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(0,0,0,.72)", backdropFilter: "blur(18px)" }}>
         <Link href="/#pricing" style={{ textDecoration: "none", color: "rgba(255,255,255,0.62)", fontSize: 12, fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 8, textTransform: "uppercase", letterSpacing: ".08em" }}>
-          <ArrowLeft size={15} /> {isMobile ? "Retour" : "Retour aux challenges"}
+          <ArrowLeft size={15} />
+          {isMobile
+            ? L("Retour", "Volver", "Back")
+            : L("Retour aux challenges", "Volver a los challenges", "Back to challenges")}
         </Link>
         <Link href="/" aria-label="Traders Rewards" style={{ position: "absolute", left: "50%", transform: "translateX(-50%)", height: isMobile ? 58 : 70, display: "flex", alignItems: "center" }}>
           <Image src="/Traders_Rewards_logo_E_sans_barre_BLANC_transparent_4K.png" alt="Traders Rewards" width={176} height={112} priority style={{ width: isMobile ? 145 : 176, height: isMobile ? 92 : 112, objectFit: "contain" }} />
         </Link>
         <div style={{ color: "rgba(255,255,255,.5)", fontSize: 11, fontWeight: 700, display: "flex", alignItems: "center", gap: 7, letterSpacing: ".05em", textTransform: "uppercase" }}>
-          <LockKeyhole size={14} color="#D4A843" /> {!isMobile && "Paiement sécurisé"}
+          <LockKeyhole size={14} color="#D4A843" />
+          {!isMobile && L("Paiement sécurisé", "Pago seguro", "Secure payment")}
         </div>
       </div>
 
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "30px 18px 18px" : "50px 24px 10px", textAlign: "center" }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 7, color: "#D4A843", fontSize: 10, fontWeight: 800, letterSpacing: ".2em", textTransform: "uppercase", marginBottom: 14 }}>
-          <Sparkles size={13} /> Votre parcours commence ici
+          <Sparkles size={13} />
+          {L("Votre parcours commence ici", "Tu recorrido empieza aquí", "Your journey starts here")}
         </div>
         <h1 style={{ margin: 0, fontSize: isMobile ? 34 : 50, lineHeight: 1.02, letterSpacing: "-.04em", fontWeight: 900 }}>
-          Finalisez votre <span style={{ color: "#D4A843" }}>Challenge</span>
+          {L("Finalisez votre", "Finaliza tu", "Complete your")}{" "}
+          <span style={{ color: "#D4A843" }}>Challenge</span>
         </h1>
         <p style={{ margin: "12px auto 20px", maxWidth: 610, color: "rgba(255,255,255,.48)", fontSize: isMobile ? 13 : 15, lineHeight: 1.6 }}>
-          Choisissez votre compte, renseignez vos informations et accédez à votre espace trader en quelques minutes.
+          {L(
+            "Choisissez votre compte, renseignez vos informations et accédez à votre espace trader en quelques minutes.",
+            "Elige tu cuenta, rellena tus datos y accede a tu espacio trader en pocos minutos.",
+            "Choose your account, fill in your details and access your trader space in just a few minutes."
+          )}
         </p>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: isMobile ? 8 : 12 }}>
-          {["Challenge", "Informations", "Paiement"].map((step, index) => (
+          {[
+            L("Challenge", "Challenge", "Challenge"),
+            L("Informations", "Información", "Details"),
+            L("Paiement", "Pago", "Payment"),
+          ].map((step, index) => (
             <div key={step} style={{ display: "contents" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 7, color: index === 0 ? "#fff" : "rgba(255,255,255,.4)", fontSize: 10, fontWeight: 800, letterSpacing: ".08em", textTransform: "uppercase" }}>
                 <span style={{ width: 22, height: 22, borderRadius: "50%", display: "grid", placeItems: "center", background: index === 0 ? "rgba(212,168,67,0.15)" : "rgba(255,255,255,.06)", border: `1px solid ${index === 0 ? "rgba(212,168,67,0.6)" : "rgba(255,255,255,.12)"}`, color: index === 0 ? "#D4A843" : "rgba(255,255,255,.5)" }}>{index + 1}</span>
@@ -423,12 +452,14 @@ function CheckoutContent() {
           <Image src="/MT5.png" alt="MT5" width={36} height={36} style={{ width: 36, height: 36, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
           <div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "1px" }}>
-              {quantity === 3 ? "Pack ×3 Challenges" : "Challenge Traders Rewards"}
+              {quantity === 3
+                ? L("Pack ×3 Challenges", "Pack ×3 Challenges", "Pack ×3 Challenges")
+                : L("Challenge Traders Rewards", "Challenge Traders Rewards", "Challenge Traders Rewards")}
             </div>
             <div style={{ fontWeight: 700, fontSize: 14 }}>{challenge.label}{quantity === 3 ? " × 3" : ""}</div>
           </div>
           <div style={{ marginLeft: "auto", fontSize: 22, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
-            {isFree ? "GRATUIT" : formatPrice(totalAmount)}
+            {isFree ? L("GRATUIT", "GRATIS", "FREE") : formatPrice(totalAmount)}
           </div>
         </div>
       )}
@@ -464,7 +495,7 @@ function CheckoutContent() {
               })}
             </div>
 
-            {/* Sélecteur quantité : 1 Challenge / Pack ×3 — pourcentages en vert voyant */}
+            {/* Sélecteur quantité : 1 Challenge / Pack ×3 */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
 
               {/* ── 1 Challenge · -80% ── */}
@@ -478,7 +509,7 @@ function CheckoutContent() {
                 }}
               >
                 <div style={{ fontSize:11, fontWeight:800, color: quantity === 1 ? "#FFFFFF" : "rgba(255,255,255,0.45)", marginBottom:3 }}>
-                  1 Challenge
+                  {L("1 Challenge", "1 Challenge", "1 Challenge")}
                 </div>
                 <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color: quantity === 1 ? "#FFFFFF" : "rgba(255,255,255,0.55)" }}>
                   −80%
@@ -506,7 +537,7 @@ function CheckoutContent() {
                   BEST DEAL
                 </div>
                 <div style={{ fontSize:11, fontWeight:800, color: quantity === 3 ? "#D4A843" : "rgba(212,168,67,0.60)", marginBottom:3 }}>
-                  Pack ×3
+                  {L("Pack ×3", "Pack ×3", "Pack ×3")}
                 </div>
                 <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color: quantity === 3 ? "#D4A843" : "rgba(212,168,67,0.60)" }}>
                   −90%
@@ -518,12 +549,14 @@ function CheckoutContent() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <div>
                 <div style={{ fontWeight: 800, fontSize: 16 }}>
-                  {quantity === 3 ? `Pack ×3 — ${challenge.label}` : `Challenge ${challenge.label}`}
+                  {quantity === 3
+                    ? `Pack ×3 — ${challenge.label}`
+                    : `Challenge ${challenge.label}`}
                 </div>
                 <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12, marginTop: 2 }}>
                   {quantity === 3
-                    ? "3 comptes MT5 · 1 étape chacun"
-                    : "1 étape · MetaTrader 5 · Compte simulé"}
+                    ? L("3 comptes MT5 · 1 étape chacun", "3 cuentas MT5 · 1 etapa c/u", "3 MT5 accounts · 1 step each")
+                    : L("1 étape · MetaTrader 5 · Compte simulé", "1 etapa · MetaTrader 5 · Cuenta simulada", "1 step · MetaTrader 5 · Simulated account")}
                 </div>
               </div>
               <span style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.7)", fontSize: 11, fontWeight: 800, padding: "4px 12px", borderRadius: 6, border: "1px solid rgba(255,255,255,0.13)", whiteSpace: "nowrap" }}>
@@ -542,22 +575,24 @@ function CheckoutContent() {
 
           {/* Infos personnelles */}
           <div style={card}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 16 }}>Informations de facturation</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 16 }}>
+              {L("Informations de facturation", "Información de facturación", "Billing information")}
+            </div>
             <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
               <div>
-                <label style={lbl}>Prénom *</label>
-                <input className="co-input" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" style={inp} />
+                <label style={lbl}>{L("Prénom *", "Nombre *", "First name *")}</label>
+                <input className="co-input" value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={L("Jean", "Juan", "John")} style={inp} />
               </div>
               <div>
-                <label style={lbl}>Nom *</label>
-                <input className="co-input" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" style={inp} />
+                <label style={lbl}>{L("Nom *", "Apellido *", "Last name *")}</label>
+                <input className="co-input" value={lastName} onChange={e => setLastName(e.target.value)} placeholder={L("Dupont", "García", "Smith")} style={inp} />
               </div>
               <div style={{ gridColumn: "1 / -1" }}>
                 <label style={lbl}>Email *</label>
-                <input className="co-input" value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com" style={inp} />
+                <input className="co-input" value={email} onChange={e => setEmail(e.target.value)} placeholder={L("jean.dupont@email.com", "juan.garcia@email.com", "john.smith@email.com")} style={inp} />
               </div>
               <div>
-                <label style={lbl}>Téléphone *</label>
+                <label style={lbl}>{L("Téléphone *", "Teléfono *", "Phone *")}</label>
                 <div style={{ display: "flex", gap: 8 }}>
                   <select className="co-select" value={dialCode} onChange={e => setDialCode(e.target.value)}
                     style={{ ...inp, width: 90, flexShrink: 0, cursor: "pointer", padding: "10px 6px" }}>
@@ -567,45 +602,51 @@ function CheckoutContent() {
                 </div>
               </div>
               <div>
-                <label style={lbl}>Date de naissance *</label>
+                <label style={lbl}>{L("Date de naissance *", "Fecha de nacimiento *", "Date of birth *")}</label>
                 <input type="date" className="co-input" value={birthDate} onChange={e => setBirthDate(e.target.value)}
                   max={new Date(new Date().setFullYear(new Date().getFullYear() - 18)).toISOString().split("T")[0]}
                   style={{ ...inp, colorScheme: "dark" }} />
-                {birthDate && !isAdult && <div style={{ color: "#ef4444", fontSize: 11, marginTop: 4 }}>Vous devez avoir au moins 18 ans.</div>}
+                {birthDate && !isAdult && (
+                  <div style={{ color: "#ef4444", fontSize: 11, marginTop: 4 }}>
+                    {L("Vous devez avoir au moins 18 ans.", "Debes tener al menos 18 años.", "You must be at least 18 years old.")}
+                  </div>
+                )}
               </div>
               <div>
-                <label style={lbl}>Ville *</label>
-                <input className="co-input" value={city} onChange={e => setCity(e.target.value)} placeholder="Paris" style={inp} />
+                <label style={lbl}>{L("Ville *", "Ciudad *", "City *")}</label>
+                <input className="co-input" value={city} onChange={e => setCity(e.target.value)} placeholder={L("Paris", "Madrid", "London")} style={inp} />
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 <div>
-                  <label style={lbl}>Code postal</label>
+                  <label style={lbl}>{L("Code postal", "Código postal", "Postal code")}</label>
                   <input className="co-input" value={postalCode} onChange={e => setPostalCode(e.target.value)} placeholder="75001" style={inp} />
                 </div>
                 <div>
-                  <label style={lbl}>Pays *</label>
-                  <input className="co-input" value={country} onChange={e => setCountry(e.target.value)} placeholder="France" style={inp} />
+                  <label style={lbl}>{L("Pays *", "País *", "Country *")}</label>
+                  <input className="co-input" value={country} onChange={e => setCountry(e.target.value)} placeholder={L("France", "España", "United Kingdom")} style={inp} />
                 </div>
               </div>
             </div>
 
             {!user && (
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginTop: 16 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.45)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Créer votre compte</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.45)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>
+                  {L("Créer votre compte", "Crear tu cuenta", "Create your account")}
+                </div>
                 <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px 16px" }}>
                   <div>
-                    <label style={lbl}>Mot de passe *</label>
+                    <label style={lbl}>{L("Mot de passe *", "Contraseña *", "Password *")}</label>
                     <div style={{ position: "relative" }}>
-                      <input type={showPassword ? "text" : "password"} className="co-input" value={password} onChange={e => setPassword(e.target.value)} placeholder="Min. 8 caractères" style={{ ...inp, paddingRight: 44 }} />
+                      <input type={showPassword ? "text" : "password"} className="co-input" value={password} onChange={e => setPassword(e.target.value)} placeholder={L("Min. 8 caractères", "Mín. 8 caracteres", "Min. 8 characters")} style={{ ...inp, paddingRight: 44 }} />
                       <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: 0 }}>
                         {showPassword ? <EyeOff /> : <EyeOpen />}
                       </button>
                     </div>
                   </div>
                   <div>
-                    <label style={lbl}>Confirmer *</label>
+                    <label style={lbl}>{L("Confirmer *", "Confirmar *", "Confirm *")}</label>
                     <div style={{ position: "relative" }}>
-                      <input type={showConfirmPassword ? "text" : "password"} className="co-input" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Répéter"
+                      <input type={showConfirmPassword ? "text" : "password"} className="co-input" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder={L("Répéter", "Repetir", "Repeat")}
                         style={{ ...inp, paddingRight: 44, borderColor: confirmPassword ? (confirmPassword === password ? "rgba(34,197,94,0.5)" : "rgba(239,68,68,0.5)") : "rgba(255,255,255,0.12)" }} />
                       <button type="button" onClick={() => setShowConfirmPassword(v => !v)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: 0 }}>
                         {showConfirmPassword ? <EyeOff /> : <EyeOpen />}
@@ -619,7 +660,9 @@ function CheckoutContent() {
             {user && (
               <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 12, marginTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e" }} />
-                <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>Connecté en tant que {user.email}</span>
+                <span style={{ fontSize: 12, color: "#22c55e", fontWeight: 600 }}>
+                  {L("Connecté en tant que", "Conectado como", "Logged in as")} {user.email}
+                </span>
               </div>
             )}
           </div>
@@ -631,7 +674,9 @@ function CheckoutContent() {
           {/* Résumé desktop */}
           {!isMobile && (
             <div style={{ ...card, borderColor: "rgba(212,168,67,.24)", boxShadow: "0 24px 80px rgba(0,0,0,.42), 0 0 50px rgba(212,168,67,.045)" }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>Résumé</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 14 }}>
+                {L("Résumé", "Resumen", "Summary")}
+              </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                 <Image src="/MT5.png" alt="MT5" width={40} height={40} style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
                 <div>
@@ -639,17 +684,19 @@ function CheckoutContent() {
                   <div style={{ color: "rgba(255,255,255,0.35)", fontSize: 12 }}>
                     {quantity === 3
                       ? `Pack ×3 — ${challenge.label}`
-                      : `${challenge.label} — 1 étape`}
+                      : `${challenge.label} — ${L("1 étape", "1 etapa", "1 step")}`}
                   </div>
-                  <div style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, marginTop: 2 }}>Standard MT5 · 1:100 · USD</div>
+                  <div style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, marginTop: 2 }}>
+                    {L("Standard MT5 · 1:100 · USD", "Estándar MT5 · 1:100 · USD", "Standard MT5 · 1:100 · USD")}
+                  </div>
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "12px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                 {[
-                  { label: "Parcours", value: quantity === 3 ? "PACK ×3" : "CHALLENGER" },
-                  { label: "Plateforme", value: "MetaTrader 5" },
-                  { label: "Capital simulé", value: challenge.label },
-                  ...(quantity === 3 ? [{ label: "Comptes créés", value: "3 comptes" }] : []),
+                  { label: L("Parcours", "Recorrido", "Track"), value: quantity === 3 ? "PACK ×3" : "CHALLENGER" },
+                  { label: L("Plateforme", "Plataforma", "Platform"), value: "MetaTrader 5" },
+                  { label: L("Capital simulé", "Capital simulado", "Simulated capital"), value: challenge.label },
+                  ...(quantity === 3 ? [{ label: L("Comptes créés", "Cuentas creadas", "Accounts created"), value: L("3 comptes", "3 cuentas", "3 accounts") }] : []),
                 ].map((row, i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>{row.label}</span>
@@ -658,22 +705,22 @@ function CheckoutContent() {
                 ))}
                 {discount > 0 && <>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>Prix</span>
+                    <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>{L("Prix", "Precio", "Price")}</span>
                     <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "line-through" }}>{formatPrice(baseAmount)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>Réduction −{discount}%</span>
+                    <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>{L("Réduction", "Descuento", "Discount")} −{discount}%</span>
                     <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>−{formatPrice(baseAmount - discountedAmount)}</span>
                   </div>
                 </>}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", paddingTop: 14 }}>
-                <span style={{ fontWeight: 700, fontSize: 15 }}>Total</span>
+                <span style={{ fontWeight: 700, fontSize: 15 }}>{L("Total", "Total", "Total")}</span>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 32, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
-                    {isFree ? "GRATUIT" : formatPrice(totalAmount)}
+                    {isFree ? L("GRATUIT", "GRATIS", "FREE") : formatPrice(totalAmount)}
                   </div>
-                  <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 11 }}>TVA incluse</div>
+                  <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 11 }}>{L("TVA incluse", "IVA incluido", "VAT included")}</div>
                 </div>
               </div>
             </div>
@@ -681,22 +728,25 @@ function CheckoutContent() {
 
           {/* Code promo */}
           <div style={card}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Code promo</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>
+              {L("Code promo", "Código promo", "Promo code")}
+            </div>
             {promoStatus !== "valid" ? (
               <div style={{ display: "flex", gap: 8 }}>
                 <input className="co-input" value={promoInput} onChange={e => { setPromoInput(e.target.value.toUpperCase()); setPromoStatus("idle"); setPromoError(""); }}
-                  onKeyDown={e => e.key === "Enter" && applyPromo()} placeholder="ENTRER LE CODE"
+                  onKeyDown={e => e.key === "Enter" && applyPromo()}
+                  placeholder={L("ENTRER LE CODE", "INTRODUCIR CÓDIGO", "ENTER CODE")}
                   style={{ ...inp, flex: 1, fontWeight: 700, letterSpacing: "1.5px", fontFamily: "monospace" }} />
                 <button onClick={applyPromo} disabled={!promoInput.trim() || promoStatus === "loading"}
                   style={{ background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.85)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 8, padding: "10px 16px", fontSize: 12, fontWeight: 700, cursor: promoInput.trim() ? "pointer" : "not-allowed", opacity: promoInput.trim() ? 1 : 0.4, whiteSpace: "nowrap" }}>
-                  {promoStatus === "loading" ? "..." : "Appliquer"}
+                  {promoStatus === "loading" ? "..." : L("Appliquer", "Aplicar", "Apply")}
                 </button>
               </div>
             ) : (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 8, padding: "10px 12px" }}>
                 <div>
                   <span style={{ color: "#22c55e", fontWeight: 800, fontSize: 13, letterSpacing: "1px", fontFamily: "monospace" }}>{appliedCode}</span>
-                  <span style={{ color: "#22c55e", fontSize: 12, marginLeft: 10 }}>−{discount}%{isFree ? " · GRATUIT" : ""}</span>
+                  <span style={{ color: "#22c55e", fontSize: 12, marginLeft: 10 }}>−{discount}%{isFree ? ` · ${L("GRATUIT", "GRATIS", "FREE")}` : ""}</span>
                 </div>
                 <button onClick={removePromo} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.3)", cursor: "pointer", padding: 2 }}><X size={14} /></button>
               </div>
@@ -706,25 +756,88 @@ function CheckoutContent() {
 
           {/* CGV */}
           <div style={card}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Conditions Générales</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>
+              {L("Conditions Générales", "Condiciones Generales", "Terms & Conditions")}
+            </div>
             <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, padding: "12px 14px", maxHeight: 110, overflowY: "auto", marginBottom: 12 }}>
               <p style={{ color: "rgba(255,255,255,0.35)", fontSize: 11, lineHeight: 1.7, margin: 0 }}>
-                <strong style={{ color: "rgba(255,255,255,0.6)" }}>Résumé des points clés :</strong><br />
-                • Le trading sur notre plateforme est <strong style={{ color: "rgba(255,255,255,0.7)" }}>100% simulé</strong> — aucun capital réel, aucun ordre exécuté sur les marchés.<br />
-                • Les Frais de Challenge sont <strong style={{ color: "rgba(255,255,255,0.7)" }}>non remboursables</strong> dès l&apos;ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).<br />
-                • Le Challenge comporte <strong style={{ color: "rgba(255,255,255,0.7)" }}>une étape</strong>, un objectif de +6% et un Trailing Drawdown EOD de 3% ou 4% selon la taille choisie.<br />
-                • Après validation, l&apos;activation du Compte Reward est soumise à des <strong style={{ color: "rgba(255,255,255,0.7)" }}>frais uniques distincts</strong> indiqués avant activation.<br />
-                • En cas de violation des règles, nous pouvons résilier votre compte sans indemnité.<br />
-                • Droit applicable : <strong style={{ color: "rgba(255,255,255,0.7)" }}>loi estonienne</strong>.
+                <strong style={{ color: "rgba(255,255,255,0.6)" }}>
+                  {L("Résumé des points clés :", "Resumen de los puntos clave:", "Key points summary:")}
+                </strong><br />
+                {L(
+                  "• Le trading sur notre plateforme est",
+                  "• El trading en nuestra plataforma es",
+                  "• Trading on our platform is"
+                )}{" "}
+                <strong style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {L("100% simulé", "100% simulado", "100% simulated")}
+                </strong>
+                {L(
+                  " — aucun capital réel, aucun ordre exécuté sur les marchés.",
+                  " — sin capital real, ninguna orden ejecutada en los mercados.",
+                  " — no real capital, no orders executed on real markets."
+                )}<br />
+                {L(
+                  "• Les Frais de Challenge sont",
+                  "• Las Tarifas de Challenge son",
+                  "• Challenge Fees are"
+                )}{" "}
+                <strong style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {L("non remboursables", "no reembolsables", "non-refundable")}
+                </strong>
+                {L(
+                  " dès l'ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).",
+                  " desde la apertura del primer trade (derecho de desistimiento de 14 días antes de cualquier trade).",
+                  " from the opening of the first trade (14-day withdrawal right before any trade)."
+                )}<br />
+                {L(
+                  "• Le Challenge comporte",
+                  "• El Challenge tiene",
+                  "• The Challenge has"
+                )}{" "}
+                <strong style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {L("une étape", "una etapa", "one step")}
+                </strong>
+                {L(
+                  ", un objectif de +6% et un Trailing Drawdown EOD de 3% ou 4% selon la taille choisie.",
+                  ", un objetivo de +6% y un Trailing Drawdown EOD del 3% o 4% según el tamaño elegido.",
+                  ", a profit target of +6% and a Trailing Drawdown EOD of 3% or 4% depending on the size chosen."
+                )}<br />
+                {L(
+                  "• Après validation, l'activation du Compte Reward est soumise à des",
+                  "• Tras la validación, la activación de la Cuenta Reward está sujeta a",
+                  "• After validation, activation of the Reward Account is subject to"
+                )}{" "}
+                <strong style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {L("frais uniques distincts", "tarifas únicas distintas", "separate one-time fees")}
+                </strong>
+                {L(
+                  " indiqués avant activation.",
+                  " indicadas antes de la activación.",
+                  " shown before activation."
+                )}<br />
+                {L(
+                  "• En cas de violation des règles, nous pouvons résilier votre compte sans indemnité.",
+                  "• En caso de violación de las reglas, podemos cancelar tu cuenta sin indemnización.",
+                  "• In case of rule violation, we may terminate your account without compensation."
+                )}<br />
+                {L(
+                  "• Droit applicable :",
+                  "• Ley aplicable:",
+                  "• Applicable law:"
+                )}{" "}
+                <strong style={{ color: "rgba(255,255,255,0.7)" }}>
+                  {L("loi estonienne", "ley estonia", "Estonian law")}
+                </strong>.
               </p>
             </div>
             <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
               <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
                 style={{ marginTop: 2, accentColor: "#D4A843", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
               <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.5 }}>
-                J&apos;ai lu et j&apos;accepte les{" "}
+                {L("J'ai lu et j'accepte les", "He leído y acepto las", "I have read and accept the")}{" "}
                 <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#D4A843", textDecoration: "underline", fontWeight: 700 }}>
-                  Conditions Générales de Vente et d&apos;Utilisation
+                  {L("Conditions Générales de Vente et d'Utilisation", "Condiciones Generales de Venta y Uso", "General Terms of Sale and Use")}
                 </a>
               </span>
             </label>
@@ -737,34 +850,54 @@ function CheckoutContent() {
                 {payError}
               </div>
             )}
-            {!profileComplete && <p style={{ textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 12, margin: 0 }}>Remplissez tous les champs pour continuer.</p>}
-            {profileComplete && !agreedToTerms && <p style={{ textAlign: "center", color: "rgba(212,168,67,0.85)", fontSize: 12, margin: 0 }}>Acceptez les CGV pour continuer.</p>}
+            {!profileComplete && (
+              <p style={{ textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 12, margin: 0 }}>
+                {L("Remplissez tous les champs pour continuer.", "Completa todos los campos para continuar.", "Fill in all fields to continue.")}
+              </p>
+            )}
+            {profileComplete && !agreedToTerms && (
+              <p style={{ textAlign: "center", color: "rgba(212,168,67,0.85)", fontSize: 12, margin: 0 }}>
+                {L("Acceptez les CGV pour continuer.", "Acepta los T&C para continuar.", "Accept the T&C to continue.")}
+              </p>
+            )}
 
             {isFree ? (
               <div className="co-border">
                 <button onClick={handleFree} disabled={anyLoading || !canPay} className="co-border-btn">
-                  {loadingFree ? "Configuration..." : <><span>🎉</span> Accès gratuit <ChevronRight size={16} /></>}
+                  {loadingFree
+                    ? L("Configuration...", "Configurando...", "Setting up...")
+                    : <><span>🎉</span> {L("Accès gratuit", "Acceso gratuito", "Free access")} <ChevronRight size={16} /></>}
                 </button>
               </div>
             ) : (<>
               <div className="co-border">
                 <button onClick={handleStripe} disabled={anyLoading || !canPay} className="co-border-btn">
-                  {loadingStripe ? "Redirection..." : <><CreditCard size={17} /> Payer par carte <ChevronRight size={16} /></>}
+                  {loadingStripe
+                    ? L("Redirection...", "Redirigiendo...", "Redirecting...")
+                    : <><CreditCard size={17} /> {L("Payer par carte", "Pagar con tarjeta", "Pay by card")} <ChevronRight size={16} /></>}
                 </button>
               </div>
               <div className="co-border">
                 <button onClick={handleCrypto} disabled={anyLoading || !canPay} className="co-border-btn crypto">
-                  {loadingCrypto ? "Redirection..." : <><Bitcoin size={17} /> Payer en crypto <ChevronRight size={16} /></>}
+                  {loadingCrypto
+                    ? L("Redirection...", "Redirigiendo...", "Redirecting...")
+                    : <><Bitcoin size={17} /> {L("Payer en crypto", "Pagar en cripto", "Pay in crypto")} <ChevronRight size={16} /></>}
                 </button>
               </div>
             </>)}
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 4 }}>
               <ShieldCheck size={13} color="#D4A843" />
-              <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 10, fontWeight: 600, letterSpacing: ".03em" }}>Sécurisé par Stripe · SSL · Aucun abonnement</span>
+              <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 10, fontWeight: 600, letterSpacing: ".03em" }}>
+                {L("Sécurisé par Stripe · SSL · Aucun abonnement", "Seguro con Stripe · SSL · Sin suscripción", "Secured by Stripe · SSL · No subscription")}
+              </span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 7, marginTop: 4 }}>
-              {["Accès rapide", "Paiement unique", "Support humain"].map(item => (
+              {[
+                L("Accès rapide", "Acceso rápido", "Quick access"),
+                L("Paiement unique", "Pago único", "One-time payment"),
+                L("Support humain", "Soporte humano", "Human support"),
+              ].map(item => (
                 <div key={item} style={{ minHeight: 48, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4, padding: "7px 4px", border: "1px solid rgba(255,255,255,.07)", borderRadius: 9, background: "rgba(255,255,255,.025)", color: "rgba(255,255,255,.42)", fontSize: 9, fontWeight: 700, textAlign: "center" }}>
                   <Check size={12} color="#D4A843" /> {item}
                 </div>

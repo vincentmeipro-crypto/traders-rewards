@@ -3,11 +3,16 @@
 import { useState, FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function GateForm() {
   const router       = useRouter();
   const searchParams = useSearchParams();
   const from         = searchParams.get("from") ?? "/";
+  const { lang }     = useLanguage();
+  const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   const [password, setPassword] = useState("");
   const [error,    setError]    = useState("");
@@ -28,11 +33,11 @@ function GateForm() {
       if (res.ok) {
         router.replace(from.startsWith("/") ? from : "/");
       } else {
-        setError("Mot de passe incorrect.");
+        setError(L("Mot de passe incorrect.", "Contraseña incorrecta.", "Incorrect password."));
         setPassword("");
       }
     } catch {
-      setError("Erreur réseau. Réessayez.");
+      setError(L("Erreur réseau. Réessayez.", "Error de red. Inténtalo.", "Network error. Please retry."));
     } finally {
       setLoading(false);
     }
@@ -67,7 +72,7 @@ function GateForm() {
             textTransform: "uppercase",
             marginBottom:  10,
           }}>
-            ACCÈS PRIVÉ
+            {L("ACCÈS PRIVÉ", "ACCESO PRIVADO", "PRIVATE ACCESS")}
           </div>
           <div style={{
             fontSize:   22,
@@ -85,7 +90,7 @@ function GateForm() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mot de passe"
+              placeholder={L("Mot de passe", "Contraseña", "Password")}
               autoFocus
               required
               disabled={loading}
@@ -134,7 +139,9 @@ function GateForm() {
               letterSpacing: "0.5px",
             }}
           >
-            {loading ? "Vérification…" : "Accéder au site"}
+            {loading
+              ? L("Vérification…", "Verificando…", "Checking…")
+              : L("Accéder au site", "Acceder al sitio", "Access the site")}
           </button>
         </form>
       </div>

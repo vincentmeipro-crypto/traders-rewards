@@ -5,8 +5,14 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export default function LoginPage() {
+  const { lang } = useLanguage();
+  const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +23,10 @@ export default function LoginPage() {
   const supabase = createClient();
 
   const handleForgotPassword = async () => {
-    if (!email) { setError("Entre ton email d'abord"); return; }
+    if (!email) {
+      setError(L("Entre ton email d'abord", "Introduce tu email primero", "Enter your email first"));
+      return;
+    }
     setError("");
     await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "https://www.traders-rewards.eu/reset-password",
@@ -31,7 +40,10 @@ export default function LoginPage() {
     setLoading(true);
     const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     setLoading(false);
-    if (error) { setError("Email ou mot de passe invalide"); return; }
+    if (error) {
+      setError(L("Email ou mot de passe invalide", "Email o contraseña inválidos", "Invalid email or password"));
+      return;
+    }
 
     // Log security event (fingerprint + IP + VPN check)
     try {
@@ -79,8 +91,12 @@ export default function LoginPage() {
         </div>
 
         <div style={{ backgroundColor: "#fff", border: "1.5px solid #111", borderRadius: 20, padding: "40px 36px", boxShadow: "0 8px 40px rgba(21,101,192,0.12)" }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6, color: "#0D1B3E", letterSpacing: "-0.5px" }}>Welcome Back</h1>
-          <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 28 }}>Log in to your Traders Rewards account.</p>
+          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 6, color: "#0D1B3E", letterSpacing: "-0.5px" }}>
+            {L("Bon retour", "Bienvenido", "Welcome Back")}
+          </h1>
+          <p style={{ color: "#7a90b0", fontSize: 14, marginBottom: 28 }}>
+            {L("Connectez-vous à votre compte Traders Rewards.", "Inicia sesión en tu cuenta Traders Rewards.", "Log in to your Traders Rewards account.")}
+          </p>
 
           <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <div>
@@ -89,7 +105,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                placeholder="votre@email.com"
+                placeholder={L("votre@email.com", "tu@email.com", "your@email.com")}
                 required
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -107,7 +123,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  placeholder="Votre mot de passe"
+                  placeholder={L("Votre mot de passe", "Tu contraseña", "Your password")}
                   required
                   autoCapitalize="none"
                   autoCorrect="off"
@@ -136,29 +152,31 @@ export default function LoginPage() {
             <div style={{ textAlign: "right", marginTop: -8 }}>
               <button type="button" onClick={handleForgotPassword}
                 style={{ background: "none", border: "none", color: "#7a90b0", fontSize: 13, cursor: "pointer", padding: 0 }}>
-                Mot de passe oublié ?
+                {L("Mot de passe oublié ?", "¿Olvidaste tu contraseña?", "Forgot password?")}
               </button>
             </div>
 
             {resetSent && (
               <div style={{ backgroundColor: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.3)", borderRadius: 10, padding: "12px 16px", color: "#16a34a", fontSize: 14 }}>
-                Email envoyé sur {email}
+                {L(`Email envoyé sur ${email}`, `Email enviado a ${email}`, `Email sent to ${email}`)}
               </div>
             )}
 
             <button type="submit" disabled={loading} style={{ width: "100%", padding: "15px", fontSize: 14, fontWeight: 800, letterSpacing: "1.5px", textTransform: "uppercase", marginTop: 8, background: "#0D1B3E", color: "#fff", border: "none", borderRadius: 8, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, transition: "all 0.2s" }}>
-              {loading ? "Connexion..." : "LOG IN"}
+              {loading ? L("Connexion...", "Conectando...", "Logging in...") : "LOG IN"}
             </button>
           </form>
 
           <p style={{ textAlign: "center", color: "#7a90b0", fontSize: 14, marginTop: 24 }}>
-            Pas encore de compte ?{" "}
-            <a href="/#pricing" style={{ color: "#1565C0", fontWeight: 700, textDecoration: "none" }}>Acheter un challenge</a>
+            {L("Pas encore de compte ?", "¿Aún no tienes cuenta?", "Don't have an account?")}{" "}
+            <a href="/#pricing" style={{ color: "#1565C0", fontWeight: 700, textDecoration: "none" }}>
+              {L("Acheter un challenge", "Comprar un challenge", "Buy a challenge")}
+            </a>
           </p>
         </div>
 
         <a href="/" style={{ display: "block", textAlign: "center", color: "#7a90b0", fontSize: 13, marginTop: 20, textDecoration: "none" }}>
-          ← Retour au site
+          {L("← Retour au site", "← Volver al sitio", "← Back to site")}
         </a>
       </div>
     </div>

@@ -3,11 +3,16 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { CheckCircle } from "lucide-react";
+import { useLanguage } from "@/lib/LanguageContext";
 
 function SuccessContent() {
   const params = useSearchParams();
   const sessionId = params.get("session_id");
   const [countdown, setCountdown] = useState(5);
+  const { lang } = useLanguage();
+  const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -28,10 +33,14 @@ function SuccessContent() {
           <CheckCircle size={56} color="#22c55e" style={{ marginBottom: 24 }} />
 
           <h1 style={{ fontSize: 28, fontWeight: 900, marginBottom: 12, letterSpacing: "-0.5px", color: "#0D1B3E" }}>
-            Payment Successful!
+            {L("Paiement réussi !", "¡Pago exitoso!", "Payment Successful!")}
           </h1>
           <p style={{ color: "#7a90b0", fontSize: 16, lineHeight: 1.6, marginBottom: 32 }}>
-            Welcome to the elite. Your challenge account is being set up and will be ready shortly.
+            {L(
+              "Bienvenue dans l'élite. Votre compte challenge est en cours de configuration et sera prêt dans quelques instants.",
+              "Bienvenido a la élite. Tu cuenta challenge se está configurando y estará lista en breve.",
+              "Welcome to the elite. Your challenge account is being set up and will be ready shortly."
+            )}
           </p>
 
           <div style={{ backgroundColor: "#f8fafc", borderRadius: 12, padding: "16px 20px", marginBottom: 32, fontSize: 13, color: "#7a90b0", border: "1px solid #e5e7eb" }}>
@@ -39,11 +48,15 @@ function SuccessContent() {
           </div>
 
           <a href="/dashboard" className="btn-primary" style={{ display: "block", textAlign: "center", padding: "16px", fontSize: 15 }}>
-            Go to Dashboard →
+            {L("Aller au Dashboard →", "Ir al Panel →", "Go to Dashboard →")}
           </a>
 
           <p style={{ color: "#7a90b0", fontSize: 13, marginTop: 20 }}>
-            Redirecting automatically in {countdown}s...
+            {L(
+              `Redirection automatique dans ${countdown}s…`,
+              `Redirigiendo automáticamente en ${countdown}s…`,
+              `Redirecting automatically in ${countdown}s...`
+            )}
           </p>
         </div>
       </div>

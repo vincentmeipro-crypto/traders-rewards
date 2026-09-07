@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useLanguage } from "@/lib/LanguageContext";
 
 const SUBMIT_BTN: React.CSSProperties = {
   width: "100%", padding: "15px", fontSize: 14, fontWeight: 800,
@@ -12,6 +13,11 @@ const SUBMIT_BTN: React.CSSProperties = {
 };
 
 export default function SupportPage() {
+  const { lang } = useLanguage();
+  const isFr = lang === "fr";
+  const isEs = lang === "es";
+  const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -35,7 +41,7 @@ export default function SupportPage() {
       setFirstName(""); setLastName(""); setEmail(""); setMessage("");
     } else {
       const d = await res.json();
-      setError(d.error || "Erreur lors de l'envoi.");
+      setError(d.error || L("Erreur lors de l'envoi.", "Error al enviar.", "Error sending message."));
     }
   };
 
@@ -56,23 +62,30 @@ export default function SupportPage() {
 
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <h1 style={{ fontSize: 36, fontWeight: 900, marginBottom: 12, letterSpacing: "-1px", color: "#ffffff" }}>
-            Contacter le Support
+            {L("Contacter le Support", "Contactar con el Soporte", "Contact Support")}
           </h1>
           <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 16, lineHeight: 1.7 }}>
-            Une question ? Un problème ? Notre équipe vous répond rapidement.
+            {L(
+              "Une question ? Un problème ? Notre équipe vous répond rapidement.",
+              "¿Una pregunta? ¿Un problema? Nuestro equipo te responde rápidamente.",
+              "A question? A problem? Our team will get back to you quickly."
+            )}
           </p>
         </div>
 
         {success ? (
           <div style={{ textAlign: "center", backgroundColor: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "48px 40px" }}>
             <div style={{ fontSize: 48, marginBottom: 20 }}>✅</div>
-            <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: "#ffffff" }}>Message envoyé !</h2>
+            <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12, color: "#ffffff" }}>
+              {L("Message envoyé !", "¡Mensaje enviado!", "Message sent!")}
+            </h2>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 15, lineHeight: 1.7, marginBottom: 28 }}>
-              Notre équipe vous répondra dans les plus brefs délais à <strong style={{ color: "rgba(255,255,255,0.8)" }}>{email || "votre adresse email"}</strong>.
+              {L("Notre équipe vous répondra dans les plus brefs délais à", "Nuestro equipo te responderá a la brevedad posible en", "Our team will reply as soon as possible to")}{" "}
+              <strong style={{ color: "rgba(255,255,255,0.8)" }}>{email || L("votre adresse email", "tu dirección de email", "your email address")}</strong>.
             </p>
             <button onClick={() => setSuccess(false)}
               style={{ background: "none", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 10, padding: "12px 28px", color: "rgba(255,255,255,0.6)", fontSize: 14, cursor: "pointer" }}>
-              Envoyer un autre message
+              {L("Envoyer un autre message", "Enviar otro mensaje", "Send another message")}
             </button>
           </div>
         ) : (
@@ -80,14 +93,14 @@ export default function SupportPage() {
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
               <div>
-                <label style={lbl}>Prénom *</label>
-                <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" required style={inp}
+                <label style={lbl}>{L("Prénom *", "Nombre *", "First name *")}</label>
+                <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder={L("Jean", "Juan", "John")} required style={inp}
                   onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
               </div>
               <div>
-                <label style={lbl}>Nom *</label>
-                <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" required style={inp}
+                <label style={lbl}>{L("Nom *", "Apellido *", "Last name *")}</label>
+                <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder={L("Dupont", "García", "Smith")} required style={inp}
                   onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
               </div>
@@ -95,14 +108,14 @@ export default function SupportPage() {
 
             <div>
               <label style={lbl}>Email *</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com" required style={inp}
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={L("jean.dupont@email.com", "juan.garcia@email.com", "john.smith@email.com")} required style={inp}
                 onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                 onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
             </div>
 
             <div>
-              <label style={lbl}>Message *</label>
-              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Décrivez votre problème ou question..." required rows={6}
+              <label style={lbl}>{L("Message *", "Mensaje *", "Message *")}</label>
+              <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder={L("Décrivez votre problème ou question...", "Describe tu problema o pregunta...", "Describe your issue or question...")} required rows={6}
                 style={{ ...inp, resize: "vertical", lineHeight: 1.6, colorScheme: "dark" } as React.CSSProperties}
                 onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                 onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
@@ -118,11 +131,13 @@ export default function SupportPage() {
               style={{ ...SUBMIT_BTN, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1 }}
               onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(212,168,67,0.85)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 22px rgba(212,168,67,0.10)"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; } }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(212,168,67,0.50)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; }}>
-              {loading ? "Envoi en cours..." : "ENVOYER LE MESSAGE"}
+              {loading
+                ? L("Envoi en cours...", "Enviando...", "Sending...")
+                : L("ENVOYER LE MESSAGE", "ENVIAR EL MENSAJE", "SEND MESSAGE")}
             </button>
 
             <p style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 13, margin: 0 }}>
-              Vous pouvez aussi nous écrire directement à{" "}
+              {L("Vous pouvez aussi nous écrire directement à", "También puedes escribirnos directamente a", "You can also write to us directly at")}{" "}
               <a href="mailto:contact@traders-rewards.eu" style={{ color: "#D4A843", textDecoration: "none" }}>
                 contact@traders-rewards.eu
               </a>
