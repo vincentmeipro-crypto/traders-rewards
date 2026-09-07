@@ -406,18 +406,18 @@ export default function LiveChatWidget() {
           to   { opacity: 1; transform: translateY(0)   scale(1);    }
         }
         .lcw-btn { transition: transform 0.15s ease, box-shadow 0.15s ease; }
-        .lcw-btn:hover { transform: scale(1.07) !important; box-shadow: 0 8px 28px rgba(183,110,121,0.28), 0 2px 8px rgba(0,0,0,0.6) !important; }
-        .lcw-btn:focus-visible { outline: 3px solid rgba(216,163,157,0.70); outline-offset: 3px; border-radius: 50%; }
+        .lcw-btn:hover { transform: scale(1.07) !important; box-shadow: 0 8px 28px rgba(184,135,70,0.28), 0 2px 8px rgba(0,0,0,0.6) !important; }
+        .lcw-btn:focus-visible { outline: 3px solid rgba(212,168,67,0.70); outline-offset: 3px; border-radius: 50%; }
         .lcw-panel { animation: lcw-fadein 0.2s ease; }
         .lcw-close:hover { background: rgba(255,255,255,0.07) !important; }
-        .lcw-close:focus-visible { outline: 3px solid rgba(216,163,157,0.65); outline-offset: 2px; border-radius: 7px; }
+        .lcw-close:focus-visible { outline: 3px solid rgba(212,168,67,0.65); outline-offset: 2px; border-radius: 7px; }
         .lcw-send:hover:not(:disabled) { background: rgba(255,255,255,0.06) !important; }
-        .lcw-send:focus-visible { outline: 3px solid rgba(216,163,157,0.65); outline-offset: 2px; border-radius: 9px; }
+        .lcw-send:focus-visible { outline: 3px solid rgba(212,168,67,0.65); outline-offset: 2px; border-radius: 9px; }
         .lcw-retry:hover { background: rgba(239,68,68,0.08) !important; }
         .lcw-msgs { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
         .lcw-msgs::-webkit-scrollbar { width: 4px; }
         .lcw-msgs::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
-        .lcw-ta:focus { border-color: rgba(216,163,157,0.45) !important; }
+        .lcw-ta:focus { border-color: rgba(212,168,67,0.45) !important; }
         .lcw-ta::placeholder { color: rgba(255,255,255,0.25); }
         @media (max-width: 639px) {
           .lcw-btn  { bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important; right: 16px !important; }
@@ -447,12 +447,12 @@ export default function LiveChatWidget() {
           height:          56,
           borderRadius:    "50%",
           backgroundColor: "#181818",
-          border:          "1px solid rgba(183,110,121,0.42)",
+          border:          "1px solid rgba(184,135,70,0.42)",
           cursor:          "pointer",
           display:         "flex",
           alignItems:      "center",
           justifyContent:  "center",
-          boxShadow:       "0 4px 18px rgba(183,110,121,0.18), 0 2px 10px rgba(0,0,0,0.60)",
+          boxShadow:       "0 4px 18px rgba(184,135,70,0.18), 0 2px 10px rgba(0,0,0,0.60)",
         }}
       >
         {isOpen ? (
@@ -513,7 +513,7 @@ export default function LiveChatWidget() {
             backgroundColor:"#0d0d0d",
             border:         "1px solid rgba(255,255,255,0.09)",
             borderRadius:   16,
-            boxShadow:      "0 8px 48px rgba(0,0,0,0.88), 0 0 0 1px rgba(183,110,121,0.10)",
+            boxShadow:      "0 8px 48px rgba(0,0,0,0.88), 0 0 0 1px rgba(184,135,70,0.10)",
             display:        "flex",
             flexDirection:  "column",
             overflow:       "hidden",
@@ -610,7 +610,7 @@ export default function LiveChatWidget() {
               width:           6,
               height:          6,
               borderRadius:    "50%",
-              backgroundColor: "#D4A0A8",
+              backgroundColor: "#D4A843",
               flexShrink:      0,
             }} />
             <span style={{
@@ -745,10 +745,10 @@ export default function LiveChatWidget() {
                       ? "13px 13px 3px 13px"
                       : "13px 13px 13px 3px",
                     backgroundColor: isClient
-                      ? "rgba(183,110,121,0.24)"
+                      ? "rgba(184,135,70,0.24)"
                       : "rgba(255,255,255,0.08)",
                     color:           isClient
-                      ? "#F5EDEB"
+                      ? "#F5F0E2"
                       : "rgba(255,255,255,0.88)",
                     fontSize:        14,
                     lineHeight:      1.55,
@@ -854,7 +854,7 @@ export default function LiveChatWidget() {
                 minWidth:        42,
                 borderRadius:    10,
                 backgroundColor: "#181818",
-                border:          "1px solid rgba(183,110,121,0.45)",
+                border:          "1px solid rgba(184,135,70,0.45)",
                 cursor:          sending || !inputValue.trim() || loading
                   ? "not-allowed"
                   : "pointer",

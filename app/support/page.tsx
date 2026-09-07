@@ -7,7 +7,7 @@ const SUBMIT_BTN: React.CSSProperties = {
   width: "100%", padding: "15px", fontSize: 14, fontWeight: 800,
   letterSpacing: "1.5px", textTransform: "uppercase",
   background: "linear-gradient(135deg, #151719, #0B0C0E)",
-  color: "#FFFFFF", border: "1px solid rgba(216,163,157,0.50)",
+  color: "#FFFFFF", border: "1px solid rgba(212,168,67,0.50)",
   borderRadius: 10, transition: "transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease",
 };
 
@@ -82,13 +82,13 @@ export default function SupportPage() {
               <div>
                 <label style={lbl}>Prénom *</label>
                 <input value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="Jean" required style={inp}
-                  onFocus={e => (e.target.style.borderColor = "rgba(216,163,157,0.65)")}
+                  onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
               </div>
               <div>
                 <label style={lbl}>Nom *</label>
                 <input value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Dupont" required style={inp}
-                  onFocus={e => (e.target.style.borderColor = "rgba(216,163,157,0.65)")}
+                  onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                   onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
               </div>
             </div>
@@ -96,7 +96,7 @@ export default function SupportPage() {
             <div>
               <label style={lbl}>Email *</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="jean.dupont@email.com" required style={inp}
-                onFocus={e => (e.target.style.borderColor = "rgba(216,163,157,0.65)")}
+                onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                 onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
             </div>
 
@@ -104,7 +104,7 @@ export default function SupportPage() {
               <label style={lbl}>Message *</label>
               <textarea value={message} onChange={e => setMessage(e.target.value)} placeholder="Décrivez votre problème ou question..." required rows={6}
                 style={{ ...inp, resize: "vertical", lineHeight: 1.6, colorScheme: "dark" } as React.CSSProperties}
-                onFocus={e => (e.target.style.borderColor = "rgba(216,163,157,0.65)")}
+                onFocus={e => (e.target.style.borderColor = "rgba(212,168,67,0.65)")}
                 onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")} />
             </div>
 
@@ -116,14 +116,14 @@ export default function SupportPage() {
 
             <button type="submit" disabled={loading}
               style={{ ...SUBMIT_BTN, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.6 : 1 }}
-              onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(216,163,157,0.85)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 22px rgba(216,163,157,0.10)"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; } }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(216,163,157,0.50)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; }}>
+              onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(212,168,67,0.85)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 22px rgba(212,168,67,0.10)"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; } }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(212,168,67,0.50)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)"; }}>
               {loading ? "Envoi en cours..." : "ENVOYER LE MESSAGE"}
             </button>
 
             <p style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 13, margin: 0 }}>
               Vous pouvez aussi nous écrire directement à{" "}
-              <a href="mailto:contact@traders-rewards.eu" style={{ color: "#D8A39D", textDecoration: "none" }}>
+              <a href="mailto:contact@traders-rewards.eu" style={{ color: "#D4A843", textDecoration: "none" }}>
                 contact@traders-rewards.eu
               </a>
             </p>

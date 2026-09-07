@@ -16,7 +16,28 @@ const FlagImg = ({ code }: { code: string }) => (
 function TraderLink() {
   return (
     <Link href="/#pricing" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", padding: "8px 10px" }}>
-      <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "1.2px", textTransform: "uppercase", background: "rgba(255,255,255,0.08)", color: "#FFFFFF", padding: "2px 8px", borderRadius: 4, border: "1px solid rgba(255,255,255,0.20)" }}>CHALLENGE</span>
+      {/* Conteneur : fond très légèrement doré + bordure dorée subtile */}
+      <span style={{
+        display: "inline-flex", alignItems: "center",
+        background:   "rgba(184,135,70,0.07)",
+        padding:      "2px 9px",
+        borderRadius: 4,
+        border:       "1px solid rgba(214,173,99,0.45)",
+      }}>
+        {/* Texte : gradient doré champagne identique aux titres */}
+        <span style={{
+          fontSize:             12,
+          fontWeight:           900,
+          letterSpacing:        "1.2px",
+          textTransform:        "uppercase" as const,
+          background:           "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor:  "transparent",
+          backgroundClip:       "text",
+        }}>
+          CHALLENGE
+        </span>
+      </span>
     </Link>
   );
 }
@@ -111,12 +132,25 @@ export default function Navbar() {
           display: inline-block;
         }
         .nav-cta:hover { opacity: 0.85; }
+
+        /* ── Trait doré champagne navbar ── */
+        .home-navbar { position: relative; }
+        .home-navbar::after {
+          content: "";
+          position: absolute;
+          bottom: 0; left: 0; right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent 0%, #B88746 15%, #E8C98A 50%, #B88746 85%, transparent 100%);
+          opacity: 0.32;
+          pointer-events: none;
+          z-index: 1;
+        }
+        .home-navbar.is-scrolled::after { opacity: 0.50; }
       `}</style>
 
       <nav className={`home-navbar${scrolled ? " is-scrolled" : ""}`} style={{
         position: "fixed", top: "var(--promo-banner-height, 0px)", left: 0, right: 0, zIndex: 100,
         backgroundColor: scrolled ? "rgba(0,0,0,0.9)" : "#000000",
-        borderBottom: scrolled ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(255,255,255,0.18)",
         backdropFilter: scrolled ? "blur(18px)" : "none",
         boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42)" : "none",
         transition: "all 0.3s ease",
@@ -174,10 +208,10 @@ export default function Navbar() {
                           width: "100%", padding: "11px 16px", background: "none",
                           border: "none", cursor: "pointer", textAlign: "left",
                           backgroundColor: lang === l.code ? "#FBF6F4" : "transparent",
-                          borderLeft: lang === l.code ? "2px solid #B76E79" : "2px solid transparent",
+                          borderLeft: lang === l.code ? "2px solid #B88746" : "2px solid transparent",
                         }}>
                         <FlagImg code={l.code} />
-                        <span style={{ color: lang === l.code ? "#B76E79" : "#4a5568", fontSize: 13, fontWeight: 500 }}>{l.label}</span>
+                        <span style={{ color: lang === l.code ? "#B88746" : "#4a5568", fontSize: 13, fontWeight: 500 }}>{l.label}</span>
                       </button>
                     ))}
                   </div>
@@ -201,7 +235,7 @@ export default function Navbar() {
                     display: "flex", alignItems: "center", justifyContent: "center",
                     width: 36, height: 36,
                     background: "none",
-                    border: `1px solid ${mobileLangOpen ? "rgba(216,163,157,0.55)" : "rgba(255,255,255,0.16)"}`,
+                    border: `1px solid ${mobileLangOpen ? "rgba(212,168,67,0.55)" : "rgba(255,255,255,0.16)"}`,
                     borderRadius: 8, cursor: "pointer", padding: 0,
                   }}
                 >
@@ -222,12 +256,12 @@ export default function Navbar() {
                           display: "flex", alignItems: "center", gap: 10,
                           width: "100%", padding: "10px 14px",
                           background: "none", border: "none", cursor: "pointer",
-                          backgroundColor: lang === l.code ? "rgba(216,163,157,0.08)" : "transparent",
-                          borderLeft: lang === l.code ? "2px solid #D8A39D" : "2px solid transparent",
+                          backgroundColor: lang === l.code ? "rgba(212,168,67,0.08)" : "transparent",
+                          borderLeft: lang === l.code ? "2px solid #D4A843" : "2px solid transparent",
                         }}>
                         <FlagImg code={l.code} />
                         <span style={{
-                          color: lang === l.code ? "#D8A39D" : "rgba(255,255,255,0.72)",
+                          color: lang === l.code ? "#D4A843" : "rgba(255,255,255,0.72)",
                           fontSize: 13, fontWeight: lang === l.code ? 700 : 500,
                         }}>
                           {l.label}
@@ -275,9 +309,9 @@ export default function Navbar() {
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {languages.map(l => (
                 <button key={l.code} onClick={() => { setLang(l.code as Lang); setOpen(false); }}
-                  style={{ display: "flex", alignItems: "center", gap: 6, background: lang === l.code ? "#FBF6F4" : "#f8f9fa", border: `1px solid ${lang === l.code ? "#B76E79" : "transparent"}`, borderRadius: 6, padding: "6px 10px", cursor: "pointer" }}>
+                  style={{ display: "flex", alignItems: "center", gap: 6, background: lang === l.code ? "#FBF6F4" : "#f8f9fa", border: `1px solid ${lang === l.code ? "#B88746" : "transparent"}`, borderRadius: 6, padding: "6px 10px", cursor: "pointer" }}>
                   <FlagImg code={l.code} />
-                  <span style={{ color: lang === l.code ? "#B76E79" : "#666", fontSize: 13 }}>{l.label}</span>
+                  <span style={{ color: lang === l.code ? "#B88746" : "#666", fontSize: 13 }}>{l.label}</span>
                 </button>
               ))}
             </div>

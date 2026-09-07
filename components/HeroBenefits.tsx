@@ -121,8 +121,8 @@ export default function HeroBenefits() {
         .hero-benefits-shell::before {
           content: ""; position: absolute; z-index: 3; pointer-events: none;
           left: 8%; right: 8%; top: -1px; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(183,110,121,.15), #F1D0C8, rgba(183,110,121,.15), transparent);
-          filter: drop-shadow(0 0 6px rgba(183,110,121,.45));
+          background: linear-gradient(90deg, transparent, rgba(184,135,70,.15), #F2D79A, rgba(184,135,70,.15), transparent);
+          filter: drop-shadow(0 0 6px rgba(184,135,70,.45));
           animation: benefitsGlow 5s ease-in-out infinite;
         }
         .hero-benefit-card {
@@ -132,7 +132,7 @@ export default function HeroBenefits() {
         .hero-benefit-card::after {
           content: ""; position: absolute; left: 20px; right: 20px; bottom: 0;
           height: 2px; opacity: .9; transform: scaleX(1);
-          background: linear-gradient(90deg, transparent, rgba(183,110,121,.55), transparent);
+          background: linear-gradient(90deg, transparent, rgba(184,135,70,.55), transparent);
           transition: opacity .25s ease, transform .25s ease;
         }
         .hero-benefit-card:hover { background: rgba(255,255,255,.038); }
@@ -186,10 +186,10 @@ export default function HeroBenefits() {
                 }}
               >
                 <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: isMobile ? 13 : 9 }}>
-                  <span style={{ color: "rgba(216,163,157,.70)", fontSize: 8, fontWeight: 900, letterSpacing: "2px" }}>{L("AVANTAGE", "VENTAJA", "BENEFIT")} 0{i + 1}</span>
-                  <span style={{ width: 27, height: 27, border: "1px solid rgba(183,110,121,.18)", borderRadius: 8, color: "rgba(216,163,157,.48)", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(183,110,121,.028)" }}>{b.icon}</span>
+                  <span style={{ color: "rgba(212,168,67,.70)", fontSize: 8, fontWeight: 900, letterSpacing: "2px" }}>{L("AVANTAGE", "VENTAJA", "BENEFIT")} 0{i + 1}</span>
+                  <span style={{ width: 27, height: 27, border: "1px solid rgba(184,135,70,.18)", borderRadius: 8, color: "rgba(212,168,67,.48)", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(184,135,70,.028)" }}>{b.icon}</span>
                 </div>
-                <div className="hero-benefit-metric" style={{ color: "#F5EDEB", fontSize: isMobile ? "clamp(2.25rem, 11vw, 3.5rem)" : "clamp(2.35rem, 3vw, 3.65rem)", fontWeight: 850, letterSpacing: "-.055em", lineHeight: .86, textShadow: "0 0 24px rgba(183,110,121,.18)" }}>
+                <div className="hero-benefit-metric" style={{ color: "#F5F0E2", fontSize: isMobile ? "clamp(2.25rem, 11vw, 3.5rem)" : "clamp(2.35rem, 3vw, 3.65rem)", fontWeight: 850, letterSpacing: "-.055em", lineHeight: .86, textShadow: "0 0 24px rgba(184,135,70,.18)" }}>
                   {b.metric}
                 </div>
                 <div style={{ color: "#fff", fontSize: isMobile ? 10 : 11, fontWeight: 900, letterSpacing: isMobile ? "1.4px" : "1.8px", marginTop: 8 }}>

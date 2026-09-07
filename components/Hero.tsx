@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
 
-const ACCENT = "#D4A0A8"; // badge dot (gauche) — rose gold nacré
+const ACCENT = "#D4A843"; // badge dot (gauche) — doré champagne
 
 // Parcours 100K — rendu top→bottom (05 en haut visuellement)
 const STEPS = [
@@ -71,7 +71,9 @@ export default function Hero() {
         <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
           PACK ×3 BEST DEAL
         </div>
-        <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3, color:"#EDD8D2" }}>
+        <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom: isMobile ? 7 : 3,
+          background:"linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+          WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
           -90%
         </div>
         <div style={{ fontSize:9, fontWeight:550, color:"rgba(255,255,255,0.38)", letterSpacing:"0.5px", textTransform:"none" }}>
@@ -90,24 +92,24 @@ export default function Hero() {
           to   { opacity: 1; transform: translateY(0); }
         }
         @keyframes heroDotTwinkle {
-          0%, 100% { opacity: 0.48; box-shadow: 0 0 0 rgba(183,110,121,0); transform: scale(0.82); }
-          50% { opacity: 1; box-shadow: 0 0 8px rgba(183,110,121,0.80), 0 0 14px rgba(183,110,121,0.35); transform: scale(1.12); }
+          0%, 100% { opacity: 0.48; box-shadow: 0 0 0 rgba(184,135,70,0); transform: scale(0.82); }
+          50% { opacity: 1; box-shadow: 0 0 8px rgba(184,135,70,0.80), 0 0 14px rgba(184,135,70,0.35); transform: scale(1.12); }
         }
         .h-pill-dot { animation: heroDotTwinkle 1.8s ease-in-out infinite; }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           CTA PRINCIPAL — nacré / rose gold premium
+           CTA PRINCIPAL — champagne / doré nacré premium
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
         .h-cta-main {
           display: inline-flex; align-items: center; gap: 18px;
           position: relative; overflow: hidden;
-          background: linear-gradient(110deg, #F7F2EF 0%, #E8D4CF 35%, #FFF9F6 58%, #D8A39D 100%);
-          color: #1A0808;
+          background: linear-gradient(110deg, #F7F3EB 0%, #E8D7B5 35%, #FFF9EC 55%, #D7B673 100%);
+          color: #111111;
           font-weight: 730; letter-spacing: 0.05px; text-transform: none;
           text-decoration: none; border-radius: 16px; cursor: pointer;
           font-family: inherit; white-space: nowrap;
-          border: 1px solid rgba(241,208,200,0.55);
-          box-shadow: 0 10px 35px rgba(183,110,121,0.15), 0 3px 12px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.75);
+          border: 1px solid rgba(232,201,138,0.55);
+          box-shadow: 0 10px 35px rgba(184,135,70,0.15), 0 3px 12px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.75);
           transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
         }
         .h-cta-main svg {
@@ -116,8 +118,8 @@ export default function Hero() {
         .h-cta-main:hover svg { transform: translateX(5px); }
         .h-cta-main:hover {
           transform: translateY(-2px);
-          background: linear-gradient(110deg, #FBF7F4 0%, #EEDBD7 35%, #FFFAF7 58%, #C9908A 100%);
-          box-shadow: 0 18px 48px rgba(183,110,121,0.22), 0 5px 16px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.85);
+          background: linear-gradient(110deg, #FBF7ED 0%, #EFDFAB 35%, #FFFAEE 58%, #BF9045 100%);
+          box-shadow: 0 18px 48px rgba(184,135,70,0.22), 0 5px 16px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.85);
         }
         .h-cta-main:active  { transform: translateY(0) scale(0.98); }
         .h-cta-main:focus-visible {
@@ -163,7 +165,7 @@ export default function Hero() {
           top: 0; bottom: 0;
           left: 50%; transform: translateX(-50%);
           width: 1px;
-          background: rgba(183,110,121,0.16);
+          background: rgba(184,135,70,0.16);
           z-index: 0;
           pointer-events: none;
         }
@@ -173,7 +175,7 @@ export default function Hero() {
           position: relative; z-index: 2;
           width: 42px; height: 42px; flex-shrink: 0;
           border-radius: 50%;
-          border: 1px solid rgba(183,110,121,0.24);
+          border: 1px solid rgba(184,135,70,0.24);
           background: #171b1f;
           display: flex; align-items: center; justify-content: center;
           font-size: 13px; font-weight: 800; letter-spacing: 1px;
@@ -220,7 +222,7 @@ export default function Hero() {
           z-index: 5;
           border: 1px solid rgba(0,0,0,0.96);
           border-radius: 16px;
-          box-shadow: inset 0 0 0 1px rgba(183,110,121,0.055);
+          box-shadow: inset 0 0 0 1px rgba(184,135,70,0.055);
           pointer-events: none;
         }
         @media (prefers-reduced-motion: reduce) {
@@ -376,7 +378,10 @@ export default function Hero() {
                 }}
               >
                 <span style={{ color: "#F7F8FA" }}>{h1L2pre}</span>
-                <span style={{ color: "#EDD8D2" }}>{h1L2acc}</span>
+                <span style={{
+                  background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                }}>{h1L2acc}</span>
               </span>
             </h1>
 

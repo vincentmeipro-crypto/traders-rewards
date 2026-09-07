@@ -52,7 +52,7 @@ function GateForm() {
         width:        "100%",
         maxWidth:     380,
         background:   "linear-gradient(145deg, #151719, #0a0a0a 70%)",
-        border:       "1px solid rgba(183,110,121,0.28)",
+        border:       "1px solid rgba(184,135,70,0.28)",
         borderRadius: 20,
         padding:      "40px 32px",
         boxShadow:    "0 32px 80px rgba(0,0,0,0.75), inset 0 1px rgba(255,255,255,0.07)",
@@ -63,7 +63,7 @@ function GateForm() {
             fontSize:      11,
             fontWeight:    800,
             letterSpacing: "3px",
-            color:         "#D8A39D",
+            color:         "#D4A843",
             textTransform: "uppercase",
             marginBottom:  10,
           }}>
@@ -122,8 +122,8 @@ function GateForm() {
               width:        "100%",
               padding:      "13px",
               background:   loading || !password
-                ? "rgba(183,110,121,0.35)"
-                : "linear-gradient(135deg, #B76E79, #D8A39D)",
+                ? "rgba(184,135,70,0.35)"
+                : "linear-gradient(135deg, #B88746, #D4A843)",
               border:       "none",
               borderRadius: 10,
               color:        "#fff",

@@ -169,7 +169,7 @@ export default function PricingV1() {
         style={{
           position:   "relative",
           background: isPopular ? "#22262a" : "#1d2024",
-          border: `1px solid ${isPopular ? "rgba(183,110,121,0.48)" : isHovered ? "rgba(255,255,255,0.13)" : "rgba(255,255,255,0.075)"}`,
+          border: `1px solid ${isPopular ? "rgba(184,135,70,0.48)" : isHovered ? "rgba(255,255,255,0.13)" : "rgba(255,255,255,0.075)"}`,
           borderRadius: 20,
           padding:      isMobile ? "24px 20px 20px" : "18px 20px 14px",
           display:      "flex",
@@ -179,7 +179,7 @@ export default function PricingV1() {
           transition:    "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease",
           transform:     isHovered ? "translateY(-2px)" : "translateY(0)",
           boxShadow:     isPopular
-            ? "0 22px 60px rgba(0,0,0,0.44), 0 0 32px rgba(183,110,121,0.08)"
+            ? "0 22px 60px rgba(0,0,0,0.44), 0 0 32px rgba(184,135,70,0.08)"
             : isHovered
               ? "0 20px 54px rgba(0,0,0,0.30)"
               : "0 14px 40px rgba(0,0,0,0.22)",
@@ -189,7 +189,7 @@ export default function PricingV1() {
         {isPopular && (
           <div style={{
             position: "absolute", top: -12, left: "50%", transform: "translateX(-50%)",
-            background: "linear-gradient(135deg, #B76E79, #F1D0C8 55%, #9A5865)",
+            background: "linear-gradient(110deg, #B88746 0%, #E1BD73 30%, #F4DFA7 52%, #C9964B 75%, #E5C47D 100%)",
             color: "#2A0810",
             fontSize: 10, fontWeight: 750, padding: "6px 18px",
             borderRadius: 100, letterSpacing: "0.15px", whiteSpace: "nowrap",
@@ -345,9 +345,9 @@ export default function PricingV1() {
                 display: "inline-flex", alignItems: "center",
                 padding: "3px 9px", borderRadius: 6,
                 background: "rgba(0,0,0,0.28)",
-                border: `1px solid ${rule.accent ? "rgba(183,110,121,0.38)" : "rgba(255,255,255,0.08)"}`,
+                border: `1px solid ${rule.accent ? "rgba(184,135,70,0.38)" : "rgba(255,255,255,0.08)"}`,
                 fontSize: 12, fontWeight: 650,
-                color: rule.accent ? "#D8A39D" : "rgba(255,255,255,0.88)",
+                color: rule.accent ? "#D4A843" : "rgba(255,255,255,0.88)",
                 letterSpacing: "0.2px",
               }}>{rule.value}</span>
             </div>
@@ -420,14 +420,14 @@ export default function PricingV1() {
           overflow: hidden;
           background: #000000;
           color: #FFFFFF;
-          border: 1px solid rgba(183,110,121,0.52);
+          border: 1px solid rgba(184,135,70,0.52);
           box-shadow: none;
           transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
         .pricing-chrome-cta:hover {
           transform: translateY(-1px);
           background: rgba(255,255,255,0.03);
-          border-color: rgba(216,163,157,0.85);
+          border-color: rgba(212,168,67,0.85);
         }
         .pricing-chrome-cta:active { transform: translateY(0) scale(0.99); }
       `}</style>
@@ -444,7 +444,13 @@ export default function PricingV1() {
             lineHeight:    1.08,
             margin:        "0 0 10px",
           }}>
-            {L("Choisissez votre Challenge","Elige tu Desafío","Choose your Challenge")}
+            {L("Choisissez votre ","Elige tu ","Choose your ")}
+            <span style={{
+              background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>
+              {L("Challenge","Desafío","Challenge")}
+            </span>
           </h2>
           <p style={{ maxWidth: isMobile ? 480 : 860, margin: "0 auto", color: "rgba(255,255,255,0.58)", fontSize: isMobile ? 14 : 16, lineHeight: 1.55, fontWeight: 400 }}>
             {L(

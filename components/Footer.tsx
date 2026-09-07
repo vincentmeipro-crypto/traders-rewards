@@ -38,7 +38,9 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="home-footer" style={{ backgroundColor: "#000000", padding: "64px 24px 40px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+    <footer className="home-footer" style={{ backgroundColor: "#000000", padding: "0 24px 40px", position: "relative" }}>
+      {/* Trait doré champagne supérieur */}
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent 0%, #B88746 15%, #E8C98A 50%, #B88746 85%, transparent 100%)", opacity: 0.38, marginBottom: 64 }} />
       <div className="home-footer-shell" style={{ maxWidth: 1100, margin: "0 auto" }}>
         <div style={{ maxWidth: 860, margin: "0 auto 48px", textAlign: "center" }}>
           <div style={{ fontSize: 16, fontWeight: 900, letterSpacing: "3.5px", color: "#FFFFFF", textTransform: "uppercase", marginBottom: 16 }}>TRADERS REWARDS</div>
@@ -67,7 +69,7 @@ export default function Footer() {
           ))}
         </div>
 
-        <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 28 }} />
+        <div style={{ height: 1, background: "linear-gradient(90deg, transparent 0%, #B88746 15%, #E8C98A 50%, #B88746 85%, transparent 100%)", opacity: 0.28, marginBottom: 28 }} />
 
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "center", gap: 16, marginBottom: 20 }}>
           <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, margin: 0 }}>{T.footer.copyright}</p>

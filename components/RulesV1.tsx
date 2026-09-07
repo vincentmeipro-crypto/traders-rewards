@@ -5,7 +5,7 @@ import { useLanguage } from "@/lib/LanguageContext";
 import { SIZES_DATA, QUAL_DAY_USD } from "@/lib/rewardsData";
 import { useSizeSync } from "@/lib/SizeSyncContext";
 
-const ACCENT = "#D8A39D";
+const ACCENT = "#D4A843";
 const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 
 // ── Type ligne de règle ────────────────────────────────────────
@@ -84,7 +84,6 @@ export default function RulesV1() {
     subtitle:      string;
     floorBlock?:   { value: number };   // uniquement NIVEAU 02
     rows:          RuleRow[];
-    explainLines?: string[];            // uniquement NIVEAU 02
   }[] = [
     {
       level:    L("NIVEAU 01", "NIVEL 01", "LEVEL 01"),
@@ -100,7 +99,7 @@ export default function RulesV1() {
     {
       level:      L("NIVEAU 02", "NIVEL 02", "LEVEL 02"),
       title:      "COMPTE REWARD",
-      subtitle:   L("Débloquez votre première récompense", "Desbloquee su primera recompensa", "Unlock your first reward"),
+      subtitle:   L("Verrouillez votre EOD et encaissez votre première Récompense", "Bloquee su EOD y cobre su primera Recompensa", "Lock your EOD and collect your first Reward"),
       floorBlock: { value: floorDisplay },
       rows: [
         { label: L("JOURS QUALIFIANTS",  "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),   value: L("5 JOURS", "5 DÍAS", "5 DAYS") },
@@ -108,18 +107,6 @@ export default function RulesV1() {
         { label: L("CONSISTANCE",        "CONSISTENCIA",      "CONSISTENCY"),        value: "50 %" },
         { label: "REWARD MAX",                                                        value: fmt(rewardMax) },
         { label: L("PAIEMENT",           "PAGO",              "PAYMENT"),            value: "48H MAX" },
-      ],
-      explainLines: [
-        L(
-          "Une fois le seuil de +4 % atteint, votre stop devient fixe.",
-          "Una vez alcanzado el umbral de +4 %, su stop se vuelve fijo.",
-          "Once the +4% threshold is reached, your stop becomes fixed.",
-        ),
-        L(
-          "Vos profits au-dessus de ce plancher deviennent disponibles pour vos Rewards.",
-          "Sus ganancias por encima de este suelo quedan disponibles para sus Rewards.",
-          "Your profits above this floor become available for your Rewards.",
-        ),
       ],
     },
     {
@@ -150,7 +137,13 @@ export default function RulesV1() {
             {L("LES RÈGLES", "LAS REGLAS", "THE RULES")}
           </div>
           <h2 style={{ color: "#fff", fontSize: "clamp(2.1rem, 4.2vw, 3.5rem)", lineHeight: .98, letterSpacing: "-.045em", margin: 0, fontWeight: 900, whiteSpace: isMobile ? "normal" : "nowrap" }}>
-            {L("Trois niveaux. Des règles claires.", "Tres niveles. Reglas claras.", "Three levels. Clear rules.")}
+            {L("Trois niveaux. Des règles ", "Tres niveles. Reglas ", "Three levels. Clear ")}
+            <span style={{
+              background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>
+              {L("claires.", "claras.", "rules.")}
+            </span>
           </h2>
           <p style={{ color: "rgba(255,255,255,.58)", fontSize: "clamp(1rem, 1.25vw, 1.22rem)", lineHeight: 1.55, margin: "22px auto 0", maxWidth: 680 }}>
             {L(
@@ -172,7 +165,7 @@ export default function RulesV1() {
               gap:        4,
               padding:    4,
               borderRadius: 24,
-              border:     "1px solid rgba(183,110,121,0.18)",
+              border:     "1px solid rgba(184,135,70,0.18)",
               background: "rgba(255,255,255,0.025)",
             }}
           >
@@ -188,8 +181,8 @@ export default function RulesV1() {
                     minWidth:      isMobile ? 62 : 72,
                     padding:       isMobile ? "7px 12px" : "7px 16px",
                     borderRadius:  18,
-                    border:        selected ? "1px solid rgba(183,110,121,0.52)" : "1px solid transparent",
-                    background:    selected ? "rgba(183,110,121,0.16)" : "transparent",
+                    border:        selected ? "1px solid rgba(184,135,70,0.52)" : "1px solid transparent",
+                    background:    selected ? "rgba(184,135,70,0.16)" : "transparent",
                     color:         selected ? ACCENT : "rgba(255,255,255,0.42)",
                     fontSize:      10,
                     fontWeight:    900,
@@ -223,8 +216,8 @@ export default function RulesV1() {
                 background: index === 1
                   ? "linear-gradient(145deg, #0e1013, #080a0c)"
                   : "#0b0e11",
-                border:     `1px solid ${index === 1 ? "rgba(183,110,121,.48)" : "rgba(255,255,255,.12)"}`,
-                boxShadow:  index === 1 ? "0 18px 60px rgba(183,110,121,.11)" : "none",
+                border:     `1px solid ${index === 1 ? "rgba(184,135,70,.48)" : "rgba(255,255,255,.12)"}`,
+                boxShadow:  index === 1 ? "0 18px 60px rgba(184,135,70,.11)" : "none",
               }}
             >
               {/* En-tête de carte */}
@@ -244,20 +237,29 @@ export default function RulesV1() {
                 <div
                   style={{
                     background:   "rgba(255,255,255,0.035)",
-                    border:       "1px solid rgba(183,110,121,0.28)",
+                    border:       "1px solid rgba(184,135,70,0.28)",
                     borderRadius: 12,
                     padding:      "16px 18px",
                     marginBottom: 22,
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-                    <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: "2px", color: ACCENT, textTransform: "uppercase" as const }}>
-                      {L("PLANCHER FIXE", "SUELO FIJO", "FIXED FLOOR")}
+                  <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: "2px", color: ACCENT, textTransform: "uppercase" as const }}>
+                    {L("VERROUILLAGE EOD", "BLOQUEO EOD", "EOD LOCK")}
+                  </span>
+                  <p style={{ margin: "6px 0 10px", fontSize: 12, color: "rgba(255,255,255,0.46)", lineHeight: 1.4 }}>
+                    {L(
+                      "Le drawdown cesse de remonter et se fixe définitivement.",
+                      "El drawdown deja de subir y se fija definitivamente.",
+                      "The drawdown stops rising and locks permanently.",
+                    )}
+                  </p>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+                    <div style={{ fontSize: "clamp(1.5rem, 3vw, 1.85rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em" }}>
+                      {fmt(card.floorBlock.value)}
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "1px", textTransform: "uppercase" as const }}>
+                      {L("PLANCHER EOD", "SUELO EOD", "EOD FLOOR")}
                     </span>
-                    <span style={{ fontSize: 12, fontWeight: 900, color: ACCENT, letterSpacing: "1px" }}>+4 %</span>
-                  </div>
-                  <div style={{ fontSize: "clamp(1.5rem, 3vw, 1.85rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em" }}>
-                    {fmt(card.floorBlock.value)}
                   </div>
                 </div>
               )}
@@ -265,16 +267,6 @@ export default function RulesV1() {
               {/* Lignes de règles — rendu unifié */}
               {renderRows(card.rows)}
 
-              {/* Lignes d'explication — NIVEAU 02 uniquement */}
-              {card.explainLines && (
-                <div style={{ marginTop: 20, display: "flex", flexDirection: "column" as const, gap: 10 }}>
-                  {card.explainLines.map((line) => (
-                    <p key={line} style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.46)", lineHeight: 1.5 }}>
-                      {line}
-                    </p>
-                  ))}
-                </div>
-              )}
             </article>
           ))}
         </div>

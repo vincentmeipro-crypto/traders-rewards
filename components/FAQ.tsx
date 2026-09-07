@@ -344,9 +344,15 @@ export default function FAQ() {
       <div className="home-faq-shell" style={{ maxWidth: 780, margin: "0 auto" }}>
 
         <div style={{ textAlign: "center", marginBottom: 56 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#D8A39D", marginBottom: 16 }}>FAQ</div>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "2px", textTransform: "uppercase", color: "#D4A843", marginBottom: 16 }}>FAQ</div>
           <h2 style={{ fontSize: isMobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)", fontWeight: 900, color: "#FFFFFF", letterSpacing: "0.5px", lineHeight: 1.05, textTransform: "uppercase" }}>
-            {faqTitles[lang] || faqTitles.en}
+            {lang === "fr" ? "Questions " : lang === "es" ? "Preguntas " : "Frequently Asked "}
+            <span style={{
+              background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+            }}>
+              {lang === "fr" ? "fréquentes" : lang === "es" ? "frecuentes" : "Questions"}
+            </span>
           </h2>
         </div>
 
@@ -371,7 +377,7 @@ export default function FAQ() {
                 <span style={{ fontSize: 15, fontWeight: 600, color: "#FFFFFF", lineHeight: 1.4 }}>{item.q}</span>
                 <div style={{
                   width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-                  background: open === i ? "#D8A39D" : "rgba(255,255,255,0.08)",
+                  background: open === i ? "#D4A843" : "rgba(255,255,255,0.08)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   transition: "all 0.2s",
                 }}>

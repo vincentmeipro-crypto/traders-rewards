@@ -25,7 +25,7 @@ type Props = {
 
 // ── style tokens ───────────────────────────────────────────────
 
-const ACCENT = "#D8A39D";
+const ACCENT = "#D4A843";
 const RED    = "#ff5364";
 const GREEN  = "#47dc88";
 const ORANGE = "#f97316";
@@ -142,14 +142,14 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
         aria-labelledby="pdm-title"
         style={{
           background:   "linear-gradient(160deg, #0f1114 0%, #080a0c 100%)",
-          border:       "1px solid rgba(183,110,121,0.22)",
+          border:       "1px solid rgba(184,135,70,0.22)",
           borderRadius: 24,
           maxWidth:     880,
           width:        "100%",
           maxHeight:    "88vh",
           overflowY:    "auto",
           position:     "relative",
-          boxShadow:    "0 40px 120px rgba(0,0,0,0.90), 0 0 60px rgba(183,110,121,0.07)",
+          boxShadow:    "0 40px 120px rgba(0,0,0,0.90), 0 0 60px rgba(184,135,70,0.07)",
         }}
       >
         {/* Fermer */}
@@ -430,7 +430,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             </p>
 
             {/* Plancher fixe +4% */}
-            <div style={{ ...infoBox, border: "1px solid rgba(183,110,121,0.30)", marginBottom: 12 }}>
+            <div style={{ ...infoBox, border: "1px solid rgba(184,135,70,0.30)", marginBottom: 12 }}>
               <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 6 }}>
                 {L("PLANCHER FIXE +4%","SUELO FIJO +4%","FIXED FLOOR +4%")}
               </div>
@@ -513,7 +513,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                   {L("Drawdown fixe — ne trail plus","Drawdown fijo — sin trailing","Fixed drawdown — no longer trailing")}
                 </div>
               </div>
-              <div style={{ ...infoBox, border: "1px solid rgba(183,110,121,0.30)" }}>
+              <div style={{ ...infoBox, border: "1px solid rgba(184,135,70,0.30)" }}>
                 <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "1.5px", textTransform: "uppercase" as const, marginBottom: 5 }}>
                   {L("PLANCHER FIXE","SUELO FIJO","FIXED FLOOR")}
                 </div>
@@ -570,8 +570,8 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                   <div key={i} style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
                     padding: "4px 8px",
-                    background: i === 4 ? "rgba(183,110,121,0.07)" : "rgba(255,255,255,0.02)",
-                    border: `1px solid ${i === 4 ? "rgba(183,110,121,0.20)" : "rgba(255,255,255,0.05)"}`,
+                    background: i === 4 ? "rgba(184,135,70,0.07)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${i === 4 ? "rgba(184,135,70,0.20)" : "rgba(255,255,255,0.05)"}`,
                     borderRadius: 6,
                   }}>
                     <span style={{ fontSize: 10.5, color: i === 4 ? ACCENT : "rgba(255,255,255,0.42)", fontWeight: i === 4 ? 800 : 500 }}>
@@ -579,7 +579,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                     </span>
                     <span style={{ fontSize: 13, fontWeight: 800, color: i === 4 ? ACCENT : "#FFFFFF" }}>
                       {fmt(cap)}
-                      {i === 4 && <span style={{ fontSize: 8, fontWeight: 700, color: "rgba(183,110,121,0.60)", marginLeft: 5, letterSpacing: "0.8px" }}>MAX</span>}
+                      {i === 4 && <span style={{ fontSize: 8, fontWeight: 700, color: "rgba(184,135,70,0.60)", marginLeft: 5, letterSpacing: "0.8px" }}>MAX</span>}
                     </span>
                   </div>
                 ))}

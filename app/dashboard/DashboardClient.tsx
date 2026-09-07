@@ -577,7 +577,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
                 borderRadius: 10, marginBottom: 4, cursor: "pointer",
                 backgroundColor: activeTab === item.tab ? "rgba(255,255,255,0.07)" : "transparent",
-                borderLeft: activeTab === item.tab ? "2px solid rgba(216,163,157,0.4)" : "2px solid transparent",
+                borderLeft: activeTab === item.tab ? "2px solid rgba(212,168,67,0.4)" : "2px solid transparent",
                 transition: "all 0.15s",
               }}
               onMouseOver={e => { if (activeTab !== item.tab) e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.03)"; }}
@@ -611,7 +611,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <div style={{ display: "flex", alignItems: "center", gap: 10, width: "100%" }}>
                 <MessageCircle size={16} />
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
-                {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 20, height: 20, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#D8A39D", color: "#02070b", fontSize: 10, fontWeight: 900, boxShadow: "0 0 16px rgba(216,163,157,.35)" }} aria-label={`${supportUnreadCount} réponse(s) non lue(s)`}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
+                {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 20, height: 20, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#D4A843", color: "#02070b", fontSize: 10, fontWeight: 900, boxShadow: "0 0 16px rgba(212,168,67,.35)" }} aria-label={`${supportUnreadCount} réponse(s) non lue(s)`}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
               </div>
               <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", paddingLeft: 26 }}>contact@traders-rewards.eu</span>
             </div>
@@ -680,7 +680,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   padding: "16px 24px", background: "none", border: "none", cursor: "pointer",
                   borderBottom: "1px solid rgba(255,255,255,0.07)",
                   backgroundColor: activeTab === item.tab ? "rgba(255,255,255,0.07)" : "transparent",
-                  borderLeft: activeTab === item.tab ? "3px solid rgba(216,163,157,0.5)" : "3px solid transparent",
+                  borderLeft: activeTab === item.tab ? "3px solid rgba(212,168,67,0.5)" : "3px solid transparent",
                 }}>
                   <span style={{ color: activeTab === item.tab ? "#FFFFFF" : "rgba(255,255,255,0.45)" }}>{item.icon}</span>
                   <span style={{ fontSize: 16, fontWeight: activeTab === item.tab ? 800 : 600, ...(item.tab === "kyc" && kycStatus === "approved" ? { color: "#22c55e" } : chromeMenuText) }}>{item.label}</span>
@@ -691,7 +691,7 @@ export default function DashboardClient({ user }: { user: User }) {
                 <div onClick={() => { setActiveTab("support"); setMenuOpen(false); }} style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 0", color: "#fff", marginBottom: 12, cursor: "pointer" }}>
                   <MessageCircle size={20} />
                   <span style={{ fontSize: 15, fontWeight: 600 }}>{isFr ? "Centre d'aide" : "Help Center"}</span>
-                  {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 22, height: 22, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#D8A39D", color: "#02070b", fontSize: 10, fontWeight: 900 }}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
+                  {supportUnreadCount > 0 && <span style={{ marginLeft: "auto", minWidth: 22, height: 22, padding: "0 6px", display: "grid", placeItems: "center", borderRadius: 100, background: "#D4A843", color: "#02070b", fontSize: 10, fontWeight: 900 }}>{supportUnreadCount > 99 ? "99+" : supportUnreadCount}</span>}
                 </div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 12 }}>{user.email}</div>
                 <button onClick={handleLogout} style={{ display: "flex", alignItems: "center", gap: 10, background: "none", border: "none", cursor: "pointer", color: "#ef4444", fontSize: 15, fontWeight: 600, padding: 0 }}>
