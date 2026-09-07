@@ -2,10 +2,57 @@
 import { useState } from "react";
 import Navbar from "@/components/Navbar";
 
+// ── Palette dorée validée site ────────────────────────────────────
+const GOLD = "linear-gradient(110deg, #B88746 0%, #D6AD63 35%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)";
+
+const goldText: React.CSSProperties = {
+  background: GOLD,
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+  backgroundClip: "text",
+};
+
+const goldBorderBtn = (extra: React.CSSProperties = {}): React.CSSProperties => ({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  background: `linear-gradient(#090A0B, #090A0B) padding-box, ${GOLD} border-box`,
+  border: "1.5px solid transparent",
+  color: "#FFFFFF",
+  borderRadius: 12,
+  fontWeight: 700,
+  textDecoration: "none",
+  letterSpacing: "0.4px",
+  cursor: "pointer",
+  ...extra,
+});
+
+// ── Tiers ────────────────────────────────────────────────────────
 const TIERS = [
-  { label: "Débutant", sales: "1 – 10 ventes", rate: "10%", color: "rgba(255,255,255,0.5)", bg: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.1)" },
-  { label: "Partenaire", sales: "11 – 29 ventes", rate: "15%", color: "#9CCFEA", bg: "rgba(96,165,250,0.07)", border: "rgba(96,165,250,0.25)" },
-  { label: "Elite", sales: "30+ ventes", rate: "20%", color: "#9CCFEA", bg: "rgba(96,165,250,0.12)", border: "rgba(96,165,250,0.4)" },
+  {
+    label: "Débutant",
+    sales: "1 – 10 ventes",
+    rate: "10%",
+    color: "rgba(255,255,255,0.55)",
+    bg: "rgba(255,255,255,0.04)",
+    border: "rgba(255,255,255,0.10)",
+  },
+  {
+    label: "Partenaire",
+    sales: "11 – 29 ventes",
+    rate: "15%",
+    color: "rgba(212,168,67,0.85)",
+    bg: "rgba(212,168,67,0.06)",
+    border: "rgba(212,168,67,0.28)",
+  },
+  {
+    label: "Elite",
+    sales: "30+ ventes",
+    rate: "20%",
+    color: "#D4A843",
+    bg: "rgba(212,168,67,0.09)",
+    border: "rgba(212,168,67,0.48)",
+  },
 ];
 
 const STEPS = [
@@ -69,20 +116,39 @@ export default function PartenariatPage() {
         }
       `}</style>
 
-      {/* Hero */}
+      {/* ── Hero ── */}
       <section className="part-hero" style={{ background: "#000000" }}>
-        <div style={{ display: "inline-block", background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.25)", borderRadius: 100, padding: "6px 18px", fontSize: 11, fontWeight: 700, color: "#9CCFEA", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 20 }}>
+
+        {/* Eyebrow badge — doré premium */}
+        <div style={{
+          display: "inline-block",
+          background: "rgba(212,168,67,0.07)",
+          border: "1px solid rgba(212,168,67,0.30)",
+          borderRadius: 100,
+          padding: "6px 18px",
+          fontSize: 11,
+          fontWeight: 700,
+          color: "rgba(212,168,67,0.85)",
+          letterSpacing: "1.5px",
+          textTransform: "uppercase",
+          marginBottom: 20,
+        }}>
           Programme Partenariat
         </div>
+
+        {/* H1 — blanc + doré */}
         <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", fontWeight: 900, color: "#ffffff", lineHeight: 1.1, letterSpacing: "-1.5px", marginBottom: 20 }}>
           Gagnez de l'argent en<br />
-          <span style={{ color: "#9CCFEA" }}>recommandant Traders Rewards</span>
+          <span style={goldText}>recommandant Traders Rewards</span>
         </h1>
+
         <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 17, maxWidth: 560, margin: "0 auto 36px", lineHeight: 1.7 }}>
           Rejoignez notre programme d'affiliation et touchez jusqu'à <strong style={{ color: "#ffffff" }}>20% de commission</strong> sur chaque vente générée par votre lien.
         </p>
+
+        {/* CTA row */}
         <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-          <a href="/dashboard" style={{ background: "#9CCFEA", color: "#000", padding: "14px 32px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", letterSpacing: "0.5px" }}>
+          <a href="/dashboard" style={goldBorderBtn({ padding: "14px 32px", fontSize: 14 })}>
             Accéder à mon dashboard →
           </a>
           <a href="#contact" style={{ background: "transparent", color: "#fff", padding: "14px 32px", borderRadius: 8, fontWeight: 700, fontSize: 14, textDecoration: "none", border: "1px solid rgba(255,255,255,0.25)", letterSpacing: "0.5px" }}>
@@ -91,11 +157,14 @@ export default function PartenariatPage() {
         </div>
       </section>
 
-      {/* Tiers */}
+      {/* ── Structure des commissions ── */}
       <section style={{ padding: "80px 0", background: "#000000" }}>
         <div className="part-section">
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 12 }}>Structure des commissions</h2>
+            <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 12 }}>
+              Structure des{" "}
+              <span style={goldText}>commissions</span>
+            </h2>
             <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 15 }}>Plus vous apportez de clients, plus votre taux augmente automatiquement.</p>
           </div>
           <div className="part-grid-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 20 }}>
@@ -114,11 +183,14 @@ export default function PartenariatPage() {
         </div>
       </section>
 
-      {/* Comment ça marche */}
+      {/* ── Comment ça marche ── */}
       <section style={{ padding: "80px 0", background: "#000000", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="part-section">
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 12 }}>Comment ça marche ?</h2>
+            <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 12 }}>
+              Comment ça{" "}
+              <span style={goldText}>marche ?</span>
+            </h2>
           </div>
           <div className="part-grid-3" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
             {STEPS.map((s) => (
@@ -132,12 +204,15 @@ export default function PartenariatPage() {
         </div>
       </section>
 
-      {/* Avantages */}
+      {/* ── Pourquoi nous choisir ── */}
       <section style={{ padding: "80px 0", background: "#000000", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="part-section">
           <div className="part-grid-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "center" }}>
             <div>
-              <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 20 }}>Pourquoi nous choisir ?</h2>
+              <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 20 }}>
+                Pourquoi nous{" "}
+                <span style={goldText}>choisir ?</span>
+              </h2>
               {[
                 { icon: "💰", title: "Paiements rapides", desc: "Commissions versées chaque semaine, directement sur votre IBAN ou en crypto." },
                 { icon: "📊", title: "Dashboard dédié", desc: "Suivez vos conversions, commissions et lien en temps réel depuis votre espace client." },
@@ -153,7 +228,15 @@ export default function PartenariatPage() {
                 </div>
               ))}
             </div>
-            <div style={{ background: "linear-gradient(135deg, #111827 0%, #1e3a5f 100%)", border: "1px solid rgba(96,165,250,0.2)", borderRadius: 20, padding: "40px 32px", color: "#fff" }}>
+
+            {/* Carte "Exemple de revenus" — dark premium, sans bleu */}
+            <div style={{
+              background: "linear-gradient(145deg, rgba(13,18,23,.98), rgba(5,7,9,.98))",
+              border: "1px solid rgba(212,168,67,0.18)",
+              borderRadius: 20,
+              padding: "40px 32px",
+              color: "#fff",
+            }}>
               <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 16 }}>Exemple de revenus</div>
               {[
                 { label: "5 ventes / mois", earn: "~€250 – €350" },
@@ -162,7 +245,7 @@ export default function PartenariatPage() {
               ].map((ex) => (
                 <div key={ex.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 0", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
                   <span style={{ fontSize: 14, color: "rgba(255,255,255,0.7)" }}>{ex.label}</span>
-                  <span style={{ fontWeight: 800, fontSize: 16, color: "#9CCFEA" }}>{ex.earn}</span>
+                  <span style={{ fontWeight: 800, fontSize: 16, color: "#D4A843" }}>{ex.earn}</span>
                 </div>
               ))}
               <p style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 16 }}>*Estimations basées sur un panier moyen de €250, avec tiers 10% à 20%.</p>
@@ -171,11 +254,14 @@ export default function PartenariatPage() {
         </div>
       </section>
 
-      {/* Contact / Formulaire */}
+      {/* ── Contact / Formulaire ── */}
       <section id="contact" style={{ padding: "80px 0", background: "#000000", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="part-section" style={{ maxWidth: 640 }}>
           <div style={{ textAlign: "center", marginBottom: 40 }}>
-            <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 12 }}>Rejoindre le programme</h2>
+            <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, color: "#ffffff", marginBottom: 12 }}>
+              Rejoindre le{" "}
+              <span style={goldText}>programme</span>
+            </h2>
             <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 15 }}>Remplissez ce formulaire et notre équipe vous contacte sous 24h pour activer votre accès partenaire.</p>
           </div>
 
@@ -184,7 +270,9 @@ export default function PartenariatPage() {
               <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
               <div style={{ fontWeight: 800, fontSize: 20, color: "#ffffff", marginBottom: 8 }}>Demande envoyée !</div>
               <p style={{ color: "rgba(255,255,255,0.55)", fontSize: 15 }}>Notre équipe vous contactera sous 24h à l'adresse <strong style={{ color: "#fff" }}>{form.email}</strong>.<br />En attendant, vous pouvez déjà vous connecter pour obtenir votre lien.</p>
-              <a href="/dashboard" style={{ display: "inline-block", marginTop: 24, background: "#9CCFEA", color: "#000", padding: "12px 28px", borderRadius: 8, fontWeight: 700, textDecoration: "none" }}>Mon dashboard →</a>
+              <a href="/dashboard" style={goldBorderBtn({ marginTop: 24, padding: "12px 28px", fontSize: 14 })}>
+                Mon dashboard →
+              </a>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: "40px 32px", display: "flex", flexDirection: "column", gap: 16 }}>
@@ -207,11 +295,29 @@ export default function PartenariatPage() {
                 <textarea value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} rows={4} placeholder="Présentez-vous, votre méthode de promotion..." style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }} />
               </div>
               {err && <div style={{ color: "#ef4444", fontSize: 13 }}>{err}</div>}
-              <button type="submit" disabled={sending} style={{ background: "#9CCFEA", color: "#000", border: "none", borderRadius: 8, padding: "14px", fontSize: 15, fontWeight: 700, cursor: sending ? "not-allowed" : "pointer", opacity: sending ? 0.7 : 1 }}>
+              <button
+                type="submit"
+                disabled={sending}
+                style={{
+                  background: `linear-gradient(#090A0B, #090A0B) padding-box, ${GOLD} border-box`,
+                  border: "1.5px solid transparent",
+                  borderRadius: 10,
+                  padding: "14px",
+                  fontSize: 15,
+                  fontWeight: 700,
+                  color: "#FFFFFF",
+                  cursor: sending ? "not-allowed" : "pointer",
+                  opacity: sending ? 0.7 : 1,
+                  letterSpacing: "0.4px",
+                }}
+              >
                 {sending ? "Envoi en cours..." : "Envoyer ma demande →"}
               </button>
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textAlign: "center" }}>
-                Déjà inscrit ? <a href="/dashboard" style={{ color: "#9CCFEA", fontWeight: 600 }}>Accédez à votre lien de parrainage ici</a>
+                Déjà inscrit ?{" "}
+                <a href="/dashboard" style={{ color: "rgba(212,168,67,0.80)", fontWeight: 600 }}>
+                  Accédez à votre lien de parrainage ici
+                </a>
               </p>
             </form>
           )}
