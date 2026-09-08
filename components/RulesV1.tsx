@@ -11,7 +11,7 @@ const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 // ── Type ligne de règle ────────────────────────────────────────
 type RuleRow = { label: string; value: string; subNote?: string };
 
-export default function RulesV1() {
+export default function RulesV1({ compact = false }: { compact?: boolean }) {
   const { lang } = useLanguage();
   const L = (fr: string, es: string, en: string) =>
     lang === "fr" ? fr : lang === "es" ? es : en;
@@ -126,12 +126,17 @@ export default function RulesV1() {
 
   return (
     <section
-      id="rules"
-      style={{ scrollMarginTop: 92, padding: "clamp(72px, 8vw, 112px) 24px", background: "#000000" }}
+      id={compact ? undefined : "rules"}
+      style={{
+        scrollMarginTop: compact ? undefined : 92,
+        padding:         compact ? "0" : "clamp(72px, 8vw, 112px) 24px",
+        background:      compact ? "transparent" : "#000000",
+      }}
     >
-      <div style={{ maxWidth: 1500, margin: "0 auto" }}>
+      <div style={{ maxWidth: compact ? "none" : 1500, margin: "0 auto" }}>
 
-        {/* En-tête section */}
+        {/* En-tête section — masqué en mode compact (dashboard) */}
+        {!compact && (
         <header style={{ maxWidth: isMobile ? 900 : "none", margin: "0 auto", marginBottom: "clamp(38px, 5vw, 62px)", textAlign: "center" }}>
           <div style={{ color: ACCENT, fontSize: 11, fontWeight: 900, letterSpacing: "2.4px", marginBottom: 14 }}>
             {L("LES RÈGLES", "LAS REGLAS", "THE RULES")}
@@ -153,6 +158,7 @@ export default function RulesV1() {
             )}
           </p>
         </header>
+        )}
 
         {/* Sélecteur 25K / 50K / 100K */}
         <div style={{ marginBottom: "clamp(24px, 3vw, 40px)", display: "flex", justifyContent: "center" }}>

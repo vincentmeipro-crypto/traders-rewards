@@ -8,10 +8,10 @@ import { languages } from "@/lib/translations";
 import { useState, useEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 import QRCode from "qrcode";
-import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Target, Calendar, Shield, BarChart2, Percent, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle, Zap } from "lucide-react";
+import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDashboard, Wallet, BookOpen, Settings, Lock, CheckCircle, Shield, BarChart2, Award, History, FileText, Upload, User as UserIcon, Users, MessageCircle, Zap } from "lucide-react";
 import SupportTab from "./SupportTab";
 import TraderCockpit from "./TraderCockpit";
-import { extractContractRules } from "@/lib/contract-rules";
+import DashboardRulesTab from "./DashboardRulesTab";
 import { isV1Challenge } from "@/lib/v1-display";
 
 type Challenge = {
@@ -1078,141 +1078,10 @@ export default function DashboardClient({ user }: { user: User }) {
           </div>
         )}
 
-        {/* Rules Tab — dynamic from rules_snapshot, falls back to challenge columns */}
-        {activeTab === "rules" && (() => {
-          // Extract contract rules from the selected challenge's snapshot
-          const contractRules = challenge
-            ? extractContractRules(challenge.rules_snapshot, {
-                phase:                challenge.phase,
-                model:                challenge.model,
-                daily_drawdown_limit: challenge.daily_drawdown_limit,
-                total_drawdown_limit: challenge.total_drawdown_limit,
-                profit_target:        challenge.profit_target,
-                trading_days:         challenge.trading_days,
-              })
-            : null;
-
-          // Resolve values: snapshot → challenge columns → generic fallback
-          const pt   = contractRules?.currentPhase?.profit_target ?? challenge?.profit_target ?? null;
-          const minD  = challenge?.phase === "funded" ? 5 : 2;
-          const isFunded = challenge?.phase === "funded";
-          const selectedAccountSize = challenge
-            ? Number(String(challenge.account_size).replace(/[^0-9.]/g, "")) * (String(challenge.account_size).toUpperCase().includes("K") ? 1000 : 1)
-            : 0;
-          const rewardsDdPct = selectedAccountSize >= 100_000 ? 3 : 4;
-
-          const ruleCards: { title: string; desc: string; icon: React.ReactNode }[] = [];
-
-          // Objectif du niveau : +6% sur le Challenge, puis +4% sur le Compte Reward.
-          if (pt != null || isFunded) {
-            const displayedTarget = isFunded ? 4 : (pt ?? 6);
-            ruleCards.push({
-              icon: <Target size={20} color="rgba(255,255,255,0.65)" />,
-              title: isFunded ? C("Seuil de Reward", "Umbral de Reward", "Reward Threshold") : C("Objectif du Challenge", "Objetivo del Challenge", "Challenge Target"),
-              desc: C(
-                `Atteindre +${displayedTarget}% sur ce compte pour ${isFunded ? "débloquer la prochaine Reward" : "valider le Challenge"}.`,
-                `Alcanzar +${displayedTarget}% en esta cuenta para ${isFunded ? "desbloquear la siguiente Reward" : "validar el Challenge"}.`,
-                `Reach +${displayedTarget}% on this account to ${isFunded ? "unlock the next Reward" : "pass the Challenge"}.`,
-              ),
-            });
-          }
-
-          // Minimum trading days
-          ruleCards.push({
-            icon: <Calendar size={20} color="rgba(255,255,255,0.65)" />,
-            title: C("Jours de trading minimum", "Días mínimos de trading", "Minimum Trading Days"),
-            desc: C(
-              isFunded
-                ? `Vous devez enregistrer au moins ${minD} journées qualifiantes avant de demander la Reward.`
-                : `Vous devez trader au moins ${minD} jours différents avant de valider le Challenge.`,
-              isFunded
-                ? `Debes registrar al menos ${minD} días qualificativos antes de solicitar la Reward.`
-                : `Debes operar al menos ${minD} días distintos antes de validar el Challenge.`,
-              isFunded
-                ? `You need at least ${minD} qualifying days before requesting the Reward.`
-                : `You must trade at least ${minD} different days before passing the Challenge.`,
-            ),
-          });
-
-          // Une seule limite de risque : Drawdown total en modèle trailing EOD.
-          ruleCards.push({
-            icon: <Shield size={20} color="rgba(255,255,255,0.65)" />,
-            title: "Total Drawdown · Trailing EOD",
-            desc: C(
-              `Limite unique de ${rewardsDdPct}% : le plancher suit le plus haut solde de fin de journée. La violation est contrôlée sur l'equity en temps réel.`,
-              `Límite único de ${rewardsDdPct}%: el suelo sigue el saldo más alto al cierre del día. La violación se controla sobre el equity en tiempo real.`,
-              `Single ${rewardsDdPct}% limit: the floor follows the highest end-of-day balance. Breaches are checked against live equity.`,
-            ),
-          });
-
-          // Règle de consistance : 50% pour tous les niveaux (Challenge et Compte Reward)
-          ruleCards.push({
-            icon: <Percent size={20} color="rgba(255,255,255,0.65)" />,
-            title: C("Règle de consistance", "Regla de consistencia", "Consistency Rule"),
-            desc: C(
-              "Votre meilleure journée ne doit pas représenter plus de 50% de votre profit total.",
-              "Tu mejor día no debe representar más del 50% de tu beneficio total.",
-              "Your best day must not represent more than 50% of your total profit.",
-            ),
-          });
-
-          // Durée contractuelle : Challenge limité à 30 jours calendaires,
-          // Compte Reward sans limite de temps.
-          ruleCards.push({
-            icon: <Clock size={20} color="rgba(255,255,255,0.65)" />,
-            title: isFunded
-              ? C("Temps illimité", "Tiempo ilimitado", "Unlimited Duration")
-              : C("30 jours calendaires maximum", "30 días calendario máximo", "30 Calendar Days Maximum"),
-            desc: isFunded
-              ? C(
-                  "Le Compte Reward ne comporte aucune limite de temps pour atteindre le prochain seuil.",
-                  "La Cuenta Reward no tiene límite de tiempo para alcanzar el siguiente umbral.",
-                  "The Compte Reward has no time limit for reaching the next threshold.",
-                )
-              : C(
-                  "Le Challenge doit être validé dans les 30 jours calendaires suivant sa création.",
-                  "El Challenge debe completarse en los 30 días calendario siguientes a su creación.",
-                  "The Challenge must be completed within 30 calendar days of its creation.",
-                ),
-          });
-          ruleCards.push({
-            icon: <BarChart2 size={20} color="rgba(255,255,255,0.65)" />,
-            title: C("Tous styles de trading", "Todos los estilos de trading", "Any Trading Style"),
-            desc: C(
-              "Scalping, swing trading, news trading — toutes les stratégies sont autorisées.",
-              "Scalping, swing trading, news trading — todas las estrategias están permitidas.",
-              "Scalping, swing trading, news trading — all strategies are allowed.",
-            ),
-          });
-
-          return (
-            <div>
-              <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rules}</h1>
-              <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>
-                {contractRules?.hasSnapshot
-                  ? C("Règles contractuelles spécifiques à ce compte — issues du snapshot d'achat.", "Reglas contractuales específicas de esta cuenta — extraídas del snapshot de compra.", "Contractual rules specific to this account — from your purchase snapshot.")
-                  : T.dash.tradingRulesSub}
-              </p>
-              {activeChallenges.length > 1 && (
-                <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 12, background: "rgba(255,255,255,0.04)" }}>
-                  <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{C("COMPTE", "CUENTA", "ACCOUNT")}</span>
-                  <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
-                    {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER"}</option>)}
-                  </select>
-                </label>
-              )}
-              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: 16 }}>
-                {ruleCards.map((rule, i) => (
-                  <div key={i} className="card" style={{ padding: 24 }}>
-                    <div style={{ backgroundColor: "rgba(255,255,255,0.07)", borderRadius: 10, padding: 10, display: "inline-flex", marginBottom: 14 }}>{rule.icon}</div>
-                    <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{rule.title}</div>
-                    <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, lineHeight: 1.6 }}>{rule.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })()}
+        {/* Rules Tab — 3 cartes NIVEAU 01 / 02 / 03 réutilisant RulesV1 du site public */}
+        {activeTab === "rules" && (
+          <DashboardRulesTab challengeAccountSize={challenge?.account_size} />
+        )}
 
         {/* Profile Tab */}
         {activeTab === "profile" && (

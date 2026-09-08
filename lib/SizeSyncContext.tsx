@@ -19,8 +19,8 @@ const SizeSyncContext = createContext<SizeSyncCtx>({
   setSelectedSizeIndex: () => {},
 });
 
-export function SizeSyncProvider({ children }: { children: React.ReactNode }) {
-  const [selectedSizeIndex, setSelectedSizeIndex] = useState(1);
+export function SizeSyncProvider({ children, initialIndex = 1 }: { children: React.ReactNode; initialIndex?: number }) {
+  const [selectedSizeIndex, setSelectedSizeIndex] = useState(initialIndex);
   return (
     <SizeSyncContext.Provider value={{ selectedSizeIndex, setSelectedSizeIndex }}>
       {children}
