@@ -36,7 +36,7 @@ import styles from "./TraderCockpit.module.css";
 import { extractContractRules } from "@/lib/contract-rules";
 import { getSyncFreshness } from "@/lib/sync-freshness";
 import { QUAL_DAY_USD, REWARD_AMOUNTS } from "@/lib/rewardsData";
-import { getTraderV1Level } from "@/lib/v1-engine";
+import { getTraderV1Level, getV1DdPctByBalance, V1_REWARD_QUAL } from "@/lib/v1-engine";
 import {
   isV1Challenge,
   getV1DdUsd,
@@ -431,18 +431,38 @@ export default function TraderCockpit({
   // nextRewardNumber=null quand parcours terminé (≥5 Rewards) → fallback 5 pour l'affichage
   const currentRewardNumber = traderLevel.nextRewardNumber ?? 5;
   const currentRewardCap = REWARD_AMOUNTS[sizeIndex][currentRewardNumber - 1];
-  const displayProfitTargetPct = challenge.phase === "funded" ? 4 : isTwoStepPhase2 ? challenge.profit_target : 6;
-  const displayDrawdownPct = accountSize >= 100_000 ? 3 : 4;
+  // N1 uniquement : objectif +6% (jamais utilisé comme "profit target" au N2/N3)
+  const displayProfitTargetPct = isTwoStepPhase2 ? challenge.profit_target : 6;
+  // DD% — source canonique via helper (4% pour 25K/50K, 3% pour 100K)
+  const displayDrawdownPct = getV1DdPctByBalance(challenge.start_balance);
+  // N1 : cible de validation
   const profitTargetUsd = challenge.start_balance * displayProfitTargetPct / 100;
-  const targetBalance = challenge.start_balance + profitTargetUsd;
-  const profitRemaining = Math.max(0, targetBalance - effectiveBalance);
-  const profitProgress = profitTargetUsd > 0 ? clamp(profit / profitTargetUsd * 100) : 100;
+  const targetBalance   = challenge.start_balance + profitTargetUsd;  // N1 uniquement
+  // N2 / N3 : plancher fixe = capital initial + 4% (ex. 50K → $52 000)
+  const floorBalance    = challenge.start_balance * (1 + V1_REWARD_QUAL.profitTargetPct / 100);
+  // Restant objectif N1 / 0 pour N2 et N3 (pas d'objectif profit)
+  const profitRemaining = isRewardAccount ? 0 : Math.max(0, targetBalance - effectiveBalance);
+  const profitProgress  = !isRewardAccount && profitTargetUsd > 0 ? clamp(profit / profitTargetUsd * 100) : 100;
 
-  // minDays from contract rules (snapshot → fallback)
-  // V1 Challenge : 2 jours minimum (V1.2)
-  const minDays = isRewardAccount ? (isTraderReward ? 0 : 5) : isV1 ? V1_CHALLENGE_MIN_DAYS : isTwoStepPhase2 ? contractRules.minTradingDays : 0;
+  // minDays : N2/N3 = 5 jours qualifiants / N1 V1 = 2 jours minimum
+  const minDays = isRewardAccount ? 5 : isV1 ? V1_CHALLENGE_MIN_DAYS : isTwoStepPhase2 ? contractRules.minTradingDays : 0;
 
-  const daysRemaining = Math.max(0, minDays - challenge.trading_days);
+  // Jours qualifiants réels (N2/N3) : profit journalier >= seuil qualifiant par taille de compte
+  const qualifyingDaysCount = useMemo(() => {
+    if (!isRewardAccount) return 0;
+    const pnlByDay = new Map<string, number>();
+    for (const trade of trades) {
+      if (!trade.date) continue;
+      const key = `${trade.date.getFullYear()}-${trade.date.getMonth()}-${trade.date.getDate()}`;
+      pnlByDay.set(key, (pnlByDay.get(key) ?? 0) + trade.profit);
+    }
+    return [...pnlByDay.values()].filter(pnl => pnl >= qualifyingDayUsd).length;
+  }, [trades, qualifyingDayUsd, isRewardAccount]);
+
+  // daysRemaining : N2/N3 = jours qualifiants manquants / N1 = jours tradés manquants
+  const daysRemaining = isRewardAccount
+    ? Math.max(0, 5 - qualifyingDaysCount)
+    : Math.max(0, minDays - challenge.trading_days);
   const dailyReferenceBalance = challenge.daily_start_balance ?? challenge.start_balance;
   const dailyLimitUsd = dailyReferenceBalance * challenge.daily_drawdown_limit / 100;
   const dailyFloor = dailyReferenceBalance - dailyLimitUsd;
@@ -685,30 +705,76 @@ export default function TraderCockpit({
               </div>
             </div>
 
-            {/* Objective remaining */}
+            {/* KPI 2 — N1: Objectif +6% restant / N2: Plancher EOD / N3: DD FIXE */}
             <div className={`${styles.card} ${styles.kpi}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{isTraderReward ? C("Seuil +4% restant", "Umbral +4% restante", "+4% threshold left") : `${C("Objectif", "Objetivo", "Target")} +${displayProfitTargetPct.toFixed(0)}% ${C("restant", "restante", "left")}`}</span><Target color={BLUE} size={17} /></div>
-              <div>
-                <div className={styles.kpiValue}>{money(profitRemaining)}</div>
-                <div className={styles.kpiMeta}>
-                  <span>{profitProgress.toFixed(0)}% {C("accompli", "completado", "complete")}</span>
-                  <span>{money(targetBalance)}</span>
-                </div>
-                <Meter value={profitProgress} color={GREEN} />
-              </div>
+              {!isRewardAccount ? (
+                /* N1 CHALLENGER : objectif restant */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{`${C("OBJECTIF","OBJETIVO","TARGET")} +${displayProfitTargetPct.toFixed(0)}% ${C("RESTANT","RESTANTE","LEFT")}`}</span><Target color={BLUE} size={17} /></div>
+                  <div>
+                    <div className={styles.kpiValue}>{money(profitRemaining)}</div>
+                    <div className={styles.kpiMeta}>
+                      <span>{profitProgress.toFixed(0)}% {C("accompli","completado","complete")}</span>
+                      <span>{money(targetBalance)}</span>
+                    </div>
+                    <Meter value={profitProgress} color={GREEN} />
+                  </div>
+                </>
+              ) : isTraderReward ? (
+                /* N3 TRADER REWARD : drawdown fixe en $ */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("DD FIXE","DD FIJO","FIXED DD")}</span><ShieldCheck color={BLUE} size={17} /></div>
+                  <div>
+                    <div className={styles.kpiValue}>{money(v1DdUsd)}</div>
+                    <div className={styles.kpiMeta}>
+                      <span>{C("Drawdown fixe","Drawdown fijo","Fixed drawdown")}</span>
+                      <span>{C("Non trailing","No trailing","Non-trailing")}</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* N2 COMPTE REWARD : plancher EOD à atteindre */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("PLANCHER EOD","SUELO EOD","EOD FLOOR")}</span><ShieldCheck color={BLUE} size={17} /></div>
+                  <div>
+                    <div className={styles.kpiValue}>{money(floorBalance)}</div>
+                    <div className={styles.kpiMeta}>
+                      <span>{C("Seuil de verrouillage","Umbral de bloqueo","Lock threshold")}</span>
+                      <span>{C("Equity à atteindre","Equidad objetivo","Target equity")}</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
-            {/* Trailing Drawdown EOD — unique limite de risque V1 */}
+            {/* KPI 3 — N1/N2: TRAILING DD EOD (buffer) / N3: PLANCHER FIXE */}
             <div className={`${styles.card} ${styles.kpi}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>TRAILING DD EOD</span><ShieldCheck color={BLUE} size={17} /></div>
-              <div>
-                <div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalBuffer)}</div>
-                <div className={styles.kpiMeta}>
-                  <span>{totalRiskUsed.toFixed(0)}% {C("utilisé", "usado", "used")}</span>
-                  <span>{C("Plancher", "Suelo", "Floor")} {money(totalFloor)}</span>
-                </div>
-                <Meter value={totalRiskUsed} color={riskColor(totalRiskUsed)} />
-              </div>
+              {isTraderReward ? (
+                /* N3 TRADER REWARD : plancher fixe immuable */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("PLANCHER FIXE","SUELO FIJO","FIXED FLOOR")}</span><ShieldCheck color={BLUE} size={17} /></div>
+                  <div>
+                    <div className={styles.kpiValue}>{money(floorBalance)}</div>
+                    <div className={styles.kpiMeta}>
+                      <span>{C("Immuable — non trailing","Inmutable — no trailing","Immutable — non-trailing")}</span>
+                      <span>{money(Math.max(0, equity - floorBalance))} {C("de marge","de margen","buffer")}</span>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* N1 & N2 : trailing DD EOD */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>TRAILING DD EOD</span><ShieldCheck color={BLUE} size={17} /></div>
+                  <div>
+                    <div className={styles.kpiValue} style={{ color: totalRiskUsed >= 60 ? riskColor(totalRiskUsed) : "#fff" }}>{money(totalBuffer)}</div>
+                    <div className={styles.kpiMeta}>
+                      <span>{totalRiskUsed.toFixed(0)}% {C("utilisé","usado","used")}</span>
+                      <span>{C("Plancher","Suelo","Floor")} {money(totalFloor)}</span>
+                    </div>
+                    <Meter value={totalRiskUsed} color={riskColor(totalRiskUsed)} />
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Règle de consistance */}
@@ -723,55 +789,64 @@ export default function TraderCockpit({
               </div>
             </div>
 
-            {/* Condition de jours, adaptée au niveau */}
+            {/* KPI 5 — Jours qualifiants (N2/N3 avec compteur réel) / Jours minimum (N1) */}
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
               <div className={styles.kpiTop}>
                 <span className={styles.kpiLabel}>
-                  {isTraderReward
-                    ? `REWARD #${currentRewardNumber}`
-                    : isRewardAccount
-                      ? C("Jours qualifiants", "Días de calificación", "Qualifying days")
-                      : isV1
-                        ? C("Jours minimum", "Días mínimos", "Minimum days")         // V1 Challenge : 2 jours minimum (V1.2)
-                        : C("Jours minimum", "Días mínimos", "Minimum days")}
+                  {isRewardAccount
+                    ? C("JOURS QUALIFIANTS","DÍAS VÁLIDOS","QUALIFYING DAYS")
+                    : C("JOURS MINIMUM","DÍAS MÍNIMOS","MINIMUM DAYS")}
                 </span>
                 <CalendarDays color={BLUE} size={16} />
               </div>
               <div>
                 <div className={styles.kpiValue}>
-                  {isTraderReward
-                    ? money(currentRewardCap)
-                    : isRewardAccount
-                      ? "5 MIN"
-                      : isV1
-                        ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS}`
-                        : challenge.trading_days}
+                  {isRewardAccount
+                    ? `${qualifyingDaysCount}/5`
+                    : isV1
+                      ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS}`
+                      : challenge.trading_days}
                 </div>
                 <div className={styles.kpiMeta}>
                   <span>
-                    {isTraderReward
-                      ? C("Plafond maximum", "Límite máximo", "Maximum cap")
-                      : isRewardAccount
-                        ? `${money(qualifyingDayUsd)} ${C("minimum / jour", "mínimo / día", "minimum / day")}`
-                        : isV1
-                          ? C("2 jours minimum", "2 días mínimos", "2 days minimum")
-                          : C("Jours tradés", "Días operados", "Days traded")}
+                    {isRewardAccount
+                      ? `${money(qualifyingDayUsd)} ${C("min / jour","mín / día","min / day")}`
+                      : isV1
+                        ? C("2 jours minimum","2 días mínimos","2 days minimum")
+                        : C("Jours tradés","Días operados","Days traded")}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Durée contractuelle */}
+            {/* KPI 6 — N1: Durée 30J / N2: Reward Max / N3: Paiement 48H */}
             <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
-              <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("Durée", "Duración", "Duration")}</span><Clock3 color={BLUE} size={16} /></div>
-              <div><div className={styles.kpiValue}>{isRewardAccount ? C("ILLIMITÉE", "ILIMITADA", "UNLIMITED") : "30 J."}</div><div className={styles.kpiMeta}><span>{isRewardAccount ? C("Aucune limite", "Sin límite", "No time limit") : C("Jours calendaires max", "Días calendario máx", "Maximum calendar days")}</span></div></div>
+              {!isRewardAccount ? (
+                /* N1 : durée max 30 jours */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("DURÉE","DURACIÓN","DURATION")}</span><Clock3 color={BLUE} size={16} /></div>
+                  <div><div className={styles.kpiValue}>30 J.</div><div className={styles.kpiMeta}><span>{C("Jours calendaires max","Días calendario máx","Maximum calendar days")}</span></div></div>
+                </>
+              ) : isTraderReward ? (
+                /* N3 : délai de paiement */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("PAIEMENT","PAGO","PAYMENT")}</span><Wallet color={BLUE} size={16} /></div>
+                  <div><div className={styles.kpiValue}>48H MAX</div><div className={styles.kpiMeta}><span>{C("Délai de versement","Plazo de pago","Payment delay")}</span></div></div>
+                </>
+              ) : (
+                /* N2 : plafond Reward #1 */
+                <>
+                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("REWARD MAX","REWARD MÁX","MAX REWARD")}</span><Trophy color={BLUE} size={16} /></div>
+                  <div><div className={styles.kpiValue}>{money(currentRewardCap)}</div><div className={styles.kpiMeta}><span>{C("Plafond Reward #1","Tope Reward #1","Reward #1 cap")}</span></div></div>
+                </>
+              )}
             </div>
 
           </div>
 
           {/* Journey stepper */}
           <div className={`${styles.card} ${styles.journey}`}>
-            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{C("Ton parcours", "Tu recorrido", "Your journey")}</strong><span>{isTraderReward ? (traderLevel.terminated ? C("PARCOURS COMPLÉTÉ ✓", "RECORRIDO COMPLETO ✓", "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : isV1 && !isRewardAccount ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS} ${C("jour(s) tradé(s)", "día(s) operado(s)", "day(s) traded")}` : `${challenge.trading_days}/${minDays} ${C("jours validés", "días completados", "days complete")}`}</span></div>
+            <div className={styles.journeyHead}><strong className={styles.journeyTitle}>{C("Ton parcours", "Tu recorrido", "Your journey")}</strong><span>{isTraderReward ? (traderLevel.terminated ? C("PARCOURS COMPLÉTÉ ✓", "RECORRIDO COMPLETO ✓", "JOURNEY COMPLETE ✓") : `REWARD #${currentRewardNumber} / #5`) : isRewardAccount ? `${qualifyingDaysCount}/5 ${C("jours qualifiants","días válidos","qualifying days")}` : isV1 ? `${challenge.trading_days}/${V1_CHALLENGE_MIN_DAYS} ${C("jour(s) tradé(s)","día(s) operado(s)","day(s) traded")}` : `${challenge.trading_days}/${minDays} ${C("jours validés","días completados","days complete")}`}</span></div>
             <div className={styles.steps} style={{ gridTemplateColumns: `repeat(${phaseSteps.length},minmax(120px,1fr))` }}>
               {phaseSteps.map((step, index) => <div key={step} className={`${styles.step} ${index < phaseIndex ? styles.stepDone : index === phaseIndex ? styles.stepActive : ""}`}><span className={styles.stepDot}>{index < phaseIndex ? <Check size={12} /> : index + 1}</span><span className={styles.stepText}>{step}</span></div>)}
             </div>
