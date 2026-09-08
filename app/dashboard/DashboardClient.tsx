@@ -12,6 +12,8 @@ import { LogOut, TrendingUp, ShieldCheck, Clock, Trophy, ChevronRight, LayoutDas
 import SupportTab from "./SupportTab";
 import TraderCockpit from "./TraderCockpit";
 import DashboardRulesTab from "./DashboardRulesTab";
+import type { RewardEligibility } from "@/lib/reward-eligibility";
+import { validRewardAmount } from "@/lib/reward-eligibility";
 import { isV1Challenge } from "@/lib/v1-display";
 
 type Challenge = {
@@ -283,6 +285,25 @@ export default function DashboardClient({ user }: { user: User }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [payoutForm, setPayoutForm] = useState({ amount: "", wallet_address: "", payment_method: "crypto" });
+  const [rewardAccounts, setRewardAccounts] = useState<(RewardEligibility & { id: string })[]>([]);
+  const [eligibilityLoading, setEligibilityLoading] = useState(false);
+  const [eligibilityRefresh, setEligibilityRefresh] = useState(0);
+  const [payoutAccountId, setPayoutAccountId] = useState("");
+  const [payoutError, setPayoutError] = useState("");
+  const payoutAccounts = allChallenges.filter(c => c.phase === "funded" && ["active", "funded"].includes(c.status) && !c.terminated_at);
+  const payoutChallenge = payoutAccounts.find(c => c.id === payoutAccountId) ?? payoutAccounts[0] ?? null;
+  const rewardEligibility = rewardAccounts.find(c => c.id === payoutChallenge?.id);
+  const rewardReasons: Record<string, string> = {
+    days: C("5 jours qualifiants requis", "Se requieren 5 días válidos", "5 qualifying days required"),
+    consistency: C("Consistance : 50 % maximum", "Consistencia: máximo 50 %", "Consistency: 50% maximum"),
+    floor: C("Aucun montant disponible au-dessus du plancher", "Sin importe disponible sobre el suelo", "No amount available above the floor"),
+    pending: C("Une demande est déjà en cours", "Ya hay una solicitud pendiente", "A request is already pending"),
+    kyc: C("KYC à valider", "KYC pendiente", "KYC approval required"),
+    terminated: C("Parcours terminé ou compte arrêté", "Recorrido terminado o cuenta detenida", "Journey complete or account stopped"),
+    inactive: C("Compte inactif", "Cuenta inactiva", "Inactive account"),
+    unsupported: C("Contrat non pris en charge", "Contrato no compatible", "Unsupported contract"),
+    unavailable: C("Données de trading indisponibles : demande bloquée", "Datos no disponibles: solicitud bloqueada", "Trading data unavailable: request blocked"),
+  };
   const [payoutLoading, setPayoutLoading] = useState(false);
   const [payoutSuccess, setPayoutSuccess] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -466,21 +487,46 @@ export default function DashboardClient({ user }: { user: User }) {
     router.refresh();
   };
 
+  useEffect(() => {
+    if (activeTab !== "payouts") return;
+    let cancelled = false;
+    setEligibilityLoading(true);
+    setRewardAccounts([]);
+    fetch("/api/payouts/eligibility", { cache: "no-store" })
+      .then(async r => { if (!r.ok) throw new Error("unavailable"); return r.json(); })
+      .then(data => { if (!cancelled && Array.isArray(data)) setRewardAccounts(data); })
+      .catch(() => { if (!cancelled) setPayoutError(lang === "fr" ? "Vérification des comptes indisponible. Réessayez." : lang === "es" ? "Verificación no disponible. Inténtalo de nuevo." : "Account verification unavailable. Try again."); })
+      .finally(() => { if (!cancelled) setEligibilityLoading(false); });
+    return () => { cancelled = true; };
+  }, [activeTab, eligibilityRefresh, lang]);
+
   const handlePayoutSubmit = async () => {
+    if (!payoutChallenge || payoutLoading || eligibilityLoading || !rewardEligibility?.eligible || !validRewardAmount(Number(payoutForm.amount), rewardEligibility.maximum)) return;
     setPayoutLoading(true);
-    await fetch("/api/payouts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: Math.max(0, profitAmount),
-        payment_method: payoutForm.payment_method,
-        wallet_address: payoutForm.wallet_address,
-        challenge_id: challenge?.id,
-      }),
-    });
-    setPayoutLoading(false);
-    setPayoutSuccess(true);
-    setTimeout(() => { setPayoutSuccess(false); }, 2000);
+    setPayoutError("");
+    setPayoutSuccess(false);
+    try {
+      const response = await fetch("/api/payouts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Number(payoutForm.amount),
+          payment_method: payoutForm.payment_method,
+          wallet_address: payoutForm.wallet_address.trim(),
+          challenge_id: payoutChallenge.id,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || C("Demande refusée", "Solicitud rechazada", "Request rejected"));
+      setAllPayouts(previous => [result, ...previous]);
+      setPayoutSuccess(true);
+      setEligibilityRefresh(v => v + 1);
+      setPayoutForm(f => ({ ...f, amount: "" }));
+    } catch (error) {
+      setPayoutError(error instanceof Error ? error.message : C("Échec de la demande", "Error de solicitud", "Request failed"));
+    } finally {
+      setPayoutLoading(false);
+    }
   };
 
   const handleKycSubmit = async () => {
@@ -1234,8 +1280,15 @@ export default function DashboardClient({ user }: { user: User }) {
           <div style={{ maxWidth: 1100 }}>
             <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rewards}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.rewardsSub}</p>
+            {payoutAccounts.length > 0 && <label style={{ display: "block", marginBottom: 20 }}>
+              {C("Compte Reward", "Cuenta Reward", "Reward account")}
+              <select value={payoutChallenge?.id ?? ""} disabled={payoutLoading} onChange={e => { setPayoutAccountId(e.target.value); setPayoutError(""); setPayoutSuccess(false); setPayoutForm(f => ({ ...f, amount: "" })); }} style={{ display: "block", width: "100%", padding: 12, background: "#222", color: "white", marginTop: 8 }}>
+                {payoutAccounts.map(c => <option key={c.id} value={c.id}>{c.account_size} · {c.mt5_login ?? c.id} · {rewardAccounts.find(r => r.id === c.id)?.eligible ? C("Éligible", "Elegible", "Eligible") : C("Conditions à vérifier", "Condiciones pendientes", "Conditions pending")}</option>)}
+              </select>
+            </label>}
+            {payoutError && <p role="alert" style={{ color: "#ef4444" }}>{payoutError}</p>}
             <div style={{ display: "grid", gridTemplateColumns: !isMobile && allPayouts.length > 0 ? "1fr 1fr" : "1fr", gap: 32, alignItems: "start" }}>
-            {challenge?.phase !== "funded" ? (
+            {payoutChallenge?.phase !== "funded" ? (
               <div className="card" style={{ padding: 32, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Lock size={40} color="#444" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{T.dash.rewardsLocked}</div>
@@ -1252,7 +1305,7 @@ export default function DashboardClient({ user }: { user: User }) {
                   {kycStatus === "pending" ? T.kyc.gateBtnPending : T.kyc.gateBtn}
                 </button>
               </div>
-            ) : allPayouts.some(p => p.challenge_id === challenge?.id && p.status === "pending") ? (
+            ) : allPayouts.some(p => p.challenge_id === payoutChallenge?.id && p.status === "pending") ? (
               <div className="card" style={{ padding: 40, textAlign: "center" }}>
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}><Clock size={40} color="#f59e0b" /></div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>
@@ -1264,35 +1317,18 @@ export default function DashboardClient({ user }: { user: User }) {
               </div>
             ) : (
               <div className="card" style={{ padding: 32 }}>
-                {/* ── 5 étapes de validation automatique ── */}
-                <div style={{ fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 18 }}>
-                  {C("VALIDATION AUTOMATIQUE", "VALIDACIÓN AUTOMÁTICA", "AUTOMATIC VALIDATION")}
-                </div>
-                <div style={{ marginBottom: 28 }}>
-                  {([
-                    C("KYC validé", "KYC verificado", "KYC verified"),
-                    C("Moyen de paiement validé", "Método de pago validado", "Payment method validated"),
-                    C("Règles du compte respectées", "Reglas de cuenta respetadas", "Account rules respected"),
-                    C("Montant Reward validé", "Importe Reward validado", "Reward amount validated"),
-                    C("Paiement automatique en 48H", "Pago automático en 48H", "Automatic payment in 48H"),
-                  ] as string[]).map((label, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < 4 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-                      <div style={{
-                        width: 22, height: 22, borderRadius: "50%", flexShrink: 0,
-                        background: i === 4 ? "rgba(255,255,255,0.07)" : "rgba(34,197,94,0.12)",
-                        border: `1px solid ${i === 4 ? "rgba(255,255,255,0.15)" : "rgba(34,197,94,0.28)"}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>
-                        <CheckCircle size={12} color={i === 4 ? "rgba(255,255,255,0.65)" : "#22c55e"} />
-                      </div>
-                      <span style={{ flex: 1, fontSize: 14, fontWeight: 600, color: i === 4 ? "rgba(255,255,255,0.65)" : "#FFFFFF" }}>{label}</span>
-                      {i === 3 && (
-                        <span style={{ fontWeight: 900, fontSize: 15, color: "#FFFFFF", fontVariantNumeric: "tabular-nums" }}>
-                          ${Math.max(0, profitAmount).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                <div style={{ marginBottom: 24 }}>
+                  {eligibilityLoading ? <p>{C("Vérification des conditions…", "Verificando condiciones…", "Checking eligibility…")}</p> : rewardEligibility ? <>
+                    <p>{C("Plancher à conserver", "Suelo a conservar", "Required floor")}: {rewardEligibility.floor.toLocaleString("en-US")} USD</p>
+                    <p>{C("Disponible maximum", "Máximo disponible", "Maximum available")}: {rewardEligibility.maximum.toLocaleString("en-US")} USD · Reward #{rewardEligibility.rewardNumber ?? "—"}</p>
+                    <p>{rewardEligibility.qualifyingDays}/5 {C("jours qualifiants", "días válidos", "qualifying days")} · {C("Consistance", "Consistencia", "Consistency")}: {rewardEligibility.consistency == null ? "—" : rewardEligibility.consistency.toFixed(1) + "%"}</p>
+                    {rewardEligibility.reasons.map(reason => <p key={reason} style={{ color: "#f59e0b" }}>{rewardReasons[reason] ?? reason}</p>)}
+                  </> : <p>{C("Éligibilité non vérifiée", "Elegibilidad no verificada", "Eligibility not verified")}</p>}
+                  <button type="button" disabled={eligibilityLoading || payoutLoading} onClick={() => { setPayoutError(""); setEligibilityRefresh(v => v + 1); }}>{C("Actualiser", "Actualizar", "Refresh")}</button>
+                  <label style={{ display: "block", marginTop: 18 }}>
+                    {C("Montant demandé (USD) — aucun minimum", "Importe solicitado (USD) — sin mínimo", "Requested amount (USD) — no minimum")}
+                    <input type="number" step="0.01" min="0" max={rewardEligibility?.maximum ?? 0} value={payoutForm.amount} disabled={eligibilityLoading || payoutLoading || !rewardEligibility?.eligible} onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))} style={{ display: "block", width: "100%", padding: 12, marginTop: 8, background: "#222", color: "white" }} />
+                  </label>
                 </div>
 
                 {/* Méthode de paiement */}
@@ -1324,7 +1360,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     <div style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginTop: 8 }}>{T.dash.requestSubmittedSub}</div>
                   </div>
                 ) : (
-                  <button onClick={handlePayoutSubmit} disabled={payoutLoading || !payoutForm.wallet_address}
+                  <button onClick={handlePayoutSubmit} disabled={payoutLoading || eligibilityLoading || !payoutForm.wallet_address.trim() || !rewardEligibility?.eligible || !validRewardAmount(Number(payoutForm.amount), rewardEligibility?.maximum ?? 0)}
                     className="btn-primary" style={{ width: "100%", padding: 14, fontSize: 15, opacity: payoutLoading ? 0.7 : 1 }}>
                     {payoutLoading ? T.dash.submitting : T.dash.submitReward}
                   </button>

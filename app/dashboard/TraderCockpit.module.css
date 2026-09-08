@@ -521,3 +521,5 @@
   .subTabNav { gap: 4px; }
   .subTabBtn { padding: 8px 14px; font-size: 11px; }
 }
+
+@media (min-width: 1281px) { .kpisFive { grid-template-columns: repeat(5, minmax(0, 1fr)); } }

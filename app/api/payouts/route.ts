@@ -1,52 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { isV1Challenge, isV1NextRewardBlocked } from "@/lib/v1-lifecycle";
+import { loadRewardAccounts } from "@/lib/reward-eligibility-server";
+import { validRewardAmount } from "@/lib/reward-eligibility";
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { challenge_id, amount, wallet_address, payment_method } = await req.json();
-
-  // Vérification du challenge pour les gardes V1
-  const { data: challenge } = await supabase
-    .from("challenges")
-    .select("id, dd_model, terminated_at")
-    .eq("id", challenge_id)
-    .single();
-
-  // Garde V1 : compte terminé après R#5 → aucun R#6 possible
-  if (challenge && isV1Challenge(challenge.dd_model as string | null) && challenge.terminated_at) {
-    return NextResponse.json(
-      { error: "Ce compte Reward a atteint le maximum de 5 Rewards. Aucun Reward supplémentaire n'est possible." },
-      { status: 409 }
-    );
-  }
-
-  // Garde V1 : compter les payouts paid pour bloquer R#6
-  if (challenge && isV1Challenge(challenge.dd_model as string | null)) {
-    const { count: paidCount } = await supabase
-      .from("payouts")
-      .select("id", { count: "exact", head: true })
-      .eq("challenge_id", challenge_id)
-      .eq("status", "paid");
-    if (isV1NextRewardBlocked(paidCount ?? 0)) {
-      return NextResponse.json(
-        { error: "Reward #6 impossible — le parcours V1 est limité à 5 Rewards." },
-        { status: 409 }
-      );
-    }
-  }
-
-  // Verrou : empêcher double demande sur le même challenge
-  const { data: existing } = await supabase
-    .from("payouts")
-    .select("id")
-    .eq("challenge_id", challenge_id)
-    .eq("status", "pending")
-    .single();
-  if (existing) return NextResponse.json({ error: "Une demande est déjà en cours pour ce compte." }, { status: 409 });
+  let body;
+  try { body = await req.json(); } catch { return NextResponse.json({ error: "Invalid request" }, { status: 400 }); }
+  const { challenge_id, amount, wallet_address, payment_method } = body ?? {};
+  if (typeof challenge_id !== "string" || typeof wallet_address !== "string" || !wallet_address.trim() || !["bank", "crypto"].includes(payment_method)) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  try {
+    const [account] = await loadRewardAccounts(supabase, user.id, challenge_id);
+    if (!account) return NextResponse.json({ error: "Compte introuvable" }, { status: 404 });
+    if (!account.eligible) return NextResponse.json({ error: "Conditions de Reward non remplies", reasons: account.reasons }, { status: 409 });
+    if (!validRewardAmount(amount, account.maximum)) return NextResponse.json({ error: "Montant hors limites", maximum: account.maximum }, { status: 400 });
+  } catch { return NextResponse.json({ error: "Vérification indisponible, réessayez plus tard" }, { status: 503 }); }
 
   const { data, error } = await supabase.from("payouts").insert({
     user_id: user.id,
@@ -57,7 +28,7 @@ export async function POST(req: NextRequest) {
     status: "pending",
   }).select().single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: error.code === "23505" ? "Une demande est déjà en cours." : "Demande impossible" }, { status: error.code === "23505" ? 409 : 500 });
   return NextResponse.json(data);
 }
 

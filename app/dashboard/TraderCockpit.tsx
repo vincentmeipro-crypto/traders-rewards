@@ -684,7 +684,7 @@ export default function TraderCockpit({
           </div>
 
           {/* KPI cards */}
-          <div className={styles.kpis}>
+          <div className={`${styles.kpis} ${isTraderReward ? styles.kpisFive : ""}`}>
 
             {/* Equity — label switches to "Dernière valeur connue" when stale */}
             <div className={`${styles.card} ${styles.kpi}`}>
@@ -819,19 +819,13 @@ export default function TraderCockpit({
               </div>
             </div>
 
-            {/* KPI 6 — N1: Durée 30J / N2: Reward Max / N3: Paiement 48H */}
-            <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
+            {/* KPI 6 — N1: Durée 30J / N2: Reward Max */}
+            {!isTraderReward && <div className={`${styles.card} ${styles.kpi} ${styles.kpiRule}`}>
               {!isRewardAccount ? (
                 /* N1 : durée max 30 jours */
                 <>
                   <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("DURÉE","DURACIÓN","DURATION")}</span><Clock3 color={BLUE} size={16} /></div>
                   <div><div className={styles.kpiValue}>30 J.</div><div className={styles.kpiMeta}><span>{C("Jours calendaires max","Días calendario máx","Maximum calendar days")}</span></div></div>
-                </>
-              ) : isTraderReward ? (
-                /* N3 : délai de paiement */
-                <>
-                  <div className={styles.kpiTop}><span className={styles.kpiLabel}>{C("PAIEMENT","PAGO","PAYMENT")}</span><Wallet color={BLUE} size={16} /></div>
-                  <div><div className={styles.kpiValue}>48H MAX</div><div className={styles.kpiMeta}><span>{C("Délai de versement","Plazo de pago","Payment delay")}</span></div></div>
                 </>
               ) : (
                 /* N2 : plafond Reward #1 */
@@ -840,7 +834,7 @@ export default function TraderCockpit({
                   <div><div className={styles.kpiValue}>{money(currentRewardCap)}</div><div className={styles.kpiMeta}><span>{C("Plafond Reward #1","Tope Reward #1","Reward #1 cap")}</span></div></div>
                 </>
               )}
-            </div>
+            </div>}
 
           </div>
 
