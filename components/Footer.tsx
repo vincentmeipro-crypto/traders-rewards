@@ -69,6 +69,34 @@ export default function Footer() {
           ))}
         </div>
 
+        <section id="informations-importantes" aria-labelledby="footer-information-title" style={{ borderTop: "1px solid rgba(212,168,67,0.25)", padding: "32px 0", marginBottom: 8 }}>
+          <h2 id="footer-information-title" style={{ color: "#D4A843", fontSize: 11, letterSpacing: "2px", textTransform: "uppercase", margin: "0 0 24px", fontWeight: 700 }}>{L("Informations importantes", "Información importante", "Important information")}</h2>
+          <div style={{ color: "#a8a8a8", fontSize: 13, lineHeight: 1.85 }}>
+            <h3 style={{ color: "#e5e5e5", fontSize: 13, letterSpacing: "0.6px", margin: "0 0 10px" }}>{L("UN PROGRAMME EXCLUSIVEMENT SIMULÉ", "UN PROGRAMA EXCLUSIVAMENTE SIMULADO", "AN EXCLUSIVELY SIMULATED PROGRAM")}</h3>
+            <p style={{ margin: "0 0 12px" }}>{L(
+              "Traders Rewards propose un programme d’évaluation et de performance en trading exclusivement simulé. Les trois niveaux — CHALLENGER, COMPTE REWARD et TRADER REWARD — fonctionnent avec des capitaux virtuels. Aucune position n’est exécutée sur les marchés réels, à aucun niveau du programme.",
+              "Traders Rewards ofrece un programa de evaluación y rendimiento de trading exclusivamente simulado. Los tres niveles — CHALLENGER, CUENTA REWARD y TRADER REWARD — utilizan capital virtual. No se ejecuta ninguna posición en los mercados reales, en ningún nivel del programa.",
+              "Traders Rewards offers an exclusively simulated trading evaluation and performance program. All three levels — CHALLENGER, REWARD ACCOUNT and TRADER REWARD — use virtual capital. No positions are executed in real markets at any level of the program."
+            )}</p>
+            <p style={{ margin: "0 0 26px" }}>{L(
+              "Les montants de 25 000 $, 50 000 $ et 100 000 $ représentent des soldes simulés. Ils ne constituent ni un dépôt du participant ni des fonds disponibles au retrait.",
+              "Los importes de 25 000 $, 50 000 $ y 100 000 $ representan saldos simulados. No constituyen depósitos del participante ni fondos disponibles para retirar.",
+              "The amounts of $25,000, $50,000 and $100,000 represent simulated balances. They are neither participant deposits nor funds available for withdrawal."
+            )}</p>
+            <h3 style={{ color: "#e5e5e5", fontSize: 13, letterSpacing: "0.6px", margin: "0 0 10px" }}>{L("DES REWARDS MONÉTAIRES SOUMIS À CONDITIONS", "REWARDS MONETARIOS SUJETOS A CONDICIONES", "MONETARY REWARDS SUBJECT TO CONDITIONS")}</h3>
+            <p style={{ margin: "0 0 12px" }}>{L(
+              "Les Rewards versés aux participants sont des paiements réels, distincts des capitaux virtuels utilisés dans le programme. Leur obtention dépend du respect des conditions applicables : règles de trading, jours qualifiants, consistance, vérification d’identité, plancher et plafond du Reward concerné.",
+              "Los Rewards abonados a los participantes son pagos reales, distintos del capital virtual utilizado en el programa. Su obtención está sujeta al cumplimiento de las condiciones aplicables: reglas de trading, días válidos, consistencia, verificación de identidad, saldo mínimo que debe conservarse y límite del Reward correspondiente.",
+              "Rewards paid to participants are real monetary payments, separate from the virtual capital used in the program. Eligibility depends on meeting the applicable conditions: trading rules, qualifying days, consistency, identity verification, the required account floor and the relevant Reward cap."
+            )}</p>
+            <p style={{ margin: 0 }}>{L(
+              "L’achat d’un Challenge ne garantit ni sa validation ni l’obtention d’un Reward. Les frais du programme sont présentés avant l’achat. Les performances simulées et les témoignages ne garantissent aucun résultat futur.",
+              "La compra de un Challenge no garantiza su superación ni la obtención de un Reward. Las tarifas del programa se presentan antes de la compra. Los resultados simulados y los testimonios no garantizan resultados futuros.",
+              "Purchasing a Challenge does not guarantee passing it or receiving a Reward. Program fees are disclosed before purchase. Simulated performance and testimonials do not guarantee future results."
+            )}</p>
+          </div>
+        </section>
+
         <div style={{ height: 1, background: "linear-gradient(90deg, transparent 0%, #B88746 15%, #E8C98A 50%, #B88746 85%, transparent 100%)", opacity: 0.28, marginBottom: 28 }} />
 
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "center", gap: 16, marginBottom: 20 }}>
@@ -88,7 +116,7 @@ export default function Footer() {
             ))}
           </div>
         </div>
-        <p style={{ color: "rgba(255,255,255,0.2)", fontSize: 11, lineHeight: 1.6 }}>{T.footer.disclaimer}</p>
+
       </div>
     </footer>
   );
