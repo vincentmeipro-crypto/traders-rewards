@@ -456,7 +456,7 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/JETONS HERO PREMIUM.jpg"
+                  src="/jetons-hero-premium.jpg"
                   alt="Comptes Traders Rewards — 100K, 25K et 50K"
                   style={{
                     display:         "block",
@@ -555,7 +555,7 @@ export default function Hero() {
             {/* ── Visuel droit — 3 jetons 100K / 25K / 50K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/JETONS HERO PREMIUM.jpg"
+              src="/jetons-hero-premium.jpg"
               alt="Comptes Traders Rewards — 100K, 25K et 50K"
               style={{
                 display:    "block",
