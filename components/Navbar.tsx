@@ -58,7 +58,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -150,10 +151,11 @@ export default function Navbar() {
 
       <nav className={`home-navbar${scrolled ? " is-scrolled" : ""}`} style={{
         position: "fixed", top: "var(--promo-banner-height, 0px)", left: 0, right: 0, zIndex: 100,
-        backgroundColor: scrolled ? "rgba(0,0,0,0.9)" : "#000000",
-        backdropFilter: scrolled ? "blur(18px)" : "none",
+        backgroundColor: scrolled ? "rgba(0,0,0,0.60)" : "#000000",
+        backdropFilter: scrolled ? "blur(12px)" : "none",
+        WebkitBackdropFilter: scrolled ? "blur(12px)" : "none",
         boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42)" : "none",
-        transition: "all 0.3s ease",
+        transition: "background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease",
       }}>
         <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: "visible" }}>
 
