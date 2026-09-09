@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { SIZES_DATA, QUAL_DAY_USD } from "@/lib/rewardsData";
 import { useSizeSync } from "@/lib/SizeSyncContext";
@@ -29,10 +29,8 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
   const selectedSize = SIZES_DATA[selectedSizeIndex as 0 | 1 | 2];
   const ddUsd        = selectedSize.bal - selectedSize.floorStart;
   const qualMin      = QUAL_DAY_USD[selectedSizeIndex as 0 | 1 | 2];
-  const floorDisplay = selectedSize.bal * 1.04;   // +4 % du capital — affichage uniquement
-  const rewardMax    = selectedSize.rewardCaps[0]; // Reward #1 cap pour cette taille
 
-  // ── Rendu unifié label / valeur (identique pour les 3 cartes) ─
+  // ── Rendu unifié label / valeur (identique pour les 2 cartes) ─
   const renderRows = (rows: RuleRow[]) =>
     rows.map((row) => (
       <div key={row.label}>
@@ -77,12 +75,11 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       </div>
     ));
 
-  // ── Données des 3 cartes ──────────────────────────────────────
+  // ── Données des 2 cartes ──────────────────────────────────────
   const cards: {
     level:         string;
     title:         string;
     subtitle:      string;
-    floorBlock?:   { value: number };   // uniquement NIVEAU 02
     rows:          RuleRow[];
   }[] = [
     {
@@ -97,25 +94,11 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       ],
     },
     {
-      level:      L("NIVEAU 02", "NIVEL 02", "LEVEL 02"),
-      title:      "COMPTE REWARD",
-      subtitle:   L("Verrouillez votre EOD et encaissez votre première Récompense", "Bloquee su EOD y cobre su primera Recompensa", "Lock your EOD and collect your first Reward"),
-      floorBlock: { value: floorDisplay },
-      rows: [
-        { label: L("JOURS QUALIFIANTS",  "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),   value: L("5 JOURS", "5 DÍAS", "5 DAYS") },
-        { label: L("PROFIT MIN / JOUR",  "PROFIT MÍN / DÍA", "MIN PROFIT / DAY"),  value: fmt(qualMin) },
-        { label: L("CONSISTANCE",        "CONSISTENCIA",      "CONSISTENCY"),        value: "50 %" },
-        { label: "REWARD MAX",                                                        value: fmt(rewardMax) },
-        { label: L("PAIEMENT",           "PAGO",              "PAYMENT"),            value: "48H MAX" },
-      ],
-    },
-    {
-      level:    L("NIVEAU 03", "NIVEL 03", "LEVEL 03"),
+      level:    L("NIVEAU 02", "NIVEL 02", "LEVEL 02"),
       title:    "TRADER REWARD",
       subtitle: L("Progressez jusqu'au Payout #5", "Progrese hasta el Payout #5", "Progress to Payout #5"),
       rows: [
-        { label: "DD FIXE",                                                          value: fmt(ddUsd) },
-        { label: L("PLANCHER FIXE",      "SUELO FIJO",        "FIXED FLOOR"),        value: fmt(floorDisplay) },
+        { label: "DD EOD",                                                          value: fmt(ddUsd) },
         { label: L("JOURS QUALIFIANTS", "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),    value: L("5 JOURS", "5 DÍAS", "5 DAYS") },
         { label: L("PROFIT MIN / JOUR",  "PROFIT MÍN / DÍA", "MIN PROFIT / DAY"),  value: fmt(qualMin) },
         { label: L("CONSISTANCE",        "CONSISTENCIA",      "CONSISTENCY"),        value: "50 %" },
@@ -142,7 +125,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
             {L("LES RÈGLES", "LAS REGLAS", "THE RULES")}
           </div>
           <h2 style={{ color: "#fff", fontSize: "clamp(2.1rem, 4.2vw, 3.5rem)", lineHeight: .98, letterSpacing: "-.045em", margin: 0, fontWeight: 900, whiteSpace: isMobile ? "normal" : "nowrap" }}>
-            {L("Trois niveaux. Des règles ", "Tres niveles. Reglas ", "Three levels. Clear ")}
+            {L("Deux niveaux. Des règles ", "Dos niveles. Reglas ", "Two levels. Clear ")}
             <span style={{
               background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
@@ -152,9 +135,9 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           </h2>
           <p style={{ color: "rgba(255,255,255,.58)", fontSize: "clamp(1rem, 1.25vw, 1.22rem)", lineHeight: 1.55, margin: "22px auto 0", maxWidth: 680 }}>
             {L(
-              "Le drawdown évolue avec votre parcours : EOD pendant le Challenge, EOD jusqu'au plancher sur le Compte Reward, puis fixe sur le Trader Reward.",
-              "El drawdown evoluciona con su recorrido: EOD durante el Challenge, EOD hasta el suelo en la Cuenta Reward y después fijo.",
-              "Drawdown evolves with your journey: EOD during the Challenge, EOD until the floor on the Reward Account, then fixed.",
+              "Validez votre Challenge, puis passez directement au Trader Reward. Le drawdown reste en EOD.",
+              "Valide su Challenge y pase directamente a Trader Reward. El drawdown sigue siendo EOD.",
+              "Complete your Challenge, then move directly to Trader Reward. Drawdown remains EOD.",
             )}
           </p>
         </header>
@@ -204,17 +187,24 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           </div>
         </div>
 
-        {/* Grille des 3 cartes */}
+        {/* Grille des 2 cartes */}
         <div
           style={{
             display:             "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 310px), 1fr))",
+            gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "minmax(0, 1fr) minmax(0, .9fr) minmax(0, 1fr)",
             gap:                 18,
           }}
         >
           {cards.map((card, index) => (
+            <Fragment key={card.title}>
+            {index === 1 && (
+              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, overflow: "hidden" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/rewards-guide-hoodie.png" alt="" loading="lazy" width={1536} height={1024}
+                  style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", objectFit: "contain", mixBlendMode: "screen" }} />
+              </div>
+            )}
             <article
-              key={card.title}
               style={{
                 minHeight:  370,
                 padding:    "clamp(26px, 3vw, 38px)",
@@ -238,42 +228,11 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
               </p>
               <div style={{ height: 1, background: "rgba(255,255,255,.1)", marginBottom: 10 }} />
 
-              {/* Bloc plancher fixe — NIVEAU 02 uniquement */}
-              {card.floorBlock && (
-                <div
-                  style={{
-                    background:   "rgba(255,255,255,0.035)",
-                    border:       "1px solid rgba(184,135,70,0.28)",
-                    borderRadius: 12,
-                    padding:      "16px 18px",
-                    marginBottom: 22,
-                  }}
-                >
-                  <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: "2px", color: ACCENT, textTransform: "uppercase" as const }}>
-                    {L("VERROUILLAGE EOD", "BLOQUEO EOD", "EOD LOCK")}
-                  </span>
-                  <p style={{ margin: "6px 0 10px", fontSize: 12, color: "rgba(255,255,255,0.46)", lineHeight: 1.4 }}>
-                    {L(
-                      "Le drawdown cesse de remonter et se fixe définitivement.",
-                      "El drawdown deja de subir y se fija definitivamente.",
-                      "The drawdown stops rising and locks permanently.",
-                    )}
-                  </p>
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
-                    <div style={{ fontSize: "clamp(1.5rem, 3vw, 1.85rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em" }}>
-                      {fmt(card.floorBlock.value)}
-                    </div>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "1px", textTransform: "uppercase" as const }}>
-                      {L("PLANCHER EOD", "SUELO EOD", "EOD FLOOR")}
-                    </span>
-                  </div>
-                </div>
-              )}
-
               {/* Lignes de règles — rendu unifié */}
               {renderRows(card.rows)}
 
             </article>
+            </Fragment>
           ))}
         </div>
       </div>
