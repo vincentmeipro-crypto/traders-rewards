@@ -403,7 +403,7 @@ export default function Hero() {
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
             paddingTop:     isMobile ? 66 : 80,
-            paddingBottom:  isMobile ? 22 : 26,
+            paddingBottom:  isMobile ? 8 : 26,
           }}>
 
             {/* ── H1 — 2 lignes ── */}
@@ -447,6 +447,8 @@ export default function Hero() {
             {/* ── Jetons — mobile uniquement, pleine largeur ── */}
             {isMobile && (
               <div style={{
+                display:      "flex",
+                justifyContent: "center",
                 marginLeft:   -22,
                 marginRight:  -22,
                 marginBottom: 16,
@@ -460,8 +462,12 @@ export default function Hero() {
                   alt="Comptes Traders Rewards — 100K, 25K et 50K"
                   style={{
                     display:         "block",
-                    width:           "125%",
-                    marginLeft:      "-12.5%",
+                    width:           "125vw",
+                    maxWidth:        "none",
+                    flexShrink:      0,
+                    // Remove the JPEG's empty vertical margins, keeping the coins intact.
+                    marginTop:       "-12vw",
+                    marginBottom:    "-14vw",
                     height:          "auto",
                     objectFit:       "contain",
                     backgroundColor: "#000000",
