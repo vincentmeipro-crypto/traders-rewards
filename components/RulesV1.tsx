@@ -96,7 +96,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
     {
       level:    L("NIVEAU 02", "NIVEL 02", "LEVEL 02"),
       title:    "TRADER REWARD",
-      subtitle: L("Progressez jusqu'au Payout #5", "Progrese hasta el Payout #5", "Progress to Payout #5"),
+      subtitle: L("Progressez jusqu'à 5 récompenses", "Progrese hasta 5 recompensas", "Progress to 5 rewards"),
       rows: [
         { label: "DD EOD",                                                          value: fmt(ddUsd) },
         { label: L("JOURS QUALIFIANTS", "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),    value: L("5 JOURS", "5 DÍAS", "5 DAYS") },
