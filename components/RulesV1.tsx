@@ -135,9 +135,9 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           </h2>
           <p style={{ color: "rgba(255,255,255,.58)", fontSize: "clamp(1rem, 1.25vw, 1.22rem)", lineHeight: 1.55, margin: "22px auto 0", maxWidth: 680 }}>
             {L(
-              "Validez votre Challenge, puis passez directement au Trader Reward. Le drawdown reste en EOD.",
-              "Valide su Challenge y pase directamente a Trader Reward. El drawdown sigue siendo EOD.",
-              "Complete your Challenge, then move directly to Trader Reward. Drawdown remains EOD.",
+              "Validez votre challenge, devenez Trader Reward",
+              "Valide su challenge, conviértase en Trader Reward",
+              "Complete your challenge, become a Trader Reward",
             )}
           </p>
         </header>
@@ -200,7 +200,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
             {index === 1 && (
               <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, overflow: "hidden" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/rewards-guide-hoodie-restored.png" alt="" loading="lazy" width={1254} height={1254}
+                <img src="/rewards-guide-duo-v2.png" alt="" loading="lazy" width={1254} height={1254}
                   style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", objectFit: "contain", mixBlendMode: "normal" }} />
               </div>
             )}
