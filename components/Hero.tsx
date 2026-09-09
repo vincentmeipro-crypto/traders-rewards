@@ -403,13 +403,13 @@ export default function Hero() {
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
             paddingTop:     isMobile ? 66 : 80,
-            paddingBottom:  isMobile ? 40 : 26,
+            paddingBottom:  isMobile ? 22 : 26,
           }}>
 
             {/* ── H1 — 2 lignes ── */}
             <h1 style={{
               fontWeight:    620,
-              margin:        isMobile ? "0 0 20px" : "0 0 24px",
+              margin:        isMobile ? "0 0 16px" : "0 0 24px",
               textTransform: "none",
               textAlign:     "left",
               letterSpacing: isMobile ? "-1.5px" : "-3px",
@@ -449,7 +449,7 @@ export default function Hero() {
               <div style={{
                 marginLeft:   -22,
                 marginRight:  -22,
-                marginBottom: 20,
+                marginBottom: 16,
                 overflow:     "hidden",
                 lineHeight:   0,
                 alignSelf:    "stretch",
@@ -460,7 +460,8 @@ export default function Hero() {
                   alt="Comptes Traders Rewards — 100K, 25K et 50K"
                   style={{
                     display:         "block",
-                    width:           "100%",
+                    width:           "125%",
+                    marginLeft:      "-12.5%",
                     height:          "auto",
                     objectFit:       "contain",
                     backgroundColor: "#000000",
@@ -473,7 +474,7 @@ export default function Hero() {
             {isMobile && (
               <div style={{
                 display: "flex", flexDirection: "column",
-                alignSelf: "center", gap: 18,
+                alignSelf: "center", gap: 16,
                 width: "fit-content",
                 animation: "heroFadeUp 0.52s ease 0.10s both",
               }}>
