@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 13">
+  <!-- Blue background -->
+  <rect width="20" height="13" fill="#003399"/>
+  <!-- 12 gold stars in a circle (r=4 from center 10,6.5) -->
+  <circle cx="10"    cy="2.5"  r="0.7" fill="#FFCC00"/>
+  <circle cx="12"    cy="3.04" r="0.7" fill="#FFCC00"/>
+  <circle cx="13.46" cy="4.5"  r="0.7" fill="#FFCC00"/>
+  <circle cx="14"    cy="6.5"  r="0.7" fill="#FFCC00"/>
+  <circle cx="13.46" cy="8.5"  r="0.7" fill="#FFCC00"/>
+  <circle cx="12"    cy="9.96" r="0.7" fill="#FFCC00"/>
+  <circle cx="10"    cy="10.5" r="0.7" fill="#FFCC00"/>
+  <circle cx="8"     cy="9.96" r="0.7" fill="#FFCC00"/>
+  <circle cx="6.54"  cy="8.5"  r="0.7" fill="#FFCC00"/>
+  <circle cx="6"     cy="6.5"  r="0.7" fill="#FFCC00"/>
+  <circle cx="6.54"  cy="4.5"  r="0.7" fill="#FFCC00"/>
+  <circle cx="8"     cy="3.04" r="0.7" fill="#FFCC00"/>
+</svg>

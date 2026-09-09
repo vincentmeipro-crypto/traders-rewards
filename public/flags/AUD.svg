@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 13">
+  <!-- Blue background -->
+  <rect width="20" height="13" fill="#00008B"/>
+  <!-- Union Jack in top-left quadrant (diagonals) -->
+  <line x1="0" y1="0" x2="10" y2="6.5" stroke="#fff" stroke-width="2.8"/>
+  <line x1="10" y1="0" x2="0" y2="6.5" stroke="#fff" stroke-width="2.8"/>
+  <line x1="0" y1="0" x2="10" y2="6.5" stroke="#C8102E" stroke-width="1.5"/>
+  <line x1="10" y1="0" x2="0" y2="6.5" stroke="#C8102E" stroke-width="1.5"/>
+  <!-- Union Jack straight cross -->
+  <rect x="0" y="2.25" width="10" height="2" fill="#fff"/>
+  <rect x="4" y="0" width="2" height="6.5" fill="#fff"/>
+  <rect x="0" y="2.75" width="10" height="1" fill="#C8102E"/>
+  <rect x="4.5" y="0" width="1" height="6.5" fill="#C8102E"/>
+  <!-- Right half: clean blue overlay (removes diagonal bleed) -->
+  <rect x="10" y="0" width="10" height="13" fill="#00008B"/>
+  <!-- Commonwealth star (simplified) bottom-left -->
+  <circle cx="2.5" cy="10" r="1.5" fill="#fff"/>
+  <!-- Southern Cross (5 stars, right side) -->
+  <circle cx="14.5" cy="2.5" r="0.65" fill="#fff"/>
+  <circle cx="17"   cy="5.8" r="0.95" fill="#fff"/>
+  <circle cx="14.5" cy="9.5" r="0.95" fill="#fff"/>
+  <circle cx="12"   cy="6.2" r="0.95" fill="#fff"/>
+  <circle cx="17.5" cy="10.2" r="0.45" fill="#fff"/>
+</svg>

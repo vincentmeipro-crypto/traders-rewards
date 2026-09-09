@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 13">
+  <!-- White top stripe -->
+  <rect width="20" height="6.5" fill="#fff"/>
+  <!-- Red bottom stripe -->
+  <rect y="6.5" width="20" height="6.5" fill="#D7141A"/>
+  <!-- Blue left triangle -->
+  <polygon points="0,0 9.5,6.5 0,13" fill="#11457E"/>
+</svg>

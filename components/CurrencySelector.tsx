@@ -20,7 +20,7 @@ export default function CurrencySelector() {
         marginBottom:   20,
       }}
     >
-      {CURRENCY_META.map(({ code, flag }) => {
+      {CURRENCY_META.map(({ code }) => {
         const isActive = currency === code;
         return (
           <button
@@ -51,7 +51,15 @@ export default function CurrencySelector() {
               whiteSpace:    "nowrap",
             }}
           >
-            <span style={{ fontSize: 14, lineHeight: 1 }}>{flag}</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/flags/${code}.svg`}
+              alt=""
+              width={22}
+              height={15}
+              style={{ borderRadius: 2, display: "block", flexShrink: 0 }}
+              aria-hidden
+            />
             {code}
           </button>
         );

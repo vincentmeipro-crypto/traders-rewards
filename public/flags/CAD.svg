@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 13">
+  <!-- Red left band -->
+  <rect width="5" height="13" fill="#FF0000"/>
+  <!-- White center -->
+  <rect x="5" width="10" height="13" fill="#fff"/>
+  <!-- Red right band -->
+  <rect x="15" width="5" height="13" fill="#FF0000"/>
+  <!-- Maple leaf (simplified 11-point) -->
+  <path d="M10,2.5 L10.5,4.8 L12.5,3.8 L11.8,5.5 L13.5,5.5 L11.5,7.2 L12,8.5 L10,7.5 L8,8.5 L8.5,7.2 L6.5,5.5 L8.2,5.5 L7.5,3.8 L9.5,4.8Z" fill="#FF0000"/>
+  <!-- Stem -->
+  <rect x="9.7" y="7.5" width="0.6" height="2.8" fill="#FF0000"/>
+</svg>
