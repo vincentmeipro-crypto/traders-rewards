@@ -198,16 +198,16 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           {cards.map((card, index) => (
             <Fragment key={card.title}>
             {index === 1 && (
-              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, overflow: "hidden" }}>
+              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: isMobile ? "auto" : 0, minHeight: isMobile ? undefined : "100%", overflow: "hidden" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/rewards-guide-duo-v2.png" alt="" loading="lazy" width={1254} height={1254}
-                  style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", objectFit: "contain", mixBlendMode: "normal" }} />
+                  style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: isMobile ? "auto" : "100%", objectFit: "contain", mixBlendMode: "normal" }} />
               </div>
             )}
             <article
               style={{
                 minHeight:  0,
-                alignSelf: "center",
+                alignSelf:  "stretch",
                 padding:    "24px",
                 borderRadius: 22,
                 background: index === 1
@@ -217,16 +217,26 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
                 boxShadow:  index === 1 ? "0 18px 60px rgba(184,135,70,.11)" : "none",
               }}
             >
-              {/* En-tête de carte */}
-              <div style={{ color: ACCENT, fontSize: 10, fontWeight: 900, letterSpacing: "2.2px" }}>
-                {card.level}
+              {/*
+                ── En-tête de carte — hauteur commune aux 2 cartes ──────────────
+                minHeight: 130px absorbe la différence entre le subtitle à 1 ligne
+                ("Validez votre Challenge") et le subtitle à 2 lignes potentielles
+                ("Progressez jusqu'à 5 récompenses") à viewport étroit (~900px).
+                Le séparateur et la 1ère règle tombent ainsi au même Y dans les 2 cartes.
+              */}
+              <div style={{ minHeight: 130 }}>
+                <div style={{ color: ACCENT, fontSize: 10, fontWeight: 900, letterSpacing: "2.2px" }}>
+                  {card.level}
+                </div>
+                <h3 style={{ color: "#fff", fontSize: "clamp(1.55rem, 2.2vw, 2.35rem)", margin: "14px 0 7px", fontWeight: 900 }}>
+                  {card.title}
+                </h3>
+                <p style={{ color: "rgba(255,255,255,.52)", fontSize: 14, margin: "0 0 20px" }}>
+                  {card.subtitle}
+                </p>
               </div>
-              <h3 style={{ color: "#fff", fontSize: "clamp(1.55rem, 2.2vw, 2.35rem)", margin: "14px 0 7px", fontWeight: 900 }}>
-                {card.title}
-              </h3>
-              <p style={{ color: "rgba(255,255,255,.52)", fontSize: 14, margin: "0 0 20px" }}>
-                {card.subtitle}
-              </p>
+
+              {/* Séparateur — toujours au même Y dans les 2 cartes */}
               <div style={{ height: 1, background: "rgba(255,255,255,.1)", marginBottom: 10 }} />
 
               {/* Lignes de règles — rendu unifié */}
