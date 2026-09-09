@@ -456,7 +456,7 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/JETONS HERO NOUVEAUX.png"
+                  src="/JETONS HERO PREMIUM.jpg"
                   alt="Comptes Traders Rewards — 100K, 25K et 50K"
                   style={{
                     display:         "block",
@@ -555,7 +555,7 @@ export default function Hero() {
             {/* ── Visuel droit — 3 jetons 100K / 25K / 50K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/JETONS HERO NOUVEAUX.png"
+              src="/JETONS HERO PREMIUM.jpg"
               alt="Comptes Traders Rewards — 100K, 25K et 50K"
               style={{
                 display:    "block",
@@ -565,6 +565,7 @@ export default function Hero() {
                 objectFit:  "contain",
                 margin:     "0 auto",
                 marginLeft: isMobile ? "auto" : "-35%",
+                marginTop:  isMobile ? 0 : -50,
               }}
             />
           </div>{/* fin colonne droite */}

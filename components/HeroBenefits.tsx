@@ -110,7 +110,7 @@ export default function HeroBenefits() {
       style={{
         background: "#000000",
         padding: isMobile ? "12px 10px 18px" : "5px 0 14px",
-        marginTop: isMobile ? 0 : -100,
+        marginTop: isMobile ? 0 : -150,
       }}
     >
       <style>{`
