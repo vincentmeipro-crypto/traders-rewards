@@ -85,7 +85,8 @@ export default function PricingV1() {
   const [selIdx, setSelIdx]     = useState(1); // 50K par défaut
   const [isMobile, setIsMobile] = useState(false);
   const [hovIdx,  setHovIdx]    = useState<number | null>(null);
-  const [showPct,  setShowPct]  = useState(true);
+  // État % / $ indépendant par carte (index 0=25K, 1=50K, 2=100K)
+  const [showPctPerCard, setShowPctPerCard] = useState<boolean[]>([true, true, true]);
   const [activeModal, setActiveModal] = useState<number | null>(null);
   // Ensemble des indices de cartes avec le pack ×3 sélectionné
   const [pack3Set, setPack3Set] = useState<Set<number>>(new Set());
@@ -142,11 +143,12 @@ export default function PricingV1() {
   };
 
   const renderCard = (card: V1Card, idx: number) => {
-    const isPack3    = pack3Set.has(idx);
+    const isPack3     = pack3Set.has(idx);
+    const cardShowPct = showPctPerCard[idx] ?? true; // état % / $ local à cette carte
     const RULES = [
-      { label: L("1 Étape","1 Paso","1 Step"),               value: "✓",                                                                                     accent: true  },
-      { label: L("Objectif profit","Objetivo profit","Profit target"), value: showPct ? "+6%" : `+${fmtDollar(card.balance * 0.06)}`,                        accent: false },
-      { label: L("Trailing DD EOD","Trailing DD EOD","Trailing DD EOD"), value: showPct ? `${card.trailingDdPct}%` : fmtDollar(card.balance * card.trailingDdPct / 100), accent: false },
+      { label: L("1 Étape","1 Paso","1 Step"),               value: "✓",                                                                                          accent: true  },
+      { label: L("Objectif profit","Objetivo profit","Profit target"), value: cardShowPct ? "+6%" : `+${fmtDollar(card.balance * 0.06)}`,                         accent: false },
+      { label: L("Trailing DD EOD","Trailing DD EOD","Trailing DD EOD"), value: fmtDollar(card.balance * card.trailingDdPct / 100), accent: false },
       { label: L("Consistance","Consistencia","Consistency"), value: "≤ 50%",                                                                                   accent: false },
       { label: L("Jours min","Días mín","Min days"),          value: L("2 jours","2 días","2 days"),                                                           accent: false },
       { label: L("Durée max","Duración máx","Max duration"),  value: L("30 j. cal.","30 d. cal.","30 cal. days"),                                              accent: false },
@@ -332,6 +334,46 @@ export default function PricingV1() {
           </div>
         </div>
 
+        {/* Toggle % / $ — aligné à droite, juste au-dessus de la première règle */}
+        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 10 }}>
+          <button
+            onClick={e => {
+              e.stopPropagation();
+              setShowPctPerCard(prev => prev.map((v, i2) => i2 === idx ? !v : v));
+            }}
+            aria-label={L(
+              `Afficher les règles en ${cardShowPct ? "dollars" : "pourcentages"}`,
+              `Mostrar reglas en ${cardShowPct ? "dólares" : "porcentajes"}`,
+              `Show rules in ${cardShowPct ? "dollars" : "percentages"}`
+            )}
+            style={{
+              display:       "inline-flex",
+              alignItems:    "center",
+              gap:           4,
+              padding:       "4px 9px",
+              borderRadius:  100,
+              border:        "1px solid rgba(255,255,255,0.12)",
+              background:    "rgba(255,255,255,0.045)",
+              color:         "#FFFFFF",
+              fontSize:      11, fontWeight: 650,
+              cursor:        "pointer",
+              fontFamily:    "inherit",
+              letterSpacing: "0.2px",
+              transition:    "all 0.15s ease",
+              whiteSpace:    "nowrap",
+            }}
+          >
+            <span style={{ fontWeight: 900, fontSize: 12 }}>%</span>
+            <span style={{ fontSize: 10, letterSpacing: "-1px" }}>⇄</span>
+            <span style={{ fontWeight: 900, fontSize: 12 }}>$</span>
+            <span style={{ fontSize: 10, marginLeft: 2 }}>
+              {cardShowPct
+                ? L("Voir $","Ver $","View $")
+                : L("Voir %","Ver %","View %")}
+            </span>
+          </button>
+        </div>
+
         {/* Règles */}
         <div style={{ marginBottom: 4, paddingBottom: 4 }}>
           {RULES.map((rule, i) => (
@@ -459,46 +501,6 @@ export default function PricingV1() {
               "Choose the simulated account size that fits your goals and progress through up to 5 Rewards."
             )}
           </p>
-        </div>
-
-        {/* ── Toggle % / $ ── */}
-        <div style={{
-          display: "flex", justifyContent: "center",
-          marginBottom: isMobile ? 14 : 16,
-        }}>
-          <button
-            onClick={() => setShowPct(v => !v)}
-            aria-label={L(
-              `Afficher les règles en ${showPct ? "dollars" : "pourcentages"}`,
-              `Mostrar las reglas en ${showPct ? "dólares" : "porcentajes"}`,
-              `Show rules in ${showPct ? "dollars" : "percentages"}`
-            )}
-            style={{
-              display:      "inline-flex",
-              alignItems:   "center",
-              gap:          8,
-               padding:      "7px 16px",
-              borderRadius: 100,
-              border:       "1px solid rgba(255,255,255,0.10)",
-              background:   "rgba(255,255,255,0.045)",
-              color:        "rgba(255,255,255,0.62)",
-              fontSize:     12, fontWeight: 700,
-              cursor:       "pointer",
-              fontFamily:   "inherit",
-              letterSpacing: "0.3px",
-              transition:   "all 0.18s ease",
-              whiteSpace:   "nowrap",
-            }}
-          >
-            <span style={{ fontWeight: 900, fontSize: 14 }}>%</span>
-            <span style={{ fontSize: 11, letterSpacing: "-1px" }}>⇄</span>
-            <span style={{ fontWeight: 900, fontSize: 14 }}>$</span>
-            <span style={{ fontSize: 11, marginLeft: 2 }}>
-              {showPct
-                ? L("Voir en $","Ver en $","View in $")
-                : L("Voir en %","Ver en %","View in %")}
-            </span>
-          </button>
         </div>
 
         {/* ── Sélecteur de devise ── */}
