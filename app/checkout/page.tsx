@@ -6,6 +6,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { ArrowLeft, Bitcoin, Check, ChevronRight, CreditCard, LockKeyhole, ShieldCheck, Sparkles, X } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useCurrency } from "@/lib/CurrencyContext";
+import { NOWPAYMENTS_FIAT_SUPPORTED } from "@/lib/fx-rates";
 
 type ModelKey = "2step" | "1step";
 type Challenge = { label: string; model: "Challenge"; price: string; amount: number; pack3Amount: number };
@@ -65,6 +67,9 @@ function CheckoutContent() {
   const isFr = lang === "fr";
   const isEs = lang === "es";
   const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
+  const { currency, formatCents } = useCurrency();
+  // Prix calculé côté serveur (même taux que la route de paiement → garantit affichage = débit)
+  const [serverPrice, setServerPrice] = useState<string | null>(null);
 
   // Quantité initiale depuis l'URL : ?qty=3 → pack ×3, sinon 1 challenge.
   const initialQty = params.get("qty") === "3" ? 3 : 1;
@@ -130,6 +135,22 @@ function CheckoutContent() {
   const discountedAmount = discount > 0 ? Math.round(baseAmount * (100 - discount) / 100) : baseAmount;
   const totalAmount     = discountedAmount;
   const isFree          = discount === 100;
+
+  // ── Snapshot de prix serveur (garantit affichage = montant débité) ──────────
+  // Appelé à chaque changement de produit / quantité / devise / remise.
+  // Utilise le même data cache Next.js (1h) que les routes de paiement.
+  useEffect(() => {
+    if (!selectedProduct?.startsWith("rewards-")) return;
+    const discountPct = discount > 0 ? discount : 0;
+    fetch("/api/checkout/preview", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug: selectedProduct, qty: quantity, currency, discountPct }),
+    })
+      .then(r => r.json())
+      .then((d: { formattedPrice?: string }) => { if (d.formattedPrice) setServerPrice(d.formattedPrice); })
+      .catch(() => setServerPrice(null));
+  }, [selectedProduct, quantity, currency, discount]);
 
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && city.trim() && country.trim() && isAdult && (user || (password.length >= 8 && password === confirmPassword));
   const canPay = !!profileComplete && agreedToTerms;
@@ -267,7 +288,7 @@ function CheckoutContent() {
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, refCode, quantity }),
+      body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, refCode, quantity, currency }),
     });
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
@@ -284,7 +305,7 @@ function CheckoutContent() {
     const res = await fetch("/api/crypto/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode, quantity }),
+      body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode, quantity, currency }),
     });
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
@@ -459,7 +480,7 @@ function CheckoutContent() {
             <div style={{ fontWeight: 700, fontSize: 14 }}>{challenge.label}{quantity === 3 ? " × 3" : ""}</div>
           </div>
           <div style={{ marginLeft: "auto", fontSize: 22, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
-            {isFree ? L("GRATUIT", "GRATIS", "FREE") : formatPrice(totalAmount)}
+            {isFree ? L("GRATUIT", "GRATIS", "FREE") : (serverPrice ?? formatCents(totalAmount))}
           </div>
         </div>
       )}
@@ -706,11 +727,11 @@ function CheckoutContent() {
                 {discount > 0 && <>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>{L("Prix", "Precio", "Price")}</span>
-                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "line-through" }}>{formatPrice(baseAmount)}</span>
+                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, textDecoration: "line-through" }}>{formatCents(baseAmount)}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
                     <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>{L("Réduction", "Descuento", "Discount")} −{discount}%</span>
-                    <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>−{formatPrice(baseAmount - discountedAmount)}</span>
+                    <span style={{ color: "#22c55e", fontSize: 13, fontWeight: 700 }}>−{formatCents(baseAmount - discountedAmount)}</span>
                   </div>
                 </>}
               </div>
@@ -718,7 +739,7 @@ function CheckoutContent() {
                 <span style={{ fontWeight: 700, fontSize: 15 }}>{L("Total", "Total", "Total")}</span>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontSize: 32, fontWeight: 900, color: isFree ? "#22c55e" : "#fff" }}>
-                    {isFree ? L("GRATUIT", "GRATIS", "FREE") : formatPrice(totalAmount)}
+                    {isFree ? L("GRATUIT", "GRATIS", "FREE") : (serverPrice ?? formatCents(totalAmount))}
                   </div>
                   <div style={{ color: "rgba(255,255,255,0.25)", fontSize: 11 }}>{L("TVA incluse", "IVA incluido", "VAT included")}</div>
                 </div>
@@ -884,6 +905,16 @@ function CheckoutContent() {
                     : <><Bitcoin size={17} /> {L("Payer en crypto", "Pagar en cripto", "Pay in crypto")} <ChevronRight size={16} /></>}
                 </button>
               </div>
+              {/* Notice i18n si la devise sélectionnée n'est pas supportée par NOWPayments */}
+              {!NOWPAYMENTS_FIAT_SUPPORTED.includes(currency) && (
+                <p style={{ margin: "0 2px", color: "rgba(255,255,255,0.35)", fontSize: 10, fontWeight: 600, textAlign: "center" }}>
+                  {L(
+                    "Paiement crypto traité en EUR.",
+                    "Pago en criptomonedas procesado en EUR.",
+                    "Crypto payment processed in EUR."
+                  )}
+                </p>
+              )}
             </>)}
 
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginTop: 4 }}>

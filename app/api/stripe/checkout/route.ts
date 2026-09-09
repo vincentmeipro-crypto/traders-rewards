@@ -5,6 +5,8 @@ import { getStringConfig } from "@/lib/config";
 import { loadProductBySlug } from "@/lib/product-engine";
 import { validatePromoCode } from "@/lib/promo";
 import { getPriceForSlug, isPricingSlug } from "@/lib/pricing";
+import { fetchLiveRates, stripeSmallestUnit, SUPPORTED_CURRENCIES, FALLBACK_RATES } from "@/lib/fx-rates";
+import type { FxCurrency } from "@/lib/fx-rates";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -12,7 +14,17 @@ export async function POST(req: NextRequest) {
   try {
     // `discount` n'est intentionnellement PAS destructuré : jamais trusté depuis le frontend.
     // Le prix est recalculé exclusivement côté serveur via getPriceForSlug().
-    const { productId, userId, userEmail, promoCode, refCode, quantity: rawQuantity } = await req.json();
+    const {
+      productId, userId, userEmail, promoCode, refCode,
+      quantity: rawQuantity,
+      currency: rawCurrency,
+    } = await req.json();
+
+    // Valider la devise (défaut EUR si non fournie ou invalide)
+    const currency: FxCurrency =
+      rawCurrency && SUPPORTED_CURRENCIES.includes(rawCurrency as FxCurrency)
+        ? (rawCurrency as FxCurrency)
+        : "EUR";
 
     // Quantité autorisée : 1 (challenge unique) ou 3 (pack ×3).
     const quantity = Number(rawQuantity ?? 1);
@@ -119,6 +131,15 @@ export async function POST(req: NextRequest) {
       ? `Traders Rewards — Pack ×3 Challenges ${product.account_size} · 3 comptes activés`
       : "Traders Rewards — Challenge en 1 étape";
 
+    // ── Conversion devise + montant Stripe ────────────────────────────────────
+    // Taux live (cache 1h) — en cas d'erreur réseau, fallback statique.
+    const rates = await fetchLiveRates();
+    const rate  = rates[currency] ?? FALLBACK_RATES[currency] ?? 1;
+    // stripeSmallestUnit convertit des centimes EUR en plus petite unité cible
+    // (ex: 3800 EUR cents → 4100 USD cents si taux 1.08)
+    const stripeAmount = stripeSmallestUnit(finalAmount, currency, rate);
+    const stripeCurrency = currency.toLowerCase();
+
     // ── Stripe Checkout Session ───────────────────────────────────────────────
     // Toujours quantity:1 dans line_items — la quantité réelle (1 ou 3) est dans metadata.
     // Raison : le tarif pack ×3 est un prix propre (≠ 3 × unitaire), donc on facture
@@ -130,9 +151,9 @@ export async function POST(req: NextRequest) {
       line_items: [
         {
           price_data: {
-            currency:     "eur",
+            currency:     stripeCurrency,
             product_data: { name: productName, description, images: [] },
-            unit_amount:  finalAmount,
+            unit_amount:  stripeAmount,
           },
           quantity: 1,
         },

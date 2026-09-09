@@ -10,6 +10,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useCurrency } from "@/lib/CurrencyContext";
+import CurrencySelector from "./CurrencySelector";
 import PricingDetailModal from "./PricingDetailModal";
 
 // ── Source de vérité fallback ──────────────────────────────────
@@ -77,6 +79,7 @@ export default function PricingV1() {
   const isFr = lang === "fr";
   const isEs = lang === "es";
   const L = (fr: string, es: string, en: string) => isFr ? fr : isEs ? es : en;
+  const { formatCents } = useCurrency();
 
   const [cards, setCards]       = useState<V1Card[]>(V1_FALLBACK);
   const [selIdx, setSelIdx]     = useState(1); // 50K par défaut
@@ -128,7 +131,6 @@ export default function PricingV1() {
   }, []);
 
   const fmtBalance = (b: number) => `$${Math.round(b / 1000)}K`;
-  const fmtPrice   = (c: number) => `€${Math.round(c / 100)}`;
   const fmtDollar  = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 
   const togglePack3 = (idx: number, enable: boolean) => {
@@ -154,11 +156,9 @@ export default function PricingV1() {
     const isHovered  = hovIdx === idx && !isActive && !isMobile;
     const label      = fmtBalance(card.balance);
 
-    // Prix affichés selon la sélection pack
-    const displayPrice    = isPack3 ? fmtPrice(card.pack3Cents)   : fmtPrice(card.priceCents);
-    const displayRefPrice = isPack3
-      ? `€${Math.round(card.refPack3Cents / 100)}`
-      : `€${Math.round(card.refPriceCents / 100)}`;
+    // Prix affichés selon la sélection pack — convertis dans la devise choisie
+    const displayPrice    = isPack3 ? formatCents(card.pack3Cents)    : formatCents(card.priceCents);
+    const displayRefPrice = isPack3 ? formatCents(card.refPack3Cents) : formatCents(card.refPriceCents);
 
     return (
       <div
@@ -370,7 +370,7 @@ export default function PricingV1() {
               color: "rgba(255,255,255,0.88)",
               letterSpacing: "0.2px",
             }}>
-              {card.activFeeEur}€
+              {formatCents(card.activFeeEur * 100)}
             </span>
           </div>
         </div>
@@ -500,6 +500,9 @@ export default function PricingV1() {
             </span>
           </button>
         </div>
+
+        {/* ── Sélecteur de devise ── */}
+        <CurrencySelector />
 
         {/* ── Mobile : selector tabs ── */}
         {isMobile && (

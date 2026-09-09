@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, Bebas_Neue, Playfair_Display, Geist } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
+import { CurrencyProvider } from "@/lib/CurrencyContext";
 import PWARegister from "@/components/PWARegister";
 import RefTracker from "@/components/RefTracker";
 import ChatWidgetGate from "@/components/chat/ChatWidgetGate";
@@ -282,7 +283,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${outfit.variable} ${bebas.variable}`}>
         <LanguageProvider>
-          {children}
+          <CurrencyProvider>
+            {children}
+          </CurrencyProvider>
         </LanguageProvider>
         <PWARegister />
         <RefTracker />

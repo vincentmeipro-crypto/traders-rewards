@@ -4,6 +4,14 @@ import { getStringConfig } from "@/lib/config";
 import { loadProductBySlug } from "@/lib/product-engine";
 import { validatePromoCode } from "@/lib/promo";
 import { getPriceForSlug, isPricingSlug } from "@/lib/pricing";
+import {
+  fetchLiveRates,
+  convertEurCents,
+  SUPPORTED_CURRENCIES,
+  FALLBACK_RATES,
+  NOWPAYMENTS_FIAT_SUPPORTED,
+} from "@/lib/fx-rates";
+import type { FxCurrency } from "@/lib/fx-rates";
 
 // Produits VIP non en DB — conservés pour rétrocompatibilité
 const VIP_PRODUCTS: Record<
@@ -20,7 +28,21 @@ export async function POST(req: NextRequest) {
   try {
     // `discount` n'est intentionnellement PAS destructuré : jamais trusté depuis le frontend.
     // Le prix est recalculé exclusivement côté serveur via getPriceForSlug().
-    const { productId, userId, promoCode, refCode, quantity: rawQuantity } = await req.json();
+    const {
+      productId, userId, promoCode, refCode,
+      quantity: rawQuantity,
+      currency: rawCurrency,
+    } = await req.json();
+
+    // ── Devise : valider + fallback EUR si non supportée par NOWPayments ──────
+    const requestedCurrency: FxCurrency =
+      rawCurrency && SUPPORTED_CURRENCIES.includes(rawCurrency as FxCurrency)
+        ? (rawCurrency as FxCurrency)
+        : "EUR";
+    const nowpaymentsCurrency: FxCurrency = NOWPAYMENTS_FIAT_SUPPORTED.includes(requestedCurrency)
+      ? requestedCurrency
+      : "EUR";
+    const usedEurFallback = requestedCurrency !== nowpaymentsCurrency;
 
     // Quantité autorisée : 1 (challenge unique) ou 3 (pack ×3).
     const quantity = Number(rawQuantity ?? 1);
@@ -149,7 +171,21 @@ export async function POST(req: NextRequest) {
       orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${qty}`;
     }
 
-    const amountEur = parseFloat((finalAmount / 100).toFixed(6));
+    // ── Conversion devise pour NOWPayments ───────────────────────────────────
+    // Si la devise demandée est supportée par NOWPayments : on la transmet directement.
+    // Sinon (ex: CZK) : fallback EUR, le frontend a prévenu l'utilisateur.
+    let priceAmount: number;
+    let priceCurrency: string;
+
+    if (nowpaymentsCurrency === "EUR") {
+      priceAmount   = parseFloat((finalAmount / 100).toFixed(6));
+      priceCurrency = "eur";
+    } else {
+      const rates  = await fetchLiveRates();
+      const rate   = rates[nowpaymentsCurrency] ?? FALLBACK_RATES[nowpaymentsCurrency] ?? 1;
+      priceAmount  = convertEurCents(finalAmount, nowpaymentsCurrency, rate);
+      priceCurrency = nowpaymentsCurrency.toLowerCase();
+    }
 
     const res = await fetch("https://api.nowpayments.io/v1/invoice", {
       method: "POST",
@@ -158,8 +194,8 @@ export async function POST(req: NextRequest) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        price_amount:      amountEur,
-        price_currency:    "eur",
+        price_amount:      priceAmount,
+        price_currency:    priceCurrency,
         order_id:          orderId,
         order_description: `Traders Rewards — ${productName}`,
         ipn_callback_url:  `${siteUrl}/api/crypto/webhook`,
@@ -167,6 +203,11 @@ export async function POST(req: NextRequest) {
         cancel_url:        `${siteUrl}/checkout/cancel`,
       }),
     });
+
+    if (usedEurFallback) {
+      // Journaliser pour monitoring — pas d'erreur utilisateur (flux OK)
+      console.info(`[crypto/checkout] devise ${requestedCurrency} non supportée par NOWPayments → fallback EUR`);
+    }
 
     const data = await res.json();
 
