@@ -191,7 +191,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
         <div
           style={{
             display:             "grid",
-            gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "minmax(0, 1fr) minmax(0, .9fr) minmax(0, 1fr)",
+            gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr)",
             gap:                 18,
           }}
         >
@@ -200,14 +200,15 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
             {index === 1 && (
               <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, overflow: "hidden" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/rewards-guide-hoodie.png" alt="" loading="lazy" width={1536} height={1024}
-                  style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", objectFit: "contain", mixBlendMode: "screen" }} />
+                <img src="/rewards-guide-hoodie-restored.png" alt="" loading="lazy" width={1254} height={1254}
+                  style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", objectFit: "contain", mixBlendMode: "normal" }} />
               </div>
             )}
             <article
               style={{
-                minHeight:  370,
-                padding:    "clamp(26px, 3vw, 38px)",
+                minHeight:  0,
+                alignSelf: "center",
+                padding:    "24px",
                 borderRadius: 22,
                 background: index === 1
                   ? "linear-gradient(145deg, #0e1013, #080a0c)"
@@ -223,7 +224,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
               <h3 style={{ color: "#fff", fontSize: "clamp(1.55rem, 2.2vw, 2.35rem)", margin: "14px 0 7px", fontWeight: 900 }}>
                 {card.title}
               </h3>
-              <p style={{ color: "rgba(255,255,255,.52)", fontSize: 14, margin: "0 0 30px" }}>
+              <p style={{ color: "rgba(255,255,255,.52)", fontSize: 14, margin: "0 0 20px" }}>
                 {card.subtitle}
               </p>
               <div style={{ height: 1, background: "rgba(255,255,255,.1)", marginBottom: 10 }} />
