@@ -451,7 +451,7 @@ export default function Hero() {
                 justifyContent: "center",
                 marginLeft:   -22,
                 marginRight:  -22,
-                marginBottom: 16,
+                marginBottom: 0,
                 overflow:     "hidden",
                 lineHeight:   0,
                 alignSelf:    "stretch",
