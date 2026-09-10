@@ -55,22 +55,14 @@ export default function Home() {
       {/* ── Plateforme de trading : MetaTrader 5 ── */}
       <section
         id="metatrader5"
-        style={{ width: "100%", padding: "0 24px 64px", backgroundColor: "#000000", overflow: "hidden" }}
+        style={{ width: "100%", padding: 0, backgroundColor: "#000000", overflow: "hidden" }}
       >
-        <div style={{
-          width: "100%", maxWidth: 1500, maxHeight: 650, margin: "0 auto",
-          border: "1px solid rgba(255,255,255,0.22)", borderRadius: 22,
-          overflow: "hidden", lineHeight: 0,
-          background: "#000000",
-          boxShadow: "0 28px 80px rgba(0,0,0,.65), inset 0 1px rgba(255,255,255,.08)",
-        }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/MT5-OR.png"
-            alt="MetaTrader 5 — plateforme de trading simulé Traders Rewards"
-            style={{ width: "100%", height: "auto", maxHeight: 650, objectFit: "contain", display: "block", backgroundColor: "#000000" }}
-          />
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/mt5-premium.png"
+          alt="MetaTrader 5 — plateforme de trading simulé Traders Rewards"
+          style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
+        />
       </section>
 
       {/* ── Aperçu du cockpit trader ── */}
