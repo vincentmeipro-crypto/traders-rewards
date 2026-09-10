@@ -7,7 +7,7 @@
 //  Source des montants : lib/rewardsData.ts (frontend uniquement)
 // ════════════════════════════════════════════════════════════════
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 
@@ -100,13 +100,31 @@ export default function RewardLevels() {
     { num: "05", label: `${R} 5`, isTrader: true  },
   ];
 
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile]   = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const modalContentRef           = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 760);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  // Fermer la modale avec Escape
+  const closeModal = useCallback(() => setModalOpen(false), []);
+  useEffect(() => {
+    if (!modalOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeModal(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [modalOpen, closeModal]);
+
+  // Bloquer le scroll body pendant l'ouverture
+  useEffect(() => {
+    document.body.style.overflow = modalOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [modalOpen]);
 
   return (
     <section
@@ -133,7 +151,7 @@ export default function RewardLevels() {
         pointerEvents: "none",
       }} />
 
-      {/* Styles hover */}
+      {/* Styles hover + animations */}
       <style>{`
         .rl-card {
           transition: transform 0.20s ease, box-shadow 0.20s ease;
@@ -143,12 +161,26 @@ export default function RewardLevels() {
         .rl-card-5:hover {
           box-shadow: 0 12px 48px rgba(201,155,84,0.13), 0 0 64px rgba(0,0,0,0.60), inset 0 1px 0 rgba(255,255,255,0.025) !important;
         }
+        .rl-info-btn {
+          transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .rl-info-btn:hover {
+          background: rgba(212,168,67,0.12) !important;
+          border-color: rgba(212,168,67,0.55) !important;
+        }
+        @keyframes rl-fadein {
+          from { opacity: 0; transform: scale(0.97); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+        .rl-modal-box {
+          animation: rl-fadein 0.18s ease both;
+        }
       `}</style>
 
       <div style={{ maxWidth: 1080, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         {/* ── HEADER ─────────────────────────────────────────── */}
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 48 : 64 }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 28 : 36 }}>
 
           {/* Eyebrow */}
           <div style={{
@@ -191,7 +223,7 @@ export default function RewardLevels() {
           <p style={{
             maxWidth:   isMobile ? 480 : "none",
             whiteSpace: isMobile ? "normal" : "nowrap",
-            margin:     "0 auto",
+            margin:     "0 auto 20px",
             color:      "rgba(255,255,255,0.46)",
             fontSize:   isMobile ? 14 : 17,
             lineHeight: 1.7,
@@ -202,6 +234,39 @@ export default function RewardLevels() {
               "Each unlocked Reward increases maximum amounts.",
             )}
           </p>
+
+          {/* ── PATCH ⓘ Informations ─────────────────────────── */}
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <button
+              className="rl-info-btn"
+              onClick={() => setModalOpen(true)}
+              aria-haspopup="dialog"
+              style={{
+                display:       "inline-flex",
+                alignItems:    "center",
+                gap:           7,
+                padding:       "7px 14px",
+                borderRadius:  13,
+                border:        "1px solid rgba(212,168,67,0.35)",
+                background:    "rgba(212,168,67,0.06)",
+                color:         "#FFFFFF",
+                fontSize:      12,
+                fontWeight:    600,
+                cursor:        "pointer",
+                fontFamily:    "inherit",
+                letterSpacing: "0.2px",
+                whiteSpace:    "nowrap",
+              }}
+            >
+              <span style={{
+                fontSize:  14,
+                color:     "#D4A843",
+                lineHeight: 1,
+                flexShrink: 0,
+              }}>ⓘ</span>
+              {L("Informations", "Información", "Information")}
+            </button>
+          </div>
         </div>
 
         {/* ── EN-TÊTES COLONNES — desktop uniquement ─────────── */}
@@ -440,6 +505,228 @@ export default function RewardLevels() {
         </div>
 
       </div>
+
+      {/* ════════════════════════════════════════════════════════
+          MODALE — Informations sur les Récompenses
+          ════════════════════════════════════════════════════ */}
+      {modalOpen && (
+        /* Overlay — clic extérieur ferme */
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={L("Informations sur les Récompenses", "Información sobre las Recompensas", "Information about Rewards")}
+          onClick={(e) => { if (e.target === e.currentTarget) closeModal(); }}
+          style={{
+            position:       "fixed",
+            inset:          0,
+            zIndex:         1000,
+            background:     "rgba(0,0,0,0.72)",
+            display:        "flex",
+            alignItems:     "center",
+            justifyContent: "center",
+            padding:        "16px",
+          }}
+        >
+          {/* Boîte modale */}
+          <div
+            ref={modalContentRef}
+            className="rl-modal-box"
+            style={{
+              position:     "relative",
+              width:        "100%",
+              maxWidth:     560,
+              maxHeight:    "90vh",
+              overflowY:    "auto",
+              borderRadius: 18,
+              border:       "1px solid rgba(212,168,67,0.38)",
+              background:   "#0D0E10",
+              padding:      isMobile ? "28px 20px 24px" : "32px 32px 28px",
+              boxShadow:    "0 32px 80px rgba(0,0,0,0.80)",
+            }}
+          >
+            {/* Bouton fermer X */}
+            <button
+              onClick={closeModal}
+              aria-label={L("Fermer", "Cerrar", "Close")}
+              style={{
+                position:       "absolute",
+                top:            14,
+                right:          16,
+                width:          30,
+                height:         30,
+                borderRadius:   "50%",
+                border:         "1px solid rgba(255,255,255,0.12)",
+                background:     "rgba(255,255,255,0.05)",
+                color:          "rgba(255,255,255,0.60)",
+                fontSize:       16,
+                cursor:         "pointer",
+                display:        "flex",
+                alignItems:     "center",
+                justifyContent: "center",
+                fontFamily:     "inherit",
+                lineHeight:     1,
+                padding:        0,
+                transition:     "background 0.12s ease, color 0.12s ease",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.12)";
+                (e.currentTarget as HTMLElement).style.color      = "#FFFFFF";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)";
+                (e.currentTarget as HTMLElement).style.color      = "rgba(255,255,255,0.60)";
+              }}
+            >
+              ✕
+            </button>
+
+            {/* ── Titre modale */}
+            <div style={{
+              display:       "flex",
+              alignItems:    "flex-start",
+              gap:           12,
+              marginBottom:  22,
+              paddingRight:  36,
+            }}>
+              <span style={{
+                fontSize:   18,
+                color:      "#D4A843",
+                lineHeight: 1,
+                flexShrink: 0,
+                marginTop:  2,
+              }}>ⓘ</span>
+              <h3 style={{
+                margin:        0,
+                fontSize:      isMobile ? 13 : 14,
+                fontWeight:    900,
+                color:         "#FFFFFF",
+                letterSpacing: "1.4px",
+                textTransform: "uppercase",
+                lineHeight:    1.3,
+              }}>
+                {L(
+                  "COMMENT FONCTIONNENT LES RÉCOMPENSES ?",
+                  "¿CÓMO FUNCIONAN LAS RECOMPENSAS?",
+                  "HOW DO REWARDS WORK?",
+                )}
+              </h3>
+            </div>
+
+            {/* ── Corps texte */}
+            <p style={{
+              fontSize:     isMobile ? 14 : 15,
+              color:        "rgba(255,255,255,0.62)",
+              lineHeight:   1.6,
+              margin:       "0 0 22px",
+            }}>
+              <span style={{ color: "#FFFFFF", fontWeight: 700 }}>
+                {L("Aucun minimum de retrait.", "Sin retiro mínimo.", "No minimum withdrawal.")}
+              </span>
+              {" "}
+              {L(
+                "Le montant indiqué dans le tableau correspond au montant MAXIMUM que vous pouvez recevoir pour chaque Reward.",
+                "El importe indicado en la tabla corresponde al importe MÁXIMO que puede recibir por cada Reward.",
+                "The amount shown in the table is the MAXIMUM amount you can receive for each Reward.",
+              )}
+            </p>
+
+            {/* ── Exemple visuel */}
+            <div style={{
+              borderRadius: 12,
+              border:       "1px solid rgba(255,255,255,0.08)",
+              background:   "rgba(255,255,255,0.03)",
+              padding:      isMobile ? "14px 16px" : "16px 20px",
+              marginBottom: 18,
+            }}>
+              {/* En-tête exemple */}
+              <div style={{
+                fontSize:      9,
+                fontWeight:    800,
+                letterSpacing: "1.8px",
+                color:         "rgba(212,168,67,0.80)",
+                textTransform: "uppercase",
+                marginBottom:  12,
+              }}>
+                {L(
+                  "EXEMPLE — COMPTE 50K · RÉCOMPENSE #1",
+                  "EJEMPLO — CUENTA 50K · RECOMPENSA #1",
+                  "EXAMPLE — 50K ACCOUNT · REWARD #1",
+                )}
+              </div>
+
+              {/* Ligne 1 — sous le plafond */}
+              <div style={{
+                display:       "flex",
+                alignItems:    "center",
+                gap:           8,
+                flexWrap:      "wrap",
+                marginBottom:  8,
+              }}>
+                <span style={{ fontSize: isMobile ? 12 : 13, color: "rgba(255,255,255,0.42)", whiteSpace: "nowrap" }}>
+                  {L("Résultat éligible :", "Resultado elegible :", "Eligible result:")}
+                </span>
+                <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#FFFFFF", whiteSpace: "nowrap" }}>
+                  320 $
+                </span>
+                <span style={{ fontSize: 13, color: "rgba(255,255,255,0.20)" }}>→</span>
+                <span style={{ fontSize: isMobile ? 12 : 13, color: "rgba(255,255,255,0.42)", whiteSpace: "nowrap" }}>
+                  {L("Récompense :", "Recompensa :", "Reward:")}
+                </span>
+                <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#FFFFFF", whiteSpace: "nowrap" }}>
+                  320 $
+                </span>
+              </div>
+
+              {/* Ligne 2 — au-dessus du plafond → 500 $ MAX */}
+              <div style={{
+                display:    "flex",
+                alignItems: "center",
+                gap:        8,
+                flexWrap:   "wrap",
+              }}>
+                <span style={{ fontSize: isMobile ? 12 : 13, color: "rgba(255,255,255,0.42)", whiteSpace: "nowrap" }}>
+                  {L("Résultat éligible :", "Resultado elegible :", "Eligible result:")}
+                </span>
+                <span style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: "#FFFFFF", whiteSpace: "nowrap" }}>
+                  700 $
+                </span>
+                <span style={{ fontSize: 13, color: "rgba(255,255,255,0.20)" }}>→</span>
+                <span style={{ fontSize: isMobile ? 12 : 13, color: "rgba(255,255,255,0.42)", whiteSpace: "nowrap" }}>
+                  {L("Récompense :", "Recompensa :", "Reward:")}
+                </span>
+                {/* 500 $ MAX — doré champagne */}
+                <span style={{
+                  fontSize:             isMobile ? 13 : 14,
+                  fontWeight:           800,
+                  background:           GOLD,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor:  "transparent",
+                  backgroundClip:       "text",
+                  whiteSpace:           "nowrap",
+                }}>
+                  {L("500 $ MAX", "500 $ MÁX.", "500 $ MAX")}
+                </span>
+              </div>
+            </div>
+
+            {/* ── Note finale */}
+            <p style={{
+              fontSize:   isMobile ? 12 : 13,
+              color:      "rgba(255,255,255,0.40)",
+              lineHeight: 1.6,
+              margin:     0,
+              fontStyle:  "italic",
+            }}>
+              {L(
+                "Vous pouvez donc demander une Récompense inférieure au maximum. Le plafond augmente à chaque niveau.",
+                "Por lo tanto, puede solicitar una Recompensa inferior al máximo. El límite aumenta en cada nivel.",
+                "You can therefore request a Reward below the maximum. The cap increases at each level.",
+              )}
+            </p>
+
+          </div>
+        </div>
+      )}
     </section>
   );
 }
