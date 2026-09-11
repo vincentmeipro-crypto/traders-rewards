@@ -198,10 +198,10 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           {cards.map((card, index) => (
             <Fragment key={card.title}>
             {index === 1 && (
-              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: isMobile ? "auto" : 0, minHeight: isMobile ? undefined : "100%", overflow: "hidden" }}>
+              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: isMobile ? "auto" : 0, minHeight: isMobile ? undefined : "100%", overflow: "visible", position: "relative", zIndex: 1 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/rewards-guide-duo-v2.png" alt="" loading="lazy" width={1254} height={1254}
-                  style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: isMobile ? "auto" : "100%", objectFit: "contain", mixBlendMode: "normal" }} />
+                <img src="/IMAGE TRADER ET TRADEUSE NIVEAUX.png" alt="" loading="lazy" width={1426} height={1103}
+                  style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", objectFit: "contain", mixBlendMode: "normal" }} />
               </div>
             )}
             <article
