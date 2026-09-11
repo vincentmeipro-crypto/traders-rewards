@@ -458,7 +458,7 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/nouveau%20hero%20trading%20premium.png"
+                  src="/nouvelle%20image%20hero%20naturelle.png"
                   alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
                   style={{
                     display:         "block",
@@ -562,7 +562,7 @@ export default function Hero() {
             {/* ── Visuel droit — Personnages + jetons 25K / 50K / 100K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/nouveau%20hero%20trading%20premium.png"
+              src="/nouvelle%20image%20hero%20naturelle.png"
               alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
               style={{
                 display:        "block",
