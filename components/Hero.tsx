@@ -444,32 +444,29 @@ export default function Hero() {
               </span>
             </h1>
 
-            {/* ── Jetons — mobile uniquement, pleine largeur ── */}
+            {/* ── Personnages + jetons — mobile uniquement, pleine largeur ── */}
             {isMobile && (
               <div style={{
-                display:      "flex",
+                display:        "flex",
                 justifyContent: "center",
-                marginLeft:   -22,
-                marginRight:  -22,
-                marginBottom: 0,
-                overflow:     "hidden",
-                lineHeight:   0,
-                alignSelf:    "stretch",
+                marginLeft:     -22,
+                marginRight:    -22,
+                marginBottom:   0,
+                overflow:       "hidden",
+                lineHeight:     0,
+                alignSelf:      "stretch",
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/jetons-hero-premium.jpg"
-                  alt="Comptes Traders Rewards — 100K, 25K et 50K"
+                  src="/NOUVEAU%20HERO%20AVEC%20DES%20PERSONNAGES.png"
+                  alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
                   style={{
                     display:         "block",
-                    width:           "125vw",
+                    width:           "110%",
                     maxWidth:        "none",
-                    flexShrink:      0,
-                    // Remove the JPEG's empty vertical margins, keeping the coins intact.
-                    marginTop:       "-12vw",
-                    marginBottom:    "-14vw",
                     height:          "auto",
                     objectFit:       "contain",
+                    margin:          "0 auto",
                     backgroundColor: "#000000",
                   }}
                 />
