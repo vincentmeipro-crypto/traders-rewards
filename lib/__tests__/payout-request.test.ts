@@ -7,7 +7,7 @@ jest.mock("../reward-eligibility-server", () => ({ loadRewardAccounts: jest.fn()
 const load = jest.mocked(loadRewardAccounts);
 const insert = jest.fn();
 const db = { auth: { getUser: jest.fn() }, from: jest.fn(() => ({ insert })) };
-const request = (amount: unknown = 50) => new NextRequest("http://localhost/api/payouts", { method: "POST", body: JSON.stringify({ challenge_id: "owned-account", amount, wallet_address: "test-only", payment_method: "bank" }) });
+const request = (amount: unknown = 100) => new NextRequest("http://localhost/api/payouts", { method: "POST", body: JSON.stringify({ challenge_id: "owned-account", amount, wallet_address: "test-only", payment_method: "bank" }) });
 beforeEach(() => {
   jest.clearAllMocks();
   jest.mocked(createClient).mockResolvedValue(db as never);
@@ -22,7 +22,7 @@ test("unauthenticated request cannot insert", async () => {
 test("validation is scoped to authenticated user and requested account", async () => {
   expect((await POST(request())).status).toBe(200);
   expect(load).toHaveBeenCalledWith(db, "test-user", "owned-account");
-  expect(insert).toHaveBeenCalledWith(expect.objectContaining({ user_id: "test-user", amount: 50, status: "pending" }));
+  expect(insert).toHaveBeenCalledWith(expect.objectContaining({ user_id: "test-user", amount: 100, status: "pending" }));
 });
 test("missing or foreign account cannot insert", async () => {
   load.mockResolvedValue([]); expect((await POST(request())).status).toBe(404); expect(insert).not.toHaveBeenCalled();

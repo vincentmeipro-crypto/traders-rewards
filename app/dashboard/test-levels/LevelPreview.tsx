@@ -25,7 +25,7 @@ export default function LevelPreview({ userId }: { userId: string }) {
     </aside>
     <TraderCockpit key={challenge.id} challenge={challenge} activeChallenges={challenges}
       tradeHistory={[]} tradeHistoryLoading={false} isFr={true} isMobile={false}
-      kycStatus="approved" approvedRewardsCount={paidCount}
+      kycStatus="approved" paidRewardsCount={paidCount}
       onSelectChallenge={c => setSelectedId(c.id)}
       onNavigate={tab => setNotice(`Action « ${tab} » neutralisée dans cette prévisualisation locale.`)}
       onRefresh={() => setNotice("Fixtures locales rechargées ; aucune synchronisation distante.")} />

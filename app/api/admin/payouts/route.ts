@@ -27,6 +27,8 @@ export async function PATCH(req: NextRequest) {
   const { data: previous } = await admin.from("payouts").select("*").eq("id", id).single();
   const updateFields: Record<string, unknown> = { status };
   if (rejection_reason !== undefined) updateFields.rejection_reason = rejection_reason;
+  // Enregistrer la date de paiement effective (distincte de created_at = date de demande)
+  if (status === "paid") updateFields.paid_at = new Date().toISOString();
   const { data } = await admin.from("payouts").update(updateFields).eq("id", id).select().single();
 
   if (status === "paid" && previous?.status !== "paid") {

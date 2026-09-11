@@ -38,7 +38,8 @@
  *   - Caps Reward #1     : 25K = 250 $ / 50K = 500 $ / 100K = 1 000 $ (1 % du capital)
  *
  *  NIVEAU 3 — TRADER REWARD / REWARDS #2 À #5 (phase_type="reward_journey") :
- *   - Reward threshold   = Safety Net + cap du niveau (ex 25K R#1 : 26 100+250 = 26 350$)
+ *   - Éligibilité Reward : available = balance − start_balance ≥ 100$ (minimum)
+ *   - Maximum Reward     = min(available, cap_du_niveau) — PAS de seuil trailingLock+cap
  *   - Plancher FIXE      = start_balance (immuable, pas de trailing)
  *   - Consistency Rule   = 50 %
  *   - Caps Rewards #2-5  : voir V1_REWARD_CAPS (INCHANGÉS)
@@ -99,7 +100,7 @@ export const V1_CHALLENGE = {
 export const V1_REWARD_QUAL = {
   profitTargetPct:   4,
   trailingDdPct:     4,   // % affiché — calcul réel via V1_DD_USD_BY_BALANCE
-  trailingLockPct:   4,   // % affiché — lock réel via V1_SAFETY_NET. Utiliser getV1SafetyNet().
+  trailingLockPct:   4,   // % affiché — lock réel via V1_TRAILING_LOCK_BALANCE. Utiliser getV1TrailingLockBalance().
   minQualifyingDays: 5,
 } as const;
 
@@ -185,19 +186,37 @@ export const V1_DD_USD_BY_BALANCE: Record<number, number> = {
 };
 
 /**
- * Safety Net : seuil absolu de verrouillage du trailing EOD — APEX EOD MODEL.
- * Lorsque highest_eod ≥ Safety Net, le floor se verrouille définitivement
- * sur start_balance (immuable).
+/**
+ * Balance EOD à laquelle le trailing floor ATTEINT le capital nominal.
  *
- *  25K  → 26 100 $  (was start × 1.04 = 26 000)
- *  50K  → 52 100 $  (was start × 1.04 = 52 000)
- * 100K  → 103 100 $ (was start × 1.03 = 103 000)
+ * Formule : trailingLockBalance = start_balance + ddUsd
+ *   = point où rawFloor (= highest_eod − ddUsd) = start_balance.
+ *   Lorsque highest_eod ≥ trailingLockBalance, le floor se verrouille
+ *   définitivement sur start_balance (CAS A — trailing hit nominal).
+ *
+ *  25K  → 26 000 $  (25 000 + 1 000 ddUsd)
+ *  50K  → 52 000 $  (50 000 + 2 000 ddUsd)
+ * 100K  → 103 000 $ (100 000 + 3 000 ddUsd)
+ *
+ * ⚠️  CE N'EST PAS LE FLOOR. Le floor = start_balance une fois verrouillé.
+ * ⚠️  CE N'EST PAS UN SEUIL D'ÉLIGIBILITÉ REWARD. Le montant retirable
+ *     est déterminé par balance − start_balance, pas par cette valeur.
+ * ⚠️  CORRECTION (was 26 100 / 52 100 / 103 100) : les anciennes valeurs
+ *     créaient une fenêtre de 100 $ où le rawFloor dépassait le start_balance.
+ *     La formule correcte est start + ddUsd.
  */
-export const V1_SAFETY_NET: Record<number, number> = {
-  25000:    26100,
-  50000:    52100,
-  100000:  103100,
+export const V1_TRAILING_LOCK_BALANCE: Record<number, number> = {
+  25000:    26000,
+  50000:    52000,
+  100000:  103000,
 };
+
+/**
+ * @deprecated Alias legacy → utiliser V1_TRAILING_LOCK_BALANCE.
+ * Conservé pour la rétrocompatibilité avec les anciens appels.
+ */
+// eslint-disable-next-line @typescript-eslint/no-deprecated
+export const V1_SAFETY_NET = V1_TRAILING_LOCK_BALANCE;
 
 /**
  * Retourne le pourcentage de trailing drawdown EOD pour une balance initiale.
@@ -230,13 +249,26 @@ export function getV1DdUsdByBalance(startBalance: number): number {
 }
 
 /**
- * Retourne le Safety Net (seuil de verrouillage absolu) en $ pour une balance initiale.
- *  25K  → 26 100 $
- *  50K  → 52 100 $
- * 100K  → 103 100 $
+ * Retourne la balance EOD à laquelle le trailing floor atteint le capital nominal.
+ * = start_balance + ddUsd (CAS A lock threshold).
+ *
+ *  25K  → 26 000 $  (= 25 000 + 1 000 ddUsd)
+ *  50K  → 52 000 $  (= 50 000 + 2 000 ddUsd)
+ * 100K  → 103 000 $ (= 100 000 + 3 000 ddUsd)
+ *
+ * ⚠️  CE N'EST PAS LE FLOOR ni un SEUIL D'ÉLIGIBILITÉ REWARD.
+ *     Voir getEffectiveRewardFloor() pour le floor canonique.
+ */
+export function getV1TrailingLockBalance(startBalance: number): number {
+  return V1_TRAILING_LOCK_BALANCE[startBalance] ?? (startBalance + getV1DdUsdByBalance(startBalance));
+}
+
+/**
+ * @deprecated Alias legacy → utiliser getV1TrailingLockBalance().
+ * Conservé pour la rétrocompatibilité (cron, metaapi/sync, anciens tests).
  */
 export function getV1SafetyNet(startBalance: number): number {
-  return V1_SAFETY_NET[startBalance] ?? (startBalance * 1.04);
+  return getV1TrailingLockBalance(startBalance);
 }
 
 /**
@@ -262,10 +294,10 @@ export function getV1RewardCap(startBalance: number, rewardLevel: number): numbe
  * threshold = Safety Net + cap du niveau de Reward.
  *
  * Exemples :
- *   getV1RewardThresholdUsd(25000,  1) → 26 100 + 250  = 26 350
- *   getV1RewardThresholdUsd(50000,  1) → 52 100 + 500  = 52 600
- *   getV1RewardThresholdUsd(100000, 1) → 103 100 + 1000 = 104 100
- *   getV1RewardThresholdUsd(25000,  2) → 26 100 + 375  = 26 475
+ *   getV1RewardThresholdUsd(25000,  1) → 26 000 + 250  = 26 250
+ *   getV1RewardThresholdUsd(50000,  1) → 52 000 + 500  = 52 500
+ *   getV1RewardThresholdUsd(100000, 1) → 103 000 + 1000 = 104 000
+ *   getV1RewardThresholdUsd(25000,  2) → 26 000 + 375  = 26 375
  *
  * @param rewardLevel  Numéro de Reward (1 à 5), default 1
  */
@@ -280,6 +312,86 @@ export function getV1RewardThresholdUsd(startBalance: number, rewardLevel: numbe
  */
 export function getV1FixedFloor(startBalance: number): number {
   return startBalance;
+}
+
+// ── Plancher canonique (source unique) ───────────────────────
+
+/** Mode du plancher effectif */
+export type V1FloorMode = "FIXED" | "TRAILING";
+
+/** Résultat de la fonction canonique de plancher */
+export interface V1EffectiveFloorResult {
+  /** Plancher effectif à utiliser pour les checks DD et les calculs de retrait */
+  floor:      number;
+  /** Mode du plancher : FIXED = verrouillé sur start_balance, TRAILING = encore mobile */
+  mode:       V1FloorMode;
+  /** Plancher brut (highest_eod − ddUsd) avant application du cap au start_balance */
+  rawFloor:   number;
+  /** true si le plancher est définitivement verrouillé sur start_balance */
+  isFixed:    boolean;
+  /**
+   * Raison du verrouillage :
+   *  "trailing_hit_nominal" — CAS A : rawFloor ≥ start_balance
+   *  "reward_paid"          — CAS B : au moins 1 Reward payée (paidRewardsCount ≥ 1)
+   *  null                   — plancher encore en mode trailing
+   */
+  lockReason: "trailing_hit_nominal" | "reward_paid" | null;
+}
+
+/**
+ * SOURCE CANONIQUE du plancher effectif pour un compte Reward V1.
+ *
+ * Règle à deux cas :
+ *   CAS A — Trailing a atteint le nominal :
+ *     rawFloor = highest_eod − ddUsd ≥ start_balance → floor = start_balance (FIXE)
+ *   CAS B — Au moins 1 Reward payée :
+ *     paidRewardsCount ≥ 1 → floor = start_balance (FIXE)
+ *   Sinon : floor = rawFloor (trailing, encore < start_balance)
+ *
+ * Convention :
+ *   Le floor PROGRESSE uniquement à l'EOD (highest_eod monotone non-décroissant).
+ *   La violation est vérifiée en TEMPS RÉEL contre l'equity live (strict <).
+ *
+ * Utiliser cette fonction comme SOURCE UNIQUE partout où le plancher est nécessaire :
+ *   - TraderCockpit.tsx (n2DisplayFloor, n2Coussin)
+ *   - evaluateReward() dans reward-eligibility.ts
+ *   - checkV1DDBreach() pour le Reward Account
+ *   - Admin / logs
+ *
+ * @param startBalance      Capital initial (ex: 50 000)
+ * @param highestEod        Plus haut EOD atteint (monotone non-décroissant)
+ * @param ddUsd             Drawdown fixe en $ — passer getV1DdUsdByBalance(startBalance)
+ * @param paidRewardsCount  Nombre de Rewards avec status="paid" pour ce challenge
+ *
+ * Exemples (50K, ddUsd=2 000) :
+ *   highestEod=50 000, paidCount=0 → rawFloor=48 000 < 50 000 → TRAILING (floor=48 000)
+ *   highestEod=51 000, paidCount=0 → rawFloor=49 000 < 50 000 → TRAILING (floor=49 000)
+ *   highestEod=52 000, paidCount=0 → rawFloor=50 000 ≥ 50 000 → FIXED / CAS A (floor=50 000)
+ *   highestEod=51 000, paidCount=1 → rawFloor=49 000 < 50 000 → FIXED / CAS B (floor=50 000)
+ */
+export function getEffectiveRewardFloor(
+  startBalance:     number,
+  highestEod:       number,
+  ddUsd:            number,
+  paidRewardsCount: number,
+): V1EffectiveFloorResult {
+  const rawFloor         = highestEod - ddUsd;
+  const trailingHitNominal = rawFloor >= startBalance;
+  const rewardPaid         = paidRewardsCount >= 1;
+  const isFixed            = trailingHitNominal || rewardPaid;
+  const floor              = isFixed ? startBalance : rawFloor;
+  const lockReason: V1EffectiveFloorResult["lockReason"] =
+    !isFixed               ? null
+    : trailingHitNominal   ? "trailing_hit_nominal"
+    : "reward_paid";
+
+  return {
+    floor,
+    mode:       isFixed ? "FIXED" : "TRAILING",
+    rawFloor,
+    isFixed,
+    lockReason,
+  };
 }
 
 // ── Types publics ─────────────────────────────────────────────
@@ -344,37 +456,37 @@ export interface V1RewardQualCheck {
  * Calcule le floor effectif du trailing drawdown V1.
  *
  * Règle :
- *  - Si lockPct non null ET highest_eod ≥ start × (1 + lockPct/100)
+ *  - Si trailingLockBalance non null ET highest_eod ≥ trailingLockBalance
  *    → floor = start_balance (verrouillé définitivement au capital initial)
- *  - Sinon : floor = highest_eod × (1 - ddPct/100)
+ *  - Sinon : floor = highest_eod − ddUsd  (trailing libre)
  *
  * ⚠️ Le floor PROGRESSE uniquement à l'EOD (highest_eod mis à jour à 22h00 UTC).
  *    La vérification de breach s'applique en TEMPS RÉEL contre l'equity live.
  *
- * @param startBalance  Capital initial (ex: 50 000)
- * @param highestEod    Plus haut EOD atteint — monotone non-décroissant
- * @param ddUsd         Montant fixe de drawdown en $ (Apex EOD) — ex: 2000 pour 50K
- * @param safetyNet     Safety Net : seuil absolu de verrouillage en $ (null = pas de verrou)
- *                      Passer getV1SafetyNet(startBalance) pour le Reward Account.
- *                      null pour le Challenge (trailing libre sans verrou).
+ * @param startBalance        Capital initial (ex: 50 000)
+ * @param highestEod          Plus haut EOD atteint — monotone non-décroissant
+ * @param ddUsd               Montant fixe de drawdown en $ — ex: 2000 pour 50K
+ * @param trailingLockBalance Balance EOD de verrouillage en $ (null = pas de verrou).
+ *                            Passer getV1TrailingLockBalance(startBalance) pour le Reward Account.
+ *                            null pour le Challenge (trailing libre sans verrou).
  *
- * Exemples Reward Account (50K, safetyNet=52 100, ddUsd=2 000) :
+ * Exemples Reward Account (50K, trailingLockBalance=52 000, ddUsd=2 000) :
  *   highest=50 000 → floor = 50 000 − 2 000 = 48 000
  *   highest=51 000 → floor = 51 000 − 2 000 = 49 000
- *   highest=52 100 (≥ 52 100) → floor = 50 000 (verrouillé au capital initial)
+ *   highest=52 000 (≥ 52 000) → floor = 50 000 (verrouillé au capital initial)
  *   highest=54 000 (au-delà du verrou) → floor = 50 000 (toujours verrouillé)
  */
 export function computeV1TrailingFloor(
-  startBalance: number,
-  highestEod:   number,
-  ddUsd:        number,        // Montant fixe en $ (Apex EOD) — was: ddPct en %
-  safetyNet:    number | null, // Seuil de lock absolu en $ — was: lockPct en %
+  startBalance:        number,
+  highestEod:          number,
+  ddUsd:               number,        // Montant fixe en $
+  trailingLockBalance: number | null, // Balance EOD de lock — null = Challenge (pas de verrou)
 ): number {
-  if (safetyNet !== null && highestEod >= safetyNet) {
-    // Floor définitivement verrouillé au capital initial (Safety Net atteint)
+  if (trailingLockBalance !== null && highestEod >= trailingLockBalance) {
+    // Floor définitivement verrouillé au capital initial
     return startBalance;
   }
-  // Trailing fixe : highest − montant$ (Apex EOD — was: highest × (1 - ddPct/100))
+  // Trailing libre : highest − ddUsd
   return highestEod - ddUsd;
 }
 
@@ -386,10 +498,10 @@ export function computeV1TrailingFloor(
  * @param safetyNet   Safety Net en $ (passer getV1SafetyNet(startBalance))
  */
 export function isV1TrailingLocked(
-  highestEod: number,
-  safetyNet:  number,  // was: (startBalance, highestEod, lockPct)
+  highestEod:          number,
+  trailingLockBalance: number,  // was: safetyNet — balance EOD de lock
 ): boolean {
-  return highestEod >= safetyNet;
+  return highestEod >= trailingLockBalance;
 }
 
 // ── DD Breach ─────────────────────────────────────────────────
@@ -407,17 +519,17 @@ export function isV1TrailingLocked(
  *    Si breached = true, l'état du compte doit passer à "failed" de manière
  *    permanente, indépendamment de toute recovery equity ultérieure.
  *
- * @param safetyNet  null = challenge (pas de verrou) / number = Safety Net $ pour Reward Account
+ * @param trailingLockBalance  null = challenge (pas de verrou) / number = balance EOD de lock pour Reward Account
  */
 export function checkV1DDBreach(
-  startBalance: number,
-  highestEod:   number,
-  equity:       number,
-  ddUsd:        number,         // Montant fixe en $ (was: ddPct en %)
-  safetyNet:    number | null,  // Safety Net en $ (was: lockPct en %)
+  startBalance:        number,
+  highestEod:          number,
+  equity:              number,
+  ddUsd:               number,        // Montant fixe en $
+  trailingLockBalance: number | null, // Balance EOD de lock — null = Challenge
 ): V1DDResult {
-  const floor  = computeV1TrailingFloor(startBalance, highestEod, ddUsd, safetyNet);
-  const locked = safetyNet !== null && isV1TrailingLocked(highestEod, safetyNet);
+  const floor  = computeV1TrailingFloor(startBalance, highestEod, ddUsd, trailingLockBalance);
+  const locked = trailingLockBalance !== null && isV1TrailingLocked(highestEod, trailingLockBalance);
   return {
     breached: equity < floor,  // strict < : equity == floor est toléré
     floor,
@@ -621,27 +733,27 @@ export function checkV1ChallengeTransition(
  *
  * Conditions simultanées requises :
  *  1. Profit ≥ +4 % (avec consistency 50 % — Apex EOD, was 33 %)
- *  2. DD trailing EOD (montant fixe $) non violé — avec Safety Net lock
+ *  2. DD trailing EOD (montant fixe $) non violé — avec lock EOD
  *  3. ≥ 5 jours profitables qualifiants (seuil qualifiant Apex EOD: 100/250/300$)
  *
- * @param ddUsd      Drawdown fixe $ — passer getV1DdUsdByBalance(startBalance)
- * @param safetyNet  Safety Net en $ — passer getV1SafetyNet(startBalance)
+ * @param ddUsd               Drawdown fixe $ — passer getV1DdUsdByBalance(startBalance)
+ * @param trailingLockBalance Balance EOD de lock — passer getV1TrailingLockBalance(startBalance)
  */
 export function checkV1RewardQualification(
-  startBalance:     number,
-  currentBalance:   number,
-  highestEod:       number,
-  currentEquity:    number,
-  bestDayProfitUsd: number,
-  qualifyingDays:   number,
-  ddUsd:            number = 1000,          // Défaut 25K — passer getV1DdUsdByBalance()
-  safetyNet:        number = 26100,         // Défaut 25K — passer getV1SafetyNet()
-  profitTargetPct:  number = V1_REWARD_QUAL.profitTargetPct,
-  minQualDays:      number = V1_REWARD_QUAL.minQualifyingDays,
+  startBalance:        number,
+  currentBalance:      number,
+  highestEod:          number,
+  currentEquity:       number,
+  bestDayProfitUsd:    number,
+  qualifyingDays:      number,
+  ddUsd:               number = 1000,   // Défaut 25K — passer getV1DdUsdByBalance()
+  trailingLockBalance: number = 26000,  // Défaut 25K — passer getV1TrailingLockBalance()
+  profitTargetPct:     number = V1_REWARD_QUAL.profitTargetPct,
+  minQualDays:         number = V1_REWARD_QUAL.minQualifyingDays,
 ): V1RewardQualCheck {
   // Apex EOD : consistency 50 % pour les Rewards (was 33 %)
   const profitCheck       = checkV1ProfitTarget(startBalance, currentBalance, profitTargetPct, bestDayProfitUsd, V1_CONSISTENCY_PCT.reward);
-  const ddResult          = checkV1DDBreach(startBalance, highestEod, currentEquity, ddUsd, safetyNet);
+  const ddResult          = checkV1DDBreach(startBalance, highestEod, currentEquity, ddUsd, trailingLockBalance);
   const qualifyingDaysMet = qualifyingDays >= minQualDays;
 
   return {
@@ -954,28 +1066,27 @@ export function computeRewardImpact(
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SECTION V1.2 — ÉLIGIBILITÉ ET MONTANT DES REWARDS #2 à #5
+// SECTION V1.2 — MONTANT DES REWARDS #1 à #5
 // ═══════════════════════════════════════════════════════════════
 //
-// Règle officielle (2026-08-21) :
-//   Une demande de Reward n'est recevable que si la balance
-//   courante est AU MINIMUM à +4 % du capital initial.
+// Montant retirable — SOURCE CANONIQUE :
+//   available = min(balance, equity) − start_balance
+//     (= profit total non retiré depuis le capital initial)
+//     (la balance MT5 reflète déjà le retrait des Rewards précédentes)
+//   maximum   = min(available, rewardCap)
 //
-//   requestThreshold = startBalance × 1.04
-//
-//   Seuils contractuels :
-//     25K  → $26 000
-//     50K  → $52 000
-//     100K → $104 000
-//
-// Montant réellement versé :
-//   eligibleNewProfit = currentBalance − balanceAfterPreviousReward
-//   rewardAmount      = min(eligibleNewProfit, rewardCap)
+// Éligibilité (floor reason) :
+//   maximum >= 100 $ minimum absolu
+//   PAS de seuil "safetyNet + cap" — ce seuil N'existe PLUS.
 //
 // Après versement :
-//   postBalance = currentBalance − rewardAmount
+//   postBalance = balance − rewardAmount
 //   (PAS de reset au capital initial)
-//   Le plancher reste verrouillé au capital initial.
+//   Le plancher reste verrouillé au capital initial (= start_balance).
+//
+// ATTENTION : computeRewardRequestThreshold() ci-dessous est LEGACY.
+//   Elle calcule safetyNet + cap, utilisée en affichage uniquement
+//   (v1-display.ts, metaapi/sync). Elle NE contrôle PAS l'éligibilité.
 // ═══════════════════════════════════════════════════════════════
 
 /**
@@ -986,22 +1097,27 @@ export function computeRewardImpact(
 export const REWARD_REQUEST_PROFIT_PCT = 4 as const;
 
 /**
- * Calcule le seuil de balance minimum requis pour une demande de Reward — APEX EOD MODEL.
+ * @legacy — AFFICHAGE UNIQUEMENT. NE CONTRÔLE PAS L'ÉLIGIBILITÉ REWARD.
  *
- * requestThreshold = Safety Net + cap du niveau de Reward
+ * Calcule trailingLockBalance + cap du niveau.
+ * Utilisé en affichage (v1-display.ts) et dans metaapi/sync pour information.
  *
- * Exemples :
- *   computeRewardRequestThreshold(25000,  1) → 26 100 + 250  = 26 350
- *   computeRewardRequestThreshold(50000,  1) → 52 100 + 500  = 52 600
- *   computeRewardRequestThreshold(100000, 1) → 103 100 + 1000 = 104 100
- *   computeRewardRequestThreshold(25000,  2) → 26 100 + 375  = 26 475
+ * ⚠️  L'éligibilité à une Reward est déterminée par :
+ *       available = min(balance, equity) − start_balance
+ *       maximum   = min(available, cap)
+ *       eligible  = maximum >= 100$  (+ autres conditions métier)
+ *   Cette fonction NE doit PAS servir de gate d'éligibilité.
  *
- * @param rewardLevel  Numéro de Reward demandé (1 à 5), default 1
+ * Exemples (affichage) :
+ *   computeRewardRequestThreshold(25000,  1) → 26 000 + 250  = 26 250
+ *   computeRewardRequestThreshold(50000,  1) → 52 000 + 500  = 52 500
+ *   computeRewardRequestThreshold(100000, 1) → 103 000 + 1000 = 104 000
+ *   computeRewardRequestThreshold(25000,  2) → 26 000 + 375  = 26 375
  */
 export function computeRewardRequestThreshold(startBalance: number, rewardLevel: number = 1): number {
-  const safetyNet = getV1SafetyNet(startBalance);
-  const cap       = getV1RewardCap(startBalance, rewardLevel) ?? 0;
-  return safetyNet + cap;
+  const trailingLock = getV1TrailingLockBalance(startBalance);
+  const cap          = getV1RewardCap(startBalance, rewardLevel) ?? 0;
+  return trailingLock + cap;
 }
 
 /**

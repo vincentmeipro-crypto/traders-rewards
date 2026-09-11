@@ -275,7 +275,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const [latestSupportReplyAt, setLatestSupportReplyAt] = useState<string | null>(null);
   const [allChallenges, setAllChallenges] = useState<Challenge[]>([]);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
-  const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; status: string; challenge_id?: string; payment_method?: string; rejection_reason?: string }[]>([]);
+  const [allPayouts, setAllPayouts] = useState<{ id: string; amount: number; created_at: string; paid_at?: string | null; status: string; challenge_id?: string; payment_method?: string; rejection_reason?: string }[]>([]);
   const [certificates, setCertificates] = useState<CertificateSummary[]>([]);
   const [tradeHistory, setTradeHistory] = useState<Record<string, unknown>[]>([]);
   const [tradeHistoryLoading, setTradeHistoryLoading] = useState(false);
@@ -782,7 +782,7 @@ export default function DashboardClient({ user }: { user: User }) {
                     : (finalBalance && c.start_balance ? ((finalBalance - c.start_balance) / c.start_balance * 100).toFixed(1) : null);
                   // Détection V1 robuste (dd_model OU rules_snapshot OU slug)
                   const isV1 = isV1Challenge(c);
-                  const phaseReached = c.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER";
+                  const phaseReached = c.phase === "funded" ? "TRADER REWARD" : "CHALLENGER";
                   const isLast = idx === allChallenges.length - 1;
                   const dotColor = c.status === "funded" ? "rgba(255,255,255,0.75)" : c.status === "failed" ? "#ef4444" : c.status === "passed" ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.75)";
                   const relatedPayouts = isV1
@@ -811,7 +811,7 @@ export default function DashboardClient({ user }: { user: User }) {
                         {/* Header */}
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.phase === "funded" ? "Compte Reward" : "Challenge"}</div>
+                            <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6 }}>{c.account_size} — {c.phase === "funded" ? "Trader Reward" : "Challenge"}</div>
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                               <span style={{ backgroundColor: `${dotColor}20`, color: dotColor, fontSize: 12, fontWeight: 700, padding: "3px 10px", borderRadius: 100, display: "inline-flex", alignItems: "center", gap: 4 }}>{c.status === "funded" && <Trophy size={11} />}{getStatusLabel(c.status, isFr, isEs)}</span>
                               <span style={{ backgroundColor: c.phase === "funded" ? "rgba(201,168,76,0.15)" : "rgba(255,255,255,0.06)", color: c.phase === "funded" ? "#C9A84C" : "rgba(255,255,255,0.45)", fontSize: 12, fontWeight: c.phase === "funded" ? 700 : 400, padding: "3px 10px", borderRadius: 100 }}>{phaseReached}</span>
@@ -874,7 +874,7 @@ export default function DashboardClient({ user }: { user: User }) {
                                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                     <Award size={14} color="#C9A84C" />
                                     <span style={{ fontSize: 13, fontWeight: 700, color: "#C9A84C" }}>
-                                      {C("Compte Reward activé", "Cuenta Reward activada", "Reward Account activated")}
+                                      {C("Challenge validé", "Challenge validado", "Challenge validated")}
                                     </span>
                                     {c.mt5_login && (
                                       <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>#{c.mt5_login}</span>
@@ -1281,7 +1281,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <h1 className="dash-chrome-title" style={{ fontSize: 24, fontWeight: 800, marginBottom: 8 }}>{T.dash.rewards}</h1>
             <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 14, marginBottom: 32 }}>{T.dash.rewardsSub}</p>
             {payoutAccounts.length > 0 && <label style={{ display: "block", marginBottom: 20 }}>
-              {C("Compte Reward", "Cuenta Reward", "Reward account")}
+              {C("Trader Reward", "Trader Reward", "Trader Reward account")}
               <select value={payoutChallenge?.id ?? ""} disabled={payoutLoading} onChange={e => { setPayoutAccountId(e.target.value); setPayoutError(""); setPayoutSuccess(false); setPayoutForm(f => ({ ...f, amount: "" })); }} style={{ display: "block", width: "100%", padding: 12, background: "#222", color: "white", marginTop: 8 }}>
                 {payoutAccounts.map(c => <option key={c.id} value={c.id}>{c.account_size} · {c.mt5_login ?? c.id} · {rewardAccounts.find(r => r.id === c.id)?.eligible ? C("Éligible", "Elegible", "Eligible") : C("Conditions à vérifier", "Condiciones pendientes", "Conditions pending")}</option>)}
               </select>
@@ -1326,8 +1326,8 @@ export default function DashboardClient({ user }: { user: User }) {
                   </> : <p>{C("Éligibilité non vérifiée", "Elegibilidad no verificada", "Eligibility not verified")}</p>}
                   <button type="button" disabled={eligibilityLoading || payoutLoading} onClick={() => { setPayoutError(""); setEligibilityRefresh(v => v + 1); }}>{C("Actualiser", "Actualizar", "Refresh")}</button>
                   <label style={{ display: "block", marginTop: 18 }}>
-                    {C("Montant demandé (USD) — aucun minimum", "Importe solicitado (USD) — sin mínimo", "Requested amount (USD) — no minimum")}
-                    <input type="number" step="0.01" min="0" max={rewardEligibility?.maximum ?? 0} value={payoutForm.amount} disabled={eligibilityLoading || payoutLoading || !rewardEligibility?.eligible} onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))} style={{ display: "block", width: "100%", padding: 12, marginTop: 8, background: "#222", color: "white" }} />
+                    {C("Montant demandé (USD) — minimum $100", "Importe solicitado (USD) — mínimo $100", "Requested amount (USD) — minimum $100")}
+                    <input type="number" step="0.01" min="100" max={rewardEligibility?.maximum ?? 0} value={payoutForm.amount} disabled={eligibilityLoading || payoutLoading || !rewardEligibility?.eligible} onChange={e => setPayoutForm(f => ({ ...f, amount: e.target.value }))} style={{ display: "block", width: "100%", padding: 12, marginTop: 8, background: "#222", color: "white" }} />
                   </label>
                 </div>
 
@@ -1530,7 +1530,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <label style={{ display: "flex", alignItems: "center", gap: 12, width: "fit-content", marginBottom: 20, padding: "8px 10px 8px 14px", border: "1px solid rgba(255,255,255,0.15)", borderRadius: 12, background: "rgba(255,255,255,0.04)" }}>
                 <span style={{ color: "rgba(255,255,255,0.65)", fontSize: 10, fontWeight: 900, letterSpacing: 1.1 }}>{C("COMPTE", "CUENTA", "ACCOUNT")}</span>
                 <select value={challenge?.id ?? ""} onChange={event => { const selected = activeChallenges.find(item => item.id === event.target.value); if (selected) setChallenge(selected); }} style={{ border: 0, outline: 0, background: "#11171b", color: "#fff", borderRadius: 8, padding: "7px 10px", font: "700 12px inherit" }}>
-                  {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "COMPTE REWARD" : "CHALLENGER"}</option>)}
+                  {activeChallenges.map(item => <option key={item.id} value={item.id}>{item.account_size} · {item.phase === "funded" ? "TRADER REWARD" : "CHALLENGER"}</option>)}
                 </select>
               </label>
             )}
@@ -1821,7 +1821,16 @@ export default function DashboardClient({ user }: { user: User }) {
             isEs={isEs}
             isMobile={isMobile}
             kycStatus={kycStatus}
-            approvedRewardsCount={allPayouts.filter(p => p.challenge_id === challenge.id && p.status === "paid").length}
+            paidRewardsCount={allPayouts.filter(p => p.challenge_id === challenge.id && p.status === "paid").length}
+            paidRewardsLastAt={(() => {
+              const last = allPayouts
+                .filter(p => p.challenge_id === challenge.id && p.status === "paid")
+                .sort((a, b) =>
+                  new Date(b.paid_at ?? b.created_at).getTime() -
+                  new Date(a.paid_at ?? a.created_at).getTime()
+                )[0];
+              return last ? (last.paid_at ?? last.created_at) : null;
+            })()}
             onSelectChallenge={selected => setChallenge(selected as Challenge)}
             onNavigate={tab => setActiveTab(tab)}
             onRefresh={handleRefresh}
