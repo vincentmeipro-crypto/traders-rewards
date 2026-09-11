@@ -444,6 +444,24 @@ export default function Hero() {
               </span>
             </h1>
 
+            <p style={{
+              margin: isMobile ? "0 0 12px" : "-24px 0 0",
+              height: isMobile ? "auto" : 104,
+              display: "flex",
+              alignItems: "center",
+              flexShrink: 0,
+              fontFamily: 'Georgia, "Times New Roman", serif',
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: isMobile ? "clamp(21px, 5.4vw, 30px)" : "clamp(24px, 2.4vw, 34px)",
+              lineHeight: 1.3,
+              color: "#FFFFFF",
+              textAlign: isMobile ? "center" : "left",
+              justifyContent: isMobile ? "center" : "flex-start",
+              alignSelf: "stretch",
+            }}>
+              <span>{L("Devenez un", "Conviértete en un", "Become a")} <span style={{ background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>trader reward</span></span>
+            </p>
             {/* ── Personnages + jetons — mobile uniquement, pleine largeur ── */}
             {isMobile && (
               <div style={{
@@ -505,9 +523,6 @@ export default function Hero() {
                 </a>
               </div>
             )}
-
-            {/* ── Spacer — sépare H1 et promo+CTA sur desktop ── */}
-            {!isMobile && <div style={{ minHeight: 80 }} aria-hidden="true" />}
 
             {/* ── Desktop : promo + CTA inchangés ── */}
             {!isMobile && (
