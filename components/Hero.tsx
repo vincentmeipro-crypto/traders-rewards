@@ -506,8 +506,8 @@ export default function Hero() {
               </div>
             )}
 
-            {/* ── Spacer — pousse promo + CTA vers le bas du Hero (desktop only) ── */}
-            {!isMobile && <div style={{ flex: 1 }} aria-hidden="true" />}
+            {/* ── Spacer — sépare H1 et promo+CTA sur desktop ── */}
+            {!isMobile && <div style={{ minHeight: 80 }} aria-hidden="true" />}
 
             {/* ── Desktop : promo + CTA inchangés ── */}
             {!isMobile && (
