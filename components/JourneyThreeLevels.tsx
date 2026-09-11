@@ -25,6 +25,11 @@ const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 // ── Données contractuelles (importées de lib/rewardsData) ─────
 const ACTIV_FEE: Record<number, number> = { 25000: 99, 50000: 99, 100000: 149 };
 
+// Plancher fixe après première Reward = capital nominal
+const FIXED_FLOOR: Record<string, string> = { "25K": "$25,000", "50K": "$50,000", "100K": "$100,000" };
+// Plancher EOD maximum avant première Reward (Trailing DD EOD)
+const MAX_EOD_FLOOR: Record<string, string> = { "25K": "$26,000", "50K": "$52,000", "100K": "$103,000" };
+
 // ── Styles partagés ───────────────────────────────────────────
 const secLabel: React.CSSProperties = {
   fontSize: 9, fontWeight: 800, color: ACCENT,
@@ -160,7 +165,6 @@ function Modal02({ onClose, L, selectedSize }: {
   selectedSize: typeof SIZES_DATA[number];
 }) {
   const rewardOne = selectedSize.rewardCaps[0];
-  const frMoney = (value: number) => `${value.toLocaleString("fr-FR")} $`;
   return (
     <div>
       {/* Header */}
@@ -169,35 +173,26 @@ function Modal02({ onClose, L, selectedSize }: {
           {L("Niveau 02","Nivel 02","Level 02")} · {L("Qualification Reward","Qualification Reward","Reward Qualification")}
         </div>
         <h2 id="m2-title" style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 900, color: "#FFF", letterSpacing: "-0.8px", lineHeight: 1, margin: "0 0 6px" }}>
-          {L("Débloquez votre première Reward","Desbloquee su primera Reward","Unlock your first Reward")}
+          {L("Debloquez votre premiere Reward","Desbloquee su primera Reward","Unlock your first Reward")}
         </h2>
         <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.36)", margin: 0 }}>
-          {L("Seuil de sécurité + Reward maximum · 5 journées qualifiantes · DD EOD avec plancher verrouillé",
-             "Safety Net + tope · 5 días calificados · Trailing DD EOD con bloqueo",
-             "Safety Net + cap · 5 qualifying days · Trailing EOD DD with lock")}
+          {L("5 journees qualifiantes · consistance 50 % · paiement 48H",
+             "5 dias calificados · consistencia 50 % · pago 48H",
+             "5 qualifying days · 50% consistency · 48H payment")}
         </p>
       </div>
 
       <div style={{ padding: "22px 28px 28px", display: "flex", flexDirection: "column", gap: 24 }}>
 
-        {/* Règles */}
+        {/* Regles */}
         <div>
-          <h3 style={modalSecTitle}>{L("Règles de qualification","Reglas de calificación","Qualification Rules")}</h3>
+          <h3 style={modalSecTitle}>{L("Regles de qualification","Reglas de calificacion","Qualification Rules")}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 8 }}>
             {[
-              {
-                label: L("Seuil à atteindre pour le Reward #1","Umbral Reward #1","Reward #1 threshold"),
-                val: L(frMoney(selectedSize.targetBal), `Safety Net + ${rewardOne.toLocaleString("es-ES")} $`, `Safety Net + $${rewardOne.toLocaleString("en-US")}`),
-                note: L(
-                  `Seuil de sécurité ${frMoney(selectedSize.lockAt)} + Reward maximum ${frMoney(rewardOne)}`,
-                  "El bloqueo se activa en la Safety Net",
-                  "The floor locks at the Safety Net",
-                ),
-                color: GREEN,
-              },
-              { label: L("Jours qualifiants","Días calificados","Qualifying days"), val: L("5 min","5 mín","5 min"), note: L("Journées avec profit ≥ seuil","Días con beneficio ≥ umbral","Days with profit ≥ threshold"), color: ACCENT },
-              { label: L("Consistance","Consistencia","Consistency"),       val: "≤ 50%",  note: L("Meilleure journée ≤ 50% du profit total","Mejor día ≤ 50% del beneficio","Best day ≤ 50% of total profit"), color: ACCENT },
-              { label: L("Durée","Duración","Duration"),                    val: L("Illimitée","Ilimitada","Unlimited"), note: L("Pas d'expiration","Sin expiración","No expiration"), color: "rgba(255,255,255,0.35)" },
+              { label: L("Jours qualifiants","Dias calificados","Qualifying days"), val: L("5 min","5 min","5 min"), note: L("Journees avec profit >= seuil","Dias con beneficio >= umbral","Days with profit >= threshold"), color: ACCENT },
+              { label: L("Consistance","Consistencia","Consistency"), val: "50%", note: L("Meilleure journee <= 50% du profit total","Mejor dia <= 50% del beneficio total","Best day <= 50% of total profit"), color: ACCENT },
+              { label: L("Retrait minimum","Retiro minimo","Minimum withdrawal"), val: "$100", note: L("Libre de retirer de $100 jusqu'au plafond","Libre de retirar de $100 hasta el limite","Free to withdraw from $100 up to the cap"), color: GREEN },
+              { label: L("Duree","Duracion","Duration"), val: L("Illimitee","Ilimitada","Unlimited"), note: L("Pas d'expiration","Sin expiracion","No expiration"), color: "rgba(255,255,255,0.35)" },
             ].map((r, i) => (
               <div key={i} style={{ ...infoBox, borderLeft: `2px solid ${r.color}33` }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>{r.label}</div>
@@ -208,26 +203,26 @@ function Modal02({ onClose, L, selectedSize }: {
           </div>
         </div>
 
-        {/* Seuils journée qualifiante */}
+        {/* Seuils journee qualifiante */}
         <div>
-          <h3 style={modalSecTitle}>{L("Seuils journée qualifiante","Umbrales día calificado","Qualifying Day Thresholds")}</h3>
+          <h3 style={modalSecTitle}>{L("Seuils journee qualifiante","Umbrales dia calificado","Qualifying Day Thresholds")}</h3>
           <p style={modalBodyTxt}>
             {L(
-              "Une journée est qualifiante uniquement si le profit de clôture est supérieur ou égal au seuil minimum applicable à votre compte. Une journée positive inférieure au seuil ne compte pas.",
-              "Un día califica solo si el beneficio de cierre es igual o superior al umbral mínimo del tamaño de cuenta. Un día positivo por debajo del umbral no cuenta.",
+              "Une journee est qualifiante uniquement si le profit de cloture est superieur ou egal au seuil minimum applicable a votre compte. Une journee positive inferieure au seuil ne compte pas.",
+              "Un dia califica solo si el beneficio de cierre es igual o superior al umbral minimo del tamano de cuenta. Un dia positivo por debajo del umbral no cuenta.",
               "A day qualifies only if the closing profit meets or exceeds the minimum threshold for your account size. A profitable day below the threshold does not count."
             )}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             {[
-              { size: "25K",  min: 100, floorStart: 24000, lockAt: 26100,  target: 26350 },
-              { size: "50K",  min: 250, floorStart: 48000, lockAt: 52100,  target: 52600 },
-              { size: "100K", min: 300, floorStart: 97000, lockAt: 103100, target: 104100 },
+              { size: "25K",  min: 100 },
+              { size: "50K",  min: 250 },
+              { size: "100K", min: 300 },
             ].map((row, i) => (
               <div key={i} style={infoBox}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>{row.size}</div>
                 <div style={{ fontSize: 16, fontWeight: 900, color: "#FFF", marginBottom: 3 }}>+{fmt(row.min)}<span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 500 }}>/jour</span></div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>{L("Seuil Reward #1","Umbral Reward #1","Reward #1 threshold")} : {fmt(row.target)}</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>{L("Profit minimum par journee qualifiante","Beneficio minimo por dia calificado","Minimum profit per qualifying day")}</div>
               </div>
             ))}
           </div>
@@ -235,12 +230,12 @@ function Modal02({ onClose, L, selectedSize }: {
 
         {/* Trailing DD + verrou */}
         <div>
-          <h3 style={modalSecTitle}>{L("PLANCHER DD EOD ÉVOLUTIF — VERROUILLAGE","TRAILING DRAWDOWN EOD — BLOQUEO","TRAILING EOD DRAWDOWN — FLOOR LOCK")}</h3>
+          <h3 style={modalSecTitle}>{L("PLANCHER DD EOD - AVANT ET APRES PREMIERE REWARD","TRAILING DRAWDOWN EOD - ANTES Y DESPUES DE LA PRIMERA RECOMPENSA","TRAILING EOD DD - BEFORE AND AFTER YOUR FIRST REWARD")}</h3>
           <p style={modalBodyTxt}>
             {L(
-              "Le plancher de protection part en dessous du capital initial. Il remonte avec chaque nouveau plus haut EOD. Une fois qu'il atteint le capital initial, il se verrouille définitivement. Le plancher de protection ne monte plus — votre capital de départ est protégé pour toujours.",
-              "El plancher de protección comienza por debajo del capital inicial. Sube con cada nuevo máximo EOD. Una vez alcanzado el capital inicial, queda bloqueado definitivamente.",
-              "The protection floor starts below the initial capital. It rises with each EOD new high. Once it reaches the starting capital, it locks permanently — your starting capital is protected forever."
+              "Avant votre premiere Reward, le plancher suit la progression de votre compte (Trailing DD EOD). Une fois votre premiere Reward effectuee, le plancher devient definitivement fixe au capital nominal de votre compte.",
+              "Antes de su primera Recompensa, el piso sigue la progresion de su cuenta (Trailing DD EOD). Una vez realizada su primera Recompensa, el piso queda definitivamente fijo en el capital nominal de su cuenta.",
+              "Before your first Reward, the floor follows your account's progression (Trailing DD EOD). Once your first Reward is made, the floor becomes permanently fixed at your account's nominal capital."
             )}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
@@ -248,35 +243,48 @@ function Modal02({ onClose, L, selectedSize }: {
               <div key={i} style={infoBox}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 6 }}>{s.label}</div>
                 {[
-                  [L("Capital initial","Capital inicial","Starting capital"), fmt(s.bal)],
-                  [L("Plancher de protection initial","Plancher inicial","Initial protection floor"), fmt(s.floorStart)],
-                  [L("Verrou déclenché à","Bloqueo en","Lock triggers at"),   fmt(s.lockAt)],
-                  [L("Plancher verrouillé à","Plancher bloqueado en","Protection floor locks to"), fmt(s.bal)],
-                  [L("Seuil à atteindre — Reward #1","Umbral Reward #1 (Safety Net + tope)","Reward #1 threshold (Safety Net + cap)"), fmt(s.targetBal)],
-                ].map(([k, v], j) => (
+                  [L("Capital initial","Capital inicial","Starting capital"), fmt(s.bal), false],
+                  [L("Plancher initial","Piso inicial","Initial floor"), fmt(s.floorStart), false],
+                  [L("Plancher EOD maximum (avant Reward #1)","Piso EOD maximo (antes Reward #1)","Max EOD floor (before Reward #1)"), MAX_EOD_FLOOR[s.label], true],
+                  [L("Plancher fixe (apres premiere Reward)","Piso fijo (despues de la primera Recompensa)","Fixed floor (after first Reward)"), FIXED_FLOOR[s.label], true],
+                ].map(([k, v, gold], j) => (
                   <div key={j} style={{ display: "flex", justifyContent: "space-between", padding: "2.5px 0",
-                    borderBottom: j < 4 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
-                    <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.38)", fontWeight: 500 }}>{k}</span>
-                    <span style={{ fontSize: 10.5, fontWeight: 800, color: j === 3 ? ACCENT : j === 4 ? GREEN : "#FFF" }}>{v}</span>
+                    borderBottom: j < 3 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
+                    <span style={{ fontSize: 10.5, color: "rgba(255,255,255,0.38)", fontWeight: 500 }}>{k as string}</span>
+                    <span style={{ fontSize: 10.5, fontWeight: 800, color: gold ? ACCENT : "#FFF" }}>{v as string}</span>
                   </div>
                 ))}
               </div>
             ))}
           </div>
+          <p style={{ fontSize: 10.5, color: "rgba(255,255,255,0.30)", marginTop: 10, lineHeight: 1.5 }}>
+            {L(
+              "Le plancher EOD maximum n'est pas un objectif obligatoire. Le Trailing DD EOD cesse simplement de remonter une fois ce niveau atteint.",
+              "El piso EOD maximo no es un objetivo obligatorio. El Trailing DD EOD simplemente deja de subir una vez alcanzado este nivel.",
+              "The max EOD floor is not a mandatory objective. The Trailing DD EOD simply stops rising once this level is reached."
+            )}
+          </p>
         </div>
 
         {/* Rewards disponibles */}
         <div>
-          <h3 style={modalSecTitle}>{L("Première Reward disponible","Primera Reward disponible","Compte Reward")}</h3>
+          <h3 style={modalSecTitle}>{L("Premiere Reward disponible","Primera Reward disponible","First Reward available")}</h3>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             {SIZES_DATA.map((s, i) => (
               <div key={i} style={{ ...infoBox, textAlign: "center" }}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 4 }}>{s.label}</div>
                 <div style={{ fontSize: 20, fontWeight: 900, color: ACCENT }}>{fmt(s.rewardCaps[0])}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", marginTop: 2 }}>{L("maximum Reward #1","máximo Reward #1","Reward #1 max")}</div>
+                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", marginTop: 2 }}>{L("plafond maximum Reward #1","limite maximo Reward #1","Reward #1 maximum cap")}</div>
               </div>
             ))}
           </div>
+          <p style={{ fontSize: 10.5, color: "rgba(255,255,255,0.30)", marginTop: 8, lineHeight: 1.5 }}>
+            {L(
+              "Vous pouvez demander de 100 $ jusqu'au plafond du niveau. Le montant effectif est limite au profit disponible depuis la derniere Reward.",
+              "Puede solicitar desde $100 hasta el limite del nivel. El importe efectivo se limita al beneficio disponible desde la ultima Recompensa.",
+              "You can request from $100 up to the level cap. The actual amount is limited to the profit available since the last Reward."
+            )}
+          </p>
         </div>
 
         {/* Fermer */}
@@ -299,47 +307,40 @@ function Modal02({ onClose, L, selectedSize }: {
   );
 }
 
-// ── Modal 03 : Rewards #2 → #5 — seuil = Safety Net + cap du niveau ─────
+// ── Modal 03 : Rewards #2 → #5 ───────────────────────────────
 function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: string, en: string) => string }) {
-  // Seuils de demande : Safety Net + cap du niveau. Tableau : seuil Reward #2 (= Safety Net + cap#2)
-  const thresholds = [
-    { size: "25K",  capital: "$25 000", threshold: "$26 400" },
-    { size: "50K",  capital: "$50 000", threshold: "$52 600" },
-    { size: "100K", capital: "$100 000",threshold: "$103 850" },
-  ];
+  // Exemple 50K apres Reward #1 (500$ verses)
+  // Hypothese : solde avant R#1 = 51 250 $, R#1 demandee = 500 $
+  // Solde apres R#1 = 50 750 $, plancher fixe = 50 000 $, coussin = 750 $
+  const BALANCE_AFTER_R1 = 50_750;
+  const FIXED_FLOOR_50K  = 50_000;
+  const CAP_R2_50K       = 750; // plafond Reward #2 — 50K
 
-  // Cas exemples 50K — post-Reward #1 (balance après R#1 = 52 100$, Safety Net 50K)
-  // Threshold R#2 = Safety Net + cap#2 = 52 100 + 650 = 52 750
-  const PREV_BALANCE = 52_100;
-  const CAP_R2 = 650; // plafond Reward #2 — 50K
-  const THRESHOLD_R2 = 52_750; // Safety Net 52 100 + cap#2 650
+  // 3 exemples apres le nouveau cycle de 5 jours qualifiants
   const cases = [
     {
-      label:   L("CAS A","CASO A","CASE A"),
-      balance: 52_400,
-      profit:  52_400 - PREV_BALANCE, // 300
-      reward:  0, // seuil 52 750 non atteint
-      after:   52_400,
-      note:    L("Seuil non atteint — Reward indisponible","Umbral no alcanzado — Reward no disponible","Threshold not reached — Reward unavailable"),
-      noteColor: ORANGE,
+      label:   L("CAS A — RETRAIT MAXIMUM","CASO A — RETIRO MAXIMO","CASE A — MAXIMUM WITHDRAWAL"),
+      balance: BALANCE_AFTER_R1 + 800, // 51 550 $ (bon parcours)
+      reward:  Math.min(800, CAP_R2_50K), // 750 (plafond atteint)
+      floor:   FIXED_FLOOR_50K,
+      note:    L("Plafond Reward #2 applique — $50 conserves","Limite Reward #2 aplicado — $50 conservados","Reward #2 cap applied — $50 stays in account"),
+      noteColor: ACCENT,
     },
     {
-      label:   L("CAS B","CASO B","CASE B"),
-      balance: THRESHOLD_R2,
-      profit:  THRESHOLD_R2 - PREV_BALANCE, // 650
-      reward:  Math.min(THRESHOLD_R2 - PREV_BALANCE, CAP_R2), // 650
-      after:   THRESHOLD_R2 - Math.min(THRESHOLD_R2 - PREV_BALANCE, CAP_R2), // 52 100
-      note:    L("Exactement le plafond","Exactamente el tope","Exactly at the cap"),
+      label:   L("CAS B — RETRAIT PARTIEL","CASO B — RETIRO PARCIAL","CASE B — PARTIAL WITHDRAWAL"),
+      balance: BALANCE_AFTER_R1 + 400, // 51 150 $
+      reward:  250, // retrait partiel choisi
+      floor:   FIXED_FLOOR_50K,
+      note:    L("Retrait libre — coussin conserve plus important","Retiro libre — mayor colchon conservado","Free withdrawal — larger cushion retained"),
       noteColor: GREEN,
     },
     {
-      label:   L("CAS C","CASO C","CASE C"),
-      balance: 53_200,
-      profit:  53_200 - PREV_BALANCE, // 1 100
-      reward:  Math.min(53_200 - PREV_BALANCE, CAP_R2), // 650
-      after:   53_200 - Math.min(53_200 - PREV_BALANCE, CAP_R2), // 52 550
-      note:    L("Limité par le plafond — 450$ conservés","Limitado por el tope — 450$ conservados","Capped — $450 stays in account"),
-      noteColor: ACCENT,
+      label:   L("CAS C — RETRAIT MINIMUM","CASO C — RETIRO MINIMO","CASE C — MINIMUM WITHDRAWAL"),
+      balance: BALANCE_AFTER_R1 + 200, // 50 950 $
+      reward:  100, // minimum
+      floor:   FIXED_FLOOR_50K,
+      note:    L("Retrait minimum $100 — coussin maximum preserve","Retiro minimo $100 — maximo colchon preservado","Minimum $100 withdrawal — maximum cushion preserved"),
+      noteColor: GREEN,
     },
   ];
 
@@ -352,91 +353,91 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
         </div>
         <h2 id="m3-title" style={{ fontSize: "clamp(1.3rem, 3vw, 1.75rem)", fontWeight: 900, color: "#FFF", letterSpacing: "-0.7px", lineHeight: 1.1, margin: "0 0 6px" }}>
           {L(
-            "Comment fonctionnent les Rewards #2 à #5 ?",
-            "¿Cómo funcionan las Rewards #2 a #5?",
+            "Comment fonctionnent les Rewards #2 a #5 ?",
+            "Como funcionan las Rewards #2 a #5?",
             "How do Rewards #2 to #5 work?"
           )}
         </h2>
         <p style={{ fontSize: 12.5, color: "rgba(255,255,255,0.36)", margin: 0 }}>
           {L(
-            "Seuil à atteindre = seuil de sécurité + Reward maximum · Montant versé limité au profit disponible · Aucun reset · DD fixe",
-            "Umbral = Safety Net + tope del nivel · Importe = min(beneficio, tope) · Sin reset · DD fijo",
-            "Threshold = Safety Net + level cap · Amount = min(profit, cap) · No reset · Fixed DD"
+            "Nouveau cycle apres chaque Reward · 5 nouveaux jours qualifiants · plancher fixe · min. $100",
+            "Nuevo ciclo tras cada Recompensa · 5 nuevos dias calificados · piso fijo · min. $100",
+            "New cycle after each Reward · 5 new qualifying days · fixed floor · min. $100"
           )}
         </p>
       </div>
 
       <div style={{ padding: "22px 28px 28px", display: "flex", flexDirection: "column", gap: 22 }}>
 
-        {/* ── Section 1 : Seuil permanent ── */}
+        {/* ── Section 1 : Nouveau cycle ── */}
         <div>
           <h3 style={modalSecTitle}>
-            {L("1 · Seuil permanent de demande","1 · Umbral permanente de solicitud","1 · Permanent request threshold")}
+            {L("1 · Un nouveau cycle apres chaque Reward","1 · Un nuevo ciclo tras cada Recompensa","1 · A new cycle after each Reward")}
           </h3>
           <p style={modalBodyTxt}>
             {L(
-              "Pour demander une Reward, votre balance doit atteindre le seuil affiché. Il correspond au seuil de sécurité additionné au Reward maximum du niveau. Ce seuil augmente à chaque niveau selon le montant maximum pouvant être versé.",
-              "Para solicitar una Reward, su balance debe alcanzar el umbral de solicitud: Safety Net + tope del nivel de Reward. Este umbral aumenta ligeramente con cada nivel según el tope asociado.",
-              "To request a Reward, your balance must reach the request threshold: Safety Net + cap of the Reward level. The threshold increases slightly at each level based on the associated cap."
+              "Apres chaque Reward versee, le compteur de jours qualifiants repart a zero. Vous devez realiser 5 nouveaux jours qualifiants en respectant la consistance de 50 % pour debloquer la suivante. Les jours qualifiants utilises ne sont pas reportes.",
+              "Tras cada Recompensa pagada, el contador de dias calificados vuelve a cero. Debe realizar 5 nuevos dias calificados respetando la consistencia del 50 % para desbloquear la siguiente. Los dias utilizados no se transfieren.",
+              "After each Reward is paid, the qualifying day counter resets to zero. You must complete 5 new qualifying days while respecting the 50% consistency rule to unlock the next one. Used days do not carry over."
             )}
           </p>
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
-              <thead>
-                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.10)" }}>
-                  {[
-                    L("Taille","Tamaño","Size"),
-                    L("Capital initial","Capital inicial","Starting capital"),
-                    L("Seuil à atteindre","Umbral de solicitud (Safety Net + tope)","Request threshold (Safety Net + cap)"),
-                  ].map((h, i) => (
-                    <th key={i} style={{
-                      textAlign: i === 0 ? "left" : "center",
-                      padding: "7px 10px", fontSize: 9, fontWeight: 800,
-                      color: i === 2 ? ACCENT : "rgba(255,255,255,0.30)",
-                      letterSpacing: "1.5px", textTransform: "uppercase",
-                    }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {thresholds.map((row, i) => (
-                  <tr key={i} style={{ borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.055)" : "none" }}>
-                    <td style={{ padding: "8px 10px", fontWeight: 800, color: "#FFF", fontSize: 12 }}>{row.size}</td>
-                    <td style={{ textAlign: "center", padding: "8px 10px", color: "rgba(255,255,255,0.52)", fontSize: 12 }}>{row.capital}</td>
-                    <td style={{ textAlign: "center", padding: "8px 10px", fontWeight: 900, color: GREEN, fontSize: 13 }}>{row.threshold}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {/* Chaine cycles */}
+          <div style={{ background: "rgba(184,135,70,0.025)", border: "1px solid rgba(184,135,70,0.14)", borderRadius: 10, padding: "12px 14px" }}>
+            {[1, 2, 3, 4, 5].map((n, i) => (
+              <div key={n}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{
+                    minWidth: 28, height: 28, borderRadius: "50%",
+                    border: "1px solid rgba(212,168,67,0.40)", background: "rgba(212,168,67,0.07)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 10, fontWeight: 800, color: ACCENT, flexShrink: 0,
+                  }}>R{n}</div>
+                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.60)", lineHeight: 1.4 }}>
+                    {n === 1
+                      ? L("5 jours qualifiants · consistance 50 %","5 dias calificados · consistencia 50 %","5 qualifying days · 50% consistency")
+                      : L("5 nouveaux jours qualifiants · consistance 50 %","5 nuevos dias calificados · consistencia 50 %","5 new qualifying days · 50% consistency")
+                    }
+                  </span>
+                </div>
+                {i < 4 && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 0 4px 12px" }}>
+                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.20)" }}>|</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.25)", letterSpacing: "0.5px" }}>
+                      {L(`Reward #${n} payee — compteur remis a zero`,`Recompensa #${n} pagada — contador a cero`,`Reward #${n} paid — counter reset`)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* ── Section 2 : Formule du montant ── */}
+        {/* ── Section 2 : Montant de la Reward ── */}
         <div>
           <h3 style={modalSecTitle}>
             {L("2 · Montant de la Reward","2 · Importe de la Reward","2 · Reward amount")}
           </h3>
           <p style={{ ...modalBodyTxt, marginBottom: 10 }}>
             {L(
-              "Seul le profit réalisé depuis la Reward précédente est pris en compte. Le montant versé est le plus petit des deux valeurs suivantes :",
-              "Solo se tiene en cuenta el beneficio realizado desde la última Reward. El importe pagado es el menor de los dos valores siguientes:",
-              "Only the profit earned since the previous Reward counts. The amount paid is whichever is lower:"
+              "Vous choisissez librement le montant a demander, a partir d'un minimum de 100 $. Seul le profit realise depuis la Reward precedente est pris en compte. Le montant verse est le plus petit des deux valeurs suivantes :",
+              "Elige libremente el importe a solicitar, a partir de un minimo de $100. Solo se tiene en cuenta el beneficio realizado desde la ultima Recompensa. El importe pagado es el menor de los dos valores siguientes:",
+              "You freely choose the amount to request, starting from a minimum of $100. Only the profit earned since the previous Reward counts. The amount paid is whichever is lower:"
             )}
           </p>
           <div style={{ background: "rgba(143,201,163,0.04)", border: "1px solid rgba(143,201,163,0.16)", borderRadius: 10, padding: "12px 16px", textAlign: "center" }}>
             <span style={{ fontSize: 14, fontWeight: 900, color: GREEN, letterSpacing: "-0.3px" }}>
               {L(
-                "Reward = min( nouveau profit depuis dernière Reward, plafond du niveau )",
-                "Reward = min( nuevo beneficio desde última Reward, tope del nivel )",
-                "Reward = min( new profit since last Reward, level cap )"
+                "Reward = montant demande (min $100), dans la limite : profit disponible et plafond du niveau",
+                "Recompensa = importe solicitado (min $100), dentro del limite : beneficio disponible y tope del nivel",
+                "Reward = requested amount (min $100), limited to: available profit and level cap"
               )}
             </span>
           </div>
           <p style={{ fontSize: 11.5, color: "rgba(255,255,255,0.32)", marginTop: 10, lineHeight: 1.55 }}>
             {L(
-              "Après versement : balance = balance − Reward versée. Le plancher de protection reste verrouillé à votre capital initial. Aucun reset automatique.",
-              "Tras el pago : balance = balance − Reward pagada. El plancher de protección sigue bloqueado en su capital inicial. Sin reset automático.",
-              "After payment: balance = balance − Reward paid. The protection floor stays locked at your starting capital. No automatic reset."
+              "Apres versement : balance = balance − Reward demandee. Le plancher reste fixe a votre capital nominal. Aucun reset automatique.",
+              "Tras el pago : balance = balance − Recompensa solicitada. El piso permanece fijo en su capital nominal. Sin reset automatico.",
+              "After payment: balance = balance − requested Reward. The floor stays fixed at your nominal capital. No automatic reset."
             )}
           </p>
         </div>
@@ -444,56 +445,57 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
         {/* ── Section 3 : 3 cas — 50K, Reward #2 ── */}
         <div>
           <h3 style={modalSecTitle}>
-            {L("3 · Exemple 50K — Reward #2 (après R#1 = 500$)","3 · Ejemplo 50K — Reward #2 (tras R#1 = 500$)","3 · 50K example — Reward #2 (after R#1 = $500)")}
+            {L("3 · Exemple 50K — Reward #2 (apres R#1 = 500 $)","3 · Ejemplo 50K — Reward #2 (tras R#1 = 500 $)","3 · 50K example — Reward #2 (after R#1 = $500)")}
           </h3>
           <p style={{ fontSize: 11.5, color: "rgba(255,255,255,0.35)", margin: "0 0 12px", lineHeight: 1.5 }}>
             {L(
-              "Balance après Reward #1 : 52 100 $ · Seuil de demande : 52 750 $ · Plafond Reward #2 : 650 $",
-              "Balance tras Reward #1 : 52 100 $ · Umbral de solicitud : 52 750 $ · Tope Reward #2 : 650 $",
-              "Balance after Reward #1: $52,100 · Request threshold: $52,750 · Reward #2 cap: $650"
+              "Solde apres Reward #1 : 50 750 $ · Plancher fixe : 50 000 $ · Plafond Reward #2 : 750 $ · 5 nouveaux jours qualifiants effectues",
+              "Saldo tras Recompensa #1 : 50 750 $ · Piso fijo : 50 000 $ · Limite Recompensa #2 : 750 $ · 5 nuevos dias calificados realizados",
+              "Balance after Reward #1: $50,750 · Fixed floor: $50,000 · Reward #2 cap: $750 · 5 new qualifying days completed"
             )}
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {cases.map((c, i) => (
-              <div key={i} style={{
-                background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 10, padding: "12px 14px",
-              }}>
-                {/* Label cas */}
-                <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
-                  {c.label}
-                </div>
-                {/* Données */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
-                  {[
-                    { lbl: L("Balance","Balance","Balance"),  val: fmt(c.balance), col: "#FFF" },
-                    { lbl: L("Nouveau profit","Nuevo beneficio","New profit"), val: fmt(c.profit), col: "rgba(255,255,255,0.85)" },
-                    { lbl: L("Reward versée","Reward pagada","Reward paid"), val: fmt(c.reward),  col: GREEN },
-                    { lbl: L("Balance après","Balance tras","Balance after"), val: fmt(c.after),  col: ACCENT },
-                  ].map((cell, j) => (
-                    <div key={j} style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: 8.5, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: 4 }}>
-                        {cell.lbl}
+            {cases.map((c, i) => {
+              const after = c.balance - c.reward;
+              const cushion = after - c.floor;
+              return (
+                <div key={i} style={{
+                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 10, padding: "12px 14px",
+                }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: "2px", textTransform: "uppercase", color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>
+                    {c.label}
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                    {[
+                      { lbl: L("Balance","Balance","Balance"),       val: fmt(c.balance), col: "#FFF" },
+                      { lbl: L("Reward demandee","Recompensa","Reward"), val: fmt(c.reward),  col: GREEN },
+                      { lbl: L("Balance apres","Balance tras","Balance after"), val: fmt(after),   col: "#FFF" },
+                      { lbl: L("Coussin","Colchon","Cushion"),        val: fmt(cushion),  col: ACCENT },
+                    ].map((cell, j) => (
+                      <div key={j} style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 8.5, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "0.8px", textTransform: "uppercase", marginBottom: 4 }}>
+                          {cell.lbl}
+                        </div>
+                        <div style={{ fontSize: 12.5, fontWeight: 900, color: cell.col }}>
+                          {cell.val}
+                        </div>
                       </div>
-                      <div style={{ fontSize: 12.5, fontWeight: 900, color: cell.col }}>
-                        {cell.val}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 8, fontSize: 10, fontWeight: 700, color: c.noteColor, opacity: 0.85 }}>
+                    {c.note}
+                  </div>
                 </div>
-                {/* Note */}
-                <div style={{ marginTop: 8, fontSize: 10, fontWeight: 700, color: c.noteColor, opacity: 0.85 }}>
-                  → {c.note}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
-        {/* ── Section 4 : Plafonds Rewards #2→#5 ── */}
+        {/* ── Section 4 : Plafonds Rewards #1→#5 ── */}
         <div>
           <h3 style={modalSecTitle}>
-            {L("4 · Plafonds Rewards #2 → #5","4 · Topes Rewards #2 → #5","4 · Reward #2 → #5 caps")}
+            {L("4 · Plafonds Rewards #1 → #5","4 · Topes Rewards #1 → #5","4 · Reward #1 → #5 caps")}
           </h3>
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
@@ -510,7 +512,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
                 </tr>
               </thead>
               <tbody>
-                {[1, 2, 3, 4].map(lv => {
+                {[0, 1, 2, 3, 4].map(lv => {
                   const isTrader = lv === 4;
                   return (
                     <tr key={lv} style={{
@@ -518,7 +520,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
                       background: isTrader ? "rgba(184,135,70,0.05)" : "transparent",
                     }}>
                       <td style={{ padding: "8px 8px", fontWeight: 700, color: isTrader ? ACCENT : "rgba(255,255,255,0.60)", fontSize: 11.5, whiteSpace: "nowrap" }}>
-                        {isTrader ? "★ TRADER REWARD" : `Reward #${lv + 1}`}
+                        {isTrader ? L("★ Reward #5 (TRADER REWARD)","★ Recompensa #5 (TRADER REWARD)","★ Reward #5 (TRADER REWARD)") : `Reward #${lv + 1}`}
                       </td>
                       {REWARD_AMOUNTS.map((col, si) => (
                         <td key={si} style={{ textAlign: "center", padding: "8px 12px", fontWeight: 800, fontSize: 13,
@@ -534,9 +536,9 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
           </div>
           <p style={{ fontSize: 10.5, color: "rgba(255,255,255,0.28)", marginTop: 8, lineHeight: 1.5 }}>
             {L(
-              "Ces montants sont des plafonds maximums. Le montant effectif peut être inférieur si votre nouveau profit est plus faible que le plafond.",
-              "Estos importes son topes máximos. El importe efectivo puede ser inferior si su nuevo beneficio es menor que el tope.",
-              "These are maximum caps. The actual amount may be lower if your new profit is below the cap."
+              "Ces montants sont des plafonds maximums. Vous choisissez librement le montant a demander a partir de 100 $, dans la limite du profit disponible et du plafond du niveau.",
+              "Estos importes son topes maximos. Elige libremente el importe a solicitar desde $100, dentro del limite del beneficio disponible y del tope del nivel.",
+              "These are maximum caps. You freely choose the amount to request from $100, within the available profit and the level cap."
             )}
           </p>
         </div>
@@ -650,13 +652,13 @@ export default function JourneyThreeLevels() {
               lineHeight:    1.05,
               margin:        "0 0 12px",
             }}>
-              {L("De Challenger à","De Challenger a","From Challenger to")}{" "}
+              {L("De Challenger a","De Challenger a","From Challenger to")}{" "}
               <span style={{ color: "#FFFFFF" }}>
                 Trader Reward
               </span>
             </h2>
-            {/* Sélecteur des trois produits */}
-            <div role="group" aria-label={L("Taille du compte","Tamaño de la cuenta","Account size")} style={{
+            {/* Selecteur des trois produits */}
+            <div role="group" aria-label={L("Taille du compte","Tamano de la cuenta","Account size")} style={{
               display: "inline-flex", alignItems: "center", gap: 4,
               padding: 4, borderRadius: 24,
               border: "1px solid rgba(184,135,70,0.18)",
@@ -711,7 +713,7 @@ export default function JourneyThreeLevels() {
                 <InfoBtn
                   btnRef={triggerRefs[0] as InfoBtnRef}
                   onClick={() => openModal(0)}
-                  label={L("Détails du Challenge","Detalles del Challenge","Challenge details")}
+                  label={L("Details du Challenge","Detalles del Challenge","Challenge details")}
                 />
               </div>
 
@@ -736,7 +738,7 @@ export default function JourneyThreeLevels() {
               {/* Spacer */}
               <div style={{ flex: 1, minHeight: 20 }} />
 
-              {/* Bénéfice final — bloc premium */}
+              {/* Benefice final — bloc premium */}
               <div style={{
                 position:     "relative",
                 background:   "linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
@@ -754,7 +756,7 @@ export default function JourneyThreeLevels() {
                   <CircleCheck size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
                 </div>
                 <div aria-hidden="true" style={{ fontSize: 9, fontWeight: 700, visibility: "hidden", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
-                  {L("JUSQU'À","HASTA","UP TO")}
+                  {L("JUSQU'A","HASTA","UP TO")}
                 </div>
                 <div style={{
                   fontSize:      "clamp(36px, 3.6vw, 50px)",
@@ -764,7 +766,7 @@ export default function JourneyThreeLevels() {
                   lineHeight:    1,
                   textShadow:    "0 0 8px rgba(184,135,70,0.16), 0 0 16px rgba(184,135,70,0.07)",
                 }}>
-                  {L("VALIDÉ !","¡VALIDADO!","PASSED!")}
+                  {L("VALIDE !","VALIDADO!","PASSED!")}
                 </div>
               </div>
             </div>
@@ -772,13 +774,13 @@ export default function JourneyThreeLevels() {
             {/* Arrow 1→2 */}
             {!isMobile && <Arrow />}
 
-            {/* ── CARTE 02 : PREMIÈRE REWARD ── */}
+            {/* ── CARTE 02 : PREMIERE REWARD ── */}
             <div style={cardBase(false)}>
               {/* Glow */}
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.015), transparent 52%)" }} />
 
-              {/* Zone supérieure */}
+              {/* Zone superieure */}
               <div>
 
                 {/* Header */}
@@ -787,7 +789,7 @@ export default function JourneyThreeLevels() {
                   <InfoBtn
                     btnRef={triggerRefs[1] as InfoBtnRef}
                     onClick={() => openModal(1)}
-                    label={L("Détails du Compte Reward","Detalles del Compte Reward","Compte Reward details")}
+                    label={L("Details du Compte Reward","Detalles del Compte Reward","Compte Reward details")}
                   />
                 </div>
 
@@ -800,18 +802,18 @@ export default function JourneyThreeLevels() {
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, position: "relative" }}>
                   <DollarSign size={15} color="rgba(255,255,255,0.40)" strokeWidth={2.5} style={{ flexShrink: 0 }} />
                   <span style={{ fontSize: 13, fontWeight: 700, color: "#FFFFFF", letterSpacing: "-0.2px" }}>
-                    {L("Débloquez votre Reward #1","Desbloquee su Reward #1","Unlock your Reward #1")}
+                    {L("Debloquez votre Reward #1","Desbloquee su Reward #1","Unlock your Reward #1")}
                   </span>
                 </div>
 
-              </div>{/* /zone supérieure */}
+              </div>{/* /zone superieure */}
 
-              {/* Délai de traitement */}
+              {/* Delai de traitement */}
               <div style={{ marginTop: 48, position: "relative" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "6px 12px" }}>
                   <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
                   <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.5px" }}>
-                    {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
+                    {L("Reward Paye en Automatique en 48H","Reward Pagada Automaticamente en 48H","Reward Paid Automatically in 48H")}
                   </span>
                 </span>
               </div>
@@ -819,7 +821,7 @@ export default function JourneyThreeLevels() {
               {/* Spacer */}
               <div style={{ flex: 1, minHeight: 20 }} />
 
-              {/* Bénéfice final — même format que les autres niveaux */}
+              {/* Benefice final — meme format que les autres niveaux */}
               <div style={{
                 position:     "relative",
                 background:   "linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))",
@@ -837,7 +839,7 @@ export default function JourneyThreeLevels() {
                   <BadgeDollarSign size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
                 </div>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
-                  {L("JUSQU'À","HASTA","UP TO")}
+                  {L("JUSQU'A","HASTA","UP TO")}
                 </div>
                 <div style={{
                   fontSize:      "clamp(40px, 4vw, 56px)",
@@ -861,7 +863,7 @@ export default function JourneyThreeLevels() {
               <div aria-hidden="true" style={{ position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                 background: "radial-gradient(circle at 50% 0%, rgba(255,255,255,0.012), transparent 50%)" }} />
 
-              {/* Zone supérieure */}
+              {/* Zone superieure */}
               <div>
 
                 {/* Header */}
@@ -870,7 +872,7 @@ export default function JourneyThreeLevels() {
                   <InfoBtn
                     btnRef={triggerRefs[2] as InfoBtnRef}
                     onClick={() => openModal(2)}
-                    label={L("Détails du parcours Rewards","Detalles del recorrido Rewards","Rewards journey details")}
+                    label={L("Details du parcours Rewards","Detalles del recorrido Rewards","Rewards journey details")}
                   />
                 </div>
 
@@ -897,14 +899,14 @@ export default function JourneyThreeLevels() {
                   </div>
                 </div>
 
-              </div>{/* /zone supérieure */}
+              </div>{/* /zone superieure */}
 
-              {/* Reward auto 48H — aligné avec le niveau 02 */}
+              {/* Reward auto 48H — aligne avec le niveau 02 */}
               <div style={{ marginTop: 12, position: "relative" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.20)", borderRadius: 100, padding: "6px 12px" }}>
                   <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 900, lineHeight: 1 }}>✓</span>
                   <span style={{ fontSize: 10, fontWeight: 800, color: "#22c55e", letterSpacing: "0.5px" }}>
-                    {L("Reward Payé en Automatique en 48H","Reward Pagada Automáticamente en 48H","Reward Paid Automatically in 48H")}
+                    {L("Reward Paye en Automatique en 48H","Reward Pagada Automaticamente en 48H","Reward Paid Automatically in 48H")}
                   </span>
                 </span>
               </div>
@@ -930,7 +932,7 @@ export default function JourneyThreeLevels() {
                   <Award size={16} color="rgba(255,255,255,0.22)" strokeWidth={1.8} />
                 </div>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>
-                  {L("JUSQU'À","HASTA","UP TO")}
+                  {L("JUSQU'A","HASTA","UP TO")}
                 </div>
                 <div style={{
                   fontSize:      "clamp(40px, 4vw, 56px)",
@@ -949,7 +951,7 @@ export default function JourneyThreeLevels() {
         </div>
       </section>
 
-      {/* ── Modal 01 : Challenge — suit le produit sélectionné ── */}
+      {/* ── Modal 01 : Challenge — suit le produit selectionne ── */}
       <PricingDetailModal
         card={activeModal === 0 ? { balance: selectedSize.bal, trailingDdPct: selectedSize.ddPct, activFeeEur: ACTIV_FEE[selectedSize.bal], qualDayUsd: QUAL_DAY_USD[selectedSizeIndex as 0|1|2] } : null}
         lang={lang}

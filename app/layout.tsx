@@ -211,7 +211,7 @@ const jsonLd = {
           name: "Comment et quand suis-je payé ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "La première Reward est accessible après avoir atteint le seuil Safety Net + cap et validé au moins 5 journées qualifiantes sur le Compte Reward, sous réserve du respect des règles du programme.",
+            text: "La première Reward est accessible après avoir validé au moins 5 journées qualifiantes (consistance 50 %) sur le Compte Reward. Le retrait minimum est de 100 $, dans la limite du plafond de votre niveau.",
           },
         },
         {
