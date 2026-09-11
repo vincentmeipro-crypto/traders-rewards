@@ -397,7 +397,7 @@ export default function Hero() {
             flex:           isMobile ? "none" : "0 0 52%",
             display:        "flex",
             flexDirection:  "column",
-            justifyContent: "center",
+            justifyContent: isMobile ? "center" : "flex-start",
             alignItems:     isMobile ? "center" : undefined,
             alignSelf:      isMobile ? undefined : "flex-start",
             paddingLeft:    isMobile ? 22 : 0,
@@ -458,7 +458,7 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/NOUVEAU%20HERO%20AVEC%20DES%20PERSONNAGES.png"
+                  src="/nouveau%20hero%20trading%20premium.png"
                   alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
                   style={{
                     display:         "block",
@@ -505,6 +505,9 @@ export default function Hero() {
                 </a>
               </div>
             )}
+
+            {/* ── Spacer — pousse promo + CTA vers le bas du Hero (desktop only) ── */}
+            {!isMobile && <div style={{ flex: 1 }} aria-hidden="true" />}
 
             {/* ── Desktop : promo + CTA inchangés ── */}
             {!isMobile && (
@@ -559,7 +562,7 @@ export default function Hero() {
             {/* ── Visuel droit — Personnages + jetons 25K / 50K / 100K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/NOUVEAU%20HERO%20AVEC%20DES%20PERSONNAGES.png"
+              src="/nouveau%20hero%20trading%20premium.png"
               alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
               style={{
                 display:        "block",
