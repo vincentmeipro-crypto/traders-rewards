@@ -148,7 +148,7 @@ export default function PricingV1() {
     const RULES = [
       { label: L("1 Étape","1 Paso","1 Step"),               value: "✓",                                                                                          accent: true  },
       { label: L("Objectif profit","Objetivo profit","Profit target"), value: cardShowPct ? "+6%" : `+${fmtDollar(card.balance * 0.06)}`,                         accent: false },
-      { label: L("Trailing DD EOD","Trailing DD EOD","Trailing DD EOD"), value: fmtDollar(card.balance * card.trailingDdPct / 100), accent: false },
+      { label: L("Trailing DD EOD","Trailing DD EOD","Trailing DD EOD"), value: cardShowPct ? `${card.trailingDdPct}%` : fmtDollar(card.balance * card.trailingDdPct / 100), accent: false },
       { label: L("Consistance","Consistencia","Consistency"), value: "≤ 50%",                                                                                   accent: false },
       { label: L("Jours min","Días mín","Min days"),          value: L("2 jours","2 días","2 days"),                                                           accent: false },
       { label: L("Durée max","Duración máx","Max duration"),  value: L("30 j. cal.","30 d. cal.","30 cal. days"),                                              accent: false },

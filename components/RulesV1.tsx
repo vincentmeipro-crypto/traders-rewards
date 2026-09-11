@@ -29,6 +29,9 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
   const selectedSize = SIZES_DATA[selectedSizeIndex as 0 | 1 | 2];
   const ddUsd        = selectedSize.bal - selectedSize.floorStart;
   const qualMin      = QUAL_DAY_USD[selectedSizeIndex as 0 | 1 | 2];
+  const [showPct, setShowPct] = useState(true);
+  const ddPct     = Math.round(ddUsd / selectedSize.bal * 100);  // 4 pour 25K/50K, 3 pour 100K
+  const profitUsd = selectedSize.bal * 0.06;                     // 1 500 / 3 000 / 6 000
 
   // ── Rendu unifié label / valeur (identique pour les 2 cartes) ─
   const renderRows = (rows: RuleRow[]) =>
@@ -87,8 +90,8 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       title:    "CHALLENGE",
       subtitle: L("Validez votre Challenge", "Valide su Challenge", "Complete your Challenge"),
       rows: [
-        { label: L("OBJECTIF",    "OBJETIVO",    "TARGET"),      value: "+6 %" },
-        { label: "DD EOD",                                        value: fmt(ddUsd) },
+        { label: L("OBJECTIF",    "OBJETIVO",    "TARGET"),      value: showPct ? "+6 %" : fmt(profitUsd) },
+        { label: "DD EOD",                                        value: showPct ? ddPct + " %" : fmt(ddUsd) },
         { label: L("CONSISTANCE", "CONSISTENCIA","CONSISTENCY"), value: "50 %" },
         { label: L("DURÉE",       "DURACIÓN",    "DURATION"),    value: L("2 À 30 JOURS", "2 A 30 DÍAS", "2 TO 30 DAYS") },
       ],
@@ -98,7 +101,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       title:    "TRADER REWARD",
       subtitle: L("Progressez jusqu'à 5 récompenses", "Progrese hasta 5 recompensas", "Progress to 5 rewards"),
       rows: [
-        { label: "DD EOD",                                                          value: fmt(ddUsd) },
+        { label: "DD EOD",                                                          value: showPct ? ddPct + " %" : fmt(ddUsd) },
         { label: L("JOURS QUALIFIANTS", "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),    value: L("5 JOURS", "5 DÍAS", "5 DAYS") },
         { label: L("PROFIT MIN / JOUR",  "PROFIT MÍN / DÍA", "MIN PROFIT / DAY"),  value: fmt(qualMin) },
         { label: L("CONSISTANCE",        "CONSISTENCIA",      "CONSISTENCY"),        value: "50 %" },
@@ -185,6 +188,43 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
               );
             })}
           </div>
+        </div>
+
+        {/* Toggle % / $ */}
+        <div style={{ marginBottom: "clamp(16px, 2vw, 24px)", display: "flex", justifyContent: "center" }}>
+          <button
+            onClick={() => setShowPct(p => !p)}
+            aria-label={L(
+              `Afficher les règles en ${showPct ? "dollars" : "pourcentages"}`,
+              `Mostrar reglas en ${showPct ? "dólares" : "porcentajes"}`,
+              `Show rules in ${showPct ? "dollars" : "percentages"}`
+            )}
+            style={{
+              display:       "inline-flex",
+              alignItems:    "center",
+              gap:           4,
+              padding:       "4px 9px",
+              borderRadius:  100,
+              border:        "1px solid rgba(255,255,255,0.12)",
+              background:    "rgba(255,255,255,0.045)",
+              color:         "#FFFFFF",
+              fontSize:      11, fontWeight: 650,
+              cursor:        "pointer",
+              fontFamily:    "inherit",
+              letterSpacing: "0.2px",
+              transition:    "all 0.15s ease",
+              whiteSpace:    "nowrap",
+            }}
+          >
+            <span style={{ fontWeight: 900, fontSize: 12 }}>%</span>
+            <span style={{ fontSize: 10, letterSpacing: "-1px" }}>⇄</span>
+            <span style={{ fontWeight: 900, fontSize: 12 }}>$</span>
+            <span style={{ fontSize: 10, marginLeft: 2 }}>
+              {showPct
+                ? L("Voir $","Ver $","View $")
+                : L("Voir %","Ver %","View %")}
+            </span>
+          </button>
         </div>
 
         {/* Grille des 2 cartes */}
