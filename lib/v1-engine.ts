@@ -35,10 +35,10 @@
  *   - Qualifying days    = 5 jours profitables qualifiants (inchangé)
  *   - Seuil qualifiant   : 25K = 100 USD / 50K = 250 USD / 100K = 300 USD / journée
  *   - Durée              = ILLIMITÉE
- *   - Caps Reward #1     : 25K = 300 $ / 50K = 500 $ / 100K = 750 $ (INCHANGÉS)
+ *   - Caps Reward #1     : 25K = 250 $ / 50K = 500 $ / 100K = 1 000 $ (1 % du capital)
  *
  *  NIVEAU 3 — TRADER REWARD / REWARDS #2 À #5 (phase_type="reward_journey") :
- *   - Reward threshold   = Safety Net + cap du niveau (ex 25K R#1 : 26 100+300 = 26 400$)
+ *   - Reward threshold   = Safety Net + cap du niveau (ex 25K R#1 : 26 100+250 = 26 350$)
  *   - Plancher FIXE      = start_balance (immuable, pas de trailing)
  *   - Consistency Rule   = 50 %
  *   - Caps Rewards #2-5  : voir V1_REWARD_CAPS (INCHANGÉS)
@@ -131,17 +131,19 @@ export const V1_CONSISTENCY_PCT = {
  *
  * Structure : V1_REWARD_CAPS[startBalance][rewardLevel] = montantMax en USD
  *
- *  25K  → #1: 300 / #2: 400 / #3: 500 / #4: 600  / #5: 750
- *  50K  → #1: 500 / #2: 650 / #3: 800 / #4: 1000 / #5: 1250
- * 100K  → #1: 750 / #2: 1000 / #3: 1250 / #4: 1500 / #5: 1750
+ * Règle : R#n = n% du capital initial (1 / 1.5 / 2 / 2.5 / 3 %)
+ *
+ *  25K  → #1: 250 / #2: 375  / #3: 500  / #4: 625  / #5: 750
+ *  50K  → #1: 500 / #2: 750  / #3: 1000 / #4: 1250 / #5: 1500
+ * 100K  → #1: 1000 / #2: 1500 / #3: 2000 / #4: 2500 / #5: 3000
  *
  * Source unique pour les caps — utiliser getV1RewardCap() plutôt que
  * lire directement ce tableau depuis les composants UI.
  */
 export const V1_REWARD_CAPS: Record<number, Record<number, number>> = {
-  25000:  { 1: 300,  2: 400,   3: 500,   4: 600,   5: 750   },
-  50000:  { 1: 500,  2: 650,   3: 800,   4: 1000,  5: 1250  },
-  100000: { 1: 750,  2: 1000,  3: 1250,  4: 1500,  5: 1750  },
+  25000:  { 1: 250,  2: 375,   3: 500,   4: 625,   5: 750   },
+  50000:  { 1: 500,  2: 750,   3: 1000,  4: 1250,  5: 1500  },
+  100000: { 1: 1000, 2: 1500,  3: 2000,  4: 2500,  5: 3000  },
 };
 
 /**
@@ -245,9 +247,9 @@ export function getV1SafetyNet(startBalance: number): number {
  * @returns Montant maximum en USD, ou null si balance/niveau non reconnus
  *
  * Exemples :
- *   getV1RewardCap(25000, 1)  → 300
- *   getV1RewardCap(50000, 2)  → 650
- *   getV1RewardCap(100000, 5) → 1750
+ *   getV1RewardCap(25000, 1)  → 250
+ *   getV1RewardCap(50000, 2)  → 750
+ *   getV1RewardCap(100000, 5) → 3000
  */
 export function getV1RewardCap(startBalance: number, rewardLevel: number): number | null {
   const caps = V1_REWARD_CAPS[startBalance];
@@ -260,10 +262,10 @@ export function getV1RewardCap(startBalance: number, rewardLevel: number): numbe
  * threshold = Safety Net + cap du niveau de Reward.
  *
  * Exemples :
- *   getV1RewardThresholdUsd(25000,  1) → 26 100 + 300  = 26 400
+ *   getV1RewardThresholdUsd(25000,  1) → 26 100 + 250  = 26 350
  *   getV1RewardThresholdUsd(50000,  1) → 52 100 + 500  = 52 600
- *   getV1RewardThresholdUsd(100000, 1) → 103 100 + 750 = 103 850
- *   getV1RewardThresholdUsd(25000,  2) → 26 100 + 400  = 26 500
+ *   getV1RewardThresholdUsd(100000, 1) → 103 100 + 1000 = 104 100
+ *   getV1RewardThresholdUsd(25000,  2) → 26 100 + 375  = 26 475
  *
  * @param rewardLevel  Numéro de Reward (1 à 5), default 1
  */
@@ -989,10 +991,10 @@ export const REWARD_REQUEST_PROFIT_PCT = 4 as const;
  * requestThreshold = Safety Net + cap du niveau de Reward
  *
  * Exemples :
- *   computeRewardRequestThreshold(25000,  1) → 26 100 + 300  = 26 400
+ *   computeRewardRequestThreshold(25000,  1) → 26 100 + 250  = 26 350
  *   computeRewardRequestThreshold(50000,  1) → 52 100 + 500  = 52 600
- *   computeRewardRequestThreshold(100000, 1) → 103 100 + 750 = 103 850
- *   computeRewardRequestThreshold(25000,  2) → 26 100 + 400  = 26 500
+ *   computeRewardRequestThreshold(100000, 1) → 103 100 + 1000 = 104 100
+ *   computeRewardRequestThreshold(25000,  2) → 26 100 + 375  = 26 475
  *
  * @param rewardLevel  Numéro de Reward demandé (1 à 5), default 1
  */
@@ -1056,10 +1058,10 @@ export interface V1RewardAmountResult {
  *
  * rewardAvailable = min(eligibleNewProfit, rewardCap)
  *
- * Cas d'usage 50K Reward #2 (plafond $650) :
- *   A) eligibleNewProfit=$500, cap=$650 → rewardAvailable=$500 (limité par profit)
- *   B) eligibleNewProfit=$650, cap=$650 → rewardAvailable=$650 (égalité)
- *   C) eligibleNewProfit=$900, cap=$650 → rewardAvailable=$650 (limité par plafond)
+ * Cas d'usage 50K Reward #2 (plafond $750) :
+ *   A) eligibleNewProfit=$500, cap=$750 → rewardAvailable=$500 (limité par profit)
+ *   B) eligibleNewProfit=$750, cap=$750 → rewardAvailable=$750 (égalité)
+ *   C) eligibleNewProfit=$900, cap=$750 → rewardAvailable=$750 (limité par plafond)
  *
  * @param eligibleNewProfit  Résultat de computeEligibleNewProfit()
  * @param rewardCap          Plafond du niveau de Reward (depuis REWARD_AMOUNTS)

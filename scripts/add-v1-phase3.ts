@@ -75,9 +75,9 @@ const ACTIVATION_FEE_EUR: Record<V1Slug, number> = {
 };
 
 const REWARD_CAPS: Record<V1Slug, Record<string, number>> = {
-  "rewards-25k":  { reward_cap_1: 300,  reward_cap_2: 400,  reward_cap_3: 500,  reward_cap_4: 600,  reward_cap_5: 750  },
-  "rewards-50k":  { reward_cap_1: 500,  reward_cap_2: 650,  reward_cap_3: 800,  reward_cap_4: 1000, reward_cap_5: 1250 },
-  "rewards-100k": { reward_cap_1: 750,  reward_cap_2: 1000, reward_cap_3: 1250, reward_cap_4: 1500, reward_cap_5: 1750 },
+  "rewards-25k":  { reward_cap_1: 250,  reward_cap_2: 375,  reward_cap_3: 500,  reward_cap_4: 625,  reward_cap_5: 750  },
+  "rewards-50k":  { reward_cap_1: 500,  reward_cap_2: 750,  reward_cap_3: 1000, reward_cap_4: 1250, reward_cap_5: 1500 },
+  "rewards-100k": { reward_cap_1: 1000, reward_cap_2: 1500, reward_cap_3: 2000, reward_cap_4: 2500, reward_cap_5: 3000 },
 };
 
 // ── DDL — Étendre le CHECK constraint via Management API ──────

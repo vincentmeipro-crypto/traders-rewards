@@ -220,9 +220,9 @@ function Modal02({ onClose, L, selectedSize }: {
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
             {[
-              { size: "25K",  min: 100, floorStart: 24000, lockAt: 26100,  target: 26400 },
+              { size: "25K",  min: 100, floorStart: 24000, lockAt: 26100,  target: 26350 },
               { size: "50K",  min: 250, floorStart: 48000, lockAt: 52100,  target: 52600 },
-              { size: "100K", min: 300, floorStart: 97000, lockAt: 103100, target: 103850 },
+              { size: "100K", min: 300, floorStart: 97000, lockAt: 103100, target: 104100 },
             ].map((row, i) => (
               <div key={i} style={infoBox}>
                 <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.28)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 5 }}>{row.size}</div>

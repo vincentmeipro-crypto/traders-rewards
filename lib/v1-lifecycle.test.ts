@@ -222,25 +222,25 @@ section("V. Aucune remise à zéro entre R1 et R5 (V1 reward withdrawal)");
 // V1 — Le retrait d'une Reward ne remet PAS à zéro
 // computeV1RewardWithdrawal retire UNIQUEMENT le montant de la Reward
 test(
-  "V1 25K R#1 : retirer 300$ uniquement (pas tout le profit)",
-  computeV1RewardWithdrawal(300),
-  300
+  "V1 25K R#1 : retirer 250$ uniquement (pas tout le profit)",
+  computeV1RewardWithdrawal(250),
+  250
 );
 test(
-  "V2 50K R#2 : retirer 650$ uniquement",
-  computeV1RewardWithdrawal(650),
-  650
+  "V2 50K R#2 : retirer 750$ uniquement",
+  computeV1RewardWithdrawal(750),
+  750
 );
 test(
-  "V3 100K R#3 : retirer 1250$ uniquement",
-  computeV1RewardWithdrawal(1250),
-  1250
+  "V3 100K R#3 : retirer 2000$ uniquement",
+  computeV1RewardWithdrawal(2000),
+  2000
 );
 
-// V4 — Après R#1 (25K) : balance = 26400 - 300 = 26100$ (≠ reset à 25000$)
+// V4 — Après R#1 (25K) : balance = 26350 - 250 = 26100$ (≠ reset à 25000$)
 {
-  const preBalance   = 26400; // seuil threshold pour R#1
-  const rewardAmount = 300;   // cap R#1 25K
+  const preBalance   = 26350; // seuil threshold pour R#1
+  const rewardAmount = 250;   // cap R#1 25K
   const postBalance  = preBalance - rewardAmount;
   test(
     "V4 25K R#1 : postBalance = 26100$ (pas de reset à 25000$)",
@@ -414,17 +414,17 @@ test("Z2-e 50K Safety Net = 52100$",  V1_SAFETY_NET[50000],  52100);
 test("Z2-f 100K Safety Net = 103100$", V1_SAFETY_NET[100000], 103100);
 
 // Reward thresholds (Safety Net + cap)
-test("Z2-g 25K Reward #1 threshold = 26400$",  computeRewardRequestThreshold(25000,  1), 26400);
+test("Z2-g 25K Reward #1 threshold = 26350$",  computeRewardRequestThreshold(25000,  1), 26350);
 test("Z2-h 50K Reward #1 threshold = 52600$",  computeRewardRequestThreshold(50000,  1), 52600);
-test("Z2-i 100K Reward #1 threshold = 103850$", computeRewardRequestThreshold(100000, 1), 103850);
+test("Z2-i 100K Reward #1 threshold = 104100$", computeRewardRequestThreshold(100000, 1), 104100);
 
 // Reward caps
-test("Z2-j 25K R#1 cap = 300$",   getV1RewardCap(25000,  1), 300);
+test("Z2-j 25K R#1 cap = 250$",   getV1RewardCap(25000,  1), 250);
 test("Z2-k 25K R#5 cap = 750$",   getV1RewardCap(25000,  5), 750);
 test("Z2-l 50K R#1 cap = 500$",   getV1RewardCap(50000,  1), 500);
-test("Z2-m 50K R#5 cap = 1250$",  getV1RewardCap(50000,  5), 1250);
-test("Z2-n 100K R#1 cap = 750$",  getV1RewardCap(100000, 1), 750);
-test("Z2-o 100K R#5 cap = 1750$", getV1RewardCap(100000, 5), 1750);
+test("Z2-m 50K R#5 cap = 1500$",  getV1RewardCap(50000,  5), 1500);
+test("Z2-n 100K R#1 cap = 1000$", getV1RewardCap(100000, 1), 1000);
+test("Z2-o 100K R#5 cap = 3000$", getV1RewardCap(100000, 5), 3000);
 
 // Trailing floor V1 (sans Safety Net = challenge)
 test(

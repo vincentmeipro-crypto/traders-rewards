@@ -235,21 +235,21 @@ section("H. Safety Net — seuil de lock Apex EOD (26 100 / 52 100 / 103 100)");
 // ════════════════════════════════════════════════════════════════
 
 section("I. Reward request threshold = Safety Net + cap (Apex EOD)");
-// 25K R#1 : 26 100 + 300 = 26 400
-test("25K R#1 threshold = 26 400", computeRewardRequestThreshold(25000, 1), 26400);
+// 25K R#1 : 26 100 + 250 = 26 350
+test("25K R#1 threshold = 26 350", computeRewardRequestThreshold(25000, 1), 26350);
 // 50K R#1 : 52 100 + 500 = 52 600
 test("50K R#1 threshold = 52 600", computeRewardRequestThreshold(50000, 1), 52600);
-// 100K R#1 : 103 100 + 750 = 103 850
-test("100K R#1 threshold = 103 850", computeRewardRequestThreshold(100000, 1), 103850);
-// 25K R#2 : 26 100 + 400 = 26 500
-test("25K R#2 threshold = 26 500", computeRewardRequestThreshold(25000, 2), 26500);
-// 50K R#5 : 52 100 + 1 250 = 53 350
-test("50K R#5 threshold = 53 350", computeRewardRequestThreshold(50000, 5), 53350);
-// 100K R#5 : 103 100 + 1 750 = 104 850
-test("100K R#5 threshold = 104 850", computeRewardRequestThreshold(100000, 5), 104850);
+// 100K R#1 : 103 100 + 1 000 = 104 100
+test("100K R#1 threshold = 104 100", computeRewardRequestThreshold(100000, 1), 104100);
+// 25K R#2 : 26 100 + 375 = 26 475
+test("25K R#2 threshold = 26 475", computeRewardRequestThreshold(25000, 2), 26475);
+// 50K R#5 : 52 100 + 1 500 = 53 600
+test("50K R#5 threshold = 53 600", computeRewardRequestThreshold(50000, 5), 53600);
+// 100K R#5 : 103 100 + 3 000 = 106 100
+test("100K R#5 threshold = 106 100", computeRewardRequestThreshold(100000, 5), 106100);
 // getV1RewardThresholdUsd = alias
-test("getV1RewardThresholdUsd(25000, 1) = 26 400", getV1RewardThresholdUsd(25000, 1), 26400);
-test("getV1RewardThresholdUsd(100000, 1) = 103 850", getV1RewardThresholdUsd(100000, 1), 103850);
+test("getV1RewardThresholdUsd(25000, 1) = 26 350", getV1RewardThresholdUsd(25000, 1), 26350);
+test("getV1RewardThresholdUsd(100000, 1) = 104 100", getV1RewardThresholdUsd(100000, 1), 104100);
 // REWARD_REQUEST_PROFIT_PCT conservé (deprecated) = 4
 test("REWARD_REQUEST_PROFIT_PCT = 4 (deprecated)", REWARD_REQUEST_PROFIT_PCT, 4);
 
@@ -332,26 +332,26 @@ test("V1_CONSISTENCY_PCT.reward = 50 (was 33)", V1_CONSISTENCY_PCT.reward, 50);
 
 section("M. Reward caps #1 à #5");
 {
-  // 25K
-  test("25K Reward #1 cap = 300$",  getV1RewardCap(25000, 1), 300);
-  test("25K Reward #2 cap = 400$",  getV1RewardCap(25000, 2), 400);
+  // 25K  (1% / 1.5% / 2% / 2.5% / 3% de 25 000)
+  test("25K Reward #1 cap = 250$",  getV1RewardCap(25000, 1), 250);
+  test("25K Reward #2 cap = 375$",  getV1RewardCap(25000, 2), 375);
   test("25K Reward #3 cap = 500$",  getV1RewardCap(25000, 3), 500);
-  test("25K Reward #4 cap = 600$",  getV1RewardCap(25000, 4), 600);
+  test("25K Reward #4 cap = 625$",  getV1RewardCap(25000, 4), 625);
   test("25K Reward #5 cap = 750$",  getV1RewardCap(25000, 5), 750);
 
-  // 50K
-  test("50K Reward #1 cap = 500$",  getV1RewardCap(50000, 1), 500);
-  test("50K Reward #2 cap = 650$",  getV1RewardCap(50000, 2), 650);
-  test("50K Reward #3 cap = 800$",  getV1RewardCap(50000, 3), 800);
-  test("50K Reward #4 cap = 1 000$",getV1RewardCap(50000, 4), 1000);
-  test("50K Reward #5 cap = 1 250$",getV1RewardCap(50000, 5), 1250);
+  // 50K  (1% / 1.5% / 2% / 2.5% / 3% de 50 000)
+  test("50K Reward #1 cap = 500$",   getV1RewardCap(50000, 1), 500);
+  test("50K Reward #2 cap = 750$",   getV1RewardCap(50000, 2), 750);
+  test("50K Reward #3 cap = 1 000$", getV1RewardCap(50000, 3), 1000);
+  test("50K Reward #4 cap = 1 250$", getV1RewardCap(50000, 4), 1250);
+  test("50K Reward #5 cap = 1 500$", getV1RewardCap(50000, 5), 1500);
 
-  // 100K
-  test("100K Reward #1 cap = 750$",  getV1RewardCap(100000, 1), 750);
-  test("100K Reward #2 cap = 1 000$",getV1RewardCap(100000, 2), 1000);
-  test("100K Reward #3 cap = 1 250$",getV1RewardCap(100000, 3), 1250);
-  test("100K Reward #4 cap = 1 500$",getV1RewardCap(100000, 4), 1500);
-  test("100K Reward #5 cap = 1 750$",getV1RewardCap(100000, 5), 1750);
+  // 100K (1% / 1.5% / 2% / 2.5% / 3% de 100 000)
+  test("100K Reward #1 cap = 1 000$", getV1RewardCap(100000, 1), 1000);
+  test("100K Reward #2 cap = 1 500$", getV1RewardCap(100000, 2), 1500);
+  test("100K Reward #3 cap = 2 000$", getV1RewardCap(100000, 3), 2000);
+  test("100K Reward #4 cap = 2 500$", getV1RewardCap(100000, 4), 2500);
+  test("100K Reward #5 cap = 3 000$", getV1RewardCap(100000, 5), 3000);
 }
 
 // ════════════════════════════════════════════════════════════════

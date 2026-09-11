@@ -229,9 +229,9 @@ export default function RewardLevels() {
             lineHeight: 1.7,
           }}>
             {L(
-              "Chaque Reward débloqué augmente les montants maximums.",
-              "Cada Reward desbloqueado aumenta los montos máximos.",
-              "Each unlocked Reward increases maximum amounts.",
+              "Retirez jusqu'à 5 récompenses avec le même compte.",
+              "Retire hasta 5 recompensas con la misma cuenta.",
+              "Withdraw up to 5 rewards with the same account.",
             )}
           </p>
 
