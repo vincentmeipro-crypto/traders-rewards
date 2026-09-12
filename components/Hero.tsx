@@ -461,7 +461,7 @@ export default function Hero() {
               justifyContent: isMobile ? "center" : "flex-start",
               alignSelf: "stretch",
             }}>
-              <span>{L("Devenez un", "Conviértete en un", "Become a")} <span style={{ background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>trader reward</span></span>
+              <span style={{ transform: isMobile ? "none" : "translateY(-4px)" }}>{L("Devenez un", "Conviértete en un", "Become a")} <span style={{ background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>trader reward</span></span>
             </p>
             {/* ── Personnages + jetons — mobile uniquement, pleine largeur ── */}
             {isMobile && (
