@@ -324,18 +324,55 @@ export default function Hero() {
         }}
       >
 
+        {/* ══════════════════════════════════════════════════════
+            WRAPPER FLEX — 2 colonnes desktop / 1 colonne mobile
+        ══════════════════════════════════════════════════════ */}
+        <div style={{
+          display:       "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems:    isMobile ? "stretch" : "center",
+          // Desktop : hauteur naturelle plafonnée à 720px pour éviter l'espace mort.
+          minHeight:     isMobile ? 0 : "min(620px, calc(100svh - 234px))",
+          paddingTop:    isMobile
+            ? "calc(60px + var(--promo-banner-height, 0px))"
+            : "calc(72px + var(--promo-banner-height, 0px))",
+          paddingBottom: isMobile ? 0 : 0,
+          maxWidth:      1380,
+          margin:        "0 auto",
+          paddingLeft:   isMobile ? 0 : "max(40px, 4vw)",
+          paddingRight:  isMobile ? 0 : "max(24px, 3vw)",
+          gap:           isMobile ? 0 : "clamp(40px, 5vw, 84px)",
+          boxSizing:     "border-box",
+        }}>
+
+          {/* ════════════════════════════════════════════════
+              COLONNE GAUCHE — Badge / H1 / Promo / CTAs
+          ════════════════════════════════════════════════ */}
+          <div style={{
+            position:       "relative",
+            flex:           isMobile ? "none" : "0 0 52%",
+            display:        "flex",
+            flexDirection:  "column",
+            justifyContent: isMobile ? "center" : "flex-start",
+            alignItems:     isMobile ? "center" : undefined,
+            alignSelf:      isMobile ? undefined : "flex-start",
+            paddingLeft:    isMobile ? 22 : 0,
+            paddingRight:   isMobile ? 22 : 12,
+            paddingTop:     isMobile ? 66 : 80,
+            paddingBottom:  isMobile ? 8 : 26,
+          }}>
+
+            <div style={{ position: "relative", width: "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start" }}>
         {/* ════════════════════════════════════════════════════════
             BADGE — position:absolute → hors flow, image inchangée
         ════════════════════════════════════════════════════════ */}
         <div style={{
           position:       "absolute",
-          top:            isMobile
-            ? "calc(60px + var(--promo-banner-height, 0px) + 20px)"
-            : "calc(72px + var(--promo-banner-height, 0px) + 24px)",
+          top:            isMobile ? -46 : -56,
           left:           0,
           right:          0,
           display:        "flex",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           zIndex:         10,
           animation:      "heroFadeUp 0.44s ease both",
         }}>
@@ -368,43 +405,6 @@ export default function Hero() {
             </span>
           </span>
         </div>
-
-        {/* ══════════════════════════════════════════════════════
-            WRAPPER FLEX — 2 colonnes desktop / 1 colonne mobile
-        ══════════════════════════════════════════════════════ */}
-        <div style={{
-          display:       "flex",
-          flexDirection: isMobile ? "column" : "row",
-          alignItems:    isMobile ? "stretch" : "center",
-          // Desktop : hauteur naturelle plafonnée à 720px pour éviter l'espace mort.
-          minHeight:     isMobile ? 0 : "min(620px, calc(100svh - 234px))",
-          paddingTop:    isMobile
-            ? "calc(60px + var(--promo-banner-height, 0px))"
-            : "calc(72px + var(--promo-banner-height, 0px))",
-          paddingBottom: isMobile ? 0 : 0,
-          maxWidth:      1380,
-          margin:        "0 auto",
-          paddingLeft:   isMobile ? 0 : "max(40px, 4vw)",
-          paddingRight:  isMobile ? 0 : "max(24px, 3vw)",
-          gap:           isMobile ? 0 : "clamp(40px, 5vw, 84px)",
-          boxSizing:     "border-box",
-        }}>
-
-          {/* ════════════════════════════════════════════════
-              COLONNE GAUCHE — Badge / H1 / Promo / CTAs
-          ════════════════════════════════════════════════ */}
-          <div style={{
-            flex:           isMobile ? "none" : "0 0 52%",
-            display:        "flex",
-            flexDirection:  "column",
-            justifyContent: isMobile ? "center" : "flex-start",
-            alignItems:     isMobile ? "center" : undefined,
-            alignSelf:      isMobile ? undefined : "flex-start",
-            paddingLeft:    isMobile ? 22 : 0,
-            paddingRight:   isMobile ? 22 : 12,
-            paddingTop:     isMobile ? 66 : 80,
-            paddingBottom:  isMobile ? 8 : 26,
-          }}>
 
             {/* ── H1 — 2 lignes ── */}
             <h1 style={{
@@ -443,6 +443,7 @@ export default function Hero() {
                 }}>{h1L2acc}</span>
               </span>
             </h1>
+            </div>
 
             <p style={{
               margin: isMobile ? "0 0 12px" : "-24px 0 0",
