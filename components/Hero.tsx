@@ -359,7 +359,7 @@ export default function Hero() {
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
             paddingTop:     isMobile ? 66 : 80,
-            paddingBottom:  isMobile ? 8 : 26,
+            paddingBottom:  isMobile ? 0 : 26,
           }}>
 
             <div style={{ position: "relative", width: "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start" }}>
