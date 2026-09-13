@@ -183,27 +183,61 @@ export default function RewardLevels() {
         .rl-modal-box { animation: rl-fadein 0.18s ease both; }
       `}</style>
 
-      {/* ── HEADER DESKTOP : grille 2 colonnes nettes ────────── */}
-      {/* Colonne gauche = texte sur fond noir pur (zéro image derrière) */}
-      {/* Colonne droite = image dans son propre container, pousse jusqu'au bord droit viewport */}
+      {/* ── HEADER DESKTOP : texte flux normal + image absolute ── */}
+      {/* Le bloc texte (flux normal) donne sa hauteur au wrapper.             */}
+      {/* L'image est position:absolute, height:auto → hauteur naturelle.      */}
+      {/* Fond noir sur le bloc texte : aucune image possible derrière.        */}
       {!isMobile && (
         <div style={{
-          display:             "grid",
-          gridTemplateColumns: "42% 58%",
-          position:            "relative",
-          minHeight:           500,
-          marginBottom:        24,
-          overflow:            "hidden",
+          position:     "relative",
+          minHeight:    500,
+          marginBottom: 24,
+          overflow:     "hidden",
         }}>
 
-          {/* ── COLONNE GAUCHE : texte sur fond noir pur ──── */}
+          {/* ── Image — position absolute, right:0, z-index 1 ────── */}
+          {/* Doit être AVANT le bloc texte dans le DOM pour le z-index */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/parcours rewards.png"
+            alt="Les 5 niveaux de Rewards — Traders Rewards"
+            style={{
+              position:        "absolute",
+              right:           0,
+              top:             "50%",
+              transform:       "translateY(-50%)",
+              width:           "clamp(500px, 65vw, 1300px)",
+              height:          "auto",
+              objectFit:       "contain",
+              objectPosition:  "right center",
+              display:         "block",
+              zIndex:          1,
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 8%, black 22%, black 100%)",
+              maskImage:       "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 8%, black 22%, black 100%)",
+            } as React.CSSProperties}
+          />
+
+          {/* ── Fondu bas — au-dessus de l'image (zIndex 3) ───────── */}
+          <div aria-hidden="true" style={{
+            position:   "absolute",
+            bottom:     0, left: 0, right: 0,
+            height:     "12%",
+            background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 75%, #000 100%)",
+            zIndex:     3, pointerEvents: "none",
+          }} />
+
+          {/* ── Bloc texte — flux normal, fond noir, z-index 2 ───── */}
+          {/* width:42% + background:#000 garantit que l'image ne passe pas derrière le texte */}
           <div style={{
+            position:      "relative",
+            zIndex:        2,
+            width:         "42%",
+            minWidth:      280,
+            minHeight:     500,
             display:       "flex",
             alignItems:    "center",
             padding:       "64px 48px 64px clamp(24px, calc((100vw - 1080px) / 2 + 24px), 140px)",
             background:    "#000000",
-            position:      "relative",
-            zIndex:        2,
           }}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
@@ -240,35 +274,6 @@ export default function RewardLevels() {
               </div>
             </div>
           </div>
-
-          {/* ── COLONNE DROITE : image, occupe toute la colonne jusqu'au bord droit ── */}
-          <div style={{ position: "relative", overflow: "hidden" }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/parcours rewards.png"
-              alt="Les 5 niveaux de Rewards — Traders Rewards"
-              style={{
-                position:        "absolute",
-                top:             0, right: 0, bottom: 0, left: 0,
-                width:           "100%",
-                height:          "100%",
-                objectFit:       "contain",
-                objectPosition:  "right center",
-                display:         "block",
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 5%, black 18%, black 100%)",
-                maskImage:       "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 5%, black 18%, black 100%)",
-              } as React.CSSProperties}
-            />
-          </div>
-
-          {/* ── FONDU BAS — span les 2 colonnes ──────────── */}
-          <div aria-hidden="true" style={{
-            position:   "absolute",
-            bottom:     0, left: 0, right: 0,
-            height:     "12%",
-            background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 75%, #000 100%)",
-            zIndex:     3, pointerEvents: "none",
-          }} />
 
         </div>
       )}
