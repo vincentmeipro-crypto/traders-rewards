@@ -20,11 +20,11 @@ export default function Home() {
       {/* ── Principaux avantages — bandeau directement sous le Hero ── */}
       <HeroBenefits />
 
-      {/* ── Offre principale — 3 challenges V1 ── */}
-      <PricingV1 />
-
       {/* ── Parcours + Règles — sélecteur 25K/50K/100K synchronisé ── */}
       <JourneyRulesSection />
+
+      {/* ── Offre principale — 3 challenges V1 ── */}
+      <PricingV1 />
 
       {/* ── Les 5 niveaux de Rewards ── */}
       <RewardLevels />
