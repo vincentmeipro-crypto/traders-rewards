@@ -183,97 +183,90 @@ export default function RewardLevels() {
         .rl-modal-box { animation: rl-fadein 0.18s ease both; }
       `}</style>
 
-      {/* ── HEADER DESKTOP : texte flux normal + image absolute ── */}
-      {/* Le bloc texte (flux normal) donne sa hauteur au wrapper.             */}
-      {/* L'image est position:absolute, height:auto → hauteur naturelle.      */}
-      {/* Fond noir sur le bloc texte : aucune image possible derrière.        */}
+      {/* ── HEADER DESKTOP : grid 2 colonnes — texte 38% / image 62% ─── */}
+      {/* Image en flux normal (width:100%; height:auto) → aucun zoom forcé.   */}
+      {/* Colonne texte s'étire (align-self:stretch) → fond noir pleine hauteur */}
       {!isMobile && (
-        <div style={{
-          position:     "relative",
-          minHeight:    500,
-          marginBottom: 24,
-          overflow:     "hidden",
-        }}>
+        <div style={{ position: "relative", marginBottom: 24, overflow: "hidden" }}>
 
-          {/* ── Image — position absolute, right:0, z-index 1 ────── */}
-          {/* Doit être AVANT le bloc texte dans le DOM pour le z-index */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/parcours-rewards.png"
-            alt="Les 5 niveaux de Rewards — Traders Rewards"
-            style={{
-              position:        "absolute",
-              right:           0,
-              top:             "50%",
-              transform:       "translateY(-50%)",
-              width:           "clamp(500px, 65vw, 1300px)",
-              height:          "auto",
-              objectFit:       "contain",
-              objectPosition:  "right center",
-              display:         "block",
-              zIndex:          1,
-              WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 8%, black 22%, black 100%)",
-              maskImage:       "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.35) 8%, black 22%, black 100%)",
-            } as React.CSSProperties}
-          />
+          {/* Grid */}
+          <div style={{
+            display:             "grid",
+            gridTemplateColumns: "38% 62%",
+          }}>
 
-          {/* ── Fondu bas — au-dessus de l'image (zIndex 3) ───────── */}
+            {/* ── Colonne gauche : texte, fond noir, pleine hauteur ── */}
+            <div style={{
+              display:    "flex",
+              alignItems: "center",
+              padding:    "64px 48px 64px clamp(24px, calc((100vw - 1080px) / 2 + 24px), 140px)",
+              background: "#000000",
+            }}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
+                  {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
+                </div>
+                <h2 id="rl-heading" style={{
+                  fontSize: "clamp(2.4rem, 3.5vw, 3.5rem)",
+                  fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
+                  letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
+                }}>
+                  {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
+                  <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                    {L("Récompenses", "Recompensas", "Rewards")}
+                  </span>
+                </h2>
+                <p style={{ maxWidth: 400, whiteSpace: "normal", margin: "0 0 20px", color: "rgba(255,255,255,0.46)", fontSize: 17, lineHeight: 1.7 }}>
+                  {L(
+                    "Retirez jusqu'à 5 récompenses avec le même compte.",
+                    "Retire hasta 5 recompensas con la misma cuenta.",
+                    "Withdraw up to 5 rewards with the same account.",
+                  )}
+                </p>
+                <div>
+                  <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
+                    display: "inline-flex", alignItems: "center", gap: 7,
+                    padding: "7px 14px", borderRadius: 13,
+                    border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
+                    color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
+                  }}>
+                    <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
+                    {L("Informations", "Información", "Information")}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Colonne droite : image entière en flux normal ───── */}
+            {/* width:100% de la colonne + height:auto → proportion naturelle */}
+            {/* alignSelf:center → image centrée si la colonne texte est plus haute */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/parcours-rewards.png"
+              alt="Les 5 niveaux de Rewards — Traders Rewards"
+              style={{
+                display:         "block",
+                width:           "100%",
+                height:          "auto",
+                objectFit:       "contain",
+                objectPosition:  "center",
+                alignSelf:       "center",
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 6%, black 100%)",
+                maskImage:       "linear-gradient(to right, transparent 0%, black 6%, black 100%)",
+              } as React.CSSProperties}
+            />
+
+          </div>
+
+          {/* Fondu bas */}
           <div aria-hidden="true" style={{
             position:   "absolute",
             bottom:     0, left: 0, right: 0,
-            height:     "12%",
-            background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 75%, #000 100%)",
-            zIndex:     3, pointerEvents: "none",
+            height:     32,
+            background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 100%)",
+            pointerEvents: "none",
           }} />
-
-          {/* ── Bloc texte — flux normal, fond noir, z-index 2 ───── */}
-          {/* width:42% + background:#000 garantit que l'image ne passe pas derrière le texte */}
-          <div style={{
-            position:      "relative",
-            zIndex:        2,
-            width:         "42%",
-            minWidth:      280,
-            minHeight:     500,
-            display:       "flex",
-            alignItems:    "center",
-            padding:       "64px 48px 64px clamp(24px, calc((100vw - 1080px) / 2 + 24px), 140px)",
-            background:    "#000000",
-          }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
-                {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
-              </div>
-              <h2 id="rl-heading" style={{
-                fontSize: "clamp(2.4rem, 3.5vw, 3.5rem)",
-                fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
-                letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
-              }}>
-                {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
-                <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                  {L("Récompenses", "Recompensas", "Rewards")}
-                </span>
-              </h2>
-              <p style={{ maxWidth: 400, whiteSpace: "normal", margin: "0 0 20px", color: "rgba(255,255,255,0.46)", fontSize: 17, lineHeight: 1.7 }}>
-                {L(
-                  "Retirez jusqu'à 5 récompenses avec le même compte.",
-                  "Retire hasta 5 recompensas con la misma cuenta.",
-                  "Withdraw up to 5 rewards with the same account.",
-                )}
-              </p>
-              <div>
-                <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
-                  display: "inline-flex", alignItems: "center", gap: 7,
-                  padding: "7px 14px", borderRadius: 13,
-                  border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
-                  color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
-                  fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
-                }}>
-                  <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
-                  {L("Informations", "Información", "Information")}
-                </button>
-              </div>
-            </div>
-          </div>
 
         </div>
       )}
