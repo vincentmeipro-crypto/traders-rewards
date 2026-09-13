@@ -42,17 +42,27 @@ function fmtUSD(n: number) { return "$" + n.toLocaleString("en-US"); }
 
 const AMOUNTS = REWARD_AMOUNTS as readonly (readonly number[])[];
 
-function amtStyle(size: number, si: number): React.CSSProperties {
+function amtStyle(size: number, _si: number, gold?: boolean): React.CSSProperties {
+  if (gold) {
+    return {
+      fontSize:             size,
+      fontWeight:           800,
+      background:           GOLD,
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor:  "transparent",
+      backgroundClip:       "text",
+      letterSpacing:        "-0.5px",
+      fontVariantNumeric:   "tabular-nums",
+      lineHeight:           1,
+    };
+  }
   return {
-    fontSize:             size,
-    fontWeight:           800,
-    background:           COL_GRADIENT[si],
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor:  "transparent",
-    backgroundClip:       "text",
-    letterSpacing:        "-0.5px",
-    fontVariantNumeric:   "tabular-nums",
-    lineHeight:           1,
+    fontSize:           size,
+    fontWeight:         800,
+    color:              "#FFFFFF",
+    letterSpacing:      "-0.5px",
+    fontVariantNumeric: "tabular-nums",
+    lineHeight:         1,
   };
 }
 
@@ -348,13 +358,13 @@ export default function RewardLevels() {
                   <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
                     <span style={{ fontSize: isTrader ? 30 : 26, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1, background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", flexShrink: 0 }}>{level.num}</span>
                     <div style={{ width: 1, height: isTrader ? 34 : 26, background: barBg, flexShrink: 0 }} />
-                    <span style={{ fontSize: isTrader ? 12 : 11, fontWeight: 800, color: LABEL_GRAY, letterSpacing: "1.2px", textTransform: "uppercase" }}>{level.label}</span>
+                    <span style={{ fontSize: isTrader ? 12 : 11, fontWeight: 800, color: isTrader ? "#D4A843" : LABEL_GRAY, letterSpacing: "1.2px", textTransform: "uppercase" }}>{level.label}</span>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
                     {SIZES.map((sz, si) => (
                       <div key={sz} style={{ textAlign: "center" }}>
                         <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.30)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>{sz}</div>
-                        <div style={amtStyle(AMT_M[li], si)}>{fmtUSD(AMOUNTS[si][li])}</div>
+                        <div style={amtStyle(AMT_M[li], si, isTrader)}>{fmtUSD(AMOUNTS[si][li])}</div>
                       </div>
                     ))}
                   </div>
@@ -380,11 +390,11 @@ export default function RewardLevels() {
                 <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
                   <div style={{ fontSize: isTrader ? 50 : 44, fontWeight: 900, letterSpacing: "-3px", lineHeight: 1, background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", minWidth: 60, textAlign: "right", flexShrink: 0 }}>{level.num}</div>
                   <div style={{ width: 1, height: isTrader ? 50 : 38, background: barBg, flexShrink: 0 }} />
-                  <div style={{ fontSize: isTrader ? 13 : 12, fontWeight: 800, color: LABEL_GRAY, letterSpacing: "1px", textTransform: "uppercase" }}>{level.label}</div>
+                  <div style={{ fontSize: isTrader ? 13 : 12, fontWeight: 800, color: isTrader ? "#D4A843" : LABEL_GRAY, letterSpacing: "1px", textTransform: "uppercase" }}>{level.label}</div>
                 </div>
                 {SIZES.map((_sz, si) => (
                   <div key={si} style={{ textAlign: "center" }}>
-                    <div style={amtStyle(AMT_D[li], si)}>{fmtUSD(AMOUNTS[si][li])}</div>
+                    <div style={amtStyle(AMT_D[li], si, isTrader)}>{fmtUSD(AMOUNTS[si][li])}</div>
                   </div>
                 ))}
               </div>
