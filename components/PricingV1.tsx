@@ -477,6 +477,9 @@ export default function PricingV1() {
 
         {/* ── Titre section ── */}
         <div style={{ textAlign: "center", marginBottom: isMobile ? 16 : 18 }}>
+          <div style={{ color: "#D4A843", fontSize: 11, fontWeight: 900, letterSpacing: "2.4px", marginBottom: 14 }}>
+            {L("LES CHALLENGES", "LOS CHALLENGES", "THE CHALLENGES")}
+          </div>
           <h2 style={{
             fontSize:      isMobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)",
             fontWeight:    900,
