@@ -176,43 +176,140 @@ export default function RewardLevels() {
       <div style={{ maxWidth: 1080, margin: "0 auto", position: "relative", zIndex: 1 }}>
 
         {/* ── HEADER ─────────────────────────────────────────── */}
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 28 : 36 }}>
-          <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
-            {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
-          </div>
-          <h2 id="rl-heading" style={{
-            fontSize: isMobile ? "clamp(2.1rem, 7vw, 2.75rem)" : "clamp(2.4rem, 3.5vw, 3.5rem)",
-            fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
-            letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
-          }}>
-            {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
-            <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-              {L("Récompenses", "Recompensas", "Rewards")}
-            </span>
-          </h2>
-          <p style={{
-            maxWidth: isMobile ? 480 : "none", whiteSpace: isMobile ? "normal" : "nowrap",
-            margin: "0 auto 20px", color: "rgba(255,255,255,0.46)", fontSize: isMobile ? 14 : 17, lineHeight: 1.7,
-          }}>
-            {L(
-              "Retirez jusqu'à 5 récompenses avec le même compte.",
-              "Retire hasta 5 recompensas con la misma cuenta.",
-              "Withdraw up to 5 rewards with the same account.",
-            )}
-          </p>
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
-              display: "inline-flex", alignItems: "center", gap: 7,
-              padding: "7px 14px", borderRadius: 13,
-              border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
-              color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
-              fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
+        {isMobile ? (
+
+          /* ── Mobile : bloc centré, image masquée ────────── */
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
+              {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
+            </div>
+            <h2 id="rl-heading" style={{
+              fontSize: "clamp(2.1rem, 7vw, 2.75rem)",
+              fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
+              letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
             }}>
-              <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
-              {L("Informations", "Información", "Information")}
-            </button>
+              {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
+              <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                {L("Récompenses", "Recompensas", "Rewards")}
+              </span>
+            </h2>
+            <p style={{ maxWidth: 480, whiteSpace: "normal", margin: "0 auto 20px", color: "rgba(255,255,255,0.46)", fontSize: 14, lineHeight: 1.7 }}>
+              {L(
+                "Retirez jusqu'à 5 récompenses avec le même compte.",
+                "Retire hasta 5 recompensas con la misma cuenta.",
+                "Withdraw up to 5 rewards with the same account.",
+              )}
+            </p>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
+                display: "inline-flex", alignItems: "center", gap: 7,
+                padding: "7px 14px", borderRadius: 13,
+                border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
+                color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
+              }}>
+                <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
+                {L("Informations", "Información", "Information")}
+              </button>
+            </div>
           </div>
-        </div>
+
+        ) : (
+
+          /* ── Desktop : composition cinématique ──────────── */
+          /* Negative margins (-24px) compensent le padding de la section (0 24px) → pleine largeur */
+          <div style={{
+            position:     "relative",
+            overflow:     "hidden",
+            minHeight:    460,
+            marginLeft:   -24,
+            marginRight:  -24,
+            marginBottom: 24,
+          }}>
+
+            {/* Image absolue droite — 65% de largeur, couvre toute la hauteur */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/parcours rewards.png"
+              alt="Les 5 niveaux de Rewards — Traders Rewards"
+              style={{
+                position:        "absolute",
+                top:             0,
+                right:           0,
+                width:           "65%",
+                height:          "100%",
+                objectFit:       "cover",
+                objectPosition:  "left center",
+                transform:       "scale(1.12)",
+                transformOrigin: "center right",
+                display:         "block",
+              }}
+            />
+
+            {/* Fondu horizontal gauche — fusion progressive avec le fond #000 */}
+            <div aria-hidden="true" style={{
+              position: "absolute", top: 0, right: 0, bottom: 0, left: 0,
+              background: "linear-gradient(90deg, #000 0%, #000 12%, rgba(0,0,0,0.96) 20%, rgba(0,0,0,0.75) 32%, rgba(0,0,0,0.30) 48%, rgba(0,0,0,0) 65%)",
+              zIndex: 1, pointerEvents: "none",
+            }} />
+
+            {/* Fondu bas — transition naturelle vers le tableau */}
+            <div aria-hidden="true" style={{
+              position:   "absolute",
+              bottom:     0, left: 0, right: 0,
+              height:     "35%",
+              background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 60%, #000 100%)",
+              zIndex:     1, pointerEvents: "none",
+            }} />
+
+            {/* Bloc texte — z-index 2, aligné à gauche, centré verticalement */}
+            <div style={{
+              position:       "relative",
+              zIndex:         2,
+              width:          "42%",
+              minWidth:       320,
+              padding:        "64px 0 64px 24px",
+              display:        "flex",
+              flexDirection:  "column",
+              justifyContent: "center",
+            }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
+                {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
+              </div>
+              <h2 id="rl-heading" style={{
+                fontSize: "clamp(2.4rem, 3.5vw, 3.5rem)",
+                fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
+                letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
+              }}>
+                {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
+                <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                  {L("Récompenses", "Recompensas", "Rewards")}
+                </span>
+              </h2>
+              <p style={{ maxWidth: 440, whiteSpace: "normal", margin: "0 0 20px", color: "rgba(255,255,255,0.46)", fontSize: 17, lineHeight: 1.7 }}>
+                {L(
+                  "Retirez jusqu'à 5 récompenses avec le même compte.",
+                  "Retire hasta 5 recompensas con la misma cuenta.",
+                  "Withdraw up to 5 rewards with the same account.",
+                )}
+              </p>
+              <div>
+                <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
+                  display: "inline-flex", alignItems: "center", gap: 7,
+                  padding: "7px 14px", borderRadius: 13,
+                  border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
+                  color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
+                }}>
+                  <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
+                  {L("Informations", "Información", "Information")}
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        )}
 
         {/* ── EN-TÊTES COLONNES desktop ───────────────────────── */}
         {!isMobile && (
