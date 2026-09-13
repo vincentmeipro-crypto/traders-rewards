@@ -115,7 +115,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       id={compact ? undefined : "rules"}
       style={{
         scrollMarginTop: compact ? undefined : 92,
-        padding:         compact ? "0" : "clamp(72px, 8vw, 112px) 24px",
+        padding:         compact ? "0" : "0 24px",
         background:      compact ? "transparent" : "#000000",
       }}
     >

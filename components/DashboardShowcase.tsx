@@ -22,7 +22,7 @@ export default function DashboardShowcase() {
     { icon: <Trophy size={17}/>, label: "REWARD", value: "#1", sub: L("Votre prochaine étape", "Tu próximo nivel", "Your next milestone") },
   ];
 
-  return <section id="dashboard-preview" style={{ padding: mobile ? "48px 16px" : "64px 24px", background: "#000" }}>
+  return <section id="dashboard-preview" style={{ padding: mobile ? "0 16px" : "0 24px", background: "#000" }}>
     <div style={{ maxWidth: 1240, margin: "0 auto" }}>
       <div style={{ textAlign: "center", marginBottom: mobile ? 30 : 44 }}>
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: 3, color: "#D4A843", marginBottom: 12 }}>COCKPIT TRADER</div>

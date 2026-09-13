@@ -14,68 +14,70 @@ export default function Home() {
     <main className="page-main" style={{ minHeight: "100vh", background: "#000000" }}>
       <Navbar />
 
-      {/* ── Accroche V1 ── */}
-      <Hero />
+      {/* ── Source de vérité unique : 50mm entre CHAQUE GRANDE SECTION COMPLÈTE ── */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "50mm" }}>
 
-      {/* ── Principaux avantages — bandeau directement sous le Hero ── */}
-      <HeroBenefits />
-
-      {/* ── Parcours + Règles — sélecteur 25K/50K/100K synchronisé ── */}
-      <JourneyRulesSection />
-
-      {/* ── Offre principale — 3 challenges V1 ── */}
-      {/* Correction cumul espacement : RulesV1 padding-bottom (112px) + PricingV1 padding-top (112px) = 224px → -60px pour retrouver ~164px cohérent */}
-      <div style={{ marginTop: "-60px" }}>
-        <PricingV1 />
-      </div>
-
-      {/* ── Les 5 niveaux de Rewards ── */}
-      <RewardLevels />
-
-      {/* ── Titre de transition : Environnement Trader ── */}
-      <div style={{ backgroundColor: "#000000", padding: "clamp(48px, 5vw, 64px) 24px", textAlign: "center" }}>
-        <div style={{
-          fontSize: 10, fontWeight: 800, color: "#D4A843",
-          letterSpacing: "3px", textTransform: "uppercase", marginBottom: 12,
-        }}>
-          ENVIRONNEMENT TRADER
+        {/* ── SECTION 1 : Hero complet — accroche + bandeau 6 avantages (interne au Hero) ── */}
+        <div>
+          <Hero />
+          <HeroBenefits />
         </div>
-        <h2 style={{
-          fontSize: "clamp(2.1rem, 3.5vw, 3.5rem)",
-          fontWeight: 900, color: "#FFFFFF",
-          textTransform: "uppercase",
-          letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 12px",
-          textWrap: "balance",
-        } as React.CSSProperties}>
-          Votre environnement de{" "}
-          <span style={{
-            background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-          }}>trading</span>
-        </h2>
+
+        {/* ── SECTION 2 : Règles ── */}
+        <JourneyRulesSection />
+
+        {/* ── SECTION 3 : Challenges (1er placement) ── */}
+        <PricingV1 />
+
+        {/* ── SECTION 4 : Les 5 niveaux de Rewards ── */}
+        <RewardLevels />
+
+        {/* ── SECTION 5 : Environnement Trader — titre + image MT5 (une seule section) ── */}
+        <div>
+          <div style={{ backgroundColor: "#000000", padding: "0 24px clamp(48px, 5vw, 64px)", textAlign: "center" }}>
+            <div style={{
+              fontSize: 10, fontWeight: 800, color: "#D4A843",
+              letterSpacing: "3px", textTransform: "uppercase", marginBottom: 12,
+            }}>
+              ENVIRONNEMENT TRADER
+            </div>
+            <h2 style={{
+              fontSize: "clamp(2.1rem, 3.5vw, 3.5rem)",
+              fontWeight: 900, color: "#FFFFFF",
+              textTransform: "uppercase",
+              letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 12px",
+              textWrap: "balance",
+            } as React.CSSProperties}>
+              Votre environnement de{" "}
+              <span style={{
+                background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+              }}>trading</span>
+            </h2>
+          </div>
+          <section
+            id="metatrader5"
+            style={{ width: "100%", padding: 0, backgroundColor: "#000000", overflow: "hidden" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/mt5-premium.png"
+              alt="MetaTrader 5 — plateforme de trading simulé Traders Rewards"
+              style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
+            />
+          </section>
+        </div>
+
+        {/* ── SECTION 6 : Cockpit Trader ── */}
+        <DashboardShowcase />
+
+        {/* ── SECTION 7 : Challenges (2e placement — conversion) ── */}
+        <PricingV1 />
+
+        {/* ── SECTION 8 : FAQ ── */}
+        <FAQ />
+
       </div>
-
-      {/* ── Plateforme de trading : MetaTrader 5 ── */}
-      <section
-        id="metatrader5"
-        style={{ width: "100%", padding: 0, backgroundColor: "#000000", overflow: "hidden" }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/mt5-premium.png"
-          alt="MetaTrader 5 — plateforme de trading simulé Traders Rewards"
-          style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
-        />
-      </section>
-
-      {/* ── Aperçu du cockpit trader ── */}
-      <DashboardShowcase />
-
-      {/* ── Pricing répété (conversion) ── */}
-      <PricingV1 />
-
-      {/* ── FAQ V1 — 14 questions ── */}
-      <FAQ />
 
       <Footer />
       <DisclaimerBanner />

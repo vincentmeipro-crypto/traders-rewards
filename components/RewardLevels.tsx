@@ -147,7 +147,7 @@ export default function RewardLevels() {
       id="rewards"
       aria-labelledby="rl-heading"
       style={{
-        padding:         isMobile ? "56px 14px 72px" : "72px 24px 88px",
+        padding:         isMobile ? "0 14px" : "0 24px",
         backgroundColor: "#000000",
         position:        "relative",
         overflow:        "hidden",
