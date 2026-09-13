@@ -147,7 +147,7 @@ export default function RewardLevels() {
       id="rewards"
       aria-labelledby="rl-heading"
       style={{
-        padding:         isMobile ? "0 14px 16px" : "0 24px 16px",
+        padding:         "0 0 16px",
         backgroundColor: "#000000",
         position:        "relative",
         overflow:        "hidden",
@@ -173,13 +173,101 @@ export default function RewardLevels() {
         .rl-modal-box { animation: rl-fadein 0.18s ease both; }
       `}</style>
 
-      <div style={{ maxWidth: 1080, margin: "0 auto", position: "relative", zIndex: 1 }}>
+      {/* ── HEADER DESKTOP : grille 2 colonnes nettes ────────── */}
+      {/* Colonne gauche = texte sur fond noir pur (zéro image derrière) */}
+      {/* Colonne droite = image dans son propre container, pousse jusqu'au bord droit viewport */}
+      {!isMobile && (
+        <div style={{
+          display:             "grid",
+          gridTemplateColumns: "42% 58%",
+          position:            "relative",
+          minHeight:           500,
+          marginBottom:        24,
+          overflow:            "hidden",
+        }}>
 
-        {/* ── HEADER ─────────────────────────────────────────── */}
-        {isMobile ? (
+          {/* ── COLONNE GAUCHE : texte sur fond noir pur ──── */}
+          <div style={{
+            display:       "flex",
+            alignItems:    "center",
+            padding:       "64px 48px 64px clamp(24px, calc((100vw - 1080px) / 2 + 24px), 140px)",
+            background:    "#000000",
+            position:      "relative",
+            zIndex:        2,
+          }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
+                {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
+              </div>
+              <h2 id="rl-heading" style={{
+                fontSize: "clamp(2.4rem, 3.5vw, 3.5rem)",
+                fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
+                letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
+              }}>
+                {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
+                <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+                  {L("Récompenses", "Recompensas", "Rewards")}
+                </span>
+              </h2>
+              <p style={{ maxWidth: 400, whiteSpace: "normal", margin: "0 0 20px", color: "rgba(255,255,255,0.46)", fontSize: 17, lineHeight: 1.7 }}>
+                {L(
+                  "Retirez jusqu'à 5 récompenses avec le même compte.",
+                  "Retire hasta 5 recompensas con la misma cuenta.",
+                  "Withdraw up to 5 rewards with the same account.",
+                )}
+              </p>
+              <div>
+                <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
+                  display: "inline-flex", alignItems: "center", gap: 7,
+                  padding: "7px 14px", borderRadius: 13,
+                  border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
+                  color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                  fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
+                }}>
+                  <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
+                  {L("Informations", "Información", "Information")}
+                </button>
+              </div>
+            </div>
+          </div>
 
-          /* ── Mobile : bloc centré, image masquée ────────── */
-          <div style={{ textAlign: "center", marginBottom: 28 }}>
+          {/* ── COLONNE DROITE : image, occupe toute la colonne jusqu'au bord droit ── */}
+          <div style={{ position: "relative", overflow: "hidden" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/parcours rewards.png"
+              alt="Les 5 niveaux de Rewards — Traders Rewards"
+              style={{
+                position:        "absolute",
+                top:             0, right: 0, bottom: 0, left: 0,
+                width:           "100%",
+                height:          "100%",
+                objectFit:       "contain",
+                objectPosition:  "right center",
+                display:         "block",
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 5%, black 18%, black 100%)",
+                maskImage:       "linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 5%, black 18%, black 100%)",
+              } as React.CSSProperties}
+            />
+          </div>
+
+          {/* ── FONDU BAS — span les 2 colonnes ──────────── */}
+          <div aria-hidden="true" style={{
+            position:   "absolute",
+            bottom:     0, left: 0, right: 0,
+            height:     "12%",
+            background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.65) 75%, #000 100%)",
+            zIndex:     3, pointerEvents: "none",
+          }} />
+
+        </div>
+      )}
+
+      {/* ── HEADER MOBILE : texte centré + image dessous ── */}
+      {isMobile && (
+        <div style={{ marginBottom: 28, padding: "0 14px" }}>
+          {/* Texte centré */}
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
             <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
               {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
             </div>
@@ -213,103 +301,18 @@ export default function RewardLevels() {
               </button>
             </div>
           </div>
+          {/* Image mobile — sous le texte, avant le tableau */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/parcours rewards.png"
+            alt="Les 5 niveaux de Rewards — Traders Rewards"
+            style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }}
+          />
+        </div>
+      )}
 
-        ) : (
-
-          /* ── Desktop : composition cinématique ──────────── */
-          /* Negative margins (-24px) compensent le padding de la section (0 24px) → pleine largeur */
-          <div style={{
-            position:     "relative",
-            overflow:     "hidden",
-            minHeight:    460,
-            marginLeft:   -24,
-            marginRight:  -24,
-            marginBottom: 24,
-          }}>
-
-            {/* Image absolue droite — 65% de largeur, couvre toute la hauteur */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/parcours rewards.png"
-              alt="Les 5 niveaux de Rewards — Traders Rewards"
-              style={{
-                position:        "absolute",
-                top:             0,
-                right:           0,
-                width:           "65%",
-                height:          "100%",
-                objectFit:       "cover",
-                objectPosition:  "left center",
-                transform:       "scale(1.12)",
-                transformOrigin: "center right",
-                display:         "block",
-              }}
-            />
-
-            {/* Fondu horizontal gauche — fusion progressive avec le fond #000 */}
-            <div aria-hidden="true" style={{
-              position: "absolute", top: 0, right: 0, bottom: 0, left: 0,
-              background: "linear-gradient(90deg, #000 0%, #000 12%, rgba(0,0,0,0.96) 20%, rgba(0,0,0,0.75) 32%, rgba(0,0,0,0.30) 48%, rgba(0,0,0,0) 65%)",
-              zIndex: 1, pointerEvents: "none",
-            }} />
-
-            {/* Fondu bas — transition naturelle vers le tableau */}
-            <div aria-hidden="true" style={{
-              position:   "absolute",
-              bottom:     0, left: 0, right: 0,
-              height:     "35%",
-              background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 60%, #000 100%)",
-              zIndex:     1, pointerEvents: "none",
-            }} />
-
-            {/* Bloc texte — z-index 2, aligné à gauche, centré verticalement */}
-            <div style={{
-              position:       "relative",
-              zIndex:         2,
-              width:          "42%",
-              minWidth:       320,
-              padding:        "64px 0 64px 24px",
-              display:        "flex",
-              flexDirection:  "column",
-              justifyContent: "center",
-            }}>
-              <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
-                {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
-              </div>
-              <h2 id="rl-heading" style={{
-                fontSize: "clamp(2.4rem, 3.5vw, 3.5rem)",
-                fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
-                letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
-              }}>
-                {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
-                <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                  {L("Récompenses", "Recompensas", "Rewards")}
-                </span>
-              </h2>
-              <p style={{ maxWidth: 440, whiteSpace: "normal", margin: "0 0 20px", color: "rgba(255,255,255,0.46)", fontSize: 17, lineHeight: 1.7 }}>
-                {L(
-                  "Retirez jusqu'à 5 récompenses avec le même compte.",
-                  "Retire hasta 5 recompensas con la misma cuenta.",
-                  "Withdraw up to 5 rewards with the same account.",
-                )}
-              </p>
-              <div>
-                <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
-                  display: "inline-flex", alignItems: "center", gap: 7,
-                  padding: "7px 14px", borderRadius: 13,
-                  border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
-                  color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
-                  fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
-                }}>
-                  <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
-                  {L("Informations", "Información", "Information")}
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        )}
+      {/* ── TABLEAU (maxWidth:1080) ───────────────────────────── */}
+      <div style={{ maxWidth: 1080, margin: "0 auto", padding: isMobile ? "0 14px" : "0 24px", position: "relative", zIndex: 1 }}>
 
         {/* ── EN-TÊTES COLONNES desktop ───────────────────────── */}
         {!isMobile && (
