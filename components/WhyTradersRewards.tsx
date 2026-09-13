@@ -87,7 +87,7 @@ const FEATURES_FR: Feature[] = [
   {
     num: "04", metric: "∞",
     title: "TEMPS ILLIMITÉ",
-    desc:  "Après validation du Challenge et activation du Compte Reward, le trader entre dans un parcours conçu pour durer — durée illimitée.",
+    desc:  "Après validation du Challenge et accès au compte Trader Reward, le trader entre dans un parcours conçu pour durer — durée illimitée.",
     icon: <IconLayers />,
   },
   {
@@ -126,7 +126,7 @@ const FEATURES_EN: Feature[] = [
   {
     num: "04", metric: "∞",
     title: "UNLIMITED TIME",
-    desc:  "After passing the Challenge and activating the Compte Reward, the trader enters a journey designed to last — unlimited duration.",
+    desc:  "After passing the Challenge and accessing the Trader Reward account, the trader enters a journey designed to last — unlimited duration.",
     icon: <IconLayers />,
   },
   {
@@ -165,7 +165,7 @@ const FEATURES_ES: Feature[] = [
   {
     num: "04", metric: "∞",
     title: "TIEMPO ILIMITADO",
-    desc:  "Tras validar el Challenge y activar el Compte Reward, el trader entra en un camino diseñado para durar — duración ilimitada.",
+    desc:  "Tras validar el Challenge y acceder a la cuenta Trader Reward, el trader entra en un camino diseñado para durar — duración ilimitada.",
     icon: <IconLayers />,
   },
   {

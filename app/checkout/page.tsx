@@ -825,9 +825,9 @@ function CheckoutContent() {
                   ", a profit target of +6% and a Trailing Drawdown EOD of 3% or 4% depending on the size chosen."
                 )}<br />
                 {L(
-                  "• Après validation, l'activation du Compte Reward est soumise à des",
-                  "• Tras la validación, la activación de la Cuenta Reward está sujeta a",
-                  "• After validation, activation of the Reward Account is subject to"
+                  "• Après validation, l'accès au compte Trader Reward est soumis à des",
+                  "• Tras la validación, el acceso a la cuenta Trader Reward está sujeto a",
+                  "• After validation, access to the Trader Reward account is subject to"
                 )}{" "}
                 <strong style={{ color: "rgba(255,255,255,0.7)" }}>
                   {L("frais uniques distincts", "tarifas únicas distintas", "separate one-time fees")}

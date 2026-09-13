@@ -116,8 +116,9 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
   const floorAmt   = balance - ddAmt;
   const maxBestDay = targetAmt / 2;
 
-  // NIVEAU 02 / 03 — plancher fixe +4% et caps Rewards
-  const fixedFloor = balance * 1.04;
+  // NIVEAU 02 — TRADER REWARD : plancher fixe = capital nominal ; verrou EOD = +4%
+  const trailingLockBalance = balance * 1.04;  // plus haut EOD déclenchant le verrouillage
+  const fixedFloor          = balance;          // plancher fixe = capital nominal
   const AMOUNTS    = REWARD_AMOUNTS as readonly (readonly number[])[];
   const sizeIdx    = balance === 25000 ? 0 : balance === 50000 ? 1 : 2;
   const rewardCaps = AMOUNTS[sizeIdx]; // [R1, R2, R3, R4, R5]
@@ -416,121 +417,135 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             </div>
           </div>
 
-          {/* ── NIVEAU 02 — COMPTE REWARD ── */}
+          {/* ── NIVEAU 02 — TRADER REWARD ── */}
           <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 24 }}>
             <h3 style={{ ...secTitle, marginBottom: 6 }}>
-              {L("NIVEAU 02 — COMPTE REWARD","NIVEL 02 — COMPTE REWARD","LEVEL 02 — REWARD ACCOUNT")}
+              {L("NIVEAU 02 — TRADER REWARD","NIVEL 02 — TRADER REWARD","LEVEL 02 — TRADER REWARD")}
             </h3>
+            {/* Intro */}
             <p style={bodyTxt}>
               {L(
-                `Le Compte Reward démarre avec un drawdown EOD. Dès que la balance réalisée atteint le plancher fixe (+4%), le trailing s'arrête et le stop devient définitivement fixe à ce niveau.`,
-                `La Cuenta Reward comienza con un drawdown EOD. En cuanto la balance realizada alcanza el suelo fijo (+4%), el trailing se detiene y el stop queda fijo permanentemente.`,
-                `The Reward Account starts with an EOD drawdown. As soon as the realised balance reaches the fixed floor (+4%), trailing stops and the stop becomes permanently fixed.`
+                `Après validation du Challenge, le compte Trader Reward démarre avec un Trailing DD EOD de ${fmt(ddAmt)} — plancher initial ${fmt(floorAmt)}. Ce plancher remonte avec vos plus hauts EOD, puis se verrouille définitivement à ${fmt(fixedFloor)} dans l'un des 2 cas suivants.`,
+                `Tras validar el Challenge, la cuenta Trader Reward comienza con un Trailing DD EOD de ${fmt(ddAmt)} — suelo inicial ${fmt(floorAmt)}. Este suelo sube con sus máximos EOD y se bloquea definitivamente en ${fmt(fixedFloor)} en uno de estos 2 casos.`,
+                `After passing the Challenge, the Trader Reward account starts with a ${fmt(ddAmt)} Trailing DD EOD — initial floor ${fmt(floorAmt)}. The floor rises with your EOD highs, then locks permanently at ${fmt(fixedFloor)} in one of these 2 cases.`
               )}
             </p>
 
-            {/* Plancher fixe +4% */}
-            <div style={{ ...infoBox, border: "1px solid rgba(184,135,70,0.30)", marginBottom: 12 }}>
-              <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 6 }}>
-                {L("PLANCHER FIXE +4%","SUELO FIJO +4%","FIXED FLOOR +4%")}
+            {/* 2 cas de verrouillage */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 12 }}>
+              {/* CAS 1 */}
+              <div style={{ ...infoBox, border: "1px solid rgba(71,220,136,0.22)", background: "rgba(71,220,136,0.03)" }}>
+                <div style={{ fontSize: 8, fontWeight: 800, color: GREEN, letterSpacing: "1.8px", textTransform: "uppercase" as const, marginBottom: 6 }}>
+                  {L("CAS 1 — VERROUILLAGE NATUREL","CASO 1 — BLOQUEO NATURAL","CASE 1 — NATURAL LOCK")}
+                </div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", lineHeight: 1.6 }}>
+                  {L(
+                    `Plus haut EOD ≥ ${fmt(trailingLockBalance)} → le trailing remonte naturellement jusqu'à ${fmt(fixedFloor)} et se verrouille définitivement.`,
+                    `Máximo EOD ≥ ${fmt(trailingLockBalance)} → el trailing sube naturalmente hasta ${fmt(fixedFloor)} y se bloquea definitivamente.`,
+                    `Highest EOD ≥ ${fmt(trailingLockBalance)} → the trailing rises naturally to ${fmt(fixedFloor)} and locks permanently.`
+                  )}
+                </div>
               </div>
-              <div style={{ fontSize: 20, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-0.5px", marginBottom: 4 }}>
-                {fmt(fixedFloor)}
+              {/* CAS 2 */}
+              <div style={{ ...infoBox, border: "1px solid rgba(184,135,70,0.30)", background: "rgba(184,135,70,0.025)" }}>
+                <div style={{ fontSize: 8, fontWeight: 800, color: ACCENT, letterSpacing: "1.8px", textTransform: "uppercase" as const, marginBottom: 6 }}>
+                  {L("CAS 2 — PREMIER REWARD PAYÉ","CASO 2 — PRIMER REWARD PAGADO","CASE 2 — FIRST REWARD PAID")}
+                </div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", lineHeight: 1.6 }}>
+                  {L(
+                    `Le paiement de votre Reward #1 verrouille immédiatement le plancher à ${fmt(fixedFloor)}, même si votre EOD n'a pas encore atteint ${fmt(trailingLockBalance)}.`,
+                    `El pago de su Reward #1 bloquea inmediatamente el suelo en ${fmt(fixedFloor)}, aunque el EOD no haya alcanzado aún ${fmt(trailingLockBalance)}.`,
+                    `Payment of your Reward #1 immediately locks the floor at ${fmt(fixedFloor)}, even if your EOD has not yet reached ${fmt(trailingLockBalance)}.`
+                  )}
+                </div>
               </div>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.32)", lineHeight: 1.5 }}>
+            </div>
+
+            {/* Exemple CAS 2 — dynamique */}
+            {(() => {
+              const eodEx    = balance * 1.025;
+              const floorEx  = eodEx - ddAmt;
+              const rwEx     = rewardCaps[0];
+              const balEx    = eodEx - rwEx;
+              const marginEx = balEx - fixedFloor;
+              return (
+                <div style={{ ...infoBox, border: "1px solid rgba(184,135,70,0.20)", marginBottom: 12 }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 12 }}>
+                    {L(
+                      `Exemple CAS 2 — ${sizeLabel} · Reward #1 avant ${fmt(trailingLockBalance)}`,
+                      `Ejemplo CASO 2 — ${sizeLabel} · Reward #1 antes de ${fmt(trailingLockBalance)}`,
+                      `Example CASE 2 — ${sizeLabel} · Reward #1 before ${fmt(trailingLockBalance)}`
+                    )}
+                  </div>
+                  {/* Avant paiement */}
+                  <div style={{ display: "flex", flexDirection: "column" as const, gap: 3, marginBottom: 10 }}>
+                    {([
+                      { lbl: L("Plus haut EOD","Máximo EOD","Highest EOD"),                                         val: fmt(eodEx),   color: "#FFF" },
+                      { lbl: `Trailing DD ${trailingDdPct}%`,                                                        val: fmt(ddAmt),   color: ORANGE },
+                      { lbl: L("Plancher trailing avant paiement","Suelo trailing antes del pago","Trailing floor before payment"), val: fmt(floorEx), color: ORANGE },
+                    ] as { lbl: string; val: string; color: string }[]).map((row, i) => (
+                      <div key={i} style={{
+                        display: "flex", justifyContent: "space-between", padding: "3px 0",
+                        borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                      }}>
+                        <span style={rowLbl}>{row.lbl}</span>
+                        <span style={{ ...rowVal, color: row.color }}>{row.val}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* Paiement */}
+                  <div style={{
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                    padding: "6px 0", margin: "2px 0 8px",
+                    borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)",
+                  }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.35)", letterSpacing: "1.5px", textTransform: "uppercase" as const }}>
+                      {L("Reward #1 demandée","Reward #1 solicitada","Reward #1 requested")}
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 900, color: "#FFFFFF" }}>{fmt(rwEx)}</span>
+                  </div>
+                  {/* Après paiement */}
+                  <div style={{ display: "flex", flexDirection: "column" as const, gap: 3 }}>
+                    {([
+                      { lbl: L("Balance après paiement","Balance tras el pago","Balance after payment"),              val: fmt(balEx),    color: GREEN  },
+                      { lbl: L("Plancher fixe (verrouillé)","Suelo fijo (bloqueado)","Fixed floor (locked)"),         val: fmt(fixedFloor), color: ACCENT },
+                      { lbl: L("Marge restante avant DD","Margen restante antes del DD","Remaining margin before DD"), val: fmt(marginEx), color: "rgba(255,255,255,0.55)" },
+                    ] as { lbl: string; val: string; color: string }[]).map((row, i) => (
+                      <div key={i} style={{
+                        display: "flex", justifyContent: "space-between", padding: "3px 0",
+                        borderBottom: i < 2 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                      }}>
+                        <span style={rowLbl}>{row.lbl}</span>
+                        <span style={{ ...rowVal, color: row.color }}>{row.val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Note importante */}
+            <div style={{
+              background: "rgba(184,135,70,0.035)", border: "1px solid rgba(184,135,70,0.18)",
+              borderRadius: 10, padding: "10px 14px", marginBottom: 12,
+            }}>
+              <p style={{ fontSize: 10.5, color: "rgba(255,255,255,0.45)", margin: 0, lineHeight: 1.7 }}>
+                <span style={{ color: ACCENT, fontWeight: 900, marginRight: 5 }}>⚠</span>
                 {L(
-                  "Dès que la balance réalisée atteint ce niveau en cours de journée, le stop devient fixe et permanent.",
-                  "En cuanto la balance realizada alcanza este nivel durante la jornada, el stop queda fijo y permanente.",
-                  "As soon as realised balance hits this level intraday, the stop becomes fixed and permanent."
+                  `${fmt(trailingLockBalance)} n'est PAS le plancher — c'est le plus haut EOD qui déclenche le verrouillage naturel. Le plancher fixe définitif du compte ${sizeLabel} est ${fmt(fixedFloor)}.`,
+                  `${fmt(trailingLockBalance)} NO es el suelo — es el máximo EOD que activa el bloqueo natural. El suelo fijo definitivo de la cuenta ${sizeLabel} es ${fmt(fixedFloor)}.`,
+                  `${fmt(trailingLockBalance)} is NOT the floor — it is the highest EOD that triggers the natural lock. The permanent fixed floor of the ${sizeLabel} account is ${fmt(fixedFloor)}.`
                 )}
-              </div>
+              </p>
             </div>
 
-            {/* Règles N02 */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))", gap: 8 }}>
+            {/* Règles par cycle */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))", gap: 8, marginBottom: 12 }}>
               {([
                 {
-                  label: L("JOURS QUALIFIANTS","DÍAS CALIFICADOS","QUALIFYING DAYS"),
+                  label: L("JOURS QUALIFIANTS / CYCLE","DÍAS CALIFICADOS / CICLO","QUALIFYING DAYS / CYCLE"),
                   value: L("5 JOURS","5 DÍAS","5 DAYS"),
-                  note:  L("5 jours de trading à profit minimum requis","5 días de trading con beneficio mínimo requerido","5 trading days at minimum profit required"),
-                  color: ACCENT,
-                },
-                {
-                  label: L("PROFIT MIN / JOUR","PROFIT MÍN / DÍA","MIN PROFIT / DAY"),
-                  value: fmt(qualDayUsd),
-                  note:  L(`Minimum ${fmt(qualDayUsd)} de profit réalisé par jour qualifiant`,`Mínimo ${fmt(qualDayUsd)} de beneficio por día calificado`,`Minimum ${fmt(qualDayUsd)} realised profit per qualifying day`),
-                  color: GREEN,
-                },
-                {
-                  label: L("CONSISTANCE","CONSISTENCIA","CONSISTENCY"),
-                  value: "≤ 50%",
-                  note:  L("Votre meilleure journée ne dépasse pas 50% du profit total","Su mejor día no supera el 50% del beneficio total","Best day must not exceed 50% of total profit"),
-                  color: ACCENT,
-                },
-                {
-                  label: "REWARD MAX",
-                  value: fmt(rewardCaps[0]),
-                  note:  L("Montant maximum du premier Reward","Monto máximo del primer Reward","Maximum amount for the first Reward"),
-                  color: ORANGE,
-                },
-                {
-                  label: L("PAIEMENT","PAGO","PAYMENT"),
-                  value: "48H MAX",
-                  note:  L("Reward versé automatiquement sous 48h","Reward abonado automáticamente en 48h","Reward automatically paid within 48h"),
-                  color: GREEN,
-                },
-              ] as { label: string; value: string; note: string; color: string }[]).map((row, i) => (
-                <div key={i} style={{ ...infoBox, borderLeft: `2px solid ${row.color}33` }}>
-                  <div style={miniLabel}>{row.label}</div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: "#FFFFFF", marginBottom: 3 }}>{row.value}</div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>{row.note}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── NIVEAU 03 — TRADER REWARD ── */}
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 24 }}>
-            <h3 style={{ ...secTitle, marginBottom: 6 }}>
-              {L("NIVEAU 03 — TRADER REWARD","NIVEL 03 — TRADER REWARD","LEVEL 03 — TRADER REWARD")}
-            </h3>
-            <p style={bodyTxt}>
-              {L(
-                `À partir du Compte Reward, le drawdown devient fixe et le plancher ne remonte plus jamais. Pour chaque nouveau Payout (Rewards 2 à 5), le trader doit valider à nouveau 5 jours qualifiants.`,
-                `A partir de la Cuenta Reward, el drawdown se vuelve fijo y el suelo nunca vuelve a subir. Para cada nuevo Payout (Rewards 2 a 5), el trader debe validar de nuevo 5 días calificados.`,
-                `From the Reward Account onward, the drawdown is fixed and the floor never rises again. For each new Payout (Rewards 2 to 5), the trader must requalify with 5 new qualifying days.`
-              )}
-            </p>
-
-            {/* DD fixe + plancher fixe */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-              <div style={{ ...infoBox, border: "1px solid rgba(255,83,100,0.22)", background: "rgba(255,83,100,0.03)" }}>
-                <div style={{ fontSize: 9, fontWeight: 800, color: ORANGE, letterSpacing: "1.5px", textTransform: "uppercase" as const, marginBottom: 5 }}>
-                  DD {L("FIXE","FIJO","FIXED")}
-                </div>
-                <div style={{ fontSize: 18, fontWeight: 900, color: "#FFFFFF", marginBottom: 3 }}>{fmt(ddAmt)}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>
-                  {L("Drawdown fixe — ne trail plus","Drawdown fijo — sin trailing","Fixed drawdown — no longer trailing")}
-                </div>
-              </div>
-              <div style={{ ...infoBox, border: "1px solid rgba(184,135,70,0.30)" }}>
-                <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "1.5px", textTransform: "uppercase" as const, marginBottom: 5 }}>
-                  {L("PLANCHER FIXE","SUELO FIJO","FIXED FLOOR")}
-                </div>
-                <div style={{ fontSize: 18, fontWeight: 900, color: "#FFFFFF", marginBottom: 3 }}>{fmt(fixedFloor)}</div>
-                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.30)", lineHeight: 1.4 }}>
-                  {L("Permanent — ne remonte jamais","Permanente — nunca vuelve a subir","Permanent — never rises again")}
-                </div>
-              </div>
-            </div>
-
-            {/* Règles N03 */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))", gap: 8 }}>
-              {([
-                {
-                  label: L("JOURS QUALIFIANTS / PAYOUT","DÍAS CALIFICADOS / PAYOUT","QUALIFYING DAYS / PAYOUT"),
-                  value: L("5 JOURS","5 DÍAS","5 DAYS"),
-                  note:  L("À refaire pour chaque nouveau Payout (Rewards 2 à 5)","A repetir para cada nuevo Payout (Rewards 2 a 5)","To redo for each new Payout (Rewards 2 to 5)"),
+                  note:  L("5 jours de trading à profit minimum requis par cycle","5 días de trading con beneficio mínimo por ciclo","5 minimum profit trading days per cycle"),
                   color: ACCENT,
                 },
                 {
@@ -542,13 +557,19 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                 {
                   label: L("CONSISTANCE","CONSISTENCIA","CONSISTENCY"),
                   value: "≤ 50%",
-                  note:  L("Votre meilleure journée ne dépasse pas 50% du profit total","Su mejor día no supera el 50% del beneficio total","Best day must not exceed 50% of total profit"),
+                  note:  L("Meilleure journée ≤ 50% du profit total du cycle","Mejor día ≤ 50% del beneficio total del ciclo","Best day ≤ 50% of total cycle profit"),
                   color: ACCENT,
                 },
                 {
+                  label: L("RETRAIT MIN","RETIRO MÍN","MIN WITHDRAWAL"),
+                  value: "$100",
+                  note:  L("Montant minimum de chaque demande de Reward","Importe mínimo de cada solicitud de Reward","Minimum amount for each Reward request"),
+                  color: ORANGE,
+                },
+                {
                   label: L("PAIEMENT","PAGO","PAYMENT"),
-                  value: "48H MAX",
-                  note:  L("Reward versé automatiquement sous 48h après validation","Reward abonado automáticamente en 48h tras validación","Reward automatically paid within 48h after validation"),
+                  value: "48H EXPRESS",
+                  note:  L("Payout validé en 48h","Payout validado en 48h","Payout validated within 48h"),
                   color: GREEN,
                 },
               ] as { label: string; value: string; note: string; color: string }[]).map((row, i) => (
@@ -561,29 +582,44 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             </div>
 
             {/* 5 niveaux de Rewards */}
-            <div style={{ ...infoBox, marginTop: 12 }}>
+            <div style={{ ...infoBox }}>
               <div style={{ fontSize: 9, fontWeight: 800, color: ACCENT, letterSpacing: "2px", textTransform: "uppercase" as const, marginBottom: 10 }}>
                 {L(`5 RÉCOMPENSES — ${sizeLabel}`, `5 RECOMPENSAS — ${sizeLabel}`, `5 REWARDS — ${sizeLabel}`)}
               </div>
               <div style={{ display: "flex", flexDirection: "column" as const, gap: 4 }}>
-                {rewardCaps.map((cap, i) => (
-                  <div key={i} style={{
-                    display: "flex", justifyContent: "space-between", alignItems: "center",
-                    padding: "4px 8px",
-                    background: i === 4 ? "rgba(184,135,70,0.07)" : "rgba(255,255,255,0.02)",
-                    border: `1px solid ${i === 4 ? "rgba(184,135,70,0.20)" : "rgba(255,255,255,0.05)"}`,
-                    borderRadius: 6,
-                  }}>
-                    <span style={{ fontSize: 10.5, color: i === 4 ? ACCENT : "rgba(255,255,255,0.42)", fontWeight: i === 4 ? 800 : 500 }}>
-                      {L(`RÉCOMPENSE ${i + 1}`, `RECOMPENSA ${i + 1}`, `REWARD ${i + 1}`)}
-                    </span>
-                    <span style={{ fontSize: 13, fontWeight: 800, color: i === 4 ? ACCENT : "#FFFFFF" }}>
-                      {fmt(cap)}
-                      {i === 4 && <span style={{ fontSize: 8, fontWeight: 700, color: "rgba(184,135,70,0.60)", marginLeft: 5, letterSpacing: "0.8px" }}>MAX</span>}
-                    </span>
-                  </div>
-                ))}
+                {rewardCaps.map((cap, i) => {
+                  const pcts = [1, 1.5, 2, 2.5, 3];
+                  return (
+                    <div key={i} style={{
+                      display: "flex", justifyContent: "space-between", alignItems: "center",
+                      padding: "4px 8px",
+                      background: i === 4 ? "rgba(184,135,70,0.07)" : "rgba(255,255,255,0.02)",
+                      border: `1px solid ${i === 4 ? "rgba(184,135,70,0.20)" : "rgba(255,255,255,0.05)"}`,
+                      borderRadius: 6,
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontSize: 10.5, color: i === 4 ? ACCENT : "rgba(255,255,255,0.42)", fontWeight: i === 4 ? 800 : 500 }}>
+                          {L(`RÉCOMPENSE ${i + 1}`, `RECOMPENSA ${i + 1}`, `REWARD ${i + 1}`)}
+                        </span>
+                        <span style={{ fontSize: 9, color: "rgba(255,255,255,0.25)", fontWeight: 600 }}>
+                          {pcts[i]}%
+                        </span>
+                      </div>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: i === 4 ? ACCENT : "#FFFFFF" }}>
+                        {fmt(cap)}
+                        {i === 4 && <span style={{ fontSize: 8, fontWeight: 700, color: "rgba(184,135,70,0.60)", marginLeft: 5, letterSpacing: "0.8px" }}>MAX</span>}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
+              <p style={{ fontSize: 10, color: "rgba(255,255,255,0.25)", margin: "8px 0 0", lineHeight: 1.5 }}>
+                {L(
+                  "Chaque cycle redémarre uniquement après paiement effectif du Reward précédent.",
+                  "Cada ciclo se reinicia solo tras el pago efectivo del Reward anterior.",
+                  "Each cycle resets only after the previous Reward is effectively paid."
+                )}
+              </p>
             </div>
           </div>
 

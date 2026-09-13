@@ -74,9 +74,9 @@ export default function Footer() {
           <div style={{ color: "#a8a8a8", fontSize: 13, lineHeight: 1.85 }}>
             <h3 style={{ color: "#e5e5e5", fontSize: 13, letterSpacing: "0.6px", margin: "0 0 10px" }}>{L("UN PROGRAMME EXCLUSIVEMENT SIMULÉ", "UN PROGRAMA EXCLUSIVAMENTE SIMULADO", "AN EXCLUSIVELY SIMULATED PROGRAM")}</h3>
             <p style={{ margin: "0 0 12px" }}>{L(
-              "Traders Rewards propose un programme d’évaluation et de performance en trading exclusivement simulé. Les trois niveaux — CHALLENGER, COMPTE REWARD et TRADER REWARD — fonctionnent avec des capitaux virtuels. Aucune position n’est exécutée sur les marchés réels, à aucun niveau du programme.",
-              "Traders Rewards ofrece un programa de evaluación y rendimiento de trading exclusivamente simulado. Los tres niveles — CHALLENGER, CUENTA REWARD y TRADER REWARD — utilizan capital virtual. No se ejecuta ninguna posición en los mercados reales, en ningún nivel del programa.",
-              "Traders Rewards offers an exclusively simulated trading evaluation and performance program. All three levels — CHALLENGER, REWARD ACCOUNT and TRADER REWARD — use virtual capital. No positions are executed in real markets at any level of the program."
+              "Traders Rewards propose un programme d’évaluation et de performance en trading exclusivement simulé. Les deux niveaux — CHALLENGER et TRADER REWARD — fonctionnent avec des capitaux virtuels. Aucune position n’est exécutée sur les marchés réels, à aucun niveau du programme.",
+              "Traders Rewards ofrece un programa de evaluación y rendimiento de trading exclusivamente simulado. Los dos niveles — CHALLENGER y TRADER REWARD — utilizan capital virtual. No se ejecuta ninguna posición en los mercados reales, en ningún nivel del programa.",
+              "Traders Rewards offers an exclusively simulated trading evaluation and performance program. Both levels — CHALLENGER and TRADER REWARD — use virtual capital. No positions are executed in real markets at any level of the program."
             )}</p>
             <p style={{ margin: "0 0 26px" }}>{L(
               "Les montants de 25 000 $, 50 000 $ et 100 000 $ représentent des soldes simulés. Ils ne constituent ni un dépôt du participant ni des fonds disponibles au retrait.",

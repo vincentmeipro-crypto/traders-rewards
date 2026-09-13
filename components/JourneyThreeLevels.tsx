@@ -349,7 +349,7 @@ function Modal03({ onClose, L }: { onClose: () => void; L: (fr: string, es: stri
       {/* ── Header ── */}
       <div style={{ padding: "28px 28px 20px", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
         <div style={{ fontSize: 9, fontWeight: 800, color: VIOLET, letterSpacing: "3px", textTransform: "uppercase", marginBottom: 7 }}>
-          TRADER REWARD · {L("Niveau 03","Nivel 03","Level 03")}
+          TRADER REWARD · {L("Niveau 02","Nivel 02","Level 02")}
         </div>
         <h2 id="m3-title" style={{ fontSize: "clamp(1.3rem, 3vw, 1.75rem)", fontWeight: 900, color: "#FFF", letterSpacing: "-0.7px", lineHeight: 1.1, margin: "0 0 6px" }}>
           {L(
@@ -789,13 +789,13 @@ export default function JourneyThreeLevels() {
                   <InfoBtn
                     btnRef={triggerRefs[1] as InfoBtnRef}
                     onClick={() => openModal(1)}
-                    label={L("Details du Compte Reward","Detalles del Compte Reward","Compte Reward details")}
+                    label={L("Details du Trader Reward","Detalles del Trader Reward","Trader Reward details")}
                   />
                 </div>
 
                 {/* Nom du niveau */}
                 <div style={{ fontSize: isMobile ? 30 : 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1, marginBottom: 14, position: "relative" }}>
-                  COMPTE REWARD
+                  TRADER REWARD
                 </div>
 
                 {/* Promesse du niveau */}
@@ -868,7 +868,7 @@ export default function JourneyThreeLevels() {
 
                 {/* Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8, position: "relative" }}>
-                  <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 03</div>
+                  <div style={{ ...secLabel, marginBottom: 0, color: "rgba(255,255,255,0.38)" }}>NIVEAU 02</div>
                   <InfoBtn
                     btnRef={triggerRefs[2] as InfoBtnRef}
                     onClick={() => openModal(2)}

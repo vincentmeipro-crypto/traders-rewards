@@ -160,7 +160,7 @@ function getCopy(key: PricingRuleKey, model: Props["model"], lang: string): Copy
       callout: tr("La patience fait partie de la performance", "La paciencia forma parte del rendimiento", "Patience is part of performance"), visual: "infinity", tone: "blue",
     },
     profitSplit: {
-      eyebrow: tr("Compte Reward", "Cuenta Reward", "Reward account"), title: tr("Partage des profits", "Reparto de beneficios", "Profit split"),
+      eyebrow: tr("Trader Reward", "Trader Reward", "Trader Reward"), title: tr("Partage des profits", "Reparto de beneficios", "Profit split"),
       short: tr(`Vous recevez ${split} des profits éligibles sur votre compte Reward.`, `Recibe el ${split} de los beneficios elegibles en su cuenta Reward.`, `You receive ${split} of eligible profits on your Reward account.`),
       detail: tr("Après avoir réussi le processus d’évaluation, vous accédez au compte Reward correspondant. Les profits éligibles sont partagés selon votre modèle de challenge, sous réserve du respect des règles et de la validation de votre demande.", "Tras completar la evaluación, accede a la cuenta Reward. Los beneficios elegibles se reparten según el modelo elegido.", "After completing the evaluation, you access the matching Reward account. Eligible profits are shared according to your challenge model, subject to the rules and reward-request validation."),
       callout: tr(`${split} pour vous · traitement sous 24 à 48h`, `${split} para usted · procesamiento en 24–48 h`, `${split} for you · processed within 24–48h`), visual: "split", tone: "green",

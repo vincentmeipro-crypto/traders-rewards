@@ -401,7 +401,7 @@ export default function PricingV1() {
             borderBottom: "1px solid rgba(255,255,255,0.075)",
           }}>
             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.62)", fontWeight: 450 }}>
-              {L("Activation Compte Reward","Activación Compte Reward","Compte Reward activation")}
+              {L("Activation Trader Reward","Activación Trader Reward","Trader Reward activation")}
             </span>
             <span style={{
               display: "inline-flex", alignItems: "center",
