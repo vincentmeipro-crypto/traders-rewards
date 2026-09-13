@@ -192,31 +192,31 @@ export default function RewardLevels() {
           {/* Grid */}
           <div style={{
             display:             "grid",
-            gridTemplateColumns: "38% 62%",
+            gridTemplateColumns: "50% 50%",
           }}>
 
             {/* ── Colonne gauche : texte, fond noir, pleine hauteur ── */}
             <div style={{
               display:    "flex",
               alignItems: "center",
-              padding:    "64px 48px 64px clamp(24px, calc((100vw - 1080px) / 2 + 24px), 140px)",
+              padding:    "96px 72px 96px clamp(24px, calc((100vw - 1080px) / 2 + 24px), 140px)",
               background: "#000000",
             }}>
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: "#D4A843", letterSpacing: "4.5px", textTransform: "uppercase", marginBottom: 21 }}>
                   {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
                 </div>
                 <h2 id="rl-heading" style={{
-                  fontSize: "clamp(2.4rem, 3.5vw, 3.5rem)",
+                  fontSize: "clamp(3.6rem, 5.25vw, 5.25rem)",
                   fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
-                  letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
+                  letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 27px",
                 }}>
                   {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
                   <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
                     {L("Récompenses", "Recompensas", "Rewards")}
                   </span>
                 </h2>
-                <p style={{ maxWidth: 400, whiteSpace: "normal", margin: "0 0 20px", color: "rgba(255,255,255,0.46)", fontSize: 17, lineHeight: 1.7 }}>
+                <p style={{ maxWidth: 600, whiteSpace: "normal", margin: "0 0 30px", color: "rgba(255,255,255,0.46)", fontSize: 26, lineHeight: 1.7 }}>
                   {L(
                     "Retirez jusqu'à 5 récompenses avec le même compte.",
                     "Retire hasta 5 recompensas con la misma cuenta.",
@@ -225,13 +225,13 @@ export default function RewardLevels() {
                 </p>
                 <div>
                   <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
-                    display: "inline-flex", alignItems: "center", gap: 7,
-                    padding: "7px 14px", borderRadius: 13,
+                    display: "inline-flex", alignItems: "center", gap: 10,
+                    padding: "10px 21px", borderRadius: 19,
                     border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
-                    color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    color: "#FFFFFF", fontSize: 18, fontWeight: 600, cursor: "pointer",
                     fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
                   }}>
-                    <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
+                    <span style={{ fontSize: 21, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
                     {L("Informations", "Información", "Information")}
                   </button>
                 </div>
