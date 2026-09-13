@@ -24,7 +24,10 @@ export default function Home() {
       <JourneyRulesSection />
 
       {/* ── Offre principale — 3 challenges V1 ── */}
-      <PricingV1 />
+      {/* Correction cumul espacement : RulesV1 padding-bottom (112px) + PricingV1 padding-top (112px) = 224px → -60px pour retrouver ~164px cohérent */}
+      <div style={{ marginTop: "-60px" }}>
+        <PricingV1 />
+      </div>
 
       {/* ── Les 5 niveaux de Rewards ── */}
       <RewardLevels />
