@@ -199,7 +199,7 @@ export default function RewardLevels() {
           {/* Doit être AVANT le bloc texte dans le DOM pour le z-index */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/parcours rewards.png"
+            src="/parcours-rewards.png"
             alt="Les 5 niveaux de Rewards — Traders Rewards"
             style={{
               position:        "absolute",
@@ -319,7 +319,7 @@ export default function RewardLevels() {
           {/* Image mobile — sous le texte, avant le tableau */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/parcours rewards.png"
+            src="/parcours-rewards.png"
             alt="Les 5 niveaux de Rewards — Traders Rewards"
             style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }}
           />
