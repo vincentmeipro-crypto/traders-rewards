@@ -362,7 +362,7 @@ export default function Hero() {
             paddingBottom:  isMobile ? 0 : 26,
           }}>
 
-            <div style={{ position: "relative", width: "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start", marginLeft: isMobile ? 0 : -78 }}>
+            <div style={{ position: "relative", width: isMobile ? "100%" : "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start", marginLeft: isMobile ? 0 : -78 }}>
         {/* ════════════════════════════════════════════════════════
             BADGE — position:absolute → hors flow, image inchangée
         ════════════════════════════════════════════════════════ */}
@@ -372,7 +372,7 @@ export default function Hero() {
           left:           0,
           right:          0,
           display:        "flex",
-          justifyContent: "flex-start",
+          justifyContent: isMobile ? "center" : "flex-start",
           zIndex:         10,
           animation:      "heroFadeUp 0.44s ease both",
         }}>
@@ -412,7 +412,7 @@ export default function Hero() {
               fontWeight:    620,
               margin:        isMobile ? "0 0 16px" : "0 0 24px",
               textTransform: "none",
-              textAlign:     "left",
+              textAlign:     isMobile ? "center" : "left",
               letterSpacing: isMobile ? "-1.5px" : "-3px",
               lineHeight:    0.98,
               animation:     "heroFadeUp 0.52s ease 0.05s both",
@@ -496,8 +496,9 @@ export default function Hero() {
             {isMobile && (
               <div style={{
                 display: "flex", flexDirection: "column",
-                alignSelf: "center", gap: 16,
-                width: "fit-content",
+                alignSelf: "stretch",
+                marginLeft: -12, marginRight: -12,
+                gap: 16,
                 animation: "heroFadeUp 0.52s ease 0.10s both",
               }}>
                 <div style={{
