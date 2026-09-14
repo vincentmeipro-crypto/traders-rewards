@@ -43,9 +43,10 @@ export default function Hero() {
 
   // ── i18n ────────────────────────────────────────────────────
   const pill    = L("Programme éducatif trading simulé", "Programa educativo de trading simulado", "Simulated trading education program");
-  const h1L1    = "1 CHALLENGE";
+  const h1L1    = L("Validez 1 challenge", "Valida 1 challenge", "Complete 1 challenge");
   const h1L2pre = "";
-  const h1L2acc = L("5 RÉCOMPENSES", "5 RECOMPENSAS", "5 REWARDS");
+  const h1L2acc = L("Recevez", "Recibe", "Get");
+  const h1L3    = L("5 récompenses", "5 recompensas", "5 rewards");
   const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
 
   const promoFS = isMobile
@@ -72,8 +73,7 @@ export default function Hero() {
           PACK ×3 BEST DEAL
         </div>
         <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:0,
-          background:"linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-          WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
+          color:"#F2EFE7" }}>
           -90%
         </div>
         <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none", position:"absolute" }}>
@@ -406,7 +406,8 @@ export default function Hero() {
           </span>
         </div>
 
-            {/* ── H1 — 2 lignes ── */}
+            {/* ── H1 — FR/ES : 3 lignes · EN : 2 lignes ── */}
+            {/* minHeight = hauteur exacte du H1 FR (3 lignes) → verrouille Y du bloc promo/CTA */}
             <h1 style={{
               fontWeight:    620,
               margin:        isMobile ? "0 0 16px" : "0 0 24px",
@@ -415,54 +416,78 @@ export default function Hero() {
               letterSpacing: isMobile ? "-1.5px" : "-3px",
               lineHeight:    0.98,
               animation:     "heroFadeUp 0.52s ease 0.05s both",
+              minHeight:     isMobile
+                ? "calc(1.96 * clamp(1.75rem, 8vw, 3.25rem) + 0.98 * clamp(38px, 12vw, 72px) + 6px)"
+                : "calc(1.96 * clamp(42px, 4.3vw, 58px) + 0.98 * clamp(52px, 6.5vw, 80px) + 11px)",
             }}>
-              {/* Ligne 1 — blanc */}
+              {/* Ligne 1 — blanc (toutes langues) */}
               <span
                 className="h1-line"
                 style={{
-                  fontSize:   isMobile ? "clamp(2.0rem, 9vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
+                  fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
                   color:      "#F7F8FA",
                   whiteSpace: "nowrap",
                 }}
               >
                 {h1L1}
               </span>
-              {/* Ligne 2 — DEVENEZ blanc + TRADER REWARD. neon */}
-              <span
-                className="h1-line"
-                style={{
-                  marginTop:  isMobile ? 4 : 7,
-                  fontSize:   isMobile ? "clamp(2.0rem, 9vw, 4rem)" : "clamp(48px, 4.3vw, 68px)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <span style={{ color: "#F7F8FA" }}>{h1L2pre}</span>
-                <span style={{
-                  background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                }}>{h1L2acc}</span>
-              </span>
+
+              {(isFr || isEs) ? (
+                /* ── FR / ES : ligne 2 "Recevez" + ligne 3 "5 récompenses" (plus grand) ── */
+                <>
+                  <span
+                    className="h1-line"
+                    style={{
+                      marginTop:  isMobile ? 4 : 7,
+                      fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <span style={{
+                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                    }}>{h1L2acc}</span>
+                  </span>
+                  <span
+                    className="h1-line"
+                    style={{
+                      marginTop:  isMobile ? 2 : 4,
+                      fontSize:   isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <span style={{
+                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                    }}>{h1L3}</span>
+                  </span>
+                </>
+              ) : (
+                /* ── EN : ligne 2 "Get" (petit) + "5 Rewards" (grand) sur UNE SEULE ligne ── */
+                <span
+                  className="h1-line"
+                  style={{
+                    marginTop:  isMobile ? 4 : 7,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <span style={{
+                    background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                    fontSize:        isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
+                    verticalAlign:   "baseline",
+                  }}>{"Get "}</span>
+                  <span style={{
+                    background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                    fontSize:        isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
+                    verticalAlign:   "baseline",
+                  }}>{"5 Rewards"}</span>
+                </span>
+              )}
             </h1>
             </div>
 
-            <p style={{
-              margin: isMobile ? "0 0 12px" : "-24px 0 0",
-              height: isMobile ? "auto" : 104,
-              display: "flex",
-              alignItems: "center",
-              flexShrink: 0,
-              fontFamily: 'Georgia, "Times New Roman", serif',
-              fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: isMobile ? "clamp(21px, 5.4vw, 30px)" : "clamp(24px, 2.4vw, 34px)",
-              lineHeight: 1.3,
-              color: "#FFFFFF",
-              textAlign: isMobile ? "center" : "left",
-              justifyContent: isMobile ? "center" : "flex-start",
-              alignSelf: "stretch",
-            }}>
-              <span style={{ transform: isMobile ? "none" : "translateY(-4px)" }}>{L("Devenez un", "Conviértete en un", "Become a")} <span style={{ background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>trader reward</span></span>
-            </p>
             {/* ── Personnages + jetons — mobile uniquement, pleine largeur ── */}
             {isMobile && (
               <div style={{
@@ -477,7 +502,7 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/hero%20rewards.png"
+                  src="/HERO HUMAINS TRADING.png"
                   alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
                   style={{
                     display:         "block",
@@ -578,7 +603,7 @@ export default function Hero() {
             {/* ── Visuel droit — Personnages + jetons 25K / 50K / 100K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/hero%20rewards.png"
+              src="/HERO HUMAINS TRADING.png"
               alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
               style={{
                 display:        "block",
@@ -589,7 +614,7 @@ export default function Hero() {
                 objectPosition: "center",
                 margin:         "0 auto",
                 marginLeft:     "-55%",
-                marginTop:      -70,
+                marginTop:      20,
                 WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 28%)",
                 maskImage:      "linear-gradient(to right, transparent 0%, black 28%)",
               }}
