@@ -486,7 +486,7 @@ export default function Hero() {
                     height:          "auto",
                     objectFit:       "contain",
                     margin:          "0 auto",
-                    transform:       "translateX(-10%)",
+                    transform:       "translateX(-4%)",
                     backgroundColor: "#000000",
                     WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%)",
                     maskImage:       "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%)",
