@@ -33,6 +33,12 @@ export default function Home() {
             width: 100%;
             max-width: 100%;
           }
+          /* Logo TradingView — plus petit sur mobile, au-dessus de la tablette */
+          .tv-logo {
+            width: clamp(56px, 12vw, 80px) !important;
+            top: 6% !important;
+            right: 20% !important;
+          }
         }
       `}</style>
 
@@ -81,9 +87,26 @@ export default function Home() {
           </div>
           <section
             id="metatrader5"
-            style={{ width: "100%", padding: 0, backgroundColor: "#000000", overflow: "hidden" }}
+            style={{ width: "100%", padding: 0, backgroundColor: "#000000", overflow: "hidden", position: "relative" }}
           >
+            {/* Logo TradingView — zone noire au-dessus de la tablette, entre PC et tablette */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/tradingview-logo.png"
+              alt="TradingView"
+              className="tv-logo"
+              style={{
+                position:      "absolute",
+                top:           "8%",
+                right:         "24%",
+                width:         "clamp(104px, 11vw, 182px)",
+                height:        "auto",
+                opacity:       0.82,
+                zIndex:        10,
+                pointerEvents: "none",
+                display:       "block",
+              }}
+            />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/TRADELOCKER.png"
