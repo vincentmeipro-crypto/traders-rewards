@@ -259,6 +259,23 @@ export default function RewardLevels() {
 
           </div>
 
+          {/* ── Patch PAYOUT EXPRESS 48H — image, flotte à la jonction des 2 colonnes ── */}
+          <div style={{
+            position:      "absolute",
+            left:          "calc(50% - 90px)",
+            top:           "50%",
+            transform:     "translateY(-50%)",
+            zIndex:        10,
+            pointerEvents: "none",
+          }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/payout express.png"
+              alt="Payout Express 48H"
+              style={{ width: 180, height: "auto", display: "block" }}
+            />
+          </div>
+
           {/* Fondu bas */}
           <div aria-hidden="true" style={{
             position:   "absolute",
@@ -296,6 +313,17 @@ export default function RewardLevels() {
                 "Withdraw up to 5 rewards with the same account.",
               )}
             </p>
+
+            {/* ── Patch PAYOUT EXPRESS 48H — image mobile ── */}
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/payout express.png"
+                alt="Payout Express 48H"
+                style={{ width: 120, height: "auto", display: "block" }}
+              />
+            </div>
+
             <div style={{ display: "flex", justifyContent: "center" }}>
               <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
                 display: "inline-flex", alignItems: "center", gap: 7,
