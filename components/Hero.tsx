@@ -47,8 +47,7 @@ export default function Hero() {
   const h1L2pre = "";
   const h1L2acc = L("Recevez", "Recibe", "Get");
   const h1L3    = L("5 récompenses", "5 recompensas", "5 rewards");
-  const ctaMainPre = L("Choisir mon ", "Elegir mi ", "Choose my ");
-  const ctaMainEnd = "Challenge";
+  const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
 
   const promoFS = isMobile
     ? "clamp(2.4rem, 10vw, 3.6rem)"
@@ -118,14 +117,25 @@ export default function Hero() {
         .h-cta-main {
           display: inline-flex; align-items: center; gap: 18px;
           position: relative; overflow: hidden;
-          background: #0A0A0A;
+          background: linear-gradient(
+            110deg,
+            #6B4A1A 0%,
+            #B88746 14%,
+            #D6AD63 28%,
+            #F2D79A 43%,
+            #FFF0AA 52%,
+            #E8C864 61%,
+            #C4943E 74%,
+            #8A6220 88%,
+            #6B4A1A 100%
+          );
           background-size: 220% 100%;
-          color: #D9B978;
+          color: #111111;
           font-weight: 730; letter-spacing: 0.05px; text-transform: none;
-          text-decoration: none; border-radius: 100px; cursor: pointer;
+          text-decoration: none; border-radius: 16px; cursor: pointer;
           font-family: inherit; white-space: nowrap;
-          border: 1px solid #D7B56D;
-          box-shadow: 0 4px 18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.04);
+          border: 1px solid rgba(232,190,100,0.50);
+          box-shadow: 0 10px 35px rgba(184,135,70,0.22), 0 3px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.38);
           transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
           animation: heroCtaGoldFlow 7s ease-in-out infinite;
         }
@@ -154,8 +164,8 @@ export default function Hero() {
         .h-cta-main:hover svg { transform: translateX(3px); }
         .h-cta-main:hover {
           transform: translateY(-1px);
-          filter: brightness(1.16);
-          box-shadow: 0 0 16px rgba(215,181,109,0.30), 0 8px 28px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.06);
+          filter: brightness(1.14);
+          box-shadow: 0 14px 42px rgba(184,135,70,0.34), 0 4px 14px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.48);
         }
         .h-cta-main:active  { transform: translateY(0) scale(0.98); filter: brightness(1); }
         .h-cta-main:focus-visible {
@@ -534,8 +544,7 @@ export default function Hero() {
                     justifyContent: "center",
                   }}
                 >
-                  <span style={{ color: "#FFFFFF" }}>{ctaMainPre}</span>
-                  <span style={{ color: "#D9B978" }}>{ctaMainEnd}</span>
+                  {ctaMain}
                   <ArrowRight size={20} strokeWidth={2.2} aria-hidden="true" />
                 </a>
               </div>
@@ -571,8 +580,7 @@ export default function Hero() {
                       minWidth: 410, boxSizing: "border-box" as const,
                     }}
                   >
-                    <span style={{ color: "#FFFFFF" }}>{ctaMainPre}</span>
-                  <span style={{ color: "#D9B978" }}>{ctaMainEnd}</span>
+                    {ctaMain}
                     <ArrowRight size={22} strokeWidth={2.2} aria-hidden="true" />
                   </a>
                 </div>
