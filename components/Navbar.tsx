@@ -158,7 +158,7 @@ export default function Navbar() {
         boxShadow: scrolled ? "0 14px 40px rgba(0,0,0,0.42)" : "none",
         transition: "background-color 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease",
       }}>
-        <div style={{ width: "100%", padding: isMobile ? "0 16px" : "0 32px", display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: "visible" }}>
+        <div style={{ width: "100%", paddingLeft: isMobile ? 16 : "max(0px, calc(max(0px, 50vw - 690px) + max(40px, 4vw) - 78px))", paddingRight: isMobile ? 16 : 32, display: "flex", alignItems: "center", justifyContent: "space-between", height: isMobile ? 60 : 72, position: "relative", overflow: "visible" }}>
 
           {/* Logo — gauche sur mobile et desktop */}
           {isMobile ? (

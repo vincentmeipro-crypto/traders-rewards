@@ -111,6 +111,7 @@ export default function HeroBenefits() {
         background: "#000000",
         padding: isMobile ? "12px 10px 18px" : "5px 0 14px",
         marginTop: isMobile ? "20mm" : 0,
+        overflowX: "hidden",
       }}
     >
       <style>{`
@@ -149,7 +150,7 @@ export default function HeroBenefits() {
         maxWidth:     1380,
         margin:       "0 auto",
         paddingLeft:  isMobile ? 0 : "max(40px, 4vw)",
-        paddingRight: isMobile ? 0 : "max(24px, 3vw)",
+        paddingRight: isMobile ? 0 : "max(40px, 4vw)",
       }}>
         <div className="hero-benefits-shell" style={{
           display:             "grid",
@@ -160,6 +161,8 @@ export default function HeroBenefits() {
           borderRadius:        isMobile ? 16 : 20,
           background:          "#000000",
           boxShadow:           "0 20px 65px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.025)",
+          marginLeft:          isMobile ? 0 : -78,
+          marginRight:         isMobile ? 0 : -78,
         }}>
           {BENEFITS.map((b, i) => {
             const totalItems = BENEFITS.length;

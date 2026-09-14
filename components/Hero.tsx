@@ -362,7 +362,7 @@ export default function Hero() {
             paddingBottom:  isMobile ? 0 : 26,
           }}>
 
-            <div style={{ position: "relative", width: "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start" }}>
+            <div style={{ position: "relative", width: "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start", marginLeft: isMobile ? 0 : -78 }}>
         {/* ════════════════════════════════════════════════════════
             BADGE — position:absolute → hors flow, image inchangée
         ════════════════════════════════════════════════════════ */}
@@ -383,20 +383,20 @@ export default function Hero() {
             background:   "rgba(255,255,255,0.025)",
             border:       "1px solid rgba(255,255,255,0.14)",
             borderRadius: 100,
-            padding:      isMobile ? "10px 22px" : "11px 24px",
+            padding:      isMobile ? "7px 16px" : "8px 18px",
           }}>
             <span className="h-pill-dot" style={{
               display:      "inline-block",
-              width:        7,
-              height:       7,
+              width:        6,
+              height:       6,
               borderRadius: "50%",
               background:   ACCENT,
               flexShrink:   0,
             }} />
             <span style={{
-              fontSize:      isMobile ? 13 : 14,
-              fontWeight:    600,
-              color:         "#FFFFFF",
+              fontSize:      isMobile ? 11 : 12,
+              fontWeight:    500,
+              color:         "rgba(255,255,255,0.48)",
               letterSpacing: "0.15px",
               textTransform: "none",
               whiteSpace:    "nowrap",
@@ -538,6 +538,7 @@ export default function Hero() {
                   border: "1px solid rgba(255,255,255,0.075)",
                   borderRadius: 16, padding: "5px 28px",
                   marginBottom: 20,
+                  marginLeft: -78,
                   animation: "heroFadeUp 0.52s ease 0.10s both",
                   boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
                 } as React.CSSProperties}>
@@ -546,6 +547,7 @@ export default function Hero() {
                 <div style={{
                   display: "flex",
                   alignItems: "flex-start", justifyContent: "flex-start",
+                  marginLeft: -78,
                   animation: "heroFadeUp 0.52s ease 0.15s both",
                 }}>
                   <a
