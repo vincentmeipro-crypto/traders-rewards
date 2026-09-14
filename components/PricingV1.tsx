@@ -170,8 +170,10 @@ export default function PricingV1() {
         onMouseLeave={() => !isMobile && setHovIdx(null)}
         style={{
           position:   "relative",
-          background: isPopular ? "#22262a" : "#1d2024",
-          border: `1px solid ${isPopular ? "rgba(184,135,70,0.48)" : isHovered ? "rgba(255,255,255,0.13)" : "rgba(255,255,255,0.075)"}`,
+          background: isPopular
+            ? "radial-gradient(ellipse at 50% 20%, #111111 0%, #000000 68%)"
+            : "radial-gradient(ellipse at 50% 20%, #0c0c0c 0%, #000000 65%)",
+          border: `1px solid ${isPopular ? "rgba(184,135,70,0.52)" : isHovered ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.16)"}`,
           borderRadius: 20,
           padding:      isMobile ? "24px 20px 20px" : "18px 20px 14px",
           display:      "flex",
@@ -181,10 +183,10 @@ export default function PricingV1() {
           transition:    "transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease",
           transform:     isHovered ? "translateY(-2px)" : "translateY(0)",
           boxShadow:     isPopular
-            ? "0 22px 60px rgba(0,0,0,0.44), 0 0 32px rgba(184,135,70,0.08)"
+            ? "0 22px 60px rgba(0,0,0,0.44), 0 0 28px rgba(184,135,70,0.12), inset 0 1px 0 rgba(255,255,255,0.05), inset 0 -1px 0 rgba(0,0,0,0.55)"
             : isHovered
-              ? "0 20px 54px rgba(0,0,0,0.30)"
-              : "0 14px 40px rgba(0,0,0,0.22)",
+              ? "0 20px 54px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -1px 0 rgba(0,0,0,0.45)"
+              : "0 14px 40px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.03), inset 0 -1px 0 rgba(0,0,0,0.35)",
         }}
       >
         {/* Badge LE PLUS POPULAIRE */}
@@ -265,7 +267,7 @@ export default function PricingV1() {
         </div>
 
         {/* ── Sélecteur 1 Challenge / Pack ×3 ── */}
-        <div style={{ display: "flex", gap: 6, marginBottom: 12, padding: 4, borderRadius: 10, background: "rgba(0,0,0,0.28)" }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 12, padding: 4, borderRadius: 10, background: "rgba(0,0,0,0.28)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "inset 0 2px 8px rgba(0,0,0,0.65)" }}>
           {[false, true].map(is3 => (
             <button
               key={String(is3)}
@@ -282,9 +284,9 @@ export default function PricingV1() {
                 background: (isPack3 === is3)
                   ? "rgba(255,255,255,0.055)"
                   : "transparent",
-                color:      (isPack3 === is3)
-                  ? "#F5F7F8"
-                  : "rgba(255,255,255,0.45)",
+                color: is3
+                  ? (isPack3 === is3 ? "#C8A84B" : "rgba(200,162,72,0.55)")
+                  : (isPack3 === is3 ? "#F5F7F8" : "rgba(255,255,255,0.45)"),
                 cursor:     "pointer",
                 fontFamily: "inherit",
                 letterSpacing: "0.3px",
@@ -299,7 +301,7 @@ export default function PricingV1() {
         </div>
 
         {/* Prix */}
-        <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid rgba(255,255,255,0.085)" }}>
+        <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
           <div style={{
             fontSize: 10, fontWeight: isPack3 ? 750 : 650, color: isPack3 ? "#C8A84B" : "rgba(255,255,255,0.38)",
             letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 4,
@@ -380,14 +382,14 @@ export default function PricingV1() {
             <div key={i} style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
               padding: "4px 0",
-              borderBottom: i < RULES.length - 1 ? "1px solid rgba(255,255,255,0.075)" : "none",
+              borderBottom: i < RULES.length - 1 ? "1px solid rgba(255,255,255,0.10)" : "none",
             }}>
               <span style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", fontWeight: 450 }}>{rule.label}</span>
               <span style={{
                 display: "inline-flex", alignItems: "center",
                 padding: "3px 9px", borderRadius: 6,
-                background: "rgba(0,0,0,0.28)",
-                border: `1px solid ${rule.accent ? "rgba(184,135,70,0.38)" : "rgba(255,255,255,0.08)"}`,
+                background: "#080808",
+                border: `1px solid ${rule.accent ? "rgba(184,135,70,0.38)" : "rgba(255,255,255,0.15)"}`,
                 fontSize: 12, fontWeight: 650,
                 color: rule.accent ? "#D4A843" : "rgba(255,255,255,0.88)",
                 letterSpacing: "0.2px",
@@ -398,7 +400,7 @@ export default function PricingV1() {
           <div style={{
             display: "flex", justifyContent: "space-between", alignItems: "center",
             padding: "4px 0",
-            borderBottom: "1px solid rgba(255,255,255,0.075)",
+            borderBottom: "1px solid rgba(255,255,255,0.10)",
           }}>
             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.62)", fontWeight: 450 }}>
               {L("Activation Trader Reward","Activación Trader Reward","Trader Reward activation")}
@@ -406,8 +408,8 @@ export default function PricingV1() {
             <span style={{
               display: "inline-flex", alignItems: "center",
               padding: "3px 9px", borderRadius: 6,
-              background: "rgba(0,0,0,0.28)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: "#080808",
+              border: "1px solid rgba(255,255,255,0.15)",
               fontSize: 12, fontWeight: 650,
               color: "rgba(255,255,255,0.88)",
               letterSpacing: "0.2px",
@@ -463,13 +465,14 @@ export default function PricingV1() {
           background: #000000;
           color: #FFFFFF;
           border: 1px solid rgba(184,135,70,0.52);
-          box-shadow: none;
-          transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+          transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
         }
         .pricing-chrome-cta:hover {
           transform: translateY(-1px);
           background: rgba(255,255,255,0.03);
           border-color: rgba(212,168,67,0.85);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 18px rgba(184,135,70,0.08);
         }
         .pricing-chrome-cta:active { transform: translateY(0) scale(0.99); }
       `}</style>

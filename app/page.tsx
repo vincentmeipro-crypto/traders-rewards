@@ -19,6 +19,21 @@ export default function Home() {
         @media (max-width: 768px) {
           .mobile-rules-up { margin-top: -30mm; }
         }
+        /* TradeLocker — réduit de ~22% sur desktop, pleine largeur sur mobile */
+        .tradelocker-img {
+          display: block;
+          width: 78%;
+          max-width: 78%;
+          height: auto;
+          margin: 0 auto;
+          object-fit: contain;
+        }
+        @media (max-width: 900px) {
+          .tradelocker-img {
+            width: 100%;
+            max-width: 100%;
+          }
+        }
       `}</style>
 
       {/* ── Source de vérité unique : 50mm entre CHAQUE GRANDE SECTION COMPLÈTE ── */}
@@ -69,10 +84,11 @@ export default function Home() {
             style={{ width: "100%", padding: 0, backgroundColor: "#000000", overflow: "hidden" }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/TRADELOCKER.png"
               alt="TradeLocker — plateforme de trading simulé Traders Rewards"
-              style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
+              className="tradelocker-img"
             />
           </section>
         </div>

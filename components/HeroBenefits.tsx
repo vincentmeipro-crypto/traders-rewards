@@ -127,7 +127,7 @@ export default function HeroBenefits() {
           animation: benefitsGlow 5s ease-in-out infinite;
         }
         .hero-benefit-card {
-          background: rgba(255,255,255,.022);
+          background: transparent;
           transition: background .25s ease, transform .25s ease;
         }
         .hero-benefit-card::after {
@@ -136,7 +136,7 @@ export default function HeroBenefits() {
           background: linear-gradient(90deg, transparent, rgba(184,135,70,.55), transparent);
           transition: opacity .25s ease, transform .25s ease;
         }
-        .hero-benefit-card:hover { background: rgba(255,255,255,.038); }
+        .hero-benefit-card:hover { background: rgba(255,255,255,.018); }
         .hero-benefit-card:hover::after { opacity: 1; }
         .hero-benefit-card:hover .hero-benefit-metric { color: #ffffff !important; }
         .hero-benefit-metric { transition: color .25s ease, transform .25s ease; }
@@ -158,7 +158,7 @@ export default function HeroBenefits() {
           overflow:            "hidden",
           border:              "1px solid rgba(255,255,255,.12)",
           borderRadius:        isMobile ? 16 : 20,
-          background:          "linear-gradient(145deg, rgba(13,18,23,.98), rgba(5,7,9,.98))",
+          background:          "#000000",
           boxShadow:           "0 20px 65px rgba(0,0,0,.34), inset 0 1px rgba(255,255,255,.025)",
         }}>
           {BENEFITS.map((b, i) => {
