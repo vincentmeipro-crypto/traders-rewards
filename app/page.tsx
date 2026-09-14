@@ -14,6 +14,13 @@ export default function Home() {
     <main className="page-main" style={{ minHeight: "100vh", background: "#000000" }}>
       <Navbar />
 
+      {/* ── Réduction du gap uniquement avant les Règles sur mobile ── */}
+      <style>{`
+        @media (max-width: 768px) {
+          .mobile-rules-up { margin-top: -30mm; }
+        }
+      `}</style>
+
       {/* ── Source de vérité unique : 50mm entre CHAQUE GRANDE SECTION COMPLÈTE ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "50mm" }}>
 
@@ -24,7 +31,9 @@ export default function Home() {
         </div>
 
         {/* ── SECTION 2 : Règles ── */}
-        <JourneyRulesSection />
+        <div className="mobile-rules-up">
+          <JourneyRulesSection />
+        </div>
 
         {/* ── SECTION 3 : Challenges (1er placement) ── */}
         <PricingV1 />

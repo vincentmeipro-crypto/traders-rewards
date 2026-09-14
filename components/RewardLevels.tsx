@@ -252,8 +252,10 @@ export default function RewardLevels() {
                 objectFit:       "contain",
                 objectPosition:  "center",
                 alignSelf:       "center",
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 6%, black 100%)",
-                maskImage:       "linear-gradient(to right, transparent 0%, black 6%, black 100%)",
+                WebkitMaskImage:    "linear-gradient(to bottom, transparent 0%, black 90px), linear-gradient(to right, transparent 0%, black 6%, black 100%)",
+                WebkitMaskComposite: "destination-in",
+                maskImage:          "linear-gradient(to bottom, transparent 0%, black 90px), linear-gradient(to right, transparent 0%, black 6%, black 100%)",
+                maskComposite:      "intersect",
               } as React.CSSProperties}
             />
 
@@ -342,7 +344,10 @@ export default function RewardLevels() {
           <img
             src="/IMAGE PARCOURS.png"
             alt="Les 5 niveaux de Rewards — Traders Rewards"
-            style={{ width: "100%", height: "auto", display: "block", objectFit: "contain" }}
+            style={{ width: "100%", height: "auto", display: "block", objectFit: "contain",
+              WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 60px)",
+              maskImage:       "linear-gradient(to bottom, transparent 0%, black 60px)",
+            } as React.CSSProperties}
           />
         </div>
       )}
