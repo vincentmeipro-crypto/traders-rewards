@@ -506,7 +506,7 @@ export default function Hero() {
                   alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
                   style={{
                     display:         "block",
-                    width:           "110%",
+                    width:           "132%",
                     maxWidth:        "none",
                     height:          "auto",
                     objectFit:       "contain",
