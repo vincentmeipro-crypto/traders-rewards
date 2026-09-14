@@ -511,6 +511,7 @@ export default function Hero() {
                     height:          "auto",
                     objectFit:       "contain",
                     margin:          "0 auto",
+                    transform:       "translateX(-10%)",
                     backgroundColor: "#000000",
                   }}
                 />
