@@ -67,6 +67,7 @@ export default function Navbar() {
 
   const navLinks: [string, string][] = [
     [T.nav.rules, "/#rules"],
+    [T.nav.rewards, "/#rewards"],
     [T.nav.faq, "/#faq"],
     [T.nav.support, "/support"],
     [T.nav.partnership, "/partenariat"],

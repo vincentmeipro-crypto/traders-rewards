@@ -10,7 +10,7 @@ export const t = {
   en: {
     nav: {
       challenges: 'Challenges', howItWorks: 'How it works', pricing: 'Pricing',
-      rules: 'Rules', elevation: 'Elevation', trader: 'Trader', faq: 'FAQ', logIn: 'LOG IN', startChallenge: 'START CHALLENGE',
+      rules: 'Rules', rewards: 'Rewards', elevation: 'Elevation', trader: 'Trader', faq: 'FAQ', logIn: 'LOG IN', startChallenge: 'START CHALLENGE',
       support: 'Support', partnership: 'Partnership',
     },
     hero: {
@@ -130,7 +130,7 @@ export const t = {
   fr: {
     nav: {
       challenges: 'Challenges', howItWorks: 'Comment ça marche', pricing: 'Tarifs',
-      rules: 'Règles', elevation: 'Élévation', trader: 'Trader', faq: 'FAQ', logIn: 'LOGIN', startChallenge: 'COMMENCER',
+      rules: 'Règles', rewards: 'Récompenses', elevation: 'Élévation', trader: 'Trader', faq: 'FAQ', logIn: 'LOGIN', startChallenge: 'COMMENCER',
       support: 'Support', partnership: 'Partenariat',
     },
     hero: {
@@ -250,7 +250,7 @@ export const t = {
   es: {
     nav: {
       challenges: 'Desafíos', howItWorks: 'Cómo funciona', pricing: 'Precios',
-      rules: 'Reglas', elevation: 'Elevación', trader: 'Trader', faq: 'FAQ', logIn: 'INICIAR SESIÓN', startChallenge: 'EMPEZAR',
+      rules: 'Reglas', rewards: 'Recompensas', elevation: 'Elevación', trader: 'Trader', faq: 'FAQ', logIn: 'INICIAR SESIÓN', startChallenge: 'EMPEZAR',
       support: 'Soporte', partnership: 'Colaboración',
     },
     hero: {
