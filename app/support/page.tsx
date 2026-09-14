@@ -215,7 +215,7 @@ export default function SupportPage() {
   const imageBlock = (
     /* eslint-disable-next-line @next/next/no-img-element */
     <img
-      src="/IMAGE SUPPORT.png"
+      src="/IMAGE%20SUPPORT.png"
       alt="Équipe support Traders Rewards"
       style={{
         display: "block",
