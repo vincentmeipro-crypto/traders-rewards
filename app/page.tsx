@@ -70,8 +70,8 @@ export default function Home() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/mt5-premium.png"
-              alt="MetaTrader 5 — plateforme de trading simulé Traders Rewards"
+              src="/TRADELOCKER.png"
+              alt="TradeLocker — plateforme de trading simulé Traders Rewards"
               style={{ display: "block", width: "100%", height: "auto", objectFit: "contain" }}
             />
           </section>
