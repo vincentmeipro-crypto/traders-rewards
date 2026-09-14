@@ -432,59 +432,34 @@ export default function Hero() {
                 {h1L1}
               </span>
 
-              {(isFr || isEs) ? (
-                /* ── FR / ES : ligne 2 "Recevez" + ligne 3 "5 récompenses" (plus grand) ── */
-                <>
-                  <span
-                    className="h1-line"
-                    style={{
-                      marginTop:  isMobile ? 4 : 7,
-                      fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <span style={{
-                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                    }}>{h1L2acc}</span>
-                  </span>
-                  <span
-                    className="h1-line"
-                    style={{
-                      marginTop:  isMobile ? 2 : 4,
-                      fontSize:   isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    <span style={{
-                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                    }}>{h1L3}</span>
-                  </span>
-                </>
-              ) : (
-                /* ── EN : ligne 2 "Get" (petit) + "5 Rewards" (grand) sur UNE SEULE ligne ── */
-                <span
-                  className="h1-line"
-                  style={{
-                    marginTop:  isMobile ? 4 : 7,
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <span style={{
-                    background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                    fontSize:        isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
-                    verticalAlign:   "baseline",
-                  }}>{"Get "}</span>
-                  <span style={{
-                    background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                    fontSize:        isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
-                    verticalAlign:   "baseline",
-                  }}>{"5 Rewards"}</span>
-                </span>
-              )}
+              {/* Ligne 2 — "Recevez" / "Recibe" / "Get" — doré, toutes langues */}
+              <span
+                className="h1-line"
+                style={{
+                  marginTop:  isMobile ? 4 : 7,
+                  fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <span style={{
+                  background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                }}>{h1L2acc}</span>
+              </span>
+              {/* Ligne 3 — "5 récompenses" / "5 recompensas" / "5 Rewards" — doré, plus grand, toutes langues */}
+              <span
+                className="h1-line"
+                style={{
+                  marginTop:  isMobile ? 2 : 4,
+                  fontSize:   isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <span style={{
+                  background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                }}>{h1L3}</span>
+              </span>
             </h1>
             </div>
 
