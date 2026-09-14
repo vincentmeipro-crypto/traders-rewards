@@ -56,7 +56,7 @@ export default function Hero() {
   // ── Colonnes internes du cadre promo (shared mobile/desktop) ──
   const promoColumns = (
     <>
-      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", position:"relative" }}>
+      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", flex:1, position:"relative" }}>
         <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2 }}>
           1 CHALLENGE
         </div>
@@ -68,7 +68,7 @@ export default function Hero() {
         </div>
       </div>
       <div style={{ width:1, alignSelf:"stretch", background:"linear-gradient(to bottom, transparent, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.22) 80%, transparent)", margin: isMobile ? "0 16px" : "0 24px", flexShrink:0 }} />
-      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", position:"relative" }}>
+      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", flex:1, position:"relative" }}>
         <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
           PACK ×3 BEST DEAL
         </div>
