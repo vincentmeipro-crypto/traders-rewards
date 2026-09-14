@@ -488,6 +488,8 @@ export default function Hero() {
                     margin:          "0 auto",
                     transform:       "translateX(-10%)",
                     backgroundColor: "#000000",
+                    WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%)",
+                    maskImage:       "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%)",
                   }}
                 />
               </div>
@@ -591,8 +593,10 @@ export default function Hero() {
                 margin:         "0 auto",
                 marginLeft:     "-55%",
                 marginTop:      20,
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 28%)",
-                maskImage:      "linear-gradient(to right, transparent 0%, black 28%)",
+                WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%), linear-gradient(to right, transparent 0%, black 28%)",
+                WebkitMaskComposite: "destination-in",
+                maskImage:       "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%), linear-gradient(to right, transparent 0%, black 28%)",
+                maskComposite:   "intersect",
               }}
             />
           </div>{/* fin colonne droite */}
