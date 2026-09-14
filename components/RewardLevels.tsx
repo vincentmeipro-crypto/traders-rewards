@@ -264,8 +264,8 @@ export default function RewardLevels() {
           {/* ── Patch PAYOUT EXPRESS 48H — image, flotte à la jonction des 2 colonnes ── */}
           <div style={{
             position:      "absolute",
-            left:          "calc(50% - 90px)",
-            top:           "50%",
+            left:          "calc(50% - 40px)",
+            top:           "calc(50% - 25px)",
             transform:     "translateY(-50%)",
             zIndex:        10,
             pointerEvents: "none",
