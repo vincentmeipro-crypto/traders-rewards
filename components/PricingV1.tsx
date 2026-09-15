@@ -403,7 +403,7 @@ export default function PricingV1() {
             borderBottom: "1px solid rgba(255,255,255,0.10)",
           }}>
             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.62)", fontWeight: 450 }}>
-              {L("Activation Trader Reward","Activación Trader Reward","Trader Reward activation")}
+              {L("Activation compte Sim_Trader Reward","Activación cuenta Sim_Trader Reward","Sim_Trader Reward account activation")}
             </span>
             <span style={{
               display: "inline-flex", alignItems: "center",
@@ -425,17 +425,18 @@ export default function PricingV1() {
           className="pricing-chrome-cta"
           onClick={e => e.stopPropagation()}
           style={{
-            display:       "flex",
-            alignItems:    "center",
-            justifyContent:"center",
-            padding:       "9px 16px",
-            marginTop:     4,
-            borderRadius:  10,
-            fontSize:      13,
-            fontWeight:    700,
-            letterSpacing: "0.3px",
-            textTransform: "none",
+            display:        "flex",
+            alignItems:     "center",
+            justifyContent: "center",
+            padding:        "9px 16px",
+            marginTop:      4,
+            borderRadius:   10,
+            fontSize:       13,
+            fontWeight:     730,
+            letterSpacing:  "0.05px",
+            textTransform:  "none",
             textDecoration: "none",
+            color:          "#111111",
           }}
         >
           {isPack3
@@ -459,22 +460,63 @@ export default function PricingV1() {
       }}
     >
       <style>{`
+        /* ── CTA Démarrer — traitement identique au Hero "Choisir mon Challenge" ── */
+        @keyframes pricingCtaShimmer {
+          0%          { transform: translateX(-280%); }
+          30%         { transform: translateX(380%); }
+          30.01%, 100%{ transform: translateX(-280%); }
+        }
+        @keyframes pricingCtaGoldFlow {
+          0%   { background-position: 0% 50%; }
+          50%  { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
         .pricing-chrome-cta {
-          position: relative;
-          overflow: hidden;
-          background: #000000;
-          color: #FFFFFF;
-          border: 1px solid rgba(184,135,70,0.52);
-          box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-          transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+          position: relative; overflow: hidden;
+          background: linear-gradient(
+            110deg,
+            #6B4A1A 0%, #B88746 14%, #D6AD63 28%, #F2D79A 43%,
+            #FFF0AA 52%, #E8C864 61%, #C4943E 74%, #8A6220 88%, #6B4A1A 100%
+          );
+          background-size: 220% 100%;
+          color: #111111 !important;
+          border: 1px solid rgba(232,190,100,0.50);
+          box-shadow: 0 10px 35px rgba(184,135,70,0.22), 0 3px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.38);
+          transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+          animation: pricingCtaGoldFlow 7s ease-in-out infinite;
+        }
+        /* Reflet shimmer — traverse le métal */
+        .pricing-chrome-cta::before {
+          content: "";
+          position: absolute;
+          top: -20%; bottom: -20%;
+          left: 0; width: 65%;
+          background: linear-gradient(
+            105deg,
+            transparent 5%,
+            rgba(255,255,255,0.08) 30%,
+            rgba(255,255,255,0.28) 50%,
+            rgba(255,255,255,0.08) 70%,
+            transparent 95%
+          );
+          transform: translateX(-280%);
+          animation: pricingCtaShimmer 6s ease-in-out 2.5s infinite;
+          pointer-events: none;
         }
         .pricing-chrome-cta:hover {
           transform: translateY(-1px);
-          background: rgba(255,255,255,0.03);
-          border-color: rgba(212,168,67,0.85);
-          box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 18px rgba(184,135,70,0.08);
+          filter: brightness(1.14);
+          box-shadow: 0 14px 42px rgba(184,135,70,0.34), 0 4px 14px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.48);
         }
-        .pricing-chrome-cta:active { transform: translateY(0) scale(0.99); }
+        .pricing-chrome-cta:active  { transform: translateY(0) scale(0.98); filter: brightness(1); }
+        .pricing-chrome-cta:focus-visible {
+          outline: 2px solid rgba(255,255,255,0.72); outline-offset: 3px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pricing-chrome-cta { animation: none; transition: none; background-position: 0% 50%; }
+          .pricing-chrome-cta::before { animation: none; opacity: 0; }
+          .pricing-chrome-cta:hover { transform: none; filter: none; }
+        }
       `}</style>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
