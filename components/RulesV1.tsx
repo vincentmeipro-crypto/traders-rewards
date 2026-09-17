@@ -102,8 +102,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       subtitle: L("Progressez jusqu'à 5 récompenses", "Progrese hasta 5 recompensas", "Progress to 5 rewards"),
       rows: [
         { label: "DD EOD",                                                          value: showPct ? ddPct + " %" : fmt(ddUsd) },
-        { label: L("JOURS QUALIFIANTS", "DÍAS CALIFICADOS",  "QUALIFYING DAYS"),    value: L("5 JOURS", "5 DÍAS", "5 DAYS") },
-        { label: L("PROFIT MIN / JOUR",  "PROFIT MÍN / DÍA", "MIN PROFIT / DAY"),  value: fmt(qualMin) },
+        { label: L("5 JOURS QUALIFIANTS", "5 DÍAS CALIFICADOS", "5 QUALIFYING DAYS"), value: fmt(qualMin) },
         { label: L("CONSISTANCE",        "CONSISTENCIA",      "CONSISTENCY"),        value: "50 %" },
         { label: L("PAIEMENT",           "PAGO",              "PAYMENT"),            value: "48H MAX" },
       ],
