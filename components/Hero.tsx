@@ -440,7 +440,7 @@ export default function Hero() {
                     color: "#F7F8FA", whiteSpace: "nowrap",
                     textShadow: "0 2px 18px rgba(0,0,0,0.85)",
                   }}>
-                    1 Challenge
+                    1 CHALLENGE
                   </span>
                   {/* L3 — RECEVEZ — doré */}
                   <span style={{ display: "block", fontSize: "clamp(66px, 19vw, 108px)", whiteSpace: "nowrap", marginTop: 4 }}>
