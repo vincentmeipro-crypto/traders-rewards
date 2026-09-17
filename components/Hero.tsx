@@ -428,7 +428,7 @@ export default function Hero() {
                 /* ── 4 LIGNES MOBILE ── */
                 <>
                   {/* L1 — VALIDEZ — doré */}
-                  <span style={{ display: "block", fontSize: "clamp(66px, 19vw, 108px)", whiteSpace: "nowrap" }}>
+                  <span style={{ display: "block", fontSize: "clamp(60px, 17vw, 98px)", whiteSpace: "nowrap" }}>
                     <span style={{
                       background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
                       WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
@@ -436,14 +436,14 @@ export default function Hero() {
                   </span>
                   {/* L2 — 1 Challenge — blanc */}
                   <span style={{
-                    display: "block", fontSize: "clamp(52px, 15vw, 88px)",
+                    display: "block", fontSize: "clamp(47px, 13.5vw, 80px)",
                     color: "#F7F8FA", whiteSpace: "nowrap",
                     textShadow: "0 2px 18px rgba(0,0,0,0.85)",
                   }}>
                     1 CHALLENGE
                   </span>
                   {/* L3 — RECEVEZ — doré */}
-                  <span style={{ display: "block", fontSize: "clamp(66px, 19vw, 108px)", whiteSpace: "nowrap", marginTop: 4 }}>
+                  <span style={{ display: "block", fontSize: "clamp(60px, 17vw, 98px)", whiteSpace: "nowrap", marginTop: 4 }}>
                     <span style={{
                       background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
                       WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
@@ -451,7 +451,7 @@ export default function Hero() {
                   </span>
                   {/* L4 — 5 REWARDS — blanc */}
                   <span style={{
-                    display: "block", fontSize: "clamp(52px, 15vw, 88px)",
+                    display: "block", fontSize: "clamp(47px, 13.5vw, 80px)",
                     color: "#F7F8FA", whiteSpace: "nowrap",
                     textShadow: "0 2px 18px rgba(0,0,0,0.85)", marginTop: 4,
                   }}>
