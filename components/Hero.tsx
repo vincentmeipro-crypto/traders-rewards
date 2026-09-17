@@ -47,9 +47,9 @@ export default function Hero() {
   const h1L2pre = "";
   const h1L2acc = L("Recevez", "Recibe", "Get");
   const h1L3    = L("5 récompenses", "5 recompensas", "5 rewards");
-  // Mobile uniquement : ligne 2 "Recevez 5" / ligne 3 "récompenses"
-  const h1L2mob = L("Recevez 5", "Recibe 5", "Get 5");
-  const h1L3mob = L("récompenses", "recompensas", "rewards");
+  // Mobile uniquement : 4 lignes fixes
+  const h1Mob1 = L("VALIDEZ",     "VALIDA",  "VALIDATE");
+  const h1Mob3 = L("RECEVEZ",     "RECIBE",  "RECEIVE");
   const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
 
   const promoFS = isMobile
@@ -409,15 +409,14 @@ export default function Hero() {
           </span>
         </div>
 
-            {/* ── H1 — FR/ES : 3 lignes · EN : 2 lignes ── */}
-            {/* minHeight = hauteur exacte du H1 FR (3 lignes) → verrouille Y du bloc promo/CTA */}
+            {/* ── H1 ── */}
             <h1 style={{
               fontWeight:    620,
-              margin:        isMobile ? "0 0 16px" : "0 0 24px",
+              margin:        isMobile ? "0 0 8px" : "0 0 24px",
               textTransform: "none",
               textAlign:     isMobile ? "center" : "left",
               letterSpacing: isMobile ? "-1.5px" : "-3px",
-              lineHeight:    0.98,
+              lineHeight:    isMobile ? 1.0 : 0.98,
               animation:     "heroFadeUp 0.52s ease 0.05s both",
               position:      "relative",
               zIndex:        2,
@@ -425,44 +424,60 @@ export default function Hero() {
                 ? undefined
                 : "calc(1.96 * clamp(42px, 4.3vw, 58px) + 0.98 * clamp(52px, 6.5vw, 80px) + 11px)",
             }}>
-              {/* Ligne 1 — blanc (toutes langues) */}
-              <span
-                className="h1-line"
-                style={{
-                  fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(52px, 6.5vw, 80px)",
-                  color:      "#F7F8FA",
-                  whiteSpace: "nowrap",
-                  textShadow: "0 2px 18px rgba(0,0,0,0.85), 0 0 40px rgba(0,0,0,0.60)",
-                }}
-              >
-                {h1L1}
-              </span>
-
-              {/* Ligne 2 — "Recevez 5" mobile / "Recevez" desktop — doré */}
-              <span
-                className="h1-line"
-                style={{
-                  marginTop:  isMobile ? 6 : 7,
-                  fontSize:   isMobile ? "clamp(36px, 11vw, 64px)" : "clamp(42px, 4.3vw, 58px)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <span style={{
-                  background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                }}>{isMobile ? h1L2mob : h1L2acc}</span>
-              </span>
-              {/* Ligne 3 — "récompenses" mobile / "5 récompenses" desktop — blanc */}
-              <span
-                className="h1-line"
-                style={{
-                  marginTop:  isMobile ? 4 : 4,
-                  fontSize:   isMobile ? "clamp(40px, 13vw, 76px)" : "clamp(52px, 6.5vw, 80px)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <span style={{ color: "#F7F8FA" }}>{isMobile ? h1L3mob : h1L3}</span>
-              </span>
+              {isMobile ? (
+                /* ── 4 LIGNES MOBILE ── */
+                <>
+                  {/* L1 — VALIDEZ — doré */}
+                  <span style={{ display: "block", fontSize: "clamp(66px, 19vw, 108px)", whiteSpace: "nowrap" }}>
+                    <span style={{
+                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                    }}>{h1Mob1}</span>
+                  </span>
+                  {/* L2 — 1 Challenge — blanc */}
+                  <span style={{
+                    display: "block", fontSize: "clamp(52px, 15vw, 88px)",
+                    color: "#F7F8FA", whiteSpace: "nowrap",
+                    textShadow: "0 2px 18px rgba(0,0,0,0.85)",
+                  }}>
+                    1 Challenge
+                  </span>
+                  {/* L3 — RECEVEZ — doré */}
+                  <span style={{ display: "block", fontSize: "clamp(66px, 19vw, 108px)", whiteSpace: "nowrap", marginTop: 4 }}>
+                    <span style={{
+                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                    }}>{h1Mob3}</span>
+                  </span>
+                  {/* L4 — 5 REWARDS — blanc */}
+                  <span style={{
+                    display: "block", fontSize: "clamp(52px, 15vw, 88px)",
+                    color: "#F7F8FA", whiteSpace: "nowrap",
+                    textShadow: "0 2px 18px rgba(0,0,0,0.85)", marginTop: 4,
+                  }}>
+                    5 REWARDS
+                  </span>
+                </>
+              ) : (
+                /* ── 3 LIGNES DESKTOP — inchangé ── */
+                <>
+                  <span className="h1-line" style={{
+                    fontSize: "clamp(52px, 6.5vw, 80px)", color: "#F7F8FA", whiteSpace: "nowrap",
+                    textShadow: "0 2px 18px rgba(0,0,0,0.85), 0 0 40px rgba(0,0,0,0.60)",
+                  }}>
+                    {h1L1}
+                  </span>
+                  <span className="h1-line" style={{ marginTop: 7, fontSize: "clamp(42px, 4.3vw, 58px)", whiteSpace: "nowrap" }}>
+                    <span style={{
+                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
+                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
+                    }}>{h1L2acc}</span>
+                  </span>
+                  <span className="h1-line" style={{ marginTop: 4, fontSize: "clamp(52px, 6.5vw, 80px)", whiteSpace: "nowrap" }}>
+                    <span style={{ color: "#F7F8FA" }}>{h1L3}</span>
+                  </span>
+                </>
+              )}
             </h1>
             </div>
 
