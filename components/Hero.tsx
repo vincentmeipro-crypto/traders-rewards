@@ -426,7 +426,7 @@ export default function Hero() {
               <span
                 className="h1-line"
                 style={{
-                  fontSize:   isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
+                  fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(52px, 6.5vw, 80px)",
                   color:      "#F7F8FA",
                   whiteSpace: "nowrap",
                   textShadow: "0 2px 18px rgba(0,0,0,0.85), 0 0 40px rgba(0,0,0,0.60)",
@@ -477,7 +477,7 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/HERO HUMAINS TRADING.png"
+                  src="/Image%20Codex%2017%20sept.%202026%2C%2008_08_50.png"
                   alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
                   style={{
                     display:         "block",
