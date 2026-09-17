@@ -477,19 +477,18 @@ export default function Hero() {
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="/Image%20Codex%2017%20sept.%202026%2C%2008_08_50.png"
+                  src="/HEROOOOOOO.png"
                   alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
                   style={{
                     display:         "block",
-                    width:           "118%",
-                    maxWidth:        "none",
+                    width:           "100%",
+                    maxWidth:        "100%",
                     height:          "auto",
                     objectFit:       "contain",
                     margin:          "0 auto",
-                    transform:       "translateX(-4%)",
                     backgroundColor: "#000000",
-                    WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%)",
-                    maskImage:       "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%)",
+                    WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.60) 88%, transparent 100%)",
+                    maskImage:       "linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.60) 88%, transparent 100%)",
                   }}
                 />
               </div>
@@ -584,21 +583,20 @@ export default function Hero() {
             {/* ── Visuel droit — Personnages + jetons 25K / 50K / 100K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/Image%20Codex%2017%20sept.%202026%2C%2008_08_50.png"
+              src="/HEROOOOOOO.png"
               alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
               style={{
                 display:        "block",
-                width:          "175%",
+                width:          "170%",
                 maxWidth:       "none",
                 height:         "auto",
                 objectFit:      "contain",
                 objectPosition: "center",
                 margin:         "0 auto",
-                marginLeft:     "-55%",
-                marginTop:      20,
-                WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%), linear-gradient(to right, transparent 0%, black 28%)",
+                marginLeft:     "-35%",
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 28%), linear-gradient(to bottom, black 0%, black 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
                 WebkitMaskComposite: "destination-in",
-                maskImage:       "linear-gradient(to bottom, black 0%, black 62%, rgba(0,0,0,0.80) 76%, rgba(0,0,0,0.35) 89%, transparent 100%), linear-gradient(to right, transparent 0%, black 28%)",
+                maskImage:       "linear-gradient(to right, transparent 0%, black 28%), linear-gradient(to bottom, black 0%, black 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
                 maskComposite:   "intersect",
               }}
             />
