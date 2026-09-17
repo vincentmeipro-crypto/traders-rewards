@@ -47,6 +47,9 @@ export default function Hero() {
   const h1L2pre = "";
   const h1L2acc = L("Recevez", "Recibe", "Get");
   const h1L3    = L("5 récompenses", "5 recompensas", "5 rewards");
+  // Mobile uniquement : ligne 2 "Recevez 5" / ligne 3 "récompenses"
+  const h1L2mob = L("Recevez 5", "Recibe 5", "Get 5");
+  const h1L3mob = L("récompenses", "recompensas", "rewards");
   const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
 
   const promoFS = isMobile
@@ -332,7 +335,7 @@ export default function Hero() {
           flexDirection: isMobile ? "column" : "row",
           alignItems:    isMobile ? "stretch" : "center",
           // Desktop : hauteur naturelle plafonnée à 720px pour éviter l'espace mort.
-          minHeight:     isMobile ? 0 : "min(620px, calc(100svh - 234px))",
+          minHeight:     isMobile ? "100svh" : "min(620px, calc(100svh - 234px))",
           paddingTop:    isMobile
             ? "calc(60px + var(--promo-banner-height, 0px))"
             : "calc(72px + var(--promo-banner-height, 0px))",
@@ -353,13 +356,13 @@ export default function Hero() {
             flex:           isMobile ? "none" : "0 0 52%",
             display:        "flex",
             flexDirection:  "column",
-            justifyContent: isMobile ? "center" : "flex-start",
+            justifyContent: isMobile ? "space-between" : "flex-start",
             alignItems:     isMobile ? "center" : undefined,
             alignSelf:      isMobile ? undefined : "flex-start",
             paddingLeft:    isMobile ? 22 : 0,
             paddingRight:   isMobile ? 22 : 12,
             paddingTop:     isMobile ? 66 : 80,
-            paddingBottom:  isMobile ? 0 : 26,
+            paddingBottom:  isMobile ? 16 : 26,
           }}>
 
             <div style={{ position: "relative", width: isMobile ? "100%" : "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start", marginLeft: isMobile ? 0 : -78 }}>
@@ -419,7 +422,7 @@ export default function Hero() {
               position:      "relative",
               zIndex:        2,
               minHeight:     isMobile
-                ? "calc(1.96 * clamp(1.75rem, 8vw, 3.25rem) + 0.98 * clamp(38px, 12vw, 72px) + 6px)"
+                ? undefined
                 : "calc(1.96 * clamp(42px, 4.3vw, 58px) + 0.98 * clamp(52px, 6.5vw, 80px) + 11px)",
             }}>
               {/* Ligne 1 — blanc (toutes langues) */}
@@ -435,30 +438,30 @@ export default function Hero() {
                 {h1L1}
               </span>
 
-              {/* Ligne 2 — "Recevez" / "Recibe" / "Get" — doré, toutes langues */}
+              {/* Ligne 2 — "Recevez 5" mobile / "Recevez" desktop — doré */}
               <span
                 className="h1-line"
                 style={{
-                  marginTop:  isMobile ? 4 : 7,
-                  fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
+                  marginTop:  isMobile ? 6 : 7,
+                  fontSize:   isMobile ? "clamp(36px, 11vw, 64px)" : "clamp(42px, 4.3vw, 58px)",
                   whiteSpace: "nowrap",
                 }}
               >
                 <span style={{
                   background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
                   WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                }}>{h1L2acc}</span>
+                }}>{isMobile ? h1L2mob : h1L2acc}</span>
               </span>
-              {/* Ligne 3 — "5 récompenses" / "5 recompensas" / "5 Rewards" — doré, plus grand, toutes langues */}
+              {/* Ligne 3 — "récompenses" mobile / "5 récompenses" desktop — blanc */}
               <span
                 className="h1-line"
                 style={{
-                  marginTop:  isMobile ? 2 : 4,
-                  fontSize:   isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
+                  marginTop:  isMobile ? 4 : 4,
+                  fontSize:   isMobile ? "clamp(40px, 13vw, 76px)" : "clamp(52px, 6.5vw, 80px)",
                   whiteSpace: "nowrap",
                 }}
               >
-                <span style={{ color: "#F7F8FA" }}>{h1L3}</span>
+                <span style={{ color: "#F7F8FA" }}>{isMobile ? h1L3mob : h1L3}</span>
               </span>
             </h1>
             </div>
@@ -474,6 +477,8 @@ export default function Hero() {
                 overflow:       "hidden",
                 lineHeight:     0,
                 alignSelf:      "stretch",
+                flex:           1,
+                minHeight:      0,
               }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -483,8 +488,9 @@ export default function Hero() {
                     display:         "block",
                     width:           "100%",
                     maxWidth:        "100%",
-                    height:          "auto",
+                    height:          "100%",
                     objectFit:       "contain",
+                    objectPosition:  "center bottom",
                     margin:          "0 auto",
                     backgroundColor: "#000000",
                     WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.60) 88%, transparent 100%)",
