@@ -416,6 +416,8 @@ export default function Hero() {
               letterSpacing: isMobile ? "-1.5px" : "-3px",
               lineHeight:    0.98,
               animation:     "heroFadeUp 0.52s ease 0.05s both",
+              position:      "relative",
+              zIndex:        2,
               minHeight:     isMobile
                 ? "calc(1.96 * clamp(1.75rem, 8vw, 3.25rem) + 0.98 * clamp(38px, 12vw, 72px) + 6px)"
                 : "calc(1.96 * clamp(42px, 4.3vw, 58px) + 0.98 * clamp(52px, 6.5vw, 80px) + 11px)",
@@ -424,9 +426,10 @@ export default function Hero() {
               <span
                 className="h1-line"
                 style={{
-                  fontSize:   isMobile ? "clamp(1.75rem, 8vw, 3.25rem)" : "clamp(42px, 4.3vw, 58px)",
+                  fontSize:   isMobile ? "clamp(38px, 12vw, 72px)" : "clamp(52px, 6.5vw, 80px)",
                   color:      "#F7F8FA",
                   whiteSpace: "nowrap",
+                  textShadow: "0 2px 18px rgba(0,0,0,0.85), 0 0 40px rgba(0,0,0,0.60)",
                 }}
               >
                 {h1L1}
@@ -581,7 +584,7 @@ export default function Hero() {
             {/* ── Visuel droit — Personnages + jetons 25K / 50K / 100K ── */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/HERO HUMAINS TRADING.png"
+              src="/Image%20Codex%2017%20sept.%202026%2C%2008_08_50.png"
               alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
               style={{
                 display:        "block",
