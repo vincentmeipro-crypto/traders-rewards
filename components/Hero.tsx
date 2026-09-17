@@ -43,10 +43,10 @@ export default function Hero() {
 
   // ── i18n ────────────────────────────────────────────────────
   const pill    = L("Programme éducatif trading simulé", "Programa educativo de trading simulado", "Simulated trading education program");
-  const h1L1    = L("Validez 1 challenge", "Valida 1 challenge", "Complete 1 challenge");
+  const h1L1    = L("VALIDEZ 1 CHALLENGE", "VALIDA 1 CHALLENGE", "COMPLETE 1 CHALLENGE");
   const h1L2pre = "";
-  const h1L2acc = L("Recevez", "Recibe", "Get");
-  const h1L3    = L("5 récompenses", "5 recompensas", "5 rewards");
+  const h1L2acc = L("RECEVEZ", "RECIBE", "GET");
+  const h1L3    = "5 REWARDS";
   // Mobile uniquement : 4 lignes fixes
   const h1Mob1 = L("VALIDEZ",     "VALIDA",  "VALIDATE");
   const h1Mob3 = L("RECEVEZ",     "RECIBE",  "RECEIVE");
@@ -462,7 +462,7 @@ export default function Hero() {
                 /* ── 3 LIGNES DESKTOP — inchangé ── */
                 <>
                   <span className="h1-line" style={{
-                    fontSize: "clamp(52px, 6.5vw, 80px)", color: "#F7F8FA", whiteSpace: "nowrap",
+                    fontSize: "clamp(44px, 5.5vw, 68px)", color: "#F7F8FA", whiteSpace: "nowrap",
                     textShadow: "0 2px 18px rgba(0,0,0,0.85), 0 0 40px rgba(0,0,0,0.60)",
                   }}>
                     {h1L1}
