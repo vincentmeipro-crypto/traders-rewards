@@ -1,7 +1,7 @@
 import Navbar            from "@/components/Navbar";
 import DisclaimerBanner  from "@/components/DisclaimerBanner";
 import Hero              from "@/components/Hero";
-import HeroBenefits      from "@/components/HeroBenefits";
+
 import PricingV1         from "@/components/PricingV1";
 import JourneyRulesSection from "@/components/JourneyRulesSection";
 import RewardLevels      from "@/components/RewardLevels";
@@ -45,10 +45,10 @@ export default function Home() {
       {/* ── Source de vérité unique : 50mm entre CHAQUE GRANDE SECTION COMPLÈTE ── */}
       <div style={{ display: "flex", flexDirection: "column", gap: "50mm" }}>
 
-        {/* ── SECTION 1 : Hero complet — accroche + bandeau 6 avantages (interne au Hero) ── */}
+        {/* ── SECTION 1 : Hero complet — offres et parcours en trois étapes ── */}
         <div>
           <Hero />
-          <HeroBenefits />
+
         </div>
 
         {/* ── SECTION 2 : Règles ── */}

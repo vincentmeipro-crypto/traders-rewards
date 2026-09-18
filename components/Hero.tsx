@@ -1,659 +1,79 @@
 "use client";
 
-// ════════════════════════════════════════════════════════════════
-//  Hero.tsx — Traders Rewards Premium · v2 Refonte
-//  Layout  : 2 colonnes — Gauche (texte/CTAs) · Droite (parcours 6250$)
-//  Couleur : Noir / Blanc / Chrome · Neon #69C5FD
-// ════════════════════════════════════════════════════════════════
-
-import { useState, useEffect } from "react";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, ClipboardList, Gift, TrendingUp } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import {
-  DEFAULT_HERO_PROMOTION_PRESENTATION,
-  type HeroPromotionPresentation,
-} from "@/lib/hero-promotion-config";
-
-const ACCENT = "#D4A843"; // badge dot (gauche) — doré champagne
-
-// Parcours 100K — rendu top→bottom (05 en haut visuellement)
-const STEPS = [
-  { num: "05", name: "REWARD #5",  sub: "",              amount: "1 750 $" },
-  { num: "04", name: "REWARD #4",  sub: "",              amount: "1 500 $" },
-  { num: "03", name: "REWARD #3",  sub: "",              amount: "1 250 $" },
-  { num: "02", name: "REWARD #2",  sub: "",              amount: "1 000 $" },
-  { num: "01", name: "REWARD #1",  sub: "",              amount:   "750 $" },
-  { num: "00", name: "CHALLENGER", sub: "CHALLENGE +6%", amount:     null  },
-] as const;
+import { DEFAULT_HERO_PROMOTION_PRESENTATION, type HeroPromotionPresentation } from "@/lib/hero-promotion-config";
+import styles from "./Hero.module.css";
 
 export default function Hero() {
   const { lang } = useLanguage();
-  const isFr = lang === "fr";
-  const isEs = lang === "es";
-  const L = (fr: string, es: string, en: string) => (isFr ? fr : isEs ? es : en);
-
-  const [isMobile, setIsMobile] = useState(false);
-  const [mounted,  setMounted]  = useState(false);
-  const [heroPromotion, setHeroPromotion] = useState<HeroPromotionPresentation>(
-    DEFAULT_HERO_PROMOTION_PRESENTATION
-  );
+  const L = (fr: string, es: string, en: string) => lang === "fr" ? fr : lang === "es" ? es : en;
+  const [promotion, setPromotion] = useState<HeroPromotionPresentation>(DEFAULT_HERO_PROMOTION_PRESENTATION);
 
   useEffect(() => {
-    let cancelled = false;
-    setMounted(true);
-    const check = () => setIsMobile(window.innerWidth < 900);
-    check();
-    window.addEventListener("resize", check);
-
-    const loadHeroPromotion = async () => {
+    const controller = new AbortController();
+    async function loadPromotion() {
       try {
-        const response = await fetch("/api/hero-promotion", { cache: "no-store" });
-        if (!response.ok) return;
-        const data = (await response.json()) as HeroPromotionPresentation;
-        if (!cancelled) setHeroPromotion(data);
+        const response = await fetch("/api/hero-promotion", { cache: "no-store", signal: controller.signal });
+        if (response.ok) setPromotion(await response.json());
       } catch {
-        // Le rendu historique reste la valeur de secours si l'API est indisponible.
+        // Keep the existing fallback if the promotion service is unavailable.
       }
-    };
-
-    void loadHeroPromotion();
-
-    return () => {
-      cancelled = true;
-      window.removeEventListener("resize", check);
-    };
+    }
+    void loadPromotion();
+    return () => controller.abort();
   }, []);
 
-  if (!mounted) return null;
-
-  // ── i18n ────────────────────────────────────────────────────
-  const pill    = L("Programme éducatif trading simulé", "Programa educativo de trading simulado", "Simulated trading education program");
-  const h1L1    = L("VALIDEZ 1 CHALLENGE", "VALIDA 1 CHALLENGE", "COMPLETE 1 CHALLENGE");
-  const h1L2pre = "";
-  const h1L2acc = L("RECEVEZ", "RECIBE", "GET");
-  const h1L3    = "5 REWARDS";
-  // Mobile uniquement : 4 lignes fixes
-  const h1Mob1 = L("VALIDEZ",     "VALIDA",  "VALIDATE");
-  const h1Mob3 = L("RECEVEZ",     "RECIBE",  "RECEIVE");
-  const ctaMain = L("Choisir mon Challenge","Elegir mi Challenge",   "Choose my Challenge");
-
-  const promoFS = isMobile
-    ? "clamp(2.4rem, 10vw, 3.6rem)"
-    : "clamp(2.8rem, 4vw, 5rem)";
-
-  // ── Colonnes internes du cadre promo (shared mobile/desktop) ──
-  const promoColumns = (
-    <>
-      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", flex:1, position:"relative" }}>
-        <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2 }}>
-          {heroPromotion.leftLabel}
-        </div>
-        <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom:0, color:"#F5F7F8" }}>
-          -{heroPromotion.leftDiscount}%
-        </div>
-        <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none", position:"absolute" }}>
-          PAIEMENT UNIQUE
-        </div>
-      </div>
-      <div style={{ width:1, alignSelf:"stretch", background:"linear-gradient(to bottom, transparent, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.22) 80%, transparent)", margin: isMobile ? "0 16px" : "0 24px", flexShrink:0 }} />
-      <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", flex:1, position:"relative" }}>
-        <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
-          {heroPromotion.rightLabel}
-        </div>
-        <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:0,
-          color:"#F2EFE7" }}>
-          -{heroPromotion.rightDiscount}%
-        </div>
-        <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none", position:"absolute" }}>
-          PAIEMENT UNIQUE
-        </div>
-      </div>
-    </>
-  );
+  const steps = [
+    { Icon: ClipboardList, title: L("Choisissez votre challenge", "Elige tu challenge", "Choose your challenge"), text: L("Sélectionnez le challenge qui vous correspond.", "Selecciona el challenge que más te convenga.", "Select the challenge that suits you.") },
+    { Icon: TrendingUp, title: L("Validez votre challenge", "Supera tu challenge", "Complete your challenge"), text: L("Atteignez les objectifs du challenge.", "Alcanza los objetivos del challenge.", "Reach your challenge objectives.") },
+    { Icon: Gift, title: L("Accédez aux récompenses", "Accede a las recompensas", "Unlock your rewards"), text: L("Découvrez les 5 niveaux de récompenses.", "Descubre los 5 niveles de recompensas.", "Discover the 5 reward levels.") },
+  ];
 
   return (
-    <>
-      <style>{`
-        /* ── Entrée fade-up ── */
-        @keyframes heroFadeUp {
-          from { opacity: 0; transform: translateY(14px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes heroDotTwinkle {
-          0%, 100% { opacity: 0.48; box-shadow: 0 0 0 rgba(184,135,70,0); transform: scale(0.82); }
-          50% { opacity: 1; box-shadow: 0 0 8px rgba(184,135,70,0.80), 0 0 14px rgba(184,135,70,0.35); transform: scale(1.12); }
-        }
-        .h-pill-dot { animation: heroDotTwinkle 1.8s ease-in-out infinite; }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           CTA PRINCIPAL — or métallique sombre premium (Variante 03)
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-        /* Reflet ponctuel — traverse de gauche à droite, longue pause */
-        @keyframes heroCtaShimmer {
-          0%          { transform: translateX(-280%); }
-          30%         { transform: translateX(380%); }
-          30.01%, 100%{ transform: translateX(-280%); }
-        }
-        /* Lumière qui circule lentement dans le métal — background-position */
-        @keyframes heroCtaGoldFlow {
-          0%   { background-position: 0% 50%; }
-          50%  { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        .h-cta-main {
-          display: inline-flex; align-items: center; gap: 18px;
-          position: relative; overflow: hidden;
-          background: linear-gradient(
-            110deg,
-            #6B4A1A 0%,
-            #B88746 14%,
-            #D6AD63 28%,
-            #F2D79A 43%,
-            #FFF0AA 52%,
-            #E8C864 61%,
-            #C4943E 74%,
-            #8A6220 88%,
-            #6B4A1A 100%
-          );
-          background-size: 220% 100%;
-          color: #111111;
-          font-weight: 730; letter-spacing: 0.05px; text-transform: none;
-          text-decoration: none; border-radius: 16px; cursor: pointer;
-          font-family: inherit; white-space: nowrap;
-          border: 1px solid rgba(232,190,100,0.50);
-          box-shadow: 0 10px 35px rgba(184,135,70,0.22), 0 3px 12px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.38);
-          transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-          animation: heroCtaGoldFlow 7s ease-in-out infinite;
-        }
-        /* Reflet shimmer ponctuel — lumière qui traverse le métal */
-        .h-cta-main::before {
-          content: "";
-          position: absolute;
-          top: -20%; bottom: -20%;
-          left: 0; width: 65%;
-          background: linear-gradient(
-            105deg,
-            transparent 5%,
-            rgba(255,255,255,0.08) 30%,
-            rgba(255,255,255,0.28) 50%,
-            rgba(255,255,255,0.08) 70%,
-            transparent 95%
-          );
-          transform: translateX(-280%);
-          animation: heroCtaShimmer 6s ease-in-out 2.5s infinite;
-          pointer-events: none;
-        }
-        .h-cta-main svg {
-          position: relative; z-index: 1;
-          transition: transform 0.25s ease; flex-shrink: 0;
-        }
-        .h-cta-main:hover svg { transform: translateX(3px); }
-        .h-cta-main:hover {
-          transform: translateY(-1px);
-          filter: brightness(1.14);
-          box-shadow: 0 14px 42px rgba(184,135,70,0.34), 0 4px 14px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.48);
-        }
-        .h-cta-main:active  { transform: translateY(0) scale(0.98); filter: brightness(1); }
-        .h-cta-main:focus-visible {
-          outline: 2px solid rgba(255,255,255,0.72); outline-offset: 3px;
-        }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           CTA SECONDAIRE — transparent / blanc
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .h-cta-ghost {
-          display: inline-flex; align-items: center; gap: 8px;
-          background: transparent; color: rgba(255,255,255,0.52);
-          font-weight: 600; letter-spacing: 0.2px; text-transform: none;
-          text-decoration: none; border-radius: 10px;
-          border: 1px solid rgba(255,255,255,0.16); cursor: pointer;
-          font-family: inherit; white-space: nowrap;
-          transition: border-color 0.22s ease, color 0.22s ease, transform 0.22s ease;
-        }
-        .h-cta-ghost:hover {
-          border-color: rgba(255,255,255,0.52); color: #FFFFFF;
-          transform: translateY(-2px);
-        }
-        .h-cta-ghost:focus-visible {
-          outline: 2px solid rgba(255,255,255,0.50); outline-offset: 3px;
-        }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           H1 — 2 lignes forcées sur desktop
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        .h1-line {
-          display: block;
-          white-space: nowrap;
-        }
-        @media (max-width: 899px) { .h1-line { white-space: normal; } }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           PANNEAU DROIT — ligne neon verticale + cercles
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-
-        /* Ligne fine qui relie tous les cercles */
-        .h-prog-line {
-          position: absolute;
-          top: 0; bottom: 0;
-          left: 50%; transform: translateX(-50%);
-          width: 1px;
-          background: rgba(184,135,70,0.16);
-          z-index: 0;
-          pointer-events: none;
-        }
-
-        /* Cercles numérotés */
-        .h-prog-circle {
-          position: relative; z-index: 2;
-          width: 42px; height: 42px; flex-shrink: 0;
-          border-radius: 50%;
-          border: 1px solid rgba(184,135,70,0.24);
-          background: #171b1f;
-          display: flex; align-items: center; justify-content: center;
-          font-size: 13px; font-weight: 800; letter-spacing: 1px;
-          color: rgba(194,226,241,0.78);
-        }
-
-        @property --premium-border-angle {
-          syntax: "<angle>";
-          initial-value: 0deg;
-          inherits: false;
-        }
-        @keyframes premiumBorderFlow {
-          to { --premium-border-angle: 360deg; }
-        }
-        .h-premium-panel {
-          isolation: isolate;
-          overflow: hidden;
-          border: 2px solid transparent !important;
-          background:
-            linear-gradient(#07090c, #07090c) padding-box,
-            conic-gradient(
-              from var(--premium-border-angle),
-              rgba(105,197,253,0.30) 0deg 230deg,
-              rgba(105,197,253,0.58) 258deg,
-              #69c5fd 286deg,
-              #e2f6ff 302deg,
-              #69c5fd 318deg,
-              rgba(105,197,253,0.58) 342deg,
-              rgba(105,197,253,0.30) 360deg
-            ) border-box !important;
-          animation: premiumBorderFlow 4.8s linear infinite;
-          box-shadow:
-            0 22px 60px rgba(0,0,0,0.42),
-            0 0 0 1px rgba(105,197,253,0.08),
-            0 0 26px rgba(105,197,253,0.08) !important;
-        }
-        .h-premium-panel::before {
-          display: none;
-        }
-        .h-premium-panel::after {
-          content: "";
-          position: absolute;
-          inset: 7px;
-          z-index: 5;
-          border: 1px solid rgba(0,0,0,0.96);
-          border-radius: 16px;
-          box-shadow: inset 0 0 0 1px rgba(184,135,70,0.055);
-          pointer-events: none;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .h-premium-panel { animation: none; }
-        }
-        @media (max-width: 899px) {
-          .h-premium-panel {
-            overflow: hidden;
-            padding: 24px 14px 18px !important;
-            border-radius: 18px !important;
-            box-shadow:
-              0 18px 42px rgba(0,0,0,0.40),
-              0 0 0 1px rgba(105,197,253,0.07),
-              0 0 20px rgba(105,197,253,0.07) !important;
-          }
-          .h-premium-panel::after {
-            display: block;
-            inset: 5px;
-            border-radius: 12px;
-          }
-        }
-        @media (max-width: 899px) {
-          .h-prog-circle {
-            width: 42px; height: 42px;
-            font-size: 11px;
-          }
-        }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           REDUCED MOTION
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        @media (prefers-reduced-motion: reduce) {
-          * { animation-duration: 0.01ms !important; }
-          .h-cta-main { animation: none; transition: none; background-position: 0% 50%; }
-          .h-cta-main::before { animation: none; opacity: 0; }
-          .h-cta-main:hover { transform: none; filter: none; }
-          .h-cta-main:hover svg { transform: none; }
-          .h-cta-ghost { transition: none; }
-        }
-      `}</style>
-
-      <section
-        id="hero"
-        aria-label="Hero Traders Rewards"
-        style={{
-          background:   "#000000",
-          fontFamily:   "var(--font-sans), system-ui, -apple-system, sans-serif",
-          width:        "100%",
-          position:     "relative",
-          overflow:     "hidden",
-          boxSizing:    "border-box",
-          marginBottom: isMobile ? 0 : 0,
-        }}
-      >
-
-        {/* ══════════════════════════════════════════════════════
-            WRAPPER FLEX — 2 colonnes desktop / 1 colonne mobile
-        ══════════════════════════════════════════════════════ */}
-        <div style={{
-          display:       "flex",
-          flexDirection: isMobile ? "column" : "row",
-          alignItems:    isMobile ? "stretch" : "center",
-          // Desktop : hauteur naturelle plafonnée à 720px pour éviter l'espace mort.
-          minHeight:     isMobile ? "100svh" : "min(620px, calc(100svh - 234px))",
-          paddingTop:    isMobile
-            ? "calc(60px + var(--promo-banner-height, 0px))"
-            : "calc(72px + var(--promo-banner-height, 0px))",
-          paddingBottom: isMobile ? 0 : 0,
-          maxWidth:      1380,
-          margin:        "0 auto",
-          paddingLeft:   isMobile ? 0 : "max(40px, 4vw)",
-          paddingRight:  isMobile ? 0 : "max(24px, 3vw)",
-          gap:           isMobile ? 0 : "clamp(40px, 5vw, 84px)",
-          boxSizing:     "border-box",
-        }}>
-
-          {/* ════════════════════════════════════════════════
-              COLONNE GAUCHE — Badge / H1 / Promo / CTAs
-          ════════════════════════════════════════════════ */}
-          <div style={{
-            position:       "relative",
-            flex:           isMobile ? "none" : "0 0 52%",
-            display:        "flex",
-            flexDirection:  "column",
-            justifyContent: isMobile ? "space-between" : "flex-start",
-            alignItems:     isMobile ? "center" : undefined,
-            alignSelf:      isMobile ? undefined : "flex-start",
-            paddingLeft:    isMobile ? 22 : 0,
-            paddingRight:   isMobile ? 22 : 12,
-            paddingTop:     isMobile ? 66 : 80,
-            paddingBottom:  isMobile ? 16 : 26,
-          }}>
-
-            <div style={{ position: "relative", width: isMobile ? "100%" : "max-content", display: "flex", flexDirection: "column", alignSelf: isMobile ? "center" : "flex-start", marginLeft: isMobile ? 0 : -78 }}>
-        {/* ════════════════════════════════════════════════════════
-            BADGE — position:absolute → hors flow, image inchangée
-        ════════════════════════════════════════════════════════ */}
-        <div style={{
-          position:       "absolute",
-          top:            isMobile ? -46 : -56,
-          left:           0,
-          right:          0,
-          display:        "flex",
-          justifyContent: isMobile ? "center" : "flex-start",
-          zIndex:         10,
-          animation:      "heroFadeUp 0.44s ease both",
-        }}>
-          <span style={{
-            display:      "inline-flex",
-            alignItems:   "center",
-            gap:          9,
-            background:   "rgba(255,255,255,0.025)",
-            border:       "1px solid rgba(255,255,255,0.14)",
-            borderRadius: 100,
-            padding:      isMobile ? "7px 16px" : "8px 18px",
-          }}>
-            <span className="h-pill-dot" style={{
-              display:      "inline-block",
-              width:        6,
-              height:       6,
-              borderRadius: "50%",
-              background:   ACCENT,
-              flexShrink:   0,
-            }} />
-            <span style={{
-              fontSize:      isMobile ? 11 : 12,
-              fontWeight:    500,
-              color:         "rgba(255,255,255,0.48)",
-              letterSpacing: "0.15px",
-              textTransform: "none",
-              whiteSpace:    "nowrap",
-            }}>
-              {pill}
-            </span>
-          </span>
-        </div>
-
-            {/* ── H1 ── */}
-            <h1 style={{
-              fontWeight:    620,
-              margin:        isMobile ? "0 0 8px" : "0 0 24px",
-              textTransform: "none",
-              textAlign:     isMobile ? "center" : "left",
-              letterSpacing: isMobile ? "-1.5px" : "-3px",
-              lineHeight:    isMobile ? 1.0 : 0.98,
-              animation:     "heroFadeUp 0.52s ease 0.05s both",
-              position:      "relative",
-              zIndex:        2,
-              minHeight:     isMobile
-                ? undefined
-                : "calc(1.96 * clamp(42px, 4.3vw, 58px) + 0.98 * clamp(52px, 6.5vw, 80px) + 11px)",
-            }}>
-              {isMobile ? (
-                /* ── 4 LIGNES MOBILE ── */
-                <>
-                  {/* L1 — VALIDEZ — doré */}
-                  <span style={{ display: "block", fontSize: "clamp(60px, 17vw, 98px)", whiteSpace: "nowrap" }}>
-                    <span style={{
-                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                    }}>{h1Mob1}</span>
-                  </span>
-                  {/* L2 — 1 Challenge — blanc */}
-                  <span style={{
-                    display: "block", fontSize: "clamp(47px, 13.5vw, 80px)",
-                    color: "#F7F8FA", whiteSpace: "nowrap",
-                    textShadow: "0 2px 18px rgba(0,0,0,0.85)",
-                  }}>
-                    1 CHALLENGE
-                  </span>
-                  {/* L3 — RECEVEZ — doré */}
-                  <span style={{ display: "block", fontSize: "clamp(60px, 17vw, 98px)", whiteSpace: "nowrap", marginTop: 4 }}>
-                    <span style={{
-                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                    }}>{h1Mob3}</span>
-                  </span>
-                  {/* L4 — 5 REWARDS — blanc */}
-                  <span style={{
-                    display: "block", fontSize: "clamp(47px, 13.5vw, 80px)",
-                    color: "#F7F8FA", whiteSpace: "nowrap",
-                    textShadow: "0 2px 18px rgba(0,0,0,0.85)", marginTop: 4,
-                  }}>
-                    5 REWARDS
-                  </span>
-                </>
-              ) : (
-                /* ── 3 LIGNES DESKTOP — inchangé ── */
-                <>
-                  <span className="h1-line" style={{
-                    fontSize: "clamp(44px, 5.5vw, 68px)", color: "#F7F8FA", whiteSpace: "nowrap",
-                    textShadow: "0 2px 18px rgba(0,0,0,0.85), 0 0 40px rgba(0,0,0,0.60)",
-                  }}>
-                    {h1L1}
-                  </span>
-                  <span className="h1-line" style={{ marginTop: 7, fontSize: "clamp(42px, 4.3vw, 58px)", whiteSpace: "nowrap" }}>
-                    <span style={{
-                      background: "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)",
-                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                    }}>{h1L2acc}</span>
-                  </span>
-                  <span className="h1-line" style={{ marginTop: 4, fontSize: "clamp(52px, 6.5vw, 80px)", whiteSpace: "nowrap" }}>
-                    <span style={{ color: "#F7F8FA" }}>{h1L3}</span>
-                  </span>
-                </>
-              )}
-            </h1>
-            </div>
-
-            {/* ── Personnages + jetons — mobile uniquement, pleine largeur ── */}
-            {isMobile && (
-              <div style={{
-                display:        "flex",
-                justifyContent: "center",
-                marginLeft:     -22,
-                marginRight:    -22,
-                marginBottom:   0,
-                overflow:       "hidden",
-                lineHeight:     0,
-                alignSelf:      "stretch",
-                flex:           1,
-                minHeight:      0,
-              }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/HEROOOOOOO.png"
-                  alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
-                  style={{
-                    display:         "block",
-                    width:           "100%",
-                    maxWidth:        "100%",
-                    height:          "100%",
-                    objectFit:       "contain",
-                    objectPosition:  "center bottom",
-                    margin:          "0 auto",
-                    backgroundColor: "#000000",
-                    WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.60) 88%, transparent 100%)",
-                    maskImage:       "linear-gradient(to bottom, black 0%, black 70%, rgba(0,0,0,0.60) 88%, transparent 100%)",
-                  }}
-                />
-              </div>
-            )}
-
-            {/* ── Mobile : promo + CTA dans un wrapper commun (largeur partagée) ── */}
-            {isMobile && (
-              <div style={{
-                display: "flex", flexDirection: "column",
-                alignSelf: "stretch",
-                marginLeft: -12, marginRight: -12,
-                gap: 16,
-                animation: "heroFadeUp 0.52s ease 0.10s both",
-              }}>
-                {heroPromotion.visible && (
-                  <div style={{
-                    display: "flex", alignItems: "stretch",
-                    background: "#1d2024",
-                    border: "1px solid rgba(255,255,255,0.075)",
-                    borderRadius: 16, padding: "14px 18px",
-                    boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
-                  } as React.CSSProperties}>
-                    {promoColumns}
+    <section id="hero" className={styles.hero} aria-labelledby="hero-title">
+      <div className={styles.layout}>
+        <div className={styles.copy}>
+          <p className={styles.badge}><span />{L("Programme éducatif • Trading simulé", "Programa educativo • Trading simulado", "Educational program • Simulated trading")}</p>
+          <h1 id="hero-title" className={styles.title}>
+            <span>{L("Validez 1 challenge.", "Supera 1 challenge.", "Complete 1 challenge.")}</span>
+            <span className={styles.gold}>{L("Débloquez 5 récompenses.", "Desbloquea 5 recompensas.", "Unlock 5 rewards.")}</span>
+          </h1>
+          <p className={styles.description}>{L("Découvrez le fonctionnement des récompenses et choisissez votre challenge.", "Descubre cómo funcionan las recompensas y elige tu challenge.", "Discover how rewards work and choose your challenge.")}</p>
+          <div className={styles.actions}>
+            {promotion.visible && (
+              <div className={styles.promotion}>
+                <p className={styles.eyebrow}>{promotion.headline || L("Offres du moment", "Ofertas actuales", "Current offers")}</p>
+                <div className={styles.offers}>
+                  <div className={styles.offer}>
+                    <span>{promotion.leftLabel}</span>
+                    <strong>−{promotion.leftDiscount}<small> %</small></strong>
                   </div>
-                )}
-                <a
-                  href="#pricing"
-                  className="h-cta-main"
-                  style={{
-                    width: "100%", boxSizing: "border-box",
-                    fontSize: 18, fontWeight: 730,
-                    height: 66, padding: "0 32px",
-                    justifyContent: "center",
-                  }}
-                >
-                  {ctaMain}
-                  <ArrowRight size={20} strokeWidth={2.2} aria-hidden="true" />
-                </a>
-              </div>
-            )}
-
-            {/* ── Desktop : promo + CTA inchangés ── */}
-            {!isMobile && (
-              <>
-                {heroPromotion.visible && (
-                  <div style={{
-                    display: "inline-flex", alignItems: "stretch",
-                    alignSelf: "flex-start",
-                    background: "#1d2024",
-                    border: "1px solid rgba(255,255,255,0.075)",
-                    borderRadius: 16, padding: "5px 28px",
-                    marginBottom: 20,
-                    marginLeft: -78,
-                    animation: "heroFadeUp 0.52s ease 0.10s both",
-                    boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
-                  } as React.CSSProperties}>
-                    {promoColumns}
+                  <div className={styles.offerFeatured}>
+                    <span>{promotion.rightLabel}</span>
+                    <strong>−{promotion.rightDiscount}<small> %</small></strong>
                   </div>
-                )}
-                <div style={{
-                  display: "flex",
-                  alignItems: "flex-start", justifyContent: "flex-start",
-                  marginLeft: -78,
-                  animation: "heroFadeUp 0.52s ease 0.15s both",
-                }}>
-                  <a
-                    href="#pricing"
-                    className="h-cta-main"
-                    style={{
-                      fontSize: 21, fontWeight: 730,
-                      height: 72, padding: "0 44px",
-                      justifyContent: "center",
-                      minWidth: 410, boxSizing: "border-box" as const,
-                    }}
-                  >
-                    {ctaMain}
-                    <ArrowRight size={22} strokeWidth={2.2} aria-hidden="true" />
-                  </a>
                 </div>
-              </>
+              </div>
             )}
-
-          </div>{/* fin colonne gauche */}
-
-          {/* ════════════════════════════════════════════════
-              COLONNE DROITE — Parcours 6 250 $ · 100K
-          ════════════════════════════════════════════════ */}
-          <div style={{
-            flex:           isMobile ? "none" : "1 1 0",
-            display:        isMobile ? "none" : "flex",
-            flexDirection:  "column",
-            justifyContent: "center",
-            padding:        "18px 0",
-          }}>
-
-            {/* ── Visuel droit — Personnages + jetons 25K / 50K / 100K ── */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/HEROOOOOOO.png"
-              alt="Comptes Traders Rewards — 3 personnages avec jetons 25K, 50K et 100K"
-              style={{
-                display:        "block",
-                width:          "170%",
-                maxWidth:       "none",
-                height:         "auto",
-                objectFit:      "contain",
-                objectPosition: "center",
-                margin:         "0 auto",
-                marginLeft:     "-35%",
-                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 28%), linear-gradient(to bottom, black 0%, black 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
-                WebkitMaskComposite: "destination-in",
-                maskImage:       "linear-gradient(to right, transparent 0%, black 28%), linear-gradient(to bottom, black 0%, black 72%, rgba(0,0,0,0.55) 88%, transparent 100%)",
-                maskComposite:   "intersect",
-              }}
-            />
-          </div>{/* fin colonne droite */}
-
-        </div>{/* fin wrapper flex */}
-      </section>
-    </>
+            <a href="#pricing" className={styles.cta}>{L("Voir les challenges et les prix", "Ver challenges y precios", "View challenges and prices")}<ArrowRight size={23} aria-hidden="true" /></a>
+            <a href="#rules" className={styles.secondary}>{L("Comment ça marche ?", "¿Cómo funciona?", "How does it work?")}</a>
+          </div>
+        </div>
+        <div className={styles.visual}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/HEROOOOOOO.png" alt="" fetchPriority="high" />
+        </div>
+      </div>
+      <ol className={styles.steps} aria-label={L("Votre parcours", "Tu recorrido", "Your journey")}>
+        {steps.map(({ Icon, title, text }, index) => (
+          <li key={index} className={styles.step}>
+            <span className={styles.icon}><Icon size={27} strokeWidth={1.5} aria-hidden="true" /></span>
+            <div><span className={styles.number}>0{index + 1}</span><h2>{title}</h2><p>{text}</p></div>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

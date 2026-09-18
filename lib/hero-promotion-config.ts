@@ -3,8 +3,10 @@ export const HERO_PROMOTION_DESCRIPTION =
   "Configuration du cadre promotionnel affiché dans le Hero";
 
 export const HERO_PROMOTION_LABEL_MAX_LENGTH = 32;
+export const HERO_PROMOTION_HEADLINE_MAX_LENGTH = 100;
 
 export interface HeroPromotionConfig {
+  headline: string;
   enabled: boolean;
   startsAt: string | null;
   endsAt: string | null;
@@ -30,6 +32,7 @@ export type HeroPromotionValidationResult =
   | { ok: false; errors: string[] };
 
 export const DEFAULT_HERO_PROMOTION_CONFIG: HeroPromotionConfig = {
+  headline: "",
   enabled: true,
   startsAt: null,
   endsAt: null,
@@ -83,6 +86,7 @@ export function normalizeHeroPromotionConfig(
       typeof source.enabled === "boolean"
         ? source.enabled
         : DEFAULT_HERO_PROMOTION_CONFIG.enabled,
+    headline: typeof source.headline === "string" && source.headline.trim().length <= HERO_PROMOTION_HEADLINE_MAX_LENGTH ? source.headline.trim() : "",
     startsAt: normalizeDate(source.startsAt),
     endsAt: normalizeDate(source.endsAt),
     leftLabel: normalizeLabel(
@@ -167,6 +171,13 @@ export function validateHeroPromotionConfig(
   }
 
   const errors: string[] = [];
+  const headline = typeof value.headline === "string" ? value.headline.trim() : "";
+  if (value.headline !== undefined && typeof value.headline !== "string") {
+    errors.push("Le libellé des offres doit être un texte");
+  }
+  if (headline.length > HERO_PROMOTION_HEADLINE_MAX_LENGTH) {
+    errors.push(`Le libellé des offres doit faire au maximum ${HERO_PROMOTION_HEADLINE_MAX_LENGTH} caractères`);
+  }
 
   const enabled =
     typeof value.enabled === "boolean"
@@ -210,6 +221,7 @@ export function validateHeroPromotionConfig(
   return {
     ok: true,
     value: {
+      headline,
       enabled,
       startsAt,
       endsAt,

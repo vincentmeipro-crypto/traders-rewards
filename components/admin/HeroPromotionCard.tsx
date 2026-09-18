@@ -3,6 +3,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import {
   HERO_PROMOTION_LABEL_MAX_LENGTH,
+  HERO_PROMOTION_HEADLINE_MAX_LENGTH,
   type HeroPromotionPresentation,
   type HeroPromotionStatus,
 } from "@/lib/hero-promotion-config";
@@ -14,6 +15,7 @@ type Props = {
 };
 
 type FormState = {
+  headline: string;
   enabled: boolean;
   startsAt: string;
   endsAt: string;
@@ -24,6 +26,7 @@ type FormState = {
 };
 
 const EMPTY_FORM: FormState = {
+  headline: "",
   enabled: true,
   startsAt: "",
   endsAt: "",
@@ -79,6 +82,7 @@ function toIso(value: string): string | null {
 
 function toForm(data: HeroPromotionPresentation): FormState {
   return {
+    headline: data.headline ?? "",
     enabled: data.enabled,
     startsAt: toDateTimeLocal(data.startsAt),
     endsAt: toDateTimeLocal(data.endsAt),
@@ -222,6 +226,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          headline: form.headline,
           enabled: form.enabled,
           startsAt: toIso(form.startsAt),
           endsAt: toIso(form.endsAt),
@@ -346,6 +351,24 @@ export default function HeroPromotionCard({ onNotify }: Props) {
         </button>
       </div>
 
+      <div style={{ marginBottom: 18 }}>
+        <label className="hero-promo-label" htmlFor="hero-promo-headline">
+          Libellé au-dessus des offres
+        </label>
+        <input
+          id="hero-promo-headline"
+          className="hero-promo-input"
+          value={form.headline}
+          maxLength={HERO_PROMOTION_HEADLINE_MAX_LENGTH}
+          disabled={disabled}
+          placeholder="Offres promotionnelles jusqu’au 15/10/2026"
+          aria-describedby="hero-promo-headline-help"
+          onChange={(event) => setForm((current) => ({ ...current, headline: event.target.value }))}
+        />
+        <p id="hero-promo-headline-help" className="hero-promo-help" style={{ marginTop: 7 }}>
+          Texte libre, date comprise. Vide : « Offres du moment ». Ce texte ne modifie pas la date de fin d’affichage.
+        </p>
+      </div>
       <div className="hero-promo-grid">
         <ColumnEditor
           side="left"
