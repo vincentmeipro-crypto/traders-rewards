@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getActivePricingPlan, isPricingSlug } from "@/lib/pricing";
 
 // GET /api/admin/products — liste tous les produits (actifs + inactifs) avec phases + règles
 export async function GET(req: NextRequest) {
@@ -59,12 +60,20 @@ export async function GET(req: NextRequest) {
     if (c.status === "funded")  countMap[c.product_id].funded++;
   }
 
-  const result = products.map((product) => ({
+  const pricing = getActivePricingPlan();
+  const result = products.map((product) => {
+    const slug: string = product.slug;
+    const price = isPricingSlug(slug) ? pricing.prices[slug] : null;
+    return ({
     ...product,
+    effective_price_cents: price?.unit ?? product.price_eur_cents,
+    pack3_price_cents: price?.pack3 ?? null,
+    pricing_period: price ? pricing.periodName : null,
     phases:          allPhases.filter((ph) => ph.product_id === product.id),
     rules:           allRules.filter((r)  => r.product_id  === product.id),
     challenge_count: countMap[product.id] ?? { active: 0, funded: 0, total: 0 },
-  }));
+  });
+  });
 
   return NextResponse.json(result);
 }

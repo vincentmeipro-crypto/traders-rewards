@@ -161,8 +161,8 @@ describe("Fallback hors des périodes définies", () => {
   test("août 2026 → fallback période 1 (avant campagne)", () => {
     expect(getActivePeriod(d(2026, 8, 27)).name).toBe("oct-1-15");
   });
-  test("janvier 2027 → fallback période 4 (après campagne)", () => {
-    expect(getActivePeriod(d(2027, 1, 5)).name).toBe("dec-16-31");
+  test("janvier 2027 → nouvelle rotation A", () => {
+    expect(getActivePeriod(d(2027, 1, 5)).name).toBe("weekly-A");
   });
 });
 

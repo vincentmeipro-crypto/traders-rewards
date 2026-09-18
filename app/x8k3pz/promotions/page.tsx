@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import HeroPromotionCard from "@/components/admin/HeroPromotionCard";
+import { PROMOTIONS_2027 } from "@/lib/pricing";
 
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
@@ -232,6 +233,12 @@ export default function PromotionsPage() {
       {/* ── Body ────────────────────────────────────────────────── */}
       <div style={{ padding: "24px 32px", maxWidth: 1200, margin: "0 auto" }}>
 
+        <section style={{ marginBottom: 24, padding: 24, border: "1px solid #66532b", borderRadius: 16 }}>
+          <h2 style={{ color: "#D9B96F", marginBottom: 12 }}>Promotions programmées au 1er janvier 2027</h2>
+          <p>Rotation automatique toutes les semaines : A, B, C, puis A. Changement à minuit, heure de Paris.</p>
+          <p>{PROMOTIONS_2027.map(p => `${p.name} : unité −${p.unitDiscount} % / pack ×3 −${p.packDiscount} %`).join(" · ")}</p>
+          <p>À partir de cette date, le Hero suit les remises du calendrier de prix, comme le site et les paiements. Les champs de remise ci-dessous concernent la campagne 2026.</p>
+        </section>
         <HeroPromotionCard onNotify={notify} />
 
         {/* KPI row — 2 cards */}

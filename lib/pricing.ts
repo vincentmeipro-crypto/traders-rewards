@@ -2,7 +2,7 @@
  * ============================================================
  * lib/pricing.ts — Source de vérité unique pour les prix Traders Rewards
  * ============================================================
- * Calendrier promotionnel oct-déc 2026.
+ * Calendrier 2026, puis rotation hebdomadaire A/B/C dès janvier 2027.
  * Importé par : api/products, api/stripe/checkout, api/crypto/checkout,
  *               api/stripe/webhook, api/crypto/webhook, frontend via /api/products.
  *
@@ -42,6 +42,20 @@ export const REF_PRICES: Record<PricingSlug, PriceEntry> = {
   "rewards-50k":  { unit: 29000, pack3:  87000 }, // 290€  /  870€
   "rewards-100k": { unit: 59000, pack3: 177000 }, // 590€  / 1 770€
 };
+
+/** Scénario 1 : semaines de sept jours à partir du 1er janvier 2027 à Paris. */
+export const PROMOTIONS_2027 = [
+  { name: "A", unitDiscount: 65, packDiscount: 70 },
+  { name: "B", unitDiscount: 60, packDiscount: 65 },
+  { name: "C", unitDiscount: 55, packDiscount: 60 },
+] as const;
+
+export function getScheduledPromotion(now: Date = new Date()) {
+  const { year, month, day } = toParisDate(now);
+  const days = Math.floor((Date.UTC(year, month - 1, day) - Date.UTC(2027, 0, 1)) / 86400000);
+  if (days < 0) return null;
+  return PROMOTIONS_2027[Math.floor(days / 7) % PROMOTIONS_2027.length];
+}
 
 // ── Calendrier promotionnel 2026 ──────────────────────────────────────────────
 export const PRICING_PERIODS: PricingPeriod[] = [
@@ -115,12 +129,23 @@ function ymd(year: number, month: number, day: number): number {
 /**
  * Retourne la période promotionnelle active pour une date donnée (heure Paris).
  *
- * Comportement hors plages définies (toutes liées à 2026) :
+ * Comportement hors plages définies :
  *  - Avant le 1er oct 2026 → retourne la période 1 (prix d'entrée les plus bas).
- *  - Après le 31 déc 2026  → retourne la période 4 (dernière connue).
+ *  - Dès le 1er janvier 2027 → rotation A/B/C, semaines ancrées au 1er janvier.
  */
 export function getActivePeriod(now: Date = new Date()): PricingPeriod {
   const { year, month, day } = toParisDate(now);
+  const promotion = getScheduledPromotion(now);
+  if (promotion) {
+    const prices = Object.fromEntries(
+      Object.entries(REF_PRICES).map(([slug, ref]) => [slug, {
+        unit: Math.round(ref.unit * (100 - promotion.unitDiscount) / 100),
+        pack3: Math.round(ref.pack3 * (100 - promotion.packDiscount) / 100),
+      }])
+    ) as Record<PricingSlug, PriceEntry>;
+    return { name: `weekly-${promotion.name}`, fromYear: year, fromMonth: month, fromDay: day,
+      toYear: year, toMonth: month, toDay: day, prices };
+  }
   const cur = ymd(year, month, day);
 
   for (const p of PRICING_PERIODS) {

@@ -27,6 +27,7 @@ import {
 } from "./v1-engine";
 import { getV1LevelLabel } from "./v1-display";
 import { CHALLENGE_PROFIT_TARGET_PCT, challengeProfitTargetUsd } from "./program-rules";
+import { LEGAL_ENTITY } from "./legal-entity";
 
 // ── Type whitelist ────────────────────────────────────────────
 
@@ -288,7 +289,9 @@ function buildEmail({
               </p>
               <p style="margin:0;color:#92928d;font-family:Arial,Helvetica,sans-serif;font-size:10px;line-height:1.6;">
                 Programme d'évaluation de performances sur comptes simulés.<br>
-                Ce message contient des informations liées à votre compte Traders Rewards.
+                Ce message contient des informations liées à votre compte Traders Rewards.<br>
+                ${LEGAL_ENTITY.name} · Registre ${LEGAL_ENTITY.registryCode}<br>
+                ${LEGAL_ENTITY.addressInternational}
               </p>
             </td>
           </tr>

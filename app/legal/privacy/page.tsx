@@ -1,3 +1,5 @@
+import { LEGAL_ENTITY } from "@/lib/legal-entity";
+
 export default function PrivacyPage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", color: "#fff", fontFamily: "Inter, sans-serif" }}>
@@ -5,12 +7,12 @@ export default function PrivacyPage() {
         <a href="/" style={{ color: "#9CCFEA", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 40 }}>← Back to Home</a>
 
         <h1 style={{ fontSize: 36, fontWeight: 900, marginBottom: 8 }}>Privacy Policy</h1>
-        <p style={{ color: "#555", fontSize: 14, marginBottom: 48 }}>Last updated: May 13, 2026</p>
+        <p style={{ color: "#999", fontSize: 14, marginBottom: 48 }}>Last updated: September 18, 2026</p>
 
         {[
           {
             title: "1. Data Controller",
-            content: `Traders Rewards (OÜ, Estonia) is the data controller responsible for your personal data. Contact: contact@traders-rewards.eu`
+            content: `${LEGAL_ENTITY.name}, Estonian registry code ${LEGAL_ENTITY.registryCode}, is the controller of your personal data. Registered office: ${LEGAL_ENTITY.addressInternational}. Contact for privacy requests: ${LEGAL_ENTITY.email}. Corporate details: ${LEGAL_ENTITY.website}/legal/notice.`
           },
           {
             title: "2. Data We Collect",

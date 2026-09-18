@@ -1,3 +1,5 @@
+import { LEGAL_ENTITY } from "@/lib/legal-entity";
+
 export default function RiskPage() {
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "#070707", color: "#fff", fontFamily: "Inter, sans-serif" }}>
@@ -5,7 +7,8 @@ export default function RiskPage() {
         <a href="/" style={{ color: "#9CCFEA", fontSize: 13, textDecoration: "none", display: "block", marginBottom: 40 }}>← Back to Home</a>
 
         <h1 style={{ fontSize: 36, fontWeight: 900, marginBottom: 8 }}>Risk Disclaimer</h1>
-        <p style={{ color: "#555", fontSize: 14, marginBottom: 48 }}>Last updated: May 13, 2026</p>
+        <p style={{ color: "#999", fontSize: 14, marginBottom: 24 }}>Last updated: September 18, 2026</p>
+        <p style={{ color: "#aaa", fontSize: 14, marginBottom: 32 }}>{LEGAL_ENTITY.name}, registry code {LEGAL_ENTITY.registryCode}. {LEGAL_ENTITY.addressInternational}. <a href="/legal/notice">Legal notice</a>.</p>
 
         <div style={{ backgroundColor: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 12, padding: "20px 24px", marginBottom: 48 }}>
           <p style={{ color: "#ef4444", fontWeight: 700, fontSize: 15, marginBottom: 8 }}>⚠️ Important Notice</p>

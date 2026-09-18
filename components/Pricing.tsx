@@ -320,7 +320,7 @@ export default function Pricing() {
             color: "rgba(255,255,255,0.22)",
             marginTop: V(3, 3, 4), fontWeight: 500,
           }}>
-            {L("Frais unique · non remboursable","Cargo único","One-time fee")}
+            {L("Paiement unique · rétractation selon CGV","Pago único · desistimiento según condiciones","One-time fee · withdrawal rights apply")}
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { challengeProfitTargetUsd } from "@/lib/program-rules";
+import { getActivePricingPlan, isPricingSlug } from "@/lib/pricing";
 
 // ════════════════════════════════════════════════════════════════
 //  PricingV1.tsx — Pricing V1 Traders Rewards
@@ -102,6 +103,10 @@ export default function PricingV1() {
   }, []);
 
   useEffect(() => {
+    const { prices } = getActivePricingPlan();
+    setCards(V1_FALLBACK.map(card => isPricingSlug(card.slug)
+      ? { ...card, priceCents: prices[card.slug].unit, pack3Cents: prices[card.slug].pack3 }
+      : card));
     fetch("/api/products")
       .then(r => r.json())
       .then((data: ApiProduct[]) => {
@@ -223,7 +228,7 @@ export default function PricingV1() {
           border:        "1px solid rgba(200,162,72,0.36)",
           boxShadow:     "0 0 14px rgba(200,162,72,0.08)",
         }}>
-          -90%
+          −{Math.round((1 - cards[selIdx].pack3Cents / cards[selIdx].refPack3Cents) * 100)}%
         </div>
 
         {/* En-tête — taille de compte + bouton "i" */}
@@ -334,7 +339,7 @@ export default function PricingV1() {
           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.40)", marginTop: 3, fontWeight: 450 }}>
             {isPack3
               ? L("3 Challenges · Paiement unique","3 Challenges · Pago único","3 Challenges · One-time")
-              : L("Paiement unique · non remboursable","Pago único · no reembolsable","One-time · non-refundable")}
+              : L("Paiement unique · rétractation selon CGV","Pago único · desistimiento según condiciones","One-time payment · withdrawal rights apply")}
           </div>
         </div>
 

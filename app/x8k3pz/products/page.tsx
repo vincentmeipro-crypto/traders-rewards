@@ -23,6 +23,7 @@ type Product = {
   model:           "2step" | "1step" | "vip";
   account_size:    string;
   price_eur_cents: number;
+  effective_price_cents?: number;
   active:          boolean;
   display_order:   number;
   updated_at:      string;
@@ -340,7 +341,7 @@ export default function ProductsPage() {
               {/* Lignes produits */}
               {group.items.map(product => {
                 const p1         = phase1(product.phases);
-                const priceEur   = Math.round(product.price_eur_cents / 100);
+                const priceEur   = (product.effective_price_cents ?? product.price_eur_cents) / 100;
                 const cnt        = product.challenge_count;
                 const isHovered  = hoveredId  === product.id;
                 const isMenuOpen = menuOpenId === product.id;
@@ -386,7 +387,7 @@ export default function ProductsPage() {
                     <div style={{ fontSize: 16, fontWeight: 800, color: product.active ? "#fff" : "rgba(255,255,255,0.28)", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.3px" }}>
                       {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,.3)", textDecoration: "line-through", marginBottom: 2 }}>€{STANDARD_PRICES[product.slug]}</span>}
                       €{priceEur}
-                      {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 9, color: "#C9963F", marginTop: 2 }}>LANCEMENT −90%</span>}
+                      {STANDARD_PRICES[product.slug] && <span style={{ display: "block", fontSize: 9, color: "#C9963F", marginTop: 2 }}>TARIF PROMOTIONNEL ACTUEL</span>}
                     </div>
 
                     {/* Règles contractuelles du Challenge — masqué en narrow */}

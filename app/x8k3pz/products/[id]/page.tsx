@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 
@@ -620,7 +620,7 @@ export default function ProductEditorPage() {
                   <div>
                     <Label>Prix promotionnel actuel</Label>
                     <Input value={form.price_eur} onChange={pf("price_eur")} type="number" suffix="€" />
-                    {form.slug.startsWith("rewards-") && <div style={{ fontSize: 10, color: "#C9963F", marginTop: 5 }}>Remise de lancement −90% · prix standard : {form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</div>}
+                    {form.slug.startsWith("rewards-") && <div style={{ fontSize: 10, color: "#C9963F", marginTop: 5 }}>Prix de référence : {form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</div>}
                   </div>
                   <div>
                     <Label>Prix crypto</Label>
@@ -1136,7 +1136,7 @@ export default function ProductEditorPage() {
                 {form.slug.startsWith("rewards-") && <span style={{ display: "block", fontSize: 12, color: "rgba(255,255,255,.32)", textDecoration: "line-through", letterSpacing: 0, marginBottom: 4 }}>{form.slug === "rewards-25k" ? "190 €" : form.slug === "rewards-50k" ? "290 €" : "590 €"}</span>}
                 {form.price_eur ? `€${form.price_eur}` : "—"}
               </div>
-              {form.slug.startsWith("rewards-") && <div style={{ color: "#C9963F", fontSize: 9, fontWeight: 900, letterSpacing: ".12em", marginBottom: 6 }}>OFFRE DE LANCEMENT · −90%</div>}
+              {form.slug.startsWith("rewards-") && <div style={{ color: "#C9963F", fontSize: 9, fontWeight: 900, letterSpacing: ".12em", marginBottom: 6 }}>PRIX ENREGISTRÉ · TARIF DE VENTE SELON CALENDRIER</div>}
               {form.price_crypto && (
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.28)", marginBottom: 4 }}>
                   Crypto : €{form.price_crypto}

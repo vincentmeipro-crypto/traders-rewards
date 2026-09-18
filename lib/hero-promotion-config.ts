@@ -1,3 +1,5 @@
+import { getScheduledPromotion } from "@/lib/pricing";
+
 export const HERO_PROMOTION_SETTING_KEY = "general.hero_promotion";
 export const HERO_PROMOTION_DESCRIPTION =
   "Configuration du cadre promotionnel affiché dans le Hero";
@@ -237,6 +239,19 @@ export function getHeroPromotionPresentation(
   config: HeroPromotionConfig,
   now = new Date()
 ): HeroPromotionPresentation {
+  const scheduled = getScheduledPromotion(now);
+  if (scheduled) {
+    return {
+      ...config,
+      headline: "Offres du moment",
+      startsAt: null,
+      endsAt: null,
+      leftDiscount: scheduled.unitDiscount,
+      rightDiscount: scheduled.packDiscount,
+      status: config.enabled ? "active" : "disabled",
+      visible: config.enabled,
+    };
+  }
   let status: HeroPromotionStatus = "active";
 
   if (!config.enabled) {

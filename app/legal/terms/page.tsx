@@ -1,3 +1,5 @@
+import { LEGAL_ENTITY, LEGAL_UPDATED_ON } from "@/lib/legal-entity";
+
 export default function TermsPage() {
   const sections = [
     {
@@ -92,7 +94,7 @@ export default function TermsPage() {
       title: "11. Droit de rétractation",
       content: [
         "Si vous êtes un Consommateur, vous disposez d'un droit de rétractation de quatorze (14) jours calendaires à compter de la conclusion de l'Accord, sans avoir à motiver votre décision.",
-        "Vous perdez ce droit dès que vous ouvrez votre premier trade simulé sur la Plateforme de Trading.",
+        "L’ouverture d’un premier trade simulé ne supprime pas, à elle seule, votre droit de rétractation. Une exception ne peut s’appliquer que si les conditions légales correspondantes sont réunies, notamment les exigences de consentement exprès et d’information préalable. Vos droits impératifs de consommateur demeurent applicables.",
         "Pour exercer ce droit, adressez-nous une notification par e-mail avant l'expiration du délai. Nous vous rembourserons dans les quatorze (14) jours suivant la réception de votre notification.",
       ]
     },
@@ -130,15 +132,15 @@ export default function TermsPage() {
     {
       title: "16. Résolution extrajudiciaire des litiges",
       content: [
-        "En tant que Consommateur résidant dans l'Union Européenne, vous pouvez recourir à la plateforme de règlement en ligne des litiges de la Commission Européenne : https://ec.europa.eu/consumers/odr",
-        "Ces procédures ne peuvent être engagées qu'après échec d'une résolution directe entre vous et nous, et dans le délai d'un an à compter de votre première réclamation.",
+        "Adressez d’abord votre réclamation à contact@traders-rewards.eu. En cas de litige transfrontalier dans l’Union européenne, le Centre européen des consommateurs de votre pays peut vous informer et vous accompagner : https://www.eccnet.eu/consumer-rights/how-enforce-my-consumer-rights/european-consumer-centres-network-ecc-net",
+        "Les consommateurs résidant en Estonie peuvent, sous réserve des conditions de recevabilité, saisir la commission estonienne des litiges de consommation : https://www.ttja.ee/en/consumer-disputes-committee. L’accès aux tribunaux compétents demeure ouvert.",
       ]
     },
     {
       title: "17. Droit applicable et juridiction compétente",
       content: [
         "L'Accord et les présentes CGV sont régis par le droit de la République d'Estonie.",
-        "Les juridictions de la République d'Estonie sont compétentes pour trancher tout litige né de l'Accord ou en relation avec celui-ci.",
+        "Ce choix de loi ne prive pas le consommateur des protections impératives applicables dans son pays de résidence habituelle. La compétence des tribunaux est déterminée par les règles applicables, notamment celles protégeant les consommateurs. Aucune compétence exclusive des tribunaux estoniens n’est imposée au consommateur en contradiction avec ces règles.",
       ]
     },
     {
@@ -193,14 +195,16 @@ export default function TermsPage() {
             Conditions Générales<br />de Vente et d&apos;Utilisation
           </h1>
           <p style={{ color: "#555", fontSize: 14 }}>
-            Dernière mise à jour : 24 mai 2026 — Traders Rewards OÜ, République d&apos;Estonie
+            Dernière mise à jour : {LEGAL_UPDATED_ON} — {LEGAL_ENTITY.name}, République d&apos;Estonie
           </p>
         </div>
 
         {/* Intro */}
         <div style={{ background: "#0d0d14", border: "1px solid #1e1e2e", borderRadius: 12, padding: "24px 28px", marginBottom: 48 }}>
           <p style={{ color: "#888", lineHeight: 1.8, fontSize: 14, margin: 0 }}>
-            Nous sommes <strong style={{ color: "#fff" }}>Traders Rewards OÜ</strong>, société de droit estonien (ci-après « nous » ou « Traders Rewards »). Notre mission est de fournir aux traders un environnement de trading simulé conçu pour évaluer leurs compétences et récompenser leurs résultats via le site <strong style={{ color: "#fff" }}>traders-rewards.eu</strong>.
+            Nous sommes <strong style={{ color: "#fff" }}>{LEGAL_ENTITY.name}</strong>, société de droit estonien immatriculée le {LEGAL_ENTITY.registeredOn} sous le numéro {LEGAL_ENTITY.registryCode}, au capital de {LEGAL_ENTITY.shareCapitalEur} €. Siège social : {LEGAL_ENTITY.address}. Représentant légal : {LEGAL_ENTITY.representative}, membre du conseil de direction. Contact : {LEGAL_ENTITY.email}.
+            <br /><br />
+            Nous fournissons un environnement de trading simulé conçu pour évaluer les compétences des participants et récompenser leurs résultats via traders-rewards.eu. <a href="/legal/notice" style={{ color: "#D9B96F" }}>Mentions légales et registre</a>.
             <br /><br />
             Les présentes CGV régissent l&apos;accès au Challenge Traders Rewards et à tous nos services. Les comptes de Challenge sont des comptes de <strong style={{ color: "#fff" }}>trading entièrement simulé</strong>. Aucun capital réel n&apos;est investi, aucun ordre n&apos;est exécuté sur les marchés financiers.
           </p>
@@ -227,7 +231,7 @@ export default function TermsPage() {
         {/* Footer note */}
         <div style={{ marginTop: 64, paddingTop: 32, borderTop: "1px solid #1a1a28", color: "#444", fontSize: 13, lineHeight: 1.7 }}>
           <p>Pour toute question relative aux présentes CGV : <a href="mailto:contact@traders-rewards.eu" style={{ color: "#00C2FF" }}>contact@traders-rewards.eu</a></p>
-          <p style={{ marginTop: 8 }}>Traders Rewards OÜ · République d&apos;Estonie · Version 1.0 — 24 mai 2026</p>
+          <p style={{ marginTop: 8 }}>{LEGAL_ENTITY.name} · Registre {LEGAL_ENTITY.registryCode} · Version 1.1 — {LEGAL_UPDATED_ON}</p>
         </div>
       </div>
     </div>

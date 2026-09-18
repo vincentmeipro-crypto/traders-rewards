@@ -8,6 +8,8 @@ import { ArrowLeft, Bitcoin, Check, ChevronRight, CreditCard, LockKeyhole, Shiel
 import { useLanguage } from "@/lib/LanguageContext";
 import { useCurrency } from "@/lib/CurrencyContext";
 import { NOWPAYMENTS_FIAT_SUPPORTED } from "@/lib/fx-rates";
+import { getActivePricingPlan, isPricingSlug, REF_PRICES } from "@/lib/pricing";
+import { LEGAL_ENTITY } from "@/lib/legal-entity";
 
 type ModelKey = "2step" | "1step";
 type Challenge = { label: string; model: "Challenge"; price: string; amount: number; pack3Amount: number };
@@ -81,6 +83,9 @@ function CheckoutContent() {
     ?? FALLBACK_PRODUCTS.find(product => product.slug === selectedProduct)
     ?? FALLBACK_PRODUCTS.find(product => product.slug === "rewards-50k")!;
   const selectedSize  = challenge.sizeKey;
+  const reference = isPricingSlug(challenge.slug) ? REF_PRICES[challenge.slug] : null;
+  const unitDiscount = reference ? Math.round((1 - challenge.amount / reference.unit) * 100) : 0;
+  const packDiscount = reference ? Math.round((1 - challenge.pack3Amount / reference.pack3) * 100) : 0;
 
   // Rules traduits
   const rules = [
@@ -165,6 +170,10 @@ function CheckoutContent() {
   }, []);
 
   useEffect(() => {
+    const { prices } = getActivePricingPlan();
+    setAvailableProducts(FALLBACK_PRODUCTS.map(product => isPricingSlug(product.slug)
+      ? { ...product, amount: prices[product.slug].unit, pack3Amount: prices[product.slug].pack3, price: formatPrice(prices[product.slug].unit) }
+      : product));
     fetch("/api/products")
       .then(response => response.json())
       .then((data: PublicProduct[]) => {
@@ -173,7 +182,7 @@ function CheckoutContent() {
           .filter(product => product.slug?.startsWith("rewards-") && [25000, 50000, 100000].includes(product.balance_usd))
           .map<CheckoutProduct>(product => {
             const unitCents  = product.unit_price_cents  ?? product.price_eur_cents;
-            const pack3Cents = product.pack3_price_cents ?? Math.round(unitCents * 3 * 0.5); // fallback rough
+            const pack3Cents = product.pack3_price_cents ?? (isPricingSlug(product.slug) ? prices[product.slug].pack3 : unitCents * 3);
             const sizeKey    = `${Math.round(product.balance_usd / 1000)}k`;
             const fb         = FALLBACK_PRODUCTS.find(f => f.sizeKey === sizeKey);
             return {
@@ -516,6 +525,11 @@ function CheckoutContent() {
               })}
             </div>
 
+            <p style={{ fontSize: 11, color: "#aaa", lineHeight: 1.6 }}>
+              {L("Vendeur", "Vendedor", "Seller")} : {LEGAL_ENTITY.name} · {LEGAL_ENTITY.registryCode}<br />
+              {LEGAL_ENTITY.addressInternational}<br />
+              <a href="/legal/notice" style={{ color: "#D9B96F" }}>{L("Mentions légales et contact", "Aviso legal y contacto", "Legal notice and contact")}</a>
+            </p>
             {/* Sélecteur quantité : 1 Challenge / Pack ×3 */}
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
 
@@ -533,7 +547,7 @@ function CheckoutContent() {
                   {L("1 Challenge", "1 Challenge", "1 Challenge")}
                 </div>
                 <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color: quantity === 1 ? "#FFFFFF" : "rgba(255,255,255,0.55)" }}>
-                  −80%
+                  −{unitDiscount}%
                 </div>
               </button>
 
@@ -561,7 +575,7 @@ function CheckoutContent() {
                   {L("Pack ×3", "Pack ×3", "Pack ×3")}
                 </div>
                 <div style={{ fontSize:13, fontWeight:900, letterSpacing:"0.3px", color: quantity === 3 ? "#D4A843" : "rgba(212,168,67,0.60)" }}>
-                  −90%
+                  −{packDiscount}%
                 </div>
               </button>
 
@@ -804,12 +818,12 @@ function CheckoutContent() {
                   "• Challenge Fees are"
                 )}{" "}
                 <strong style={{ color: "rgba(255,255,255,0.7)" }}>
-                  {L("non remboursables", "no reembolsables", "non-refundable")}
+                  {L("soumis au droit de rétractation prévu dans les CGV", "sujetos al derecho de desistimiento previsto en las condiciones", "subject to the withdrawal rights described in the terms")}
                 </strong>
                 {L(
-                  " dès l'ouverture du premier trade (droit de rétractation de 14 jours avant tout trade).",
-                  " desde la apertura del primer trade (derecho de desistimiento de 14 días antes de cualquier trade).",
-                  " from the opening of the first trade (14-day withdrawal right before any trade)."
+                  ". Consultez les conditions et modalités de rétractation avant votre achat.",
+                  ". Consulta las condiciones y modalidades de desistimiento antes de comprar.",
+                  ". Review the withdrawal conditions and procedure before purchasing."
                 )}<br />
                 {L(
                   "• Le Challenge comporte",

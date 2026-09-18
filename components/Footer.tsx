@@ -1,6 +1,7 @@
 "use client";
 import { useLanguage } from "@/lib/LanguageContext";
 import { useState, useEffect } from "react";
+import { LEGAL_ENTITY } from "@/lib/legal-entity";
 
 export default function Footer() {
   const { T, lang } = useLanguage();
@@ -103,6 +104,7 @@ export default function Footer() {
           <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, margin: 0 }}>{T.footer.copyright}</p>
           <div style={{ display: "flex", gap: isMobile ? 16 : 24, flexWrap: "wrap" }}>
             {[
+              { label: L("Mentions légales", "Aviso legal", "Legal notice"), href: "/legal/notice" },
               { label: T.footer.privacy, href: "/legal/privacy" },
               { label: T.footer.terms,   href: "/legal/terms" },
               { label: T.footer.risk,    href: "/legal/risk" },
@@ -117,6 +119,11 @@ export default function Footer() {
           </div>
         </div>
 
+        <p style={{ color: "#999", fontSize: 12, lineHeight: 1.8, marginTop: 24 }}>
+          {LEGAL_ENTITY.name} · {L("Registre", "Registro", "Registry")} {LEGAL_ENTITY.registryCode}<br />
+          {LEGAL_ENTITY.addressInternational}<br />
+          <a href={`mailto:${LEGAL_ENTITY.email}`} style={{ color: "inherit" }}>{LEGAL_ENTITY.email}</a>
+        </p>
       </div>
     </footer>
   );

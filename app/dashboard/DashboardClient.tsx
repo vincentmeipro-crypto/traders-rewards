@@ -15,6 +15,7 @@ import DashboardRulesTab from "./DashboardRulesTab";
 import type { RewardEligibility } from "@/lib/reward-eligibility";
 import { validRewardAmount } from "@/lib/reward-eligibility";
 import { isV1Challenge } from "@/lib/v1-display";
+import { LEGAL_ENTITY } from "@/lib/legal-entity";
 
 type Challenge = {
   id: string;
@@ -1105,6 +1106,7 @@ export default function DashboardClient({ user }: { user: User }) {
                               <div class="total">Total TTC : €${c.amount_paid}</div>
                               <div class="footer">
                                 TRADERS REWARDS — traders-rewards.eu — Paiement reçu le ${d.toLocaleDateString("fr-FR")}<br>
+                                ${d.getTime() >= Date.parse("2026-09-18T00:00:00+03:00") ? `${LEGAL_ENTITY.name} · Registre ${LEGAL_ENTITY.registryCode}<br>${LEGAL_ENTITY.address}<br>${LEGAL_ENTITY.email}<br>` : ""}
                                 Ce document tient lieu de facture acquittée.
                               </div>
                               <div style="text-align:center;margin-top:32px"><button onclick="window.print()" style="background:#111;color:#fff;border:none;padding:12px 32px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Imprimer / Télécharger PDF</button></div>
