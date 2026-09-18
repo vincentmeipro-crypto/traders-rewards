@@ -420,7 +420,8 @@ export default function LiveChatWidget() {
         .lcw-ta:focus { border-color: rgba(212,168,67,0.45) !important; }
         .lcw-ta::placeholder { color: rgba(255,255,255,0.25); }
         @media (max-width: 639px) {
-          .lcw-btn  { bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important; right: 16px !important; }
+          .lcw-btn  { bottom: calc(10px + env(safe-area-inset-bottom, 0px)) !important; right: 10px !important; width: 44px !important; height: 44px !important; box-shadow: none !important; }
+          .lcw-btn > svg, .lcw-btn > span > svg { width: 20px; height: 20px; }
           .lcw-panel {
             left: 8px !important; right: 8px !important; width: auto !important;
             bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;

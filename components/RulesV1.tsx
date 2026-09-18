@@ -60,7 +60,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
               {row.label}
             </span>
           </div>
-          <span style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>{row.value}</span>
+          <span style={{ fontSize: row.value.length > 24 ? 12 : 15, fontWeight: 900, color: "#fff", textAlign: "right", maxWidth: "62%", lineHeight: 1.4 }}>{row.value}</span>
         </div>
         {row.subNote && (
           <p
@@ -83,28 +83,40 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
     level:         string;
     title:         string;
     subtitle:      string;
+    badges:        string[];
     rows:          RuleRow[];
   }[] = [
     {
       level:    L("NIVEAU 01", "NIVEL 01", "LEVEL 01"),
       title:    "CHALLENGE",
       subtitle: L("Validez votre Challenge", "Valide su Challenge", "Complete your Challenge"),
+      badges: [
+        L("1 seule étape", "1 sola etapa", "Just 1 step"),
+        L("2 jours minimum", "2 días como mínimo", "2 days minimum"),
+        L("Jusqu’à 10 challenges actifs simultanément", "Hasta 10 challenges activos simultáneamente", "Up to 10 challenges active at once"),
+      ],
       rows: [
         { label: L("OBJECTIF",    "OBJETIVO",    "TARGET"),      value: showPct ? "+6 %" : fmt(profitUsd) },
         { label: "DD EOD",                                        value: showPct ? ddPct + " %" : fmt(ddUsd) },
         { label: L("CONSISTANCE", "CONSISTENCIA","CONSISTENCY"), value: "50 %" },
-        { label: L("DURÉE",       "DURACIÓN",    "DURATION"),    value: L("2 À 30 JOURS", "2 A 30 DÍAS", "2 TO 30 DAYS") },
+        { label: L("DURÉE",       "DURACIÓN",    "DURATION"),    value: L("30 JOURS", "30 DÍAS", "30 DAYS") },
       ],
     },
     {
       level:    L("NIVEAU 02", "NIVEL 02", "LEVEL 02"),
       title:    "TRADER REWARD",
       subtitle: L("Progressez jusqu'à 5 récompenses", "Progrese hasta 5 recompensas", "Progress to 5 rewards"),
+      badges: [
+        L("Jusqu’à 5 récompenses par compte", "Hasta 5 recompensas por cuenta", "Up to 5 rewards per account"),
+        L("90 % pour vous", "90 % para ti", "90% for you"),
+        L("Paiement sous 48 h", "Pago en 48 h", "Payment within 48h"),
+        L("Jusqu’à 5 comptes Reward actifs", "Hasta 5 cuentas Reward activas", "Up to 5 active Reward accounts"),
+      ],
       rows: [
         { label: "DD EOD",                                                          value: showPct ? ddPct + " %" : fmt(ddUsd) },
         { label: L("5 JOURS QUALIFIANTS", "5 DÍAS CALIFICADOS", "5 QUALIFYING DAYS"), value: fmt(qualMin) },
         { label: L("CONSISTANCE",        "CONSISTENCIA",      "CONSISTENCY"),        value: "50 %" },
-        { label: L("PAIEMENT",           "PAGO",              "PAYMENT"),            value: "48H MAX" },
+        { label: L("PAIEMENT",           "PAGO",              "PAYMENT"),            value: L("VIREMENT INSTANTANÉ & CRYPTO", "TRANSFERENCIA INSTANTÁNEA Y CRIPTO", "INSTANT TRANSFER & CRYPTO") },
       ],
     },
   ];
@@ -118,6 +130,11 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
         background:      compact ? "transparent" : "#000000",
       }}
     >
+      <style>{`
+        .rules-benefits { display:flex; flex-wrap:wrap; align-content:flex-start; gap:8px; list-style:none; padding:0; margin:0 0 20px; min-height:136px; }
+        .rules-benefits li { max-width:100%; padding:7px 10px; border-radius:10px; border:1px solid rgba(212,168,67,.28); background:rgba(212,168,67,.075); color:#e3c780; font-size:12px; font-weight:650; line-height:1.45; }
+        @media(max-width:899px) { .rules-benefits { min-height:0; } }
+      `}</style>
       <div style={{ maxWidth: compact ? "none" : 1500, margin: "0 auto" }}>
 
         {/* En-tête section — masqué en mode compact (dashboard) */}
@@ -275,7 +292,11 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
                 </p>
               </div>
 
-              {/* Séparateur — toujours au même Y dans les 2 cartes */}
+              <ul className="rules-benefits" aria-label={L("Avantages", "Ventajas", "Benefits")}>
+                {card.badges.map((badge) => <li key={badge}>{badge}</li>)}
+              </ul>
+
+              {/* Séparateur avant les règles détaillées */}
               <div style={{ height: 1, background: "rgba(255,255,255,.1)", marginBottom: 10 }} />
 
               {/* Lignes de règles — rendu unifié */}

@@ -40,7 +40,7 @@ export default function Hero() {
             <span>{L("Validez 1 challenge.", "Supera 1 challenge.", "Complete 1 challenge.")}</span>
             <span className={styles.gold}>{L("Débloquez 5 récompenses.", "Desbloquea 5 recompensas.", "Unlock 5 rewards.")}</span>
           </h1>
-          <p className={styles.description}>{L("Découvrez le fonctionnement des récompenses et choisissez votre challenge.", "Descubre cómo funcionan las recompensas y elige tu challenge.", "Discover how rewards work and choose your challenge.")}</p>
+          <p className={styles.description}><span className={styles.desktopDescription}>{L("Découvrez le fonctionnement des récompenses et choisissez votre challenge.", "Descubre cómo funcionan las recompensas y elige tu challenge.", "Discover how rewards work and choose your challenge.")}</span><span className={styles.mobileDescription}>{L("Choisissez votre challenge et découvrez les 5 niveaux de récompenses.", "Elige tu challenge y descubre los 5 niveles de recompensas.", "Choose your challenge and discover the 5 reward levels.")}</span></p>
           <div className={styles.actions}>
             {promotion.visible && (
               <div className={styles.promotion}>
