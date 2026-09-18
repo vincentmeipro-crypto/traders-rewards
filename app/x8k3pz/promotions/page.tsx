@@ -1,6 +1,7 @@
 ﻿"use client";
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import HeroPromotionCard from "@/components/admin/HeroPromotionCard";
 
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
@@ -230,6 +231,8 @@ export default function PromotionsPage() {
 
       {/* ── Body ────────────────────────────────────────────────── */}
       <div style={{ padding: "24px 32px", maxWidth: 1200, margin: "0 auto" }}>
+
+        <HeroPromotionCard onNotify={notify} />
 
         {/* KPI row — 2 cards */}
         <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
