@@ -1,0 +1,28 @@
+.dialog { position:fixed; inset:0; margin:auto; width:min(680px,calc(100% - 32px)); max-height:calc(100dvh - 40px); padding:0; border:1px solid #756035; border-radius:18px; background:#101113; color:#d0d2d7; overflow:auto; box-shadow:0 24px 80px #0009; font-size:15px; line-height:1.6; }
+.dialog::backdrop { background:#000c; }
+.content { padding:24px; }
+.header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
+.header h2 { margin:0; font-size:25px; font-weight:750; color:white; line-height:1.2; }
+.eyebrow { margin:0 0 7px; color:#dfbf76; font-size:11px; font-weight:700; letter-spacing:2px; }
+.header button { position:sticky; top:12px; border:1px solid #555; border-radius:50%; background:#1c1d20; color:white; width:40px; height:40px; flex-shrink:0; font-size:24px; cursor:pointer; }
+.dialog button:focus-visible, .dialog summary:focus-visible { outline:2px solid #dfbf76; outline-offset:3px; }
+.essentials { list-style:none; padding:0; margin:18px 0; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.essentials li { padding:13px; background:#d4a8430a; border:1px solid #544628; border-radius:10px; }
+.essentials strong { display:block; color:#e4c987; margin-bottom:4px; }
+.essentials span { font-size:14px; }
+.note { font-size:13px; color:#b2b5bf; }
+.example { border:1px solid #50432d; border-radius:12px; padding:18px; margin:20px 0; background:#171610; }
+.example h3 { font-size:17px; color:#f1dfb5; line-height:1.4; margin:0 0 10px; }
+.example p { margin:10px 0; }
+.example dl { margin:14px 0; }
+.example dl div { display:flex; justify-content:space-between; gap:16px; padding:8px 0; border-bottom:1px solid #ffffff12; }
+.example dt { font-size:14px; }
+.example dd { margin:0; color:white; font-weight:750; white-space:nowrap; }
+.details details { border-top:1px solid #ffffff22; padding:14px 0; }
+.details summary { color:#f0dfb7; cursor:pointer; font-weight:650; padding-right:6px; }
+.details p { margin:12px 0 0; }
+.thresholds { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.thresholds div { background:#ffffff06; border:1px solid #ffffff18; border-radius:8px; padding:8px; text-align:center; }
+.thresholds strong, .thresholds span { display:block; }
+.thresholds strong { color:#e4c987; }
+@media(max-width:560px) { .dialog { width:calc(100% - 20px); max-height:calc(100dvh - 24px); } .content { padding:18px; } .header h2 { font-size:22px; } .essentials { grid-template-columns:1fr; } .example { padding:13px; } }
