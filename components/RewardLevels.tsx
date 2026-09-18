@@ -12,59 +12,11 @@ import { REWARD_AMOUNTS } from "@/lib/rewardsData";
 
 const SIZES = ["25K", "50K", "100K"] as const;
 
-const SILVER    = "linear-gradient(110deg, #8E949A 0%, #D7DADD 35%, #F2F3F4 52%, #A8ADB2 75%, #D9DCDF 100%)";
-const ROSE_GOLD = "linear-gradient(110deg, #9F625C 0%, #C9897E 28%, #E5B4A8 52%, #B56F66 78%, #D79A8F 100%)";
 const GOLD      = "linear-gradient(110deg, #B88746 0%, #D6AD63 25%, #F2D79A 52%, #C6964D 78%, #E6C57E 100%)";
-
-const COL_GRADIENT = [SILVER, ROSE_GOLD, GOLD] as const;
-
-const BORDER = [
-  "rgba(216,180,104,0.12)",
-  "rgba(216,180,104,0.20)",
-  "rgba(216,180,104,0.30)",
-  "rgba(216,180,104,0.48)",
-  "rgba(216,180,104,0.72)",
-];
-
-const SHADOW = [
-  "0 2px 16px rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.015)",
-  "0 2px 16px rgba(0,0,0,0.52), inset 0 1px 0 rgba(255,255,255,0.018)",
-  "0 4px 20px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.020)",
-  "0 6px 24px rgba(0,0,0,0.58), 0 0 20px rgba(201,155,84,0.04), inset 0 1px 0 rgba(255,255,255,0.022)",
-  "0 8px 32px rgba(0,0,0,0.64), 0 0 32px rgba(201,155,84,0.07), inset 0 1px 0 rgba(255,255,255,0.025)",
-];
-
-const LABEL_GRAY = "rgba(143,148,154,0.90)";
-const AMT_D = [33, 34, 35, 36, 38];
-const AMT_M = [22, 23, 24, 25, 27];
 
 function fmtUSD(n: number) { return "$" + n.toLocaleString("en-US"); }
 
 const AMOUNTS = REWARD_AMOUNTS as readonly (readonly number[])[];
-
-function amtStyle(size: number, _si: number, gold?: boolean): React.CSSProperties {
-  if (gold) {
-    return {
-      fontSize:             size,
-      fontWeight:           800,
-      background:           GOLD,
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor:  "transparent",
-      backgroundClip:       "text",
-      letterSpacing:        "-0.5px",
-      fontVariantNumeric:   "tabular-nums",
-      lineHeight:           1,
-    };
-  }
-  return {
-    fontSize:           size,
-    fontWeight:         800,
-    color:              "#FFFFFF",
-    letterSpacing:      "-0.5px",
-    fontVariantNumeric: "tabular-nums",
-    lineHeight:         1,
-  };
-}
 
 // ── Sous-section label gold ────────────────────────────────────
 function SectionLabel({ text }: { text: string }) {
@@ -157,7 +109,8 @@ export default function RewardLevels() {
       id="rewards"
       aria-labelledby="rl-heading"
       style={{
-        padding:         "0 0 16px",
+        padding:         "12px 0 16px",
+        scrollMarginTop: 82,
         backgroundColor: "#000000",
         position:        "relative",
         overflow:        "hidden",
@@ -174,6 +127,48 @@ export default function RewardLevels() {
 
       {/* Styles */}
       <style>{`
+        .rl-overview { max-width:1160px; margin:0 auto; padding:0 24px; }
+        .rl-summary { position:relative; isolation:isolate; display:grid; grid-template-columns:2.4fr 1fr; gap:32px; align-items:center; margin-bottom:14px; }
+        .rl-eyebrow { color:#d4a843; font-size:10px; font-weight:800; letter-spacing:3px; margin-bottom:10px; }
+        .rl-summary-copy { position:relative; z-index:1; }
+        .rl-summary h2 { font-size:clamp(2.4rem,3.5vw,3.5rem); line-height:1.08; letter-spacing:-2px; font-weight:900; margin:0 0 12px; color:white; }
+        .rl-summary h2 span { color:#dfbf76; }
+        .rl-summary p { color:#b3b5bb; font-size:15px; line-height:1.5; max-width:540px; margin:0 0 14px; }
+        .rl-details { padding:9px 14px; border:1px solid #665127; border-radius:10px; background:#d4a8430c; color:#e5cc96; font:inherit; font-size:13px; cursor:pointer; }
+        .rl-details:focus-visible { outline:2px solid #e5cc96; outline-offset:4px; }
+        .rl-summary-image { position:absolute; right:0; top:0; display:block; width:55%; height:270px; object-fit:cover; object-position:center; pointer-events:none; z-index:0; -webkit-mask-image:linear-gradient(to right,transparent 0%,black 38%,black 85%,transparent 100%),linear-gradient(to bottom,transparent 0%,black 18%,black 62%,transparent 100%); -webkit-mask-composite:source-in; mask-image:linear-gradient(to right,transparent 0%,black 38%,black 85%,transparent 100%),linear-gradient(to bottom,transparent 0%,black 18%,black 62%,transparent 100%); mask-composite:intersect; }
+        .rl-table { position:relative; z-index:1; width:100%; border-collapse:separate; border-spacing:0 6px; table-layout:fixed; }
+        .rl-table caption { text-align:left; color:#a6a9b0; font-size:12px; padding-bottom:6px; }
+        .rl-table thead th { color:#dfbf76; font-size:13px; letter-spacing:1px; padding:8px; }
+        .rl-table thead th:first-child { text-align:left; width:28%; padding-left:18px; }
+        .rl-table tbody th, .rl-table td { background:#0c0d0f; border-top:1px solid #343024; border-bottom:1px solid #343024; padding:10px 12px; line-height:1.15; }
+        .rl-table tbody th { text-align:left; border-left:1px solid #343024; border-radius:12px 0 0 12px; }
+        .rl-table td { text-align:center; color:white; font-size:clamp(21px,2.3vw,30px); font-weight:750; font-variant-numeric:tabular-nums; }
+        .rl-table td:last-child { border-right:1px solid #343024; border-radius:0 12px 12px 0; }
+        .rl-level-number { color:#dfbf76; font-size:23px; font-weight:800; margin-right:14px; }
+        .rl-level-label { color:#afb2b9; font-size:11px; }
+        .rl-table .rl-final-level > * { border-color:#94773b; background:#19150c; color:#e5c77e; }
+        @media (max-width:759px) {
+          .rl-overview { padding:0 16px; }
+          .rl-summary { display:block; margin-bottom:16px; }
+          .rl-summary-image { display:none; }
+          .rl-summary-copy { position:relative; z-index:1; }
+        .rl-summary h2 { font-size:clamp(2.1rem,7vw,2.75rem); }
+          .rl-summary p { font-size:14px; margin-bottom:10px; }
+          .rl-table caption { font-size:11px; line-height:1.4; }
+          .rl-table thead th:first-child { width:19%; padding-left:10px; }
+          .rl-table thead th { font-size:12px; padding:7px 3px; }
+          .rl-table tbody th, .rl-table td { padding:13px 4px; }
+          .rl-table tbody th { padding-left:10px; }
+          .rl-table td { font-size:clamp(16px,4.5vw,22px); }
+          .rl-level-number { margin:0; font-size:20px; }
+          .rl-level-label { display:none; }
+        }
+        @media (min-width:760px) and (max-height:740px) {
+          .rl-summary-image { height:230px; }
+
+          .rl-table tbody th, .rl-table td { padding-top:8px; padding-bottom:8px; }
+        }
         .rl-card { transition: transform 0.20s ease, box-shadow 0.20s ease; will-change: transform; }
         .rl-card:hover { transform: translateY(-3px); }
         .rl-card-5:hover { box-shadow: 0 12px 48px rgba(201,155,84,0.13), 0 0 64px rgba(0,0,0,0.60), inset 0 1px 0 rgba(255,255,255,0.025) !important; }
@@ -183,257 +178,35 @@ export default function RewardLevels() {
         .rl-modal-box { animation: rl-fadein 0.18s ease both; }
       `}</style>
 
-      {/* ── HEADER DESKTOP : grid 2 colonnes — texte 38% / image 62% ─── */}
-      {/* Image en flux normal (width:100%; height:auto) → aucun zoom forcé.   */}
-      {/* Colonne texte s'étire (align-self:stretch) → fond noir pleine hauteur */}
-      {!isMobile && (
-        <div style={{ position: "relative", marginBottom: 24, overflow: "hidden" }}>
-
-          {/* Grid */}
-          <div style={{
-            display:             "grid",
-            gridTemplateColumns: "50% 50%",
-          }}>
-
-            {/* ── Colonne gauche : texte, fond noir, pleine hauteur ── */}
-            <div style={{
-              display:    "flex",
-              alignItems: "center",
-              padding:    "96px 72px 96px clamp(24px, calc((100vw - 1080px) / 2 + 24px), 140px)",
-              background: "#000000",
-            }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <div style={{ fontSize: 15, fontWeight: 800, color: "#D4A843", letterSpacing: "4.5px", textTransform: "uppercase", marginBottom: 21 }}>
-                  {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
-                </div>
-                <h2 id="rl-heading" style={{
-                  fontSize: "clamp(3.6rem, 5.25vw, 5.25rem)",
-                  fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
-                  letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 27px",
-                }}>
-                  {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
-                  <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                    {L("Récompenses", "Recompensas", "Rewards")}
-                  </span>
-                </h2>
-                <p style={{ maxWidth: 600, whiteSpace: "normal", margin: "0 0 30px", color: "rgba(255,255,255,0.46)", fontSize: 26, lineHeight: 1.7 }}>
-                  {L(
-                    "Retirez jusqu'à 5 récompenses avec le même compte.",
-                    "Retire hasta 5 recompensas con la misma cuenta.",
-                    "Withdraw up to 5 rewards with the same account.",
-                  )}
-                </p>
-                <div>
-                  <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
-                    display: "inline-flex", alignItems: "center", gap: 10,
-                    padding: "10px 21px", borderRadius: 19,
-                    border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
-                    color: "#FFFFFF", fontSize: 18, fontWeight: 600, cursor: "pointer",
-                    fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
-                  }}>
-                    <span style={{ fontSize: 21, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
-                    {L("Informations", "Información", "Information")}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Colonne droite : image entière en flux normal ───── */}
-            {/* width:100% de la colonne + height:auto → proportion naturelle */}
-            {/* alignSelf:center → image centrée si la colonne texte est plus haute */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/IMAGE PARCOURS.png"
-              alt="Les 5 niveaux de Rewards — Traders Rewards"
-              style={{
-                display:         "block",
-                width:           "100%",
-                height:          "auto",
-                objectFit:       "contain",
-                objectPosition:  "center",
-                alignSelf:       "center",
-                WebkitMaskImage:    "linear-gradient(to bottom, transparent 0%, black 90px), linear-gradient(to right, transparent 0%, black 6%, black 100%)",
-                WebkitMaskComposite: "destination-in",
-                maskImage:          "linear-gradient(to bottom, transparent 0%, black 90px), linear-gradient(to right, transparent 0%, black 6%, black 100%)",
-                maskComposite:      "intersect",
-              } as React.CSSProperties}
-            />
-
+      <div className="rl-overview">
+        <header className="rl-summary">
+          <div className="rl-summary-copy">
+            <div className="rl-eyebrow">{L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}</div>
+            <h2 id="rl-heading">{L("5 niveaux de", "5 niveles de", "5 levels of")} <span>{L("récompenses", "recompensas", "rewards")}</span></h2>
+            <p>{L("Jusqu’à 5 récompenses avec le même compte. Retrouvez les plafonds par niveau et par taille de compte.", "Hasta 5 recompensas con la misma cuenta. Consulta los límites por nivel y tamaño de cuenta.", "Up to 5 rewards with the same account. Compare caps by level and account size.")}</p>
+            <button className="rl-info-btn rl-details" onClick={() => setModalOpen(true)} aria-haspopup="dialog">
+              {L("ⓘ Conditions et fonctionnement", "ⓘ Condiciones y funcionamiento", "ⓘ Conditions and how it works")}
+            </button>
           </div>
-
-          {/* ── Patch PAYOUT EXPRESS 48H — image, flotte à la jonction des 2 colonnes ── */}
-          <div style={{
-            position:      "absolute",
-            left:          "calc(50% - 40px)",
-            top:           "calc(50% - 25px)",
-            transform:     "translateY(-50%)",
-            zIndex:        10,
-            pointerEvents: "none",
-          }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/payout express.png"
-              alt="Payout Express 48H"
-              style={{ width: 180, height: "auto", display: "block" }}
-            />
-          </div>
-
-          {/* Fondu bas */}
-          <div aria-hidden="true" style={{
-            position:   "absolute",
-            bottom:     0, left: 0, right: 0,
-            height:     32,
-            background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, #000 100%)",
-            pointerEvents: "none",
-          }} />
-
-        </div>
-      )}
-
-      {/* ── HEADER MOBILE : texte centré + image dessous ── */}
-      {isMobile && (
-        <div style={{ marginBottom: 28, padding: "0 14px" }}>
-          {/* Texte centré */}
-          <div style={{ textAlign: "center", marginBottom: 24 }}>
-            <div style={{ fontSize: 10, fontWeight: 800, color: "#D4A843", letterSpacing: "3px", textTransform: "uppercase", marginBottom: 14 }}>
-              {L("LES REWARDS", "LOS REWARDS", "THE REWARDS")}
-            </div>
-            <h2 id="rl-heading" style={{
-              fontSize: "clamp(2.1rem, 7vw, 2.75rem)",
-              fontWeight: 900, textTransform: "uppercase", color: "#FFFFFF",
-              letterSpacing: "0.5px", lineHeight: 1.05, margin: "0 0 18px",
-            }}>
-              {L("5 niveaux de", "5 niveles de", "5 levels of")}{" "}
-              <span style={{ background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                {L("Récompenses", "Recompensas", "Rewards")}
-              </span>
-            </h2>
-            <p style={{ maxWidth: 480, whiteSpace: "normal", margin: "0 auto 20px", color: "rgba(255,255,255,0.46)", fontSize: 14, lineHeight: 1.7 }}>
-              {L(
-                "Retirez jusqu'à 5 récompenses avec le même compte.",
-                "Retire hasta 5 recompensas con la misma cuenta.",
-                "Withdraw up to 5 rewards with the same account.",
-              )}
-            </p>
-
-            {/* ── Patch PAYOUT EXPRESS 48H — image mobile ── */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/payout express.png"
-                alt="Payout Express 48H"
-                style={{ width: 120, height: "auto", display: "block" }}
-              />
-            </div>
-
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <button className="rl-info-btn" onClick={() => setModalOpen(true)} aria-haspopup="dialog" style={{
-                display: "inline-flex", alignItems: "center", gap: 7,
-                padding: "7px 14px", borderRadius: 13,
-                border: "1px solid rgba(212,168,67,0.35)", background: "rgba(212,168,67,0.06)",
-                color: "#FFFFFF", fontSize: 12, fontWeight: 600, cursor: "pointer",
-                fontFamily: "inherit", letterSpacing: "0.2px", whiteSpace: "nowrap",
-              }}>
-                <span style={{ fontSize: 14, color: "#D4A843", lineHeight: 1, flexShrink: 0 }}>ⓘ</span>
-                {L("Informations", "Información", "Information")}
-              </button>
-            </div>
-          </div>
-          {/* Image mobile — sous le texte, avant le tableau */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/IMAGE PARCOURS.png"
-            alt="Les 5 niveaux de Rewards — Traders Rewards"
-            style={{ width: "100%", height: "auto", display: "block", objectFit: "contain",
-              WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 60px)",
-              maskImage:       "linear-gradient(to bottom, transparent 0%, black 60px)",
-            } as React.CSSProperties}
-          />
-        </div>
-      )}
-
-      {/* ── TABLEAU (maxWidth:1080) ───────────────────────────── */}
-      <div style={{ maxWidth: 1080, margin: "0 auto", padding: isMobile ? "0 14px" : "0 24px", position: "relative", zIndex: 1 }}>
-
-        {/* ── EN-TÊTES COLONNES desktop ───────────────────────── */}
-        {!isMobile && (
-          <div style={{ display: "grid", gridTemplateColumns: "220px repeat(3, 1fr)", gap: 16, marginBottom: 10, padding: "0 28px" }}>
-            <div />
-            {SIZES.map((s) => (
-              <div key={s} style={{ textAlign: "center", fontSize: 10, fontWeight: 800, color: "rgba(255,255,255,0.32)", letterSpacing: "2.5px", textTransform: "uppercase" }}>{s}</div>
+          <img className="rl-summary-image" src="/IMAGE PARCOURS.png" alt="" />
+        </header>
+        <table className="rl-table">
+          <caption>{L("Plafonds des récompenses en dollars (USD), sous conditions", "Límites de recompensas en dólares (USD), sujetos a condiciones", "Reward caps in US dollars (USD), subject to conditions")}</caption>
+          <thead><tr>
+            <th scope="col">{L("Niveau", "Nivel", "Level")}</th>
+            {SIZES.map(size => <th scope="col" key={size}>{size}</th>)}
+          </tr></thead>
+          <tbody>
+            {LEVELS.map((level, li) => (
+              <tr key={level.num} className={level.isTrader ? "rl-final-level" : undefined}>
+                <th scope="row"><span className="rl-level-number">{level.num}</span><span className="rl-level-label">{level.label}</span></th>
+                {SIZES.map((size, si) => <td key={size}>{fmtUSD(AMOUNTS[si][li])}</td>)}
+              </tr>
             ))}
-          </div>
-        )}
-
-        {/* ── LES 5 CARTES ──────────────────────────────────── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 10 : 8 }}>
-          {LEVELS.map((level, li) => {
-            const isTrader = level.isTrader;
-            const barBg = isTrader ? GOLD : `rgba(216,180,104,${0.14 + li * 0.07})`;
-
-            if (isMobile) {
-              return (
-                <div key={li} className={`rl-card${isTrader ? " rl-card-5" : ""}`} style={{
-                  position: "relative", borderRadius: isTrader ? 16 : 12,
-                  border: `1px solid ${BORDER[li]}`, background: "linear-gradient(180deg, #050505 0%, #090909 100%)",
-                  boxShadow: SHADOW[li], padding: isTrader ? "24px 16px 20px" : "18px 14px",
-                }}>
-                  {isTrader && (
-                    <div style={{
-                      position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)",
-                      background: "#050505", border: `1px solid ${BORDER[li]}`, borderRadius: 999,
-                      padding: "4px 14px", fontSize: 9, fontWeight: 800, color: "#D4A843",
-                      letterSpacing: "1.5px", whiteSpace: "nowrap",
-                    }}>MAX REWARD</div>
-                  )}
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
-                    <span style={{ fontSize: isTrader ? 30 : 26, fontWeight: 900, letterSpacing: "-2px", lineHeight: 1, background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", flexShrink: 0 }}>{level.num}</span>
-                    <div style={{ width: 1, height: isTrader ? 34 : 26, background: barBg, flexShrink: 0 }} />
-                    <span style={{ fontSize: isTrader ? 12 : 11, fontWeight: 800, color: isTrader ? "#D4A843" : LABEL_GRAY, letterSpacing: "1.2px", textTransform: "uppercase" }}>{level.label}</span>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 6 }}>
-                    {SIZES.map((sz, si) => (
-                      <div key={sz} style={{ textAlign: "center" }}>
-                        <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.30)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 6 }}>{sz}</div>
-                        <div style={amtStyle(AMT_M[li], si, isTrader)}>{fmtUSD(AMOUNTS[si][li])}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            }
-
-            return (
-              <div key={li} className={`rl-card${isTrader ? " rl-card-5" : ""}`} style={{
-                position: "relative", display: "grid", gridTemplateColumns: "220px repeat(3, 1fr)",
-                gap: 16, alignItems: "center", borderRadius: isTrader ? 18 : 13,
-                border: `1px solid ${BORDER[li]}`, background: "linear-gradient(180deg, #050505 0%, #090909 100%)",
-                boxShadow: SHADOW[li], padding: isTrader ? "30px 28px" : "22px 28px",
-              }}>
-                {isTrader && (
-                  <div style={{
-                    position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)",
-                    background: "#050505", border: `1px solid ${BORDER[li]}`, borderRadius: 999,
-                    padding: "5px 18px", fontSize: 9, fontWeight: 800, color: "#D4A843",
-                    letterSpacing: "2px", whiteSpace: "nowrap",
-                  }}>MAX REWARD</div>
-                )}
-                <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-                  <div style={{ fontSize: isTrader ? 50 : 44, fontWeight: 900, letterSpacing: "-3px", lineHeight: 1, background: GOLD, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", minWidth: 60, textAlign: "right", flexShrink: 0 }}>{level.num}</div>
-                  <div style={{ width: 1, height: isTrader ? 50 : 38, background: barBg, flexShrink: 0 }} />
-                  <div style={{ fontSize: isTrader ? 13 : 12, fontWeight: 800, color: isTrader ? "#D4A843" : LABEL_GRAY, letterSpacing: "1px", textTransform: "uppercase" }}>{level.label}</div>
-                </div>
-                {SIZES.map((_sz, si) => (
-                  <div key={si} style={{ textAlign: "center" }}>
-                    <div style={amtStyle(AMT_D[li], si, isTrader)}>{fmtUSD(AMOUNTS[si][li])}</div>
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        </div>
+          </tbody>
+        </table>
       </div>
-
       {/* ════════════════════════════════════════════════════════
           MODALE — Comment fonctionnent les Récompenses ?
           ════════════════════════════════════════════════════ */}
