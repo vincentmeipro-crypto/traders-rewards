@@ -9,6 +9,10 @@
 import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
+import {
+  DEFAULT_HERO_PROMOTION_PRESENTATION,
+  type HeroPromotionPresentation,
+} from "@/lib/hero-promotion-config";
 
 const ACCENT = "#D4A843"; // badge dot (gauche) — doré champagne
 
@@ -30,13 +34,34 @@ export default function Hero() {
 
   const [isMobile, setIsMobile] = useState(false);
   const [mounted,  setMounted]  = useState(false);
+  const [heroPromotion, setHeroPromotion] = useState<HeroPromotionPresentation>(
+    DEFAULT_HERO_PROMOTION_PRESENTATION
+  );
 
   useEffect(() => {
+    let cancelled = false;
     setMounted(true);
     const check = () => setIsMobile(window.innerWidth < 900);
     check();
     window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+
+    const loadHeroPromotion = async () => {
+      try {
+        const response = await fetch("/api/hero-promotion", { cache: "no-store" });
+        if (!response.ok) return;
+        const data = (await response.json()) as HeroPromotionPresentation;
+        if (!cancelled) setHeroPromotion(data);
+      } catch {
+        // Le rendu historique reste la valeur de secours si l'API est indisponible.
+      }
+    };
+
+    void loadHeroPromotion();
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", check);
+    };
   }, []);
 
   if (!mounted) return null;
@@ -61,10 +86,10 @@ export default function Hero() {
     <>
       <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", flex:1, position:"relative" }}>
         <div style={{ fontSize:10, fontWeight:600, color:"rgba(255,255,255,0.52)", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2 }}>
-          1 CHALLENGE
+          {heroPromotion.leftLabel}
         </div>
         <div style={{ fontSize:promoFS, fontWeight:650, letterSpacing:"-2px", lineHeight:0.90, marginBottom:0, color:"#F5F7F8" }}>
-          -80%
+          -{heroPromotion.leftDiscount}%
         </div>
         <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none", position:"absolute" }}>
           PAIEMENT UNIQUE
@@ -73,11 +98,11 @@ export default function Hero() {
       <div style={{ width:1, alignSelf:"stretch", background:"linear-gradient(to bottom, transparent, rgba(255,255,255,0.22) 20%, rgba(255,255,255,0.22) 80%, transparent)", margin: isMobile ? "0 16px" : "0 24px", flexShrink:0 }} />
       <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center", flex:1, position:"relative" }}>
         <div style={{ fontSize:10, fontWeight:700, color:"#D6B46A", letterSpacing:"0.4px", textTransform:"none", marginBottom: isMobile ? 6 : 2, textShadow:"0 0 14px rgba(200,162,72,0.22)" }}>
-          PACK ×3 BEST DEAL
+          {heroPromotion.rightLabel}
         </div>
         <div style={{ fontSize:promoFS, fontWeight:680, letterSpacing:"-2px", lineHeight:0.90, marginBottom:0,
           color:"#F2EFE7" }}>
-          -90%
+          -{heroPromotion.rightDiscount}%
         </div>
         <div style={{ fontSize:9, fontWeight:550, color:"transparent", letterSpacing:"0.5px", textTransform:"none", userSelect:"none", pointerEvents:"none", position:"absolute" }}>
           PAIEMENT UNIQUE
@@ -524,15 +549,17 @@ export default function Hero() {
                 gap: 16,
                 animation: "heroFadeUp 0.52s ease 0.10s both",
               }}>
-                <div style={{
-                  display: "flex", alignItems: "stretch",
-                  background: "#1d2024",
-                  border: "1px solid rgba(255,255,255,0.075)",
-                  borderRadius: 16, padding: "14px 18px",
-                  boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
-                } as React.CSSProperties}>
-                  {promoColumns}
-                </div>
+                {heroPromotion.visible && (
+                  <div style={{
+                    display: "flex", alignItems: "stretch",
+                    background: "#1d2024",
+                    border: "1px solid rgba(255,255,255,0.075)",
+                    borderRadius: 16, padding: "14px 18px",
+                    boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
+                  } as React.CSSProperties}>
+                    {promoColumns}
+                  </div>
+                )}
                 <a
                   href="#pricing"
                   className="h-cta-main"
@@ -552,19 +579,21 @@ export default function Hero() {
             {/* ── Desktop : promo + CTA inchangés ── */}
             {!isMobile && (
               <>
-                <div style={{
-                  display: "inline-flex", alignItems: "stretch",
-                  alignSelf: "flex-start",
-                  background: "#1d2024",
-                  border: "1px solid rgba(255,255,255,0.075)",
-                  borderRadius: 16, padding: "5px 28px",
-                  marginBottom: 20,
-                  marginLeft: -78,
-                  animation: "heroFadeUp 0.52s ease 0.10s both",
-                  boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
-                } as React.CSSProperties}>
-                  {promoColumns}
-                </div>
+                {heroPromotion.visible && (
+                  <div style={{
+                    display: "inline-flex", alignItems: "stretch",
+                    alignSelf: "flex-start",
+                    background: "#1d2024",
+                    border: "1px solid rgba(255,255,255,0.075)",
+                    borderRadius: 16, padding: "5px 28px",
+                    marginBottom: 20,
+                    marginLeft: -78,
+                    animation: "heroFadeUp 0.52s ease 0.10s both",
+                    boxShadow: "0 16px 45px rgba(0,0,0,0.24)",
+                  } as React.CSSProperties}>
+                    {promoColumns}
+                  </div>
+                )}
                 <div style={{
                   display: "flex",
                   alignItems: "flex-start", justifyContent: "flex-start",
