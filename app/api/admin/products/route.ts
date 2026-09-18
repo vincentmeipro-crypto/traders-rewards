@@ -1,7 +1,8 @@
+import { getEffectivePricingPlan } from "@/lib/promotion-calendar-store";
 import { NextRequest, NextResponse } from "next/server";
 import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getActivePricingPlan, isPricingSlug } from "@/lib/pricing";
+import { isPricingSlug } from "@/lib/pricing";
 
 // GET /api/admin/products — liste tous les produits (actifs + inactifs) avec phases + règles
 export async function GET(req: NextRequest) {
@@ -60,7 +61,7 @@ export async function GET(req: NextRequest) {
     if (c.status === "funded")  countMap[c.product_id].funded++;
   }
 
-  const pricing = getActivePricingPlan();
+  const pricing = await getEffectivePricingPlan();
   const result = products.map((product) => {
     const slug: string = product.slug;
     const price = isPricingSlug(slug) ? pricing.prices[slug] : null;

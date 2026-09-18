@@ -3,27 +3,29 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, ClipboardList, Gift, TrendingUp } from "lucide-react";
 import { useLanguage } from "@/lib/LanguageContext";
-import { DEFAULT_HERO_PROMOTION_PRESENTATION, getHeroPromotionPresentation, type HeroPromotionPresentation } from "@/lib/hero-promotion-config";
+import { DEFAULT_HERO_PROMOTION_PRESENTATION, type HeroPromotionPresentation } from "@/lib/hero-promotion-config";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
   const { lang } = useLanguage();
   const L = (fr: string, es: string, en: string) => lang === "fr" ? fr : lang === "es" ? es : en;
-  const [promotion, setPromotion] = useState<HeroPromotionPresentation>(DEFAULT_HERO_PROMOTION_PRESENTATION);
+  const [promotion, setPromotion] = useState<HeroPromotionPresentation>({...DEFAULT_HERO_PROMOTION_PRESENTATION, visible:false});
 
   useEffect(() => {
-    setPromotion(getHeroPromotionPresentation(DEFAULT_HERO_PROMOTION_PRESENTATION));
     const controller = new AbortController();
     async function loadPromotion() {
       try {
         const response = await fetch("/api/hero-promotion", { cache: "no-store", signal: controller.signal });
         if (response.ok) setPromotion(await response.json());
       } catch {
-        // Keep the existing fallback if the promotion service is unavailable.
+        // Do not advertise a fallback discount that could differ from the calendar.
       }
     }
     void loadPromotion();
-    return () => controller.abort();
+    const timer = window.setInterval(() => void loadPromotion(), 60000);
+    const refresh = () => { if (!document.hidden) void loadPromotion(); };
+    document.addEventListener("visibilitychange", refresh);
+    return () => { controller.abort();window.clearInterval(timer);document.removeEventListener("visibilitychange",refresh); };
   }, []);
 
   const steps = [

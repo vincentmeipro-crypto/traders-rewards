@@ -157,10 +157,12 @@ function ColumnEditor({
           id={`hero-promo-${side}-discount`}
           className="hero-promo-input hero-promo-number"
           type="number"
-          min={1}
+          min={0}
           max={100}
           step={1}
           value={discount}
+          readOnly
+          title="Gérée par le calendrier des promotions"
           disabled={disabled}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             onDiscountChange(Number(event.target.value))
@@ -304,9 +306,9 @@ export default function HeroPromotionCard({ onNotify }: Props) {
             </span>
           </div>
           <p className="hero-promo-help">
-            Pilote uniquement le cadre promotionnel à deux colonnes du Hero. Les
-            remises du checkout restent gérées séparément par les codes
-            promotionnels.
+            Pilote le cadre promotionnel du Hero. Dès le 18 septembre 2026,
+            ses remises suivent automatiquement le calendrier des prix du site.
+            Les codes promotionnels du checkout restent gérés séparément.
           </p>
         </div>
 
@@ -359,14 +361,15 @@ export default function HeroPromotionCard({ onNotify }: Props) {
           id="hero-promo-headline"
           className="hero-promo-input"
           value={form.headline}
+          readOnly
           maxLength={HERO_PROMOTION_HEADLINE_MAX_LENGTH}
           disabled={disabled}
-          placeholder="Offres promotionnelles jusqu’au 15/10/2026"
+          placeholder="Date de fin définie par le calendrier"
           aria-describedby="hero-promo-headline-help"
           onChange={(event) => setForm((current) => ({ ...current, headline: event.target.value }))}
         />
         <p id="hero-promo-headline-help" className="hero-promo-help" style={{ marginTop: 7 }}>
-          Texte libre, date comprise. Vide : « Offres du moment ». Ce texte ne modifie pas la date de fin d’affichage.
+          Le calendrier des promotions ci-dessus définit automatiquement les remises, ce titre et sa date de fin.
         </p>
       </div>
       <div className="hero-promo-grid">
@@ -408,6 +411,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
             className="hero-promo-input"
             type="datetime-local"
             value={form.startsAt}
+            readOnly
             disabled={disabled}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setForm((current) => ({
@@ -427,6 +431,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
             className="hero-promo-input"
             type="datetime-local"
             value={form.endsAt}
+            readOnly
             disabled={disabled}
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setForm((current) => ({
@@ -441,7 +446,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
 
       <div className="hero-promo-footer">
         <div style={{ color: "rgba(255,255,255,0.24)", fontSize: 11 }}>
-          Sans dates, l’affichage suit uniquement le bouton d’activation.
+          Remises et date de fin automatiques depuis le 18 septembre. Le bouton d’activation contrôle l’affichage.
         </div>
         <button
           type="button"

@@ -1,10 +1,11 @@
+import { getEffectivePriceForSlug } from "@/lib/promotion-calendar-store";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStringConfig } from "@/lib/config";
 import { loadProductBySlug } from "@/lib/product-engine";
 import { validatePromoCode } from "@/lib/promo";
-import { getPriceForSlug, isPricingSlug } from "@/lib/pricing";
+import { isPricingSlug } from "@/lib/pricing";
 import { fetchLiveRates, stripeSmallestUnit, SUPPORTED_CURRENCIES, FALLBACK_RATES } from "@/lib/fx-rates";
 import type { FxCurrency } from "@/lib/fx-rates";
 
@@ -113,7 +114,7 @@ export async function POST(req: NextRequest) {
 
     // ── Prix depuis le calendrier promotionnel (server-side, jamais le frontend) ──
     // qty=1 → prix unitaire ; qty=3 → prix pack ×3 propre (≠ 3 × unitaire)
-    const baseAmount  = getPriceForSlug(product.slug, qty);
+    const baseAmount  = await getEffectivePriceForSlug(product.slug, qty);
     const finalAmount = discountPct > 0
       ? Math.round(baseAmount * (100 - discountPct) / 100)
       : baseAmount;

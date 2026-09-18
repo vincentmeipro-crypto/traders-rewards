@@ -1,6 +1,9 @@
+import { getEffectivePricingPlan } from "@/lib/promotion-calendar-store";
 import { NextResponse } from "next/server";
 import { loadAllActiveProducts } from "@/lib/product-engine";
-import { getActivePricingPlan, REF_PRICES, isPricingSlug } from "@/lib/pricing";
+import { REF_PRICES, isPricingSlug } from "@/lib/pricing";
+
+export const dynamic = "force-dynamic";
 
 /**
  * GET /api/products
@@ -17,7 +20,7 @@ import { getActivePricingPlan, REF_PRICES, isPricingSlug } from "@/lib/pricing";
 export async function GET() {
   try {
     const products = await loadAllActiveProducts();
-    const { prices: currentPrices } = getActivePricingPlan();
+    const { prices: currentPrices } = await getEffectivePricingPlan();
 
     return NextResponse.json(
       products.map(({ product, phases, rules }) => {

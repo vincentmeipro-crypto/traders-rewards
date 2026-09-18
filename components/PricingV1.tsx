@@ -18,7 +18,7 @@ import CurrencySelector from "./CurrencySelector";
 import PricingDetailModal from "./PricingDetailModal";
 
 // ── Source de vérité fallback ──────────────────────────────────
-// Période 1 (oct 1-15) — prix d'entrée les plus bas.
+// Tarifs de pré-lancement, recalculés selon la date ci-dessous.
 // Le frontend recharge depuis /api/products et surcharge ces valeurs
 // avec les prix de la période active. Ce fallback évite un flash vide
 // au premier rendu.
@@ -107,7 +107,7 @@ export default function PricingV1() {
     setCards(V1_FALLBACK.map(card => isPricingSlug(card.slug)
       ? { ...card, priceCents: prices[card.slug].unit, pack3Cents: prices[card.slug].pack3 }
       : card));
-    fetch("/api/products")
+    fetch("/api/products", { cache: "no-store" })
       .then(r => r.json())
       .then((data: ApiProduct[]) => {
         if (!Array.isArray(data)) return;
@@ -124,8 +124,8 @@ export default function PricingV1() {
           return {
             slug:          p.slug,
             balance:       p.balance_usd,
-            priceCents:    p.unit_price_cents  ?? p.effective_price_cents ?? fb.priceCents,
-            pack3Cents:    p.pack3_price_cents  ?? fb.pack3Cents,
+            priceCents:    p.unit_price_cents  ?? p.effective_price_cents ?? (isPricingSlug(p.slug) ? prices[p.slug].unit : fb.priceCents),
+            pack3Cents:    p.pack3_price_cents  ?? (isPricingSlug(p.slug) ? prices[p.slug].pack3 : fb.pack3Cents),
             qualDayUsd:    qualDay,
             activFeeEur:   activFee,
             refPriceCents:  p.ref_price_cents        ?? fb.refPriceCents,

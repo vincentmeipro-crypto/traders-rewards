@@ -2,9 +2,11 @@ import { getActivePeriod, getPriceForSlug } from "@/lib/pricing";
 import { DEFAULT_HERO_PROMOTION_CONFIG, getHeroPromotionPresentation } from "@/lib/hero-promotion-config";
 
 describe("Scénario 1 au 1er janvier 2027", () => {
-  test("bascule à minuit Paris sans changer les tarifs 2026", () => {
-    expect(getPriceForSlug("rewards-25k", 1, new Date("2026-12-31T22:59:59Z"))).toBe(9500);
+  test("bascule de la promo B Q4 à la promo A 2027 à minuit Paris", () => {
+    expect(getPriceForSlug("rewards-25k", 1, new Date("2026-12-31T22:59:59Z"))).toBe(6650);
+    expect(getPriceForSlug("rewards-25k", 3, new Date("2026-12-31T22:59:59Z"))).toBe(14250);
     expect(getPriceForSlug("rewards-25k", 1, new Date("2026-12-31T23:00:00Z"))).toBe(6650);
+    expect(getPriceForSlug("rewards-25k", 3, new Date("2026-12-31T23:00:00Z"))).toBe(17100);
   });
   test.each([
     ["2027-01-01", "A", 6650, 17100],
@@ -29,6 +31,6 @@ describe("Scénario 1 au 1er janvier 2027", () => {
   test("Hero synchronisé même si la campagne 2026 a expiré", () => {
     const result = getHeroPromotionPresentation({ ...DEFAULT_HERO_PROMOTION_CONFIG,
       endsAt: "2026-10-15T10:00:00Z", headline: "Ancienne offre jusqu’au 15/10/2026" }, new Date("2027-01-08T12:00:00Z"));
-    expect(result).toMatchObject({ leftDiscount: 60, rightDiscount: 65, visible: true, headline: "Offres du moment" });
+    expect(result).toMatchObject({ leftDiscount: 60, rightDiscount: 65, visible: true, headline: "Offres promotionnelles jusqu’au 14/01/2027 inclus" });
   });
 });

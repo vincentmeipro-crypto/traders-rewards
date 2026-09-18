@@ -1,3 +1,4 @@
+import { getEffectivePriceForSlug } from "@/lib/promotion-calendar-store";
 /**
  * POST /api/checkout/preview
  * ============================================================
@@ -16,7 +17,7 @@
  * ============================================================
  */
 import { NextRequest, NextResponse } from "next/server";
-import { getPriceForSlug, isPricingSlug } from "@/lib/pricing";
+import { isPricingSlug } from "@/lib/pricing";
 import {
   fetchLiveRates,
   convertEurCents,
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     const discountPct = Math.max(0, Math.min(99, Number(rawDiscount ?? 0)));
 
     // ── Prix EUR canonique (calendrier promo) ─────────────────────────────────
-    const eurCentsBase = getPriceForSlug(slug, qty as 1 | 3);
+    const eurCentsBase = await getEffectivePriceForSlug(slug, qty as 1 | 3);
     const eurCents = discountPct > 0
       ? Math.round(eurCentsBase * (100 - discountPct) / 100)
       : eurCentsBase;

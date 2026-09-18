@@ -2,7 +2,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import HeroPromotionCard from "@/components/admin/HeroPromotionCard";
-import { PROMOTIONS_2027 } from "@/lib/pricing";
+import PromotionCalendar from "@/components/admin/PromotionCalendar";
+import { PROMOTIONS_Q4_2026, PROMOTIONS_2027 } from "@/lib/pricing";
 
 const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
@@ -70,6 +71,7 @@ export default function PromotionsPage() {
   const [deleting, setDeleting]         = useState<string | null>(null);
   const [copiedId, setCopiedId]         = useState<string | null>(null);
   const [notification, setNotif]        = useState<{ msg: string; ok: boolean } | null>(null);
+  const [calendarVersion, setCalendarVersion] = useState(0);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   const notify = (msg: string, ok = true) => {
@@ -233,13 +235,18 @@ export default function PromotionsPage() {
       {/* ── Body ────────────────────────────────────────────────── */}
       <div style={{ padding: "24px 32px", maxWidth: 1200, margin: "0 auto" }}>
 
-        <section style={{ marginBottom: 24, padding: 24, border: "1px solid #66532b", borderRadius: 16 }}>
-          <h2 style={{ color: "#D9B96F", marginBottom: 12 }}>Promotions programmées au 1er janvier 2027</h2>
-          <p>Rotation automatique toutes les semaines : A, B, C, puis A. Changement à minuit, heure de Paris.</p>
+        <PromotionCalendar onNotify={(message, ok) => { notify(message, ok); if (ok) setCalendarVersion(v => v + 1); }} />
+        <details style={{ marginBottom: 24, padding: 24, border: "1px solid #66532b", borderRadius: 16 }}>
+          <summary style={{cursor:"pointer",color:"#D9B96F"}}>Rotation automatique utilisée sans période personnalisée</summary>
+          <h2 style={{ color: "#D9B96F", marginBottom: 12 }}>Calendrier des promotions</h2>
+          <p>Du 18 au 30 septembre 2026 inclus : offre A, unité −75 % / pack ×3 −85 %. La date du Hero suit automatiquement la fin de l’offre.</p>
+          <p>Du 1er octobre au 31 décembre 2026 : rotation A, B, C par périodes de sept jours, ancrée au 1er octobre. Changement à minuit, heure de Paris.</p>
+          <p>{PROMOTIONS_Q4_2026.map(p => `${p.name} : unité −${p.unitDiscount} % / pack ×3 −${p.packDiscount} %`).join(" · ")}</p>
+          <p>À partir du 1er janvier 2027 : nouvelle grille, la rotation repart de A.</p>
           <p>{PROMOTIONS_2027.map(p => `${p.name} : unité −${p.unitDiscount} % / pack ×3 −${p.packDiscount} %`).join(" · ")}</p>
-          <p>À partir de cette date, le Hero suit les remises du calendrier de prix, comme le site et les paiements. Les champs de remise ci-dessous concernent la campagne 2026.</p>
-        </section>
-        <HeroPromotionCard onNotify={notify} />
+          <p>Dès le 18 septembre, le Hero suit les remises et la date de fin du calendrier, comme le site et les paiements. Les remises, le titre et les dates saisis ci-dessous sont remplacés par le calendrier. Le bouton d’activation du Hero reste disponible.</p>
+        </details>
+        <HeroPromotionCard key={calendarVersion} onNotify={notify} />
 
         {/* KPI row — 2 cards */}
         <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>

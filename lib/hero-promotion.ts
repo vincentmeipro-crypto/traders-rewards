@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getEffectivePricingPlan } from "@/lib/promotion-calendar-store";
 import {
   DEFAULT_HERO_PROMOTION_CONFIG,
   HERO_PROMOTION_DESCRIPTION,
@@ -24,11 +25,13 @@ export async function getHeroPromotion(): Promise<HeroPromotionPresentation> {
       ? normalizeHeroPromotionConfig(data.value)
       : DEFAULT_HERO_PROMOTION_CONFIG;
 
-    return getHeroPromotionPresentation(config);
+    const now = new Date();
+    const plan = await getEffectivePricingPlan(now);
+    return getHeroPromotionPresentation(config, now, plan.promotion);
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     console.error(`[hero-promotion] lecture impossible: ${reason}`);
-    return getHeroPromotionPresentation(DEFAULT_HERO_PROMOTION_CONFIG);
+    return { ...DEFAULT_HERO_PROMOTION_CONFIG, status: "disabled", visible: false };
   }
 }
 
@@ -48,5 +51,7 @@ export async function saveHeroPromotion(
 
   if (error) throw new Error(error.message);
 
-  return getHeroPromotionPresentation(config);
+  const now = new Date();
+  const plan = await getEffectivePricingPlan(now);
+  return getHeroPromotionPresentation(config, now, plan.promotion);
 }

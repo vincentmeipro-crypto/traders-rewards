@@ -174,14 +174,14 @@ function CheckoutContent() {
     setAvailableProducts(FALLBACK_PRODUCTS.map(product => isPricingSlug(product.slug)
       ? { ...product, amount: prices[product.slug].unit, pack3Amount: prices[product.slug].pack3, price: formatPrice(prices[product.slug].unit) }
       : product));
-    fetch("/api/products")
+    fetch("/api/products", { cache: "no-store" })
       .then(response => response.json())
       .then((data: PublicProduct[]) => {
         if (!Array.isArray(data)) return;
         const products = data
           .filter(product => product.slug?.startsWith("rewards-") && [25000, 50000, 100000].includes(product.balance_usd))
           .map<CheckoutProduct>(product => {
-            const unitCents  = product.unit_price_cents  ?? product.price_eur_cents;
+            const unitCents  = product.unit_price_cents  ?? (isPricingSlug(product.slug) ? prices[product.slug].unit : product.price_eur_cents);
             const pack3Cents = product.pack3_price_cents ?? (isPricingSlug(product.slug) ? prices[product.slug].pack3 : unitCents * 3);
             const sizeKey    = `${Math.round(product.balance_usd / 1000)}k`;
             const fb         = FALLBACK_PRODUCTS.find(f => f.sizeKey === sizeKey);

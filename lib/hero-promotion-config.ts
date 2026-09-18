@@ -65,7 +65,7 @@ function normalizeLabel(value: unknown, fallback: string): string {
 
 function normalizeDiscount(value: unknown, fallback: number): number {
   const parsed = typeof value === "number" ? value : Number(value);
-  if (!Number.isInteger(parsed) || parsed < 1 || parsed > 100) {
+  if (!Number.isInteger(parsed) || parsed < 0 || parsed > 100) {
     return fallback;
   }
   return parsed;
@@ -138,8 +138,8 @@ function validateDiscount(
   errors: string[]
 ): number {
   const parsed = typeof value === "number" ? value : Number(value);
-  if (!Number.isInteger(parsed) || parsed < 1 || parsed > 100) {
-    errors.push(`${fieldLabel} doit être un entier entre 1 et 100`);
+  if (!Number.isInteger(parsed) || parsed < 0 || parsed > 100) {
+    errors.push(`${fieldLabel} doit être un entier entre 0 et 100`);
     return 0;
   }
   return parsed;
@@ -237,13 +237,13 @@ export function validateHeroPromotionConfig(
 
 export function getHeroPromotionPresentation(
   config: HeroPromotionConfig,
-  now = new Date()
+  now = new Date(),
+  scheduled: { unitDiscount: number; packDiscount: number; endsOn: string } | null = getScheduledPromotion(now)
 ): HeroPromotionPresentation {
-  const scheduled = getScheduledPromotion(now);
   if (scheduled) {
     return {
       ...config,
-      headline: "Offres du moment",
+      headline: `Offres promotionnelles jusqu’au ${scheduled.endsOn} inclus`,
       startsAt: null,
       endsAt: null,
       leftDiscount: scheduled.unitDiscount,

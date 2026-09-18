@@ -2,7 +2,7 @@
  * ============================================================
  * lib/pricing.ts — Source de vérité unique pour les prix Traders Rewards
  * ============================================================
- * Calendrier 2026, puis rotation hebdomadaire A/B/C dès janvier 2027.
+ * Offre A dès le 18 septembre, rotation A/B/C dès octobre, nouvelle grille en janvier 2027.
  * Importé par : api/products, api/stripe/checkout, api/crypto/checkout,
  *               api/stripe/webhook, api/crypto/webhook, frontend via /api/products.
  *
@@ -43,6 +43,13 @@ export const REF_PRICES: Record<PricingSlug, PriceEntry> = {
   "rewards-100k": { unit: 59000, pack3: 177000 }, // 590€  / 1 770€
 };
 
+/** Q4 : semaines de sept jours à partir du 1er octobre 2026 à Paris. */
+export const PROMOTIONS_Q4_2026 = [
+  { name: "A", unitDiscount: 75, packDiscount: 85 },
+  { name: "B", unitDiscount: 65, packDiscount: 75 },
+  { name: "C", unitDiscount: 55, packDiscount: 65 },
+] as const;
+
 /** Scénario 1 : semaines de sept jours à partir du 1er janvier 2027 à Paris. */
 export const PROMOTIONS_2027 = [
   { name: "A", unitDiscount: 65, packDiscount: 70 },
@@ -52,58 +59,34 @@ export const PROMOTIONS_2027 = [
 
 export function getScheduledPromotion(now: Date = new Date()) {
   const { year, month, day } = toParisDate(now);
-  const days = Math.floor((Date.UTC(year, month - 1, day) - Date.UTC(2027, 0, 1)) / 86400000);
-  if (days < 0) return null;
-  return PROMOTIONS_2027[Math.floor(days / 7) % PROMOTIONS_2027.length];
+  const is2027 = year >= 2027;
+  const anchor = is2027 ? Date.UTC(2027, 0, 1) : Date.UTC(2026, 9, 1);
+  const promotions = is2027 ? PROMOTIONS_2027 : PROMOTIONS_Q4_2026;
+  const days = Math.floor((Date.UTC(year, month - 1, day) - anchor) / 86400000);
+  if (days < 0) {
+    if (year === 2026 && month === 9 && day >= 18) {
+      return { ...PROMOTIONS_Q4_2026[0], endsOn: "30/09/2026" };
+    }
+    return null;
+  }
+  const week = Math.floor(days / 7);
+  const end = new Date(Math.min(anchor + (week * 7 + 6) * 86400000,
+    is2027 ? Infinity : Date.UTC(2026, 11, 31)));
+  const endsOn = new Intl.DateTimeFormat("fr-FR", { timeZone: "UTC" }).format(end);
+  return { ...promotions[week % promotions.length], endsOn };
 }
 
-// ── Calendrier promotionnel 2026 ──────────────────────────────────────────────
-export const PRICING_PERIODS: PricingPeriod[] = [
-  // Période 1 — 1 au 15 octobre 2026
-  {
-    name:      "oct-1-15",
-    fromYear: 2026, fromMonth: 10, fromDay:  1,
-    toYear:   2026, toMonth:   10, toDay:   15,
-    prices: {
-      "rewards-25k":  { unit:  3800, pack3:  5700 }, //  38€ /  57€
-      "rewards-50k":  { unit:  5800, pack3:  8700 }, //  58€ /  87€
-      "rewards-100k": { unit: 11800, pack3: 17700 }, // 118€ / 177€
-    },
+// Tarifs historiques avant l'activation de l'offre le 18 septembre 2026.
+const PRE_LAUNCH_PERIOD: PricingPeriod = {
+  name: "pre-launch",
+  fromYear: 2026, fromMonth: 1, fromDay: 1,
+  toYear: 2026, toMonth: 9, toDay: 17,
+  prices: {
+    "rewards-25k": { unit: 3800, pack3: 5700 },
+    "rewards-50k": { unit: 5800, pack3: 8700 },
+    "rewards-100k": { unit: 11800, pack3: 17700 },
   },
-  // Période 2 — 16 octobre au 15 novembre 2026
-  {
-    name:      "oct-16-nov-15",
-    fromYear: 2026, fromMonth: 10, fromDay: 16,
-    toYear:   2026, toMonth:   11, toDay:   15,
-    prices: {
-      "rewards-25k":  { unit:  5700, pack3: 11400 }, //  57€ / 114€
-      "rewards-50k":  { unit:  8700, pack3: 17400 }, //  87€ / 174€
-      "rewards-100k": { unit: 17700, pack3: 35400 }, // 177€ / 354€
-    },
-  },
-  // Période 3 — 16 novembre au 15 décembre 2026
-  {
-    name:      "nov-16-dec-15",
-    fromYear: 2026, fromMonth: 11, fromDay: 16,
-    toYear:   2026, toMonth:   12, toDay:   15,
-    prices: {
-      "rewards-25k":  { unit:  7600, pack3: 17100 }, //  76€ / 171€
-      "rewards-50k":  { unit: 11600, pack3: 26100 }, // 116€ / 261€
-      "rewards-100k": { unit: 23600, pack3: 53100 }, // 236€ / 531€
-    },
-  },
-  // Période 4 — 16 au 31 décembre 2026
-  {
-    name:      "dec-16-31",
-    fromYear: 2026, fromMonth: 12, fromDay: 16,
-    toYear:   2026, toMonth:   12, toDay:   31,
-    prices: {
-      "rewards-25k":  { unit:  9500, pack3: 22800 }, //  95€ / 228€
-      "rewards-50k":  { unit: 14500, pack3: 34800 }, // 145€ / 348€
-      "rewards-100k": { unit: 29500, pack3: 70800 }, // 295€ / 708€
-    },
-  },
-];
+};
 
 /**
  * Retourne le {year, month, day} dans le fuseau Europe/Paris pour une date UTC.
@@ -121,17 +104,8 @@ function toParisDate(utcDate: Date): { year: number; month: number; day: number 
   return { year: get("year"), month: get("month"), day: get("day") };
 }
 
-/** Convertit année/mois/jour en entier comparable : 20261015 = 2026-10-15. */
-function ymd(year: number, month: number, day: number): number {
-  return year * 10000 + month * 100 + day;
-}
-
-/**
- * Retourne la période promotionnelle active pour une date donnée (heure Paris).
- *
- * Comportement hors plages définies :
- *  - Avant le 1er oct 2026 → retourne la période 1 (prix d'entrée les plus bas).
- *  - Dès le 1er janvier 2027 → rotation A/B/C, semaines ancrées au 1er janvier.
+/** Prix de pré-lancement avant octobre, puis rotation hebdomadaire A/B/C.
+ * La rotation repart de A le 1er janvier 2027 avec la nouvelle grille.
  */
 export function getActivePeriod(now: Date = new Date()): PricingPeriod {
   const { year, month, day } = toParisDate(now);
@@ -146,22 +120,7 @@ export function getActivePeriod(now: Date = new Date()): PricingPeriod {
     return { name: `weekly-${promotion.name}`, fromYear: year, fromMonth: month, fromDay: day,
       toYear: year, toMonth: month, toDay: day, prices };
   }
-  const cur = ymd(year, month, day);
-
-  for (const p of PRICING_PERIODS) {
-    const from = ymd(p.fromYear, p.fromMonth, p.fromDay);
-    const to   = ymd(p.toYear,   p.toMonth,   p.toDay);
-    if (cur >= from && cur <= to) return p;
-  }
-
-  // Avant la première période → retourner la première
-  const firstFrom = ymd(
-    PRICING_PERIODS[0].fromYear, PRICING_PERIODS[0].fromMonth, PRICING_PERIODS[0].fromDay
-  );
-  if (cur < firstFrom) return PRICING_PERIODS[0];
-
-  // Après la dernière période (ou entre des périodes) → retourner la dernière
-  return PRICING_PERIODS[PRICING_PERIODS.length - 1];
+  return PRE_LAUNCH_PERIOD;
 }
 
 /**
