@@ -19,7 +19,7 @@
  * STRUCTURE 3 NIVEAUX MÉTIER :
  *
  *  NIVEAU 1 — CHALLENGER / CHALLENGE (phase_type="challenge") — APEX EOD MODEL :
- *   - Profit Target      = +6 % (25K=+1 500$ / 50K=+3 000$ / 100K=+6 000$)
+ *   - Profit Target      = +9 % (25K=+2 250$ / 50K=+4 500$ / 100K=+9 000$)
  *   - Drawdown EOD fixe  = 1 000$ (25K) / 2 000$ (50K) / 3 000$ (100K) — montant fixe en $
  *   - Consistency Rule   = 50 % — best_day < 50 % du profit requis (V1.2)
  *   - Min trading days   = 2 jours minimum (V1.2)
@@ -35,7 +35,7 @@
  *   - Qualifying days    = 5 jours profitables qualifiants (inchangé)
  *   - Seuil qualifiant   : 25K = 100 USD / 50K = 250 USD / 100K = 300 USD / journée
  *   - Durée              = ILLIMITÉE
- *   - Caps Reward #1     : 25K = 300 $ / 50K = 500 $ / 100K = 750 $ (INCHANGÉS)
+ *   - Caps Reward #1     : 25K = 300 $ / 50K = 500 $ / 100K = 1 000 $
  *
  *  NIVEAU 3 — TRADER REWARD / REWARDS #2 À #5 (phase_type="reward_journey") :
  *   - Éligibilité Reward : available = balance − start_balance ≥ 100$ (minimum)
@@ -83,13 +83,14 @@
  */
 
 // ── Constantes publiques ──────────────────────────────────────
+import { CHALLENGE_PROFIT_TARGET_PCT, REWARD_AMOUNTS } from "./program-rules";
 
 /** Valeur du discriminant de version dans rules_snapshot.rules et challenges.dd_model */
 export const V1_DD_MODEL = "trailing_eod_lock" as const;
 
 /** Règles contractuelles du Challenge V1 — APEX EOD MODEL */
 export const V1_CHALLENGE = {
-  profitTargetPct:  6,
+  profitTargetPct:  CHALLENGE_PROFIT_TARGET_PCT,
   trailingDdPct:    4,   // Gardé pour l'affichage % — calcul réel via V1_DD_USD_BY_BALANCE
   // consistencyPct : 50 % — identique Reward (V1.2 — même règle toutes phases)
   minTradingDays:   2,   // V1.2 : 2 jours minimum
@@ -134,16 +135,17 @@ export const V1_CONSISTENCY_PCT = {
  *
  *  25K  → #1: 300 / #2: 400 / #3: 500 / #4: 600  / #5: 750
  *  50K  → #1: 500 / #2: 650 / #3: 800 / #4: 1000 / #5: 1250
- * 100K  → #1: 750 / #2: 1000 / #3: 1250 / #4: 1500 / #5: 1750
+ * 100K  → #1: 1000 / #2: 1400 / #3: 1800 / #4: 2000 / #5: 3000
  *
  * Source unique pour les caps — utiliser getV1RewardCap() plutôt que
  * lire directement ce tableau depuis les composants UI.
  */
-export const V1_REWARD_CAPS: Record<number, Record<number, number>> = {
-  25000:  { 1: 300,  2: 400,   3: 500,   4: 600,   5: 750   },
-  50000:  { 1: 500,  2: 650,   3: 800,   4: 1000,  5: 1250  },
-  100000: { 1: 750,  2: 1000,  3: 1250,  4: 1500,  5: 1750  },
-};
+export const V1_REWARD_CAPS: Record<number, Record<number, number>> = Object.fromEntries(
+  [25000, 50000, 100000].map((balance, sizeIndex) => [
+    balance,
+    Object.fromEntries(REWARD_AMOUNTS[sizeIndex].map((cap, index) => [index + 1, cap])),
+  ]),
+);
 
 /**
  * Frais d'activation Reward Account en EUR, par balance initiale.
@@ -279,7 +281,7 @@ export function getV1SafetyNet(startBalance: number): number {
  * Exemples :
  *   getV1RewardCap(25000, 1)  → 300
  *   getV1RewardCap(50000, 2)  → 650
- *   getV1RewardCap(100000, 5) → 1750
+ *   getV1RewardCap(100000, 5) → 3000
  */
 export function getV1RewardCap(startBalance: number, rewardLevel: number): number | null {
   const caps = V1_REWARD_CAPS[startBalance];
@@ -294,7 +296,7 @@ export function getV1RewardCap(startBalance: number, rewardLevel: number): numbe
  * Exemples :
  *   getV1RewardThresholdUsd(25000,  1) → 26 000 + 300  = 26 300
  *   getV1RewardThresholdUsd(50000,  1) → 52 000 + 500  = 52 500
- *   getV1RewardThresholdUsd(100000, 1) → 103 000 + 750 = 103 750
+ *   getV1RewardThresholdUsd(100000, 1) → 103 000 + 1000 = 104 000
  *   getV1RewardThresholdUsd(25000,  2) → 26 000 + 400  = 26 400
  *
  * @param rewardLevel  Numéro de Reward (1 à 5), default 1
@@ -689,7 +691,7 @@ export function isV1QualifyingDay(
  * Vérifie les conditions de transition challenge → Reward Account — APEX EOD MODEL.
  *
  * Toutes ces conditions doivent être simultanément vraies :
- *  1. Profit ≥ +6 % avec consistency 50 % (best_day < 50 % du profit requis — V1.2)
+ *  1. Profit ≥ +9 % avec consistency 50 % (best_day < 50 % du profit requis — V1.2)
  *  2. Min trading days ≥ 2 (V1.2)
  *  3. Max trading days ≤ 30 (non dépassé)
  *  4. Aucune breach DD (redondant — détectée en amont par le moteur DD)
@@ -1109,7 +1111,7 @@ export const REWARD_REQUEST_PROFIT_PCT = 4 as const;
  * Exemples (affichage) :
  *   computeRewardRequestThreshold(25000,  1) → 26 000 + 300  = 26 300
  *   computeRewardRequestThreshold(50000,  1) → 52 000 + 500  = 52 500
- *   computeRewardRequestThreshold(100000, 1) → 103 000 + 750 = 103 750
+ *   computeRewardRequestThreshold(100000, 1) → 103 000 + 1000 = 104 000
  *   computeRewardRequestThreshold(25000,  2) → 26 000 + 400  = 26 400
  */
 export function computeRewardRequestThreshold(startBalance: number, rewardLevel: number = 1): number {

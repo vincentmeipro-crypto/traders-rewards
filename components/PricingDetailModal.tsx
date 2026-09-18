@@ -1,5 +1,7 @@
 "use client";
 
+import { challengeProfitTargetUsd } from "@/lib/program-rules";
+
 // ════════════════════════════════════════════════════════════════
 //  PricingDetailModal.tsx — Modal Challenge V1
 //  Contenu : règles Challenge uniquement
@@ -111,7 +113,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
   const { balance, trailingDdPct, qualDayUsd } = card;
   const sizeK      = balance / 1000;
   const sizeLabel  = `$${sizeK}K`;
-  const targetAmt  = balance * 0.06;
+  const targetAmt  = challengeProfitTargetUsd(balance);
   const ddAmt      = balance * trailingDdPct / 100;
   const floorAmt   = balance - ddAmt;
   const maxBestDay = targetAmt / 2;
@@ -217,7 +219,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
               {[
                 {
                   label: L("Objectif profit","Objetivo profit","Profit target"),
-                  pctStr: "+6%", usd: fmt(targetAmt),
+                  pctStr: "+9%", usd: fmt(targetAmt),
                   note: L(`Minimum ${fmt(targetAmt)} sur ${sizeLabel}`, `Mínimo ${fmt(targetAmt)} sobre ${sizeLabel}`, `Minimum ${fmt(targetAmt)} on ${sizeLabel}`),
                   color: GREEN,
                 },
@@ -265,9 +267,9 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
             <h3 style={secTitle}>Trailing Drawdown EOD</h3>
             <p style={{ ...bodyTxt, marginBottom: 14 }}>
               {L(
-                `Le plancher de protection part de ${fmt(floorAmt)} et remonte avec chaque nouveau plus haut EOD. Il ne se verrouille jamais pendant le Challenge — il continue de suivre votre progression même après avoir atteint l'objectif de +6%, tant que toutes les conditions ne sont pas réunies.`,
-                `El plancher de protección comienza en ${fmt(floorAmt)} y sube con cada nuevo máximo EOD. No se bloquea nunca durante el Challenge — sigue la progresión incluso tras alcanzar el +6%, mientras no se cumplan todas las condiciones.`,
-                `The protection floor starts at ${fmt(floorAmt)} and rises with each EOD new high. It never locks during the Challenge — it keeps following your progress even past the +6% target, until all conditions are met.`
+                `Le plancher de protection part de ${fmt(floorAmt)} et remonte avec chaque nouveau plus haut EOD. Il ne se verrouille jamais pendant le Challenge — il continue de suivre votre progression même après avoir atteint l'objectif de +9%, tant que toutes les conditions ne sont pas réunies.`,
+                `El plancher de protección comienza en ${fmt(floorAmt)} y sube con cada nuevo máximo EOD. No se bloquea nunca durante el Challenge — sigue la progresión incluso tras alcanzar el +9%, mientras no se cumplan todas las condiciones.`,
+                `The protection floor starts at ${fmt(floorAmt)} and rises with each EOD new high. It never locks during the Challenge — it keeps following your progress even past the +9% target, until all conditions are met.`
               )}
             </p>
 
@@ -300,8 +302,8 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                 {([
                   { eod: balance * 1.02,  floor: balance * 1.02  - ddAmt, note: "" },
                   { eod: balance * 1.04,  floor: balance * 1.04  - ddAmt, note: "" },
-                  { eod: balance * 1.06,  floor: balance * 1.06  - ddAmt, note: L("+6% — objectif min. atteint","+6% — objetivo mín. alcanzado","+6% — min. target reached") },
-                  { eod: balance * 1.08,  floor: balance * 1.08  - ddAmt, note: L("si le Challenge continue","si el Challenge continúa","if Challenge continues") },
+                  { eod: balance + targetAmt,  floor: balance + targetAmt  - ddAmt, note: L("+9% — objectif min. atteint","+9% — objetivo mín. alcanzado","+9% — min. target reached") },
+                  { eod: balance + targetAmt + balance * 0.02,  floor: balance + targetAmt + balance * 0.02  - ddAmt, note: L("si le Challenge continue","si el Challenge continúa","if Challenge continues") },
                 ] as { eod: number; floor: number; note: string }[]).map((row, i) => (
                   <div key={i} style={{
                     display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -346,7 +348,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 {([
-                  { lbl: L("Profit total (objectif +6%)","Beneficio total (objetivo +6%)","Total profit (target +6%)"), val: fmt(targetAmt),  color: GREEN  },
+                  { lbl: L("Profit total (objectif +9%)","Beneficio total (objetivo +9%)","Total profit (target +9%)"), val: fmt(targetAmt),  color: GREEN  },
                   { lbl: L("Meilleure journée max (50%)","Mejor día máx. (50%)","Best day max (50%)"),                 val: fmt(maxBestDay), color: ORANGE },
                 ] as { lbl: string; val: string; color: string }[]).map((row, i) => (
                   <div key={i} style={{
@@ -588,7 +590,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
               </div>
               <div style={{ display: "flex", flexDirection: "column" as const, gap: 4 }}>
                 {rewardCaps.map((cap, i) => {
-                  const pcts = [1, 1.5, 2, 2.5, 3];
+                  const capPct = Number((cap / balance * 100).toFixed(2));
                   return (
                     <div key={i} style={{
                       display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -602,7 +604,7 @@ export default function PricingDetailModal({ card, lang, onClose }: Props) {
                           {L(`RÉCOMPENSE ${i + 1}`, `RECOMPENSA ${i + 1}`, `REWARD ${i + 1}`)}
                         </span>
                         <span style={{ fontSize: 9, color: "rgba(255,255,255,0.25)", fontWeight: 600 }}>
-                          {pcts[i]}%
+                          {capPct}%
                         </span>
                       </div>
                       <span style={{ fontSize: 13, fontWeight: 800, color: i === 4 ? ACCENT : "#FFFFFF" }}>

@@ -21,11 +21,11 @@ const BASE_CHALLENGE = {
   id: "preview-mock-id",
   model: "v1",
   status: "funded",
-  profit_target: 6,
+  profit_target: 9,
   daily_drawdown_limit: 4,
   total_drawdown_limit: 4,
   trading_days: 0,
-  dd_model: "apex_eod",
+  dd_model: "trailing_eod_lock",
   open_positions: [] as Record<string, unknown>[],
 };
 

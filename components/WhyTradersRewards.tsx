@@ -73,9 +73,9 @@ const FEATURES_FR: Feature[] = [
     icon: <IconTag />,
   },
   {
-    num: "02", metric: "+6%",
+    num: "02", metric: "+9%",
     title: "1 SEUL OBJECTIF",
-    desc:  "Un seul Challenge à valider. Objectif +6%, minimum 2 journées de trading. 30 jours maximum.",
+    desc:  "Un seul Challenge à valider. Objectif +9%, minimum 2 journées de trading. 30 jours maximum.",
     icon: <IconTrendUp />,
   },
   {
@@ -112,9 +112,9 @@ const FEATURES_EN: Feature[] = [
     icon: <IconTag />,
   },
   {
-    num: "02", metric: "+6%",
+    num: "02", metric: "+9%",
     title: "1 SINGLE TARGET",
-    desc:  "One challenge to validate. Target: +6%, minimum 2 trading days. 30 days maximum.",
+    desc:  "One challenge to validate. Target: +9%, minimum 2 trading days. 30 days maximum.",
     icon: <IconTrendUp />,
   },
   {
@@ -151,9 +151,9 @@ const FEATURES_ES: Feature[] = [
     icon: <IconTag />,
   },
   {
-    num: "02", metric: "+6%",
+    num: "02", metric: "+9%",
     title: "1 SOLO OBJETIVO",
-    desc:  "Un único Challenge a validar. Objetivo +6%, mínimo 2 días de trading. 30 días máximo.",
+    desc:  "Un único Challenge a validar. Objetivo +9%, mínimo 2 días de trading. 30 días máximo.",
     icon: <IconTrendUp />,
   },
   {

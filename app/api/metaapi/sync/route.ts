@@ -17,7 +17,9 @@ import {
   getV1QualifyingDayMinUsd,
   getV1RewardCap,
   getV1SafetyNet,
+  V1_CHALLENGE,
 } from "@/lib/v1-engine";
+import { isV1Challenge } from "@/lib/v1-display";
 
 const FUNDED_GROUP: Record<string, string> = {
   "2step": "HAR\\MAN32\\demoG3",
@@ -37,7 +39,10 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
   const startBalance = challenge.start_balance as number;
   const dailyLimit   = challenge.daily_drawdown_limit as number;
   const totalLimit   = challenge.total_drawdown_limit as number;
-  const profitTarget = challenge.profit_target as number;
+  const storedProfitTarget = challenge.profit_target as number;
+  const profitTarget = isV1Challenge(challenge) && phase === "phase1"
+    ? Math.max(storedProfitTarget, V1_CHALLENGE.profitTargetPct)
+    : storedProfitTarget;
   const accountSize  = challenge.account_size as string;
   const prevBalance  = challenge.balance as number;
   const prevHighest  = (challenge.highest_balance as number | null) ?? startBalance;
@@ -151,7 +156,7 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
     await admin.from("challenges").update({
       daily_dd: dailyDDRounded,
       best_day_profit: newBestDay,
-      ...(effectiveProfitTarget > profitTarget && { profit_target: effectiveProfitTarget }),
+      ...(effectiveProfitTarget > storedProfitTarget && { profit_target: effectiveProfitTarget }),
     }).eq("id", id);
   } catch {}
 
@@ -357,8 +362,8 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
       } : {
         calendarDaysElapsed,
         calendarDaysMax: 30,
-        profitTargetPct: 6,
-        profitTargetUsdParam: startBalance * 0.06,
+        profitTargetPct: profitTarget,
+        profitTargetUsdParam: startBalance * profitTarget / 100,
         minTradingDays: 2,
       }),
     }, { userId, challengeId: id, tradingDayId: closedTradingDay }).catch(() => {});

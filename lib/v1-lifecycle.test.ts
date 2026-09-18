@@ -84,29 +84,29 @@ section("Q. Challenge réussi → reste vivant le Jour J (pas de conversion imm�
 
 // Q1 — Profit 6% atteint
 test(
-  "Q1 25K : balance 26500 ≥ +6% de 25000 → profit cible atteint",
-  isV1ProfitTargetMet(26500, 25000),
+  "Q1 25K : balance 27250 ≥ +9% de 25000 → profit cible atteint",
+  isV1ProfitTargetMet(27250, 25000),
   true
 );
 
 // Q2 — Profit insuffisant
 test(
-  "Q2 25K : balance 26000 < +6% de 25000 → profit cible NON atteint",
+  "Q2 25K : balance 26000 < +9% de 25000 → profit cible NON atteint",
   isV1ProfitTargetMet(26000, 25000),
   false
 );
 
 // Q3 — 50K profit atteint
 test(
-  "Q3 50K : balance 53500 ≥ +6% de 50000 → profit cible atteint",
-  isV1ProfitTargetMet(53500, 50000),
+  "Q3 50K : balance 54500 ≥ +9% de 50000 → profit cible atteint",
+  isV1ProfitTargetMet(54500, 50000),
   true
 );
 
 // Q4 — 100K profit atteint
 test(
-  "Q4 100K : balance 106100 ≥ +6% de 100000 → profit cible atteint",
-  isV1ProfitTargetMet(106100, 100000),
+  "Q4 100K : balance 109000 ≥ +9% de 100000 → profit cible atteint",
+  isV1ProfitTargetMet(109000, 100000),
   true
 );
 
@@ -409,22 +409,22 @@ test("Z2-b 50K DD = 2000$",  V1_DD_USD_BY_BALANCE[50000],  2000);
 test("Z2-c 100K DD = 3000$", V1_DD_USD_BY_BALANCE[100000], 3000);
 
 // Safety Net (seuil de verrouillage)
-test("Z2-d 25K Safety Net = 26100$",  V1_SAFETY_NET[25000],  26100);
-test("Z2-e 50K Safety Net = 52100$",  V1_SAFETY_NET[50000],  52100);
-test("Z2-f 100K Safety Net = 103100$", V1_SAFETY_NET[100000], 103100);
+test("Z2-d 25K Safety Net = 26000$",  V1_SAFETY_NET[25000],  26000);
+test("Z2-e 50K Safety Net = 52000$",  V1_SAFETY_NET[50000],  52000);
+test("Z2-f 100K Safety Net = 103000$", V1_SAFETY_NET[100000], 103000);
 
 // Reward thresholds (Safety Net + cap)
-test("Z2-g 25K Reward #1 threshold = 26400$",  computeRewardRequestThreshold(25000,  1), 26400);
-test("Z2-h 50K Reward #1 threshold = 52600$",  computeRewardRequestThreshold(50000,  1), 52600);
-test("Z2-i 100K Reward #1 threshold = 103850$", computeRewardRequestThreshold(100000, 1), 103850);
+test("Z2-g 25K Reward #1 threshold = 26300$",  computeRewardRequestThreshold(25000,  1), 26300);
+test("Z2-h 50K Reward #1 threshold = 52500$",  computeRewardRequestThreshold(50000,  1), 52500);
+test("Z2-i 100K Reward #1 threshold = 104000$", computeRewardRequestThreshold(100000, 1), 104000);
 
 // Reward caps
 test("Z2-j 25K R#1 cap = 300$",   getV1RewardCap(25000,  1), 300);
 test("Z2-k 25K R#5 cap = 750$",   getV1RewardCap(25000,  5), 750);
 test("Z2-l 50K R#1 cap = 500$",   getV1RewardCap(50000,  1), 500);
 test("Z2-m 50K R#5 cap = 1250$",  getV1RewardCap(50000,  5), 1250);
-test("Z2-n 100K R#1 cap = 750$",  getV1RewardCap(100000, 1), 750);
-test("Z2-o 100K R#5 cap = 1750$", getV1RewardCap(100000, 5), 1750);
+test("Z2-n 100K R#1 cap = 1000$",  getV1RewardCap(100000, 1), 1000);
+test("Z2-o 100K R#5 cap = 3000$", getV1RewardCap(100000, 5), 3000);
 
 // Trailing floor V1 (sans Safety Net = challenge)
 test(

@@ -161,11 +161,11 @@ testContains("getV1DdDisplay(100K) contient '$'",  getV1DdDisplay(100_000), "$")
 
 section("D. Safety Net (getV1SafetyNetUsd / getV1SafetyNetDisplay)");
 
-test("25K → 26 100$",  getV1SafetyNetUsd(25_000),  26_100);
-test("50K → 52 100$",  getV1SafetyNetUsd(50_000),  52_100);
-test("100K → 103 100$", getV1SafetyNetUsd(100_000), 103_100);
+test("25K → 26 000$",  getV1SafetyNetUsd(25_000),  26_000);
+test("50K → 52 000$",  getV1SafetyNetUsd(50_000),  52_000);
+test("100K → 103 000$", getV1SafetyNetUsd(100_000), 103_000);
 
-testContains("getV1SafetyNetDisplay(25K) contient '100'", getV1SafetyNetDisplay(25_000), "100");
+testContains("getV1SafetyNetDisplay(25K) contient '000'", getV1SafetyNetDisplay(25_000), "000");
 testContains("getV1SafetyNetDisplay(25K) contient '$'",   getV1SafetyNetDisplay(25_000), "$");
 
 // ═══════════════════════════════════════════════════════════════
@@ -176,15 +176,15 @@ section("E. Seuil Reward (getV1RewardThresholdUsd)");
 
 // Seuil = Safety Net + cap du Reward level
 // 25K R#1 : 26 100 + 300 = 26 400
-test("25K R#1 → 26 400$", getV1RewardThresholdUsd(25_000, 1), 26_400);
+test("25K R#1 → 26 300$", getV1RewardThresholdUsd(25_000, 1), 26_300);
 // 25K R#2 : 26 100 + 400 = 26 500
-test("25K R#2 → 26 500$", getV1RewardThresholdUsd(25_000, 2), 26_500);
+test("25K R#2 → 26 400$", getV1RewardThresholdUsd(25_000, 2), 26_400);
 // 50K R#1 : 52 100 + 500 = 52 600
-test("50K R#1 → 52 600$", getV1RewardThresholdUsd(50_000, 1), 52_600);
+test("50K R#1 → 52 500$", getV1RewardThresholdUsd(50_000, 1), 52_500);
 // 100K R#1 : 103 100 + 750 = 103 850
-test("100K R#1 → 103 850$", getV1RewardThresholdUsd(100_000, 1), 103_850);
+test("100K R#1 → 104 000$", getV1RewardThresholdUsd(100_000, 1), 104_000);
 
-testContains("getV1RewardThresholdDisplay(25K, 1) contient '400'", getV1RewardThresholdDisplay(25_000, 1), "400");
+testContains("getV1RewardThresholdDisplay(25K, 1) contient '300'", getV1RewardThresholdDisplay(25_000, 1), "300");
 
 // ═══════════════════════════════════════════════════════════════
 // F. Plafond Reward — getV1RewardCapDisplay
@@ -201,8 +201,8 @@ testContains("25K R#5 → '750'",   getV1RewardCapDisplay(25_000, 5), "750");
 testContains("50K R#1 → '500'",   getV1RewardCapDisplay(50_000, 1), "500");
 testContains("50K R#5 → '250'",   getV1RewardCapDisplay(50_000, 5), "250");   // 1 250$
 
-testContains("100K R#1 → '750'",  getV1RewardCapDisplay(100_000, 1), "750");
-testContains("100K R#5 → '750'",  getV1RewardCapDisplay(100_000, 5), "750");  // 1 750$
+testContains("100K R#1 → 1000",  getV1RewardCapDisplay(100_000, 1), "000");
+testContains("100K R#5 → 3000",  getV1RewardCapDisplay(100_000, 5), "000");  // 1 750$
 
 test("R#6 hors range → '—'", getV1RewardCapDisplay(25_000, 6), "—");
 
@@ -225,8 +225,8 @@ testContains("getV1QualDayDisplay(25K) contient '/jour'",  getV1QualDayDisplay(2
 
 section("H. Consistance (getV1ConsistencyDisplay)");
 
-test("phase1 → 'AUCUNE'",  getV1ConsistencyDisplay("phase1"), "AUCUNE");
-test("phase2 → 'AUCUNE'",  getV1ConsistencyDisplay("phase2"), "AUCUNE");
+test("phase1 → '≤ 50%'",  getV1ConsistencyDisplay("phase1"), "≤ 50%");
+test("phase2 → '≤ 50%'",  getV1ConsistencyDisplay("phase2"), "≤ 50%");
 test("funded → '≤ 50%'",   getV1ConsistencyDisplay("funded"), "≤ 50%");
 
 // ═══════════════════════════════════════════════════════════════
@@ -236,9 +236,9 @@ test("funded → '≤ 50%'",   getV1ConsistencyDisplay("funded"), "≤ 50%");
 section("I. Constantes V1 exportées");
 
 test("V1_QUAL_DAYS_MIN = 5",          V1_QUAL_DAYS_MIN,        5);
-test("V1_CHALLENGE_MIN_DAYS = 0",     V1_CHALLENGE_MIN_DAYS,   0);
+test("V1_CHALLENGE_MIN_DAYS = 2",     V1_CHALLENGE_MIN_DAYS,   2);
 test("V1_CHALLENGE_MAX_DAYS = 30",    V1_CHALLENGE_MAX_DAYS,   30);
-test("V1_CHALLENGE_PROFIT_PCT = 6",   V1_CHALLENGE_PROFIT_PCT, 6);
+test("V1_CHALLENGE_PROFIT_PCT = 9",   V1_CHALLENGE_PROFIT_PCT, 9);
 test("V1_REWARD_PROFIT_PCT = 4",      V1_REWARD_PROFIT_PCT,    4);
 test("V1_MAX = 5",                    V1_MAX,                  5);
 

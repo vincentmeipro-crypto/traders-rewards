@@ -172,7 +172,7 @@ export async function sendWelcomeEmail(
 }
 
 // ── sendChallengerValidatedEmail ─────────────────────────────
-// Envoyé quand le Challenger a atteint son objectif (+6%).
+// Envoyé quand le Challenger a atteint son objectif (+9%).
 // Ne doit PAS annoncer de nouveaux identifiants MT5.
 
 export async function sendChallengerValidatedEmail(

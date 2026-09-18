@@ -730,9 +730,9 @@ export default function JourneyThreeLevels() {
                 </span>
               </div>
 
-              {/* +6% */}
+              {/* +9% */}
               <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 12, position: "relative" }}>
-                <span style={{ fontSize: 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1 }}>+6%</span>
+                <span style={{ fontSize: 28, fontWeight: 900, color: "#FFFFFF", letterSpacing: "-1px", lineHeight: 1 }}>+9%</span>
               </div>
 
               {/* Spacer */}

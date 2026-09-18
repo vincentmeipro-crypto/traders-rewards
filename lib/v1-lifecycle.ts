@@ -72,13 +72,13 @@ export function getCurrentTradingDayStart(now: Date = new Date()): Date {
  * Retourne true si le profit cible du Challenge V1 est atteint.
  *
  * Apex EOD — Challenge : 0 jours minimum, pas de consistency.
- * Cible = +6 % du capital initial.
+ * Cible = +9 % du capital initial.
  *
  * NB : la vérification breach (DD) est séparée (faite en amont).
  *
  * @param currentBalance  Balance courante en USD
  * @param startBalance    Capital initial en USD
- * @param baseTargetPct   Cible % (défaut V1_CHALLENGE.profitTargetPct = 6)
+ * @param baseTargetPct   Cible % (défaut V1_CHALLENGE.profitTargetPct = 9)
  */
 export function isV1ProfitTargetMet(
   currentBalance: number,

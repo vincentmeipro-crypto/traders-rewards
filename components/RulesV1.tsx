@@ -1,5 +1,7 @@
 "use client";
 
+import { challengeProfitTargetUsd } from "@/lib/program-rules";
+
 import { useState, useEffect, Fragment } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
 import { SIZES_DATA, QUAL_DAY_USD } from "@/lib/rewardsData";
@@ -31,7 +33,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
   const qualMin      = QUAL_DAY_USD[selectedSizeIndex as 0 | 1 | 2];
   const [showPct, setShowPct] = useState(true);
   const ddPct     = Math.round(ddUsd / selectedSize.bal * 100);  // 4 pour 25K/50K, 3 pour 100K
-  const profitUsd = selectedSize.bal * 0.06;                     // 1 500 / 3 000 / 6 000
+  const profitUsd = challengeProfitTargetUsd(selectedSize.bal);                     // 2 250 / 4 500 / 9 000
 
   // ── Rendu unifié label / valeur (identique pour les 2 cartes) ─
   const renderRows = (rows: RuleRow[]) =>
@@ -96,7 +98,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
         L("Jusqu’à 10 challenges actifs simultanément", "Hasta 10 challenges activos simultáneamente", "Up to 10 challenges active at once"),
       ],
       rows: [
-        { label: L("OBJECTIF",    "OBJETIVO",    "TARGET"),      value: showPct ? "+6 %" : fmt(profitUsd) },
+        { label: L("OBJECTIF",    "OBJETIVO",    "TARGET"),      value: showPct ? "+9 %" : fmt(profitUsd) },
         { label: "DD EOD",                                        value: showPct ? ddPct + " %" : fmt(ddUsd) },
         { label: L("CONSISTANCE", "CONSISTENCIA","CONSISTENCY"), value: "50 %" },
         { label: L("DURÉE",       "DURACIÓN",    "DURATION"),    value: L("30 JOURS", "30 DÍAS", "30 DAYS") },

@@ -40,7 +40,7 @@ export default function TermsPage() {
       content: [
         "Le Trading Simulé reproduit les conditions des marchés financiers réels. Les données de marché sont utilisées uniquement pour reproduire ces conditions. Aucun ordre réel n'est exécuté sur les marchés financiers.",
         "Vous reconnaissez que le Trading Simulé est entièrement fictif, que le capital affiché n'a aucune valeur monétaire réelle, et que vous ne percevrez aucune rémunération lors de la phase d'Évaluation.",
-        "Le Challenge comporte une seule étape : objectif de profit +6%, minimum de deux (2) journées de trading, consistance maximale de 50% et durée maximale de trente (30) jours calendaires.",
+        "Le Challenge comporte une seule étape : objectif de profit +9%, minimum de deux (2) journées de trading, consistance maximale de 50% et durée maximale de trente (30) jours calendaires.",
         "La limite de perte est un Trailing Drawdown EOD de 4% pour les comptes 25K et 50K, et de 3% pour le compte 100K. Aucun Daily Drawdown séparé ne s'applique.",
         "Si vous n'activez pas une phase dans les trente (30) jours suivant sa mise à disposition, votre accès sera suspendu. Vous pouvez demander un renouvellement dans les six (6) mois, faute de quoi l'Accord sera résilié sans remboursement.",
       ]
@@ -162,7 +162,7 @@ export default function TermsPage() {
       content: [
         "« Accord » : le contrat conclu entre vous et nous lors de la confirmation de votre Commande.",
         "« Capital Simulé Initial » : le montant simulé choisi lors de la Commande, sans valeur monétaire réelle.",
-        "« Challenge Traders Rewards » : le service d'évaluation en une étape avec objectif de profit de +6%.",
+        "« Challenge Traders Rewards » : le service d'évaluation en une étape avec objectif de profit de +9%.",
         "« Compte Reward » : le compte simulé accessible après réussite du Challenge et règlement des frais d'activation applicables.",
         "« Trailing Drawdown EOD » : plancher de protection recalculé à partir des plus hauts de fin de journée, selon la taille et l'état du compte.",
         "« Frais de Challenge » : les frais associés au Challenge Traders Rewards, non remboursables sauf rétractation valide.",

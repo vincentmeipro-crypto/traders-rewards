@@ -164,7 +164,7 @@ async function main() {
         .eq("phase_order", 1)
         .single();
 
-      chk(`${slug} Phase1 profit_target = 6.0`,                  phases?.profit_target  === 6.0,        `trouvé: ${phases?.profit_target}`);
+      chk(`${slug} Phase1 profit_target = 9.0`,                  phases?.profit_target  === 9.0,        `trouvé: ${phases?.profit_target}`);
       chk(`${slug} Phase1 total_drawdown = ${expectedDd}`,       phases?.total_drawdown === expectedDd, `trouvé: ${phases?.total_drawdown}`);
       chk(`${slug} Phase1 daily_drawdown = ${expectedDd}`,       phases?.daily_drawdown === expectedDd, `trouvé: ${phases?.daily_drawdown}`);
       chk(`${slug} Phase1 min_trading_days = 2`,                 phases?.min_trading_days === 2,        `trouvé: ${phases?.min_trading_days}`);
@@ -317,7 +317,7 @@ async function main() {
     const capsExpected: Record<string, Record<string, number>> = {
       "rewards-25k":  { reward_cap_1: 300,  reward_cap_2: 400,  reward_cap_3: 500,  reward_cap_4: 600,  reward_cap_5: 750  },
       "rewards-50k":  { reward_cap_1: 500,  reward_cap_2: 650,  reward_cap_3: 800,  reward_cap_4: 1000, reward_cap_5: 1250 },
-      "rewards-100k": { reward_cap_1: 750,  reward_cap_2: 1000, reward_cap_3: 1250, reward_cap_4: 1500, reward_cap_5: 1750 },
+      "rewards-100k": { reward_cap_1: 1000, reward_cap_2: 1400, reward_cap_3: 1800, reward_cap_4: 2000, reward_cap_5: 3000 },
     };
     for (const [slug, caps] of Object.entries(capsExpected)) {
       for (const [key, expected] of Object.entries(caps)) {

@@ -17,7 +17,7 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 const SITE_URL = "https://www.traders-rewards.eu";
 const TITLE = "Traders Rewards | Programme Éducatif de Trading";
 const DESCRIPTION =
-  "Transformez votre trading démo en vraies Rewards. Choisissez un Challenge 25K, 50K ou 100K, validez un objectif unique de +6% et progressez jusqu'au statut Trader Reward.";
+  "Transformez votre trading démo en vraies Rewards. Choisissez un Challenge 25K, 50K ou 100K, validez un objectif unique de +9% et progressez jusqu'au statut Trader Reward.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -171,7 +171,7 @@ const jsonLd = {
           name: "Comment démarrer avec Traders Rewards ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Choisissez un Challenge 25K, 50K ou 100K. L'objectif unique est de +6%, avec un minimum de 2 journées et un maximum de 30 jours calendaires.",
+            text: "Choisissez un Challenge 25K, 50K ou 100K. L'objectif unique est de +9%, avec un minimum de 2 journées et un maximum de 30 jours calendaires.",
           },
         },
         {
@@ -195,7 +195,7 @@ const jsonLd = {
           name: "Quels sont les objectifs de profit du challenge ?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Le Challenge comporte une seule étape avec un objectif de profit de +6%.",
+            text: "Le Challenge comporte une seule étape avec un objectif de profit de +9%.",
           },
         },
         {
@@ -241,7 +241,7 @@ const jsonLd = {
           {
             "@type": "Offer",
             name: "Challenge 50K",
-            description: "Challenge en une étape sur compte simulé 50K, objectif +6%, Trailing Drawdown EOD 4%.",
+            description: "Challenge en une étape sur compte simulé 50K, objectif +9%, Trailing Drawdown EOD 4%.",
             priceCurrency: "EUR",
             price: "29",
             url: `${SITE_URL}/#pricing`,
@@ -249,7 +249,7 @@ const jsonLd = {
           {
             "@type": "Offer",
             name: "Challenge 100K",
-            description: "Challenge en une étape sur compte simulé 100K, objectif +6%, Trailing Drawdown EOD 3%.",
+            description: "Challenge en une étape sur compte simulé 100K, objectif +9%, Trailing Drawdown EOD 3%.",
             priceCurrency: "EUR",
             price: "59",
             url: `${SITE_URL}/#pricing`,

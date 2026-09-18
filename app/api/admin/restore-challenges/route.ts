@@ -1,4 +1,5 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+import { getChallengeProfitTargetPct } from "@/lib/program-rules";
+import { NextRequest, NextResponse } from "next/server";
 import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendApologyEmail } from "@/lib/mailer";
@@ -109,7 +110,7 @@ export async function POST(req: NextRequest) {
         phase,
         balance:               Math.round(balance),
         start_balance:         startBalance,
-        profit_target:         phase === "funded" ? 0 : 10,
+        profit_target:         phase === "funded" ? 0 : getChallengeProfitTargetPct(model, startBalance, 10),
         daily_drawdown_limit:  model === "1step" ? 3 : 5,
         total_drawdown_limit:  10,
         trading_days:          0,

@@ -395,7 +395,7 @@ export default function ProductsPage() {
                         {p1 ? (
                           <div style={{ display: "flex", gap: 12, fontSize: 12, color: "rgba(255,255,255,0.42)", flexWrap: "wrap" }}>
                             {isCurrentOffer(product) ? <>
-                              <span>Objectif <strong style={{ color: "#C9963F" }}>+6%</strong></span>
+                              <span>Objectif <strong style={{ color: "#C9963F" }}>+9%</strong></span>
                               <span>Trailing DD EOD <strong style={{ color: "#C9963F" }}>{product.slug === "rewards-100k" ? "3%" : "4%"}</strong></span>
                               <span>Consistance <strong style={{ color: "#C9963F" }}>≤50%</strong></span>
                               <span>Minimum <strong style={{ color: "#C9963F" }}>2 jours</strong></span>

@@ -16,7 +16,7 @@ export default function DashboardShowcase() {
   const L = (fr: string, es: string, en: string) => lang === "fr" ? fr : lang === "es" ? es : en;
 
   const cards = [
-    { icon: <Target size={17}/>, label: L("OBJECTIF", "OBJETIVO", "TARGET"), value: "+6%", sub: L("Progression en direct", "Progreso en directo", "Live progress") },
+    { icon: <Target size={17}/>, label: L("OBJECTIF", "OBJETIVO", "TARGET"), value: "+9%", sub: L("Progression en direct", "Progreso en directo", "Live progress") },
     { icon: <ShieldCheck size={17}/>, label: "TRAILING DD EOD", value: "4%", sub: L("Plancher clairement affiché", "Suelo claramente visible", "Clear protection floor") },
     { icon: <BarChart3 size={17}/>, label: "DD EOD", value: "$2,000", sub: L("Trailing 50K", "Trailing 50K", "Trailing 50K") },
     { icon: <Trophy size={17}/>, label: "REWARD", value: "#1", sub: L("Votre prochaine étape", "Tu próximo nivel", "Your next milestone") },

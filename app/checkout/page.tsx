@@ -85,7 +85,7 @@ function CheckoutContent() {
   // Rules traduits
   const rules = [
     { label: L("Étapes", "Etapas", "Steps"), value: "1" },
-    { label: L("Objectif de profit", "Objetivo de beneficio", "Profit target"), value: "+6%" },
+    { label: L("Objectif de profit", "Objetivo de beneficio", "Profit target"), value: "+9%" },
     { label: L("Trailing Drawdown EOD", "Trailing Drawdown EOD", "Trailing Drawdown EOD"), value: selectedSize === "100k" ? "3%" : "4%" },
     { label: L("Consistance", "Consistencia", "Consistency"), value: "≤ 50%" },
     { label: L("Jours de trading minimum", "Días mínimos de trading", "Minimum trading days"), value: L("2 jours", "2 días", "2 days") },
@@ -820,9 +820,9 @@ function CheckoutContent() {
                   {L("une étape", "una etapa", "one step")}
                 </strong>
                 {L(
-                  ", un objectif de +6% et un Trailing Drawdown EOD de 3% ou 4% selon la taille choisie.",
-                  ", un objetivo de +6% y un Trailing Drawdown EOD del 3% o 4% según el tamaño elegido.",
-                  ", a profit target of +6% and a Trailing Drawdown EOD of 3% or 4% depending on the size chosen."
+                  ", un objectif de +9% et un Trailing Drawdown EOD de 3% ou 4% selon la taille choisie.",
+                  ", un objetivo de +9% y un Trailing Drawdown EOD del 3% o 4% según el tamaño elegido.",
+                  ", a profit target of +9% and a Trailing Drawdown EOD of 3% or 4% depending on the size chosen."
                 )}<br />
                 {L(
                   "• Après validation, l'accès au compte Trader Reward est soumis à des",

@@ -1,3 +1,4 @@
+import { getChallengeProfitTargetPct } from "@/lib/program-rules";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -193,7 +194,7 @@ export async function POST(req: NextRequest) {
         phase:                "phase1",
         balance:              size,
         start_balance:        size,
-        profit_target:        challengeDefaults.profitTarget,
+        profit_target:        getChallengeProfitTargetPct(model, size, challengeDefaults.profitTarget),
         daily_drawdown_limit: model === "1step" ? challengeDefaults.dailyDd1step : challengeDefaults.dailyDd2step,
         total_drawdown_limit: challengeDefaults.totalDdDefault,
         trading_days:         0,

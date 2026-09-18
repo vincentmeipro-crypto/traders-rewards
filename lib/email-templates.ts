@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ============================================================
  * EMAIL TEMPLATES — Traders Rewards V1.3
  * ============================================================
@@ -26,6 +26,7 @@ import {
   getV1QualifyingDayMinUsd,
 } from "./v1-engine";
 import { getV1LevelLabel } from "./v1-display";
+import { CHALLENGE_PROFIT_TARGET_PCT, challengeProfitTargetUsd } from "./program-rules";
 
 // ── Type whitelist ────────────────────────────────────────────
 
@@ -92,18 +93,14 @@ function ddEodStr(bal: number): string {
   return "1 000 $";
 }
 
-/** Objectif de profit Challenge : +6% avec montant en $ */
+/** Objectif de profit Challenge : +9% avec montant en $ */
 function profitTargetStr(bal: number): string {
-  if (bal >= 100_000) return "+6 % = 6 000 $";
-  if (bal >= 50_000)  return "+6 % = 3 000 $";
-  return "+6 % = 1 500 $";
+  return `+${CHALLENGE_PROFIT_TARGET_PCT} % = ${fmtUsd(challengeProfitTargetUsd(bal))}`;
 }
 
 /** Montant cible du profit en USD */
 function profitTargetUsd(bal: number): number {
-  if (bal >= 100_000) return 6_000;
-  if (bal >= 50_000)  return 3_000;
-  return 1_500;
+  return challengeProfitTargetUsd(bal);
 }
 
 /** Label canonique centralisé du niveau réel du compte. */
@@ -483,7 +480,7 @@ export function buildWelcomeEmail(p: {
 
 // ── 2. buildChallengerValidatedEmail ─────────────────────────
 //
-// Envoyé quand le Compte Challenger a atteint son objectif (+6%).
+// Envoyé quand le Compte Challenger a atteint son objectif (+9%).
 // Confirme la validation SANS annoncer de nouveaux identifiants
 // (le même compte MT5 est conservé jusqu'au Reward #5).
 
@@ -491,7 +488,7 @@ export function buildChallengerValidatedEmail(p: {
   accountSize:      string;
   mt5Login?:        number;
   date?:            string;
-  profitTargetUsd?: number;   // ex: 3000 pour 50K
+  profitTargetUsd?: number;   // ex: 4500 pour 50K
   siteUrl:          string;
   logoUrl:          string;
 }): { subject: string; html: string } {
@@ -504,7 +501,7 @@ export function buildChallengerValidatedEmail(p: {
     { label: "Taille du compte",     value: accountSize },
     ...(mt5Login ? [{ label: "Login MT5", value: String(mt5Login) }] : []),
     ...(date     ? [{ label: "Date de validation", value: date }] : []),
-    { label: "Objectif atteint",     value: `+6 % = ${fmtUsd(targetUsd)}` },
+    { label: "Objectif atteint",     value: `+9 % = ${fmtUsd(targetUsd)}` },
     { label: "Consistance",          value: "≤ 50% respectée" },
     { label: "DD EOD",               value: `${ddEodStr(bal)} respecté` },
     { label: "Jours minimum",        value: "2 jours respectés" },
@@ -721,8 +718,8 @@ export type DailyUpdateParams = {
   // Challenger
   calendarDaysElapsed?: number;
   calendarDaysMax?:     number;  // 30
-  profitTargetPct?:     number;  // 6
-  profitTargetUsdParam?: number; // ex: 3000 pour 50K
+  profitTargetPct?:     number;  // 9
+  profitTargetUsdParam?: number; // ex: 4500 pour 50K
   minTradingDays?:      number;  // 2
 
   // Compte Reward / Trader Reward
@@ -804,7 +801,7 @@ export function buildDailyUpdateEmail(p: DailyUpdateParams): { subject: string; 
   if (isChallenger) {
     details.push({ label: "OBJECTIF CHALLENGER", value: "", isHeader: true });
     if (targetUsd != null)
-      details.push({ label: "Objectif profit",     value: `+${profitTargetPct ?? 6} % = ${fmtDollar(targetUsd)}` });
+      details.push({ label: "Objectif profit",     value: `+${profitTargetPct ?? CHALLENGE_PROFIT_TARGET_PCT} % = ${fmtDollar(targetUsd)}` });
     if (profitUsdCalc != null)
       details.push({ label: "Profit actuel",       value: `${sign(profitUsdCalc)}${fmtDollar(Math.abs(profitUsdCalc))}` });
     if (distToTarget != null && distToTarget > 0)
@@ -911,7 +908,7 @@ export function buildPhase1CertificateEmail(p: {
       { label: "Trader",           value: name },
       { label: "Compte",           value: accountSize },
       { label: "Date",             value: date },
-      { label: "Objectif atteint", value: "+6 %" },
+      { label: "Objectif atteint", value: "+9 %" },
       { label: "Login MT5",        value: "Conservé identique" },
     ],
     certUrl,
@@ -948,7 +945,7 @@ export function buildChallengeCertificateEmail(p: {
       { label: "Trader",           value: name },
       { label: "Compte",           value: accountSize },
       { label: "Date",             value: date },
-      { label: "Objectif atteint", value: "+6 %" },
+      { label: "Objectif atteint", value: "+9 %" },
     ],
     certUrl,
     logoUrl,
@@ -1202,8 +1199,8 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
         ...(isChallenger ? {
           calendarDaysElapsed: 10,
           calendarDaysMax: 30,
-          profitTargetPct: 6,
-          profitTargetUsdParam: 6_000,
+          profitTargetPct: CHALLENGE_PROFIT_TARGET_PCT,
+          profitTargetUsdParam: challengeProfitTargetUsd(100_000),
           minTradingDays: 2,
         } : {
           safetyNetUsd: 103_100,
@@ -1222,7 +1219,7 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
     case "challenge_certificate":
       return buildChallengeCertificateEmail({ firstName, lastName, accountSize, date: "27 août 2026", siteUrl, logoUrl });
     case "reward_certificate":
-      return buildRewardCertificateEmail({ firstName, lastName, accountSize, grossAmount: 1_750, rewardLevel: 5, date: "27 août 2026", netAmountEur: 1_575, splitPct: 90, mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
+      return buildRewardCertificateEmail({ firstName, lastName, accountSize, grossAmount: getV1RewardCap(parseBalance(accountSize), 5)!, rewardLevel: 5, date: "27 août 2026", netAmountEur: getV1RewardCap(parseBalance(accountSize), 5)! * 0.9, splitPct: 90, mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "reward_progression":
       return buildRewardProgressionEmail({ firstName, accountSize, rewardPaid: 2, rewardAmount: "$850", mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "apology":

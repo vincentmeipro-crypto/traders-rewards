@@ -218,16 +218,16 @@ section("H. Safety Net — seuil de lock Apex EOD (26 100 / 52 100 / 103 100)");
   // Safety Net vs ancien seuil start×1.03
   const oldLock  = 100000 * 1.03;  // 103 000 (ancien)
   const newSN    = V1_SAFETY_NET[100000];  // 103 100 (Apex EOD)
-  test("Safety Net 100K = 103 100 (was 103 000)", newSN, 103100);
-  test("Safety Net 100K > ancien lock start×1.03", newSN > oldLock, true);
+  test("Safety Net 100K = 103 000 (was 103 000)", newSN, 103000);
+  test("Safety Net 100K = start×1.03", newSN === oldLock, true);
 
   // Safety Net 25K / 50K / 100K
-  test("getV1SafetyNet(25000)  = 26 100", getV1SafetyNet(25000),  26100);
-  test("getV1SafetyNet(50000)  = 52 100", getV1SafetyNet(50000),  52100);
-  test("getV1SafetyNet(100000) = 103 100", getV1SafetyNet(100000), 103100);
-  test("V1_SAFETY_NET[25000]  = 26 100", V1_SAFETY_NET[25000],  26100);
-  test("V1_SAFETY_NET[50000]  = 52 100", V1_SAFETY_NET[50000],  52100);
-  test("V1_SAFETY_NET[100000] = 103 100", V1_SAFETY_NET[100000], 103100);
+  test("getV1SafetyNet(25000)  = 26 000", getV1SafetyNet(25000),  26000);
+  test("getV1SafetyNet(50000)  = 52 000", getV1SafetyNet(50000),  52000);
+  test("getV1SafetyNet(100000) = 103 000", getV1SafetyNet(100000), 103000);
+  test("V1_SAFETY_NET[25000]  = 26 000", V1_SAFETY_NET[25000],  26000);
+  test("V1_SAFETY_NET[50000]  = 52 000", V1_SAFETY_NET[50000],  52000);
+  test("V1_SAFETY_NET[100000] = 103 000", V1_SAFETY_NET[100000], 103000);
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -236,20 +236,20 @@ section("H. Safety Net — seuil de lock Apex EOD (26 100 / 52 100 / 103 100)");
 
 section("I. Reward request threshold = Safety Net + cap (Apex EOD)");
 // 25K R#1 : 26 100 + 300 = 26 400
-test("25K R#1 threshold = 26 400", computeRewardRequestThreshold(25000, 1), 26400);
+test("25K R#1 threshold = 26 300", computeRewardRequestThreshold(25000, 1), 26300);
 // 50K R#1 : 52 100 + 500 = 52 600
-test("50K R#1 threshold = 52 600", computeRewardRequestThreshold(50000, 1), 52600);
+test("50K R#1 threshold = 52 500", computeRewardRequestThreshold(50000, 1), 52500);
 // 100K R#1 : 103 100 + 750 = 103 850
-test("100K R#1 threshold = 103 850", computeRewardRequestThreshold(100000, 1), 103850);
+test("100K R#1 threshold = 104 000", computeRewardRequestThreshold(100000, 1), 104000);
 // 25K R#2 : 26 100 + 400 = 26 500
-test("25K R#2 threshold = 26 500", computeRewardRequestThreshold(25000, 2), 26500);
+test("25K R#2 threshold = 26 400", computeRewardRequestThreshold(25000, 2), 26400);
 // 50K R#5 : 52 100 + 1 250 = 53 350
-test("50K R#5 threshold = 53 350", computeRewardRequestThreshold(50000, 5), 53350);
+test("50K R#5 threshold = 53 250", computeRewardRequestThreshold(50000, 5), 53250);
 // 100K R#5 : 103 100 + 1 750 = 104 850
-test("100K R#5 threshold = 104 850", computeRewardRequestThreshold(100000, 5), 104850);
+test("100K R#5 threshold = 106 000", computeRewardRequestThreshold(100000, 5), 106000);
 // getV1RewardThresholdUsd = alias
-test("getV1RewardThresholdUsd(25000, 1) = 26 400", getV1RewardThresholdUsd(25000, 1), 26400);
-test("getV1RewardThresholdUsd(100000, 1) = 103 850", getV1RewardThresholdUsd(100000, 1), 103850);
+test("getV1RewardThresholdUsd(25000, 1) = 26 300", getV1RewardThresholdUsd(25000, 1), 26300);
+test("getV1RewardThresholdUsd(100000, 1) = 104 000", getV1RewardThresholdUsd(100000, 1), 104000);
 // REWARD_REQUEST_PROFIT_PCT conservé (deprecated) = 4
 test("REWARD_REQUEST_PROFIT_PCT = 4 (deprecated)", REWARD_REQUEST_PROFIT_PCT, 4);
 
@@ -292,10 +292,10 @@ section("K. Challenge — Consistency 50 % (V1.2)");
 
   // 2 jours tradés + profit OK + consistency OK → validé
   const check2Days = checkV1ChallengeTransition(
-    50000, 53100, 53100, 53100, 2, 500,
+    50000, 54600, 54600, 54600, 2, 2000,
     getV1DdUsdByBalance(50000),
   );
-  test("50K Challenge 2 jours + profit 6.2% + best_day OK → canTransition = true", check2Days.canTransition, true);
+  test("50K Challenge 2 jours + profit 9.2% + best_day OK → canTransition = true", check2Days.canTransition, true);
   test("50K Challenge 2 jours → minDaysMet = true", check2Days.minDaysMet, true);
 }
 
@@ -347,11 +347,11 @@ section("M. Reward caps #1 à #5");
   test("50K Reward #5 cap = 1 250$",getV1RewardCap(50000, 5), 1250);
 
   // 100K
-  test("100K Reward #1 cap = 750$",  getV1RewardCap(100000, 1), 750);
-  test("100K Reward #2 cap = 1 000$",getV1RewardCap(100000, 2), 1000);
-  test("100K Reward #3 cap = 1 250$",getV1RewardCap(100000, 3), 1250);
-  test("100K Reward #4 cap = 1 500$",getV1RewardCap(100000, 4), 1500);
-  test("100K Reward #5 cap = 1 750$",getV1RewardCap(100000, 5), 1750);
+  test("100K Reward #1 cap = 1000$",  getV1RewardCap(100000, 1), 1000);
+  test("100K Reward #2 cap = 1400$",getV1RewardCap(100000, 2), 1400);
+  test("100K Reward #3 cap = 1800$",getV1RewardCap(100000, 3), 1800);
+  test("100K Reward #4 cap = 2000$",getV1RewardCap(100000, 4), 2000);
+  test("100K Reward #5 cap = 3000$",getV1RewardCap(100000, 5), 3000);
 }
 
 // ════════════════════════════════════════════════════════════════

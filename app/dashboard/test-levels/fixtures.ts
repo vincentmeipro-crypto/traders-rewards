@@ -10,7 +10,7 @@ export function createLevelFixtures(userId: string) {
     trading_days: 0, best_day_profit: 0,
   };
   const challenges = [
-    { ...base, id: "local-test-50k-n1", label: "TEST 50K — N1 CHALLENGER", phase: "phase1", status: "active", balance: 50000, highest_eod: 50000, profit_target: 6 },
+    { ...base, id: "local-test-50k-n1", label: "TEST 50K — N1 CHALLENGER", phase: "phase1", status: "active", balance: 50000, highest_eod: 50000, profit_target: 9 },
     { ...base, id: "local-test-50k-n2", label: "TEST 50K — N2 COMPTE REWARD", phase: "funded", status: "funded", balance: 52500, highest_eod: 52500, profit_target: 0 },
     { ...base, id: "local-test-50k-n3", label: "TEST 50K — N3 TRADER REWARD", phase: "funded", status: "funded", balance: 52500, highest_eod: 53000, profit_target: 0 },
   ] satisfies (CockpitChallenge & { user_id: string; is_test: boolean; label: string })[];

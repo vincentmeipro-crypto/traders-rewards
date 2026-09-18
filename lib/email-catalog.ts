@@ -50,8 +50,8 @@ export const EMAIL_CATALOG: EmailCatalogEntry[] = [
   {
     type:        "challenger_validated",
     label:       "Challenger Validé",
-    description: "Envoyé quand le Compte Challenger a atteint son objectif (+6%). Confirme la validation SANS annoncer de nouveaux identifiants — le même compte MT5 est conservé.",
-    trigger:     "Objectif Challenger atteint (+6% profit, consistance ≤50%, DD respecté, 2 jours min)",
+    description: "Envoyé quand le Compte Challenger a atteint son objectif (+9%). Confirme la validation SANS annoncer de nouveaux identifiants — le même compte MT5 est conservé.",
+    trigger:     "Objectif Challenger atteint (+9% profit, consistance ≤50%, DD respecté, 2 jours min)",
     sensitive:   false,
     variables: [
       { name: "accountSize", sensitive: false },

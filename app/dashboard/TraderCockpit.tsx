@@ -42,6 +42,7 @@ import {
   getV1DdUsd,
   getV1SafetyNetUsd,
   V1_CHALLENGE_MIN_DAYS,
+  V1_CHALLENGE_PROFIT_PCT,
 } from "@/lib/v1-display";
 
 export type CockpitSubTab = "cockpit" | "trading";
@@ -224,7 +225,7 @@ function ObjectiveBlock({
         {isFunded
           ? `${levelLabel} · SEUIL +4%`
           : phase === "phase1"
-            ? "CHALLENGER · OBJECTIF +6%"
+            ? "CHALLENGER · OBJECTIF +9%"
             : phase === "phase2"
               ? OB("CHALLENGER · OBJECTIF", "CHALLENGER · OBJETIVO", "CHALLENGER · TARGET")
               : OB("Objectif — Challenge", "Objetivo — Challenge", "Objective — Challenge")}
@@ -434,8 +435,8 @@ export default function TraderCockpit({
   // nextRewardNumber=null quand parcours terminé (≥5 Rewards) → fallback 5 pour l'affichage
   const currentRewardNumber = traderLevel.nextRewardNumber ?? 5;
   const currentRewardCap = REWARD_AMOUNTS[sizeIndex][currentRewardNumber - 1];
-  // N1 uniquement : objectif +6% (jamais utilisé comme "profit target" au N2/N3)
-  const displayProfitTargetPct = isTwoStepPhase2 ? challenge.profit_target : 6;
+  // N1 uniquement : objectif +9% (jamais utilisé comme "profit target" au N2/N3)
+  const displayProfitTargetPct = isV1 ? Math.max(V1_CHALLENGE_PROFIT_PCT, challenge.profit_target) : challenge.profit_target;
   // DD% — source canonique via helper (4% pour 25K/50K, 3% pour 100K)
   const displayDrawdownPct = getV1DdPctByBalance(challenge.start_balance);
   // N1 : cible de validation
@@ -743,7 +744,7 @@ export default function TraderCockpit({
             {/* ─── N1 CHALLENGER — 5 KPIs ─────────────────────────────────── */}
             {!isRewardAccount && <>
 
-              {/* N1 KPI 2 : Objectif +6% restant */}
+              {/* N1 KPI 2 : Objectif +9% restant */}
               <div className={`${styles.card} ${styles.kpi}`}>
                 <div className={styles.kpiTop}><span className={styles.kpiLabel}>{`${C("OBJECTIF","OBJETIVO","TARGET")} +${displayProfitTargetPct.toFixed(0)}% ${C("RESTANT","RESTANTE","LEFT")}`}</span><Target color={BLUE} size={17} /></div>
                 <div>

@@ -161,7 +161,7 @@ const PRODUCTS = [
 ];
 
 // ─── Structure 3 niveaux V1 ───────────────────────────────────
-//  Phase 1 : challenge      → STARTER       (+6%, trailing no-lock)
+//  Phase 1 : challenge      → STARTER       (+9%, trailing no-lock)
 //  Phase 2 : funded         → REWARD START  (+4%, trailing with lock, 5 j. qualif.)
 //  Phase 3 : reward_journey → TRADER REWARD (floor fixe, reward threshold, caps #2-5)
 // ─────────────────────────────────────────────────────────────
@@ -178,7 +178,7 @@ const PHASES: Array<{
     slug: "rewards-25k",
     phases: [
       { phase_order: 1, phase_label: "Challenge",         phase_type: "challenge",
-        profit_target: 6.0, daily_drawdown: 4.0, total_drawdown: 4.0,
+        profit_target: 9.0, daily_drawdown: 4.0, total_drawdown: 4.0,
         min_trading_days: 2, max_trading_days: 30,   profit_split: null },
       { phase_order: 2, phase_label: "Reward #1",         phase_type: "funded",
         profit_target: 4.0, daily_drawdown: 4.0, total_drawdown: 4.0,
@@ -192,7 +192,7 @@ const PHASES: Array<{
     slug: "rewards-50k",
     phases: [
       { phase_order: 1, phase_label: "Challenge",         phase_type: "challenge",
-        profit_target: 6.0, daily_drawdown: 4.0, total_drawdown: 4.0,
+        profit_target: 9.0, daily_drawdown: 4.0, total_drawdown: 4.0,
         min_trading_days: 2, max_trading_days: 30,   profit_split: null },
       { phase_order: 2, phase_label: "Reward #1",         phase_type: "funded",
         profit_target: 4.0, daily_drawdown: 4.0, total_drawdown: 4.0,
@@ -206,7 +206,7 @@ const PHASES: Array<{
     slug: "rewards-100k",
     phases: [
       { phase_order: 1, phase_label: "Challenge",         phase_type: "challenge",
-        profit_target: 6.0, daily_drawdown: 3.0, total_drawdown: 3.0,
+        profit_target: 9.0, daily_drawdown: 3.0, total_drawdown: 3.0,
         min_trading_days: 2, max_trading_days: 30,   profit_split: null },
       { phase_order: 2, phase_label: "Reward #1",         phase_type: "funded",
         profit_target: 4.0, daily_drawdown: 3.0, total_drawdown: 3.0,
@@ -297,16 +297,16 @@ const RULES: Array<{
         description: "Seuil USD qualifiant Reward #1 — 100K : 150 USD/j." },
       { rule_key: "activation_fee_eur",    rule_value: 149,   enabled: true,
         description: "Frais activation Reward Account — 100K : 149 EUR." },
-      { rule_key: "reward_cap_1",          rule_value: 750,   enabled: true,
-        description: "Plafond Reward #1 — 100K : 750 USD." },
-      { rule_key: "reward_cap_2",          rule_value: 1000,  enabled: true,
-        description: "Plafond Reward #2 — 100K : 1 000 USD." },
-      { rule_key: "reward_cap_3",          rule_value: 1250,  enabled: true,
-        description: "Plafond Reward #3 — 100K : 1 250 USD." },
-      { rule_key: "reward_cap_4",          rule_value: 1500,  enabled: true,
-        description: "Plafond Reward #4 — 100K : 1 500 USD." },
-      { rule_key: "reward_cap_5",          rule_value: 1750,  enabled: true,
-        description: "Plafond Reward #5 — 100K : 1 750 USD." },
+      { rule_key: "reward_cap_1",          rule_value: 1000,   enabled: true,
+        description: "Plafond Reward #1 — 100K : 1 000 USD." },
+      { rule_key: "reward_cap_2",          rule_value: 1400,  enabled: true,
+        description: "Plafond Reward #2 — 100K : 1 400 USD." },
+      { rule_key: "reward_cap_3",          rule_value: 1800,  enabled: true,
+        description: "Plafond Reward #3 — 100K : 1 800 USD." },
+      { rule_key: "reward_cap_4",          rule_value: 2000,  enabled: true,
+        description: "Plafond Reward #4 — 100K : 2 000 USD." },
+      { rule_key: "reward_cap_5",          rule_value: 3000,  enabled: true,
+        description: "Plafond Reward #5 — 100K : 3 000 USD." },
     ],
   },
 ];

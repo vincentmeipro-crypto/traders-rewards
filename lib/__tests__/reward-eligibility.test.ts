@@ -234,14 +234,14 @@ describe("evaluateReward — floor = start_balance, available = balance − star
   });
 
   test("R2 : maximum = min(balance − start, cap_R2)", () => {
-    // paidCount=1 → R2, cap=750 ; balance=51000 → available=1000 → max=750
+    // paidCount=1 → R2, cap=650 ; balance=51000 → available=1000 → max=650
     const r = evaluateReward({ ...BASE_50K, paidCount: 1, balance: 51000, equity: 51000 });
     expect(r.eligible).toBe(true);
-    expect(r.maximum).toBe(750);
+    expect(r.maximum).toBe(650);
     expect(r.rewardNumber).toBe(2);
   });
 
-  test("25K R1 : cap=250, balance=25300 → max=min(300,250)=250", () => {
+  test("25K R1 : cap=300, balance=25300 → max=min(300,300)=300", () => {
     const r = evaluateReward({
       ...BASE_50K,
       start:        25000,
@@ -250,7 +250,7 @@ describe("evaluateReward — floor = start_balance, available = balance − star
       dailyProfits: FIVE_DAYS_25K,
     });
     expect(r.eligible).toBe(true);
-    expect(r.maximum).toBe(250);
+    expect(r.maximum).toBe(300);
   });
 
   test("25K R1 : balance=25100 → max=100, éligible exactement au minimum", () => {

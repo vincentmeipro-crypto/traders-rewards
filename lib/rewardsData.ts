@@ -22,11 +22,8 @@ export const REWARD_LEVELS = [
 
 // Plafonds MAX par taille × niveau
 // REWARD_AMOUNTS[sizeIndex][levelIndex]  (0=25K · 1=50K · 2=100K)
-export const REWARD_AMOUNTS = [
-  [ 300,  400,  500,  600,  750 ],  // 25K  R1 → R5
-  [ 500,  650,  800, 1000, 1250 ],  // 50K  R1 → R5
-  [ 750, 1000, 1250, 1500, 1750 ],  // 100K R1 → R5
-] as const;
+import { REWARD_AMOUNTS } from "./program-rules";
+export { REWARD_AMOUNTS } from "./program-rules";
 
 // Seuils journée qualifiante (USD) — [25K, 50K, 100K] — APEX EOD MODEL
 // ATTENTION : ce sont des SEUILS de qualification, PAS des montants de reward
@@ -36,7 +33,7 @@ export const QUAL_DAY_USD = [100, 250, 300] as const;
 // Données contractuelles par taille de compte (frontend display uniquement)
 // Consommé par : JourneyThreeLevels, RulesV1
 export const SIZES_DATA = [
-  { bal: 25000,  label: "25K",  ddPct: 4, floorStart: 24000,  lockAt: 26100,  targetBal: 26400,  rewardCaps: REWARD_AMOUNTS[0] },
-  { bal: 50000,  label: "50K",  ddPct: 4, floorStart: 48000,  lockAt: 52100,  targetBal: 52600,  rewardCaps: REWARD_AMOUNTS[1] },
-  { bal: 100000, label: "100K", ddPct: 3, floorStart: 97000,  lockAt: 103100, targetBal: 103850, rewardCaps: REWARD_AMOUNTS[2] },
+  { bal: 25000,  label: "25K",  ddPct: 4, floorStart: 24000,  rewardCaps: REWARD_AMOUNTS[0] },
+  { bal: 50000,  label: "50K",  ddPct: 4, floorStart: 48000,  rewardCaps: REWARD_AMOUNTS[1] },
+  { bal: 100000, label: "100K", ddPct: 3, floorStart: 97000, rewardCaps: REWARD_AMOUNTS[2] },
 ] as const;

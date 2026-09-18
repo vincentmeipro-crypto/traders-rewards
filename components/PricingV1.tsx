@@ -1,5 +1,7 @@
 "use client";
 
+import { challengeProfitTargetUsd } from "@/lib/program-rules";
+
 // ════════════════════════════════════════════════════════════════
 //  PricingV1.tsx — Pricing V1 Traders Rewards
 //  3 cartes : rewards-25k / rewards-50k / rewards-100k
@@ -147,7 +149,7 @@ export default function PricingV1() {
     const cardShowPct = showPctPerCard[idx] ?? true; // état % / $ local à cette carte
     const RULES = [
       { label: L("1 Étape","1 Paso","1 Step"),               value: "✓",                                                                                          accent: true  },
-      { label: L("Objectif profit","Objetivo profit","Profit target"), value: cardShowPct ? "+6%" : `+${fmtDollar(card.balance * 0.06)}`,                         accent: false },
+      { label: L("Objectif profit","Objetivo profit","Profit target"), value: cardShowPct ? "+9%" : `+${fmtDollar(challengeProfitTargetUsd(card.balance))}`,                         accent: false },
       { label: L("Trailing DD EOD","Trailing DD EOD","Trailing DD EOD"), value: cardShowPct ? `${card.trailingDdPct}%` : fmtDollar(card.balance * card.trailingDdPct / 100), accent: false },
       { label: L("Consistance","Consistencia","Consistency"), value: "≤ 50%",                                                                                   accent: false },
       { label: L("Jours min","Días mín","Min days"),          value: L("2 jours","2 días","2 days"),                                                           accent: false },

@@ -4,6 +4,9 @@ import { sendFundedEmail, sendFailedEmail, sendWelcomeEmail, sendPhase1Certifica
 import { createMT5Account, getMT5Group, changeMT5Group, disableMT5Account, getMT5Account, updateMT5AccountName, addMT5Balance, withdrawMT5Balance, enableMT5Account } from "@/lib/mt5";
 import { checkAdmin } from "@/lib/admin-auth";
 import { buildRewardReview, type RewardReviewData } from "@/lib/reward-review";
+import { V1_CHALLENGE } from "@/lib/v1-engine";
+import { isV1Challenge } from "@/lib/v1-display";
+import { getChallengeProfitTargetPct } from "@/lib/program-rules";
 
 async function autoTransitionPhase(challenge: Record<string, unknown>) {
   const admin = createAdminClient();
@@ -12,7 +15,9 @@ async function autoTransitionPhase(challenge: Record<string, unknown>) {
   const tradingDays = challenge.trading_days as number;
   const phase = challenge.phase as string;
   const model = ((challenge.model as string) ?? "2step").toLowerCase().replace(/[\s-]/g, "");
-  const profitTarget = challenge.profit_target as number;
+  const profitTarget = isV1Challenge(challenge)
+    ? Math.max(challenge.profit_target as number, V1_CHALLENGE.profitTargetPct)
+    : challenge.profit_target as number;
   const id = challenge.id as string;
   const is1Step = model.includes("1step");
 
@@ -187,7 +192,7 @@ export async function POST(req: NextRequest) {
     phase: isReward ? "funded" : "phase1",
     balance: size,
     start_balance: size,
-    profit_target: isReward ? 0 : 10,
+    profit_target: isReward ? 0 : getChallengeProfitTargetPct(model, size, 10),
     daily_drawdown_limit: model === "1step" ? 3 : 5,
     total_drawdown_limit: 10,
     trading_days: 0,
