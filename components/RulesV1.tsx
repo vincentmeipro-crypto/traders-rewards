@@ -251,13 +251,13 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
             display:             isMobile ? "flex" : "grid",
             flexDirection:       isMobile ? "column" : undefined,
             gridTemplateColumns: isMobile ? undefined : "minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr)",
-            gap:                 isMobile ? 24 : 18,
+            gap:                 isMobile ? 20 : 18,
           }}
         >
           {cards.map((card, index) => (
             <Fragment key={card.title}>
             {index === 1 && (
-              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: "auto", minHeight: 0, overflow: "visible", position: "relative", zIndex: 1 }}>
+              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: "auto", minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, margin: isMobile ? "-4px 0" : "0" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/nouvelle-image-parcours.png" alt="" loading="lazy" width={1122} height={1402}
                   style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", aspectRatio: "1122 / 1402", objectFit: "contain", mixBlendMode: "normal" }} />
