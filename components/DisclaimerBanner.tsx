@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useConsent } from "@/lib/ConsentContext";
 
 const text: Record<string, { msg: string; ok: string }> = {
   en: {
@@ -35,6 +36,7 @@ const text: Record<string, { msg: string; ok: string }> = {
 
 export default function DisclaimerBanner() {
   const { lang } = useLanguage();
+  const { hasSeenBanner } = useConsent();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function DisclaimerBanner() {
   return (
     <div className="disclaimer-banner" role="status" style={{
       position: "fixed",
-      bottom: 0, left: 0, right: 0,
+      bottom: "var(--cookie-banner-height, 0px)", left: 0, right: 0,
       zIndex: 999,
       backgroundColor: "#0a0a14",
       borderTop: "1px solid rgba(45,125,210,0.25)",
@@ -62,6 +64,8 @@ export default function DisclaimerBanner() {
       justifyContent: "center",
       gap: 20,
       flexWrap: "wrap",
+      // Add small margin-top when CookieBanner is visible (hasSeenBanner === false)
+      marginTop: !hasSeenBanner ? "8px" : "0px",
     }}>
       <p style={{
         color: "#888",

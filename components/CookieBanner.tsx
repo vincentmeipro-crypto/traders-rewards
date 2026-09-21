@@ -1,11 +1,34 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useConsent } from "@/lib/ConsentContext";
 import CookieSettingsModal from "./CookieSettingsModal";
 
 export default function CookieBanner() {
   const { hasSeenBanner, setHasSeenBanner, acceptAll, rejectAll } = useConsent();
   const [showSettings, setShowSettings] = useState(false);
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  // Measure height and expose via CSS variable
+  useEffect(() => {
+    if (!bannerRef.current) return;
+
+    const updateHeight = () => {
+      if (bannerRef.current) {
+        const height = bannerRef.current.getBoundingClientRect().height;
+        document.documentElement.style.setProperty("--cookie-banner-height", `${height}px`);
+      }
+    };
+
+    updateHeight();
+
+    const resizeObserver = new ResizeObserver(updateHeight);
+    resizeObserver.observe(bannerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+      document.documentElement.style.removeProperty("--cookie-banner-height");
+    };
+  }, []);
 
   if (hasSeenBanner) return null;
 
@@ -13,6 +36,7 @@ export default function CookieBanner() {
     <>
       {/* Cookie Banner */}
       <div
+        ref={bannerRef}
         role="region"
         aria-label="Cookie consent banner"
         style={{
