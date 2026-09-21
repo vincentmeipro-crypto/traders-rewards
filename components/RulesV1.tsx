@@ -250,7 +250,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           style={{
             display:             "grid",
             gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr)",
-            gap:                 isMobile ? 8 : 18,
+            gap:                 isMobile ? 24 : 18,
           }}
         >
           {cards.map((card, index) => (
