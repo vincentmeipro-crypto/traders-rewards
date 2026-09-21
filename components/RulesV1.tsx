@@ -245,18 +245,19 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           </button>
         </div>
 
-        {/* Grille des 2 cartes */}
+        {/* Grille des 2 cartes — flex sur mobile, grid sur desktop */}
         <div
           style={{
-            display:             "grid",
-            gridTemplateColumns: isMobile ? "minmax(0, 1fr)" : "minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr)",
+            display:             isMobile ? "flex" : "grid",
+            flexDirection:       isMobile ? "column" : undefined,
+            gridTemplateColumns: isMobile ? undefined : "minmax(0, 1fr) minmax(0, 1.15fr) minmax(0, 1fr)",
             gap:                 isMobile ? 24 : 18,
           }}
         >
           {cards.map((card, index) => (
             <Fragment key={card.title}>
             {index === 1 && (
-              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: isMobile ? "auto" : 0, minHeight: isMobile ? undefined : "100%", overflow: "visible", position: "relative", zIndex: 1 }}>
+              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: "auto", minHeight: 0, overflow: "visible", position: "relative", zIndex: 1 }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/nouvelle-image-parcours.png" alt="" loading="lazy" width={1122} height={1402}
                   style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", aspectRatio: "1122 / 1402", objectFit: "contain", mixBlendMode: "normal" }} />
@@ -265,7 +266,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
             <article
               style={{
                 minHeight:  0,
-                alignSelf:  "stretch",
+                alignSelf:  isMobile ? "auto" : "stretch",
                 padding:    "24px",
                 borderRadius: 22,
                 background: index === 1
@@ -282,7 +283,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
                 ("Progressez jusqu'à 5 récompenses") à viewport étroit (~900px).
                 Le séparateur et la 1ère règle tombent ainsi au même Y dans les 2 cartes.
               */}
-              <div style={{ minHeight: 130 }}>
+              <div style={{ minHeight: isMobile ? 0 : 130 }}>
                 <div style={{ color: ACCENT, fontSize: 10, fontWeight: 900, letterSpacing: "2.2px" }}>
                   {card.level}
                 </div>
