@@ -3,9 +3,11 @@ import { Outfit, Bebas_Neue, Playfair_Display, Geist } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/lib/LanguageContext";
 import { CurrencyProvider } from "@/lib/CurrencyContext";
+import { ConsentProvider } from "@/lib/ConsentContext";
 import PWARegister from "@/components/PWARegister";
 import RefTracker from "@/components/RefTracker";
 import ChatWidgetGate from "@/components/chat/ChatWidgetGate";
+import CookieBanner from "@/components/CookieBanner";
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -282,11 +284,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className={`${outfit.variable} ${bebas.variable}`}>
-        <LanguageProvider>
-          <CurrencyProvider>
-            {children}
-          </CurrencyProvider>
-        </LanguageProvider>
+        <ConsentProvider>
+          <LanguageProvider>
+            <CurrencyProvider>
+              {children}
+            </CurrencyProvider>
+          </LanguageProvider>
+          <CookieBanner />
+        </ConsentProvider>
         <PWARegister />
         <RefTracker />
         <ChatWidgetGate />

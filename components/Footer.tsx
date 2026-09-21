@@ -1,11 +1,16 @@
 "use client";
 import { useLanguage } from "@/lib/LanguageContext";
+import { useConsent } from "@/lib/ConsentContext";
+import CookieSettingsModal from "./CookieSettingsModal";
 import { useState, useEffect } from "react";
 import { LEGAL_ENTITY } from "@/lib/legal-entity";
 
 export default function Footer() {
   const { T, lang } = useLanguage();
+  const { setHasSeenBanner } = useConsent();
   const [isMobile, setIsMobile] = useState(false);
+  const [showCookieSettings, setShowCookieSettings] = useState(false);
+
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
     check();
@@ -116,6 +121,26 @@ export default function Footer() {
                 {item.label}
               </a>
             ))}
+            <button
+              onClick={() => {
+                setHasSeenBanner(false);
+                setShowCookieSettings(true);
+              }}
+              style={{
+                background: "none",
+                border: "none",
+                color: "rgba(255,255,255,0.3)",
+                fontSize: 12,
+                cursor: "pointer",
+                textDecoration: "none",
+                padding: 0,
+                transition: "color 0.2s",
+              }}
+              onMouseOver={e => (e.currentTarget.style.color = "#FFFFFF")}
+              onMouseOut={e => (e.currentTarget.style.color = "rgba(255,255,255,0.3)")}
+            >
+              {L("Préférences cookies", "Preferencias de cookies", "Cookie preferences")}
+            </button>
           </div>
         </div>
 
@@ -125,6 +150,8 @@ export default function Footer() {
           <a href={`mailto:${LEGAL_ENTITY.email}`} style={{ color: "inherit" }}>{LEGAL_ENTITY.email}</a>
         </p>
       </div>
+
+      <CookieSettingsModal isOpen={showCookieSettings} onClose={() => setShowCookieSettings(false)} />
     </footer>
   );
 }
