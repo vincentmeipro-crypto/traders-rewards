@@ -266,7 +266,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
             <article
               style={{
                 minHeight:  0,
-                alignSelf:  isMobile ? "auto" : "stretch",
+                alignSelf:  isMobile ? "auto" : "center",
                 padding:    "24px",
                 borderRadius: 22,
                 position:   "relative",
