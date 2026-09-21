@@ -269,6 +269,8 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
                 alignSelf:  isMobile ? "auto" : "stretch",
                 padding:    "24px",
                 borderRadius: 22,
+                position:   "relative",
+                zIndex:     2,
                 background: index === 1
                   ? "linear-gradient(145deg, #0e1013, #080a0c)"
                   : "#0b0e11",
