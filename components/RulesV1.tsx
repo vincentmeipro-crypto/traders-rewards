@@ -257,7 +257,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           {cards.map((card, index) => (
             <Fragment key={card.title}>
             {index === 1 && (
-              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: "auto", minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, margin: isMobile ? "-16px 0" : "0" }}>
+              <div aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", minWidth: 0, height: "auto", minHeight: 0, overflow: "visible", position: "relative", zIndex: 1, marginTop: isMobile ? "-100px" : "0", marginBottom: isMobile ? "-16px" : "0" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/nouvelle-image-parcours.png" alt="" loading="lazy" width={1122} height={1402}
                   style={{ display: "block", width: "100%", maxWidth: isMobile ? 420 : "none", height: "auto", aspectRatio: "1122 / 1402", objectFit: "contain", mixBlendMode: "normal" }} />
