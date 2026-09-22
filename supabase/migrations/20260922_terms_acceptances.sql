@@ -63,7 +63,7 @@ COMMENT ON COLUMN public.terms_acceptances.accepted_at IS
   'Timestamp exact d''acceptation. Utilisé pour délai rétractation 14 jours.';
 
 COMMENT ON COLUMN public.terms_acceptances.immediate_performance_requested IS
-  'TRUE si client a coché "démarrage immédiat". Afaiblit droit rétractation (art. 14 LCCV).';
+  'TRUE si le client a expressément demandé le commencement immédiat du Challenge avant l''expiration du délai de rétractation.';
 
 COMMENT ON COLUMN public.terms_acceptances.payment_reference IS
   'Clé unique pour idempotence : stripe_session_id ou payment_id NOWPayments.';
@@ -98,7 +98,7 @@ REVOKE ALL ON public.terms_acceptances FROM PUBLIC;
 REVOKE ALL ON public.terms_acceptances FROM anon;
 REVOKE ALL ON public.terms_acceptances FROM authenticated;
 
-GRANT SELECT, INSERT, UPDATE, DELETE
+GRANT SELECT, INSERT
   ON public.terms_acceptances
   TO service_role;
 
