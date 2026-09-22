@@ -140,7 +140,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       <div style={{ maxWidth: compact ? "none" : 1500, margin: "0 auto" }}>
 
         {/* Bloc supérieur — décalé vers le bas sur desktop */}
-        <div style={{ transform: isMobile ? "none" : "translateY(80px)", marginTop: 0, marginBottom: isMobile ? 0 : -80 }}>
+        <div style={{ position: "relative", zIndex: 3, transform: isMobile ? "none" : "translateY(80px)", marginTop: 0, marginBottom: isMobile ? 0 : -80 }}>
 
         {/* En-tête section — masqué en mode compact (dashboard) */}
         {!compact && (
@@ -166,7 +166,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           </p>
 
           {/* Sélecteur 25K / 50K / 100K — dans le header */}
-          <div style={{ marginBottom: "clamp(24px, 3vw, 40px)", marginTop: "clamp(20px, 2vw, 30px)", display: "flex", justifyContent: "center" }}>
+          <div style={{ position: "relative", zIndex: 3, marginBottom: "clamp(24px, 3vw, 40px)", marginTop: "clamp(20px, 2vw, 30px)", display: "flex", justifyContent: "center" }}>
             <div
               role="group"
               aria-label={L("Taille du compte", "Tamaño de la cuenta", "Account size")}
@@ -210,7 +210,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
           </div>
 
           {/* Toggle % / $ — dans le header */}
-          <div style={{ marginBottom: "clamp(16px, 2vw, 24px)", display: "flex", justifyContent: "center" }}>
+          <div style={{ position: "relative", zIndex: 3, marginBottom: "clamp(16px, 2vw, 24px)", display: "flex", justifyContent: "center" }}>
             <button
               onClick={() => setShowPct(p => !p)}
               aria-label={L(
