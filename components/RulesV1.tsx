@@ -139,6 +139,9 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       `}</style>
       <div style={{ maxWidth: compact ? "none" : 1500, margin: "0 auto" }}>
 
+        {/* Bloc supérieur — décalé vers le bas sur desktop */}
+        <div style={{ transform: isMobile ? "none" : "translateY(80px)" }}>
+
         {/* En-tête section — masqué en mode compact (dashboard) */}
         {!compact && (
         <header style={{ maxWidth: isMobile ? 900 : "none", margin: "0 auto", marginBottom: "clamp(38px, 5vw, 62px)", textAlign: "center" }}>
@@ -243,6 +246,8 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
                 : L("Voir %","Ver %","View %")}
             </span>
           </button>
+        </div>
+
         </div>
 
         {/* Grille des 2 cartes — flex sur mobile, grid sur desktop */}
