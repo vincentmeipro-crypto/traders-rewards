@@ -139,8 +139,8 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       `}</style>
       <div style={{ maxWidth: compact ? "none" : 1500, margin: "0 auto" }}>
 
-        {/* Bloc supérieur — avec espacement desktop */}
-        <div style={{ transform: "none", marginTop: isMobile ? 0 : 80, marginBottom: isMobile ? 0 : 80 }}>
+        {/* Bloc supérieur — décalé vers le bas sur desktop */}
+        <div style={{ transform: isMobile ? "none" : "translateY(80px)", marginTop: 0, marginBottom: isMobile ? 0 : -80 }}>
 
         {/* En-tête section — masqué en mode compact (dashboard) */}
         {!compact && (
