@@ -11,6 +11,7 @@ import {
   getEffectivePrice,
 } from "@/lib/product-engine";
 import { consumePromoCode } from "@/lib/promo";
+import { TERMS_VERSION } from "@/lib/terms-config";
 
 // Anciens slugs (VIP) — fallback si parts[2] n'est pas un UUID
 const PRODUCTS: Record<string, { accountSize: string; model: string }> = {
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    // Parse order_id: "elysium~{userId}~{productId}~{timestamp}~{promoCode}~{refCode}"
+    // Parse order_id: "elysium~{userId}~{productId}~{timestamp}~{promoCode}~{refCode}~{qty}~{termsVersion}~{agreedToTerms}~{agreedImmediateStart}~{language}~{clientIp}~{clientUserAgent}"
     const orderId: string = body.order_id || "";
     const parts = orderId.split("~");
     if (parts.length < 3 || parts[0] !== "elysium") {
@@ -85,11 +86,22 @@ export async function POST(req: NextRequest) {
 
     const userId    = parts[1];
     const productId = parts[2];  // UUID (new path) ou slug (ancien path)
+    const creationTimestamp = parseInt(parts[3] ?? "0", 10);
     const promoCode = parts[4] || "";
     const refCode   = parts[5] || "";
     // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (VIP).
     const rawQty   = parseInt(parts[6] ?? "1", 10);
     const quantity = ([1, 3, 5] as number[]).includes(rawQty) ? rawQty : 1;
+
+    // Données CGV (présentes dans new path, absentes en ancien path)
+    const termsVersion = parts[7] || TERMS_VERSION;
+    const agreedToTerms = parts[8] === "true";
+    const agreedImmediateStart = parts[9] === "true";
+    const language = (parts[10] as "fr" | "en" | "es") || "en";
+
+    // Données client (présentes dans new path, absentes en ancien path)
+    const clientIp = parts[11] ? decodeURIComponent(parts[11]) : null;
+    const clientUserAgent = parts[12] ? decodeURIComponent(parts[12]) : null;
 
     if (!userId || !productId) return NextResponse.json({ received: true });
 
@@ -101,6 +113,27 @@ export async function POST(req: NextRequest) {
       const { data: existing } = await admin.from("challenges")
         .select("id").eq("stripe_session_id", nowpaymentsId).maybeSingle();
       if (existing) return NextResponse.json({ received: true, duplicate: true });
+    }
+
+    // ── Enregistrer l'acceptation CGV (preuve légale) ─────────────────────────
+    // Avant la création du challenge, pour que cette preuve soit complète
+    // IP et user-agent capturés au moment du checkout (dans orderId)
+    try {
+      await admin.from("terms_acceptances").insert({
+        user_id: userId,
+        payment_provider: "crypto",
+        payment_reference: nowpaymentsId || `temp_${Date.now()}`,
+        terms_version: termsVersion,
+        terms_accepted: agreedToTerms,
+        immediate_performance_requested: agreedImmediateStart,
+        client_ip_address: clientIp,
+        client_user_agent: clientUserAgent,
+        language,
+        accepted_at: new Date(creationTimestamp).toISOString(),
+      });
+    } catch (e) {
+      console.error("[crypto/webhook] terms_acceptances insert error:", e);
+      // Ne pas bloquer la création du challenge si l'enregistrement échoue
     }
 
     // price_amount est en EUR (prix de la facture NOWPayments)

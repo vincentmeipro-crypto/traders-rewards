@@ -12,6 +12,8 @@ import {
   FALLBACK_RATES,
   NOWPAYMENTS_FIAT_SUPPORTED,
 } from "@/lib/fx-rates";
+import { extractClientInfo } from "@/lib/request-utils";
+import { TERMS_VERSION } from "@/lib/terms-config";
 import type { FxCurrency } from "@/lib/fx-rates";
 
 // Produits VIP non en DB — conservés pour rétrocompatibilité
@@ -33,7 +35,27 @@ export async function POST(req: NextRequest) {
       productId, userId, promoCode, refCode,
       quantity: rawQuantity,
       currency: rawCurrency,
+      termsVersion,
+      agreedToTerms,
+      agreedImmediateStart,
+      language,
     } = await req.json();
+
+    // Valider acceptation CGV côté serveur
+    if (!agreedToTerms || !agreedImmediateStart) {
+      return NextResponse.json(
+        { error: "Acceptation des CGV et consentement démarrage immédiat requis." },
+        { status: 400 }
+      );
+    }
+
+    // Valider version CGV serveur
+    if (termsVersion !== TERMS_VERSION) {
+      return NextResponse.json(
+        { error: "Version CGV incompatible. Veuillez recharger la page." },
+        { status: 400 }
+      );
+    }
 
     // ── Devise : valider + fallback EUR si non supportée par NOWPayments ──────
     const requestedCurrency: FxCurrency =
@@ -94,6 +116,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // ── Extraction IP et User-Agent client ────────────────────────────────────
+    const { ip: clientIp, userAgent: clientUserAgent } = extractClientInfo(req);
+    const creationTimestamp = Date.now();
+
     let orderId:     string;
     let finalAmount: number; // centimes EUR
     let productName: string;
@@ -153,7 +179,7 @@ export async function POST(req: NextRequest) {
         : productFromDB.name;
       productName = discountPct > 0 ? `${baseLabel} (${discountPct}% off)` : baseLabel;
 
-      orderId = `elysium~${userId}~${productFromDB.id}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${qty}`;
+      orderId = `elysium~${userId}~${productFromDB.id}~${creationTimestamp}~${promoCode || ""}~${refCode || ""}~${qty}~${termsVersion}~${String(agreedToTerms)}~${String(agreedImmediateStart)}~${language}~${encodeURIComponent(clientIp)}~${encodeURIComponent(clientUserAgent)}`;
     } else {
       // ── Fallback : produit VIP non en DB ─────────────────────────────────
       const vipProduct = VIP_PRODUCTS[productId as keyof typeof VIP_PRODUCTS];
@@ -169,7 +195,7 @@ export async function POST(req: NextRequest) {
         : vipProduct.amount;
       productName = vipProduct.name;
 
-      orderId = `elysium~${userId}~${productId}~${Date.now()}~${promoCode || ""}~${refCode || ""}~${qty}`;
+      orderId = `elysium~${userId}~${productId}~${creationTimestamp}~${promoCode || ""}~${refCode || ""}~${qty}~${termsVersion}~${String(agreedToTerms)}~${String(agreedImmediateStart)}~${language}~${encodeURIComponent(clientIp)}~${encodeURIComponent(clientUserAgent)}`;
     }
 
     // ── Conversion devise pour NOWPayments ───────────────────────────────────

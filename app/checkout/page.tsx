@@ -10,6 +10,7 @@ import { useCurrency } from "@/lib/CurrencyContext";
 import { NOWPAYMENTS_FIAT_SUPPORTED } from "@/lib/fx-rates";
 import { getActivePricingPlan, isPricingSlug, REF_PRICES } from "@/lib/pricing";
 import { LEGAL_ENTITY } from "@/lib/legal-entity";
+import { TERMS_VERSION, IMMEDIATE_START_CONSENT_TEXT } from "@/lib/terms-config";
 
 type ModelKey = "2step" | "1step";
 type Challenge = { label: string; model: "Challenge"; price: string; amount: number; pack3Amount: number };
@@ -129,6 +130,7 @@ function CheckoutContent() {
   const [appliedCode, setAppliedCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedImmediateStart, setAgreedImmediateStart] = useState(false);
   const [refCode, setRefCode] = useState("");
 
   const fullPhone = phone ? `${dialCode} ${phone}` : "";
@@ -158,7 +160,7 @@ function CheckoutContent() {
   }, [selectedProduct, quantity, currency, discount]);
 
   const profileComplete = firstName.trim() && lastName.trim() && phone.trim() && email.trim() && city.trim() && country.trim() && isAdult && (user || (password.length >= 8 && password === confirmPassword));
-  const canPay = !!profileComplete && agreedToTerms;
+  const canPay = !!profileComplete && agreedToTerms && agreedImmediateStart;
   const anyLoading = loadingStripe || loadingCrypto || loadingFree;
 
   useEffect(() => {
@@ -297,7 +299,19 @@ function CheckoutContent() {
     const res = await fetch("/api/stripe/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId: selectedProduct, userId: u.id, userEmail: u.email, promoCode: appliedCode, refCode, quantity, currency }),
+      body: JSON.stringify({
+        productId: selectedProduct,
+        userId: u.id,
+        userEmail: u.email,
+        promoCode: appliedCode,
+        refCode,
+        quantity,
+        currency,
+        termsVersion: TERMS_VERSION,
+        agreedToTerms,
+        agreedImmediateStart,
+        language: lang,
+      }),
     });
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
@@ -314,7 +328,18 @@ function CheckoutContent() {
     const res = await fetch("/api/crypto/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productId: selectedProduct, userId: u.id, promoCode: appliedCode, refCode, quantity, currency }),
+      body: JSON.stringify({
+        productId: selectedProduct,
+        userId: u.id,
+        promoCode: appliedCode,
+        refCode,
+        quantity,
+        currency,
+        termsVersion: TERMS_VERSION,
+        agreedToTerms,
+        agreedImmediateStart,
+        language: lang,
+      }),
     });
     const data = await res.json();
     if (data.url) { window.location.assign(data.url); return; }
@@ -866,7 +891,7 @@ function CheckoutContent() {
                 </strong>.
               </p>
             </div>
-            <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", marginBottom: 12 }}>
               <input type="checkbox" checked={agreedToTerms} onChange={e => setAgreedToTerms(e.target.checked)}
                 style={{ marginTop: 2, accentColor: "#D4A843", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
               <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.5 }}>
@@ -874,6 +899,14 @@ function CheckoutContent() {
                 <a href="/legal/terms" target="_blank" rel="noopener noreferrer" style={{ color: "#D4A843", textDecoration: "underline", fontWeight: 700 }}>
                   {L("Conditions Générales de Vente et d'Utilisation", "Condiciones Generales de Venta y Uso", "General Terms of Sale and Use")}
                 </a>
+              </span>
+            </label>
+
+            <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer" }}>
+              <input type="checkbox" checked={agreedImmediateStart} onChange={e => setAgreedImmediateStart(e.target.checked)}
+                style={{ marginTop: 2, accentColor: "#D4A843", width: 14, height: 14, flexShrink: 0, cursor: "pointer" }} />
+              <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, lineHeight: 1.5 }}>
+                {IMMEDIATE_START_CONSENT_TEXT[lang as keyof typeof IMMEDIATE_START_CONSENT_TEXT] || IMMEDIATE_START_CONSENT_TEXT.en}
               </span>
             </label>
           </div>
@@ -890,9 +923,14 @@ function CheckoutContent() {
                 {L("Remplissez tous les champs pour continuer.", "Completa todos los campos para continuar.", "Fill in all fields to continue.")}
               </p>
             )}
-            {profileComplete && !agreedToTerms && (
+            {profileComplete && (!agreedToTerms || !agreedImmediateStart) && (
               <p style={{ textAlign: "center", color: "rgba(212,168,67,0.85)", fontSize: 12, margin: 0 }}>
-                {L("Acceptez les CGV pour continuer.", "Acepta los T&C para continuar.", "Accept the T&C to continue.")}
+                {!agreedToTerms && (
+                  L("Acceptez les CGV pour continuer.", "Acepta los T&C para continuar.", "Accept the T&C to continue.")
+                )}
+                {agreedToTerms && !agreedImmediateStart && (
+                  L("Confirmez le démarrage immédiat pour continuer.", "Confirma el comienzo inmediato para continuar.", "Confirm immediate start to continue.")
+                )}
               </p>
             )}
 

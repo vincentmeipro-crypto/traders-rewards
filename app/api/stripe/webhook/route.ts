@@ -11,6 +11,7 @@ import {
   getEffectivePrice,
 } from "@/lib/product-engine";
 import { consumePromoCode } from "@/lib/promo";
+import { TERMS_VERSION } from "@/lib/terms-config";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -32,7 +33,11 @@ export async function POST(req: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
-    const { userId, productId, accountSize, model, promoCode, refCode } = session.metadata!;
+    const {
+      userId, productId, accountSize, model, promoCode, refCode,
+      termsVersion, agreedToTerms, agreedImmediateStart, language,
+      clientIp, clientUserAgent,
+    } = session.metadata!;
     // Supporte 1 (challenge unique), 3 (pack ×3) et 5 (VIP).
     const rawQty  = parseInt(session.metadata?.quantity ?? "1", 10);
     const quantity = ([1, 3, 5] as number[]).includes(rawQty) ? rawQty : 1;
@@ -46,6 +51,26 @@ export async function POST(req: NextRequest) {
       .eq("stripe_session_id", session.id)
       .single();
     if (existing) return NextResponse.json({ received: true, skipped: "duplicate" });
+
+    // ── Enregistrer l'acceptation CGV (preuve légale) ─────────────────────────
+    // Avant la création du challenge, pour que cette preuve soit complète
+    try {
+      await admin.from("terms_acceptances").insert({
+        user_id: userId,
+        payment_provider: "stripe",
+        payment_reference: session.id,
+        terms_version: termsVersion || TERMS_VERSION,
+        terms_accepted: agreedToTerms === "true",
+        immediate_performance_requested: agreedImmediateStart === "true",
+        client_ip_address: clientIp || null,
+        client_user_agent: clientUserAgent || null,
+        language: (language as "fr" | "en" | "es") || "en",
+        accepted_at: new Date(session.created * 1000).toISOString(),
+      });
+    } catch (e) {
+      console.error("[stripe/webhook] terms_acceptances insert error:", e);
+      // Ne pas bloquer la création du challenge si l'enregistrement échoue
+    }
 
     const sizeMap: Record<string, number> = {
       "$10,000": 10000, "$25,000": 25000, "$50,000": 50000,

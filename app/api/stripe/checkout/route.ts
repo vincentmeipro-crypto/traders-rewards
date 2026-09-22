@@ -7,6 +7,8 @@ import { loadProductBySlug } from "@/lib/product-engine";
 import { validatePromoCode } from "@/lib/promo";
 import { isPricingSlug } from "@/lib/pricing";
 import { fetchLiveRates, stripeSmallestUnit, SUPPORTED_CURRENCIES, FALLBACK_RATES } from "@/lib/fx-rates";
+import { extractClientInfo } from "@/lib/request-utils";
+import { TERMS_VERSION } from "@/lib/terms-config";
 import type { FxCurrency } from "@/lib/fx-rates";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
@@ -19,7 +21,27 @@ export async function POST(req: NextRequest) {
       productId, userId, userEmail, promoCode, refCode,
       quantity: rawQuantity,
       currency: rawCurrency,
+      termsVersion,
+      agreedToTerms,
+      agreedImmediateStart,
+      language,
     } = await req.json();
+
+    // Valider acceptation CGV côté serveur
+    if (!agreedToTerms || !agreedImmediateStart) {
+      return NextResponse.json(
+        { error: "Acceptation des CGV et consentement démarrage immédiat requis." },
+        { status: 400 }
+      );
+    }
+
+    // Valider version CGV serveur
+    if (termsVersion !== TERMS_VERSION) {
+      return NextResponse.json(
+        { error: "Version CGV incompatible. Veuillez recharger la page." },
+        { status: 400 }
+      );
+    }
 
     // Valider la devise (défaut EUR si non fournie ou invalide)
     const currency: FxCurrency =
@@ -141,6 +163,9 @@ export async function POST(req: NextRequest) {
     const stripeAmount = stripeSmallestUnit(finalAmount, currency, rate);
     const stripeCurrency = currency.toLowerCase();
 
+    // ── Extraction IP et User-Agent client ────────────────────────────────────
+    const { ip: clientIp, userAgent: clientUserAgent } = extractClientInfo(req);
+
     // ── Stripe Checkout Session ───────────────────────────────────────────────
     // Toujours quantity:1 dans line_items — la quantité réelle (1 ou 3) est dans metadata.
     // Raison : le tarif pack ×3 est un prix propre (≠ 3 × unitaire), donc on facture
@@ -168,6 +193,12 @@ export async function POST(req: NextRequest) {
         promoCode:   promoCode || "",
         refCode:     refCode   || "",
         quantity:    String(qty),   // "1" ou "3" — utilisé par le webhook
+        termsVersion,
+        agreedToTerms: String(agreedToTerms),
+        agreedImmediateStart: String(agreedImmediateStart),
+        language,
+        clientIp,
+        clientUserAgent,
       },
       success_url: `${SITE_URL}/checkout/success`,
       cancel_url:  `${SITE_URL}/checkout/cancel`,
