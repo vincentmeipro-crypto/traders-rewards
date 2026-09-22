@@ -140,7 +140,7 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
       <div style={{ maxWidth: compact ? "none" : 1500, margin: "0 auto" }}>
 
         {/* Bloc supérieur — décalé vers le bas sur desktop */}
-        <div style={{ transform: isMobile ? "none" : "translateY(80px)" }}>
+        <div style={{ position: "relative", transform: isMobile ? "none" : "translateY(80px)" }}>
 
         {/* En-tête section — masqué en mode compact (dashboard) */}
         {!compact && (
