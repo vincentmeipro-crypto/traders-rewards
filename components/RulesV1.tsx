@@ -164,89 +164,89 @@ export default function RulesV1({ compact = false }: { compact?: boolean }) {
               "Complete your challenge, become a Trader Reward",
             )}
           </p>
+
+          {/* Sélecteur 25K / 50K / 100K — dans le header */}
+          <div style={{ marginBottom: "clamp(24px, 3vw, 40px)", marginTop: "clamp(20px, 2vw, 30px)", display: "flex", justifyContent: "center" }}>
+            <div
+              role="group"
+              aria-label={L("Taille du compte", "Tamaño de la cuenta", "Account size")}
+              style={{
+                display:    "inline-flex",
+                alignItems: "center",
+                gap:        4,
+                padding:    4,
+                borderRadius: 24,
+                border:     "1px solid rgba(184,135,70,0.18)",
+                background: "rgba(255,255,255,0.025)",
+              }}
+            >
+              {(SIZES_DATA as readonly { label: string }[]).map((size, index) => {
+                const selected = selectedSizeIndex === index;
+                return (
+                  <button
+                    key={size.label}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => setSelectedSizeIndex(index)}
+                    style={{
+                      minWidth:      isMobile ? 62 : 72,
+                      padding:       isMobile ? "7px 12px" : "7px 16px",
+                      borderRadius:  18,
+                      border:        selected ? "1px solid rgba(184,135,70,0.52)" : "1px solid transparent",
+                      background:    selected ? "rgba(184,135,70,0.16)" : "transparent",
+                      color:         selected ? ACCENT : "rgba(255,255,255,0.42)",
+                      fontSize:      10,
+                      fontWeight:    900,
+                      letterSpacing: "1.4px",
+                      cursor:        "pointer",
+                      fontFamily:    "inherit",
+                    }}
+                  >
+                    {size.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Toggle % / $ — dans le header */}
+          <div style={{ marginBottom: "clamp(16px, 2vw, 24px)", display: "flex", justifyContent: "center" }}>
+            <button
+              onClick={() => setShowPct(p => !p)}
+              aria-label={L(
+                `Afficher les règles en ${showPct ? "dollars" : "pourcentages"}`,
+                `Mostrar reglas en ${showPct ? "dólares" : "porcentajes"}`,
+                `Show rules in ${showPct ? "dollars" : "percentages"}`
+              )}
+              style={{
+                display:       "inline-flex",
+                alignItems:    "center",
+                gap:           4,
+                padding:       "4px 9px",
+                borderRadius:  100,
+                border:        "1px solid rgba(255,255,255,0.12)",
+                background:    "rgba(255,255,255,0.045)",
+                color:         "#FFFFFF",
+                fontSize:      11, fontWeight: 650,
+                cursor:        "pointer",
+                fontFamily:    "inherit",
+                letterSpacing: "0.2px",
+                transition:    "all 0.15s ease",
+                whiteSpace:    "nowrap",
+              }}
+            >
+              <span style={{ fontWeight: 900, fontSize: 12 }}>%</span>
+              <span style={{ fontSize: 10, letterSpacing: "-1px" }}>⇄</span>
+              <span style={{ fontWeight: 900, fontSize: 12 }}>$</span>
+              <span style={{ fontSize: 10, marginLeft: 2 }}>
+                {showPct
+                  ? L("Voir $","Ver $","View $")
+                  : L("Voir %","Ver %","View %")}
+              </span>
+            </button>
+          </div>
         </header>
         )}
-
-        {/* Sélecteur 25K / 50K / 100K */}
-        <div style={{ marginBottom: "clamp(24px, 3vw, 40px)", display: "flex", justifyContent: "center" }}>
-          <div
-            role="group"
-            aria-label={L("Taille du compte", "Tamaño de la cuenta", "Account size")}
-            style={{
-              display:    "inline-flex",
-              alignItems: "center",
-              gap:        4,
-              padding:    4,
-              borderRadius: 24,
-              border:     "1px solid rgba(184,135,70,0.18)",
-              background: "rgba(255,255,255,0.025)",
-            }}
-          >
-            {(SIZES_DATA as readonly { label: string }[]).map((size, index) => {
-              const selected = selectedSizeIndex === index;
-              return (
-                <button
-                  key={size.label}
-                  type="button"
-                  aria-pressed={selected}
-                  onClick={() => setSelectedSizeIndex(index)}
-                  style={{
-                    minWidth:      isMobile ? 62 : 72,
-                    padding:       isMobile ? "7px 12px" : "7px 16px",
-                    borderRadius:  18,
-                    border:        selected ? "1px solid rgba(184,135,70,0.52)" : "1px solid transparent",
-                    background:    selected ? "rgba(184,135,70,0.16)" : "transparent",
-                    color:         selected ? ACCENT : "rgba(255,255,255,0.42)",
-                    fontSize:      10,
-                    fontWeight:    900,
-                    letterSpacing: "1.4px",
-                    cursor:        "pointer",
-                    fontFamily:    "inherit",
-                  }}
-                >
-                  {size.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Toggle % / $ */}
-        <div style={{ marginBottom: "clamp(16px, 2vw, 24px)", display: "flex", justifyContent: "center" }}>
-          <button
-            onClick={() => setShowPct(p => !p)}
-            aria-label={L(
-              `Afficher les règles en ${showPct ? "dollars" : "pourcentages"}`,
-              `Mostrar reglas en ${showPct ? "dólares" : "porcentajes"}`,
-              `Show rules in ${showPct ? "dollars" : "percentages"}`
-            )}
-            style={{
-              display:       "inline-flex",
-              alignItems:    "center",
-              gap:           4,
-              padding:       "4px 9px",
-              borderRadius:  100,
-              border:        "1px solid rgba(255,255,255,0.12)",
-              background:    "rgba(255,255,255,0.045)",
-              color:         "#FFFFFF",
-              fontSize:      11, fontWeight: 650,
-              cursor:        "pointer",
-              fontFamily:    "inherit",
-              letterSpacing: "0.2px",
-              transition:    "all 0.15s ease",
-              whiteSpace:    "nowrap",
-            }}
-          >
-            <span style={{ fontWeight: 900, fontSize: 12 }}>%</span>
-            <span style={{ fontSize: 10, letterSpacing: "-1px" }}>⇄</span>
-            <span style={{ fontWeight: 900, fontSize: 12 }}>$</span>
-            <span style={{ fontSize: 10, marginLeft: 2 }}>
-              {showPct
-                ? L("Voir $","Ver $","View $")
-                : L("Voir %","Ver %","View %")}
-            </span>
-          </button>
-        </div>
 
         </div>
 
