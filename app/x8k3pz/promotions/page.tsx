@@ -5,7 +5,6 @@ import HeroPromotionCard from "@/components/admin/HeroPromotionCard";
 import PromotionCalendar from "@/components/admin/PromotionCalendar";
 import { PROMOTIONS_Q4_2026, PROMOTIONS_2027 } from "@/lib/pricing";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────
 type PromoStatus = "revoked" | "exhausted" | "expired" | "scheduled" | "active";
@@ -37,8 +36,7 @@ const STATUS_CFG: Record<PromoStatus, { label: string; bg: string; color: string
   revoked:   { label: "RÉVOQUÉE",  bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "rgba(255,255,255,0.1)" },
   expired:   { label: "EXPIRÉE",   bg: "rgba(245,158,11,0.1)",  color: "#fbbf24", border: "rgba(245,158,11,0.2)"  },
   exhausted: { label: "ÉPUISÉE",   bg: "rgba(201,150,63,0.1)",  color: "rgba(201,150,63,0.85)", border: "rgba(201,150,63,0.2)"  },
-  scheduled: { label: "PLANIFIÉE", bg: "rgba(168,85,247,0.1)",  color: "#c084fc", border: "rgba(168,85,247,0.2)"  },
-};
+  scheduled: { label: "PLANIFIÉE", bg: "rgba(168,85,247,0.1)",  color: "#c084fc", border: "rgba(168,85,247,0.2)"  }};
 
 const StatusBadge = ({ status }: { status: PromoStatus }) => {
   const cfg = STATUS_CFG[status];
@@ -46,8 +44,7 @@ const StatusBadge = ({ status }: { status: PromoStatus }) => {
     <span style={{
       fontSize: 10, fontWeight: 700, letterSpacing: "0.5px",
       padding: "3px 8px", borderRadius: 4, whiteSpace: "nowrap" as const,
-      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`,
-    }}>
+      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`}}>
       {cfg.label}
     </span>
   );
@@ -95,7 +92,7 @@ export default function PromotionsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch("/api/admin/promo-codes", { headers: { "x-admin-key": ADMIN_KEY } });
+      const res  = await fetch("/api/admin/promo-codes", { });
       const data = await res.json();
       if (res.ok && Array.isArray(data)) setPromos(data);
       else notify(data.error || "Erreur chargement", false);
@@ -122,9 +119,8 @@ export default function PromotionsPage() {
     try {
       const res  = await fetch(`/api/admin/promo-codes/${promo.id}`, {
         method: "PATCH",
-        headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ active: !promo.active }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active: !promo.active })});
       const data = await res.json();
       if (res.ok) {
         await load(); // re-fetch pour avoir le status recalculé server-side
@@ -142,9 +138,7 @@ export default function PromotionsPage() {
     closeMenu();
     try {
       const res  = await fetch(`/api/admin/promo-codes/${promo.id}`, {
-        method: "DELETE",
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+        method: "DELETE"});
       const data = await res.json();
       if (res.ok) { setPromos(prev => prev.filter(p => p.id !== promo.id)); notify("Code supprimé"); }
       else notify(data.error || "Erreur suppression", false);
@@ -195,8 +189,7 @@ export default function PromotionsPage() {
           border: `1px solid ${notification.ok ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
           color: notification.ok ? "#86efac" : "#fca5a5",
           padding: "12px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
-        }}>
+          boxShadow: "0 4px 24px rgba(0,0,0,0.5)"}}>
           {notification.msg}
         </div>
       )}
@@ -207,8 +200,7 @@ export default function PromotionsPage() {
         padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         position: "sticky", top: 0, background: "#0c0c0c",
-        zIndex: 50, gap: 12, flexWrap: "wrap",
-      }}>
+        zIndex: 50, gap: 12, flexWrap: "wrap"}}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <a href="/x8k3pz?t=promos" className="promo-link" style={{ color: "rgba(255,255,255,0.28)", textDecoration: "none", fontSize: 12 }}>
             Marketing
@@ -218,16 +210,14 @@ export default function PromotionsPage() {
           <span style={{
             background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
             color: "rgba(255,255,255,0.45)", borderRadius: 20,
-            padding: "2px 10px", fontSize: 12, fontWeight: 700,
-          }}>
+            padding: "2px 10px", fontSize: 12, fontWeight: 700}}>
             {promos.length}
           </span>
         </div>
         <Link href="/x8k3pz/promotions/new" style={{
           background: "#C9963F", border: "none", color: "#fff",
           borderRadius: 8, padding: "8px 20px", fontSize: 13, fontWeight: 700,
-          textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 7,
-        }}>
+          textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 7}}>
           + Nouveau code
         </Link>
       </div>
@@ -270,8 +260,7 @@ export default function PromotionsPage() {
               flex: 1, maxWidth: 280,
               background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 7, padding: "8px 12px",
-              color: "#fff", fontSize: 13, outline: "none",
-            }}
+              color: "#fff", fontSize: 13, outline: "none"}}
           />
           <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
             {PILLS.map(pill => (
@@ -282,8 +271,7 @@ export default function PromotionsPage() {
                 borderRadius: 7,
                 color: statusFilter === pill.id ? "#fff" : "rgba(255,255,255,0.35)",
                 fontSize: 12, fontWeight: statusFilter === pill.id ? 700 : 400,
-                cursor: "pointer",
-              }}>
+                cursor: "pointer"}}>
                 {pill.label}
               </button>
             ))}
@@ -301,8 +289,7 @@ export default function PromotionsPage() {
                       height: 13, borderRadius: 4, background: "rgba(255,255,255,0.18)",
                       width: w, flexShrink: 0,
                       animation: "sk-fade 1.6s ease-in-out infinite",
-                      animationDelay: `${(i * skeletonWidths.length + j) * 0.04}s`,
-                    }} />
+                      animationDelay: `${(i * skeletonWidths.length + j) * 0.04}s`}} />
                   ))}
                 </div>
               ))}
@@ -316,8 +303,7 @@ export default function PromotionsPage() {
                 <Link href="/x8k3pz/promotions/new" style={{
                   display: "inline-block", padding: "8px 20px", background: "rgba(201,150,63,0.1)",
                   border: "1px solid rgba(201,150,63,0.25)", borderRadius: 7,
-                  color: "rgba(201,150,63,0.85)", fontSize: 13, fontWeight: 700, textDecoration: "none",
-                }}>
+                  color: "rgba(201,150,63,0.85)", fontSize: 13, fontWeight: 700, textDecoration: "none"}}>
                   Créer le premier code
                 </Link>
               )}
@@ -332,8 +318,7 @@ export default function PromotionsPage() {
                         padding: "12px 16px", textAlign: "left",
                         color: "rgba(255,255,255,0.3)", fontWeight: 600,
                         fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8,
-                        whiteSpace: "nowrap",
-                      }}>{h}</th>
+                        whiteSpace: "nowrap"}}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -345,8 +330,7 @@ export default function PromotionsPage() {
                       <tr key={p.id} className="promo-row" style={{
                         borderBottom: "1px solid rgba(255,255,255,0.04)",
                         opacity: busy ? 0.5 : 1,
-                        transition: "background 0.1s",
-                      }}>
+                        transition: "background 0.1s"}}>
 
                         {/* PROMOTION — nom + code copiable */}
                         <td style={{ padding: "13px 16px" }}>
@@ -368,8 +352,7 @@ export default function PromotionsPage() {
                               background: "rgba(255,255,255,.025)", cursor: "copy",
                               color: copiedId === p.id ? "#4ade80" : p.name ? "rgba(255,255,255,.5)" : "#fff",
                               fontSize: p.name ? 12 : 13, fontWeight: 700, fontFamily: "monospace", letterSpacing: "0.5px",
-                              transition: "all .15s ease",
-                            }}
+                              transition: "all .15s ease"}}
                           >
                             <span>{p.code}</span>
                             <span aria-hidden="true" style={{ fontFamily: "sans-serif", fontSize: 11, color: copiedId === p.id ? "#4ade80" : "rgba(201,150,63,0.85)" }}>
@@ -407,16 +390,14 @@ export default function PromotionsPage() {
                               <span style={{
                                 fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4,
                                 background: "rgba(239,68,68,0.1)", color: "rgba(239,68,68,0.8)",
-                                border: "1px solid rgba(239,68,68,0.2)",
-                              }}>
+                                border: "1px solid rgba(239,68,68,0.2)"}}>
                                 Aucun produit
                               </span>
                             ) : (
                               <span style={{
                                 fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4,
                                 background: "rgba(168,85,247,0.1)", color: "#c084fc",
-                                border: "1px solid rgba(168,85,247,0.2)",
-                              }}>
+                                border: "1px solid rgba(168,85,247,0.2)"}}>
                                 {p.product_ids.length} produit{p.product_ids.length !== 1 ? "s" : ""}
                               </span>
                             )
@@ -440,8 +421,7 @@ export default function PromotionsPage() {
                                 width: 28, height: 28, borderRadius: 6, border: "1px solid rgba(255,255,255,0.1)",
                                 background: "transparent", color: "rgba(255,255,255,0.4)",
                                 cursor: busy ? "default" : "pointer", fontSize: 16,
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                              }}
+                                display: "flex", alignItems: "center", justifyContent: "center"}}
                             >
                               ···
                             </button>
@@ -451,8 +431,7 @@ export default function PromotionsPage() {
                                 position: "absolute", right: 0, top: "calc(100% + 6px)", zIndex: 100,
                                 background: "#111", border: "1px solid rgba(255,255,255,0.1)",
                                 borderRadius: 8, padding: 4, minWidth: 170,
-                                boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
-                              }}>
+                                boxShadow: "0 8px 32px rgba(0,0,0,0.6)"}}>
                                 {deleteConfirmId === p.id ? (
                                   /* ─ Confirmation step ─ */
                                   <>
@@ -466,8 +445,7 @@ export default function PromotionsPage() {
                                         display: "block", width: "100%", textAlign: "left",
                                         padding: "8px 12px", background: "transparent", border: "none",
                                         borderRadius: 5, color: "rgba(239,68,68,0.9)",
-                                        fontSize: 12, fontWeight: 700, cursor: "pointer",
-                                      }}
+                                        fontSize: 12, fontWeight: 700, cursor: "pointer"}}
                                     >
                                       Confirmer la suppression
                                     </button>
@@ -478,8 +456,7 @@ export default function PromotionsPage() {
                                         display: "block", width: "100%", textAlign: "left",
                                         padding: "8px 12px", background: "transparent", border: "none",
                                         borderRadius: 5, color: "rgba(255,255,255,0.45)",
-                                        fontSize: 12, cursor: "pointer",
-                                      }}
+                                        fontSize: 12, cursor: "pointer"}}
                                     >
                                       Annuler
                                     </button>
@@ -495,8 +472,7 @@ export default function PromotionsPage() {
                                         padding: "8px 12px", background: "transparent", border: "none",
                                         borderRadius: 5,
                                         color: p.active ? "rgba(245,158,11,0.85)" : "#4ade80",
-                                        fontSize: 12, cursor: "pointer",
-                                      }}
+                                        fontSize: 12, cursor: "pointer"}}
                                     >
                                       {p.active ? "Révoquer" : "Activer"}
                                     </button>
@@ -508,8 +484,7 @@ export default function PromotionsPage() {
                                           display: "block", width: "100%", textAlign: "left",
                                           padding: "8px 12px", background: "transparent", border: "none",
                                           borderRadius: 5, color: "rgba(239,68,68,0.85)",
-                                          fontSize: 12, cursor: "pointer",
-                                        }}
+                                          fontSize: 12, cursor: "pointer"}}
                                       >
                                         Supprimer
                                       </button>

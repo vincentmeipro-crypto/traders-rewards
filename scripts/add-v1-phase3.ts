@@ -27,10 +27,13 @@ import { createClient }  from "@supabase/supabase-js";
 import { readFileSync }   from "fs";
 import { homedir }        from "os";
 import { join }           from "path";
+import { loadLocalEnv, requireEnv } from "./env";
 
-const SUPABASE_URL         = "https://gvvtpgekhhsjvnlgesgc.supabase.co";
-const SUPABASE_SERVICE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2dnRwZ2VraGhzanZubGdlc2djIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODY4MTQ5MywiZXhwIjoyMDk0MjU3NDkzfQ.NebKiXtVcDvisUic99XADUec1bZJbDpHlhnkTXvEeqs";
-const PROJECT_REF          = "gvvtpgekhhsjvnlgesgc";
+loadLocalEnv();
+
+const SUPABASE_URL         = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
+const SUPABASE_SERVICE_KEY = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+const PROJECT_REF          = new URL(SUPABASE_URL).hostname.split(".")[0];
 
 const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
   auth: { persistSession: false },

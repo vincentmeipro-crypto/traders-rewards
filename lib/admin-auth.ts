@@ -1,36 +1,41 @@
 /**
- * Auth admin partagée — utilisée par toutes les routes /api/admin/*
- *
- * Deux méthodes acceptées :
- *  1. Header  x-admin-key: <ADMIN_KEY>  (page admin sans login)
- *  2. Header  Authorization: Bearer <token>  (session Supabase — compat)
+ * Auth admin — session Supabase uniquement.
+ * Bearer (Authorization) ou cookie de session. L'email doit être ADMIN_EMAIL.
  */
 
 import { NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 export const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "vincentmeipro@gmail.com";
-export const ADMIN_KEY   = process.env.ADMIN_KEY || "tr2026-admin-k9x";
 
 export async function checkAdmin(
   req: NextRequest
-): Promise<{ ok: boolean; userId: string | null; reason?: string }> {
-
-  // ── Méthode 1 : clé statique (page sans login) ─────────────────
-  const staticKey = req.headers.get("x-admin-key");
-  if (staticKey) {
-    if (staticKey === ADMIN_KEY) return { ok: true, userId: "admin-static" };
-    return { ok: false, userId: null, reason: "invalid admin key" };
+): Promise<{ ok: boolean; userId: string | null; email: string | null; reason?: string }> {
+  const token = req.headers.get("Authorization")?.replace(/^Bearer\s+/i, "").trim();
+  if (token) {
+    const admin = createAdminClient();
+    const { data: { user }, error } = await admin.auth.getUser(token);
+    if (!error && user?.email) {
+      if (user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        return { ok: false, userId: null, email: user.email, reason: "email mismatch" };
+      }
+      return { ok: true, userId: user.id, email: user.email };
+    }
   }
 
-  // ── Méthode 2 : Bearer token Supabase (compat session) ─────────
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) return { ok: false, userId: null, reason: "no token" };
+  try {
+    const supabase = await createClient();
+    const { data: { user }, error } = await supabase.auth.getUser();
+    if (!error && user?.email) {
+      if (user.email.toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+        return { ok: false, userId: null, email: user.email, reason: "email mismatch" };
+      }
+      return { ok: true, userId: user.id, email: user.email };
+    }
+  } catch {
+    // pas de session cookie
+  }
 
-  const admin = createAdminClient();
-  const { data: { user }, error } = await admin.auth.getUser(token);
-  if (error || !user) return { ok: false, userId: null, reason: error?.message || "no user" };
-  if (user.email !== ADMIN_EMAIL) return { ok: false, userId: null, reason: `email mismatch: ${user.email}` };
-
-  return { ok: true, userId: user.id };
+  return { ok: false, userId: null, email: null, reason: "no session" };
 }

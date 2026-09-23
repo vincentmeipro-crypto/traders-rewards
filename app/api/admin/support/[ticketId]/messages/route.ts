@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 // ── GET /api/admin/support/[ticketId]/messages ────────────────────────────────
 //
-// Auth     : checkAdmin (x-admin-key ou Bearer JWT admin)
+// Auth     : checkAdmin (session Supabase admin)
 // Retourne : fil de messages du ticket, ordre chronologique.
 //
 // Colonnes EXPOSÉES : id, sender_type, content, channel, created_at

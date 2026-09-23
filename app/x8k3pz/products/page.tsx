@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────
 type Phase = {
@@ -49,8 +48,7 @@ function formatRelativeDate(dateStr: string): string {
 const STANDARD_PRICES: Record<string, number> = {
   "rewards-25k": 190,
   "rewards-50k": 290,
-  "rewards-100k": 590,
-};
+  "rewards-100k": 590};
 
 // ── Composants atomiques ─────────────────────────────────────────
 const StatusBadge = ({ active }: { active: boolean }) => (
@@ -59,8 +57,7 @@ const StatusBadge = ({ active }: { active: boolean }) => (
     padding: "3px 8px", borderRadius: 4, whiteSpace: "nowrap" as const,
     background: active ? "rgba(34,197,94,0.1)" : "rgba(255,255,255,0.06)",
     color:      active ? "#4ade80"             : "rgba(255,255,255,0.35)",
-    border: `1px solid ${active ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.1)"}`,
-  }}>
+    border: `1px solid ${active ? "rgba(34,197,94,0.2)" : "rgba(255,255,255,0.1)"}`}}>
     {active ? "ACTIF" : "INACTIF"}
   </span>
 );
@@ -75,8 +72,7 @@ const ModelBadge = ({ model }: { model: string }) => {
     <span style={{
       fontSize: 10, fontWeight: 800, letterSpacing: "0.8px",
       padding: "2px 7px", borderRadius: 4,
-      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`,
-    }}>{cfg.label}</span>
+      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`}}>{cfg.label}</span>
   );
 };
 
@@ -116,7 +112,7 @@ export default function ProductsPage() {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch("/api/admin/products", { headers: { "x-admin-key": ADMIN_KEY } });
+      const res  = await fetch("/api/admin/products", { });
       const data = await res.json();
       setProducts(Array.isArray(data) ? data : []);
     } catch {
@@ -134,9 +130,8 @@ export default function ProductsPage() {
     try {
       const res = await fetch(`/api/admin/products/${product.id}`, {
         method: "PUT",
-        headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ active: !product.active }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active: !product.active })});
       if (res.ok) {
         setProducts(prev => prev.map(p => p.id === product.id ? { ...p, active: !p.active } : p));
         notify(`${product.name} — ${!product.active ? "activé" : "désactivé"}`);
@@ -156,9 +151,7 @@ export default function ProductsPage() {
     setMenuOpenId(null);
     try {
       const res  = await fetch(`/api/admin/products/${product.id}/duplicate`, {
-        method: "POST",
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+        method: "POST"});
       const data = await res.json();
       if (res.ok && data.product?.id) {
         notify(`Dupliqué — ${data.product.slug}`);
@@ -193,8 +186,7 @@ export default function ProductsPage() {
   // P1#7: Labels de groupes complets
   const GROUP_LABELS: Record<string, string> = {
     "current": "OFFRES ACTUELLES — CHALLENGE",
-    "archive": "ARCHIVES — ANCIENS PRODUITS",
-  };
+    "archive": "ARCHIVES — ANCIENS PRODUITS"};
 
   return (
     // P1#3: surface page → #050505
@@ -208,8 +200,7 @@ export default function ProductsPage() {
           border: `1px solid ${notification.ok ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
           color: notification.ok ? "#86efac" : "#fca5a5",
           padding: "12px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
-        }}>
+          boxShadow: "0 4px 24px rgba(0,0,0,0.5)"}}>
           {notification.msg}
         </div>
       )}
@@ -220,8 +211,7 @@ export default function ProductsPage() {
         padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         gap: 16, flexWrap: "wrap",
-        background: "#0c0c0c",
-      }}>
+        background: "#0c0c0c"}}>
         {/* Gauche: breadcrumb + titre */}
         <div>
           {/* P1#5: breadcrumb cliquable */}
@@ -309,8 +299,7 @@ export default function ProductsPage() {
               <div style={{
                 display: "flex", alignItems: "center", gap: 10,
                 marginBottom: 12, paddingBottom: 12,
-                borderBottom: "1px solid rgba(255,255,255,0.07)",
-              }}>
+                borderBottom: "1px solid rgba(255,255,255,0.07)"}}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>
                   {GROUP_LABELS[group.model]}
                 </span>
@@ -327,8 +316,7 @@ export default function ProductsPage() {
                 fontSize: 10, fontWeight: 600, letterSpacing: "1.2px",
                 textTransform: "uppercase", color: "rgba(255,255,255,0.2)",
                 // P1#3: border plus contrastée
-                borderBottom: "1px solid rgba(255,255,255,0.08)",
-              }}>
+                borderBottom: "1px solid rgba(255,255,255,0.08)"}}>
                 <div>Statut</div>
                 <div>Produit</div>
                 <div>Prix promo</div>
@@ -362,8 +350,7 @@ export default function ProductsPage() {
                       // P1#3: hover plus perceptible sur #050505
                       background: isHovered ? "rgba(255,255,255,0.04)" : "transparent",
                       transition: "background 0.1s",
-                      cursor: "pointer",
-                    }}
+                      cursor: "pointer"}}
                   >
                     {/* Statut */}
                     <div onClick={e => e.stopPropagation()}>
@@ -442,8 +429,7 @@ export default function ProductsPage() {
                             border: "1px solid rgba(255,255,255,0.1)",
                             borderRadius: 6, width: 30, height: 30,
                             cursor: "pointer", color: "rgba(255,255,255,0.4)",
-                            fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center",
-                          }}
+                            fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center"}}
                         >
                           ⋯
                         </button>
@@ -456,8 +442,7 @@ export default function ProductsPage() {
                               zIndex: 100, background: "#111",
                               border: "1px solid rgba(255,255,255,0.1)",
                               borderRadius: 8, padding: 6, minWidth: 180,
-                              boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
-                            }}
+                              boxShadow: "0 8px 32px rgba(0,0,0,0.6)"}}
                           >
                             <button
                               onClick={e => duplicate(product, e)}

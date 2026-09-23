@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkAdmin, ADMIN_EMAIL, ADMIN_KEY } from "@/lib/admin-auth";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // ── GET /api/admin/notes?target_type=trader&target_id=<uuid> ────────────────
@@ -37,7 +37,8 @@ export async function GET(req: NextRequest) {
 // body: { target_type, target_id, content }
 // author_email : JAMAIS accepté depuis le frontend — résolu côté serveur.
 export async function POST(req: NextRequest) {
-  if (!(await checkAdmin(req)).ok)
+  const auth = await checkAdmin(req);
+  if (!auth.ok || !auth.email)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   let body: unknown;
@@ -56,23 +57,7 @@ export async function POST(req: NextRequest) {
   if (!trimmed || trimmed.length > 4000)
     return NextResponse.json({ error: "Contenu vide ou trop long (max 4 000 car.)" }, { status: 400 });
 
-  // ── Résolution author_email — server-side uniquement ─────────────────────
-  // Méthode 1 : clé statique  → ADMIN_EMAIL (constante env)
-  // Méthode 2 : Bearer token  → user.email depuis la session Supabase
-  let author_email: string;
-  const staticKey = req.headers.get("x-admin-key");
-  if (staticKey) {
-    if (staticKey !== ADMIN_KEY)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    author_email = ADMIN_EMAIL;
-  } else {
-    const token = req.headers.get("Authorization")?.replace("Bearer ", "");
-    if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    const adminClient = createAdminClient();
-    const { data: { user } } = await adminClient.auth.getUser(token);
-    if (!user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    author_email = user.email;
-  }
+  const author_email = auth.email;
 
   const admin = createAdminClient();
   const { data, error } = await admin

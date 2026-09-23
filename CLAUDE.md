@@ -1,9 +1,11 @@
-# Elysium Funded — Context pour Claude
+# Traders Rewards — Contexte projet
 
 ## Projet
-Site live : https://www.elysium-rewards.com (Vercel, auto-deploy sur push)
-Repo : vincentmeipro-crypto/elysium-funded
-Stack : Next.js 15, React 19, TypeScript, Supabase, Stripe, Resend, Vercel
+Site live : https://www.traders-rewards.eu (Vercel, auto-deploy sur push)
+Entité : Traders Rewards OÜ
+Stack : Next.js 16, React 19, TypeScript, Supabase, Stripe, Resend, Vercel
+
+Ancien nom interne : Elysium Funded. Ne plus l'utiliser dans le code, les docs ou les réponses. Deux identifiants historiques restent en place pour ne pas casser les sessions déjà stockées : la clé localStorage `elysium_ref` et le préfixe d'orderId crypto `elysium~`.
 
 ## Règles de travail
 - Toujours commiter ET pusher après chaque modification
@@ -11,11 +13,13 @@ Stack : Next.js 15, React 19, TypeScript, Supabase, Stripe, Resend, Vercel
 - Pour images hero mobile : utiliser `<img>` HTML classique, pas Next.js `<Image fill>`
 - Terminologie client : "Certifié" (= funded), "Récompense" (= payout) — jamais "funded" ou "payout" visible
 - Réponses courtes, passer directement à l'action
+- Pas de clé admin dans le JavaScript public. L'admin `/x8k3pz` exige une session Supabase dont l'email est `ADMIN_EMAIL`.
 
 ## Architecture
 - `app/page.tsx` — landing page
 - `app/dashboard/DashboardClient.tsx` — dashboard client
-- `app/admin/page.tsx` — admin
+- `app/dashboard/TraderCockpit.tsx` — cockpit trader
+- `app/x8k3pz/` — back-office (pas `app/admin`)
 - `app/checkout/page.tsx` — checkout (Stripe + Crypto + Promo free)
 - `app/api/stripe/checkout/route.ts` + `webhook/route.ts`
 - `app/api/crypto/checkout/route.ts` + `webhook/route.ts`
@@ -23,6 +27,8 @@ Stack : Next.js 15, React 19, TypeScript, Supabase, Stripe, Resend, Vercel
 - `components/RefTracker.tsx` — détecte ?ref= et sauvegarde en localStorage
 - `lib/mt5.ts` — création comptes MT5 via Manager API (microservice Python VPS)
 - `lib/mailer.ts` — emails transactionnels (Resend)
+- `lib/admin-auth.ts` — session admin
+- `lib/product-engine.ts` — prix et règles lus en base
 
 ## Supabase — Tables importantes
 - `challenges` : challenges des traders (phase, balance, mt5_login, etc.)
@@ -34,7 +40,7 @@ Stack : Next.js 15, React 19, TypeScript, Supabase, Stripe, Resend, Vercel
 
 ## Système d'affiliation (implémenté)
 - Chaque client a un code unique dans `affiliates.code`
-- Landing page détecte `?ref=CODE` → localStorage (`elysium_ref`)
+- Landing page détecte `?ref=CODE` → localStorage (`elysium_ref`, nom historique)
 - Checkout passe `refCode` dans metadata Stripe et dans l'orderId crypto
 - Webhooks Stripe + Crypto créent un enregistrement dans `affiliate_referrals`
 - Dashboard tab "Affiliation" : affiche le lien, stats, tiers (10%/15%/20%)
@@ -45,7 +51,6 @@ Stack : Next.js 15, React 19, TypeScript, Supabase, Stripe, Resend, Vercel
 - Microservice Python sur VPS Windows → Manager API → serveur MT5
 - Création automatique de compte MT5 à chaque achat (via `lib/mt5.ts`)
 
-## Emails admin
-- fundedelysium@gmail.com (admin)
-- elysiumcertified@gmail.com (comptes MT5 clients)
-- support@elysium-rewards.com (support)
+## Emails
+- contact@traders-rewards.eu (contact public et expéditeur)
+- Compte admin applicatif : email défini par `ADMIN_EMAIL`

@@ -5,7 +5,7 @@ import { sendSupportReplyEmail } from "@/lib/mailer";
 
 // ── POST /api/admin/support/[ticketId]/reply ──────────────────────────────────
 //
-// Auth     : checkAdmin (x-admin-key ou Bearer JWT admin)
+// Auth     : checkAdmin (session Supabase admin)
 // Body     : { message: string } — max 4 000 caractères
 //
 // sender_type='admin' et channel='dashboard' forcés server-side.

@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────
 type PromoStatus = "revoked" | "exhausted" | "expired" | "scheduled" | "active";
@@ -59,23 +58,20 @@ const STATUS_CFG: Record<PromoStatus, { label: string; bg: string; color: string
   revoked:   { label: "RÉVOQUÉE",  bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.35)", border: "rgba(255,255,255,0.1)" },
   expired:   { label: "EXPIRÉE",   bg: "rgba(245,158,11,0.1)",  color: "#fbbf24", border: "rgba(245,158,11,0.2)"  },
   exhausted: { label: "ÉPUISÉE",   bg: "rgba(201,150,63,0.1)",  color: "rgba(201,150,63,0.85)", border: "rgba(201,150,63,0.2)"  },
-  scheduled: { label: "PLANIFIÉE", bg: "rgba(168,85,247,0.1)",  color: "#c084fc", border: "rgba(168,85,247,0.2)"  },
-};
+  scheduled: { label: "PLANIFIÉE", bg: "rgba(168,85,247,0.1)",  color: "#c084fc", border: "rgba(168,85,247,0.2)"  }};
 
 // ── Provider config ──────────────────────────────────────────────
 const PROVIDER_CFG: Record<string, { label: string; bg: string; color: string; border: string }> = {
   stripe: { label: "Stripe",  bg: "rgba(99,102,241,0.1)",   color: "#818cf8", border: "rgba(99,102,241,0.2)"   },
   crypto: { label: "Crypto",  bg: "rgba(245,158,11,0.1)",   color: "#fbbf24", border: "rgba(245,158,11,0.2)"   },
-  free:   { label: "Gratuit", bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)", border: "rgba(255,255,255,0.1)" },
-};
+  free:   { label: "Gratuit", bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)", border: "rgba(255,255,255,0.1)" }};
 
 // ── Atomic UI ────────────────────────────────────────────────────
 const Label = ({ children, required, htmlFor }: { children: React.ReactNode; required?: boolean; htmlFor?: string }) => (
   <label htmlFor={htmlFor} style={{
     display: "flex", fontSize: 10, fontWeight: 600, letterSpacing: "1.5px",
     textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6,
-    cursor: htmlFor ? "pointer" : "default",
-  }}>
+    cursor: htmlFor ? "pointer" : "default"}}>
     {children}{required && <span style={{ color: "rgba(239,68,68,0.7)", marginLeft: 3 }}>*</span>}
   </label>
 );
@@ -83,8 +79,7 @@ const Label = ({ children, required, htmlFor }: { children: React.ReactNode; req
 const inputBaseStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 6, padding: "9px 12px", color: "#fff", fontSize: 13, fontWeight: 500,
-  width: "100%", outline: "none", fontFamily: "inherit", boxSizing: "border-box",
-};
+  width: "100%", outline: "none", fontFamily: "inherit", boxSizing: "border-box"};
 
 const Input = ({ id, value, onChange, type = "text", placeholder, readOnly }: {
   id?: string; value: string; onChange?: (v: string) => void;
@@ -131,13 +126,11 @@ const Toggle = ({ checked, onChange, label, id }: {
       style={{
         width: 36, height: 20, borderRadius: 10, border: "none",
         cursor: "pointer", background: checked ? "#22c55e" : "rgba(255,255,255,0.15)",
-        position: "relative", transition: "background 0.2s", flexShrink: 0,
-      }}
+        position: "relative", transition: "background 0.2s", flexShrink: 0}}
     >
       <div style={{
         width: 14, height: 14, borderRadius: "50%", background: "#fff",
-        position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s",
-      }} />
+        position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s"}} />
     </button>
     {label && <span style={{ fontSize: 13, color: checked ? "#fff" : "rgba(255,255,255,0.45)" }}>{label}</span>}
   </div>
@@ -149,8 +142,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     letterSpacing: "1.5px", textTransform: "uppercase",
     marginBottom: 18, paddingBottom: 10,
     borderBottom: "1px solid rgba(255,255,255,0.08)",
-    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)",
-  }}>
+    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)"}}>
     {children}
   </div>
 );
@@ -217,8 +209,7 @@ export default function PromoEditorPage() {
     targeting_mode:      "all",
     product_ids:         [],
     affiliate_user_id:   "",
-    active:              true,
-  });
+    active:              true});
   const snapshotRef = useRef<string | null>(null); // JSON snapshot for dirty detection
 
   const isDirty = snapshotRef.current !== null && JSON.stringify(form) !== snapshotRef.current;
@@ -232,7 +223,7 @@ export default function PromoEditorPage() {
   const loadPromo = useCallback(async () => {
     setLoading(true);
     try {
-      const res  = await fetch("/api/admin/promo-codes", { headers: { "x-admin-key": ADMIN_KEY } });
+      const res  = await fetch("/api/admin/promo-codes", { });
       const data = await res.json();
       if (res.ok && Array.isArray(data)) {
         const found = data.find((p: Promo) => p.id === promoId);
@@ -248,8 +239,7 @@ export default function PromoEditorPage() {
             targeting_mode:      found.targeting_mode,
             product_ids:         found.product_ids || [],
             affiliate_user_id:   found.affiliate_user_id || "",
-            active:              found.active,
-          };
+            active:              found.active};
           setForm(newForm);
           snapshotRef.current = JSON.stringify(newForm); // reset dirty tracking
           setConfDel(false);
@@ -265,8 +255,8 @@ export default function PromoEditorPage() {
   // Load products (all, including inactive) + affiliates
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/products",  { headers: { "x-admin-key": ADMIN_KEY } }).then(r => r.json()),
-      fetch("/api/admin/affiliates", { headers: { "x-admin-key": ADMIN_KEY } }).then(r => r.json()),
+      fetch("/api/admin/products",  { }).then(r => r.json()),
+      fetch("/api/admin/affiliates", { }).then(r => r.json()),
     ]).then(([prod, aff]) => {
       if (Array.isArray(prod)) setProducts(prod); // no filter — keep inactive for targeted display
       if (Array.isArray(aff))  setAffiliates(aff);
@@ -279,9 +269,7 @@ export default function PromoEditorPage() {
   const loadUsage = useCallback(async (page: number) => {
     setULoading(true);
     try {
-      const res  = await fetch(`/api/admin/promo-codes/${promoId}/usages?page=${page}&limit=25`, {
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+      const res  = await fetch(`/api/admin/promo-codes/${promoId}/usages?page=${page}&limit=25`, {});
       const data = await res.json();
       if (res.ok) setUsage(data);
     } catch { /* silent */ }
@@ -329,13 +317,11 @@ export default function PromoEditorPage() {
         targeting_mode:      form.targeting_mode,
         product_ids:         form.targeting_mode === "specific" ? form.product_ids : [],
         affiliate_user_id:   form.affiliate_user_id || null,
-        active:              form.active,
-      };
+        active:              form.active};
       const res  = await fetch(`/api/admin/promo-codes/${promoId}`, {
         method: "PATCH",
-        headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)});
       const data = await res.json();
       if (res.ok) {
         notify("Modifications sauvegardées");
@@ -351,9 +337,8 @@ export default function PromoEditorPage() {
     try {
       const res  = await fetch(`/api/admin/promo-codes/${promoId}`, {
         method: "PATCH",
-        headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ active: !promo.active }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active: !promo.active })});
       const data = await res.json();
       if (res.ok) {
         notify(data.active ? "Promotion activée" : "Promotion révoquée");
@@ -368,9 +353,7 @@ export default function PromoEditorPage() {
     setSaving(true);
     try {
       const res  = await fetch(`/api/admin/promo-codes/${promoId}`, {
-        method: "DELETE",
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+        method: "DELETE"});
       const data = await res.json();
       if (res.ok) { notify("Code supprimé"); setTimeout(() => router.push("/x8k3pz/promotions"), 600); }
       else notify(data.error || "Erreur suppression", false);
@@ -385,8 +368,7 @@ export default function PromoEditorPage() {
     color: activeTab === tab ? "#fff" : "rgba(255,255,255,0.38)",
     fontSize: 13, fontWeight: activeTab === tab ? 700 : 500,
     padding: "12px 20px", cursor: "pointer",
-    transition: "all 0.15s", fontFamily: "inherit",
-  });
+    transition: "all 0.15s", fontFamily: "inherit"});
 
   // ── Loading skeleton ─────────────────────────────────────────────
   if (loading) {
@@ -398,8 +380,7 @@ export default function PromoEditorPage() {
             height: 13, borderRadius: 5, marginBottom: i === 1 ? 32 : 18,
             background: "rgba(255,255,255,0.18)", maxWidth: w,
             animation: "sk-fade 1.6s ease-in-out infinite",
-            animationDelay: `${i * 0.1}s`,
-          }} />
+            animationDelay: `${i * 0.1}s`}} />
         ))}
       </div>
     );
@@ -444,8 +425,7 @@ export default function PromoEditorPage() {
           border: `1px solid ${notification.ok ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
           color: notification.ok ? "#86efac" : "#fca5a5",
           padding: "12px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
-        }}>
+          boxShadow: "0 4px 24px rgba(0,0,0,0.5)"}}>
           {notification.msg}
         </div>
       )}
@@ -456,8 +436,7 @@ export default function PromoEditorPage() {
         padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         position: "sticky", top: 0, background: "#0c0c0c",
-        zIndex: 50, gap: 12, flexWrap: "wrap",
-      }}>
+        zIndex: 50, gap: 12, flexWrap: "wrap"}}>
         {/* Breadcrumb + dirty indicator */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <a
@@ -479,13 +458,11 @@ export default function PromoEditorPage() {
             color: statusCfg.color, borderRadius: 20,
             padding: "3px 10px 3px 8px", fontSize: 10, fontWeight: 700,
             display: "inline-flex", alignItems: "center", gap: 6, letterSpacing: "0.5px",
-            userSelect: "none",
-          }}>
+            userSelect: "none"}}>
             <div style={{
               width: 6, height: 6, borderRadius: "50%",
               background: status === "active" ? "#22c55e" : statusCfg.color,
-              animation: status === "active" ? "pulse-dot 2.4s ease-in-out infinite" : undefined,
-            }} />
+              animation: status === "active" ? "pulse-dot 2.4s ease-in-out infinite" : undefined}} />
             {statusCfg.label}
           </span>
           {isDirty && (
@@ -506,8 +483,7 @@ export default function PromoEditorPage() {
               color: promo.active ? "rgba(239,68,68,0.85)" : "#4ade80",
               borderRadius: 6, padding: "8px 14px", fontSize: 12, fontWeight: 600,
               cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1,
-              whiteSpace: "nowrap",
-            }}
+              whiteSpace: "nowrap"}}
           >
             {saving ? "…" : promo.active ? "Révoquer" : "Activer"}
           </button>
@@ -519,8 +495,7 @@ export default function PromoEditorPage() {
                 background: "#3B82F6", border: "none", color: "#fff",
                 borderRadius: 8, padding: "8px 22px", fontSize: 13, fontWeight: 700,
                 cursor: (!isDirty || saving) ? "default" : "pointer",
-                opacity: (!isDirty || saving) ? 0.4 : 1, transition: "opacity 0.15s",
-              }}
+                opacity: (!isDirty || saving) ? 0.4 : 1, transition: "opacity 0.15s"}}
             >
               {saving ? "…" : "Sauvegarder"}
             </button>
@@ -531,8 +506,7 @@ export default function PromoEditorPage() {
         {showLeaveWarning && (
           <div style={{
             width: "100%", display: "flex", alignItems: "center", gap: 12,
-            paddingTop: 10, borderTop: "1px solid rgba(245,158,11,0.2)", flexWrap: "wrap",
-          }}>
+            paddingTop: 10, borderTop: "1px solid rgba(245,158,11,0.2)", flexWrap: "wrap"}}>
             <span style={{ fontSize: 12, color: "#fbbf24", fontWeight: 500 }}>
               Des modifications ne sont pas sauvegardées.
             </span>
@@ -541,8 +515,7 @@ export default function PromoEditorPage() {
               style={{
                 padding: "5px 12px", borderRadius: 6, fontSize: 12, fontWeight: 600,
                 background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)",
-                color: "rgba(239,68,68,0.85)", cursor: "pointer",
-              }}
+                color: "rgba(239,68,68,0.85)", cursor: "pointer"}}
             >
               Quitter sans sauvegarder
             </button>
@@ -551,8 +524,7 @@ export default function PromoEditorPage() {
               style={{
                 padding: "5px 12px", borderRadius: 6, fontSize: 12,
                 background: "transparent", border: "1px solid rgba(255,255,255,0.12)",
-                color: "rgba(255,255,255,0.5)", cursor: "pointer",
-              }}
+                color: "rgba(255,255,255,0.5)", cursor: "pointer"}}
             >
               Continuer l'édition
             </button>
@@ -587,8 +559,7 @@ export default function PromoEditorPage() {
           {promo.usage_records_count > 0 && (
             <span style={{
               marginLeft: 7, background: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)",
-              borderRadius: 10, padding: "1px 7px", fontSize: 10, fontWeight: 800,
-            }}>
+              borderRadius: 10, padding: "1px 7px", fontSize: 10, fontWeight: 800}}>
               {promo.usage_records_count}
             </span>
           )}
@@ -682,8 +653,7 @@ export default function PromoEditorPage() {
                       cursor: "pointer",
                       background: form.targeting_mode === mode ? "rgba(201,150,63,0.12)" : "transparent",
                       border: `1px solid ${form.targeting_mode === mode ? "rgba(201,150,63,0.35)" : "rgba(255,255,255,0.1)"}`,
-                      color: form.targeting_mode === mode ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.45)",
-                    }}
+                      color: form.targeting_mode === mode ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.45)"}}
                   >
                     {mode === "all" ? "Tous les produits" : "Produits spécifiques"}
                   </button>
@@ -721,8 +691,7 @@ export default function PromoEditorPage() {
                                 ? isInactive ? "rgba(245,158,11,0.2)" : "rgba(201,150,63,0.25)"
                                 : "rgba(255,255,255,0.06)"}`,
                               opacity: isInactive && !selected ? 0.4 : 1,
-                              transition: "all 0.1s",
-                            }}
+                              transition: "all 0.1s"}}
                           >
                             <input
                               type="checkbox"
@@ -737,8 +706,7 @@ export default function PromoEditorPage() {
                               width: 16, height: 16, borderRadius: 4, flexShrink: 0,
                               background: selected ? (isInactive ? "#f59e0b" : "#3B82F6") : "transparent",
                               border: `2px solid ${selected ? (isInactive ? "#f59e0b" : "#3B82F6") : "rgba(255,255,255,0.2)"}`,
-                              display: "flex", alignItems: "center", justifyContent: "center",
-                            }}>
+                              display: "flex", alignItems: "center", justifyContent: "center"}}>
                               {selected && <div style={{ width: 8, height: 8, background: "#fff", borderRadius: 1 }} />}
                             </div>
                             <div style={{ flex: 1, minWidth: 0 }}>
@@ -750,8 +718,7 @@ export default function PromoEditorPage() {
                                   <span style={{
                                     fontSize: 10, fontWeight: 700, padding: "1px 5px", borderRadius: 3,
                                     background: "rgba(245,158,11,0.1)", color: "#fbbf24",
-                                    border: "1px solid rgba(245,158,11,0.2)",
-                                  }}>
+                                    border: "1px solid rgba(245,158,11,0.2)"}}>
                                     INACTIF
                                   </span>
                                 )}
@@ -813,15 +780,13 @@ export default function PromoEditorPage() {
             {/* ─── Danger Zone ─── */}
             <div style={{
               background: "#0c0c0c", border: "1px solid rgba(239,68,68,0.2)",
-              borderRadius: 12, padding: "24px 28px",
-            }}>
+              borderRadius: 12, padding: "24px 28px"}}>
               <div style={{
                 fontSize: 12, fontWeight: 700, color: "rgba(239,68,68,0.6)",
                 letterSpacing: "1.5px", textTransform: "uppercase",
                 marginBottom: 18, paddingBottom: 10,
                 borderBottom: "1px solid rgba(239,68,68,0.1)",
-                paddingLeft: 10, borderLeft: "3px solid rgba(239,68,68,0.3)",
-              }}>
+                paddingLeft: 10, borderLeft: "3px solid rgba(239,68,68,0.3)"}}>
                 Zone de danger
               </div>
 
@@ -842,8 +807,7 @@ export default function PromoEditorPage() {
                     style={{
                       padding: "8px 16px", borderRadius: 6, fontSize: 12, fontWeight: 700,
                       background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.25)",
-                      color: "rgba(239,68,68,0.85)", cursor: "pointer", flexShrink: 0,
-                    }}
+                      color: "rgba(239,68,68,0.85)", cursor: "pointer", flexShrink: 0}}
                   >
                     Supprimer
                   </button>
@@ -857,8 +821,7 @@ export default function PromoEditorPage() {
                       style={{
                         padding: "8px 16px", borderRadius: 6, fontSize: 12, fontWeight: 700,
                         background: "#ef4444", border: "none", color: "#fff",
-                        cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1,
-                      }}
+                        cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1}}
                     >
                       {saving ? "…" : "Supprimer définitivement"}
                     </button>
@@ -867,8 +830,7 @@ export default function PromoEditorPage() {
                       style={{
                         padding: "8px 16px", borderRadius: 6, fontSize: 12,
                         background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
-                        color: "rgba(255,255,255,0.4)", cursor: "pointer",
-                      }}
+                        color: "rgba(255,255,255,0.4)", cursor: "pointer"}}
                     >
                       Annuler
                     </button>
@@ -900,8 +862,7 @@ export default function PromoEditorPage() {
                       <div key={j} style={{
                         height: 12, borderRadius: 4, background: "rgba(255,255,255,0.18)", width: w,
                         animation: "sk-fade 1.6s ease-in-out infinite",
-                        animationDelay: `${(i * 6 + j) * 0.04}s`,
-                      }} />
+                        animationDelay: `${(i * 6 + j) * 0.04}s`}} />
                     ))}
                   </div>
                 ))}
@@ -925,8 +886,7 @@ export default function PromoEditorPage() {
                         padding: "5px 12px", borderRadius: 6, fontSize: 12,
                         background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
                         color: "rgba(255,255,255,0.4)", cursor: usagePage <= 1 ? "default" : "pointer",
-                        opacity: usagePage <= 1 ? 0.3 : 1,
-                      }}
+                        opacity: usagePage <= 1 ? 0.3 : 1}}
                     >
                       Préc.
                     </button>
@@ -937,8 +897,7 @@ export default function PromoEditorPage() {
                         padding: "5px 12px", borderRadius: 6, fontSize: 12,
                         background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
                         color: "rgba(255,255,255,0.4)", cursor: !usage || usagePage >= usage.totalPages ? "default" : "pointer",
-                        opacity: !usage || usagePage >= usage.totalPages ? 0.3 : 1,
-                      }}
+                        opacity: !usage || usagePage >= usage.totalPages ? 0.3 : 1}}
                     >
                       Suiv.
                     </button>
@@ -953,8 +912,7 @@ export default function PromoEditorPage() {
                             padding: "11px 16px", textAlign: "left",
                             color: "rgba(255,255,255,0.3)", fontWeight: 600,
                             fontSize: 10, textTransform: "uppercase", letterSpacing: 0.8,
-                            whiteSpace: "nowrap",
-                          }}>{h}</th>
+                            whiteSpace: "nowrap"}}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -962,8 +920,7 @@ export default function PromoEditorPage() {
                       {usage.items.map((row, i) => {
                         const provCfg = PROVIDER_CFG[row.provider] || {
                           label: row.provider, bg: "rgba(255,255,255,0.05)",
-                          color: "rgba(255,255,255,0.4)", border: "rgba(255,255,255,0.08)",
-                        };
+                          color: "rgba(255,255,255,0.4)", border: "rgba(255,255,255,0.08)"};
                         return (
                           <tr key={row.id} style={{ borderBottom: i < usage.items.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none" }}>
                             <td style={{ padding: "12px 16px", color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
@@ -994,8 +951,7 @@ export default function PromoEditorPage() {
                               <span style={{
                                 fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4,
                                 background: provCfg.bg, color: provCfg.color,
-                                border: `1px solid ${provCfg.border}`,
-                              }}>
+                                border: `1px solid ${provCfg.border}`}}>
                                 {provCfg.label}
                               </span>
                             </td>

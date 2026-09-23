@@ -112,12 +112,21 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
+  const adminEmail = (process.env.ADMIN_EMAIL || "vincentmeipro@gmail.com").toLowerCase();
+  if (pathname.startsWith("/x8k3pz")) {
+    if (!user) return NextResponse.redirect(new URL("/login", request.url));
+    if (user.email?.toLowerCase() !== adminEmail) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+  }
+
   if (!user && pathname.startsWith("/dashboard")) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   if (user && (pathname === "/login" || pathname === "/register")) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    const dest = user.email?.toLowerCase() === adminEmail ? "/x8k3pz" : "/dashboard";
+    return NextResponse.redirect(new URL(dest, request.url));
   }
 
   return supabaseResponse;

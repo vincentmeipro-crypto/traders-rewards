@@ -1,13 +1,12 @@
 ﻿"use client";
 // ── ChatCRM — Live Chat CRM Admin ─────────────────────────────────────────────
 // Interface admin 2 colonnes : liste conversations + détail.
-// Polling liste 4s / détail 3s (pas de Realtime : admin utilise x-admin-key, pas JWT).
+// Polling liste 4s / détail 3s.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -54,8 +53,7 @@ const STATUS_CONFIG: Record<ChatStatus, { label: string; bg: string; color: stri
   waiting_support: { label: "À répondre",     bg: "rgba(239,68,68,0.12)",   color: "#f87171", border: "rgba(239,68,68,0.25)"  },
   open:            { label: "En cours",        bg: "rgba(245,158,11,0.15)",  color: "#fbbf24", border: "rgba(245,158,11,0.3)"  },
   waiting_client:  { label: "Attend client",   bg: "rgba(201,150,63,0.15)",  color: "rgba(201,150,63,0.85)", border: "rgba(201,150,63,0.3)"  },
-  closed:          { label: "Fermée",          bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)", border: "rgba(255,255,255,0.1)" },
-};
+  closed:          { label: "Fermée",          bg: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)", border: "rgba(255,255,255,0.1)" }};
 
 const STATUS_FILTER_TABS: { key: "all" | ChatStatus; label: string }[] = [
   { key: "all",             label: "Tous"          },
@@ -79,8 +77,7 @@ function fmtRelative(iso: string | null): string {
 
 function fmtDateTime(iso: string): string {
   return new Date(iso).toLocaleString("fr-FR", {
-    day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
-  });
+    day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"});
 }
 
 function displayName(conv: Pick<ConvSummary, "first_name" | "last_name" | "email">): string {
@@ -96,8 +93,7 @@ function ChatStatusBadge({ status }: { status: ChatStatus }) {
     <span style={{
       fontSize: 10, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" as const,
       padding: "2px 8px", borderRadius: 100, whiteSpace: "nowrap" as const,
-      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`,
-    }}>
+      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`}}>
       {cfg.label}
     </span>
   );
@@ -116,9 +112,7 @@ function ConvNotes({ convId }: { convId: string }) {
   useEffect(() => {
     let cancelled = false;
     setLoaded(false);
-    fetch(`/api/admin/notes?target_type=chat_conversation&target_id=${convId}`, {
-      headers: { "x-admin-key": ADMIN_KEY },
-    })
+    fetch(`/api/admin/notes?target_type=chat_conversation&target_id=${convId}`, {})
       .then(r => r.json())
       .then(d => { if (!cancelled) { setNotes(d.notes ?? []); setLoaded(true); } })
       .catch(() => { if (!cancelled) setLoaded(true); });
@@ -132,9 +126,8 @@ function ConvNotes({ convId }: { convId: string }) {
     try {
       const res = await fetch("/api/admin/notes", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ target_type: "chat_conversation", target_id: convId, content: trimmed }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target_type: "chat_conversation", target_id: convId, content: trimmed })});
       const d = await res.json();
       if (!res.ok) { setError(d.error || "Erreur"); return; }
       setNotes(prev => [d.note as Note, ...prev]);
@@ -146,7 +139,7 @@ function ConvNotes({ convId }: { convId: string }) {
   const deleteNote = async (id: string) => {
     setDeleting(id); setError(null);
     try {
-      const res = await fetch(`/api/admin/notes?id=${id}`, { method: "DELETE", headers: { "x-admin-key": ADMIN_KEY } });
+      const res = await fetch(`/api/admin/notes?id=${id}`, { method: "DELETE" });
       if (!res.ok) { const d = await res.json(); setError(d.error || "Erreur"); return; }
       setNotes(prev => prev.filter(n => n.id !== id));
     } catch { setError("Erreur réseau"); }
@@ -204,8 +197,7 @@ function ConvNotes({ convId }: { convId: string }) {
 function ConvRow({
   conv,
   isSelected,
-  onClick,
-}: {
+  onClick}: {
   conv: ConvSummary;
   isSelected: boolean;
   onClick: () => void;
@@ -222,8 +214,7 @@ function ConvRow({
         border: `1px solid ${isSelected ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.06)"}`,
         borderRadius: 8, cursor: "pointer",
         transition: "background 0.1s, border-color 0.1s",
-        display: "flex", flexDirection: "column", gap: 5,
-      }}
+        display: "flex", flexDirection: "column", gap: 5}}
     >
       {/* Ligne 1 : nom + badge statut + unread */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "space-between" }}>
@@ -233,8 +224,7 @@ function ConvRow({
           )}
           <span style={{
             fontSize: 12, fontWeight: isUnread ? 700 : 600, color: isUnread ? "#fff" : "rgba(255,255,255,0.75)",
-            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const, flex: 1,
-          }}>
+            overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const, flex: 1}}>
             {name}
           </span>
         </div>
@@ -252,8 +242,7 @@ function ConvRow({
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}>
         <span style={{
           fontSize: 11, color: "rgba(255,255,255,0.3)",
-          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const, flex: 1,
-        }}>
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const, flex: 1}}>
           {conv.last_message_preview
             ? `${conv.last_message_sender === "admin" ? "Vous : " : ""}${conv.last_message_preview}`
             : conv.email ?? "Email non renseigné"}
@@ -270,8 +259,7 @@ function ConvRow({
 
 function ChatDetail({
   convId,
-  onConvUpdate,
-}: {
+  onConvUpdate}: {
   convId: string;
   onConvUpdate: (conv: ConvSummary) => void;
 }) {
@@ -303,9 +291,7 @@ function ChatDetail({
   // ── Fetch détail ──────────────────────────────────────────────────────────
   const fetchDetail = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/chat/${convId}`, {
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+      const res = await fetch(`/api/admin/chat/${convId}`, {});
       if (!res.ok) { if (!conv) setLoadErr("Conversation introuvable"); return; }
       const d = await res.json();
       const convData = d.conversation as ConvDetail;
@@ -334,9 +320,7 @@ function ChatDetail({
           inFlightReadRef.current        = true;
           lastMarkedTimestampRef.current = latestClient.created_at;
           fetch(`/api/admin/chat/${convId}/read`, {
-            method: "POST",
-            headers: { "x-admin-key": ADMIN_KEY },
-          }).catch(() => null).finally(() => { inFlightReadRef.current = false; });
+            method: "POST"}).catch(() => null).finally(() => { inFlightReadRef.current = false; });
         }
       }
     } catch {
@@ -387,9 +371,8 @@ function ChatDetail({
     try {
       const res = await fetch(`/api/admin/chat/${convId}/messages`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ message: trimmed }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmed })});
       const d = await res.json();
       if (!res.ok) { setSendErr(d.error || "Erreur"); return; }
       setDraft("");
@@ -408,9 +391,8 @@ function ChatDetail({
     try {
       const res = await fetch(`/api/admin/chat/${convId}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ status }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })});
       const d = await res.json();
       if (!res.ok) return;
       const updated = d.conversation as ConvDetail;
@@ -426,9 +408,7 @@ function ChatDetail({
     setConverting(true);
     try {
       const res = await fetch(`/api/admin/chat/${convId}/convert-ticket`, {
-        method: "POST",
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+        method: "POST"});
       const d = await res.json();
       if (!res.ok) return;
       setConvertDone(d.ticketId as string);
@@ -571,12 +551,10 @@ function ChatDetail({
               <div style={{
                 maxWidth: "75%", padding: "9px 14px", borderRadius: 12,
                 background: isAdmin ? "rgba(201,150,63,0.18)" : "rgba(255,255,255,0.07)",
-                border: `1px solid ${isAdmin ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.1)"}`,
-              }}>
+                border: `1px solid ${isAdmin ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.1)"}`}}>
                 <p style={{
                   margin: "0 0 4px 0", fontSize: 12.5, color: isAdmin ? "rgba(212,168,67,0.72)" : "rgba(255,255,255,0.85)",
-                  lineHeight: "1.55", whiteSpace: "pre-wrap" as const, wordBreak: "break-word" as const,
-                }}>
+                  lineHeight: "1.55", whiteSpace: "pre-wrap" as const, wordBreak: "break-word" as const}}>
                   {msg.message}
                 </p>
                 <span style={{ fontSize: 10, color: "rgba(255,255,255,0.2)" }}>
@@ -600,8 +578,7 @@ function ChatDetail({
           disabled={sending}
           style={{
             flex: 1, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 9, padding: "9px 13px",
-            color: "#fff", fontSize: 13, resize: "none" as const, outline: "none", fontFamily: "inherit", minHeight: 56,
-          }}
+            color: "#fff", fontSize: 13, resize: "none" as const, outline: "none", fontFamily: "inherit", minHeight: 56}}
         />
         <button
           onClick={sendMessage}
@@ -609,8 +586,7 @@ function ChatDetail({
           style={{
             padding: "9px 18px", background: sending || !draft.trim() ? "rgba(201,150,63,0.2)" : "#C9963F",
             border: "none", borderRadius: 9, color: "#fff", fontSize: 13, fontWeight: 700,
-            cursor: sending || !draft.trim() ? "not-allowed" : "pointer", height: 56, flexShrink: 0,
-          }}
+            cursor: sending || !draft.trim() ? "not-allowed" : "pointer", height: 56, flexShrink: 0}}
         >
           {sending ? "…" : "Envoyer"}
         </button>
@@ -652,9 +628,7 @@ export default function ChatCRM() {
   ) => {
     try {
       const params = new URLSearchParams({ status: st, search: q, page: String(pg) });
-      const res = await fetch(`/api/admin/chat?${params}`, {
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+      const res = await fetch(`/api/admin/chat?${params}`, {});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const d = await res.json();
       setConversations(d.conversations ?? []);
@@ -712,8 +686,7 @@ export default function ChatCRM() {
       <div style={{
         width: 320, flexShrink: 0, borderRight: "1px solid rgba(255,255,255,0.07)",
         display: "flex", flexDirection: "column", gap: 0,
-        background: "#080a0e",
-      }}>
+        background: "#080a0e"}}>
         {/* Filtres + recherche */}
         <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.07)", display: "flex", flexDirection: "column", gap: 8 }}>
           {/* Search */}
@@ -737,8 +710,7 @@ export default function ChatCRM() {
                     background: active ? "rgba(201,150,63,0.12)" : "rgba(255,255,255,0.04)",
                     border: `1px solid ${active ? "rgba(201,150,63,0.3)" : "rgba(255,255,255,0.07)"}`,
                     color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.4)",
-                    display: "flex", alignItems: "center", gap: 5,
-                  }}
+                    display: "flex", alignItems: "center", gap: 5}}
                 >
                   {tab.label}
                   {badge !== null && badge > 0 && (

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getMT5Account, createMT5Account, changeMT5Group, disableMT5Account, closeAllPositions, changeMT5Password } from "@/lib/mt5";
 import {
@@ -375,7 +376,8 @@ async function processChallenge(challenge: Challenge, userEmail: string, firstNa
 // â”€â”€ Route â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("Authorization");
-  if (auth !== `Bearer ${process.env.CRON_SECRET}` && auth !== `Bearer admin-vincentmeipro@gmail.com`) {
+  const cronOk = Boolean(process.env.CRON_SECRET) && auth === `Bearer ${process.env.CRON_SECRET}`;
+  if (!cronOk && !(await checkAdmin(req)).ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

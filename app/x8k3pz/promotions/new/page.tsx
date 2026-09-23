@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────
 type Product   = { id: string; name: string; account_size: string; model: string; active: boolean };
@@ -14,8 +13,7 @@ const Label = ({ children, required, htmlFor }: { children: React.ReactNode; req
     display: "flex", gap: 4, alignItems: "center",
     fontSize: 10, fontWeight: 600, letterSpacing: "1.5px",
     textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6,
-    cursor: htmlFor ? "pointer" : "default",
-  }}>
+    cursor: htmlFor ? "pointer" : "default"}}>
     {children}
     {required && <span style={{ color: "rgba(239,68,68,0.7)", fontSize: 10 }}>*</span>}
   </label>
@@ -24,8 +22,7 @@ const Label = ({ children, required, htmlFor }: { children: React.ReactNode; req
 const inputStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 6, padding: "9px 12px", color: "#fff", fontSize: 13, fontWeight: 500,
-  width: "100%", outline: "none", fontFamily: "inherit", boxSizing: "border-box",
-};
+  width: "100%", outline: "none", fontFamily: "inherit", boxSizing: "border-box"};
 
 const Input = ({ id, value, onChange, type = "text", placeholder }: {
   id?: string; value: string; onChange: (v: string) => void;
@@ -70,13 +67,11 @@ const Toggle = ({ checked, onChange, label, id }: {
       style={{
         width: 36, height: 20, borderRadius: 10, border: "none",
         cursor: "pointer", background: checked ? "#22c55e" : "rgba(255,255,255,0.15)",
-        position: "relative", transition: "background 0.2s", flexShrink: 0,
-      }}
+        position: "relative", transition: "background 0.2s", flexShrink: 0}}
     >
       <div style={{
         width: 14, height: 14, borderRadius: "50%", background: "#fff",
-        position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s",
-      }} />
+        position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s"}} />
     </button>
     {label && <span style={{ fontSize: 13, color: checked ? "#fff" : "rgba(255,255,255,0.45)" }}>{label}</span>}
   </div>
@@ -88,8 +83,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     letterSpacing: "1.5px", textTransform: "uppercase",
     marginBottom: 18, paddingBottom: 10,
     borderBottom: "1px solid rgba(255,255,255,0.08)",
-    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)",
-  }}>
+    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)"}}>
     {children}
   </div>
 );
@@ -116,8 +110,7 @@ export default function NewPromoPage() {
     targeting_mode:      "all" as "all" | "specific",
     product_ids:         [] as string[],
     affiliate_user_id:   "",
-    active:              true,
-  });
+    active:              true});
 
   const notify = (msg: string, ok = true) => {
     setNotif({ msg, ok });
@@ -127,8 +120,8 @@ export default function NewPromoPage() {
   // Load products (active only) + affiliates
   useEffect(() => {
     Promise.all([
-      fetch("/api/admin/products",  { headers: { "x-admin-key": ADMIN_KEY } }).then(r => r.json()),
-      fetch("/api/admin/affiliates", { headers: { "x-admin-key": ADMIN_KEY } }).then(r => r.json()),
+      fetch("/api/admin/products",  { }).then(r => r.json()),
+      fetch("/api/admin/affiliates", { }).then(r => r.json()),
     ]).then(([prod, aff]) => {
       if (Array.isArray(prod)) setProducts(prod.filter((p: Product) => p.active));
       if (Array.isArray(aff))  setAffiliates(aff);
@@ -142,8 +135,7 @@ export default function NewPromoPage() {
       ...prev,
       product_ids: prev.product_ids.includes(id)
         ? prev.product_ids.filter(x => x !== id)
-        : [...prev.product_ids, id],
-    }));
+        : [...prev.product_ids, id]}));
   };
 
   // ── Submit — convert datetime-local to UTC ISO before send ───────
@@ -165,14 +157,12 @@ export default function NewPromoPage() {
         targeting_mode:      form.targeting_mode,
         product_ids:         form.targeting_mode === "specific" ? form.product_ids : [],
         affiliate_user_id:   form.affiliate_user_id || null,
-        active:              form.active,
-      };
+        active:              form.active};
 
       const res  = await fetch("/api/admin/promo-codes", {
         method: "POST",
-        headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)});
       const data = await res.json();
       if (res.ok) {
         notify("Code créé !");
@@ -207,8 +197,7 @@ export default function NewPromoPage() {
           border: `1px solid ${notification.ok ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
           color: notification.ok ? "#86efac" : "#fca5a5",
           padding: "12px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
-        }}>
+          boxShadow: "0 4px 24px rgba(0,0,0,0.5)"}}>
           {notification.msg}
         </div>
       )}
@@ -219,8 +208,7 @@ export default function NewPromoPage() {
         padding: "16px 32px",
         display: "flex", alignItems: "center", justifyContent: "space-between",
         position: "sticky", top: 0, background: "#0c0c0c",
-        zIndex: 50, gap: 12, flexWrap: "wrap",
-      }}>
+        zIndex: 50, gap: 12, flexWrap: "wrap"}}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <a href="/x8k3pz/promotions" style={{ color: "rgba(255,255,255,0.28)", textDecoration: "none", fontSize: 12 }}
             onMouseEnter={e => (e.currentTarget.style.color = "rgba(255,255,255,0.55)")}
@@ -235,8 +223,7 @@ export default function NewPromoPage() {
           <a href="/x8k3pz/promotions" style={{
             background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
             color: "rgba(255,255,255,0.48)", borderRadius: 6, padding: "8px 14px",
-            fontSize: 12, fontWeight: 600, textDecoration: "none",
-          }}>
+            fontSize: 12, fontWeight: 600, textDecoration: "none"}}>
             Annuler
           </a>
           <button
@@ -246,8 +233,7 @@ export default function NewPromoPage() {
               background: "#C9963F", border: "none", color: "#fff",
               borderRadius: 8, padding: "8px 22px", fontSize: 13, fontWeight: 700,
               cursor: saving ? "default" : "pointer", opacity: saving ? 0.6 : 1,
-              transition: "opacity 0.15s",
-            }}
+              transition: "opacity 0.15s"}}
           >
             {saving ? "Création…" : "Créer le code"}
           </button>
@@ -343,8 +329,7 @@ export default function NewPromoPage() {
                   cursor: "pointer",
                   background: form.targeting_mode === mode ? "rgba(201,150,63,0.12)" : "transparent",
                   border: `1px solid ${form.targeting_mode === mode ? "rgba(201,150,63,0.35)" : "rgba(255,255,255,0.1)"}`,
-                  color: form.targeting_mode === mode ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.45)",
-                }}
+                  color: form.targeting_mode === mode ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.45)"}}
               >
                 {mode === "all" ? "Tous les produits" : "Produits spécifiques"}
               </button>
@@ -372,8 +357,7 @@ export default function NewPromoPage() {
                           padding: "10px 14px", borderRadius: 8, cursor: "pointer",
                           background: selected ? "rgba(201,150,63,0.07)" : "rgba(255,255,255,0.03)",
                           border: `1px solid ${selected ? "rgba(201,150,63,0.25)" : "rgba(255,255,255,0.06)"}`,
-                          transition: "all 0.1s",
-                        }}
+                          transition: "all 0.1s"}}
                       >
                         <input
                           type="checkbox"
@@ -387,8 +371,7 @@ export default function NewPromoPage() {
                           width: 16, height: 16, borderRadius: 4, flexShrink: 0,
                           background: selected ? "#C9963F" : "transparent",
                           border: `2px solid ${selected ? "#C9963F" : "rgba(255,255,255,0.2)"}`,
-                          display: "flex", alignItems: "center", justifyContent: "center",
-                        }}>
+                          display: "flex", alignItems: "center", justifyContent: "center"}}>
                           {selected && <div style={{ width: 8, height: 8, background: "#fff", borderRadius: 1 }} />}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
@@ -460,8 +443,7 @@ export default function NewPromoPage() {
           <a href="/x8k3pz/promotions" style={{
             padding: "10px 20px", borderRadius: 7, fontSize: 13, fontWeight: 600,
             background: "transparent", border: "1px solid rgba(255,255,255,0.12)",
-            color: "rgba(255,255,255,0.5)", textDecoration: "none",
-          }}>
+            color: "rgba(255,255,255,0.5)", textDecoration: "none"}}>
             Annuler
           </a>
         </div>

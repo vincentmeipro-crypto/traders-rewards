@@ -10,11 +10,9 @@ import {
   getV1DdUsd,
   getV1SafetyNetUsd,
   getV1DdDisplay,
-  getV1LevelLabel,
-} from "@/lib/v1-display";
+  getV1LevelLabel} from "@/lib/v1-display";
 
 // Clé admin statique — accès sans connexion Supabase
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 type Challenge = {
   id: string;
@@ -134,8 +132,7 @@ const STATUS_LABELS: Record<string, string> = {
   passed:   "Validé",
   pending:  "En attente",
   paid:     "Versé",
-  rejected: "Refusé",
-};
+  rejected: "Refusé"};
 
 const STATUS_COLORS: Record<string, string> = {
   active:  "#22c55e",
@@ -144,8 +141,7 @@ const STATUS_COLORS: Record<string, string> = {
   funded:  "#22c55e",
   pending: "#f59e0b",
   paid:    "#22c55e",
-  rejected:"#ef4444",
-};
+  rejected:"#ef4444"};
 
 // Labels pour le header (titre de page)
 const TAB_LABELS: Record<Tab, string> = {
@@ -165,8 +161,7 @@ const TAB_LABELS: Record<Tab, string> = {
   securite:      "Sécurité",
   create:        "Nouveau Challenge",
   settings:      "Plateforme",
-  maintenance:   "Maintenance",
-};
+  maintenance:   "Maintenance"};
 
 // Structure de navigation groupée
 type NavItem = { id: Tab | "products"; label: string; sub?: boolean; href?: string };
@@ -269,7 +264,7 @@ function CustomSelect({ value, onChange, options, small }: {
 }
 
 function AdminPageInner() {
-  const token = true; // accès sans connexion — toujours autorisé
+  const token = true; // page déjà gardée par la session admin
   const searchParams = useSearchParams();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>(() => (searchParams.get("t") as Tab) ?? "overview");
@@ -395,7 +390,7 @@ function AdminPageInner() {
 
   const loadAdminData = async () => {
     try {
-      const headers = { "x-admin-key": ADMIN_KEY };
+      const headers = {  };
       const [cRes, pRes, kRes, prRes] = await Promise.all([
         fetch("/api/admin/challenges?include=review", { headers }),
         fetch("/api/admin/payouts",    { headers }),
@@ -416,11 +411,10 @@ function AdminPageInner() {
 
   useEffect(() => { loadAdminData(); }, []);
 
-  // handleAdminLogin supprimé — accès sans connexion
 
   const loadPromos = async () => {
     setPromosLoading(true);
-    const res = await fetch("/api/admin/promo-codes", { headers: { "x-admin-key": ADMIN_KEY } });
+    const res = await fetch("/api/admin/promo-codes", { });
     const data = await res.json();
     if (Array.isArray(data)) setPromos(data);
     setPromosLoading(false);
@@ -428,7 +422,7 @@ function AdminPageInner() {
 
   const loadKyc = async () => {
     setKycLoading(true);
-    const res = await fetch("/api/admin/kyc", { headers: { "x-admin-key": ADMIN_KEY } });
+    const res = await fetch("/api/admin/kyc", { });
     const data = await res.json();
     if (Array.isArray(data)) setKycSubmissions(data);
     setKycLoading(false);
@@ -436,14 +430,14 @@ function AdminPageInner() {
 
   const loadSecurity = async () => {
     setSecurityLoading(true);
-    const res = await fetch("/api/admin/security", { headers: { "x-admin-key": ADMIN_KEY } });
+    const res = await fetch("/api/admin/security", { });
     const data = await res.json();
     setSecurityData(data);
     setSecurityLoading(false);
     // Charger les IPs MT5 en parallèle
     setMt5Loading(true);
     try {
-      const mt5Res = await fetch("/api/security/mt5-ips", { headers: { "x-admin-key": ADMIN_KEY } });
+      const mt5Res = await fetch("/api/security/mt5-ips", { });
       if (mt5Res.ok) { const mt5Data = await mt5Res.json(); setMt5Sessions(mt5Data.sessions || []); }
     } catch { /* ignore */ }
     setMt5Loading(false);
@@ -473,7 +467,7 @@ function AdminPageInner() {
     if (tab === "settings" && settingsData.length === 0) {
       setSettingsLoading(true);
       setSettingsApiError("");
-      fetch("/api/admin/settings", { headers: { "x-admin-key": ADMIN_KEY } })
+      fetch("/api/admin/settings", { })
         .then(async r => {
           const data = await r.json();
           console.log("[settings] API response:", r.status, data);
@@ -494,7 +488,7 @@ function AdminPageInner() {
 
   useEffect(() => {
     if ((tab === "affilies" || tab === "promos") && !affiliatesLoaded) {
-      fetch("/api/admin/affiliates", { headers: { "x-admin-key": ADMIN_KEY } })
+      fetch("/api/admin/affiliates", { })
         .then(r => r.json()).then(data => { if (Array.isArray(data)) { setAffiliates(data); setAffiliatesLoaded(true); } });
     }
   }, [tab, token, affiliatesLoaded]);
@@ -511,9 +505,8 @@ function AdminPageInner() {
     if (!affiliatePromoForm || !affiliatePromoData.code) return;
     const res = await fetch("/api/admin/affiliates", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-      body: JSON.stringify({ action: "create_promo", code: affiliatePromoData.code, discount_percent: affiliatePromoData.discount, max_uses: affiliatePromoData.maxUses || null, affiliate_user_id: affiliatePromoForm.userId }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "create_promo", code: affiliatePromoData.code, discount_percent: affiliatePromoData.discount, max_uses: affiliatePromoData.maxUses || null, affiliate_user_id: affiliatePromoForm.userId })});
     const data = await res.json();
     if (res.ok) { setAffiliateMsg(`Code ${data.code} créé`); setAffiliatePromoForm(null); setAffiliatePromoData({ code: "", discount: "10", maxUses: "" }); }
     else setAffiliateMsg(`Erreur : ${data.error}`);
@@ -523,9 +516,8 @@ function AdminPageInner() {
   const updateCommissionRate = async (affiliateId: string, rate: number) => {
     const res = await fetch("/api/admin/affiliates", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-      body: JSON.stringify({ action: "set_rate", affiliate_id: affiliateId, commission_rate: rate }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "set_rate", affiliate_id: affiliateId, commission_rate: rate })});
     if (res.ok) {
       const data = await res.json();
       setAffiliates(prev => prev.map(a => a.id === affiliateId ? { ...a, commission_rate: data.commission_rate } : a));
@@ -536,15 +528,13 @@ function AdminPageInner() {
   const payCommission = async (referralId: string) => {
     const res = await fetch("/api/admin/affiliates", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-      body: JSON.stringify({ action: "pay_commission", referral_id: referralId }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "pay_commission", referral_id: referralId })});
     if (res.ok) {
       const data = await res.json();
       setAffiliates(prev => prev.map(a => ({
         ...a,
-        referrals: a.referrals.map(r => r.id === referralId ? { ...r, status: data.status } : r),
-      })));
+        referrals: a.referrals.map(r => r.id === referralId ? { ...r, status: data.status } : r)})));
     }
   };
 
@@ -662,9 +652,8 @@ function AdminPageInner() {
   const saveChallenge = async (id: string) => {
     const res = await fetch("/api/admin/challenges?include=review", {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-      body: JSON.stringify({ id, ...editData }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, ...editData })});
     const updated = await res.json();
     if (!res.ok || updated.error) { alert(`Erreur : ${updated.error}`); return; }
     setChallenges(cs => cs.map(c => c.id === id ? { ...c, ...updated } : c));
@@ -672,7 +661,7 @@ function AdminPageInner() {
   };
 
   const deleteChallenge = async (id: string) => {
-    await fetch("/api/admin/challenges?include=review", { method: "DELETE", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id }) });
+    await fetch("/api/admin/challenges?include=review", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
     setChallenges(cs => cs.filter(x => x.id !== id));
     setChallengeDeleteConfirmId(null);
   };
@@ -682,13 +671,13 @@ function AdminPageInner() {
     const sizeMap: Record<string, number> = { "$10,000": 10000, "$25,000": 25000, "$50,000": 50000, "$100,000": 100000, "$200,000": 200000 };
     const expected = sizeMap[c.account_size] ?? 0;
     // Lire la vraie balance MT5
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const diff = expected - mt5Balance;
     if (diff <= 0) { alert(`Balance MT5 déjà correcte : $${mt5Balance.toLocaleString()}`); return; }
     if (!confirm(`MT5 balance actuelle : $${mt5Balance.toLocaleString()}\nAjouter $${diff.toLocaleString()} pour atteindre $${expected.toLocaleString()} ?`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount: diff }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ login: c.mt5_login, amount: diff }) });
     const data = await res.json();
     if (res.ok) alert(`✅ +$${diff.toLocaleString()} ajoutés sur MT5 ${c.mt5_login}`);
     else alert(`Erreur : ${data.error}`);
@@ -696,13 +685,13 @@ function AdminPageInner() {
 
   const withdrawMT5Profit = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const profit = Math.round((mt5Balance - c.start_balance) * 100) / 100;
     if (profit <= 0) { alert(`Aucun profit à retirer. Balance MT5 : $${mt5Balance.toLocaleString()}`); return; }
     if (!confirm(`Retirer le profit de $${profit.toLocaleString()} sur MT5 ${c.mt5_login} ?\n(Balance actuelle : $${mt5Balance.toLocaleString()} → $${c.start_balance.toLocaleString()})`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: c.mt5_login, amount: profit, withdraw: true, comment: "Profit withdrawal" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ login: c.mt5_login, amount: profit, withdraw: true, comment: "Profit withdrawal" }) });
     const data = await res.json();
     if (res.ok) alert(`✅ Retrait de $${profit.toLocaleString()} effectué sur MT5 ${c.mt5_login}`);
     else alert(`Erreur : ${data.error}`);
@@ -710,7 +699,7 @@ function AdminPageInner() {
 
   const addMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     setMt5CustomModal({ id: c.id, type: "add", mt5Login: c.mt5_login, mt5Balance });
@@ -720,7 +709,7 @@ function AdminPageInner() {
 
   const withdrawMT5Custom = async (c: Challenge) => {
     if (!c.mt5_login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { headers: { "x-admin-key": ADMIN_KEY } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${c.mt5_login}`, { });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     setMt5CustomModal({ id: c.id, type: "withdraw", mt5Login: c.mt5_login, mt5Balance });
@@ -738,9 +727,8 @@ function AdminPageInner() {
     setMt5CustomMsg("");
     const res = await fetch("/api/admin/mt5-fix-balance", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-      body: JSON.stringify({ login: mt5Login, amount, withdraw: type === "withdraw", comment: type === "add" ? "Ajout manuel admin" : "Retrait manuel admin" }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ login: mt5Login, amount, withdraw: type === "withdraw", comment: type === "add" ? "Ajout manuel admin" : "Retrait manuel admin" })});
     const data = await res.json();
     if (res.ok) {
       const newBalance = type === "add" ? mt5Balance + amount : mt5Balance - amount;
@@ -754,13 +742,13 @@ function AdminPageInner() {
   };
 
   const updatePayout = async (id: string, status: string) => {
-    const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id, status }) });
+    const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status }) });
     const data = await res.json();
     if (res.ok) {
       setPayouts(ps => ps.map(p => p.id === id ? { ...p, ...data } : p));
       // Refresh challenges so trading_days + balance display the reset values
       if (status === "paid") {
-        fetch("/api/admin/challenges?include=review", { headers: { "x-admin-key": ADMIN_KEY } })
+        fetch("/api/admin/challenges?include=review", { })
           .then(r => r.json()).then(d => { if (Array.isArray(d)) setChallenges(d); }).catch(() => {});
       }
     }
@@ -768,13 +756,13 @@ function AdminPageInner() {
 
   const triggerMT5WithdrawFromPayout = async (mt5Login: number, startBalance: number) => {
     if (!mt5Login) { alert("Pas de login MT5 sur ce compte"); return; }
-    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${mt5Login}`, { headers: { "x-admin-key": ADMIN_KEY } });
+    const syncRes = await fetch(`/api/admin/mt5-fix-balance?login=${mt5Login}`, { });
     const syncData = await syncRes.json();
     const mt5Balance = syncData.balance ?? 0;
     const profit = Math.round((mt5Balance - startBalance) * 100) / 100;
     if (profit <= 0) { alert(`Aucun profit MT5 à retirer.\nBalance actuelle : $${mt5Balance.toLocaleString()}`); return; }
     if (!confirm(`Retrait MT5 de $${profit.toLocaleString()} sur login ${mt5Login} ?\n(Balance : $${mt5Balance.toLocaleString()} → $${startBalance.toLocaleString()})`)) return;
-    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ login: mt5Login, amount: profit, withdraw: true, comment: "Profit Withdrawal — Traders Rewards" }) });
+    const res = await fetch("/api/admin/mt5-fix-balance", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ login: mt5Login, amount: profit, withdraw: true, comment: "Profit Withdrawal — Traders Rewards" }) });
     const data = await res.json();
     if (res.ok) alert(`✅ Retrait MT5 de $${profit.toLocaleString()} effectué`);
     else alert(`Erreur MT5 : ${data.error}`);
@@ -788,9 +776,8 @@ function AdminPageInner() {
     try {
       const res = await fetch("/api/admin/provision-mt5", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ challengeId: c.id }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ challengeId: c.id })});
       const data = await res.json();
       if (res.ok) {
         setProvisionMsg(m => ({ ...m, [c.id]: `✓ MT5 #${data.login}` }));
@@ -808,13 +795,13 @@ function AdminPageInner() {
   const createChallenge = async () => {
     if (!token || !createForm.userEmail || !createForm.accountSize) return;
     setCreateLoading(true); setCreateError(""); setCreateMsg("");
-    const res = await fetch("/api/admin/challenges?include=review", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
+    const res = await fetch("/api/admin/challenges?include=review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...createForm, amountPaid: parseFloat(createForm.amountPaid) || 0 }) });
     const data = await res.json();
     setCreateLoading(false);
     if (res.ok) {
       setCreateMsg("Challenge créé — email envoyé au trader.");
       setCreateForm(f => ({ ...f, userEmail: "", firstName: "", lastName: "", amountPaid: "" }));
-      const r = await fetch("/api/admin/challenges?include=review", { headers: { "x-admin-key": ADMIN_KEY } });
+      const r = await fetch("/api/admin/challenges?include=review", { });
       const d = await r.json();
       if (Array.isArray(d)) setChallenges(d);
     } else setCreateError(data.error || "Erreur");
@@ -822,13 +809,13 @@ function AdminPageInner() {
 
   const [accessEmailMsg, setAccessEmailMsg] = useState<Record<string, string>>({});
   const sendAccessEmail = async (email: string) => {
-    const res = await fetch("/api/admin/send-access-email", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ email }) });
+    const res = await fetch("/api/admin/send-access-email", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email }) });
     setAccessEmailMsg(m => ({ ...m, [email]: res.ok ? "✓ Email envoyé" : "Erreur" }));
     setTimeout(() => setAccessEmailMsg(m => { const n = { ...m }; delete n[email]; return n; }), 4000);
   };
 
   const updateKyc = async (user_id: string, status: string, rejection_reason?: string) => {
-    const res = await fetch("/api/admin/kyc", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ user_id, status, rejection_reason }) });
+    const res = await fetch("/api/admin/kyc", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ user_id, status, rejection_reason }) });
     if (res.ok) {
       setKycSubmissions(ks => ks.map(k => k.id === user_id ? { ...k, kyc_status: status, kyc_rejection_reason: rejection_reason || null } : k));
       setKycMsg(status === "approved" ? "✓ KYC approuvé" : "KYC refusé");
@@ -839,11 +826,11 @@ function AdminPageInner() {
   const runSync = async () => {
     setSyncing(true); setSyncMsg(""); setSyncDetail("");
     try {
-      const res = await fetch("/api/metaapi/sync", { headers: { Authorization: `Bearer admin-vincentmeipro@gmail.com` } });
+      const res = await fetch("/api/metaapi/sync");
       const data = await res.json();
       setSyncMsg(`✓ ${data.synced ?? 0}/${data.total ?? 0} synchronisé(s)`);
       setSyncDetail(JSON.stringify(data.results ?? data, null, 2));
-      if (token) { const r = await fetch("/api/admin/challenges?include=review", { headers: { "x-admin-key": ADMIN_KEY } }); const d = await r.json(); if (Array.isArray(d)) setChallenges(d); }
+      if (token) { const r = await fetch("/api/admin/challenges?include=review", { }); const d = await r.json(); if (Array.isArray(d)) setChallenges(d); }
     } catch (e) { setSyncMsg("Erreur sync"); setSyncDetail(String(e)); }
     setSyncing(false);
   };
@@ -957,8 +944,7 @@ function AdminPageInner() {
                 borderRadius: "12px 12px 0 0", zIndex: 46,
                 transform: drawerOpen ? "translateY(0)" : "translateY(100%)",
                 transition: "transform 0.22s cubic-bezier(.4,0,.2,1)",
-                paddingTop: 8, paddingBottom: 4,
-              }}>
+                paddingTop: 8, paddingBottom: 4}}>
                 <div style={{ width: 36, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.15)", margin: "4px auto 12px" }} />
                 <div style={{ padding: "0 16px 8px", fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.3)", letterSpacing: 1.5, textTransform: "uppercase" }}>Modules</div>
                 {drawerNav.map(item => item.href ? (
@@ -976,8 +962,7 @@ function AdminPageInner() {
                       border: "none",
                       borderLeft: `3px solid ${tab === item.id ? "#C9963F" : "transparent"}`,
                       color: tab === item.id ? "#fff" : "rgba(255,255,255,0.65)",
-                      fontSize: 13, fontWeight: tab === item.id ? 700 : 400, cursor: "pointer",
-                    }}>
+                      fontSize: 13, fontWeight: tab === item.id ? 700 : 400, cursor: "pointer"}}>
                     {item.label}
                   </button>
                 ))}
@@ -1055,8 +1040,7 @@ function AdminPageInner() {
               at: p.created_at,
               label: p.status === "paid" ? "Reward validé" : "Reward demandé",
               sub: `€${p.amount?.toLocaleString() ?? "—"} · ${p.user_email}`,
-              color: p.status === "paid" ? "#22c55e" : "#f59e0b",
-            })),
+              color: p.status === "paid" ? "#22c55e" : "#f59e0b"})),
             ...challenges
               .filter(c => c.status === "failed" && !!c.breach_at)
               .map(c => ({ at: c.breach_at as string, label: "Challenge échoué", sub: `${c.account_size} · ${c.user_email}`, color: "#ef4444" })),
@@ -1345,8 +1329,7 @@ function AdminPageInner() {
                       border: `1px solid ${pipelineFilter === p.id ? "#C9963F" : "rgba(255,255,255,0.1)"}`,
                       background: pipelineFilter === p.id ? "rgba(201,150,63,0.12)" : "transparent",
                       color: pipelineFilter === p.id ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.5)",
-                      fontSize: 12, fontWeight: pipelineFilter === p.id ? 700 : 400,
-                    }}>
+                      fontSize: 12, fontWeight: pipelineFilter === p.id ? 700 : 400}}>
                       {p.label}{p.cnt > 0 && p.id !== "all" ? ` · ${p.cnt}` : ""}
                     </button>
                   ))}
@@ -1553,7 +1536,7 @@ function AdminPageInner() {
                                             onClick={async (e) => {
                                               e.stopPropagation();
                                               if (!confirm(`Envoyer le certificat à ${c.user_email} ?`)) return;
-                                              const r = await fetch("/api/admin/challenges/cert", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id: c.id }) });
+                                              const r = await fetch("/api/admin/challenges/cert", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: c.id }) });
                                               const d = await r.json();
                                               alert(r.ok ? `✅ Certificat envoyé à ${d.sentTo}` : `❌ Erreur : ${d.error}`);
                                             }}
@@ -2596,7 +2579,7 @@ function AdminPageInner() {
                                             style={{ width: "100%", background: "rgba(239,68,68,0.04)", border: "1px solid rgba(239,68,68,0.15)", borderRadius: 5, padding: "4px 8px", color: "#fff", fontSize: 10, outline: "none", boxSizing: "border-box", marginBottom: 3 }} />
                                           <button onClick={async () => {
                                             const reason = payoutRejectReason[p.id] || "";
-                                            const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY }, body: JSON.stringify({ id: p.id, status: "rejected", rejection_reason: reason }) });
+                                            const res = await fetch("/api/admin/payouts", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: p.id, status: "rejected", rejection_reason: reason }) });
                                             const data = await res.json();
                                             if (res.ok) setPayouts(ps => ps.map(x => x.id === p.id ? { ...x, ...data } : x));
                                           }}
@@ -2918,8 +2901,7 @@ function AdminPageInner() {
                         display: "inline-flex", alignItems: "center", gap: 8,
                         padding: "10px 22px", background: "#C9963F", border: "none",
                         borderRadius: 8, color: "#fff", fontSize: 13, fontWeight: 700,
-                        textDecoration: "none", whiteSpace: "nowrap",
-                      }}>
+                        textDecoration: "none", whiteSpace: "nowrap"}}>
                         Ouvrir le Builder
                       </a>
                       <a href="/x8k3pz/promotions/new" style={{
@@ -2927,8 +2909,7 @@ function AdminPageInner() {
                         padding: "9px 22px", background: "transparent",
                         border: "1px solid rgba(201,150,63,0.3)",
                         borderRadius: 8, color: "rgba(201,150,63,0.85)", fontSize: 12, fontWeight: 600,
-                        textDecoration: "none", whiteSpace: "nowrap",
-                      }}>
+                        textDecoration: "none", whiteSpace: "nowrap"}}>
                         + Nouveau code
                       </a>
                     </div>
@@ -2945,8 +2926,7 @@ function AdminPageInner() {
                         <div key={p.id} style={{
                           display: "flex", alignItems: "center", gap: 12, padding: "12px 20px",
                           borderBottom: i < Math.min(5, activePromos.length) - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                          textDecoration: "none",
-                        }}
+                          textDecoration: "none"}}
                           onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.02)")}
                           onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                         >
@@ -3443,8 +3423,7 @@ function AdminPageInner() {
                     fontSize: 13, fontWeight: 700,
                     backgroundColor: createForm.type === val ? (val === "reward" ? "rgba(201,150,63,0.85)" : "#0D1B3E") : "transparent",
                     color: createForm.type === val ? "#fff" : "#6b7280",
-                    transition: "all 0.2s",
-                  }}>{label}</button>
+                    transition: "all 0.2s"}}>{label}</button>
                 ))}
               </div>
 
@@ -4547,7 +4526,7 @@ function AdminPageInner() {
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
                       <button
                         onClick={async () => {
-                          await fetch("/api/admin/preview-apology-email", { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
+                          await fetch("/api/admin/preview-apology-email", { method: "POST" });
                         }}
                         style={{ background: "transparent", color: "rgba(201,150,63,0.85)", border: "1px solid rgba(201,150,63,0.25)", borderRadius: 8, padding: "8px 16px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
                       >
@@ -4591,8 +4570,7 @@ function AdminPageInner() {
             "challenges.profit_target":      "Objectif de profit (%)",
             "challenges.daily_dd_1step":     "Drawdown journalier 1-Step (%)",
             "challenges.daily_dd_2step":     "Drawdown journalier 2-Step (%)",
-            "challenges.total_dd_default":   "Drawdown total (%)",
-          };
+            "challenges.total_dd_default":   "Drawdown total (%)"};
 
           const saveSetting = async (key: string) => {
             const rawVal = settingsEdit[key];
@@ -4604,9 +4582,8 @@ function AdminPageInner() {
             try {
               const res = await fetch("/api/admin/settings", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-                body: JSON.stringify({ key, value }),
-              });
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ key, value })});
               const data = await res.json();
               if (data.success) {
                 setSettingsMsg(p => ({ ...p, [key]: { ok: true, msg: "Sauvegarde" } }));
@@ -4699,7 +4676,7 @@ function AdminPageInner() {
                   <button
                     onClick={() => {
                       setSettingsData([]); setSettingsLoading(true);
-                      fetch("/api/admin/settings", { headers: { "x-admin-key": ADMIN_KEY } })
+                      fetch("/api/admin/settings", { })
                         .then(r => r.json()).then(d => { if (d.settings) setSettingsData(d.settings); })
                         .finally(() => setSettingsLoading(false));
                     }}

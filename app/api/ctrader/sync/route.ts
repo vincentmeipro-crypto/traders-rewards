@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPhase2Email, sendFundedEmail } from "@/lib/mailer";
-
-const ADMIN_EMAIL = "vincentmeipro@gmail.com";
 
 async function refreshToken(refreshToken: string) {
   const res = await fetch("https://connect.ctrader.com/oauth/token", {
@@ -89,7 +88,8 @@ async function checkAndTransition(challenge: Record<string, unknown>, userEmail:
 export async function GET(req: NextRequest) {
   // Security: only allow Vercel Cron or admin
   const authHeader = req.headers.get("Authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}` && authHeader !== `Bearer admin-${ADMIN_EMAIL}`) {
+  const cronOk = Boolean(process.env.CRON_SECRET) && authHeader === `Bearer ${process.env.CRON_SECRET}`;
+  if (!cronOk && !(await checkAdmin(req)).ok) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

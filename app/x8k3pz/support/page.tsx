@@ -9,7 +9,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import ChatCRM from "./ChatCRM";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -56,8 +55,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   reward:    "Reward",
   kyc:       "KYC",
   technical: "Technique",
-  other:     "Autre",
-};
+  other:     "Autre"};
 
 const CATEGORY_COLORS: Record<string, string> = {
   billing:   "#f59e0b",
@@ -66,14 +64,12 @@ const CATEGORY_COLORS: Record<string, string> = {
   reward:    "#22c55e",
   kyc:       "#06b6d4",
   technical: "#f97316",
-  other:     "rgba(255,255,255,0.4)",
-};
+  other:     "rgba(255,255,255,0.4)"};
 
 const STATUS_CONFIG = {
   new:      { label: "Nouveau",    bg: "rgba(201,150,63,0.15)",  color: "rgba(201,150,63,0.85)",  border: "rgba(201,150,63,0.3)"  },
   open:     { label: "En cours",   bg: "rgba(245,158,11,0.15)",  color: "#fbbf24",  border: "rgba(245,158,11,0.3)"  },
-  resolved: { label: "Résolu",     bg: "rgba(34,197,94,0.12)",   color: "#4ade80",  border: "rgba(34,197,94,0.25)"  },
-};
+  resolved: { label: "Résolu",     bg: "rgba(34,197,94,0.12)",   color: "#4ade80",  border: "rgba(34,197,94,0.25)"  }};
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -100,8 +96,7 @@ function StatusBadge({ status }: { status: SupportTicket["status"] }) {
     <span style={{
       fontSize: 10, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase" as const,
       padding: "3px 9px", borderRadius: 100, whiteSpace: "nowrap" as const,
-      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`,
-    }}>
+      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`}}>
       {cfg.label}
     </span>
   );
@@ -116,8 +111,7 @@ function CategoryBadge({ category }: { category: string | null }) {
     <span style={{
       fontSize: 10, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" as const,
       padding: "2px 8px", borderRadius: 4,
-      background: `${color}18`, color, border: `1px solid ${color}30`,
-    }}>
+      background: `${color}18`, color, border: `1px solid ${color}30`}}>
       {CATEGORY_LABELS[category] ?? category}
     </span>
   );
@@ -135,9 +129,7 @@ function TicketNotes({ ticketId }: { ticketId: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/admin/notes?target_type=support_ticket&target_id=${ticketId}`, {
-      headers: { "x-admin-key": ADMIN_KEY },
-    })
+    fetch(`/api/admin/notes?target_type=support_ticket&target_id=${ticketId}`, {})
       .then(r => r.json())
       .then(d => { if (!cancelled) { setNotes(d.notes ?? []); setLoaded(true); } })
       .catch(() => { if (!cancelled) setLoaded(true); });
@@ -151,9 +143,8 @@ function TicketNotes({ ticketId }: { ticketId: string }) {
     try {
       const res = await fetch("/api/admin/notes", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ target_type: "support_ticket", target_id: ticketId, content: trimmed }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target_type: "support_ticket", target_id: ticketId, content: trimmed })});
       const d = await res.json();
       if (!res.ok) { setError(d.error || "Erreur inconnue"); return; }
       setNotes(prev => [d.note as Note, ...prev]);
@@ -165,7 +156,7 @@ function TicketNotes({ ticketId }: { ticketId: string }) {
   const deleteNote = async (id: string) => {
     setDeleting(id); setError(null);
     try {
-      const res = await fetch(`/api/admin/notes?id=${id}`, { method: "DELETE", headers: { "x-admin-key": ADMIN_KEY } });
+      const res = await fetch(`/api/admin/notes?id=${id}`, { method: "DELETE" });
       if (!res.ok) { const d = await res.json(); setError(d.error || "Erreur"); return; }
       setNotes(prev => prev.filter(n => n.id !== id));
     } catch { setError("Erreur réseau"); }
@@ -238,9 +229,7 @@ function TicketThread({ ticketId }: { ticketId: string }) {
 
   const fetchMessages = useCallback(async () => {
     try {
-      const res = await fetch(`/api/admin/support/${ticketId}/messages`, {
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+      const res = await fetch(`/api/admin/support/${ticketId}/messages`, {});
       if (!res.ok) return;
       const d = await res.json() as { messages: SupportMessage[] };
       setMessages(d.messages ?? []);
@@ -272,9 +261,8 @@ function TicketThread({ ticketId }: { ticketId: string }) {
     try {
       const res = await fetch(`/api/admin/support/${ticketId}/reply`, {
         method:  "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body:    JSON.stringify({ message: trimmed }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ message: trimmed })});
       const d = await res.json() as { error?: string; emailSent?: boolean };
       if (!res.ok) { setSendError(d.error ?? "Erreur"); return; }
       setDraft("");
@@ -304,8 +292,7 @@ function TicketThread({ ticketId }: { ticketId: string }) {
           display:       "flex",
           flexDirection: "column",
           gap:           8,
-          padding:       "4px 2px",
-        }}
+          padding:       "4px 2px"}}
       >
         {messages.length === 0 && (
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>Aucun message.</div>
@@ -315,21 +302,18 @@ function TicketThread({ ticketId }: { ticketId: string }) {
           return (
             <div key={msg.id} style={{
               display:        "flex",
-              justifyContent: isAdmin ? "flex-end" : "flex-start",
-            }}>
+              justifyContent: isAdmin ? "flex-end" : "flex-start"}}>
               <div style={{
                 maxWidth:     "76%",
                 background:   isAdmin ? "rgba(201,150,63,0.18)" : "rgba(255,255,255,0.07)",
                 border:       `1px solid ${isAdmin ? "rgba(201,150,63,0.3)" : "rgba(255,255,255,0.09)"}`,
                 borderRadius: isAdmin ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
-                padding:      "10px 14px",
-              }}>
+                padding:      "10px 14px"}}>
                 <div style={{
                   fontSize:    11,
                   fontWeight:  600,
                   color:       isAdmin ? "rgba(147,197,253,0.7)" : "rgba(255,255,255,0.35)",
-                  marginBottom: 5,
-                }}>
+                  marginBottom: 5}}>
                   {isAdmin ? "Support" : "Client"} · {fmtRelative(msg.created_at)}
                 </div>
                 <div style={{
@@ -337,8 +321,7 @@ function TicketThread({ ticketId }: { ticketId: string }) {
                   color:      isAdmin ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.8)",
                   lineHeight: "1.6",
                   whiteSpace: "pre-wrap" as const,
-                  wordBreak:  "break-word" as const,
-                }}>
+                  wordBreak:  "break-word" as const}}>
                   {msg.content}
                 </div>
               </div>
@@ -372,8 +355,7 @@ function TicketThread({ ticketId }: { ticketId: string }) {
             resize:       "vertical" as const,
             outline:      "none",
             fontFamily:   "inherit",
-            transition:   "border-color 0.15s",
-          }}
+            transition:   "border-color 0.15s"}}
         />
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button
@@ -388,16 +370,14 @@ function TicketThread({ ticketId }: { ticketId: string }) {
               fontSize:     12,
               fontWeight:   700,
               cursor:       sending || !draft.trim() ? "not-allowed" : "pointer",
-              transition:   "background 0.15s",
-            }}
+              transition:   "background 0.15s"}}
           >
             {sending ? "Envoi…" : "Envoyer"}
           </button>
           {draft.trim().length > 0 && (
             <span style={{
               fontSize: 11,
-              color:    draft.trim().length > 3800 ? "#ef4444" : "rgba(255,255,255,0.25)",
-            }}>
+              color:    draft.trim().length > 3800 ? "#ef4444" : "rgba(255,255,255,0.25)"}}>
               {draft.trim().length} / 4000
             </span>
           )}
@@ -416,8 +396,7 @@ function TicketThread({ ticketId }: { ticketId: string }) {
 function TicketDetail({
   ticket,
   onStatusChange,
-  onCategoryChange,
-}: {
+  onCategoryChange}: {
   ticket: SupportTicket;
   onStatusChange: (id: string, status: SupportTicket["status"]) => Promise<void>;
   onCategoryChange: (id: string, category: string | null) => Promise<void>;
@@ -563,8 +542,7 @@ function TicketRow({
   isOpen,
   onToggle,
   onStatusChange,
-  onCategoryChange,
-}: {
+  onCategoryChange}: {
   ticket: SupportTicket;
   isOpen: boolean;
   onToggle: () => void;
@@ -575,8 +553,7 @@ function TicketRow({
     <div style={{
       background: "#0c0c0c",
       border: `1px solid ${isOpen ? "rgba(201,150,63,0.2)" : "rgba(255,255,255,0.07)"}`,
-      borderRadius: 10, overflow: "hidden",
-    }}>
+      borderRadius: 10, overflow: "hidden"}}>
       {/* Ligne fermée */}
       <div
         onClick={onToggle}
@@ -673,11 +650,8 @@ function SupportPageInner() {
         category: cat,
         search:   q,
         page:     String(pg),
-        limit:    String(LIMIT),
-      });
-      const res = await fetch(`/api/admin/support?${params}`, {
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+        limit:    String(LIMIT)});
+      const res = await fetch(`/api/admin/support?${params}`, {});
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const d = await res.json();
       setTickets(d.tickets ?? []);
@@ -722,9 +696,7 @@ function SupportPageInner() {
 
     if (!fullTickets[ticketId]) {
       try {
-        const res = await fetch(`/api/admin/support/${ticketId}`, {
-          headers: { "x-admin-key": ADMIN_KEY },
-        });
+        const res = await fetch(`/api/admin/support/${ticketId}`, {});
         if (res.ok) {
           const d = await res.json();
           setFullTickets(prev => ({ ...prev, [ticketId]: d.ticket?.message ?? "" }));
@@ -742,9 +714,8 @@ function SupportPageInner() {
   ) => {
     const res = await fetch(`/api/admin/support/${ticketId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-      body: JSON.stringify({ status: newStatus }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: newStatus })});
     if (!res.ok) return;
     const d = await res.json();
     const updated = d.ticket as SupportTicket;
@@ -759,9 +730,8 @@ function SupportPageInner() {
   ) => {
     const res = await fetch(`/api/admin/support/${ticketId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-      body: JSON.stringify({ category: newCat }),
-    });
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ category: newCat })});
     if (!res.ok) return;
     const d = await res.json();
     const updated = d.ticket as SupportTicket;
@@ -770,8 +740,7 @@ function SupportPageInner() {
 
   const enrichedTickets = tickets.map(t => ({
     ...t,
-    message: fullTickets[t.id] ?? t.message,
-  }));
+    message: fullTickets[t.id] ?? t.message}));
 
   // ── Render ───────────────────────────────────────────────────────────────
   return (
@@ -805,8 +774,7 @@ function SupportPageInner() {
                   background: active ? "rgba(201,150,63,0.15)" : "rgba(255,255,255,0.04)",
                   border: `1px solid ${active ? "rgba(201,150,63,0.4)" : "rgba(255,255,255,0.09)"}`,
                   color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.5)",
-                  display: "flex", alignItems: "center", gap: 7, transition: "all 0.15s",
-                }}
+                  display: "flex", alignItems: "center", gap: 7, transition: "all 0.15s"}}
               >
                 {t.label}
                 {t.badge !== null && t.badge > 0 && (
@@ -844,8 +812,7 @@ function SupportPageInner() {
                     background: active ? "rgba(201,150,63,0.15)" : "rgba(255,255,255,0.04)",
                     border: `1px solid ${active ? "rgba(201,150,63,0.35)" : "rgba(255,255,255,0.08)"}`,
                     color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.55)",
-                    display: "flex", alignItems: "center", gap: 6,
-                  }}
+                    display: "flex", alignItems: "center", gap: 6}}
                 >
                   {tab.label}
                   {tab.count !== null && tab.count > 0 && (

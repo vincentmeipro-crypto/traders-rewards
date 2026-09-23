@@ -5,10 +5,8 @@ import {
   HERO_PROMOTION_LABEL_MAX_LENGTH,
   HERO_PROMOTION_HEADLINE_MAX_LENGTH,
   type HeroPromotionPresentation,
-  type HeroPromotionStatus,
-} from "@/lib/hero-promotion-config";
+  type HeroPromotionStatus} from "@/lib/hero-promotion-config";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 type Props = {
   onNotify: (message: string, ok?: boolean) => void;
@@ -33,8 +31,7 @@ const EMPTY_FORM: FormState = {
   leftLabel: "1 CHALLENGE",
   leftDiscount: 80,
   rightLabel: "PACK ×3 BEST DEAL",
-  rightDiscount: 90,
-};
+  rightDiscount: 90};
 
 const STATUS_STYLE: Record<
   HeroPromotionStatus,
@@ -44,27 +41,22 @@ const STATUS_STYLE: Record<
     label: "ACTIVE",
     color: "#4ade80",
     background: "rgba(34,197,94,0.1)",
-    border: "rgba(34,197,94,0.2)",
-  },
+    border: "rgba(34,197,94,0.2)"},
   scheduled: {
     label: "PLANIFIÉE",
     color: "#c084fc",
     background: "rgba(168,85,247,0.1)",
-    border: "rgba(168,85,247,0.2)",
-  },
+    border: "rgba(168,85,247,0.2)"},
   expired: {
     label: "EXPIRÉE",
     color: "#fbbf24",
     background: "rgba(245,158,11,0.1)",
-    border: "rgba(245,158,11,0.2)",
-  },
+    border: "rgba(245,158,11,0.2)"},
   disabled: {
     label: "DÉSACTIVÉE",
     color: "rgba(255,255,255,0.38)",
     background: "rgba(255,255,255,0.05)",
-    border: "rgba(255,255,255,0.1)",
-  },
-};
+    border: "rgba(255,255,255,0.1)"}};
 
 function toDateTimeLocal(value: string | null): string {
   if (!value) return "";
@@ -89,8 +81,7 @@ function toForm(data: HeroPromotionPresentation): FormState {
     leftLabel: data.leftLabel,
     leftDiscount: data.leftDiscount,
     rightLabel: data.rightLabel,
-    rightDiscount: data.rightDiscount,
-  };
+    rightDiscount: data.rightDiscount};
 }
 
 function getFormStatus(form: FormState): HeroPromotionStatus {
@@ -126,8 +117,7 @@ function ColumnEditor({
   discount,
   disabled,
   onLabelChange,
-  onDiscountChange,
-}: ColumnEditorProps) {
+  onDiscountChange}: ColumnEditorProps) {
   return (
     <div className="hero-promo-column">
       <div className="hero-promo-column-title">{title}</div>
@@ -185,9 +175,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
     const load = async () => {
       try {
         const response = await fetch("/api/admin/hero-promotion", {
-          headers: { "x-admin-key": ADMIN_KEY },
-          cache: "no-store",
-        });
+          cache: "no-store"});
         const data = (await response.json()) as
           | HeroPromotionPresentation
           | { error?: string };
@@ -224,9 +212,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
       const response = await fetch("/api/admin/hero-promotion", {
         method: "PUT",
         headers: {
-          "x-admin-key": ADMIN_KEY,
-          "Content-Type": "application/json",
-        },
+          "Content-Type": "application/json"},
         body: JSON.stringify({
           headline: form.headline,
           enabled: form.enabled,
@@ -235,9 +221,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
           leftLabel: form.leftLabel,
           leftDiscount: form.leftDiscount,
           rightLabel: form.rightLabel,
-          rightDiscount: form.rightDiscount,
-        }),
-      });
+          rightDiscount: form.rightDiscount})});
       const data = (await response.json()) as
         | HeroPromotionPresentation
         | { error?: string };
@@ -299,8 +283,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
                 border: `1px solid ${status.border}`,
                 fontSize: 10,
                 fontWeight: 700,
-                letterSpacing: "0.5px",
-              }}
+                letterSpacing: "0.5px"}}
             >
               {loading ? "CHARGEMENT" : status.label}
             </span>
@@ -337,8 +320,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
             fontSize: 12,
             fontWeight: 700,
             cursor: disabled ? "default" : "pointer",
-            opacity: disabled ? 0.6 : 1,
-          }}
+            opacity: disabled ? 0.6 : 1}}
         >
           <span
             aria-hidden="true"
@@ -346,8 +328,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
               width: 8,
               height: 8,
               borderRadius: "50%",
-              background: form.enabled ? "#4ade80" : "rgba(255,255,255,0.25)",
-            }}
+              background: form.enabled ? "#4ade80" : "rgba(255,255,255,0.25)"}}
           />
           {form.enabled ? "Affichée dans le Hero" : "Masquée dans le Hero"}
         </button>
@@ -416,8 +397,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setForm((current) => ({
                 ...current,
-                startsAt: event.target.value,
-              }))
+                startsAt: event.target.value}))
             }
             style={{ colorScheme: "dark" }}
           />
@@ -436,8 +416,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
             onChange={(event: ChangeEvent<HTMLInputElement>) =>
               setForm((current) => ({
                 ...current,
-                endsAt: event.target.value,
-              }))
+                endsAt: event.target.value}))
             }
             style={{ colorScheme: "dark" }}
           />
@@ -461,8 +440,7 @@ export default function HeroPromotionCard({ onNotify }: Props) {
             fontSize: 13,
             fontWeight: 700,
             cursor: disabled ? "default" : "pointer",
-            opacity: disabled ? 0.55 : 1,
-          }}
+            opacity: disabled ? 0.55 : 1}}
         >
           {saving ? "Enregistrement…" : "Enregistrer la Promotion Hero"}
         </button>

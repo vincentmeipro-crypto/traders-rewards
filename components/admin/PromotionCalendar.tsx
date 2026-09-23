@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from "react";
 import { parisDay, validatePromotionCalendar, type CalendarPromotion } from "@/lib/promotion-calendar";
 import { getScheduledPromotion } from "@/lib/pricing";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 const addDays = (day: string, count: number) => {
   const date = new Date(`${day}T12:00:00Z`);
   date.setUTCDate(date.getUTCDate() + count);
@@ -22,7 +21,7 @@ export default function PromotionCalendar({ onNotify }: { onNotify: (message: st
 
   const load = useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/promotion-calendar", {headers:{"x-admin-key":ADMIN_KEY},cache:"no-store"});
+      const response = await fetch("/api/admin/promotion-calendar", {cache:"no-store"});
       const data = await response.json();
       if (!response.ok) throw Error(data.error || "Chargement impossible");
       const parsed = validatePromotionCalendar(data.rows);
@@ -61,7 +60,7 @@ export default function PromotionCalendar({ onNotify }: { onNotify: (message: st
     if(!parsed.ok){setError(parsed.error);return;}
     setBusy(true);setError("");
     try {
-      const response=await fetch("/api/admin/promotion-calendar",{method:"PUT",headers:{"x-admin-key":ADMIN_KEY,"Content-Type":"application/json"},body:JSON.stringify({rows:parsed.rows})});
+      const response=await fetch("/api/admin/promotion-calendar",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows:parsed.rows})});
       const data=await response.json();
       if(!response.ok)throw Error(data.error||"Enregistrement impossible");
       setRows(data.rows);setSavedRows(data.rows);setDirty(false);onNotify("Calendrier enregistré : les prix et le Hero suivront ces dates.",true);

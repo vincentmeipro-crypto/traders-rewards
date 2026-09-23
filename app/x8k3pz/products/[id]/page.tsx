@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ────────────────────────────────────────────────────────
 type Phase = {
@@ -53,8 +52,7 @@ type Product = {
 const Label = ({ children }: { children: React.ReactNode }) => (
   <div style={{
     fontSize: 10, fontWeight: 600, letterSpacing: "1.5px",
-    textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6,
-  }}>
+    textTransform: "uppercase", color: "rgba(255,255,255,0.3)", marginBottom: 6}}>
     {children}
   </div>
 );
@@ -65,20 +63,17 @@ const inputBaseStyle: React.CSSProperties = {
   border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 6, padding: "9px 12px",
   color: "#fff", fontSize: 13, fontWeight: 500,
-  width: "100%", outline: "none", fontFamily: "inherit",
-};
+  width: "100%", outline: "none", fontFamily: "inherit"};
 
 const readOnlyStyle: React.CSSProperties = {
   background: "rgba(255,255,255,0.03)",
   border: "1px solid rgba(255,255,255,0.1)",
   borderRadius: 6, padding: "9px 12px",
   color: "rgba(255,255,255,0.35)", fontSize: 13, fontWeight: 400,
-  width: "100%", outline: "none", fontFamily: "inherit",
-};
+  width: "100%", outline: "none", fontFamily: "inherit"};
 
 const Input = ({
-  value, onChange, type = "text", readOnly = false, suffix,
-}: {
+  value, onChange, type = "text", readOnly = false, suffix}: {
   value: string | number;
   onChange?: (v: string) => void;
   type?: string;
@@ -100,8 +95,7 @@ const Input = ({
 );
 
 const Textarea = ({
-  value, onChange, placeholder,
-}: {
+  value, onChange, placeholder}: {
   value: string;
   onChange?: (v: string) => void;
   placeholder?: string;
@@ -117,8 +111,7 @@ const Textarea = ({
       borderRadius: 6, padding: "9px 12px",
       color: "#fff", fontSize: 13, fontWeight: 500,
       width: "100%", outline: "none", fontFamily: "inherit",
-      resize: "vertical", minHeight: 72, boxSizing: "border-box",
-    }}
+      resize: "vertical", minHeight: 72, boxSizing: "border-box"}}
     onFocus={e => { e.target.style.borderColor = "rgba(201,150,63,0.5)"; }}
     onBlur={e => { e.target.style.borderColor = "rgba(255,255,255,0.1)"; }}
   />
@@ -138,8 +131,7 @@ const Select = ({ value, onChange, options }: {
       border: "1px solid rgba(255,255,255,0.1)",
       borderRadius: 6, padding: "9px 12px",
       color: "#fff", fontSize: 13, fontWeight: 500,
-      width: "100%", outline: "none", fontFamily: "inherit", cursor: "pointer",
-    }}
+      width: "100%", outline: "none", fontFamily: "inherit", cursor: "pointer"}}
   >
     {options.map(o => <option key={o.value} value={o.value} style={{ background: "#111" }}>{o.label}</option>)}
   </select>
@@ -151,13 +143,11 @@ const Toggle = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean
     style={{
       width: 36, height: 20, borderRadius: 10, border: "none",
       cursor: "pointer", background: checked ? "#22c55e" : "rgba(255,255,255,0.15)",
-      position: "relative", transition: "background 0.2s", flexShrink: 0,
-    }}
+      position: "relative", transition: "background 0.2s", flexShrink: 0}}
   >
     <div style={{
       width: 14, height: 14, borderRadius: "50%", background: "#fff",
-      position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s",
-    }} />
+      position: "absolute", top: 3, left: checked ? 18 : 4, transition: "left 0.2s"}} />
   </button>
 );
 
@@ -168,8 +158,7 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     letterSpacing: "1.5px", textTransform: "uppercase",
     marginBottom: 18, paddingBottom: 10,
     borderBottom: "1px solid rgba(255,255,255,0.08)",
-    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)",
-  }}>
+    paddingLeft: 10, borderLeft: "3px solid rgba(201,150,63,0.3)"}}>
     {children}
   </div>
 );
@@ -205,8 +194,7 @@ export default function ProductEditorPage() {
     price_eur: "",
     price_crypto: "",
     leverage: "100", max_cumul_usd: "", display_order: "0",
-    mt5_group_challenge: "", mt5_group_funded: "", slug: "",
-  });
+    mt5_group_challenge: "", mt5_group_funded: "", slug: ""});
 
   const [phases, setPhases]             = useState<Phase[]>([]);
   const [editingPhase, setEditingPhase] = useState<number | null>(null);
@@ -237,21 +225,19 @@ export default function ProductEditorPage() {
       display_order:       String(p.display_order),
       mt5_group_challenge: p.mt5_group_challenge || "",
       mt5_group_funded:    p.mt5_group_funded    || "",
-      slug:                p.slug,
-    });
+      slug:                p.slug});
     setPhases(p.phases ?? []);
     setRules(p.rules ?? []);
   };
 
   const BALANCES: Record<string, string> = {
-    "$25,000": "25000", "$50,000": "50000", "$100,000": "100000",
-  };
+    "$25,000": "25000", "$50,000": "50000", "$100,000": "100000"};
 
   const fetchProduct = useCallback(async () => {
     if (isNew) return;
     setLoading(true);
     try {
-      const res  = await fetch(`/api/admin/products/${productId}`, { headers: { "x-admin-key": ADMIN_KEY } });
+      const res  = await fetch(`/api/admin/products/${productId}`, { });
       const data = await res.json();
       if (res.ok) { setProduct(data); syncFormFromProduct(data); }
       else notify(data.error || "Produit introuvable", false);
@@ -279,16 +265,15 @@ export default function ProductEditorPage() {
         max_cumul_usd:       form.max_cumul_usd ? Number(form.max_cumul_usd) : null,
         display_order:       Number(form.display_order) || 0,
         mt5_group_challenge: form.mt5_group_challenge || null,
-        mt5_group_funded:    form.mt5_group_funded    || null,
-      };
+        mt5_group_funded:    form.mt5_group_funded    || null};
       if (isNew) {
         payload.slug = form.slug || form.name.toLowerCase().replace(/[^a-z0-9]/g, "-");
-        const res  = await fetch("/api/admin/products", { method: "POST", headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        const res  = await fetch("/api/admin/products", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
         const data = await res.json();
         if (res.ok) { notify("Produit créé !"); router.push(`/x8k3pz/products/${data.id}`); }
         else notify(data.error || "Erreur lors de la création", false);
       } else {
-        const res  = await fetch(`/api/admin/products/${productId}`, { method: "PUT", headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        const res  = await fetch(`/api/admin/products/${productId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
         const data = await res.json();
         if (res.ok) { setProduct(data); notify("Modifications sauvegardées"); }
         else notify(data.error || "Erreur lors de la sauvegarde", false);
@@ -301,7 +286,7 @@ export default function ProductEditorPage() {
     if (!product) return;
     setSaving(true);
     try {
-      const res  = await fetch(`/api/admin/products/${productId}`, { method: "PUT", headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ active: !product.active }) });
+      const res  = await fetch(`/api/admin/products/${productId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ active: !product.active }) });
       const data = await res.json();
       if (res.ok) { setProduct(data); notify(data.active ? "Produit activé" : "Produit désactivé"); }
       else notify(data.error || "Erreur", false);
@@ -312,7 +297,7 @@ export default function ProductEditorPage() {
   const duplicate = async () => {
     setSaving(true);
     try {
-      const res  = await fetch(`/api/admin/products/${productId}/duplicate`, { method: "POST", headers: { "x-admin-key": ADMIN_KEY } });
+      const res  = await fetch(`/api/admin/products/${productId}/duplicate`, { method: "POST" });
       const data = await res.json();
       if (res.ok) { notify(`Dupliqué — ${data.product.slug}`); router.push(`/x8k3pz/products/${data.product.id}`); }
       else notify(data.error || "Erreur lors de la duplication", false);
@@ -323,7 +308,7 @@ export default function ProductEditorPage() {
   const deleteProduct = async () => {
     setSaving(true);
     try {
-      const res  = await fetch(`/api/admin/products/${productId}`, { method: "DELETE", headers: { "x-admin-key": ADMIN_KEY } });
+      const res  = await fetch(`/api/admin/products/${productId}`, { method: "DELETE" });
       const data = await res.json();
       if (res.ok) { notify("Produit supprimé"); router.push("/x8k3pz/products"); }
       else notify(data.error || "Erreur lors de la suppression", false);
@@ -334,7 +319,7 @@ export default function ProductEditorPage() {
   const savePhase = async (phase_order: number) => {
     setSaving(true);
     try {
-      const res  = await fetch(`/api/admin/products/${productId}/phases`, { method: "PUT", headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ phase_order, ...phaseForm }) });
+      const res  = await fetch(`/api/admin/products/${productId}/phases`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phase_order, ...phaseForm }) });
       const data = await res.json();
       if (res.ok) { setPhases(prev => prev.map(ph => ph.phase_order === phase_order ? { ...ph, ...data } : ph)); setEditingPhase(null); notify("Phase sauvegardée"); }
       else notify(data.error || "Erreur", false);
@@ -347,7 +332,7 @@ export default function ProductEditorPage() {
     try {
       let parsedValue: unknown = ruleForm.rule_value;
       try { parsedValue = JSON.parse(ruleForm.rule_value); } catch { /* garder comme string */ }
-      const res  = await fetch(`/api/admin/products/${productId}/rules`, { method: "PUT", headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ rule_key, rule_value: parsedValue }) });
+      const res  = await fetch(`/api/admin/products/${productId}/rules`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rule_key, rule_value: parsedValue }) });
       const data = await res.json();
       if (res.ok) { setRules(prev => prev.map(r => r.rule_key === rule_key ? { ...r, ...data } : r)); setEditingRule(null); notify("Règle sauvegardée"); }
       else notify(data.error || "Erreur", false);
@@ -357,7 +342,7 @@ export default function ProductEditorPage() {
 
   const toggleRule = async (rule: Rule) => {
     try {
-      const res = await fetch(`/api/admin/products/${productId}/rules`, { method: "PUT", headers: { "x-admin-key": ADMIN_KEY, "Content-Type": "application/json" }, body: JSON.stringify({ rule_key: rule.rule_key, enabled: !rule.enabled }) });
+      const res = await fetch(`/api/admin/products/${productId}/rules`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rule_key: rule.rule_key, enabled: !rule.enabled }) });
       if (res.ok) setRules(prev => prev.map(r => r.rule_key === rule.rule_key ? { ...r, enabled: !r.enabled } : r));
       else notify("Erreur toggle règle", false);
     } catch { notify("Erreur réseau", false); }
@@ -369,8 +354,7 @@ export default function ProductEditorPage() {
     borderBottom: `2px solid ${activeTab === tab ? "#3B82F6" : "transparent"}`,
     color: activeTab === tab ? "#fff" : "rgba(255,255,255,0.38)",
     fontSize: 13, fontWeight: activeTab === tab ? 700 : 500,
-    padding: "12px 20px", cursor: "pointer", transition: "all 0.15s", fontFamily: "inherit",
-  });
+    padding: "12px 20px", cursor: "pointer", transition: "all 0.15s", fontFamily: "inherit"});
 
   const cnt    = product?.challenge_count;
   const hasAny = (cnt?.total ?? 0) > 0;
@@ -390,8 +374,7 @@ export default function ProductEditorPage() {
             height: 14, borderRadius: 5, marginBottom: i === 1 ? 32 : 18,
             background: "rgba(255,255,255,0.18)", maxWidth: w,
             animation: "sk-fade 1.6s ease-in-out infinite",
-            animationDelay: `${i * 0.1}s`,
-          }} />
+            animationDelay: `${i * 0.1}s`}} />
         ))}
       </div>
     );
@@ -411,8 +394,7 @@ export default function ProductEditorPage() {
           border: `1px solid ${notification.ok ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`,
           color: notification.ok ? "#86efac" : "#fca5a5",
           padding: "12px 20px", borderRadius: 8, fontSize: 13, fontWeight: 500,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
-        }}>
+          boxShadow: "0 4px 24px rgba(0,0,0,0.5)"}}>
           {notification.msg}
         </div>
       )}
@@ -425,8 +407,7 @@ export default function ProductEditorPage() {
         position: "sticky", top: 0,
         // header sticky sur surface card
         background: "#0c0c0c",
-        zIndex: 50, gap: 12, flexWrap: "wrap",
-      }}>
+        zIndex: 50, gap: 12, flexWrap: "wrap"}}>
         {/* Breadcrumb + titre + badge */}
         <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           {/* P1#4: "Produits /" en 12px muted, nom du produit en 20px/800 */}
@@ -447,8 +428,7 @@ export default function ProductEditorPage() {
               color: product.active ? "#4ade80" : "rgba(255,255,255,0.38)",
               borderRadius: 20, padding: "3px 10px 3px 8px", fontSize: 10, fontWeight: 700,
               display: "inline-flex", alignItems: "center", gap: 6, letterSpacing: "0.5px",
-              userSelect: "none",
-            }}>
+              userSelect: "none"}}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: product.active ? "#22c55e" : "rgba(255,255,255,0.25)", animation: product.active ? "pulse-dot 2.4s ease-in-out infinite" : undefined }} />
               {product.active ? "ACTIF" : "INACTIF"}
             </span>
@@ -467,8 +447,7 @@ export default function ProductEditorPage() {
                 border: `1px solid ${product.active ? "rgba(239,68,68,0.3)" : "rgba(34,197,94,0.3)"}`,
                 color: product.active ? "rgba(239,68,68,0.85)" : "#4ade80",
                 borderRadius: 6, padding: "8px 14px", fontSize: 12, fontWeight: 600,
-                cursor: "pointer", opacity: saving ? 0.6 : 1, whiteSpace: "nowrap",
-              }}
+                cursor: "pointer", opacity: saving ? 0.6 : 1, whiteSpace: "nowrap"}}
             >
               {saving ? "…" : product.active ? "Désactiver" : "Activer"}
             </button>
@@ -480,8 +459,7 @@ export default function ProductEditorPage() {
               style={{
                 background: "transparent", border: "1px solid rgba(255,255,255,0.1)",
                 color: "rgba(255,255,255,0.48)", borderRadius: 6, padding: "8px 14px",
-                fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
-              }}
+                fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap"}}
             >
               Dupliquer
             </button>
@@ -495,8 +473,7 @@ export default function ProductEditorPage() {
                 background: "#3B82F6", border: "none", color: "#fff",
                 borderRadius: 8, padding: "8px 22px", fontSize: 13, fontWeight: 700,
                 cursor: "pointer", opacity: saving ? 0.6 : 1,
-                transition: "opacity 0.15s", whiteSpace: "nowrap",
-              }}
+                transition: "opacity 0.15s", whiteSpace: "nowrap"}}
             >
               {saving ? "…" : isNew ? "Créer le produit" : "Sauvegarder"}
             </button>
@@ -511,8 +488,7 @@ export default function ProductEditorPage() {
           borderBottom: "1px solid rgba(245,158,11,0.12)",
           padding: "9px 32px",
           display: "flex", alignItems: "center", gap: 8,
-          fontSize: 12, color: "rgba(245,158,11,0.75)",
-        }}>
+          fontSize: 12, color: "rgba(245,158,11,0.75)"}}>
           <span>⚠</span>
           <span>
             Ce produit est utilisé par{" "}
@@ -547,8 +523,7 @@ export default function ProductEditorPage() {
       {/* ── Layout (form + sidebar) ──────────────────────────────── */}
       <div style={{
         display: "flex", flexDirection: isCompact ? "column" : "row",
-        alignItems: "flex-start", maxWidth: 1120, margin: "0 auto", padding: "0 32px",
-      }}>
+        alignItems: "flex-start", maxWidth: 1120, margin: "0 auto", padding: "0 32px"}}>
 
         {/* ── Zone de formulaire ───────────────────────────────── */}
         <div style={{
@@ -557,8 +532,7 @@ export default function ProductEditorPage() {
           // P3#23: formulaire /new centré et limité en largeur
           maxWidth: isNew ? 720 : undefined,
           // P3#29: espace sous la bannière fixe en mode compact
-          paddingBottom: isCompact && !isNew ? 80 : undefined,
-        }}>
+          paddingBottom: isCompact && !isNew ? 80 : undefined}}>
 
           {/* P10 — Guide création */}
           {isNew && (
@@ -566,8 +540,7 @@ export default function ProductEditorPage() {
               marginBottom: 24, padding: "10px 16px",
               background: "rgba(201,150,63,0.06)", border: "1px solid rgba(201,150,63,0.15)",
               borderRadius: 8, fontSize: 12, color: "rgba(255,255,255,0.45)",
-              display: "flex", alignItems: "center", gap: 8,
-            }}>
+              display: "flex", alignItems: "center", gap: 8}}>
               <span style={{ color: "rgba(201,150,63,0.85)", fontWeight: 700 }}>Étape 1/3</span>
               <span>— Après création, vous configurerez les phases et les règles.</span>
             </div>
@@ -687,13 +660,11 @@ export default function ProductEditorPage() {
                 const V1_PHASE_ACCENT: Record<string, string> = {
                   challenge:      "rgba(201,150,63,0.85)",
                   funded:         "#c9a84c",
-                  reward_journey: "#4ade80",
-                };
+                  reward_journey: "#4ade80"};
                 const V1_PHASE_SUBLABEL: Record<string, string> = {
                   challenge:      "CHALLENGER",
                   funded:         "REWARD START",
-                  reward_journey: "TRADER REWARD",
-                };
+                  reward_journey: "TRADER REWARD"};
 
                 return phases.length === 0 ? (
                   <div style={{ padding: "60px 0", textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 13 }}>Aucune phase définie</div>
@@ -715,8 +686,7 @@ export default function ProductEditorPage() {
                           borderRadius: 8, overflow: "hidden",
                           background: isEditing ? "#111" : "#0c0c0c",
                           transition: "all 0.2s",
-                          boxShadow: isEditing ? `0 0 0 1px ${accent}20, inset 0 1px 0 ${accent}18` : "none",
-                        }}>
+                          boxShadow: isEditing ? `0 0 0 1px ${accent}20, inset 0 1px 0 ${accent}18` : "none"}}>
                           {/* Résumé */}
                           <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
@@ -863,8 +833,7 @@ export default function ProductEditorPage() {
                                     min_trading_days: phase.min_trading_days,
                                     max_trading_days: phase.max_trading_days,
                                     profit_split:     phase.profit_split,
-                                    mt5_group:        phase.mt5_group,
-                                  });
+                                    mt5_group:        phase.mt5_group});
                                 }}
                                 style={{
                                   fontSize: 12, fontWeight: 600,
@@ -872,8 +841,7 @@ export default function ProductEditorPage() {
                                   background: isEditing ? `${accent}14` : "rgba(255,255,255,0.05)",
                                   border: `1px solid ${isEditing ? accent + "38" : "rgba(255,255,255,0.1)"}`,
                                   borderRadius: 5, padding: "6px 14px",
-                                  cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s",
-                                }}
+                                  cursor: "pointer", whiteSpace: "nowrap", transition: "all 0.15s"}}
                               >
                                 {isEditing ? (
                                   <span style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
@@ -1021,8 +989,7 @@ export default function ProductEditorPage() {
                       padding: "14px 20px",
                       // P1#3: rule rows border plus contrastée
                       borderBottom: "1px solid rgba(255,255,255,0.07)",
-                      display: "flex", flexDirection: "column", gap: isEditing ? 12 : 0,
-                    }}>
+                      display: "flex", flexDirection: "column", gap: isEditing ? 12 : 0}}>
                       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                         <Toggle checked={rule.enabled} onChange={() => toggleRule(rule)} />
                         <div style={{ flex: 1 }}>
@@ -1114,15 +1081,13 @@ export default function ProductEditorPage() {
             position: "sticky",
             top: 56,
             maxHeight: "calc(100vh - 56px)",
-            overflowY: "auto",
-          }}>
+            overflowY: "auto"}}>
             {/* P1#3: sidebar card → #0c0c0c + border rgba(255,255,255,0.1) | P2#12: inset shadow */}
             <div style={{
               background: "#0c0c0c",
               border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 10, padding: "20px",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-            }}>
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)"}}>
               <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "2px", textTransform: "uppercase", marginBottom: 16 }}>
                 Aperçu client
               </div>
@@ -1151,11 +1116,9 @@ export default function ProductEditorPage() {
                   {(() => {
                     const isV1sb = rules.some(r => r.rule_key === "dd_model" && r.rule_value === "trailing_eod_lock");
                     const phAccent: Record<string, string> = {
-                      challenge: "rgba(201,150,63,0.85)", funded: "#c9a84c", reward_journey: "#4ade80",
-                    };
+                      challenge: "rgba(201,150,63,0.85)", funded: "#c9a84c", reward_journey: "#4ade80"};
                     const phSublabel: Record<string, string> = {
-                      challenge: "CHALLENGER", funded: "REWARD START", reward_journey: "TRADER REWARD",
-                    };
+                      challenge: "CHALLENGER", funded: "REWARD START", reward_journey: "TRADER REWARD"};
                     return (<>
                       <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.22)", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: 12 }}>Parcours {phases.length}</div>
                       {phases.map((ph, idx) => {
@@ -1214,8 +1177,7 @@ export default function ProductEditorPage() {
                       display: "flex", alignItems: "center", gap: 5,
                       fontSize: 12, color: "rgba(201,150,63,0.65)", textDecoration: "none",
                       fontWeight: 600, letterSpacing: "0.3px",
-                      transition: "color 0.15s",
-                    }}
+                      transition: "color 0.15s"}}
                     onMouseEnter={e => (e.currentTarget.style.color = "rgba(201,150,63,0.9)")}
                     onMouseLeave={e => (e.currentTarget.style.color = "rgba(201,150,63,0.65)")}
                   >
@@ -1240,8 +1202,7 @@ export default function ProductEditorPage() {
           borderTop: "1px solid rgba(255,255,255,0.1)",
           boxShadow: "0 -4px 24px rgba(0,0,0,0.5)",
           padding: "10px 20px",
-          display: "flex", alignItems: "center", gap: 14,
-        }}>
+          display: "flex", alignItems: "center", gap: 14}}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {form.name || "—"}
@@ -1258,8 +1219,7 @@ export default function ProductEditorPage() {
             border: `1px solid ${product.active ? "rgba(34,197,94,0.22)" : "rgba(255,255,255,0.1)"}`,
             color: product.active ? "#4ade80" : "rgba(255,255,255,0.38)",
             borderRadius: 20, padding: "3px 10px", fontSize: 10, fontWeight: 700,
-            display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0,
-          }}>
+            display: "inline-flex", alignItems: "center", gap: 5, flexShrink: 0}}>
             <div style={{ width: 5, height: 5, borderRadius: "50%", background: product.active ? "#22c55e" : "rgba(255,255,255,0.25)", animation: product.active ? "pulse-dot 2.4s ease-in-out infinite" : undefined }} />
             {product.active ? "ACTIF" : "INACTIF"}
           </span>

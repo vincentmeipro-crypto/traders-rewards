@@ -58,8 +58,7 @@ export async function POST(
 
   // ── INSERT message ─────────────────────────────────────────────────────────
   // sender_type = "admin" FORCÉ — ne jamais accepter une valeur du client
-  // sender_user_id = userId résolu par checkAdmin (null pour admin-static)
-  const senderUserId = auth.userId !== "admin-static" ? auth.userId : null;
+  const senderUserId = auth.userId;
 
   const { data: inserted, error: insertErr } = await admin
     .from("chat_messages")

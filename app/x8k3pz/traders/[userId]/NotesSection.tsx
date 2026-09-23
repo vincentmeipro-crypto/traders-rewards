@@ -6,7 +6,6 @@
 
 import { useState } from "react";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 type Note = {
   id: string;
@@ -35,9 +34,8 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
     try {
       const res = await fetch("/api/admin/notes", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ target_type: "trader", target_id: traderId, content: trimmed }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ target_type: "trader", target_id: traderId, content: trimmed })});
       const data = await res.json();
       if (!res.ok) { setError(data.error || "Erreur inconnue"); return; }
       setNotes(prev => [data.note as Note, ...prev]);
@@ -54,9 +52,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
     setError(null);
     try {
       const res = await fetch(`/api/admin/notes?id=${id}`, {
-        method: "DELETE",
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+        method: "DELETE"});
       if (!res.ok) { const d = await res.json(); setError(d.error || "Erreur suppression"); return; }
       setNotes(prev => prev.filter(n => n.id !== id));
     } catch {
@@ -81,8 +77,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
             background: "#111", border: "1px solid rgba(255,255,255,0.1)",
             borderRadius: 8, padding: "10px 14px",
             color: "#fff", fontSize: 13, resize: "vertical",
-            outline: "none", fontFamily: "inherit",
-          }}
+            outline: "none", fontFamily: "inherit"}}
         />
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <button
@@ -93,8 +88,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
               background: saving || !draft.trim() ? "rgba(201,150,63,0.25)" : "#C9963F",
               border: "none", borderRadius: 7,
               color: "#fff", fontSize: 12, fontWeight: 700,
-              cursor: saving || !draft.trim() ? "not-allowed" : "pointer",
-            }}
+              cursor: saving || !draft.trim() ? "not-allowed" : "pointer"}}
           >
             {saving ? "Enregistrement…" : "Ajouter"}
           </button>
@@ -126,8 +120,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
             padding: "12px 16px",
             display: "flex",
             flexDirection: "column",
-            gap: 6,
-          }}
+            gap: 6}}
         >
           {/* Méta */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
@@ -138,8 +131,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
               <span>
                 {new Date(note.created_at).toLocaleDateString("fr-FR", {
                   day: "2-digit", month: "short", year: "numeric",
-                  hour: "2-digit", minute: "2-digit",
-                })}
+                  hour: "2-digit", minute: "2-digit"})}
               </span>
             </div>
             <button
@@ -151,8 +143,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
                 color: deleting === note.id ? "rgba(255,255,255,0.2)" : "rgba(239,68,68,0.5)",
                 cursor: deleting === note.id ? "not-allowed" : "pointer",
                 fontSize: 11, fontWeight: 600, padding: "2px 4px",
-                flexShrink: 0,
-              }}
+                flexShrink: 0}}
             >
               {deleting === note.id ? "…" : "Supprimer"}
             </button>
@@ -161,8 +152,7 @@ export default function NotesSection({ traderId, initialNotes }: NotesSectionPro
           {/* Contenu */}
           <div style={{
             fontSize: 13, color: "rgba(255,255,255,0.85)",
-            lineHeight: "1.55", whiteSpace: "pre-wrap", wordBreak: "break-word",
-          }}>
+            lineHeight: "1.55", whiteSpace: "pre-wrap", wordBreak: "break-word"}}>
             {note.content}
           </div>
         </div>

@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { EMAIL_CATALOG } from "@/lib/email-catalog";
 
-const ADMIN_KEY = process.env.NEXT_PUBLIC_ADMIN_KEY || "tr2026-admin-k9x";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -57,8 +56,7 @@ const TYPE_LABELS: Record<string, string> = {
   "test:phase1_certificate":    "Test — Certificat Challenger",
   "test:challenge_certificate": "Test — Certificat Challenger",
   "test:reward_certificate":    "Test — Certificat Reward",
-  "test:apology":               "Test — Compte rétabli",
-};
+  "test:apology":               "Test — Compte rétabli"};
 
 const TYPE_OPTIONS = [
   { value: "all",                   label: "Tous les types" },
@@ -121,8 +119,7 @@ function StatusBadge({ status }: { status: "sent" | "failed" }) {
     <span style={{
       fontSize: 10, fontWeight: 700, letterSpacing: "0.5px",
       padding: "3px 8px", borderRadius: 4, whiteSpace: "nowrap" as const,
-      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`,
-    }}>
+      background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}`}}>
       {cfg.label}
     </span>
   );
@@ -132,8 +129,7 @@ function TypeBadge({ type }: { type: string }) {
   return (
     <span style={{
       fontSize: 11, fontWeight: 500, color: "rgba(255,255,255,0.55)",
-      whiteSpace: "nowrap" as const,
-    }}>
+      whiteSpace: "nowrap" as const}}>
       {typeLabel(type)}
     </span>
   );
@@ -148,8 +144,7 @@ function SensitiveBadge() {
         padding: "2px 7px", borderRadius: 3, whiteSpace: "nowrap" as const,
         background: "rgba(251,191,36,0.08)", color: "#fbbf24",
         border: "1px solid rgba(251,191,36,0.2)",
-        textTransform: "uppercase" as const,
-      }}
+        textTransform: "uppercase" as const}}
     >
       Identifiants
     </span>
@@ -157,8 +152,7 @@ function SensitiveBadge() {
 }
 
 function CopyButton({
-  text, id, copied, onCopy,
-}: { text: string; id: string; copied: string | null; onCopy: (t: string, i: string) => void }) {
+  text, id, copied, onCopy}: { text: string; id: string; copied: string | null; onCopy: (t: string, i: string) => void }) {
   const isCopied = copied === id;
   return (
     <button
@@ -168,8 +162,7 @@ function CopyButton({
         background: "transparent", border: "none", cursor: "pointer",
         color: isCopied ? "#4ade80" : "rgba(255,255,255,0.35)",
         fontSize: 11, padding: "2px 4px", borderRadius: 3,
-        transition: "color 0.2s",
-      }}
+        transition: "color 0.2s"}}
     >
       {isCopied ? "Copié" : "Copier"}
     </button>
@@ -177,13 +170,11 @@ function CopyButton({
 }
 
 function KpiCard({
-  label, value, sub, color,
-}: { label: string; value: string | number; sub?: string; color?: string }) {
+  label, value, sub, color}: { label: string; value: string | number; sub?: string; color?: string }) {
   return (
     <div style={{
       background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)",
-      borderRadius: 8, padding: "14px 18px", flex: 1, minWidth: 120,
-    }}>
+      borderRadius: 8, padding: "14px 18px", flex: 1, minWidth: 120}}>
       <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1px", color: "rgba(255,255,255,0.3)", textTransform: "uppercase" as const, marginBottom: 6 }}>
         {label}
       </div>
@@ -207,8 +198,7 @@ function Skeleton() {
       {[...Array(6)].map((_, i) => (
         <div key={i} style={{
           display: "flex", alignItems: "center", gap: 16,
-          padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)",
-        }}>
+          padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)"}}>
           <div className="email-skel" style={{ width: 90,  height: 12, background: "rgba(255,255,255,0.1)", borderRadius: 4, flexShrink: 0 }} />
           <div className="email-skel" style={{ width: 120, height: 12, background: "rgba(255,255,255,0.1)", borderRadius: 4, flexShrink: 0 }} />
           <div className="email-skel" style={{ width: 160, height: 12, background: "rgba(255,255,255,0.1)", borderRadius: 4, flex: 1 }} />
@@ -224,8 +214,7 @@ function Skeleton() {
 // ── Detail Panel (Journal) ────────────────────────────────────────────────────
 
 function DetailPanel({
-  log, onClose, copied, onCopy,
-}: {
+  log, onClose, copied, onCopy}: {
   log: EmailLog;
   onClose: () => void;
   copied: string | null;
@@ -252,14 +241,12 @@ function DetailPanel({
       <div style={{
         position: "fixed", top: 0, right: 0, bottom: 0, width: "min(420px, 100vw)",
         background: "#0c0c0c", borderLeft: "1px solid rgba(255,255,255,0.08)",
-        zIndex: 50, display: "flex", flexDirection: "column", overflowY: "auto",
-      }}>
+        zIndex: 50, display: "flex", flexDirection: "column", overflowY: "auto"}}>
         <div style={{
           padding: "20px 24px 16px",
           borderBottom: "1px solid rgba(255,255,255,0.08)",
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          position: "sticky", top: 0, background: "#0c0c0c", zIndex: 1,
-        }}>
+          position: "sticky", top: 0, background: "#0c0c0c", zIndex: 1}}>
           <div>
             <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{typeLabel(log.type)}</div>
             <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginTop: 2 }}>Détail de l'envoi</div>
@@ -270,8 +257,7 @@ function DetailPanel({
             style={{
               background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 6, color: "rgba(255,255,255,0.6)", cursor: "pointer",
-              fontSize: 12, fontWeight: 600, padding: "6px 12px",
-            }}
+              fontSize: 12, fontWeight: 600, padding: "6px 12px"}}
           >
             Fermer
           </button>
@@ -304,8 +290,7 @@ function DetailPanel({
                 background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)",
                 borderRadius: 6, padding: "10px 12px",
                 fontSize: 12, color: "rgba(255,255,255,0.7)",
-                fontFamily: "monospace", wordBreak: "break-word" as const, lineHeight: 1.6,
-              }}>
+                fontFamily: "monospace", wordBreak: "break-word" as const, lineHeight: 1.6}}>
                 {log.error}
               </div>
             </div>
@@ -319,8 +304,7 @@ function DetailPanel({
 // ── Preview Panel (Transactional) ─────────────────────────────────────────────
 
 function PreviewPanel({
-  data, mode, onSetMode, onClose,
-}: {
+  data, mode, onSetMode, onClose}: {
   data:       PreviewData;
   mode:       "desktop" | "mobile";
   onSetMode:  (m: "desktop" | "mobile") => void;
@@ -342,16 +326,14 @@ function PreviewPanel({
           position: "fixed", top: 0, right: 0, bottom: 0,
           width: "min(800px, 100vw)",
           background: "#090909", borderLeft: "1px solid rgba(255,255,255,0.09)",
-          zIndex: 70, display: "flex", flexDirection: "column",
-        }}
+          zIndex: 70, display: "flex", flexDirection: "column"}}
       >
         {/* Header */}
         <div style={{
           padding: "18px 24px 14px",
           borderBottom: "1px solid rgba(255,255,255,0.08)",
           display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16,
-          flexShrink: 0,
-        }}>
+          flexShrink: 0}}>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{data.label}</span>
@@ -359,8 +341,7 @@ function PreviewPanel({
             </div>
             <div style={{
               fontSize: 12, color: "rgba(255,255,255,0.4)",
-              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const,
-            }}>
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const}}>
               {data.subject}
             </div>
           </div>
@@ -370,8 +351,7 @@ function PreviewPanel({
             style={{
               background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
               borderRadius: 6, color: "rgba(255,255,255,0.6)", cursor: "pointer",
-              fontSize: 12, fontWeight: 600, padding: "6px 12px", flexShrink: 0,
-            }}
+              fontSize: 12, fontWeight: 600, padding: "6px 12px", flexShrink: 0}}
           >
             Fermer
           </button>
@@ -382,8 +362,7 @@ function PreviewPanel({
           padding: "10px 24px",
           borderBottom: "1px solid rgba(255,255,255,0.06)",
           display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" as const,
-          flexShrink: 0,
-        }}>
+          flexShrink: 0}}>
           {/* Trigger */}
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: "1px", color: "rgba(255,255,255,0.25)", textTransform: "uppercase" as const }}>
@@ -392,8 +371,7 @@ function PreviewPanel({
             <span style={{
               fontSize: 11, color: "rgba(255,255,255,0.6)",
               background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: 4, padding: "2px 8px",
-            }}>
+              borderRadius: 4, padding: "2px 8px"}}>
               {data.trigger}
             </span>
           </div>
@@ -413,8 +391,7 @@ function PreviewPanel({
                     padding: "2px 6px", borderRadius: 3,
                     background: v.sensitive ? "rgba(251,191,36,0.06)" : "rgba(255,255,255,0.05)",
                     color:      v.sensitive ? "#fbbf24"                : "rgba(255,255,255,0.5)",
-                    border: `1px solid ${v.sensitive ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.08)"}`,
-                  }}
+                    border: `1px solid ${v.sensitive ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.08)"}`}}
                 >
                   {"{{"}{v.name}{"}}"}
                 </span>
@@ -435,8 +412,7 @@ function PreviewPanel({
                   background: mode === m ? "rgba(201,150,63,0.12)" : "transparent",
                   border: `1px solid ${mode === m ? "rgba(201,150,63,0.4)" : "rgba(255,255,255,0.1)"}`,
                   color: mode === m ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.4)",
-                  transition: "all 0.15s",
-                }}
+                  transition: "all 0.15s"}}
               >
                 {m === "desktop" ? "Bureau" : "Mobile"}
               </button>
@@ -447,8 +423,7 @@ function PreviewPanel({
         {/* iframe area */}
         <div style={{
           flex: 1, padding: "20px 24px", display: "flex", justifyContent: "center",
-          alignItems: "flex-start", background: "#111", overflowY: "auto",
-        }}>
+          alignItems: "flex-start", background: "#111", overflowY: "auto"}}>
           <iframe
             title={`Prévisualisation email : ${data.label}`}
             srcDoc={data.html}
@@ -460,8 +435,7 @@ function PreviewPanel({
               borderRadius: 8,
               background: "#fff",
               display: "block",
-              transition: "width 0.2s",
-            }}
+              transition: "width 0.2s"}}
           />
         </div>
 
@@ -470,8 +444,7 @@ function PreviewPanel({
           padding: "10px 24px",
           borderTop: "1px solid rgba(255,255,255,0.06)",
           fontSize: 11, color: "rgba(255,255,255,0.22)", textAlign: "center" as const,
-          flexShrink: 0,
-        }}>
+          flexShrink: 0}}>
           Données fictives — aucun email n'est envoyé depuis cette prévisualisation.
         </div>
       </div>
@@ -531,9 +504,7 @@ export default function EmailCenterPage() {
       if (typeFilter   !== "all") params.set("type",   typeFilter);
       if (debouncedSearch)        params.set("search", debouncedSearch);
 
-      const res = await fetch(`/api/admin/email-logs?${params.toString()}`, {
-        headers: { "x-admin-key": ADMIN_KEY },
-      });
+      const res = await fetch(`/api/admin/email-logs?${params.toString()}`, {});
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         setErr(d.error || "Impossible de charger le journal des emails.");
@@ -568,8 +539,7 @@ export default function EmailCenterPage() {
     border: `1px solid ${active ? "rgba(201,150,63,0.4)" : "rgba(255,255,255,0.1)"}`,
     background: active ? "rgba(201,150,63,0.12)" : "transparent",
     color: active ? "rgba(201,150,63,0.85)" : "rgba(255,255,255,0.5)",
-    transition: "all 0.15s",
-  });
+    transition: "all 0.15s"});
 
   const tabStyle = (active: boolean) => ({
     fontSize: 13, fontWeight: active ? 700 : 500,
@@ -577,8 +547,7 @@ export default function EmailCenterPage() {
     background: "transparent", border: "none",
     borderBottom: `2px solid ${active ? "#C9963F" : "transparent"}`,
     color: active ? "#fff" : "rgba(255,255,255,0.38)",
-    transition: "all 0.15s",
-  });
+    transition: "all 0.15s"});
 
   const failureRate7d = summary ? pct(summary.failed_7d, summary.sent_7d) : "—";
   const isEmpty = !loading && logs.length === 0;
@@ -599,9 +568,8 @@ export default function EmailCenterPage() {
           : undefined;
       const res = await fetch("/api/admin/emails/preview", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ type, ...(model ? { model } : {}) }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type, ...(model ? { model } : {}) })});
       if (!res.ok) {
         const d = await res.json().catch(() => ({}));
         setTestMsg(m => ({ ...m, [type]: { ok: false, text: d.error || "Erreur de prévisualisation." } }));
@@ -629,9 +597,8 @@ export default function EmailCenterPage() {
     try {
       const res = await fetch("/api/admin/emails/test", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-admin-key": ADMIN_KEY },
-        body: JSON.stringify({ type }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type })});
       if (!res.ok) {
         setTestMsg(m => ({ ...m, [type]: { ok: false, text: "Échec de l'envoi test." } }));
       } else {
@@ -680,8 +647,7 @@ export default function EmailCenterPage() {
       {/* ── Sticky header ──────────────────────────────────────────── */}
       <div style={{
         position: "sticky", top: 0, zIndex: 20,
-        background: "#050505", borderBottom: "1px solid rgba(255,255,255,0.08)",
-      }}>
+        background: "#050505", borderBottom: "1px solid rgba(255,255,255,0.08)"}}>
         {/* Breadcrumb + title */}
         <div style={{ padding: "18px 24px 0" }}>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", marginBottom: 6, letterSpacing: "0.3px" }}>
@@ -738,8 +704,7 @@ export default function EmailCenterPage() {
                 style={{
                   background: "#111", border: "1px solid rgba(255,255,255,0.1)",
                   borderRadius: 6, color: "#fff", fontSize: 12, padding: "7px 12px",
-                  outline: "none", width: 220, flexShrink: 0,
-                }}
+                  outline: "none", width: 220, flexShrink: 0}}
               />
               <div style={{ display: "flex", gap: 6 }}>
                 {(["all", "sent", "failed"] as const).map(s => (
@@ -755,8 +720,7 @@ export default function EmailCenterPage() {
                 style={{
                   background: "#111", border: "1px solid rgba(255,255,255,0.1)",
                   borderRadius: 6, color: typeFilter === "all" ? "rgba(255,255,255,0.5)" : "#fff",
-                  fontSize: 12, padding: "7px 10px", outline: "none", cursor: "pointer",
-                }}
+                  fontSize: 12, padding: "7px 10px", outline: "none", cursor: "pointer"}}
               >
                 {TYPE_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
@@ -777,8 +741,7 @@ export default function EmailCenterPage() {
             <div style={{
               margin: "20px 24px", padding: "12px 16px",
               background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)",
-              borderRadius: 8, fontSize: 13, color: "#f87171",
-            }}>
+              borderRadius: 8, fontSize: 13, color: "#f87171"}}>
               {err}
             </div>
           )}
@@ -791,8 +754,7 @@ export default function EmailCenterPage() {
               padding: "10px 20px",
               borderBottom: "1px solid rgba(255,255,255,0.06)",
               fontSize: 10, fontWeight: 700, letterSpacing: "1px",
-              color: "rgba(255,255,255,0.25)", textTransform: "uppercase" as const,
-            }}>
+              color: "rgba(255,255,255,0.25)", textTransform: "uppercase" as const}}>
               <div>Date</div><div>Type</div><div>Destinataire</div>
               <div>Sujet</div><div>Statut</div><div>Resend ID</div><div>Action</div>
             </div>
@@ -824,8 +786,7 @@ export default function EmailCenterPage() {
                   padding: "12px 20px",
                   borderBottom: "1px solid rgba(255,255,255,0.05)",
                   alignItems: "center",
-                  background: "transparent", transition: "background 0.1s",
-                }}
+                  background: "transparent", transition: "background 0.1s"}}
               >
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontVariantNumeric: "tabular-nums" as const }}>
                   {fmtDateShort(log.created_at)}
@@ -857,8 +818,7 @@ export default function EmailCenterPage() {
                     style={{
                       background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
                       borderRadius: 5, color: "rgba(255,255,255,0.55)", cursor: "pointer",
-                      fontSize: 11, fontWeight: 500, padding: "4px 10px", whiteSpace: "nowrap" as const,
-                    }}
+                      fontSize: 11, fontWeight: 500, padding: "4px 10px", whiteSpace: "nowrap" as const}}
                   >
                     Voir
                   </button>
@@ -959,8 +919,7 @@ export default function EmailCenterPage() {
                     border: "1px solid rgba(255,255,255,0.08)",
                     borderRadius: 10, padding: "18px 20px",
                     display: "flex", flexDirection: "column", gap: 12,
-                    transition: "border-color 0.15s",
-                  }}
+                    transition: "border-color 0.15s"}}
                 >
                   {/* Header */}
                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -983,8 +942,7 @@ export default function EmailCenterPage() {
                     <span style={{
                       fontSize: 11, color: "rgba(255,255,255,0.55)",
                       background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)",
-                      borderRadius: 4, padding: "2px 8px",
-                    }}>
+                      borderRadius: 4, padding: "2px 8px"}}>
                       {entry.trigger}
                     </span>
                   </div>
@@ -1001,8 +959,7 @@ export default function EmailCenterPage() {
                             padding: "2px 6px", borderRadius: 3,
                             background: v.sensitive ? "rgba(251,191,36,0.06)" : "rgba(255,255,255,0.04)",
                             color:      v.sensitive ? "#fbbf24"                : "rgba(255,255,255,0.4)",
-                            border: `1px solid ${v.sensitive ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.07)"}`,
-                          }}
+                            border: `1px solid ${v.sensitive ? "rgba(251,191,36,0.15)" : "rgba(255,255,255,0.07)"}`}}
                         >
                           {"{{"}{v.name}{"}}"}
                         </span>
@@ -1052,8 +1009,7 @@ export default function EmailCenterPage() {
                       fontSize: 11, padding: "6px 10px", borderRadius: 5,
                       background: msg.ok ? "rgba(34,197,94,0.07)"  : "rgba(239,68,68,0.07)",
                       border: `1px solid ${msg.ok ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`,
-                      color: msg.ok ? "#4ade80" : "#f87171",
-                    }}>
+                      color: msg.ok ? "#4ade80" : "#f87171"}}>
                       {msg.text}
                     </div>
                   )}
@@ -1074,8 +1030,7 @@ export default function EmailCenterPage() {
                         border: "1px solid rgba(255,255,255,0.1)",
                         color: "rgba(255,255,255,0.7)",
                         opacity: isPreviewLoading ? 0.6 : 1,
-                        transition: "opacity 0.15s",
-                      }}
+                        transition: "opacity 0.15s"}}
                     >
                       {isPreviewLoading ? "Chargement…" : "Prévisualiser"}
                     </button>
@@ -1096,8 +1051,7 @@ export default function EmailCenterPage() {
                             border: "1px solid rgba(201,150,63,0.35)",
                             color: "rgba(201,150,63,0.85)",
                             opacity: isTestLoading ? 0.6 : 1,
-                            transition: "opacity 0.15s",
-                          }}
+                            transition: "opacity 0.15s"}}
                         >
                           Confirmer
                         </button>
@@ -1109,8 +1063,7 @@ export default function EmailCenterPage() {
                             padding: "8px 10px", borderRadius: 7, cursor: "pointer",
                             background: "transparent",
                             border: "1px solid rgba(255,255,255,0.1)",
-                            color: "rgba(255,255,255,0.4)",
-                          }}
+                            color: "rgba(255,255,255,0.4)"}}
                         >
                           Annuler
                         </button>
@@ -1129,8 +1082,7 @@ export default function EmailCenterPage() {
                           border: "1px solid rgba(201,150,63,0.2)",
                           color: "rgba(201,150,63,0.85)",
                           opacity: isTestLoading ? 0.6 : 1,
-                          transition: "opacity 0.15s",
-                        }}
+                          transition: "opacity 0.15s"}}
                       >
                         {isTestLoading ? "Envoi…" : "Envoyer un test"}
                       </button>

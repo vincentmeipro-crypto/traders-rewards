@@ -13,7 +13,7 @@ let writeError: unknown;
 const upsert=jest.fn(async(payload:{value:unknown})=>{if(!writeError)saved=payload.value;return {error:writeError};});
 beforeEach(()=>{
  saved=null;readError=null;writeError=null;jest.clearAllMocks();
- jest.mocked(checkAdmin).mockResolvedValue({ok:true,userId:"test-admin"});
+ jest.mocked(checkAdmin).mockResolvedValue({ok:true,userId:"test-admin",email:"admin@test"});
  jest.mocked(createAdminClient).mockReturnValue({from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:saved===null?null:{value:saved},error:readError})})}),upsert})} as unknown as ReturnType<typeof createAdminClient>);
 });
 const request=(value:unknown)=>new NextRequest("http://localhost/api/admin/promotion-calendar",{method:"PUT",body:JSON.stringify(value)});
@@ -35,7 +35,7 @@ test("refuse les écritures invalides sans toucher au stockage",async()=>{
  expect(upsert).not.toHaveBeenCalled();
 });
 test("API protégée en lecture et écriture",async()=>{
- jest.mocked(checkAdmin).mockResolvedValue({ok:false,userId:null});
+ jest.mocked(checkAdmin).mockResolvedValue({ok:false,userId:null,email:null});
  expect((await GET(new NextRequest("http://localhost"))).status).toBe(401);
  expect((await PUT(request({rows}))).status).toBe(401);
  expect(createAdminClient).not.toHaveBeenCalled();
