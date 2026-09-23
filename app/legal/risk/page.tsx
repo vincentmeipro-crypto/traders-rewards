@@ -35,8 +35,8 @@ export default function RiskPage() {
             content: `The challenge fee you pay to participate is the only real financial risk involved in using our platform. There is a risk that you will not pass the challenge and the fee will not be refunded (except where explicitly stated in our fee refund policy). Only participate with money you can afford to lose.`
           },
           {
-            title: "5. No Guarantee of Funded Account",
-            content: `Purchasing a challenge does not guarantee that you will receive a certified account. A certified account is only granted upon successful completion of all challenge objectives and compliance with all trading rules.`
+            title: "5. No Guarantee of a Trader Reward Account",
+            content: `Purchasing a challenge does not guarantee that you will receive a trader reward account. A trader reward account is only granted upon successful completion of all challenge objectives and compliance with all trading rules.`
           },
           {
             title: "6. Market Risk",

@@ -289,7 +289,7 @@ export default function Hero3DTestPage() {
           <h1 style={STYLES.headline}>
             Prouvez votre talent.
             <br />
-            <span style={STYLES.headlineAccent}>Devenez Certifié.</span>
+            <span style={STYLES.headlineAccent}>Compte trader reward.</span>
           </h1>
 
           <p style={STYLES.subline}>

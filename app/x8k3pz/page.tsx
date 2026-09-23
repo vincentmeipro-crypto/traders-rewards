@@ -126,7 +126,7 @@ type MT5Session = {
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  funded:   "Certifié",
+  funded:   "compte trader reward",
   active:   "Actif",
   failed:   "Échoué",
   passed:   "Validé",
@@ -3764,7 +3764,7 @@ function AdminPageInner() {
                               <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{b.size}</span>
                               <div style={{ display: "flex", gap: 8, fontSize: 11 }}>
                                 <span style={{ color: "#22c55e" }}>{b.active} act.</span>
-                                <span style={{ color: "#C9963F" }}>{b.certified} cert.</span>
+                                <span style={{ color: "#C9963F" }}>{b.certified} trader reward</span>
                                 <span style={{ color: "#ef4444" }}>{b.failed} éch.</span>
                               </div>
                             </div>

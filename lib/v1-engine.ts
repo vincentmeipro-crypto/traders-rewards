@@ -47,7 +47,7 @@
  *   - Max 5 Rewards — pas de Reward #6
  *
  *  Frais d'activation (activation_fee_eur) :
- *   - 25K = 99 EUR / 50K = 99 EUR / 100K = 149 EUR
+ *   - 25K = 99 EUR / 50K = 99 EUR / 100K = 99 EUR
  *
  * DISTINCTION EOD vs INTRADAY :
  *   - Le floor PROGRESSE uniquement à l'EOD (rollover broker à 22h00 UTC)
@@ -154,7 +154,7 @@ export const V1_REWARD_CAPS: Record<number, Record<number, number>> = Object.fro
 export const V1_ACTIVATION_FEE_EUR: Record<number, number> = {
   25000:   99,
   50000:   99,
-  100000: 149,
+  100000: 99,
 };
 
 /**

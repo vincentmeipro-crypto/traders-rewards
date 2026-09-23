@@ -219,10 +219,10 @@ async function main() {
     }
   }
 
-  // ── I. Activation fees 99/99/149 EUR ──────────────────────
+  // ── I. Activation fees 99/99/99 EUR ───────────────────────
   section("I. Activation fees (activation_fee_eur)");
   {
-    const expected: Record<string, number> = { "rewards-25k": 99, "rewards-50k": 99, "rewards-100k": 149 };
+    const expected: Record<string, number> = { "rewards-25k": 99, "rewards-50k": 99, "rewards-100k": 99 };
     for (const [slug, expectedFee] of Object.entries(expected)) {
       const { data: rule } = await admin
         .from("challenge_product_rules")

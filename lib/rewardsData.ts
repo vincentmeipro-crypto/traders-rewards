@@ -8,7 +8,7 @@
 export const ACCOUNT_SIZES = [
   { label: "25K",  usdBal: 25_000,  slug: "rewards-25k",  challengeEur: 19, refEur: 190, activEur: 99  },
   { label: "50K",  usdBal: 50_000,  slug: "rewards-50k",  challengeEur: 29, refEur: 290, activEur: 99  },
-  { label: "100K", usdBal: 100_000, slug: "rewards-100k", challengeEur: 59, refEur: 590, activEur: 149 },
+  { label: "100K", usdBal: 100_000, slug: "rewards-100k", challengeEur: 59, refEur: 590, activEur: 99 },
 ] as const;
 
 // Niveaux de Rewards (1 → 5)

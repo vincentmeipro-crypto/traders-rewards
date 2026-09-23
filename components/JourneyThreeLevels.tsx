@@ -23,7 +23,7 @@ const VIOLET  = "#B8A8D8";
 const fmt = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
 
 // ── Données contractuelles (importées de lib/rewardsData) ─────
-const ACTIV_FEE: Record<number, number> = { 25000: 99, 50000: 99, 100000: 149 };
+const ACTIV_FEE: Record<number, number> = { 25000: 99, 50000: 99, 100000: 99 };
 
 // Plancher fixe après première Reward = capital nominal
 const FIXED_FLOOR: Record<string, string> = { "25K": "$25,000", "50K": "$50,000", "100K": "$100,000" };

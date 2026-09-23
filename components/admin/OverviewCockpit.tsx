@@ -171,7 +171,7 @@ export default function OverviewCockpit() {
           <div style={{ background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "20px 22px", cursor: "pointer", height: "100%", boxSizing: "border-box" as const }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase" as const, letterSpacing: 1.5, marginBottom: 10 }}>Traders</div>
             <div style={{ fontSize: 28, fontWeight: 900, color: "#fff", marginBottom: 6, fontVariantNumeric: "tabular-nums" as const }}>{kpis.traders}</div>
-            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{kpis.certified} certifié{kpis.certified !== 1 ? "s" : ""} · {kpis.passed} en attente</div>
+            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>{kpis.certified} compte{kpis.certified !== 1 ? "s" : ""} trader reward · {kpis.passed} en attente</div>
           </div>
         </Link>
 

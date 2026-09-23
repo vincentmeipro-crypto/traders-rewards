@@ -49,7 +49,7 @@ const faqData = {
     // 07
     {
       q: "Comment activer le Trader Reward ?",
-      a: "Une fois votre Challenge validé, vous devez régler des frais d'activation uniques : 99 € pour les comptes 25K et 50K, et 149 € pour le compte 100K. Ces frais activent votre Trader Reward et ne sont facturés qu'une seule fois.",
+      a: "Une fois votre Challenge validé, vous devez régler des frais d'activation uniques de 99 €, pour toutes les tailles : 25K, 50K et 100K. Ces frais activent votre compte trader reward et ne sont facturés qu'une seule fois.",
     },
     // 08
     {
@@ -123,7 +123,7 @@ const faqData = {
     // 07
     {
       q: "How do I activate the Trader Reward?",
-      a: "Once your Challenge is validated, you pay a one-time activation fee: €99 for 25K and 50K accounts, and €149 for the 100K account. This fee activates your Trader Reward and is charged only once.",
+      a: "Once your Challenge is validated, you pay a one-time activation fee of €99 for every account size: 25K, 50K and 100K. This fee activates your trader reward account and is charged only once.",
     },
     // 08
     {
@@ -202,7 +202,7 @@ const faqData = {
     // 07
     {
       q: "¿Cómo se activa el Trader Reward?",
-      a: "Una vez validado tu Challenge, debes abonar una cuota de activación única: 99 € para las cuentas 25K y 50K, y 149 € para la cuenta 100K. Esta cuota activa tu Trader Reward y solo se cobra una vez.",
+      a: "Una vez validado tu Challenge, debes abonar una cuota de activación única de 99 € para todos los tamaños: 25K, 50K y 100K. Esta cuota activa tu cuenta trader reward y solo se cobra una vez.",
     },
     // 08
     {
@@ -254,7 +254,7 @@ const faqData = {
     { q: "Existe um limite de perda diária?", a: "Não. Traders Rewards não aplica um Daily Drawdown separado. O único limite de perda é o Trailing Drawdown EOD: 4 % nas contas 25K e 50K, e 3 % na conta 100K." },
     { q: "Quais são todas as regras do Challenge?", a: "Objetivo: +9 % (2 250 $ no 25K / 4 500 $ no 50K / 9 000 $ no 100K). Sem mínimo de dias, sem regra de consistência. Trailing Drawdown EOD fixo: 1 000 $ (25K), 2 000 $ (50K), 3 000 $ (100K). Máximo 30 dias calendário." },
     { q: "O que é a Trader Reward?", a: "A Trader Reward é a conta a longo prazo, acessível após validar o Challenge e pagar a taxa de ativação. Para desbloquear cada Reward, deve realizar 5 dias qualificados respeitando a regra de consistência de 50 % (melhor dia < 50 % do lucro total). Cada Reward inicia um novo ciclo: os 5 dias utilizados não transitam para o seguinte. O levantamento mínimo é de $100. Tempo ilimitado." },
-    { q: "Como ativar a Trader Reward?", a: "Taxa de ativação única: 99 € para as contas 25K e 50K, 149 € para a conta 100K. Esta taxa ativa a Trader Reward e é cobrada apenas uma vez." },
+    { q: "Como ativar a Trader Reward?", a: "Taxa de ativação única de 99 € para todos os tamanhos: 25K, 50K e 100K. Esta taxa ativa a conta trader reward e é cobrada apenas uma vez." },
     { q: "O que é um dia qualificado?", a: "Um dia qualificado é um dia de trading fechado com um lucro líquido mínimo: 100 $ na conta 25K, 250 $ na conta 50K e 300 $ na conta 100K. São necessários pelo menos 5 dias qualificados para cumprir as condições da Trader Reward. Estes valores são apenas o mínimo de lucro diário exigido — não o valor das Rewards." },
     { q: "Como são calculados e pagos os Rewards?", a: "O valor da Reward depende do lucro disponível na Trader Reward, dentro do limite máximo correspondente ao nível e tamanho de conta. Estes limites aumentam progressivamente do Reward #1 ao Reward #5. Após validação do pedido, o valor aprovado é pago e o percurso continua para o nível seguinte." },
     { q: "Existe um limite no número de Rewards?", a: "Sim. O percurso Traders Rewards inclui 5 Rewards sucessivas, com limites que aumentam a cada nível.\n\nConta 25K :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\nConta 50K :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\nConta 100K :\nReward #1 : 1.000 $\nReward #2 : 1.400 $\nReward #3 : 1.800 $\nReward #4 : 2.000 $\nReward #5 : 3.000 $\n\nO Reward #5 é o nível final e concede o estatuto Trader Reward." },
@@ -273,7 +273,7 @@ const faqData = {
     { q: "Gibt es ein tägliches Verlustlimit?", a: "Nein. Traders Rewards wendet keinen separaten Daily Drawdown an. Ihr einziges Verlustlimit ist der Trailing Drawdown EOD: 4 % für 25K- und 50K-Konten, 3 % für das 100K-Konto." },
     { q: "Was sind alle Challenge-Regeln?", a: "Gewinnziel: +9 % (2 250 $ beim 25K / 4 500 $ beim 50K / 9 000 $ beim 100K). Kein Mindesttagehandel, keine Konsistenzregel. Einziges Risikolimit: fixer Trailing Drawdown EOD (1 000 $ / 2 000 $ / 3 000 $). Maximum 30 Kalendertage." },
     { q: "Was ist das Trader Reward?", a: "Das Trader Reward ist Ihr Langzeitkonto nach bestandener Challenge. Um jede Reward freizuschalten, müssen Sie 5 qualifizierende Tage absolvieren und die 50 %-Konsistenzregel einhalten (bester Tag < 50 % des Gesamtgewinns). Jede Reward startet einen neuen Zyklus: die 5 verwendeten Tage werden nicht übertragen. Mindestentnahme: $100. Unbegrenzte Zeit." },
-    { q: "Wie aktiviere ich das Trader Reward?", a: "Einmalige Aktivierungsgebühr: 99 € für 25K- und 50K-Konten, 149 € für das 100K-Konto. Diese Gebühr wird nur einmal berechnet." },
+    { q: "Wie aktiviere ich das Trader Reward?", a: "Einmalige Aktivierungsgebühr von 99 € für alle Kontogrößen: 25K, 50K und 100K. Diese Gebühr aktiviert das Konto trader reward und wird nur einmal berechnet." },
     { q: "Was ist ein qualifizierender Tag?", a: "Ein qualifizierender Tag ist ein Handelstag mit einem Mindest-Nettogewinn: 100 $ (25K), 250 $ (50K), 300 $ (100K). Sie benötigen mindestens 5 qualifizierende Tage. Diese Beträge sind nur der Mindesttagesgewinn — nicht der Reward-Betrag." },
     { q: "Wie werden Rewards berechnet und ausgezahlt?", a: "Der Reward-Betrag hängt vom verfügbaren Gewinn im Trader Reward ab, begrenzt durch den Cap Ihres Kontoniveaus. Diese Caps steigen progressiv von Reward #1 bis Reward #5. Nach Validierung wird der Betrag ausgezahlt und Sie setzen die Journey zur nächsten Stufe fort." },
     { q: "Gibt es eine Begrenzung der Rewards?", a: "Ja. Die Traders Rewards Journey umfasst 5 aufeinanderfolgende Rewards, mit steigenden Caps je Stufe.\n\n25K-Konto :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\n50K-Konto :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\n100K-Konto :\nReward #1 : 1.000 $\nReward #2 : 1.400 $\nReward #3 : 1.800 $\nReward #4 : 2.000 $\nReward #5 : 3.000 $\n\nReward #5 ist die finale Stufe und verleiht den Trader Reward Status." },
@@ -292,7 +292,7 @@ const faqData = {
     { q: "Günlük kayıp limiti var mı?", a: "Hayır. Traders Rewards ayrı bir Daily Drawdown uygulamaz. Tek kayıp limitiniz Trailing Drawdown EOD'dur: 25K ve 50K hesaplar için %4, 100K için %3." },
     { q: "Challenge'ın tüm kuralları nelerdir?", a: "Hedef: +9 % (25K: 2 250 $ / 50K: 4 500 $ / 100K: 9 000 $). Minimum işlem günü yok, tutarlılık kuralı yok. Tek risk limiti: sabit Trailing Drawdown EOD (1 000 $ / 2 000 $ / 3 000 $). Maksimum 30 takvim günü." },
     { q: "Trader Reward nedir?", a: "Trader Reward, Challenge'ı geçtikten ve aktivasyon ücretini ödedikten sonra erişilen uzun vadeli hesaptır. Her Reward'ı açmak için %50 tutarlılık kuralına uyarak (en iyi gün < toplam kârın %50'si) 5 nitelikli gün tamamlamanız gerekir. Her Reward yeni bir döngü başlatır: kullanılan 5 gün bir sonrakine aktarılmaz. Minimum çekim: 100 $. Süre sınırsızdır." },
-    { q: "Trader Reward nasıl aktive edilir?", a: "Challenge başarıyla tamamlandıktan sonra tek seferlik aktivasyon ücreti ödenir: 25K ve 50K hesaplar için 99 €, 100K hesap için 149 €. Bu ücret yalnızca bir kez alınır." },
+    { q: "Trader Reward nasıl aktive edilir?", a: "Challenge başarıyla tamamlandıktan sonra tüm boyutlar için tek seferlik 99 € aktivasyon ücreti ödenir: 25K, 50K ve 100K. Bu ücret trader reward hesabını açar ve yalnızca bir kez alınır." },
     { q: "Nitelikli gün nedir?", a: "Nitelikli gün, hesap büyüklüğüne göre minimum net kâr eşiğini aşan bir işlem günüdür: 25K için 100 $, 50K için 250 $, 100K için 300 $. Trader Reward koşullarını karşılamak için en az 5 nitelikli gün gereklidir. Bu tutarlar yalnızca günlük minimum kâr eşiğidir — Reward miktarı değildir." },
     { q: "Rewards nasıl hesaplanır ve ödenir?", a: "Reward miktarı, Trader Reward'taki mevcut kâra bağlıdır; hesap büyüklüğüne ve seviyeye göre belirlenen tavan ile sınırlıdır. Bu tavanlar Reward #1'den Reward #5'e kadar artar. Onaylandıktan sonra tutar ödenir ve bir sonraki seviyeye devam edilir." },
     { q: "Rewards sayısında sınır var mı?", a: "Evet. Traders Rewards yolculuğu, her seviyede artan tavanlarla 5 ardışık Reward içerir.\n\n25K hesap :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\n50K hesap :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\n100K hesap :\nReward #1 : 1.000 $\nReward #2 : 1.400 $\nReward #3 : 1.800 $\nReward #4 : 2.000 $\nReward #5 : 3.000 $\n\nReward #5 son seviyedir ve Trader Reward statüsünü verir." },
@@ -311,7 +311,7 @@ const faqData = {
     { q: "هل يوجد حدّ للخسارة اليومية؟", a: "لا. Traders Rewards لا يطبق Daily Drawdown منفصلاً. حدّ الخسارة الوحيد هو Trailing Drawdown EOD: 4 % لحسابات 25K و50K، و3 % لحساب 100K." },
     { q: "ما هي جميع قواعد Challenge؟", a: "الهدف: +9 % (25K: 2 250 $ / 50K: 4 500 $ / 100K: 9 000 $). لا حد أدنى لأيام التداول ولا قاعدة اتساق. حد الخسارة الوحيد: Trailing Drawdown EOD ثابت (1 000 $ / 2 000 $ / 3 000 $). حد أقصى 30 يوماً تقويمياً." },
     { q: "ما هو Trader Reward؟", a: "Trader Reward هو حسابك طويل الأمد، متاح بعد إتمام Challenge ودفع رسوم التفعيل. لفتح كل Reward، يجب إتمام 5 أيام مؤهلة مع احترام قاعدة الاتساق 50 % (أفضل يوم < 50 % من إجمالي الربح). كل Reward تبدأ دورة جديدة: الأيام المستخدمة لا تنتقل للمستوى التالي. الحد الأدنى للسحب: 100 $. الوقت غير محدود." },
-    { q: "كيف يتم تفعيل Trader Reward؟", a: "رسوم تفعيل لمرة واحدة: 99 € لحسابات 25K و50K، و149 € لحساب 100K. تُحصّل هذه الرسوم مرة واحدة فقط." },
+    { q: "كيف يتم تفعيل Trader Reward؟", a: "رسوم تفعيل لمرة واحدة قدرها 99 € لكل الأحجام: 25K و50K و100K. تفعّل هذه الرسوم حساب trader reward وتُحصّل مرة واحدة فقط." },
     { q: "ما هو اليوم المؤهل؟", a: "اليوم المؤهل هو يوم تداول تحقق فيه ربحاً صافياً لا يقل عن: 100 $ (25K)، 250 $ (50K)، 300 $ (100K). تحتاج 5 أيام مؤهلة على الأقل. هذه المبالغ هي الحد الأدنى للربح اليومي، وليست قيمة Rewards." },
     { q: "كيف تُحسب وتُدفع Rewards؟", a: "يعتمد مبلغ Reward على الربح المتاح في Trader Reward، بحدود أقصى تزداد تدريجياً من Reward #1 إلى Reward #5. بعد التحقق من الطلب يُصرف المبلغ، ثم تستمر في المستوى التالي." },
     { q: "هل هناك حدٌّ لعدد Rewards؟", a: "نعم. يتضمن مسار Traders Rewards 5 Rewards متتالية، بحدود قصوى تزداد في كل مستوى.\n\nحساب 25K :\nReward #1 : 300 $\nReward #2 : 400 $\nReward #3 : 500 $\nReward #4 : 600 $\nReward #5 : 750 $\n\nحساب 50K :\nReward #1 : 500 $\nReward #2 : 650 $\nReward #3 : 800 $\nReward #4 : 1.000 $\nReward #5 : 1.250 $\n\nحساب 100K :\nReward #1 : 1.000 $\nReward #2 : 1.400 $\nReward #3 : 1.800 $\nReward #4 : 2.000 $\nReward #5 : 3.000 $\n\nReward #5 هو المستوى النهائي ويمنح وضع Trader Reward." },

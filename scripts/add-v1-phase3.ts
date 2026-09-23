@@ -74,7 +74,7 @@ const QUALIFYING_MIN_USD: Record<V1Slug, number> = {
 const ACTIVATION_FEE_EUR: Record<V1Slug, number> = {
   "rewards-25k":   99,
   "rewards-50k":   99,
-  "rewards-100k": 149,
+  "rewards-100k": 99,
 };
 
 const REWARD_CAPS: Record<V1Slug, Record<string, number>> = {

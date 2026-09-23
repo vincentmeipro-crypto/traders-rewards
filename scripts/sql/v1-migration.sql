@@ -314,8 +314,8 @@ VALUES
 ),
 (
   (SELECT id FROM challenge_products WHERE slug = 'rewards-100k'),
-  'activation_fee_eur', '149', true,
-  'Frais activation Reward Account — 100K : 149 EUR.'
+  'activation_fee_eur', '99', true,
+  'Frais activation Reward Account — 100K : 99 EUR.'
 );
 
 

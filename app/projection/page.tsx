@@ -316,7 +316,7 @@ export default function ProjectionPage() {
           <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1B4FD8" }}>
             5 000 € → 52 890 € de dividendes sur 3 ans (ROI 1 058 %)&nbsp;&nbsp;|&nbsp;&nbsp;10 000 € → 105 780 € sur 3 ans (ROI 1 058 %)
           </p>
-          <p style={{ margin: "6px 0 0 0", fontSize: 11, color: "#6b7a99" }}>Hypothèse : 20% des traders certifiés effectuent un retrait à 3% de profit — marge nette plateau : 69,1%</p>
+          <p style={{ margin: "6px 0 0 0", fontSize: 11, color: "#6b7a99" }}>Hypothèse : 20% des comptes trader reward effectuent un retrait à 3% de profit — marge nette plateau : 69,1%</p>
         </div>
         <p style={{ textAlign: "center", fontSize: 11, color: "#9aa5be", fontStyle: "italic", marginTop: 8 }}>Document confidentiel — Usage exclusif réservé au destinataire</p>
 
