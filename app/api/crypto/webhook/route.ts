@@ -1,9 +1,11 @@
 import { getChallengeProfitTargetPct } from "@/lib/program-rules";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendWelcomeEmail } from "@/lib/mailer";
-import { getChallengeDefaults } from "@/lib/config";
+import { sendWelcomeEmail, sendPurchaseConfirmationEmail } from "@/lib/mailer";
+import { getChallengeDefaults, getStringConfig, getBrandingConfig } from "@/lib/config";
+import { createInvoiceAtomic } from "@/lib/invoice-creation-atomic";
+import { getSellerSnapshot } from "@/lib/invoice-config";
 import {
   loadProductFull,
   buildRulesSnapshot,
@@ -281,87 +283,186 @@ export async function POST(req: NextRequest) {
     const challengeIds = (inserted ?? []).map(row => row.id as string);
     const challengeId = challengeIds[0];
 
-    // Attacher le challenge à l'usage promo (best-effort, non bloquant)
-    if (promoUsageId && challengeId) {
-      try {
-        await admin.from("promo_code_usages")
-          .update({ challenge_id: challengeId })
-          .eq("id", promoUsageId);
-      } catch (e) {
-        console.error("[crypto/webhook] usage challenge_id update error:", e);
-      }
-    }
+    // ── Créer facture (invoice) ATOMIQUEMENT ──────────────────────
+    // Snapshot immuable des données de paiement
+    // Utilise PostgreSQL pg_advisory_xact_lock pour garantir atomicité:
+    // - 2 webhooks du même paiement → 1 facture, 1 numéro consommé
+    let invoiceCreated = false;
+    let invoiceNumber: string | null = null;
+    let userEmail: string = "";
+    try {
+      const { data: { users } } = await admin.auth.admin.listUsers();
+      const user = users.find(u => u.id === userId);
+      userEmail = user?.email || "";
+      const { data: profile } = await admin.from("profiles")
+        .select("first_name, last_name")
+        .eq("user_id", userId)
+        .single();
+      const invoiceFirstName = user?.user_metadata?.first_name || profile?.first_name || "";
+      const invoiceLastName  = user?.user_metadata?.last_name  || profile?.last_name  || "";
 
-    // ── Affiliation ───────────────────────────────────────────────────
-    if (refCode) {
-      try {
-        const { data: affiliate } = await admin.from("affiliates")
-          .select("user_id, commission_rate, total_earned")
-          .eq("code", refCode)
-          .single();
-        if (affiliate && affiliate.user_id !== userId) {
-          const rate       = (affiliate.commission_rate || 10) / 100;
-          const commission = Math.round(amountPaid * rate * 100) / 100;
-          await admin.from("affiliate_referrals").insert({
-            affiliate_user_id: affiliate.user_id,
-            referred_user_id:  userId,
-            purchase_amount:   amountPaid,
-            commission_amount: commission,
-            status:            "pending",
-          });
-          await admin.from("affiliates")
-            .update({ total_earned: (affiliate.total_earned || 0) + commission })
-            .eq("user_id", affiliate.user_id);
-        }
-      } catch (e) { console.error("[crypto/webhook] Affiliate error:", e); }
-    }
+      const paymentRefForInvoice = nowpaymentsId || `temp_${Date.now()}`;
+      const seller = getSellerSnapshot();
 
-    // ── User info pour MT5 ────────────────────────────────────────────
-    const { data: { users } } = await admin.auth.admin.listUsers();
-    const user = users.find(u => u.id === userId);
-    const userEmail = user?.email || "";
-    const { data: profile } = await admin.from("profiles")
-      .select("first_name, last_name")
-      .eq("user_id", userId)
-      .single();
-    const firstName = user?.user_metadata?.first_name || profile?.first_name || "Trader";
-    const lastName  = user?.user_metadata?.last_name  || profile?.last_name  || "";
-
-    // ── Provision MT5 ─────────────────────────────────────────────────
-    for (const currentChallengeId of challengeIds) try {
-      const mt5Res = await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
-        method: "POST",
-        headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          challenge_id: currentChallengeId,
-          first_name:   firstName,
-          last_name:    lastName,
-          email:        userEmail,
-          model:        challengeModel,
-          balance:      challengeBalance,
-        }),
+      const invoiceResult = await createInvoiceAtomic({
+        user_id: userId,
+        challenge_id: challengeId,
+        payment_provider: "crypto",
+        payment_reference: paymentRefForInvoice,
+        customer_email: userEmail,
+        customer_name: invoiceFirstName && invoiceLastName ? `${invoiceFirstName} ${invoiceLastName}` : invoiceFirstName || invoiceLastName || null,
+        customer_address: null,
+        customer_city: null,
+        customer_postal_code: null,
+        customer_country: null,
+        customer_company: null,
+        customer_vat_number: null,
+        product_name: `Challenge ${challengeAccountSize}`,
+        account_size: challengeAccountSize,
+        product_description: null,
+        quantity,
+        promo_code_used: promoCode || null,
+        affiliate_code: refCode || null,
+        currency: "EUR",
+        subtotal_cents: Math.round(amountPaidPerChallenge * 100),
+        amount_paid_cents: Math.round(amountPaidPerChallenge * 100),
+        seller_legal_name: seller.legal_name,
+        seller_registration_number: seller.registration_number,
+        seller_address: seller.address,
+        seller_country: seller.country,
+        seller_email: seller.email,
+        seller_vat_number: seller.vat_number,
+        language,
       });
-      if (mt5Res.ok) {
-        const mt5Data = await mt5Res.json();
-        if (mt5Data.ok && mt5Data.login) {
-          await admin.from("challenges").update({
-            mt5_login:             mt5Data.login,
-            mt5_password:          mt5Data.password,
-            mt5_password_investor: mt5Data.password_investor,
-            mt5_server:            mt5Data.server,
-          }).eq("id", currentChallengeId);
-          if (userEmail) {
-            try {
-              await sendWelcomeEmail(userEmail, challengeAccountSize, challengeModel, {
-                login:    mt5Data.login,
-                password: mt5Data.password,
-                server:   mt5Data.server,
-              }, undefined, { userId: userId as string, challengeId: currentChallengeId });
-            } catch (e) { console.error("[crypto/webhook] Welcome email failed:", e); }
+
+      if (invoiceResult.success && invoiceResult.invoice) {
+        invoiceCreated = invoiceResult.invoice.created;
+        invoiceNumber = invoiceResult.invoice.invoice_number;
+      } else {
+        console.error("[crypto/webhook] invoice creation failed:", invoiceResult.error);
+      }
+    } catch (invoiceErr) {
+      console.error("[crypto/webhook] invoice creation exception:", invoiceErr);
+    }
+
+    // ── Répondre à NOWPayments immédiatement — MT5 + email + affiliation en arrière-plan ──
+    after(async () => {
+      // Attacher le challenge à l'usage promo (best-effort, non bloquant)
+      if (promoUsageId && challengeId) {
+        try {
+          await admin.from("promo_code_usages")
+            .update({ challenge_id: challengeId })
+            .eq("id", promoUsageId);
+        } catch (e) {
+          console.error("[crypto/webhook] usage challenge_id update error:", e);
+        }
+      }
+
+      // ── Affiliation ───────────────────────────────────────────────────
+      if (refCode) {
+        try {
+          const { data: affiliate } = await admin.from("affiliates")
+            .select("user_id, commission_rate, total_earned")
+            .eq("code", refCode)
+            .single();
+          if (affiliate && affiliate.user_id !== userId) {
+            const rate       = (affiliate.commission_rate || 10) / 100;
+            const commission = Math.round(amountPaid * rate * 100) / 100;
+            await admin.from("affiliate_referrals").insert({
+              affiliate_user_id: affiliate.user_id,
+              referred_user_id:  userId,
+              purchase_amount:   amountPaid,
+              commission_amount: commission,
+              status:            "pending",
+            });
+            await admin.from("affiliates")
+              .update({ total_earned: (affiliate.total_earned || 0) + commission })
+              .eq("user_id", affiliate.user_id);
+          }
+        } catch (e) { console.error("[crypto/webhook] Affiliate error:", e); }
+      }
+
+      // ── User info pour MT5 ────────────────────────────────────────────
+      const { data: { users } } = await admin.auth.admin.listUsers();
+      const user = users.find(u => u.id === userId);
+      const userEmail = user?.email || "";
+      const { data: profile } = await admin.from("profiles")
+        .select("first_name, last_name")
+        .eq("user_id", userId)
+        .single();
+      const firstName2 = user?.user_metadata?.first_name || profile?.first_name || "Trader";
+      const lastName2  = user?.user_metadata?.last_name  || profile?.last_name  || "";
+
+      // ── Provision MT5 ─────────────────────────────────────────────────
+      for (const currentChallengeId of challengeIds) try {
+        const mt5Res = await fetch(`${process.env.MT5_API_URL}/provision-challenge`, {
+          method: "POST",
+          headers: { "x-api-key": process.env.MT5_API_SECRET!, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            challenge_id: currentChallengeId,
+            first_name:   firstName2,
+            last_name:    lastName2,
+            email:        userEmail,
+            model:        challengeModel,
+            balance:      challengeBalance,
+          }),
+        });
+        if (mt5Res.ok) {
+          const mt5Data = await mt5Res.json();
+          if (mt5Data.ok && mt5Data.login) {
+            await admin.from("challenges").update({
+              mt5_login:             mt5Data.login,
+              mt5_password:          mt5Data.password,
+              mt5_password_investor: mt5Data.password_investor,
+              mt5_server:            mt5Data.server,
+            }).eq("id", currentChallengeId);
+            if (userEmail) {
+              try {
+                await sendWelcomeEmail(userEmail, challengeAccountSize, challengeModel, {
+                  login:    mt5Data.login,
+                  password: mt5Data.password,
+                  server:   mt5Data.server,
+                }, undefined, { userId: userId as string, challengeId: currentChallengeId });
+              } catch (e) { console.error("[crypto/webhook] Welcome email failed:", e); }
+            }
           }
         }
+      } catch (e) { console.error("[crypto/webhook] MT5 provision error:", e); }
+
+      // ── Email confirmation d'achat ─────────────────────────────────
+      // ATOMIQUE: event_key + ON CONFLICT DO NOTHING garantit un seul envoi
+      // Même si invoiceCreated=false (facture existait déjà), on envoie l'email
+      // La DB s'occupe de garantir zéro doublon via ON CONFLICT.
+      if (userEmail && invoiceNumber) {
+        try {
+          const siteUrl = await getStringConfig("branding.site_url");
+          const amountPaidFormatted = amountPaidPerChallenge.toLocaleString(
+            language === "fr" ? "fr-FR" : language === "es" ? "es-ES" : "en-GB",
+            { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+          );
+
+          await sendPurchaseConfirmationEmail(
+            userEmail,
+            {
+              firstName: firstName2 || undefined,
+              email: userEmail,
+              challengeAccountSize,
+              invoiceNumber,
+              amountPaid: `${amountPaidFormatted} EUR`,
+              paymentReference: nowpaymentsId || "NOWPayments",
+              invoiceUrl: `${siteUrl}/invoices/${invoiceNumber}`,
+              siteUrl,
+              logoUrl: (await getBrandingConfig()).logoUrl,
+              language,
+            },
+            {
+              userId,
+              eventKey: `purchase_confirmation:crypto:${nowpaymentsId}`,
+            }
+          );
+        } catch (e) { console.error("[crypto/webhook] Purchase confirmation email error:", e); }
       }
-    } catch (e) { console.error("[crypto/webhook] MT5 provision error:", e); }
+    });
 
     return NextResponse.json({ received: true });
   } catch (err) {

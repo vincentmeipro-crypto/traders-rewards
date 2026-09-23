@@ -2,8 +2,8 @@ import { getChallengeProfitTargetPct } from "@/lib/program-rules";
 import { NextRequest, NextResponse, after } from "next/server";
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendWelcomeEmail } from "@/lib/mailer";
-import { getChallengeDefaults } from "@/lib/config";
+import { sendWelcomeEmail, sendPurchaseConfirmationEmail } from "@/lib/mailer";
+import { getChallengeDefaults, getStringConfig, getBrandingConfig } from "@/lib/config";
 import {
   loadProductFull,
   buildRulesSnapshot,
@@ -12,6 +12,8 @@ import {
 } from "@/lib/product-engine";
 import { consumePromoCode } from "@/lib/promo";
 import { TERMS_VERSION } from "@/lib/terms-config";
+import { createInvoiceAtomic } from "@/lib/invoice-creation-atomic";
+import { getSellerSnapshot } from "@/lib/invoice-config";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -219,6 +221,55 @@ export async function POST(req: NextRequest) {
     const challengeIds = (inserted ?? []).map(row => row.id as string);
     const challengeId = challengeIds[0];
 
+    // ── Créer facture (invoice) ATOMIQUEMENT ──────────────────────
+    // Snapshot immuable des données de paiement
+    // Utilise PostgreSQL pg_advisory_xact_lock pour garantir atomicité:
+    // - 2 webhooks du même paiement → 1 facture, 1 numéro consommé
+    let invoiceCreated = false;
+    let invoiceNumber: string | null = null;
+    try {
+      const seller = getSellerSnapshot();
+      const invoiceResult = await createInvoiceAtomic({
+        user_id: userId,
+        challenge_id: challengeId,
+        payment_provider: "stripe",
+        payment_reference: session.id,
+        customer_email: email,
+        customer_name: firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || null,
+        customer_address: session.customer_details?.address?.line1 || null,
+        customer_city: session.customer_details?.address?.city || null,
+        customer_postal_code: session.customer_details?.address?.postal_code || null,
+        customer_country: session.customer_details?.address?.country || null,
+        customer_company: null,
+        customer_vat_number: null,
+        product_name: `Challenge ${accountSize}`,
+        account_size: accountSize,
+        product_description: null,
+        quantity,
+        promo_code_used: promoCode || null,
+        affiliate_code: refCode || null,
+        currency: session.currency?.toUpperCase() || "EUR",
+        subtotal_cents: amountPaidPerChallengeCents,
+        amount_paid_cents: amountPaidPerChallengeCents,
+        seller_legal_name: seller.legal_name,
+        seller_registration_number: seller.registration_number,
+        seller_address: seller.address,
+        seller_country: seller.country,
+        seller_email: seller.email,
+        seller_vat_number: seller.vat_number,
+        language: (language as "fr" | "en" | "es") || "en",
+      });
+
+      if (invoiceResult.success && invoiceResult.invoice) {
+        invoiceCreated = invoiceResult.invoice.created;
+        invoiceNumber = invoiceResult.invoice.invoice_number;
+      } else {
+        console.error("[stripe/webhook] invoice creation failed:", invoiceResult.error);
+      }
+    } catch (invoiceErr) {
+      console.error("[stripe/webhook] invoice creation exception:", invoiceErr);
+    }
+
     // ── Répondre à Stripe immédiatement — MT5 + email + affiliation en arrière-plan ──
     // after() s'exécute après que la réponse HTTP a été envoyée, dans la même
     // invocation Vercel (maxDuration: 60). Stripe reçoit son 200 en ~2s et ne
@@ -301,6 +352,40 @@ export async function POST(req: NextRequest) {
               .eq("user_id", affiliate.user_id);
           }
         } catch (e) { console.error("[stripe/webhook] Affiliate referral error:", e); }
+      }
+
+      // ── Email confirmation d'achat ─────────────────────────────────
+      // ATOMIQUE: event_key + ON CONFLICT DO NOTHING garantit un seul envoi
+      // Même si invoiceCreated=false (facture existait déjà), on envoie l'email
+      // La DB s'occupe de garantir zéro doublon via ON CONFLICT.
+      if (email && invoiceNumber) {
+        try {
+          const siteUrl = await getStringConfig("branding.site_url");
+          const amountPaidFormatted = (amountPaidPerChallengeCents / 100).toLocaleString(
+            (language as string) === "fr" ? "fr-FR" : (language as string) === "es" ? "es-ES" : "en-GB",
+            { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+          );
+
+          await sendPurchaseConfirmationEmail(
+            email,
+            {
+              firstName: firstName || undefined,
+              email,
+              challengeAccountSize: accountSize,
+              invoiceNumber,
+              amountPaid: `${amountPaidFormatted} EUR`,
+              paymentReference: session.id,
+              invoiceUrl: `${siteUrl}/invoices/${invoiceNumber}`,
+              siteUrl,
+              logoUrl: (await getBrandingConfig()).logoUrl,
+              language: (language as "fr" | "en" | "es") || "en",
+            },
+            {
+              userId,
+              eventKey: `purchase_confirmation:stripe:${session.id}`,
+            }
+          );
+        } catch (e) { console.error("[stripe/webhook] Purchase confirmation email error:", e); }
       }
     });
   }

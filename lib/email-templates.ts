@@ -44,6 +44,7 @@ export const TRANSACTIONAL_EMAIL_TYPES = [
   "reward_certificate",
   "reward_progression",
   "apology",
+  "purchase_confirmation",  // Confirmation d'achat — facture séparée des identifiants
 ] as const;
 
 export type TransactionalEmailType = typeof TRANSACTIONAL_EMAIL_TYPES[number];
@@ -1135,6 +1136,94 @@ export function buildApologyEmail(p: {
   return { subject, html };
 }
 
+// ── 12. buildPurchaseConfirmationEmail ────────────────────────
+
+export interface PurchaseConfirmationParams {
+  firstName?: string;
+  email: string;
+  challengeAccountSize: string;
+  invoiceNumber: string;
+  amountPaid: string; // formatted with currency (e.g., "299,00 €")
+  paymentReference: string;
+  invoiceUrl: string;
+  siteUrl: string;
+  logoUrl: string;
+  language?: "fr" | "en" | "es";
+}
+
+export function buildPurchaseConfirmationEmail(p: PurchaseConfirmationParams): { subject: string; html: string } {
+  const { firstName, email, challengeAccountSize, invoiceNumber, amountPaid, paymentReference, invoiceUrl, siteUrl, logoUrl, language = "en" } = p;
+
+  // Subject et corps par langue
+  let subject: string;
+  let bodyText: string;
+  let subjectLine: string;
+  let invoiceLabel: string;
+  let invoiceUrlLabel: string;
+  let ctaText: string;
+  let eyebrowText: string;
+
+  switch (language) {
+    case "fr":
+      subject = "Confirmation de votre achat — Traders Rewards";
+      eyebrowText = "TRADERS REWARDS · CONFIRMATION D'ACHAT";
+      subjectLine = "Confirmation de votre achat";
+      bodyText = `Bonjour${firstName ? ` ${firstName}` : " Trader"},\n\nNous vous confirmons la réception de votre paiement pour votre Challenge Traders Rewards.\n\nLes informations de connexion à votre Challenge vous sont communiquées séparément dès que votre compte est prêt.`;
+      invoiceLabel = "Facture";
+      invoiceUrlLabel = "Consulter ma facture";
+      ctaText = "Accéder à mon Dashboard";
+      break;
+
+    case "es":
+      subject = "Confirmación de su compra — Traders Rewards";
+      eyebrowText = "TRADERS REWARDS · CONFIRMACIÓN DE COMPRA";
+      subjectLine = "Confirmación de su compra";
+      bodyText = `Hola${firstName ? ` ${firstName}` : " Trader"},\n\nConfirmamos la recepción de su pago para su Challenge Traders Rewards.\n\nLa información de acceso a su Challenge le será comunicada por separado una vez que su cuenta esté lista.`;
+      invoiceLabel = "Factura";
+      invoiceUrlLabel = "Ver mi factura";
+      ctaText = "Acceder a mi Dashboard";
+      break;
+
+    case "en":
+    default:
+      subject = "Purchase Confirmation — Traders Rewards";
+      eyebrowText = "TRADERS REWARDS · PURCHASE CONFIRMATION";
+      subjectLine = "Purchase Confirmation";
+      bodyText = `Hello${firstName ? ` ${firstName}` : " Trader"},\n\nWe confirm receipt of your payment for your Traders Rewards Challenge.\n\nYour Challenge login credentials will be sent separately as soon as your account is ready.`;
+      invoiceLabel = "Invoice";
+      invoiceUrlLabel = "View my invoice";
+      ctaText = "Access my Dashboard";
+      break;
+  }
+
+  const html = buildEmail({
+    title: subjectLine,
+    eyebrow: eyebrowText,
+    preheader: subject,
+    body: bodyText,
+    details: [
+      { label: "Challenge", value: challengeAccountSize },
+      { label: invoiceLabel, value: invoiceNumber },
+      { label: language === "fr" ? "Montant payé" : language === "es" ? "Monto pagado" : "Amount Paid", value: amountPaid },
+      { label: language === "fr" ? "Référence de paiement" : language === "es" ? "Referencia de pago" : "Payment Reference", value: paymentReference },
+    ],
+    highlight: {
+      icon: "✓",
+      eyebrow: language === "fr" ? "PAIEMENT CONFIRMÉ" : language === "es" ? "PAGO CONFIRMADO" : "PAYMENT CONFIRMED",
+      title: language === "fr" ? "Votre paiement a été reçu" : language === "es" ? "Su pago ha sido recibido" : "Your payment has been received",
+      text: language === "fr"
+        ? "Un email séparé contenant les informations de connexion à votre Challenge vous sera envoyé dès que votre compte sera activé (généralement dans les 24 heures)."
+        : language === "es"
+        ? "Un email separado con la información de acceso a su Challenge le será enviado tan pronto como su cuenta esté activada (normalmente en 24 horas)."
+        : "A separate email with your Challenge login credentials will be sent as soon as your account is activated (usually within 24 hours).",
+    },
+    cta: { text: ctaText, href: `${siteUrl}/dashboard` },
+    logoUrl,
+  });
+
+  return { subject, html };
+}
+
 // ── Dispatch preview (fake data) ──────────────────────────────
 
 export function buildPreviewFor(type: TransactionalEmailType, previewModel?: string): { subject: string; html: string } {
@@ -1227,5 +1316,18 @@ export function buildPreviewFor(type: TransactionalEmailType, previewModel?: str
       return buildRewardProgressionEmail({ firstName, accountSize, rewardPaid: 2, rewardAmount: "$850", mt5Login: FAKE_MT5.login, siteUrl, logoUrl });
     case "apology":
       return buildApologyEmail({ firstName, accountSize, phase: "funded", mt5: FAKE_MT5, siteUrl, logoUrl });
+    case "purchase_confirmation":
+      return buildPurchaseConfirmationEmail({
+        firstName,
+        email: FAKE_PERSON.email,
+        challengeAccountSize: accountSize,
+        invoiceNumber: "TR-2026-000001",
+        amountPaid: "299,00 EUR",
+        paymentReference: "pi_1A2B3C4D5E6F",
+        invoiceUrl: `${siteUrl}/invoices/TR-2026-000001`,
+        siteUrl,
+        logoUrl,
+        language: previewModel === "es" ? "es" : previewModel === "en" ? "en" : "fr",
+      });
   }
 }

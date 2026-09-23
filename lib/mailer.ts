@@ -49,8 +49,10 @@ import {
   buildRewardCertificateEmail,
   buildRewardProgressionEmail,
   buildApologyEmail,
+  buildPurchaseConfirmationEmail,
   buildPreviewFor,
   type TransactionalEmailType,
+  type PurchaseConfirmationParams,
 } from "@/lib/email-templates";
 
 // ── Sender résolution ─────────────────────────────────────────
@@ -121,21 +123,69 @@ async function _loggedSend(params: {
 }): Promise<{ success: boolean; resendId: string | null; error?: string }> {
   const { type, to, subject, html, userId, challengeId, eventKey } = params;
 
+  // Atomique : réserver le droit d'envoyer cet email (event_key UNIQUE)
+  // Si event_key existe déjà (autre webhook l'a prise), ne pas envoyer
+  if (eventKey) {
+    try {
+      const admin = createAdminClient();
+      const { count } = await admin
+        .from("email_logs")
+        .select("id", { count: "exact", head: true })
+        .eq("event_key", eventKey)
+        .single();
+
+      if (count && count > 0) {
+        // Cet email a déjà été envoyé/réservé
+        console.log(`[mailer] Email ${type} — event_key ${eventKey} déjà traité (concurrence évitée)`);
+        return { success: true, resendId: null };
+      }
+    } catch (checkErr) {
+      // Si la vérification échoue, continuer (meilleur effort)
+      const msg = checkErr instanceof Error ? checkErr.message : String(checkErr);
+      if (!msg.includes("single()")) {
+        console.warn(`[mailer] Event key check failed for ${type}:`, msg.slice(0, 150));
+      }
+    }
+  }
+
   const result = await sendEmail(to, subject, html);
 
+  // Insérer le log — utiliser ON CONFLICT DO NOTHING si event_key fourni (atomicité)
   try {
     const admin = createAdminClient();
-    await admin.from("email_logs").insert({
-      type,
-      to_email:     to,
-      user_id:      userId      ?? null,
-      challenge_id: challengeId ?? null,
-      subject,
-      resend_id:    result.resendId ?? null,
-      status:       result.success ? "sent" : "failed",
-      error:        result.success ? null : (result.error ?? null),
-      event_key:    eventKey ?? null,
-    });
+
+    if (eventKey) {
+      // Insertion atomique : ON CONFLICT DO NOTHING si event_key déjà présent
+      // Cela garantit qu'un seul webhook peut insérer la première ligne pour cet event_key
+      const { error } = await admin.rpc("log_email_atomic", {
+        p_type: type,
+        p_to_email: to,
+        p_user_id: userId ?? null,
+        p_challenge_id: challengeId ?? null,
+        p_subject: subject,
+        p_resend_id: result.resendId ?? null,
+        p_status: result.success ? "sent" : "failed",
+        p_error: result.success ? null : (result.error ?? null),
+        p_event_key: eventKey,
+      });
+
+      if (error) {
+        console.error(`[email_logs] Atomic insert failed — type=${type} event_key=${eventKey}:`, error.message.slice(0, 200));
+      }
+    } else {
+      // Pas de event_key : insertion simple (pas de garantie d'unicité)
+      await admin.from("email_logs").insert({
+        type,
+        to_email:     to,
+        user_id:      userId      ?? null,
+        challenge_id: challengeId ?? null,
+        subject,
+        resend_id:    result.resendId ?? null,
+        status:       result.success ? "sent" : "failed",
+        error:        result.success ? null : (result.error ?? null),
+        event_key:    null,
+      });
+    }
   } catch (logErr) {
     const errMsg = logErr instanceof Error ? logErr.message : String(logErr);
     console.error(
@@ -676,11 +726,42 @@ export async function sendSupportReplyEmail(params: {
   });
 }
 
+// ── sendPurchaseConfirmationEmail ──────────────────────────────
+// Confirmation d'achat — DISTINCT du mail contenant les identifiants Challenge.
+// Envoyé une fois par webhook de paiement confirmé (Stripe/Crypto).
+// Idempotence : ATOMIQUE via PostgreSQL ON CONFLICT DO NOTHING sur event_key.
+// Deux webhooks du même paiement → un seul email envoyé.
+
+export async function sendPurchaseConfirmationEmail(
+  to: string,
+  params: PurchaseConfirmationParams,
+  opts?: { userId?: string; eventKey?: string },
+): Promise<{ success: boolean; resendId: string | null; error?: string }> {
+  const eventKey = opts?.eventKey || `purchase_confirmation:${params.paymentReference || "unknown"}`;
+
+  const { siteUrl, logoUrl } = await getBrandingConfig();
+  const { subject, html } = buildPurchaseConfirmationEmail({
+    ...params,
+    siteUrl,
+    logoUrl,
+  });
+
+  // Idempotence ATOMIQUE : _loggedSend() utilise ON CONFLICT DO NOTHING dans la DB
+  return _loggedSend({
+    type: "purchase_confirmation",
+    to,
+    subject,
+    html,
+    userId: opts?.userId,
+    eventKey,
+  });
+}
+
 // ── sendTestEmail ─────────────────────────────────────────────
 //
 // Phase 3B-1b : envoi de test sécurisé vers ADMIN_EMAIL uniquement.
 //
-// - templateType : un des 9 types transactionnels
+// - templateType : un des types transactionnels
 // - Destinataire : ADMIN_EMAIL (résolu côté serveur — non exposable)
 // - Subject : "[TEST] " + subject réel
 // - HTML : template avec fake data (FAKE_MT5, FAKE_PERSON, etc.)
