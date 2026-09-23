@@ -594,17 +594,19 @@ body {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 16px !important;
-  padding: 11px 92px 11px 22px !important;
-  border-top-color: rgba(255,255,255, 0.10) !important;
-  background: rgba(4, 7, 11, 0.94) !important;
-  box-shadow: 0 -18px 46px rgba(0, 0, 0, 0.52), 0 -1px 0 rgba(255,255,255, 0.025);
+  padding: 13px 92px 13px 22px !important;
+  border-top: 2px solid #E6C57E !important;
+  border-bottom: 1px solid rgba(214, 173, 99, 0.55) !important;
+  background: linear-gradient(180deg, #3a2c16 0%, #241a0e 100%) !important;
+  box-shadow: 0 -18px 46px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(242, 215, 154, 0.35);
   backdrop-filter: blur(18px);
 }
 
 .disclaimer-banner p {
   justify-self: end;
-  color: rgba(255, 255, 255, 0.48) !important;
-  font-size: 12px !important;
+  color: #F7F1E4 !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
 }
 
 .disclaimer-banner button {
@@ -696,15 +698,15 @@ body {
   }
 
   .disclaimer-banner p {
-    color: rgba(255, 255, 255, 0.52) !important;
-    font-size: 10px !important;
-    line-height: 1.42 !important;
+    color: #F7F1E4 !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
     text-align: left !important;
   }
 
   .disclaimer-banner button {
-    padding: 9px 76px 9px 12px !important;
-    font-size: 11px !important;
+    padding: 8px 14px !important;
+    font-size: 12px !important;
   }
 }
 
