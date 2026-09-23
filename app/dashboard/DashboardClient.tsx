@@ -482,10 +482,8 @@ export default function DashboardClient({ user }: { user: User }) {
     }
   }, [activeTab, challenge?.id]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
+  const handleLogout = () => {
+    window.location.assign("/logout");
   };
 
   useEffect(() => {

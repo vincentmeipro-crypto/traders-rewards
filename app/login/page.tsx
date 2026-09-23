@@ -1,6 +1,6 @@
 "use client";
 export const dynamic = "force-dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -21,6 +21,22 @@ export default function LoginPage() {
   const [resetSent, setResetSent] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    const reset = new URLSearchParams(window.location.search).get("reset") === "1";
+    if (!reset) return;
+    try {
+      for (const key of Object.keys(localStorage)) {
+        if (key.startsWith("sb-")) localStorage.removeItem(key);
+      }
+      document.cookie.split(";").forEach((part) => {
+        const name = part.split("=")[0]?.trim();
+        if (name?.startsWith("sb-")) {
+          document.cookie = `${name}=; path=/; max-age=0`;
+        }
+      });
+    } catch { /* le cookie serveur est déjà effacé */ }
+  }, []);
 
   const handleForgotPassword = async () => {
     if (!email) {
