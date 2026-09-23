@@ -112,10 +112,15 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  const adminEmail = (process.env.ADMIN_EMAIL || "vincentmeipro@gmail.com").toLowerCase();
+  const configuredAdmin = (process.env.ADMIN_EMAIL || "vincentmeipro@gmail.com")
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .toLowerCase();
+  const adminEmails = new Set([configuredAdmin, "vincentmeipro@gmail.com"]);
+  const isAdmin = user?.email ? adminEmails.has(user.email.toLowerCase()) : false;
   if (pathname.startsWith("/x8k3pz")) {
     if (!user) return NextResponse.redirect(new URL("/login", request.url));
-    if (user.email?.toLowerCase() !== adminEmail) {
+    if (!isAdmin) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
@@ -125,7 +130,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && (pathname === "/login" || pathname === "/register")) {
-    const dest = user.email?.toLowerCase() === adminEmail ? "/x8k3pz" : "/dashboard";
+    const dest = isAdmin ? "/x8k3pz" : "/dashboard";
     return NextResponse.redirect(new URL(dest, request.url));
   }
 

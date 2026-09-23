@@ -20,6 +20,7 @@
  */
 
 import { NextRequest } from "next/server";
+import { isAdminEmail } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -85,9 +86,7 @@ const ROLE_PERMISSIONS: Record<Role, Set<Permission>> = {
  * Phase 1.2 : remplacer par une query table user_roles.
  */
 function resolveRole(email: string): Role {
-  // Fallback hardcodé si ADMIN_EMAIL n'est pas défini en prod (Vercel)
-  const adminEmail = process.env.ADMIN_EMAIL || "vincentmeipro@gmail.com";
-  if (email === adminEmail) return "admin";
+  if (isAdminEmail(email)) return "admin";
   return "trader";
 }
 

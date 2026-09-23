@@ -61,7 +61,7 @@ export default function LoginPage() {
       });
     } catch { /* ignore */ }
 
-    if (data.user?.email === "vincentmeipro@gmail.com") {
+    if (data.user?.email?.toLowerCase() === "vincentmeipro@gmail.com") {
       router.push("/x8k3pz");
     } else {
       router.push("/dashboard");
