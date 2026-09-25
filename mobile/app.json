@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Traders Rewards",
+    "slug": "traders-rewards-mobile",
+    "version": "0.1.0",
+    "scheme": "tradersrewards",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#000000",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "eu.tradersrewards.mobile"
+    },
+    "android": {
+      "package": "eu.tradersrewards.mobile",
+      "predictiveBackGestureEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "name": "Traders Rewards — aperçu mobile"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "68d6fe93-144f-4cde-a142-8d738e43fa9d"
+      }
+    }
+  }
+}
